@@ -5,6 +5,9 @@ export { ResourceBrowserComponent } from './lib/comparison/resource-browser.comp
 export { ResourcesListComponent } from './lib/list-view/resources-list.component';
 export { ResultCountComponent } from './lib/list-view/result-count.component';
 export { MultipleViewerComponent } from './lib/comparison/multiple-viewer.component';
+// The selection banner. Rendered by the Data tab's class view above the split, so it is common to
+// the list and the table rather than living inside the panel only one of them has.
+export { ResourceListSelectionComponent } from './lib/list-view/resource-list-selection.component';
 
 // Service used by ResourceBrowserComponent
 export { MultipleViewerService } from './lib/comparison/multiple-viewer.service';

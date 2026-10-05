@@ -3,7 +3,6 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CenteredBoxComponent, CenteredMessageComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { ResourceListSelectionComponent } from '../list-view/resource-list-selection.component';
 import { ComparisonComponent } from './comparison.component';
 import { MultipleViewerService } from './multiple-viewer.service';
 
@@ -19,9 +18,9 @@ import { MultipleViewerService } from './multiple-viewer.service';
             [message]="'pages.dataBrowser.multipleViewer.chooseResources' | translate" />
         </app-centered-box>
       } @else {
-        @if (multipleViewerService.selectMode) {
-          <app-resource-list-selection />
-        }
+        <!-- The selection banner used to sit here. It now lives under the class header, above the
+             split, because it describes the selection and not the panel — and the table view has
+             no panel at all, so a banner inside one was invisible to half the Data tab. -->
         @if (selectedResourceIds.length <= MAX_RESOURCES) {
           <app-comparison [resourceIds]="selectedResourceIds" (afterResourceDeleted)="afterResourceDeleted.emit()" />
         } @else {
@@ -35,14 +34,7 @@ import { MultipleViewerService } from './multiple-viewer.service';
       }
     }
   `,
-  imports: [
-    AsyncPipe,
-    TranslatePipe,
-    CenteredBoxComponent,
-    CenteredMessageComponent,
-    ResourceListSelectionComponent,
-    ComparisonComponent,
-  ],
+  imports: [AsyncPipe, TranslatePipe, CenteredBoxComponent, CenteredMessageComponent, ComparisonComponent],
 })
 export class MultipleViewerComponent {
   @Output() afterResourceDeleted = new EventEmitter<void>();

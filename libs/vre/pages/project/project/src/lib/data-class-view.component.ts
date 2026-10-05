@@ -4,7 +4,11 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { MultipleViewerComponent, TableViewStateService } from '@dasch-swiss/vre/pages/data-browser';
+import {
+  MultipleViewerComponent,
+  MultipleViewerService,
+  ResourceListSelectionComponent,
+} from '@dasch-swiss/vre/pages/data-browser';
 import { provideSearchFilters, StatementDraftStore } from '@dasch-swiss/vre/pages/search/search-filters';
 import { OntologyService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
@@ -28,6 +32,17 @@ import { ProjectPageService } from './project-page.service';
         </app-centered-box>
       } @else {
         <app-data-class-header [classSelected]="classSelected" />
+        <!-- Under the header and above the split, so it is the same banner in both views.
+             Inside the viewer it was invisible in table view, which has no viewer — and it was
+             describing the selection, not the panel it happened to sit in.
+
+             selectMode is read in the template rather than folded into a computed: it is a plain
+             field on the service with no change notification, and a computed that reads it behind
+             a short-circuited signal read registers no dependency and caches forever (DEV-7466).
+             A template binding is re-evaluated every pass, so it cannot go stale. -->
+        @if ((selectedResources$ | async)?.length && multipleViewerService.selectMode) {
+          <app-resource-list-selection />
+        }
         <as-split>
           <as-split-area [size]="panelSize()" cdkScrollable>
             <app-data-class-panel [classSelected]="classSelected" />
@@ -73,6 +88,7 @@ import { ProjectPageService } from './project-page.service';
     DataClassHeaderComponent,
     DataClassPanelComponent,
     MultipleViewerComponent,
+    ResourceListSelectionComponent,
   ],
   // Scoped here rather than on the panel so the class header and the list resolve one query, and so
   // a class switch tears the whole search state down with the view. `ResourceResultService` joins
@@ -92,6 +108,10 @@ export class DataClassViewComponent {
    * the viewer, which would keep fetching the selected resource for a panel nobody can see.
    */
   private readonly _view = toSignal(inject(DataClassUrlStateService).view$, { initialValue: 'list' as DataClassView });
+
+  /** Public: the selection banner's visibility is decided in this component's template. */
+  readonly multipleViewerService = inject(MultipleViewerService);
+  readonly selectedResources$ = this.multipleViewerService.selectedResources$;
 
   readonly viewerIsVisible = computed(() => this._view() !== 'table');
 

@@ -1,11 +1,16 @@
 @use '@angular/material' as mat;
 
 /**
- * Room for the absolutely positioned row-control cluster — 76px, which is the checkbox's full
- * 40px touch target plus the 24px open control and their margins; shrinking the touch target to
- * save width would be the wrong trade. The header is indented to match so the
- * two read as one column with a control gutter — which is what the design draws as two separate
- * narrow columns.
+ * Room for the absolutely positioned row-control cluster.
+ *
+ * Measured rather than guessed: 4px offset + the checkbox's full 40px touch target + a 6px gap +
+ * the explorer button's 48px host = 98px, so 104px leaves the label a little clear air. The
+ * previous 76px was narrower than the cluster itself, and the open arrow sat on top of the first
+ * characters of every label. Shrinking either control to save width would be the wrong trade —
+ * they are the row's only affordances.
+ *
+ * The header is indented to match so the two read as one column with a control gutter, which is
+ * what the design draws as two separate narrow columns.
  *
  * Mixed into each density block rather than written once outside them: those blocks set `padding`
  * on every cell through a two-class descendant selector, which outranks anything a single-class
@@ -14,7 +19,7 @@
 @mixin label-column-gutter {
   .is-label-cell,
   .is-label-header {
-    padding-left: 76px;
+    padding-left: 104px;
   }
 }
 
@@ -228,35 +233,43 @@ table {
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
   // Material's own token, so the checkbox shrinks to fit the gutter without reaching into its
   // internals — `::ng-deep` is not available to us and would not survive a Material upgrade.
   --mdc-checkbox-state-layer-size: 28px;
-  opacity: 0;
-
-  // Idle rows show no controls: at twenty-five rows a permanent column of checkboxes and arrows
-  // reads as chrome rather than as a thing to act on. Hover is only half of that — `focus-within`
-  // is what keeps both controls reachable from the keyboard, which is the only way in without a
-  // pointer.
-  tr:hover &,
-  tr:focus-within & {
-    opacity: 1;
-  }
 }
 
-// Three ways a row keeps its controls once the pointer has moved on.
+// Opacity sits on the two controls rather than on the cluster around them, because they do not
+// appear under the same conditions: the checkbox outlives the pointer while a selection is being
+// built, the open arrow never does.
+.row-controls [data-cy='row-check'],
+.row-controls .row-open {
+  opacity: 0;
+}
+
+// Idle rows show no controls: at twenty-five rows a permanent column of checkboxes and arrows
+// reads as chrome rather than as a thing to act on. Hover is only half of that — `focus-within`
+// is what keeps both controls reachable from the keyboard, which is the only way in without a
+// pointer.
+tr:hover .row-controls [data-cy='row-check'],
+tr:focus-within .row-controls [data-cy='row-check'],
+tr:hover .row-controls .row-open,
+tr:focus-within .row-controls .row-open {
+  opacity: 1;
+}
+
+// Three ways a row keeps its *checkbox* once the pointer has moved on — and only its checkbox.
 //
-// `.selection-active` is the list view's rule — `resource-list-item` renders its checkbox on
-// `showCheckbox || selectMode`, so while a comparison set is being built every row offers one.
-// The other two are the row the user is actually working with: a set you assemble one hover at a
-// time is a set you can never see, and a row whose controls vanish the moment you look elsewhere
-// is a row you have to find again to act on.
+// `.selection-active` is the list view's rule: `resource-list-item` renders its checkbox on
+// `showCheckbox || selectMode`, so while a comparison set is being built every row offers one. The
+// other two are the row the user is actually working with — a set you assemble one hover at a time
+// is a set you can never see.
 //
-// All three outrank the `opacity: 0` above, which is the only rule that hides anything — the hover
-// rule only ever raises opacity, so it has nothing to conflict with.
-.selection-active .row-controls,
-tr.is-checked .row-controls,
-tr.is-selected .row-controls {
+// The open arrow is deliberately absent. It acts on one row and says nothing about the selection,
+// so leaving it drawn on all twenty-five rows turns a quiet gutter into a column of arrows.
+.selection-active .row-controls [data-cy='row-check'],
+tr.is-checked .row-controls [data-cy='row-check'],
+tr.is-selected .row-controls [data-cy='row-check'] {
   opacity: 1;
 }
 

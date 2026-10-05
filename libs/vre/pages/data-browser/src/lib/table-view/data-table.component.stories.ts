@@ -386,8 +386,8 @@ export const KeepsTheControlsOnACheckedRowWhileAnotherIsHovered: Story = {
     const rows = canvasElement.querySelectorAll('tr.mat-mdc-row');
     await userEvent.hover(rows[1]);
 
-    const checkedControls = rows[0].querySelector('.row-controls') as HTMLElement;
-    await expect(getComputedStyle(checkedControls).opacity).toBe('1');
+    const checkedBox = rows[0].querySelector('[data-cy="row-check"]') as HTMLElement;
+    await expect(getComputedStyle(checkedBox).opacity).toBe('1');
   },
 };
 
@@ -402,8 +402,14 @@ export const ShowsEveryRowsCheckboxWhileASetIsBeingBuilt: Story = {
     const rows = canvasElement.querySelectorAll('tr.mat-mdc-row');
     await userEvent.hover(rows[0]);
 
-    const unhovered = rows[1].querySelector('.row-controls') as HTMLElement;
+    const unhovered = rows[1].querySelector('[data-cy="row-check"]') as HTMLElement;
     await expect(getComputedStyle(unhovered).opacity).toBe('1');
+
+    // The open arrow acts on one row and says nothing about the selection, so it stays with the
+    // pointer rather than joining twenty-five others in the gutter.
+    const unhoveredArrow = rows[1].querySelector('.row-open') as HTMLElement;
+    await expect(getComputedStyle(unhoveredArrow).opacity).toBe('0');
+    await expect(getComputedStyle(rows[0].querySelector('.row-open') as HTMLElement).opacity).toBe('1');
   },
 };
 
@@ -413,7 +419,7 @@ export const HidesTheControlsOnIdleRowsWhenNoSetIsBeingBuilt: Story = {
     const rows = canvasElement.querySelectorAll('tr.mat-mdc-row');
     await userEvent.hover(rows[0]);
 
-    const idle = rows[1].querySelector('.row-controls') as HTMLElement;
+    const idle = rows[1].querySelector('[data-cy="row-check"]') as HTMLElement;
     await expect(getComputedStyle(idle).opacity).toBe('0');
   },
 };
