@@ -35,8 +35,14 @@
 table {
   // `fixed` is what makes the header's per-column widths authoritative, and what lets the table
   // exceed its container instead of squeezing forty columns into the viewport.
+  //
+  // `min-width: 0` undoes Material's own `min-width: 100%` on `.mat-mdc-table`. When the columns add
+  // up to less than the container, that rule makes the browser spread the difference over them, so
+  // every column renders wider than its stored width. A drag then starts from the stretched width —
+  // the column jumps — and can never go below its share of the stretch. With few columns the table
+  // simply ends before the container does.
   width: max-content;
-  min-width: 100%;
+  min-width: 0;
 }
 
 // The row-height tokens set `height`, which clips a cell holding three stacked values. Turning
@@ -73,6 +79,11 @@ table {
   align-items: center;
   gap: 4px;
   min-width: 0;
+  // Under `table-layout: fixed` a column still cannot render narrower than its cells' min-content,
+  // and a flex row's min-content counts the label's full text however `min-width` is set on the
+  // label. Containment drops the header's say in that, so the column goes down to the width it is
+  // dragged to and the label ellipsises instead.
+  contain: inline-size;
 }
 
 .header-grip {
@@ -195,6 +206,9 @@ table {
 
 .header-label {
   display: block;
+  // A flex item's `min-width: auto` is its text, so without this the ellipsis never kicks in and
+  // the label holds the column wider than the width it was dragged to.
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
