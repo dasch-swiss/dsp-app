@@ -25,6 +25,7 @@ import { ScrollWhenTallerDirective } from './scroll-when-taller.directive';
 import { TableColumn } from './table-column.model';
 import { TablePropertyCellComponent } from './table-property-cell.component';
 import { buildRows, TableRow } from './table-row.model';
+import { TruncatedTooltipDirective } from './truncated-tooltip.directive';
 
 /**
  * A column with everything its header needs already resolved.
@@ -127,7 +128,7 @@ const FILLER_COLUMN_KEY = '__filler';
                     <mat-icon>drag_indicator</mat-icon>
                   </button>
                 }
-                <span class="header-label" [title]="column.label">{{ column.label }}</span>
+                <span class="header-label" [appTruncatedTooltip]="column.label">{{ column.label }}</span>
 
                 <!-- Only where the Data tab's own sort rule allows it (REQ-3.2). A control the
                      query cannot honour is worse than none: the user would click it and watch the
@@ -293,6 +294,7 @@ const FILLER_COLUMN_KEY = '__filler';
     RowResizeDirective,
     ResourceExplorerButtonComponent,
     TablePropertyCellComponent,
+    TruncatedTooltipDirective,
   ],
   providers: [
     // Two services the viewer's subtree injects but does not provide, and which are genuinely

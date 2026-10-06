@@ -884,15 +884,39 @@ export const ResizesAColumnWithTheKeyboardFromItsHandle: Story = {
     await expect(handle).toHaveAttribute('tabindex', '0');
     await expect(handle).toHaveAttribute('aria-valuenow', '200');
 
-    // Measured, not assumed. The table is `min-width: 100%`, so a class with few columns is
-    // stretched past the widths the model asked for — and the keyboard step works from what is on
-    // screen, exactly as the pointer drag does.
+    // Measured, not assumed: the keyboard step works from what is on screen, exactly as the
+    // pointer drag does.
     const before = Math.round((handle.closest('th') as HTMLElement).getBoundingClientRect().width);
 
     handle.focus();
     await userEvent.keyboard('{ArrowRight}');
 
     await expect(onResize).toHaveBeenCalledWith({ key: `${ONTO}hasTitle`, width: before + 16 });
+  },
+};
+
+/**
+ * A header narrowed until its name is cut off still tells the user which column it is: hovering
+ * the name shows it in full. A name that already fits shows nothing — a tooltip repeating what is
+ * on screen is noise on a row the pointer crosses constantly.
+ */
+export const ShowsATruncatedHeaderNameInFullOnHover: Story = {
+  args: { columnWidths: { [`${ONTO}hasTitle`]: 90 } },
+  play: async ({ canvasElement }) => {
+    const label = (name: string) =>
+      Array.from(canvasElement.querySelectorAll('th .header-label')).find(element =>
+        element.textContent?.includes(name)
+      ) as HTMLElement;
+    const tooltip = () => document.querySelector('.mat-mdc-tooltip');
+
+    await userEvent.hover(label('Place'));
+    await new Promise(resolve => setTimeout(resolve, 300));
+    await expect(tooltip()).toBeNull();
+    await userEvent.unhover(label('Place'));
+
+    await userEvent.hover(label('Title'));
+    await waitFor(() => expect(tooltip()).toHaveTextContent('Title'));
+    await userEvent.unhover(label('Title'));
   },
 };
 
