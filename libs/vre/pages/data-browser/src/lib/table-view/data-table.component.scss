@@ -390,6 +390,13 @@ tr.is-selected .row-controls [data-cy='row-check'] {
   .cell-property,
   .cell-values {
     max-height: 200px;
+    // Both axes, not just `overflow-y`. Naming one axis `auto` and leaving the other `visible` is
+    // not a state CSS has: the other axis computes to `auto` too. Every capped cell therefore
+    // became a scroll container sideways as well, and a one-line cell flashed an overlay
+    // scrollbar on hover although it had 30px of content and nothing to scroll. Nothing here
+    // needs to scroll horizontally — a long value ellipsises, and the action bubble sits inside
+    // the cell's width — so `hidden` clips nothing that was visible.
+    overflow-x: hidden;
     overflow-y: auto;
     // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.
     box-sizing: border-box;
@@ -425,6 +432,13 @@ tr.is-selected .row-controls [data-cy='row-check'] {
   .cell-property,
   .cell-values {
     max-height: 200px;
+    // Both axes, not just `overflow-y`. Naming one axis `auto` and leaving the other `visible` is
+    // not a state CSS has: the other axis computes to `auto` too. Every capped cell therefore
+    // became a scroll container sideways as well, and a one-line cell flashed an overlay
+    // scrollbar on hover although it had 30px of content and nothing to scroll. Nothing here
+    // needs to scroll horizontally — a long value ellipsises, and the action bubble sits inside
+    // the cell's width — so `hidden` clips nothing that was visible.
+    overflow-x: hidden;
     overflow-y: auto;
     // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.
     box-sizing: border-box;
