@@ -73,6 +73,7 @@ table {
     .header-grip,
     .column-resize-handle,
     .header-sort,
+    .header-filter,
     .header-pin {
       opacity: 1;
     }
@@ -119,10 +120,9 @@ table {
   }
 }
 
-// Shared shape for the two header controls. They differ only in when they are visible: the sort
-// button hides until the column is hovered *unless* it is the active sort, which must stay readable
-// from across the table (REQ-3.3), while the filter button is always drawn so the absence of a
-// filter is as legible as its presence.
+// Shared shape for the header controls. Each hides until the column is hovered *unless* it is
+// active — the sorted column, a filtered one, a pinned one — which must stay readable from across
+// the table (REQ-3.3).
 .header-sort,
 .header-filter,
 .header-pin {
@@ -179,9 +179,14 @@ table {
   }
 }
 
-.header-filter.is-active {
-  background: #d6e0e8;
-  color: var(--primary, #336790);
+.header-filter {
+  opacity: 0;
+
+  &.is-active {
+    opacity: 1;
+    background: #d6e0e8;
+    color: var(--primary, #336790);
+  }
 }
 
 .column-resize-handle {
