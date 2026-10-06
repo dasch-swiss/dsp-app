@@ -410,6 +410,10 @@ tr.is-checked .row-controls [data-cy='row-check'] {
   // that wants as many rows on screen as will fit, 16px above and below every value made a
   // single-value cell taller than the row height asked for.
   --property-value-padding-block: 4px;
+  // At that padding a one-line value is 28px tall, and the viewer's fixed 8px offset left the 32px
+  // bubble hanging 12px below it. Centred on the value instead, whatever its height.
+  --action-bubble-top: 50%;
+  --action-bubble-shift: -50%;
 
   .mat-mdc-cell,
   .mat-mdc-header-cell {

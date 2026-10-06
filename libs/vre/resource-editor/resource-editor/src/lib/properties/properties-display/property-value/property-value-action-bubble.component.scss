@@ -2,6 +2,9 @@
   display: block;
   position: absolute;
   top: 0;
+  // Spans the value's height, so a host that centres the bubble has a box to centre it in. Zero
+  // wide, so it covers nothing.
+  bottom: 0;
   right: 0;
 }
 
@@ -12,5 +15,9 @@
 .action-bubble {
   position: absolute;
   right: 16px;
-  top: 8px;
+  // 8px from the top suits the viewer, where a one-line value is about 50px tall and the bubble
+  // reads as centred. A host with tighter values — the Data tab's table — centres it instead via
+  // these two variables rather than reaching in with ::ng-deep.
+  top: var(--action-bubble-top, 8px);
+  transform: translateY(var(--action-bubble-shift, 0));
 }
