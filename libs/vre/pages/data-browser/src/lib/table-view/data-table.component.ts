@@ -191,7 +191,7 @@ const FILLER_COLUMN_KEY = '__filler';
                   (heightChanged)="onRowResized(row.id, $event)"
                   (heightReset)="onRowHeightReset(row.id)"
                   [attr.aria-label]="'pages.dataBrowser.table.resizeRow' | translate: { label: row.label }"></span>
-                <div class="row-controls" (click)="$event.stopPropagation()">
+                <div class="row-controls">
                   <mat-checkbox
                     data-cy="row-check"
                     [checked]="checkedResourceIds().has(row.id)"
@@ -225,10 +225,7 @@ const FILLER_COLUMN_KEY = '__filler';
                   <span class="cell-value">{{ cell.text }}</span>
                 </div>
               } @else if (cell.propertyInfo; as propertyInfo) {
-                <!-- Every click inside the cell is also a click on the row, which selects the
-                     resource in the viewer. Stopped once here rather than on each of the dozen
-                     controls the viewer's unit brings with it. -->
-                <div class="cell-property" [appScrollWhenTaller]="rowCap(row.id)" (click)="$event.stopPropagation()">
+                <div class="cell-property" [appScrollWhenTaller]="rowCap(row.id)">
                   <app-table-property-cell
                     [dspResource]="row.dspResource!"
                     [myProperty]="propertyInfo"
@@ -249,7 +246,7 @@ const FILLER_COLUMN_KEY = '__filler';
                       type="button"
                       class="cell-more"
                       data-cy="cell-more"
-                      (click)="toggleExpanded(row.id, column.key); $event.stopPropagation()">
+                      (click)="toggleExpanded(row.id, column.key)">
                       <mat-icon>{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
                       @if (expanded) {
                         {{ 'pages.dataBrowser.table.showLess' | translate }}
@@ -278,9 +275,7 @@ const FILLER_COLUMN_KEY = '__filler';
           *matRowDef="let row; columns: displayedColumns()"
           [style.height.px]="rowHeightFor(row.id)"
           [style.--row-cap.px]="rowCap(row.id)"
-          [class.is-selected]="row.id === selectedResourceId()"
-          [class.is-checked]="checkedResourceIds().has(row.id)"
-          (click)="resourceSelected.emit(row.resource)"></tr>
+          [class.is-checked]="checkedResourceIds().has(row.id)"></tr>
       </table>
     </div>
   `,
@@ -321,8 +316,6 @@ export class DataTableComponent {
   readonly visibleColumns = input.required<string[]>();
   /** Pixel widths the user has set. A column absent here falls back to its `defaultWidth`. */
   readonly columnWidths = input<Readonly<Record<string, number>>>({});
-  /** IRI of the resource currently open in the viewer, highlighted in the table. */
-  readonly selectedResourceId = input<string | undefined>(undefined);
   /** The sort the query is running, so the matching header can announce `aria-sort`. */
   readonly sortedColumnKey = input<string | undefined>(undefined);
   readonly sortDescending = input(false);
@@ -352,7 +345,6 @@ export class DataTableComponent {
    */
   readonly selectionActive = input(false);
 
-  readonly resourceSelected = output<ReadResource>();
   /**
    * A row's checkbox, as a change rather than as "add" and "remove" outputs.
    *

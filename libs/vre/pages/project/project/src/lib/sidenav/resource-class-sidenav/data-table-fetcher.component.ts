@@ -65,13 +65,11 @@ import { ProjectPageService } from '../../project-page.service';
             [visibleColumns]="layout().visible"
             [columnWidths]="layout().widths"
             [rowHeight]="layout().rowHeight"
-            [selectedResourceId]="selectedResourceId()"
             [checkedResourceIds]="checkedResourceIds()"
             [selectionActive]="selectionActive()"
             [sortedColumnKey]="sortedColumnKey()"
             [sortDescending]="sortDescending()"
             [filteredColumnKeys]="filteredColumnKeys()"
-            (resourceSelected)="onResourceSelected($event)"
             (resourceCheckedChanged)="onResourceCheckedChanged($event)"
             (columnsReordered)="onColumnsReordered($event)"
             (columnResized)="onColumnResized($event)"
@@ -145,22 +143,10 @@ export class DataTableFetcherComponent implements OnChanges {
   private readonly _selectedResources = signal<ReadResource[]>([]);
 
   /**
-   * The row the viewer is showing, highlighted in the table.
-   *
-   * Nothing is highlighted in select mode: the viewer is then comparing several resources, and
-   * pointing at one of them would claim a primacy it does not have. The checkboxes say which they
-   * are.
-   */
-  readonly selectedResourceId = computed<string | undefined>(() => {
-    const selected = this._selectedResources();
-    return this._multipleViewerService.selectMode ? undefined : selected[0]?.id;
-  });
-
-  /**
    * Whether the user is building a comparison set.
    *
    * `MultipleViewerService.selectMode` is a plain mutable field with no change notification, so
-   * the selection's emission is what these three computeds react to. Note the shape they all
+   * the selection's emission is what these two computeds react to. Note the shape they both
    * share: **the signal is read first, unconditionally**, and only then is the flag consulted.
    *
    * That is not a style preference. Written the natural way —
@@ -273,10 +259,6 @@ export class DataTableFetcherComponent implements OnChanges {
   onRetry() {
     this.failed.set(false);
     this._retrySubject.next();
-  }
-
-  onResourceSelected(resource: ReadResource) {
-    this._multipleViewerService.selectOneResource(resource);
   }
 
   /**

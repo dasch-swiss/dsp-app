@@ -3,10 +3,10 @@ import { DestroyRef, Directive, ElementRef, inject, input, NgZone, output } from
 /**
  * Drags a row's bottom edge to resize it, the counterpart of {@link ColumnResizeDirective}.
  *
- * Put this on a thin element inside the sticky label cell, not on the `<tr>`: the row carries a
- * click that selects the resource, and a pointer-down on it has to keep meaning that everywhere
- * except on the few pixels that mean "resize". The label cell is the right host because it is the
- * one cell always on screen, however far the table is scrolled sideways.
+ * Put this on a thin element inside the sticky label cell, not on the `<tr>`: a pointer-down on a
+ * cell's values has to keep meaning what it means in the viewer everywhere except on the few pixels
+ * that mean "resize". The label cell is the right host because it is the one cell always on screen,
+ * however far the table is scrolled sideways.
  *
  * During the drag the height is written straight onto the `<tr>`, as the same two properties the
  * component's template binds once the gesture is committed: a `height`, which grows a short row,
@@ -77,8 +77,7 @@ export class RowResizeDirective {
     this._startHeight = row.getBoundingClientRect().height;
     this._currentHeight = this._startHeight;
 
-    // Otherwise the same pointer-down selects the row, and the user watches the viewer change
-    // while trying to make a row taller.
+    // Otherwise the drag also selects the text of the rows it passes over.
     event.preventDefault();
     event.stopPropagation();
 

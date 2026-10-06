@@ -223,26 +223,17 @@ table {
 }
 
 .mat-mdc-row {
-  cursor: pointer;
-
   &:hover {
     background: #f5f7f9;
   }
 
-  // Checked first, selected second: a row can be both, and "this is the one the viewer is showing"
-  // is the stronger statement of the two.
   &.is-checked {
     background: #eef3f7;
-  }
-
-  &.is-selected {
-    background: #d6e0e8;
   }
 }
 
 // Drags a row's bottom edge. Lives in the sticky label cell so it is reachable however far the
-// table is scrolled sideways, and spans that cell's width so it is easy to aim at without being a
-// target anywhere near the row's own click.
+// table is scrolled sideways, and spans that cell's width so it is easy to aim at.
 .row-resize-handle {
   position: absolute;
   left: 0;
@@ -318,8 +309,7 @@ tr:focus-within .row-controls .row-open {
 // The open arrow is deliberately absent. It acts on one row and says nothing about the selection,
 // so leaving it drawn on all twenty-five rows turns a quiet gutter into a column of arrows.
 .selection-active .row-controls [data-cy='row-check'],
-tr.is-checked .row-controls [data-cy='row-check'],
-tr.is-selected .row-controls [data-cy='row-check'] {
+tr.is-checked .row-controls [data-cy='row-check'] {
   opacity: 1;
 }
 
