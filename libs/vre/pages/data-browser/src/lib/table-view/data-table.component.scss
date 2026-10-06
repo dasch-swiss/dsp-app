@@ -3,11 +3,12 @@
 /**
  * Room for the absolutely positioned row-control cluster.
  *
- * Measured rather than guessed: 4px offset + the checkbox's full 40px touch target + a 6px gap +
- * the explorer button's 48px host = 98px, so 104px leaves the label a little clear air. The
- * previous 76px was narrower than the cluster itself, and the open arrow sat on top of the first
- * characters of every label. Shrinking either control to save width would be the wrong trade —
- * they are the row's only affordances.
+ * Measured rather than guessed: 4px offset + the checkbox's full 40px touch target + the
+ * explorer button's 48px host = 92px, so 104px leaves the label clear air. The two controls sit
+ * flush against each other; their own touch targets already carry the visual spacing, and a gap
+ * on top of those pushed the arrow into the label. The previous 76px gutter was narrower than
+ * the cluster itself, and the arrow sat on the first characters of every label. Shrinking either
+ * control to save width would be the wrong trade — they are the row's only affordances.
  *
  * The header is indented to match so the two read as one column with a control gutter, which is
  * what the design draws as two separate narrow columns.
@@ -233,7 +234,7 @@ table {
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0;
   // Material's own token, so the checkbox shrinks to fit the gutter without reaching into its
   // internals — `::ng-deep` is not available to us and would not survive a Material upgrade.
   --mdc-checkbox-state-layer-size: 28px;
@@ -387,15 +388,16 @@ tr.is-selected .row-controls [data-cy='row-check'] {
   //
   // Only at compact density. At default the row is allowed to grow, because the user has not
   // asked to see as many rows as possible.
-  .cell-property,
-  .cell-values {
+  // Only cells the directive measured as taller than the cap. A short cell is left alone
+  // entirely — not a scroll container at all — because the editor's hover bubble is absolutely
+  // positioned and pokes out of a 28px cell, which would make it scrollable with nothing to
+  // scroll. See ScrollWhenTallerDirective.
+  .cell-property.is-capped,
+  .cell-values.is-capped {
     max-height: 200px;
-    // Both axes, not just `overflow-y`. Naming one axis `auto` and leaving the other `visible` is
-    // not a state CSS has: the other axis computes to `auto` too. Every capped cell therefore
-    // became a scroll container sideways as well, and a one-line cell flashed an overlay
-    // scrollbar on hover although it had 30px of content and nothing to scroll. Nothing here
-    // needs to scroll horizontally — a long value ellipsises, and the action bubble sits inside
-    // the cell's width — so `hidden` clips nothing that was visible.
+    // Both axes, not just `overflow-y`: naming one axis `auto` and leaving the other `visible`
+    // is not a state CSS has, so the other computes to `auto` too. Nothing here scrolls
+    // sideways — a long value ellipsises — so `hidden` clips nothing that was visible.
     overflow-x: hidden;
     overflow-y: auto;
     // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.

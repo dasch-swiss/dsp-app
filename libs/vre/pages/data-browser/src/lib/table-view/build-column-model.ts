@@ -43,7 +43,12 @@ function isEditableInResourceEditor(propDef: ResourcePropertyDefinitionWithAllLa
  * the table that the list view cannot display or undo.
  */
 function isSortableProperty(propDef: ResourcePropertyDefinitionWithAllLanguages): boolean {
-  return !propDef.isLinkProperty && propDef.objectType !== Constants.ListValue;
+  // `isLinkValueProperty` as well as `isLinkProperty`. The sort header's rule names only the
+  // latter because `OntologyDataService` has already dropped every reified `…Value` property
+  // before it sees the list — the table builds its columns from the ontology directly, so it has
+  // to exclude them itself or it would offer a sort the list view cannot show, on a `LinkValue`
+  // whose ordering means nothing anyway.
+  return !propDef.isLinkProperty && !propDef.isLinkValueProperty && propDef.objectType !== Constants.ListValue;
 }
 
 /**
@@ -95,6 +100,18 @@ export function buildColumnModel(
     .map((hasProperty): TableColumn | undefined => {
       const propDef = propertyDefinitions.get(hasProperty.propertyIndex);
       if (!propDef) {
+        return undefined;
+      }
+
+      // dsp-api reifies every link property into a `…Value` sibling — `linkToAuthor` and
+      // `linkToAuthorValue` — and both carry the same `rdfs:label`. A class listing both would
+      // otherwise produce two columns headed "Author(s)": one holding the values, and one that
+      // can never hold anything, because `getValues(linkToAuthor)` has nothing to return.
+      //
+      // The `…Value` sibling is the one that survives, which is the same choice
+      // `GenerateProperty.commonProperty` makes when it filters `isLinkProperty` out — so the
+      // column that remains is the one the resource editor can actually render and edit.
+      if (propDef.isLinkProperty) {
         return undefined;
       }
 

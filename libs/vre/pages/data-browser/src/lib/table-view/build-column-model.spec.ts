@@ -90,11 +90,30 @@ describe('buildColumnModel', () => {
 
   // The three kinds `GenerateProperty.commonProperty` drops. A cell of any of them has no
   // `PropertyInfoValues`, so there is no editor component to mount (PRD §9.11).
-  it('MarksALinkPropertyNeitherEditableNorSortable', () => {
-    const [, link] = build([propDef({ id: `${ONTO}hasOther`, isLinkProperty: true, objectType: Constants.LinkValue })]);
+  /**
+   * dsp-api reifies every link property into a `…Value` sibling sharing its label, so keeping
+   * both produced two identically headed columns — one of which could never hold a value.
+   */
+  it('DropsTheLinkPropertyAndKeepsItsReifiedValueSibling', () => {
+    const link = propDef({ id: `${ONTO}linkToAuthor`, isLinkProperty: true, objectType: `${ONTO}Author` });
+    const linkValue = propDef({
+      id: `${ONTO}linkToAuthorValue`,
+      isLinkValueProperty: true,
+      objectType: Constants.LinkValue,
+    });
 
-    expect(link.isEditable).toBe(false);
-    expect(link.isSortable).toBe(false);
+    const columns = build([link, linkValue]);
+
+    expect(columns.map(column => column.key)).toEqual([LABEL_COLUMN_KEY, linkValue.id]);
+  });
+
+  /** Ordering by a reified link value means nothing, and the list view's sort menu never lists it. */
+  it('MarksTheReifiedLinkValueColumnNotSortable', () => {
+    const [, linkValue] = build([
+      propDef({ id: `${ONTO}linkToAuthorValue`, isLinkValueProperty: true, objectType: Constants.LinkValue }),
+    ]);
+
+    expect(linkValue.isSortable).toBe(false);
   });
 
   it('MarksAFileValuePropertyReadOnly', () => {

@@ -20,6 +20,7 @@ import {
 } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ColumnResizeDirective } from './column-resize.directive';
+import { ScrollWhenTallerDirective } from './scroll-when-taller.directive';
 import { DEFAULT_DENSITY, TableColumn, TableDensity } from './table-column.model';
 import { TablePropertyCellComponent } from './table-property-cell.component';
 import { buildRows, TableRow } from './table-row.model';
@@ -202,14 +203,14 @@ interface RenderColumn extends TableColumn {
               @if (cell.text !== undefined) {
                 <!-- The label column. Kept inside the same wrapper as a property cell so the two
                      line up: cell-value only truncates as a flex item. -->
-                <div class="cell-values">
+                <div class="cell-values" [appScrollWhenTaller]="cellMaxHeight">
                   <span class="cell-value">{{ cell.text }}</span>
                 </div>
               } @else if (cell.propertyInfo; as propertyInfo) {
                 <!-- Every click inside the cell is also a click on the row, which selects the
                      resource in the viewer. Stopped once here rather than on each of the dozen
                      controls the viewer's unit brings with it. -->
-                <div class="cell-property" (click)="$event.stopPropagation()">
+                <div class="cell-property" [appScrollWhenTaller]="cellMaxHeight" (click)="$event.stopPropagation()">
                   <app-table-property-cell
                     [dspResource]="row.dspResource!"
                     [myProperty]="propertyInfo"
@@ -221,7 +222,7 @@ interface RenderColumn extends TableColumn {
                      is no PropertyInfoValues to hand the viewer and no editor to mount — they
                      render as text, and keep the collapse a viewer cell cannot have (REQ-4.7). -->
                 @let expanded = isExpanded(row.id, column.key);
-                <div class="cell-values">
+                <div class="cell-values" [appScrollWhenTaller]="cellMaxHeight">
                   @for (value of expanded ? cell.values : cell.collapsedValues; track value.id) {
                     <span class="cell-value">{{ value.strval }}</span>
                   }
@@ -265,6 +266,7 @@ interface RenderColumn extends TableColumn {
     CdkDrag,
     CdkDragHandle,
     ColumnResizeDirective,
+    ScrollWhenTallerDirective,
     ResourceExplorerButtonComponent,
     TablePropertyCellComponent,
   ],
@@ -538,5 +540,15 @@ export class DataTableComponent {
   }
 
   /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */
+  /**
+   * Height past which a cell is marked as tall.
+   *
+   * The marking happens at both densities; only compact acts on it, because only there has the
+   * user asked to see as many rows as will fit. Measuring regardless keeps the directive's
+   * decision stable across a density switch, which it cannot re-measure for — see
+   * `ScrollWhenTallerDirective`.
+   */
+  protected readonly cellMaxHeight = 200;
+
   protected readonly trackRow = (_: number, row: TableRow) => row.id;
 }
