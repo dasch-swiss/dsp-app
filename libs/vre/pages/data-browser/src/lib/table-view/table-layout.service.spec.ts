@@ -2,7 +2,7 @@ import { TableColumn, LABEL_COLUMN_KEY } from './table-column.model';
 import { TableLayout, TableLayoutService } from './table-layout.service';
 
 const CLASS_IRI = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
-const STORAGE_KEY = `dsp.dataBrowser.tableLayout.v1.${CLASS_IRI}`;
+const STORAGE_KEY = `dsp.dataBrowser.tableLayout.v2.${CLASS_IRI}`;
 
 function column(key: string): TableColumn {
   return {
@@ -18,7 +18,7 @@ function column(key: string): TableColumn {
   };
 }
 
-/** Label plus ten properties — enough to exercise the eight-column default. */
+/** Label plus ten properties. */
 function columns(count = 10): TableColumn[] {
   return [column(LABEL_COLUMN_KEY), ...Array.from({ length: count }, (_, i) => column(`p${i}`))];
 }
@@ -36,19 +36,12 @@ describe('TableLayoutService', () => {
   });
 
   describe('defaults', () => {
-    it('ShowsTheLabelAndTheFirstSevenPropertiesWhenNothingIsStored', () => {
+    it('ShowsEveryColumnWhenNothingIsStored', () => {
       const layout = service.load(CLASS_IRI, columns());
 
-      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6']);
-      expect(layout.hidden).toEqual(['p7', 'p8', 'p9']);
-      expect(layout.widths).toEqual({});
-    });
-
-    it('HidesNothingWhenTheClassHasFewerThanEightColumns', () => {
-      const layout = service.load(CLASS_IRI, columns(3));
-
-      expect(layout.visible).toHaveLength(4);
+      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, ...Array.from({ length: 10 }, (_, i) => `p${i}`)]);
       expect(layout.hidden).toEqual([]);
+      expect(layout.widths).toEqual({});
     });
   });
 

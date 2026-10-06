@@ -1,11 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  DEFAULT_VISIBLE_COLUMN_COUNT,
-  LABEL_COLUMN_KEY,
-  ROW_HEIGHT_MAX,
-  ROW_HEIGHT_MIN,
-  TableColumn,
-} from './table-column.model';
+import { LABEL_COLUMN_KEY, ROW_HEIGHT_MAX, ROW_HEIGHT_MIN, TableColumn } from './table-column.model';
 
 /** How a user has shaped one class's table. Column keys, not indices — the model can change under it. */
 export interface TableLayout {
@@ -31,8 +25,11 @@ export interface TableLayout {
  * Cheaper than a migration: a layout is a convenience, not data, so an old entry is discarded rather
  * than upgraded. Without the version, a shape change would surface as a confusing half-restored
  * table rather than as a clean reset.
+ *
+ * 2: the default went from the first eight columns to all of them. The shape is unchanged, but a v1
+ * entry carries the old default's hidden columns, which would otherwise outlive it.
  */
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 const KEY_PREFIX = `dsp.dataBrowser.tableLayout.v${SCHEMA_VERSION}.`;
 
@@ -94,12 +91,11 @@ export class TableLayoutService {
     }
   }
 
-  /** Label plus the first seven properties in `guiOrder`; the rest hidden (PRD REQ-2.1). */
+  /** Every column, in `guiOrder`, nothing hidden. The picker is for taking columns away. */
   defaultLayout(columns: TableColumn[]): TableLayout {
-    const keys = columns.map(column => column.key);
     return {
-      visible: keys.slice(0, DEFAULT_VISIBLE_COLUMN_COUNT),
-      hidden: keys.slice(DEFAULT_VISIBLE_COLUMN_COUNT),
+      visible: columns.map(column => column.key),
+      hidden: [],
       widths: {},
     };
   }

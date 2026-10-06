@@ -64,15 +64,6 @@ export const ROW_HEIGHT_MAX = 400;
 export const ROW_HEIGHT_STEP = 8;
 
 /**
- * How many columns a class opens with.
- *
- * The label plus the first seven properties (PRD REQ-2.1). A guard against a forty-property class
- * rendering a thousand cells on first paint, not a limit — everything else is one click away in the
- * picker, and the user may show all of them.
- */
-export const DEFAULT_VISIBLE_COLUMN_COUNT = 8;
-
-/**
  * One column of the table.
  *
  * Built once per resource class from the ontology, then held constant while the user shapes which of
