@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, computed, ErrorHandler, Inject, inject, Input, OnChanges, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   KnoraApiConnection,
   ReadOntology,
@@ -15,6 +15,7 @@ import {
   DataTableComponent,
   LABEL_COLUMN_KEY,
   MultipleViewerService,
+  rightsColumns,
   TableViewStateService,
 } from '@dasch-swiss/vre/pages/data-browser';
 import {
@@ -22,11 +23,11 @@ import {
   RDFS_LABEL,
   SearchFilterState,
 } from '@dasch-swiss/vre/pages/search/search-filters';
-import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { ProjectDataRightsService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { CenteredBoxComponent, CenteredMessageComponent, SearchFailedComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, combineLatest, first, map, Observable, of, skip, switchMap } from 'rxjs';
 import { DataBrowserPageService } from '../../data-browser-page.service';
 import { DataClassQueryService } from '../../data-class-query.service';
@@ -62,6 +63,7 @@ import { ProjectPageService } from '../../project-page.service';
           <app-data-table
             [resources]="data.resources"
             [columns]="columns()"
+            [projectRights]="projectRights()"
             [visibleColumns]="layout().visible"
             [columnWidths]="layout().widths"
             [rowHeight]="layout().rowHeight"
@@ -128,6 +130,22 @@ export class DataTableFetcherComponent implements OnChanges {
    */
   private readonly _tableState = inject(TableViewStateService);
   readonly columns = this._tableState.columns;
+
+  /**
+   * The project's legal info, for the rights-statement columns — the same cached lookup the
+   * viewer's statement makes. A failure leaves those columns without the project's fields rather
+   * than failing the table: the rows are what the user came for.
+   */
+  private readonly _dataRights = inject(ProjectDataRightsService);
+  private readonly _translate = inject(TranslateService);
+
+  readonly projectRights = toSignal(
+    inject(ProjectPageService).currentProject$.pipe(
+      first(),
+      switchMap(project => this._dataRights.fromProject(project)),
+      catchError(() => of(undefined))
+    )
+  );
   readonly layout = this._tableState.layout;
 
   /**
@@ -351,12 +369,14 @@ export class DataTableFetcherComponent implements OnChanges {
         .map(propDef => [propDef.id, propDef])
     );
 
-    const columns = buildColumnModel(
-      this.resClass,
-      definitions,
-      propDef => this._stringify.transform(propDef.labels),
-      'Label'
-    );
+    const columns = [
+      ...buildColumnModel(this.resClass, definitions, propDef => this._stringify.transform(propDef.labels), 'Label'),
+      ...rightsColumns({
+        license: this._translate.instant('legal.dataSide.license'),
+        copyrightHolder: this._translate.instant('legal.dataSide.copyrightHolder'),
+        authorship: this._translate.instant('legal.dataSide.authorship'),
+      }),
+    ];
 
     this._tableState.init(this.resClass.id, columns);
   }

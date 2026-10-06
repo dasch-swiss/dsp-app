@@ -127,8 +127,8 @@ export class TableLayoutService {
    * Three cases, and all three are real rather than defensive: ontologies are edited while people
    * have the app open.
    *   - a stored key the class no longer defines is dropped (REQ-2.9);
-   *   - a column the layout never heard of is added hidden, so a new property shows up in the picker
-   *     instead of silently widening everyone's table (REQ-2.9a);
+   *   - a column the layout never heard of is added visible, at the end — the same as it would be in
+   *     a layout made today, where every column starts visible;
    *   - a malformed field falls back to its default rather than failing the whole layout.
    */
   private _reconcile(stored: StoredLayout, columns: TableColumn[]): TableLayout {
@@ -149,8 +149,8 @@ export class TableLayoutService {
     }
 
     return {
-      visible,
-      hidden: [...hidden, ...unknownToLayout].filter(key => key !== LABEL_COLUMN_KEY),
+      visible: [...visible, ...unknownToLayout.filter(key => key !== LABEL_COLUMN_KEY)],
+      hidden: hidden.filter(key => key !== LABEL_COLUMN_KEY),
       widths: this._reconcileWidths(stored.widths, known),
       ...this._reconcileRowHeight(stored.rowHeight),
     };

@@ -78,17 +78,18 @@ describe('TableLayoutService', () => {
 
       const layout = service.load(CLASS_IRI, columns(2));
 
-      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0']);
-      expect(layout.hidden).toEqual(['p1']);
+      // p1 was never stored at all, so it joins as a new column would.
+      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1']);
+      expect(layout.hidden).toEqual([]);
     });
 
-    it('AddsAColumnTheLayoutNeverHeardOfAsHidden', () => {
+    it('AddsAColumnTheLayoutNeverHeardOfAsVisibleAtTheEnd', () => {
       store({ visible: [LABEL_COLUMN_KEY, 'p0'], hidden: ['p1'], widths: {} });
 
       const layout = service.load(CLASS_IRI, columns(3));
 
-      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0']);
-      expect(layout.hidden).toEqual(['p1', 'p2']);
+      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p2']);
+      expect(layout.hidden).toEqual(['p1']);
     });
 
     it('DropsAWidthForAColumnTheClassNoLongerDefines', () => {
@@ -161,10 +162,10 @@ describe('TableLayoutService', () => {
 
       const layout = service.load(CLASS_IRI, columns(2));
 
-      // Nothing survived the type check, so every column is unknown to the layout and lands hidden —
-      // except the label, which is reinstated structurally.
-      expect(layout.visible).toEqual([LABEL_COLUMN_KEY]);
-      expect(layout.hidden).toEqual(['p0', 'p1']);
+      // Nothing survived the type check, so every column is unknown to the layout and lands visible,
+      // as in a fresh layout.
+      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1']);
+      expect(layout.hidden).toEqual([]);
     });
   });
 });

@@ -345,6 +345,12 @@ tr.is-checked .row-controls [data-cy='row-check'] {
   white-space: nowrap;
 }
 
+// The project's default authorship standing in for a resource's own: muted, so it does not read as
+// something the resource asserts.
+.cell-fallback {
+  color: rgba(0, 0, 0, 0.6);
+}
+
 .cell-empty {
   font-style: italic;
   color: rgba(0, 0, 0, 0.38);

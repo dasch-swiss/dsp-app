@@ -9,6 +9,20 @@ import { Cardinality, Constants, ResourcePropertyDefinitionWithAllLanguages } fr
  */
 export const LABEL_COLUMN_KEY = '__label';
 
+/**
+ * The three fields of the Resource Rights Statement, as the viewer shows it under a resource's
+ * properties. License and copyright holder are the project's, so they read the same on every row;
+ * authorship is the resource's own, falling back to the project's default.
+ */
+export type RightsField = 'license' | 'copyrightHolder' | 'authorship';
+
+/** Synthetic keys like the label column's: the rights statement is not made of properties. */
+export const RIGHTS_COLUMN_KEYS: Readonly<Record<RightsField, string>> = {
+  license: '__license',
+  copyrightHolder: '__copyrightHolder',
+  authorship: '__authorship',
+};
+
 /** Widths in pixels. Picked per value type so a date column does not open as wide as a text column. */
 const WIDTH_BY_VALUE_TYPE: ReadonlyMap<string, number> = new Map([
   [Constants.BooleanValue, 110],
@@ -25,7 +39,7 @@ const WIDTH_BY_VALUE_TYPE: ReadonlyMap<string, number> = new Map([
 ]);
 
 /** Everything not in the table above — text, and any value type dsp-api grows later. */
-const DEFAULT_WIDTH = 200;
+export const DEFAULT_WIDTH = 200;
 
 /** The label carries the resource's identity, so it opens wider than a generic text column. */
 export const LABEL_COLUMN_WIDTH = 280;
@@ -110,6 +124,8 @@ export interface TableColumn {
   readonly isSortable: boolean;
   /** Whether the header offers a filter control. Mirrors what the shared filter bar can express. */
   readonly isFilterable: boolean;
+  /** Which rights-statement field the column shows. Absent on every other column. */
+  readonly rightsField?: RightsField;
   /** Pinned to the left edge and excluded from hide, move and resize. Only the label column. */
   readonly isSticky: boolean;
   readonly defaultWidth: number;

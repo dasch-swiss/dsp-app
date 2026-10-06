@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   linkedSignal,
   output,
@@ -18,7 +19,8 @@ import {
   PropertiesDisplayService,
   ResourceExplorerButtonComponent,
 } from '@dasch-swiss/vre/resource-editor/resource-editor';
-import { TranslatePipe } from '@ngx-translate/core';
+import { ProjectDataRights } from '@dasch-swiss/vre/shared/app-helper-services';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ColumnResizeDirective } from './column-resize.directive';
 import { RowResizeDirective } from './row-resize.directive';
 import { ScrollWhenTallerDirective } from './scroll-when-taller.directive';
@@ -220,10 +222,29 @@ const FILLER_COLUMN_KEY = '__filler';
               }
 
               @if (cell.text !== undefined) {
-                <!-- The label column. Kept inside the same wrapper as a property cell so the two
-                     line up: cell-value only truncates as a flex item. -->
+                <!-- The label and the rights-statement columns. Kept inside the same wrapper as a
+                     property cell so they line up: cell-value only truncates as a flex item. -->
                 <div class="cell-values" [appScrollWhenTaller]="rowCap(row.id)">
-                  <span class="cell-value">{{ cell.text }}</span>
+                  @if (cell.href) {
+                    <a
+                      class="cell-value"
+                      [href]="cell.href"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      [attr.aria-label]="cell.text + ', ' + ('legal.dataSide.opensInNewTab' | translate)"
+                      >{{ cell.text }}</a
+                    >
+                  } @else if (cell.isFallback) {
+                    <!-- The project's default, not the resource's own authorship: italic, as the
+                         viewer's statement marks it, and named for what it is on hover. -->
+                    <em
+                      class="cell-value cell-fallback"
+                      [title]="'legal.dataSide.noAuthorshipFallback' | translate: { default: cell.text }"
+                      >{{ cell.text }}</em
+                    >
+                  } @else {
+                    <span class="cell-value">{{ cell.text }}</span>
+                  }
                 </div>
               } @else if (cell.propertyInfo; as propertyInfo) {
                 <div class="cell-property" [appScrollWhenTaller]="rowCap(row.id)">
@@ -314,6 +335,11 @@ export class DataTableComponent {
   readonly resources = input.required<ReadResource[]>();
   /** Every column of the class, visible or not. Drives the mounted column definitions. */
   readonly columns = input.required<TableColumn[]>();
+  /**
+   * The project's legal info, for the rights-statement columns. Undefined while it loads; those
+   * columns then show the resource's own authorship and leave the project's fields blank.
+   */
+  readonly projectRights = input<ProjectDataRights | undefined>(undefined);
   /** Keys of the columns to show, in display order. A subset of `columns`, label first. */
   readonly visibleColumns = input.required<string[]>();
   /** Pixel widths the user has set. A column absent here falls back to its `defaultWidth`. */
@@ -405,11 +431,16 @@ export class DataTableComponent {
     computation: () => new Map(),
   });
 
+  private readonly _translate = inject(TranslateService);
+
   readonly rows = computed<TableRow[]>(() => {
     const reloaded = this._reloaded();
     const resources =
       reloaded.size === 0 ? this.resources() : this.resources().map(resource => reloaded.get(resource.id) ?? resource);
-    return buildRows(resources, this.columns());
+    return buildRows(resources, this.columns(), {
+      rights: this.projectRights(),
+      placeholderLabel: this._translate.instant('legal.dataSide.placeholder'),
+    });
   });
 
   protected readonly fillerColumnKey = FILLER_COLUMN_KEY;

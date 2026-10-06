@@ -5,11 +5,14 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ApiConstants } from '@dasch-swiss/vre/core/config';
 import {
+  DEFAULT_WIDTH,
   defaultWidthForValueType,
   LABEL_COLUMN_KEY,
   LABEL_COLUMN_WIDTH,
   LABEL_MIN_COLUMN_WIDTH,
   MIN_COLUMN_WIDTH,
+  RIGHTS_COLUMN_KEYS,
+  RightsField,
   TableColumn,
 } from './table-column.model';
 
@@ -149,4 +152,28 @@ export function buildColumnModel(
   });
 
   return [labelColumn(labelColumnTitle), ...ordered];
+}
+
+/**
+ * The Resource Rights Statement as three trailing columns: license, copyright holder, authorship.
+ *
+ * Kept out of {@link buildColumnModel}, which turns a class's properties into columns — these are
+ * not properties, and every class gets them alike. Read-only, like the statement's license and
+ * holder in the viewer; neither sortable nor filterable, because Gravsearch can do neither on them.
+ *
+ * @param titles the header of each column, already localised
+ */
+export function rightsColumns(titles: Readonly<Record<RightsField, string>>): TableColumn[] {
+  return (['license', 'copyrightHolder', 'authorship'] as const).map(field => ({
+    key: RIGHTS_COLUMN_KEYS[field],
+    label: titles[field],
+    valueType: '',
+    rightsField: field,
+    isEditable: false,
+    isSortable: false,
+    isFilterable: false,
+    isSticky: false,
+    defaultWidth: DEFAULT_WIDTH,
+    minWidth: MIN_COLUMN_WIDTH,
+  }));
 }

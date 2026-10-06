@@ -1,6 +1,12 @@
 import { ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
-import { DspResource, generateDspResource, PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
+import {
+  DspResource,
+  generateDspResource,
+  joinPlaceholderLegalValues,
+  PropertyInfoValues,
+} from '@dasch-swiss/vre/shared/app-common';
+import { ProjectDataRights } from '@dasch-swiss/vre/shared/app-helper-services';
+import { LABEL_COLUMN_KEY, RightsField, TableColumn } from './table-column.model';
 
 /**
  * How many values a read-only cell shows before it collapses the rest behind a "show more"
@@ -26,12 +32,19 @@ export const COLLAPSED_VALUE_COUNT = 3;
 export interface TableCell {
   readonly columnKey: string;
   /**
-   * The label column's text.
+   * The text of a column that is not a property: the label, or a rights-statement field.
    *
-   * Undefined on every property column. The resource label is not a value: there is no
-   * `ReadValue` behind it and no property definition, so it stays plain text.
+   * Undefined on every property column. Neither the resource label nor the rights statement is a
+   * value: there is no `ReadValue` behind them and no property definition, so they stay plain text.
    */
   readonly text?: string;
+  /** Where the text links to. Only the license, to its Creative Commons deed. */
+  readonly href?: string;
+  /**
+   * True when the text is not the resource's own but the project's default standing in for it —
+   * authorship, when the resource records none. Shown as such, never asserted as the resource's.
+   */
+  readonly isFallback?: boolean;
   /**
    * What `app-property-values` needs on its `myProperty` input, or undefined when this column has
    * no editor to mount.
@@ -110,21 +123,73 @@ function _generate(resource: ReadResource): DspResource | undefined {
 
 const EMPTY_VALUES: readonly ReadValue[] = [];
 
-function _labelCell(resource: ReadResource, column: TableColumn): TableCell {
+function _textCell(column: TableColumn, text: string, extra: Partial<TableCell> = {}): TableCell {
   return {
     columnKey: column.key,
-    text: resource.label,
+    text,
     values: EMPTY_VALUES,
     collapsedValues: EMPTY_VALUES,
     hiddenCount: 0,
     isCollapsible: false,
-    isEmpty: resource.label === '',
+    isEmpty: text === '',
+    ...extra,
   };
 }
 
-function cellFor(resource: ReadResource, dspResource: DspResource | undefined, column: TableColumn): TableCell {
+/**
+ * One field of the Resource Rights Statement, read the way the viewer's statement reads it.
+ *
+ * `rights` is undefined until the project's legal info has loaded. The project-level fields are
+ * then blank rather than "not set", which they may well not be — and authorship already shows the
+ * resource's own, which needs nothing from the project.
+ */
+function _rightsCell(
+  resource: ReadResource,
+  column: TableColumn,
+  field: RightsField,
+  rights: ProjectDataRights | undefined,
+  placeholderLabel: string
+): TableCell {
+  if (field === 'authorship' && resource.resourceAuthorship.length > 0) {
+    return _textCell(column, joinPlaceholderLegalValues(resource.resourceAuthorship, placeholderLabel));
+  }
+  if (!rights) {
+    return { ..._textCell(column, ''), isEmpty: false };
+  }
+
+  switch (field) {
+    case 'license':
+      return rights.isPlaceholderLicense
+        ? _textCell(column, placeholderLabel)
+        : _textCell(column, rights.licenseLabel ?? '', { href: rights.licenseUrl });
+    case 'copyrightHolder':
+      return _textCell(column, rights.isPlaceholderCopyrightHolder ? placeholderLabel : (rights.copyrightHolder ?? ''));
+    case 'authorship':
+      return _textCell(column, joinPlaceholderLegalValues(rights.defaultDataAuthorship, placeholderLabel), {
+        isFallback: true,
+      });
+  }
+}
+
+/** What a row needs beyond its resource to render the rights-statement columns. */
+export interface RowRights {
+  /** The project's legal info; undefined while it loads, or if it could not be loaded. */
+  readonly rights?: ProjectDataRights;
+  /** The readable marker shown in place of a placeholder legal value, already translated. */
+  readonly placeholderLabel: string;
+}
+
+function cellFor(
+  resource: ReadResource,
+  dspResource: DspResource | undefined,
+  column: TableColumn,
+  rowRights: RowRights
+): TableCell {
   if (column.key === LABEL_COLUMN_KEY) {
-    return _labelCell(resource, column);
+    return _textCell(column, resource.label);
+  }
+  if (column.rightsField) {
+    return _rightsCell(resource, column, column.rightsField, rowRights.rights, rowRights.placeholderLabel);
   }
 
   // The resource editor's own answer to "is there an editor for this property", not a second
@@ -161,7 +226,11 @@ function cellFor(resource: ReadResource, dspResource: DspResource | undefined, c
 }
 
 /** Resolve a page of resources against the column model. */
-export function buildRows(resources: ReadResource[], columns: TableColumn[]): TableRow[] {
+export function buildRows(
+  resources: ReadResource[],
+  columns: TableColumn[],
+  rowRights: RowRights = { placeholderLabel: '' }
+): TableRow[] {
   return resources.map(resource => {
     const dspResource = _generate(resource);
 
@@ -171,7 +240,7 @@ export function buildRows(resources: ReadResource[], columns: TableColumn[]): Ta
       id: resource.id,
       label: resource.label,
       cells: columns.reduce<Record<string, TableCell>>((cells, column) => {
-        cells[column.key] = cellFor(resource, dspResource, column);
+        cells[column.key] = cellFor(resource, dspResource, column, rowRights);
         return cells;
       }, {}),
     };

@@ -6,8 +6,8 @@ import {
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { ApiConstants } from '@dasch-swiss/vre/core/config';
-import { buildColumnModel } from './build-column-model';
-import { LABEL_COLUMN_KEY, LABEL_MIN_COLUMN_WIDTH, MIN_COLUMN_WIDTH } from './table-column.model';
+import { buildColumnModel, rightsColumns } from './build-column-model';
+import { LABEL_COLUMN_KEY, LABEL_MIN_COLUMN_WIDTH, MIN_COLUMN_WIDTH, RIGHTS_COLUMN_KEYS } from './table-column.model';
 
 const ONTO = 'http://0.0.0.0:3333/ontology/0001/anything/v2#';
 
@@ -221,5 +221,25 @@ describe('buildColumnModel', () => {
     const [, textColumn, dateColumn] = build([text, date]);
 
     expect(dateColumn.defaultWidth).toBeLessThan(textColumn.defaultWidth);
+  });
+});
+
+describe('rightsColumns', () => {
+  const columns = rightsColumns({ license: 'License', copyrightHolder: 'Copyright holder', authorship: 'Authorship' });
+
+  it('GivesTheRightsStatementItsThreeFieldsInTheViewersOrder', () => {
+    expect(columns.map(column => [column.key, column.label, column.rightsField])).toEqual([
+      [RIGHTS_COLUMN_KEYS.license, 'License', 'license'],
+      [RIGHTS_COLUMN_KEYS.copyrightHolder, 'Copyright holder', 'copyrightHolder'],
+      [RIGHTS_COLUMN_KEYS.authorship, 'Authorship', 'authorship'],
+    ]);
+  });
+
+  // Gravsearch can neither order nor filter by the rights statement, so a control for either would
+  // be a control that does nothing.
+  it('MarksThemReadOnlyAndNeitherSortableNorFilterable', () => {
+    for (const column of columns) {
+      expect(column).toMatchObject({ isEditable: false, isSortable: false, isFilterable: false, isSticky: false });
+    }
   });
 });
