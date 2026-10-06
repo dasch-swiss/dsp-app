@@ -1,18 +1,23 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { inject, Injectable } from '@angular/core';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { combineLatest, distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
-import { IriLabelPair, OrderByItem, OrderDirection, Predicate, StatementElement } from '../model';
-import { buildStatementsFromFilterParams } from '../util/build-statements';
-import { GravsearchService } from './gravsearch.service';
-import { OntologyDataService } from './ontology-data.service';
-import { SearchUrlSyncService, SearchUrlParams } from './search-url-sync.service';
+import {
+  IriLabelPair,
+  OrderByItem,
+  OrderDirection,
+  StatementElement,
+} from '@dasch-swiss/vre/pages/search/search-filters';
+import { ConfirmedSearchStateService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { GravsearchService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { combineLatest, distinctUntilChanged, map, Observable } from 'rxjs';
+import { SearchUrlSyncService } from './search-url-sync.service';
 
 /**
- * Derived, read-only view of the search form, computed purely from the URL.
+ * The Search tab's own derivation on top of the shared confirmed state.
  *
- * The URL query params are the single source of truth; everything the search UI reads flows from
- * here. First load, back/forward, and user actions all go through the same derivation. It exposes:
+ * Hydration and the ontology-switch reaction are page-agnostic and live in
+ * {@link ConfirmedSearchStateService}. What remains here is specific to this page: sorting by a
+ * *filter's predicate*, and assembling the query from all six URL params. It exposes:
  *   - `searchState$`  — { resourceClass, statements, orderByItems }, gated on ontology readiness
  *   - `orderByItems$` — pure order-by list derived from (confirmed statements, orderBy param)
  *   - `gravsearchQuery$` — the query string (or null), via the pure GravsearchService
@@ -29,34 +34,7 @@ export class DerivedSearchStateService {
   private readonly _urlSync = inject(SearchUrlSyncService);
   private readonly _ontology = inject(OntologyDataService);
   private readonly _gravsearch = inject(GravsearchService);
-  private readonly _destroyRef = inject(DestroyRef);
-
-  constructor() {
-    this._reactToOntologyParam();
-  }
-
-  /**
-   * Ontology-switch reaction. Keeps the loaded ontology in sync with the URL's `ontology` param:
-   *   - a non-empty param names the ontology to load;
-   *   - an empty param (no `ontology` in the URL, e.g. after Reset) falls back to the project default,
-   *     so the Data Model chip reverts instead of staying stuck on a previously chosen ontology.
-   * `setOntology` re-hydrates `resourceClasses$`/predicates and lets `loading$` settle. De-duped via
-   * `distinctUntilChanged` on the param plus an identity guard against the currently-loaded ontology,
-   * so an unchanged target never reloads. This is the only thing that switches the ontology from the URL.
-   */
-  private _reactToOntologyParam(): void {
-    this._urlSync.params$
-      .pipe(
-        map(params => params.ontology),
-        distinctUntilChanged(),
-        map(ontologyIri => ontologyIri || this._ontology.defaultOntologyIri),
-        filter(
-          (ontologyIri): ontologyIri is string => !!ontologyIri && ontologyIri !== this._ontology.selectedOntology.iri
-        ),
-        takeUntilDestroyed(this._destroyRef)
-      )
-      .subscribe(ontologyIri => this._ontology.setOntology(ontologyIri));
-  }
+  private readonly _confirmed = inject(ConfirmedSearchStateService);
 
   /**
    * Combined readiness gate. True while any source needed to hydrate the URL is not yet available:
@@ -80,18 +58,20 @@ export class DerivedSearchStateService {
     distinctUntilChanged()
   );
 
-  /** Hydrated search state, emitted only once the readiness gate is open. */
-  readonly searchState$: Observable<DerivedSearchState> = this._urlSync.params$.pipe(
-    switchMap(params =>
-      combineLatest([this._ontology.resourceClasses$, this._ontology.getProperties$()]).pipe(
-        // Wait until the sources needed for THIS url are ready, then hydrate once.
-        map(([classes, predicates]) => ({ params, classes, predicates })),
-        distinctUntilChanged(
-          (a, b) => a.params === b.params && a.classes === b.classes && a.predicates === b.predicates
-        ),
-        map(({ classes, predicates }) => this._hydrate(params, classes, predicates))
-      )
-    )
+  /**
+   * Hydrated search state, emitted only once the readiness gate is open. The resource class and
+   * statements come from the shared confirmed state; this page adds the order-by list, which it derives
+   * from the confirmed statements' predicates.
+   */
+  readonly searchState$: Observable<DerivedSearchState> = combineLatest([
+    this._confirmed.confirmedState$,
+    this._urlSync.params$,
+  ]).pipe(
+    map(([confirmed, params]) => ({
+      resourceClass: confirmed.resourceClass,
+      statements: confirmed.statements,
+      orderByItems: this._deriveOrderByItems(confirmed.statements, params.orderBy, params.orderDir),
+    }))
   );
 
   /** Pure order-by list: available (sortable-aware) predicates with the URL's active id marked. */
@@ -122,15 +102,6 @@ export class DerivedSearchStateService {
     }),
     distinctUntilChanged()
   );
-
-  private _hydrate(params: SearchUrlParams, classes: IriLabelPair[], predicates: Predicate[]): DerivedSearchState {
-    const resourceClass = params.class ? (classes.find(c => c.iri === params.class) ?? null) : null;
-    const statements = params.filters
-      ? buildStatementsFromFilterParams(this._urlSync.decodeFilters(params.filters), predicates)
-      : [];
-    const orderByItems = this._deriveOrderByItems(statements, params.orderBy, params.orderDir);
-    return { resourceClass, statements, orderByItems };
-  }
 
   /**
    * Pure order-by derivation: one `OrderByItem` per confirmed statement's predicate, with the item

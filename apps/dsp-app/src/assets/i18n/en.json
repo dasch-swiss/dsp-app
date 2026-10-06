@@ -532,6 +532,7 @@
         "usePreviousSearch": "Use previous search",
         "fulltextSearch": "Full-text search",
         "reset": "Reset",
+        "clearSearch": "Clear search",
         "addFilter": "Add filter",
         "add": "Add",
         "operator": "Operator",
@@ -586,7 +587,8 @@
       "resourcesListFetcher": {
         "noResourcesFound": "No resources found for this class.",
         "noPermissions": "It seems like you don't have the necessary permissions.",
-        "checkPermissions": "Check with a project admin if you have the necessary permission or if you are logged in."
+        "checkPermissions": "Check with a project admin if you have the necessary permission or if you are logged in.",
+        "noResourcesMatchFilters": "No resources match these filters."
       },
       "multipleViewer": {
         "selectResource": "Select a resource on the left panel",
@@ -619,7 +621,24 @@
         "largeExportWarning": "This export contains {{count}} resources and may take several minutes. Please keep this tab open.",
         "progressXofN": "Exported {{x}} of {{n}} resources",
         "buildingCsv": "Building your CSV — keep this tab open. We'll start the download as soon as the file is ready.",
-        "preparing": "Preparing…"
+        "preparing": "Preparing…",
+        "scopeNote": "The export covers all resources of this class, regardless of the filters currently applied."
+      },
+      "dataClassHeader": {
+        "searchLabel": "Search",
+        "searchPlaceholder": "Search in this class"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} of {{total}}",
+        "pageOf": "{{current}} of {{total}}"
+      },
+      "sortHeader": {
+        "sortBy": "Sort by",
+        "chooseProperty": "Choose a property to sort by",
+        "aToZ": "A–Z",
+        "zToA": "Z–A",
+        "sortAscending": "Sort ascending",
+        "sortDescending": "Sort descending"
       }
     }
   },

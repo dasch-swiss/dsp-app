@@ -532,6 +532,7 @@
         "usePreviousSearch": "Vorherige Suche verwenden",
         "fulltextSearch": "Volltextsuche",
         "reset": "Zurücksetzen",
+        "clearSearch": "Suche löschen",
         "addFilter": "Filter hinzufügen",
         "add": "Hinzufügen",
         "operator": "Operator",
@@ -586,7 +587,8 @@
       "resourcesListFetcher": {
         "noResourcesFound": "Keine Ressourcen für diese Klasse gefunden.",
         "noPermissions": "Es scheint, dass Sie nicht über die erforderlichen Berechtigungen verfügen.",
-        "checkPermissions": "Überprüfen Sie bei einem Projektadministrator, ob Sie über die erforderliche Berechtigung verfügen oder ob Sie angemeldet sind."
+        "checkPermissions": "Überprüfen Sie bei einem Projektadministrator, ob Sie über die erforderliche Berechtigung verfügen oder ob Sie angemeldet sind.",
+        "noResourcesMatchFilters": "Keine Ressourcen entsprechen diesen Filtern."
       },
       "multipleViewer": {
         "selectResource": "Wählen Sie eine Ressource im linken Bereich aus",
@@ -619,7 +621,24 @@
         "largeExportWarning": "Dieser Export enthält {{count}} Ressourcen und kann mehrere Minuten dauern. Bitte lassen Sie diesen Tab geöffnet.",
         "progressXofN": "{{x}} von {{n}} Ressourcen exportiert",
         "buildingCsv": "Ihre CSV-Datei wird erstellt — bitte lassen Sie diesen Tab geöffnet. Der Download startet, sobald die Datei bereit ist.",
-        "preparing": "Wird vorbereitet…"
+        "preparing": "Wird vorbereitet…",
+        "scopeNote": "Der Export umfasst alle Ressourcen dieser Klasse, unabhängig von den aktuell gesetzten Filtern."
+      },
+      "dataClassHeader": {
+        "searchLabel": "Suche",
+        "searchPlaceholder": "In dieser Klasse suchen"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} von {{total}}",
+        "pageOf": "{{current}} von {{total}}"
+      },
+      "sortHeader": {
+        "sortBy": "Sortieren nach",
+        "chooseProperty": "Eigenschaft zum Sortieren wählen",
+        "aToZ": "A–Z",
+        "zToA": "Z–A",
+        "sortAscending": "Aufsteigend sortieren",
+        "sortDescending": "Absteigend sortieren"
       }
     }
   },

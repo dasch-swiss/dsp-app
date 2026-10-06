@@ -532,6 +532,7 @@
         "usePreviousSearch": "Usa la ricerca precedente",
         "fulltextSearch": "Ricerca full-text",
         "reset": "Reimposta",
+        "clearSearch": "Cancella ricerca",
         "addFilter": "Aggiungi filtro",
         "add": "Aggiungi",
         "operator": "Operatore",
@@ -586,7 +587,8 @@
       "resourcesListFetcher": {
         "noResourcesFound": "Nessuna risorsa trovata per questa classe.",
         "noPermissions": "Sembra che tu non abbia i permessi necessari.",
-        "checkPermissions": "Verifica con un amministratore del progetto se hai i permessi necessari o se hai effettuato l'accesso."
+        "checkPermissions": "Verifica con un amministratore del progetto se hai i permessi necessari o se hai effettuato l'accesso.",
+        "noResourcesMatchFilters": "Nessuna risorsa corrisponde a questi filtri."
       },
       "multipleViewer": {
         "selectResource": "Seleziona una risorsa nel pannello di sinistra",
@@ -619,7 +621,24 @@
         "largeExportWarning": "Questo export contiene {{count}} risorse e potrebbe richiedere diversi minuti. Tieni aperta questa scheda.",
         "progressXofN": "Esportate {{x}} su {{n}} risorse",
         "buildingCsv": "Creazione del file CSV in corso — tieni aperta questa scheda. Il download inizierà non appena il file sarà pronto.",
-        "preparing": "Preparazione…"
+        "preparing": "Preparazione…",
+        "scopeNote": "L'esportazione include tutte le risorse di questa classe, indipendentemente dai filtri applicati."
+      },
+      "dataClassHeader": {
+        "searchLabel": "Cerca",
+        "searchPlaceholder": "Cerca in questa classe"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} di {{total}}",
+        "pageOf": "{{current}} di {{total}}"
+      },
+      "sortHeader": {
+        "sortBy": "Ordina per",
+        "chooseProperty": "Scegli una proprietà per l'ordinamento",
+        "aToZ": "A–Z",
+        "zToA": "Z–A",
+        "sortAscending": "Ordina in modo crescente",
+        "sortDescending": "Ordina in modo decrescente"
       }
     }
   },

@@ -5,11 +5,11 @@ import { ReadResource } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ErrorReportingService } from '@dasch-swiss/vre/core/error-handler';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { SearchFlowLogger } from '@dasch-swiss/vre/pages/search/search-filters';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateModule } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 import { AdvancedSearchResultsComponent } from '../advanced-search-results.component';
-import { SearchFlowLogger } from '../service/search-flow-logger.service';
 
 describe('AdvancedSearchResultsComponent', () => {
   const projectIri = 'http://rdfh.ch/projects/0001';
