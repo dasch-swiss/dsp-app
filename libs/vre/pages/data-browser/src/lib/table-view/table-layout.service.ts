@@ -17,7 +17,7 @@ export interface TableLayout {
   readonly widths: Readonly<Record<string, number>>;
   /**
    * The height every row is set to, from the View-options slider. Absent means Auto: rows hug
-   * their content up to the default cap.
+   * their content, however tall that is.
    *
    * Persisted, unlike a single row's dragged height. This is one number per class, like a column
    * width; a dragged row belongs to one resource, of which a class may hold tens of thousands.

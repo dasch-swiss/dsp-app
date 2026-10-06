@@ -1051,6 +1051,43 @@ export const ResetsDraggedRowsWhenTheViewOptionsHeightChanges: Story = {
   },
 };
 
+/** A resource whose Place carries far more values than fit in any reasonable row. */
+const manyPlaces = () =>
+  resource('http://rdfh.ch/0001/many', 'Petrowa, Anna', {
+    ...texts(`${ONTO}hasTitle`, 'Brautpaar in Tracht'),
+    ...texts(`${ONTO}hasPlace`, ...Array.from({ length: 20 }, (_, i) => `Ort ${i + 1}`)),
+  });
+
+/**
+ * With no height chosen, nothing is capped: a row grows to whatever its content needs. There used
+ * to be a 200px default cap here; it hid part of a cell nobody had asked to shorten.
+ */
+export const LetsATallCellGrowItsRowWhenNoHeightIsSet: Story = {
+  args: { resources: [manyPlaces()] },
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const cells = Array.from(row.querySelectorAll('.cell-property, .cell-values')) as HTMLElement[];
+
+    for (const cell of cells) {
+      await expect(cell).not.toHaveClass('is-capped');
+    }
+    await expect(Math.round(row.getBoundingClientRect().height)).toBeGreaterThan(300);
+  },
+};
+
+/** Once a height is chosen, a cell taller than it scrolls rather than stretching the row. */
+export const ScrollsATallCellOnceAHeightIsSet: Story = {
+  args: { resources: [manyPlaces()], rowHeight: 120 },
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const capped = row.querySelector('.is-capped') as HTMLElement;
+
+    await expect(capped).not.toBeNull();
+    await expect(capped.scrollHeight).toBeGreaterThan(capped.clientHeight);
+    await expect(Math.round(row.getBoundingClientRect().height)).toBeLessThan(200);
+  },
+};
+
 /**
  * The regression the cap directive exists to prevent, under a set row height. Giving a row a
  * height must not turn its short cells into scroll containers, or the editor's hover bubble — which

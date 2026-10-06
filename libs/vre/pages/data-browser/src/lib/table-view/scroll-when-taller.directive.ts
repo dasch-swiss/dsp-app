@@ -15,8 +15,9 @@ import { AfterViewInit, Directive, ElementRef, inject, Input, NgZone, OnChanges,
  * class. Cells that do not need it are left alone entirely — not a scroll container at all, so the
  * bubble is free to overhang exactly as it does in the viewer.
  *
- * The cap moves: it is the row's own dragged height, else the View-options row height, else the
- * default. So the class is re-decided whenever the cap changes, in both directions. That cannot
+ * The cap moves: it is the row's own dragged height, else the View-options row height, and when
+ * neither is set there is no cap and nothing is marked. So the class is re-decided whenever the
+ * cap changes, in both directions. That cannot
  * oscillate, because `scrollHeight` reports the content's height whether the cell is capped or
  * not — capping changes what is visible, never what is measured.
  *
@@ -29,8 +30,8 @@ import { AfterViewInit, Directive, ElementRef, inject, Input, NgZone, OnChanges,
   selector: '[appScrollWhenTaller]',
 })
 export class ScrollWhenTallerDirective implements AfterViewInit, OnChanges, OnDestroy {
-  /** Height in pixels past which the cell is capped. */
-  @Input({ required: true, alias: 'appScrollWhenTaller' }) maxHeight!: number;
+  /** Height in pixels past which the cell is capped, or undefined for no cap at all. */
+  @Input({ required: true, alias: 'appScrollWhenTaller' }) maxHeight!: number | undefined;
 
   private readonly _host = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
   private readonly _zone = inject(NgZone);
@@ -68,6 +69,6 @@ export class ScrollWhenTallerDirective implements AfterViewInit, OnChanges, OnDe
   }
 
   private _isTaller(): boolean {
-    return this._host.scrollHeight > this.maxHeight;
+    return this.maxHeight !== undefined && this._host.scrollHeight > this.maxHeight;
   }
 }

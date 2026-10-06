@@ -22,7 +22,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ColumnResizeDirective } from './column-resize.directive';
 import { RowResizeDirective } from './row-resize.directive';
 import { ScrollWhenTallerDirective } from './scroll-when-taller.directive';
-import { DEFAULT_CELL_CAP, TableColumn } from './table-column.model';
+import { TableColumn } from './table-column.model';
 import { TablePropertyCellComponent } from './table-property-cell.component';
 import { buildRows, TableRow } from './table-row.model';
 
@@ -540,10 +540,9 @@ export class DataTableComponent {
     this.resourceReloaded.emit(resource);
   }
 
-  /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */
   /**
    * The height every row is set to from View options, or undefined for Auto — rows hug their
-   * content up to the default cap.
+   * content, however tall that is.
    */
   readonly rowHeight = input<number | undefined>(undefined);
 
@@ -559,14 +558,17 @@ export class DataTableComponent {
   }
 
   /**
-   * The height past which a cell in this row scrolls rather than stretching it.
+   * The height past which a cell in this row scrolls rather than stretching it, or undefined when
+   * the row has no height set and so no cell in it ever scrolls.
    *
-   * Whatever the row is drawn at, when it is drawn at something; the default otherwise. Read both
-   * by the row, as `--row-cap`, and by each cell's `ScrollWhenTallerDirective`, which decides
-   * whether that particular cell is tall enough to need it.
+   * There is no cap of its own: a row the user has not sized grows to whatever its content needs.
+   * A height only becomes a cap once the user asks for one, because only then is there a reason to
+   * hide part of a cell. Read both by the row, as `--row-cap`, and by each cell's
+   * `ScrollWhenTallerDirective`, which decides whether that particular cell is tall enough to need
+   * it.
    */
-  protected rowCap(id: string): number {
-    return this.rowHeightFor(id) ?? DEFAULT_CELL_CAP;
+  protected rowCap(id: string): number | undefined {
+    return this.rowHeightFor(id);
   }
 
   /** Below this a row has no room for one line of text plus its padding. */
@@ -606,5 +608,6 @@ export class DataTableComponent {
     });
   }
 
+  /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */
   protected readonly trackRow = (_: number, row: TableRow) => row.id;
 }

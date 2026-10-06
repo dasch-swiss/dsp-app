@@ -413,29 +413,28 @@ tr.is-selected .row-controls [data-cy='row-check'] {
   @include label-column-gutter;
 }
 
-// A row is capped at this height.
+// A cell taller than its row's chosen height scrolls instead of stretching the row.
 //
-// Without it one resource with a dozen values makes a row a dozen lines tall and pushes every
-// other row off the screen. The cap is what keeps the table scannable at all.
+// Only when a height has been chosen — the row's own dragged height, else the View-options row
+// height — which the component binds as `--row-cap`. A row with neither has no cap: it grows to
+// whatever its content needs, the component binds nothing, and no cell in it is ever marked.
+//
+// A row given a height also gets it as `height`, which grows the row when its content is
+// shorter. `height` on a table row is only ever a minimum, so it is this cap, on the cells that
+// exceed it, that lets a row be made shorter than its content as well.
 //
 // Only cells the directive measured as taller than the cap carry the class. A short cell is left
 // alone entirely — not a scroll container at all — because the editor's hover bubble is
 // absolutely positioned and pokes out of a 28px cell, which would otherwise make it scrollable
 // with nothing to scroll. See ScrollWhenTallerDirective.
-//
-// The cap is the row's `--row-cap`: its own dragged height, else the View-options row height,
-// else the 200px default — the component binds whichever applies. A row given a height also gets
-// it as a `height`, which grows it when its content is shorter; `height` on a table row is only
-// ever a minimum, so it is this cap, on the cells that exceed it, that lets a row be made shorter
-// than its content as well.
 .cell-property.is-capped,
 .cell-values.is-capped {
-  max-height: var(--row-cap, 200px);
+  max-height: var(--row-cap);
   // Both axes, not just `overflow-y`: naming one axis `auto` and leaving the other `visible` is
   // not a state CSS has, so the other computes to `auto` too. Nothing here scrolls sideways — a
   // long value ellipsises — so `hidden` clips nothing that was visible.
   overflow-x: hidden;
   overflow-y: auto;
-  // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.
+  // So the cap means that many pixels of cell, not that plus whatever padding the wrapper carries.
   box-sizing: border-box;
 }

@@ -54,22 +54,14 @@ export const MIN_COLUMN_WIDTH = 90;
 /**
  * The range of the View-options row-height slider.
  *
- * The bottom stop is not a height but "Auto": rows hug their content up to the default cap, which
- * is how the table behaves until the user asks otherwise. It sits one step below the smallest real
- * height so the slider has somewhere to return to.
+ * The bottom stop is not a height but "Auto": rows hug their content, however tall, which is how
+ * the table behaves until the user asks otherwise. It sits one step below the smallest real height
+ * so the slider has somewhere to return to.
  */
 export const ROW_HEIGHT_AUTO = 40;
 export const ROW_HEIGHT_MIN = 48;
 export const ROW_HEIGHT_MAX = 400;
 export const ROW_HEIGHT_STEP = 8;
-
-/**
- * Height past which a cell is capped and scrolls when nothing more specific is set.
- *
- * A resource with a dozen values would otherwise make a row a dozen lines tall and push every
- * other row off screen. The slider and a row's own dragged height both replace it.
- */
-export const DEFAULT_CELL_CAP = 200;
 
 /**
  * How many columns a class opens with.
