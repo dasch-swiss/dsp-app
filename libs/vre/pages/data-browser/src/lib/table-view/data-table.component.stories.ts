@@ -10,7 +10,7 @@ import {
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { EDITABLE_PROPERTY_IRI, makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
 import { DataTableComponent } from './data-table.component';
 import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
@@ -1019,6 +1019,35 @@ export const LetsADraggedRowOverrideTheViewOptionsHeight: Story = {
 
     await expect(Math.round(dragged.getBoundingClientRect().height)).toBeGreaterThan(before + 80);
     await expect(Math.round(other.getBoundingClientRect().height)).toBe(before);
+  },
+};
+
+/**
+ * Moving the slider is a request for the whole table to be one size, so it clears the rows the user
+ * had dragged — otherwise the table would be all one size except where it was not. The host
+ * template's button stands in for the slider: it changes the same input the class header binds.
+ */
+export const ResetsDraggedRowsWhenTheViewOptionsHeightChanges: Story = {
+  render: storyArgs => ({
+    props: { ...storyArgs, rowHeight: undefined as number | undefined },
+    template: `<button type="button" data-cy="apply-row-height" (click)="rowHeight = 160">160</button>
+      <app-data-table
+        [resources]="resources"
+        [columns]="columns"
+        [visibleColumns]="visibleColumns"
+        [rowHeight]="rowHeight" />`,
+  }),
+  play: async ({ canvasElement }) => {
+    const rowsNow = () => Array.from(canvasElement.querySelectorAll('tr.mat-mdc-row')) as HTMLElement[];
+    const heightOf = (row: HTMLElement) => Math.round(row.getBoundingClientRect().height);
+
+    dragVertically(rowsNow()[0].querySelector('[data-cy="row-resize"]') as HTMLElement, 260);
+    await expect(heightOf(rowsNow()[0])).toBeGreaterThan(heightOf(rowsNow()[1]) + 100);
+
+    await userEvent.click(canvasElement.querySelector('[data-cy="apply-row-height"]') as HTMLElement);
+
+    await waitFor(() => expect(heightOf(rowsNow()[0])).toBe(heightOf(rowsNow()[1])));
+    await expect(heightOf(rowsNow()[0])).toBeGreaterThanOrEqual(160);
   },
 };
 

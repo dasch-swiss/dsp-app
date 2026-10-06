@@ -581,8 +581,18 @@ export class DataTableComponent {
    * any bound — and a height dragged to read one long value is rarely wanted again a week later.
    * Keyed by IRI rather than by index so a row keeps its height while the page re-renders around
    * it, which `trackBy` already does for the row itself.
+   *
+   * Linked to the View-options row height, so moving the slider clears every one of them. The
+   * slider is a request for the whole table to be one size; leaving the rows the user had dragged
+   * at their own heights would answer it with a table that is all one size except where it is not.
+   * A `linkedSignal` rather than an effect because "writable, but reset whenever this other value
+   * changes" is exactly what it is — and it resets only on a real change, so re-rendering with the
+   * same height leaves the user's drags alone.
    */
-  protected readonly rowHeights = signal<Record<string, number>>({});
+  protected readonly rowHeights = linkedSignal<number | undefined, Record<string, number>>({
+    source: this.rowHeight,
+    computation: () => ({}),
+  });
 
   protected onRowResized(id: string, height: number): void {
     this.rowHeights.update(heights => ({ ...heights, [id]: height }));
