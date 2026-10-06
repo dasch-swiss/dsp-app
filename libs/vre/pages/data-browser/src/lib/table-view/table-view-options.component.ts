@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -49,15 +49,14 @@ import { ColumnPickerEntry } from './table-view-state.service';
           <!-- Not discrete: its value bubble floats above the thumb and, at either end of the
                track, past the panel's edge, where the panel — which must not scroll sideways —
                clips it. In German the bottom stop reads Automatisch, twice the width of Auto. The
-               section header above shows the same value, live while dragging, with room to spare. -->
+               section header above shows the same value, with room to spare. -->
           <mat-slider data-cy="row-height-slider" [min]="sliderMin" [max]="sliderMax" [step]="sliderStep">
             <input
               matSliderThumb
               [value]="rowHeight() ?? sliderMin"
               [attr.aria-label]="'pages.dataBrowser.viewOptions.rowHeight' | translate"
               [attr.aria-valuetext]="rowHeightLabel()"
-              (input)="onSliderInput($event)"
-              (valueChange)="onSliderChange($event)" />
+              (input)="onSliderInput($event)" />
           </mat-slider>
         </div>
 
@@ -155,41 +154,30 @@ export class TableViewOptionsComponent {
   protected readonly sliderStep = ROW_HEIGHT_STEP;
 
   /**
-   * Where the thumb is while it is being dragged, before the release commits it.
-   *
-   * Linked to the committed height so it clears itself once the release has round-tripped
-   * through the layout — the header then reads the input again, with no flicker back to the old
-   * value in between, because both hold the same number by then.
-   */
-  private readonly _preview = linkedSignal<number | undefined, number | undefined>({
-    source: this.rowHeight,
-    computation: () => undefined,
-  });
-
-  /**
    * The section's value, and the thumb's `aria-valuetext`, so a screen reader hears "Auto" rather
-   * than the sentinel 40. Live during a drag: the header is the only place the value is shown.
+   * than the sentinel 40. Live during a drag, because the height is applied as the thumb moves.
    */
   protected readonly rowHeightLabel = computed(() => {
-    const value = this._preview() ?? this.rowHeight() ?? ROW_HEIGHT_AUTO;
+    const value = this.rowHeight() ?? ROW_HEIGHT_AUTO;
     return value <= ROW_HEIGHT_AUTO
       ? this._translate.instant('pages.dataBrowser.viewOptions.rowHeightAuto')
       : `${value}px`;
   });
-
-  protected onSliderInput(event: Event): void {
-    this._preview.set(Number((event.target as HTMLInputElement).value));
-  }
 
   /**
    * The bottom stop is Auto rather than a height. It sits one step below the smallest real height
    * so the slider has somewhere to return to, and it emits `undefined` rather than a number so the
    * layout stores nothing at all instead of a sentinel every reader would have to know about.
    *
-   * `valueChange` rather than `input`: it fires once, on release, so the layout is written once per
-   * gesture rather than once per pixel the thumb passes through.
+   * `input` rather than MatSlider's `valueChange`: the table follows the thumb while it is dragged
+   * instead of jumping once on release. The range input only fires when the value crosses a step,
+   * so a gesture writes the layout once per 8px, not once per pixel.
    */
-  protected onSliderChange(value: number): void {
-    this.rowHeightChanged.emit(value <= ROW_HEIGHT_AUTO ? undefined : Math.max(ROW_HEIGHT_MIN, value));
+  protected onSliderInput(event: Event): void {
+    const value = Number((event.target as HTMLInputElement).value);
+    const height = value <= ROW_HEIGHT_AUTO ? undefined : Math.max(ROW_HEIGHT_MIN, value);
+    if (height !== this.rowHeight()) {
+      this.rowHeightChanged.emit(height);
+    }
   }
 }

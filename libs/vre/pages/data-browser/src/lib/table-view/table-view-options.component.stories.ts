@@ -64,7 +64,7 @@ const meta: Meta<TableViewOptionsComponent> = {
     entries: { description: 'Every column of the class with its current on/off state, in ontology order.' },
     columnVisibilityChanged: { description: 'Emits the column key the user toggled and its new visibility.' },
     rowHeight: { description: 'Height every row is drawn at, or undefined for Auto.' },
-    rowHeightChanged: { description: 'Emits the height picked on release, or undefined at the Auto stop.' },
+    rowHeightChanged: { description: 'Emits the height as the thumb moves, or undefined at the Auto stop.' },
     allColumnsVisibilityChanged: { description: 'Emits true to show every column, false to hide all but the label.' },
   },
 };
@@ -190,17 +190,16 @@ export const ShowsTheCurrentRowHeight: Story = {
 };
 
 /**
- * Setting the thumb's value and firing `change` is how a release reaches MatSlider; the slider
- * emits on release only, so the layout is written once per gesture rather than once per pixel.
+ * The table follows the thumb while it is dragged: each step it crosses is emitted on `input`,
+ * without waiting for the release.
  */
-export const EmitsTheHeightTheSliderIsReleasedAt: Story = {
+export const EmitsTheHeightWhileTheSliderIsDragged: Story = {
   play: async () => {
     await openMenu();
     const thumb = document.querySelector('[data-cy="row-height-slider"] input') as HTMLInputElement;
 
     thumb.value = '200';
     thumb.dispatchEvent(new Event('input', { bubbles: true }));
-    thumb.dispatchEvent(new Event('change', { bubbles: true }));
 
     await expect(onRowHeight).toHaveBeenCalledWith(200);
   },
@@ -214,7 +213,6 @@ export const EmitsAutoWhenTheSliderReturnsToItsBottomStop: Story = {
 
     thumb.value = '40';
     thumb.dispatchEvent(new Event('input', { bubbles: true }));
-    thumb.dispatchEvent(new Event('change', { bubbles: true }));
 
     await expect(onRowHeight).toHaveBeenCalledWith(undefined);
   },
