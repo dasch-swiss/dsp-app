@@ -655,6 +655,8 @@
         "sortColumnAscending": "Ordina per {{column}}, crescente",
         "sortColumnDescending": "Ordina per {{column}}, decrescente",
         "filterByColumn": "Filtra per {{column}}",
+        "pinColumn": "Blocca {{column}}",
+        "unpinColumn": "Sblocca {{column}}",
         "editColumnFilter": "Modifica il filtro su {{column}}",
         "selectRow": "Aggiungi {{label}} al confronto",
         "openRow": "Apri {{label}}",

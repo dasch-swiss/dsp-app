@@ -72,7 +72,8 @@ table {
   &:focus-within {
     .header-grip,
     .column-resize-handle,
-    .header-sort {
+    .header-sort,
+    .header-pin {
       opacity: 1;
     }
   }
@@ -123,7 +124,8 @@ table {
 // from across the table (REQ-3.3), while the filter button is always drawn so the absence of a
 // filter is as legible as its presence.
 .header-sort,
-.header-filter {
+.header-filter,
+.header-pin {
   flex: none;
   display: inline-flex;
   align-items: center;
@@ -155,6 +157,25 @@ table {
     // Beats the hover rule above, which only ever raises opacity.
     opacity: 1;
     color: var(--primary, #336790);
+  }
+}
+
+// Hover-only like the sort, unless the column is pinned: then it stays, both as the way to unpin
+// and as the sign of why the column does not scroll.
+.header-pin {
+  opacity: 0;
+
+  &.is-active {
+    opacity: 1;
+    color: var(--primary, #336790);
+  }
+
+  mat-icon {
+    transform: rotate(45deg);
+  }
+
+  &.is-active mat-icon {
+    transform: none;
   }
 }
 
@@ -329,6 +350,12 @@ tr.is-checked .row-controls [data-cy='row-check'] {
 // Sticky columns inherit the row background so the scrolling columns do not show through them.
 .mat-mdc-table-sticky {
   background: inherit;
+}
+
+// The edge of the frozen columns — the label and any pinned after it. MatTable marks the last
+// left-sticky cell of each row with this class, so the line follows the pins as they change.
+.mat-mdc-table-sticky-border-elem-left {
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.12);
 }
 
 .cell-values {

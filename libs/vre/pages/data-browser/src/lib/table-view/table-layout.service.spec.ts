@@ -92,6 +92,15 @@ describe('TableLayoutService', () => {
       expect(layout.hidden).toEqual(['p1']);
     });
 
+    it('DropsAPinOnAColumnThatIsGoneOrHiddenAndKeepsThePinsFirst', () => {
+      store({ visible: [LABEL_COLUMN_KEY, 'p0', 'p1'], hidden: ['p2'], widths: {}, pinned: ['gone', 'p2', 'p1'] });
+
+      const layout = service.load(CLASS_IRI, columns(3));
+
+      expect(layout.pinned).toEqual(['p1']);
+      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p1', 'p0']);
+    });
+
     it('DropsAWidthForAColumnTheClassNoLongerDefines', () => {
       store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: { p0: 300, gone: 400 } });
 

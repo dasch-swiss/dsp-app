@@ -72,11 +72,13 @@ import { ProjectPageService } from '../../project-page.service';
             [sortedColumnKey]="sortedColumnKey()"
             [sortDescending]="sortDescending()"
             [filteredColumnKeys]="filteredColumnKeys()"
+            [pinnedColumns]="layout().pinned ?? []"
             (resourceCheckedChanged)="onResourceCheckedChanged($event)"
             (columnsReordered)="onColumnsReordered($event)"
             (columnResized)="onColumnResized($event)"
             (sortToggled)="onSortToggled($event)"
             (filterRequested)="onFilterRequested($event)"
+            (columnPinToggled)="onColumnPinToggled($event)"
             (resourceReloaded)="onResourceReloaded($event)" />
         } @else if (filtersAreActive) {
           <app-centered-message
@@ -311,6 +313,10 @@ export class DataTableFetcherComponent implements OnChanges {
    */
   onColumnsReordered(order: string[]) {
     this._tableState.setVisibleOrder(order);
+  }
+
+  onColumnPinToggled(key: string) {
+    this._tableState.togglePinned(key);
   }
 
   onColumnResized({ key, width }: { key: string; width: number }) {

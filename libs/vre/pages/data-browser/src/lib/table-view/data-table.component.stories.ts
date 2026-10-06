@@ -224,6 +224,8 @@ const meta: Meta<DataTableComponent> = {
     columnResized: { description: 'Emits a column key and its new pixel width once a resize gesture ends.' },
     sortToggled: { description: 'Emits the column to sort by and the direction the click asks for.' },
     filterRequested: { description: 'Emits the column whose filter the user wants to edit.' },
+    pinnedColumns: { description: 'Keys of the columns pinned after the label, in display order.' },
+    columnPinToggled: { description: 'Emits the column whose pin the user toggled.' },
     resourceReloaded: {
       description: "Emits a row's resource after a cell saved, deleted or reordered one of its values.",
     },
@@ -917,6 +919,77 @@ export const ShowsATruncatedHeaderNameInFullOnHover: Story = {
     await userEvent.hover(label('Title'));
     await waitFor(() => expect(tooltip()).toHaveTextContent('Title'));
     await userEvent.unhover(label('Title'));
+  },
+};
+
+// ── Pinning ─────────────────────────────────────────────────────────────────
+
+const onPin = fn().mockName('columnPinToggled');
+const PLACE = `${ONTO}hasPlace`;
+const TITLE = `${ONTO}hasTitle`;
+
+/** Place pinned after the label, in a container narrow enough that the table scrolls sideways. */
+const pinnedStory = (): Story => ({
+  render: storyArgs => ({
+    props: { ...storyArgs, onPin, onReorder, pinned: [PLACE], order: [LABEL_COLUMN_KEY, PLACE, TITLE] },
+    template: `<div style="width: 420px; height: 300px">
+      <app-data-table
+        [resources]="resources"
+        [columns]="columns"
+        [visibleColumns]="order"
+        [pinnedColumns]="pinned"
+        (columnPinToggled)="onPin($event)"
+        (columnsReordered)="onReorder($event)" />
+    </div>`,
+  }),
+  beforeEach: () => {
+    onPin.mockClear();
+    onReorder.mockClear();
+  },
+});
+
+export const TogglesAColumnsPinFromItsHeader: Story = {
+  ...pinnedStory(),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Pinned: the button says what pressing it will do, and reports its state.
+    const unpin = canvas.getByRole('button', { name: 'Unpin Place' });
+    await expect(unpin).toHaveAttribute('aria-pressed', 'true');
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Pin Title' }));
+    await expect(onPin).toHaveBeenCalledWith(TITLE);
+  },
+};
+
+/** The point of pinning: the column stays in view, right after the label, as the rest scroll. */
+export const KeepsAPinnedColumnInViewWhileTheTableScrolls: Story = {
+  ...pinnedStory(),
+  play: async ({ canvasElement }) => {
+    const scroller = canvasElement.querySelector('.table-scroll') as HTMLElement;
+    const header = (name: string) => canvasElement.querySelector(`th[aria-label="${name}"]`) as HTMLElement;
+    const labelWidth = header('Label').getBoundingClientRect().width;
+    const scrollerLeft = scroller.getBoundingClientRect().left;
+
+    scroller.scrollLeft = 200;
+
+    await waitFor(() =>
+      expect(Math.round(header('Place').getBoundingClientRect().left - scrollerLeft)).toBe(Math.round(labelWidth))
+    );
+    // The scrolling column did move.
+    await expect(header('Title').getBoundingClientRect().left - scrollerLeft).toBeLessThan(labelWidth + 200);
+  },
+};
+
+/** A scrolling column moved in front of a pinned one would slide under it. */
+export const RefusesToMoveAScrollingColumnInFrontOfAPin: Story = {
+  ...pinnedStory(),
+  play: async ({ canvasElement }) => {
+    const titleGrip = canvasElement.querySelector('th[aria-label="Title"] [data-cy="column-grip"]') as HTMLElement;
+    titleGrip.focus();
+    await userEvent.keyboard('{ArrowLeft}');
+
+    await expect(onReorder).not.toHaveBeenCalled();
   },
 };
 

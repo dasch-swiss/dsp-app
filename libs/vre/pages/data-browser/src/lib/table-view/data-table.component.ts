@@ -47,6 +47,8 @@ interface RenderColumn extends TableColumn {
   readonly sortLabelKey: string;
   readonly isFiltered: boolean;
   readonly filterLabelKey: string;
+  /** Pinned after the label by the user, and so sticky like it. Never true on the label itself. */
+  readonly isPinned: boolean;
 }
 
 /**
@@ -96,7 +98,7 @@ const FILLER_COLUMN_KEY = '__filler';
              Dropping a def when its column is hidden makes MatTable re-register the remaining
              ones, and a displayed key with no surviving def throws. -->
         @for (column of renderColumns(); track column.key) {
-          <ng-container [matColumnDef]="column.key" [sticky]="column.isSticky">
+          <ng-container [matColumnDef]="column.key" [sticky]="column.isSticky || column.isPinned">
             <!-- Width on the header only: under table-layout fixed the first row fixes the column
                  widths, so binding it on every cell would be 25x the bindings for the same result.
                  MatTable emits role=columnheader but no scope, and no aria-sort unless matSort is
@@ -113,6 +115,7 @@ const FILLER_COLUMN_KEY = '__filler';
               [attr.aria-label]="column.label"
               [attr.aria-sort]="column.ariaSort"
               cdkDrag
+              [cdkDragData]="column.key"
               [cdkDragDisabled]="column.isSticky">
               <div class="header-content">
                 @if (!column.isSticky) {
@@ -156,6 +159,24 @@ const FILLER_COLUMN_KEY = '__filler';
                     [attr.aria-label]="column.filterLabelKey | translate: { column: column.label }"
                     (click)="filterRequested.emit(column.key)">
                     <mat-icon>filter_list</mat-icon>
+                  </button>
+                }
+
+                <!-- Freezes the column after the label, so it stays in view while the rest scroll
+                     past. The label is frozen already and has nothing to toggle. -->
+                @if (!column.isSticky) {
+                  <button
+                    type="button"
+                    class="header-pin"
+                    [class.is-active]="column.isPinned"
+                    data-cy="column-pin"
+                    [attr.aria-pressed]="column.isPinned"
+                    [attr.aria-label]="
+                      (column.isPinned ? 'pages.dataBrowser.table.unpinColumn' : 'pages.dataBrowser.table.pinColumn')
+                        | translate: { column: column.label }
+                    "
+                    (click)="columnPinToggled.emit(column.key)">
+                    <mat-icon>push_pin</mat-icon>
                   </button>
                 }
               </div>
@@ -354,6 +375,8 @@ export class DataTableComponent {
    * the bar stops being indicated here with no further wiring (REQ-3.8).
    */
   readonly filteredColumnKeys = input<ReadonlySet<string>>(new Set<string>());
+  /** Keys of the columns pinned after the label, in display order. Always visible ones. */
+  readonly pinnedColumns = input<readonly string[]>([]);
   /**
    * IRIs of the resources in the comparison selection, so their row checkboxes read as checked.
    *
@@ -396,6 +419,8 @@ export class DataTableComponent {
   readonly sortToggled = output<{ key: string; descending: boolean }>();
   /** The column whose filter the user wants to edit. The host decides where the editor opens. */
   readonly filterRequested = output<string>();
+  /** Emits the column whose pin the user toggled. */
+  readonly columnPinToggled = output<string>();
   /**
    * A row's resource as dsp-api holds it after a cell was saved.
    *
@@ -453,6 +478,7 @@ export class DataTableComponent {
     const sortedKey = this.sortedColumnKey();
     const descending = this.sortDescending();
     const filtered = this.filteredColumnKeys();
+    const pinned = this.pinnedColumns();
 
     return this.columns().map((column): RenderColumn => {
       const isSorted = column.key === sortedKey;
@@ -479,6 +505,7 @@ export class DataTableComponent {
         filterLabelKey: isFiltered
           ? 'pages.dataBrowser.table.editColumnFilter'
           : 'pages.dataBrowser.table.filterByColumn',
+        isPinned: pinned.includes(column.key),
       };
     });
   });
@@ -508,13 +535,24 @@ export class DataTableComponent {
   }
 
   /**
-   * Refuse a drop onto the first slot.
+   * Keep a moved column within its own group: a pinned column among the pins, any other among the
+   * scrolling columns.
    *
    * The label column is drag-disabled, which stops it being *picked up* but says nothing about
    * another column being dropped in front of it. Without this the sticky column could end up at
-   * index 1, pinned to the left edge with a scrolling column underneath it (REQ-2.10).
+   * index 1, pinned to the left edge with a scrolling column underneath it (REQ-2.10) — and the same
+   * goes for a scrolling column dropped among the pins.
    */
-  protected readonly canDropAt = (index: number) => index > 0;
+  protected readonly canDropAt = (index: number, drag: CdkDrag<string>): boolean => {
+    const [first, last] = this._slotsFor(drag.data);
+    return index >= first && index <= last;
+  };
+
+  /** The display indices a column may move between: its group's, after the label at index 0. */
+  private _slotsFor(key: string): [number, number] {
+    const pinnedCount = this.pinnedColumns().length;
+    return this.pinnedColumns().includes(key) ? [1, pinnedCount] : [pinnedCount + 1, this.visibleColumns().length - 1];
+  }
 
   protected onRowCheckChanged(resource: ReadResource, event: MatCheckboxChange): void {
     this.resourceCheckedChanged.emit({ resource, checked: event.checked });
@@ -537,9 +575,10 @@ export class DataTableComponent {
     const order = [...this.visibleColumns()];
     const from = order.indexOf(key);
     const to = from + delta;
-    // `to > 0`, not `>= 0`: index 0 is the sticky label column, which stays pinned to the left edge
-    // (REQ-2.10) — the same rule `canDropAt` enforces for the pointer.
-    if (from < 0 || to <= 0 || to >= order.length) {
+    // The same groups `canDropAt` keeps for the pointer: never in front of the label (REQ-2.10),
+    // and never across the line between the pinned and the scrolling columns.
+    const [first, last] = this._slotsFor(key);
+    if (from < 0 || to < first || to > last) {
       return;
     }
 

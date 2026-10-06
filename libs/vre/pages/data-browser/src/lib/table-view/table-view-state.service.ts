@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
-import { TableLayout, TableLayoutService } from './table-layout.service';
+import { arrangePinned, TableLayout, TableLayoutService } from './table-layout.service';
 
 const EMPTY_LAYOUT: TableLayout = { visible: [], hidden: [], widths: {} };
 
@@ -92,17 +92,60 @@ export class TableViewStateService {
         };
       }
 
-      return {
-        ...layout,
-        visible: layout.visible.filter(entry => entry !== key),
-        hidden: this._insertInModelOrder(layout.hidden, key),
-      };
+      // A hidden column is no longer pinned: showing it again appends it like any other.
+      return this._withPinned(
+        {
+          ...layout,
+          visible: layout.visible.filter(entry => entry !== key),
+          hidden: this._insertInModelOrder(layout.hidden, key),
+        },
+        (layout.pinned ?? []).filter(entry => entry !== key)
+      );
     });
   }
 
-  /** Accepts the whole new display order, which is what `moveItemInArray` produces on a drop. */
+  /**
+   * Accepts the whole new display order, which is what `moveItemInArray` produces on a drop.
+   *
+   * The pins take their order from it — a drag within the pinned group reorders the pins — and
+   * the groups are re-asserted, so no order can put a scrolling column in front of a pinned one.
+   */
   setVisibleOrder(visible: string[]): void {
-    this._update(layout => ({ ...layout, visible }));
+    this._update(layout => {
+      const pinned = layout.pinned ?? [];
+      return this._withPinned(
+        { ...layout, visible },
+        visible.filter(key => pinned.includes(key))
+      );
+    });
+  }
+
+  /**
+   * Pin a column after the label, or unpin it.
+   *
+   * A pinned column joins the end of the pinned group, so pins stack left to right in the order
+   * they were made. An unpinned one goes to the front of the scrolling columns — right where it
+   * was, next to the pins, rather than jumping back to some earlier position it no longer has.
+   */
+  togglePinned(key: string): void {
+    if (key === LABEL_COLUMN_KEY) {
+      return;
+    }
+
+    this._update(layout => {
+      const pinned = layout.pinned ?? [];
+      if (pinned.includes(key)) {
+        const remaining = pinned.filter(entry => entry !== key);
+        const rest = layout.visible.filter(entry => entry !== key && !remaining.includes(entry));
+        // `rest` starts with the label, so the column lands right after the remaining pins.
+        return this._withPinned({ ...layout, visible: [rest[0], ...remaining, key, ...rest.slice(1)] }, remaining);
+      }
+
+      if (!layout.visible.includes(key)) {
+        return layout;
+      }
+      return this._withPinned(layout, [...pinned, key]);
+    });
   }
 
   setColumnWidth(key: string, width: number): void {
@@ -144,12 +187,22 @@ export class TableViewStateService {
         return { ...layout, visible: [...layout.visible, ...appended], hidden: [] };
       }
 
-      return {
-        ...layout,
-        visible: layout.visible.filter(key => !hideable.some(column => column.key === key)),
-        hidden: hideable.map(column => column.key),
-      };
+      return this._withPinned(
+        {
+          ...layout,
+          visible: layout.visible.filter(key => !hideable.some(column => column.key === key)),
+          hidden: hideable.map(column => column.key),
+        },
+        []
+      );
     });
+  }
+
+  /** Set the pins and re-arrange `visible` around them. No pins removes the field. */
+  private _withPinned(layout: TableLayout, pinned: string[]): TableLayout {
+    const { pinned: _previous, ...rest } = layout;
+    const visible = arrangePinned(layout.visible, pinned);
+    return pinned.length > 0 ? { ...rest, visible, pinned } : { ...rest, visible };
   }
 
   private _insertInModelOrder(keys: string[], key: string): string[] {

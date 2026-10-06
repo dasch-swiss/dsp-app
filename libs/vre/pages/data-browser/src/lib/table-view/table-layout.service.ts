@@ -17,6 +17,22 @@ export interface TableLayout {
    * width; a dragged row belongs to one resource, of which a class may hold tens of thousands.
    */
   readonly rowHeight?: number;
+  /**
+   * Keys of the columns pinned after the label, in the order they are pinned in. Absent means none.
+   *
+   * Always a prefix of `visible` after the label: a pinned column is sticky, and a sticky column
+   * with a scrolling one in front of it would have the scrolling one slide under it.
+   */
+  readonly pinned?: string[];
+}
+
+/**
+ * Arrange `visible` as the label, then the pinned columns, then the rest — each group keeping the
+ * order it has in `visible`, or for the pins, the order given.
+ */
+export function arrangePinned(visible: readonly string[], pinned: readonly string[]): string[] {
+  const rest = visible.filter(key => key !== LABEL_COLUMN_KEY && !pinned.includes(key));
+  return [...(visible.includes(LABEL_COLUMN_KEY) ? [LABEL_COLUMN_KEY] : []), ...pinned, ...rest];
 }
 
 /**
@@ -39,6 +55,7 @@ interface StoredLayout {
   hidden?: unknown;
   widths?: unknown;
   rowHeight?: unknown;
+  pinned?: unknown;
   // A `density` field written by an earlier build may still be present. It is not read: the
   // table has one set of row metrics now, and `_reconcile` builds a fresh object from the fields
   // it knows, so the stale one simply falls away on the next save. No schema bump is needed for a
@@ -148,11 +165,18 @@ export class TableLayoutService {
       visible.unshift(LABEL_COLUMN_KEY);
     }
 
+    const allVisible = [...visible, ...unknownToLayout.filter(key => key !== LABEL_COLUMN_KEY)];
+    // Only pins on columns that are still there and still shown; a hidden column cannot be pinned.
+    const pinned = (isStringArray(stored.pinned) ? stored.pinned : []).filter(
+      key => key !== LABEL_COLUMN_KEY && allVisible.includes(key)
+    );
+
     return {
-      visible: [...visible, ...unknownToLayout.filter(key => key !== LABEL_COLUMN_KEY)],
+      visible: arrangePinned(allVisible, pinned),
       hidden: hidden.filter(key => key !== LABEL_COLUMN_KEY),
       widths: this._reconcileWidths(stored.widths, known),
       ...this._reconcileRowHeight(stored.rowHeight),
+      ...(pinned.length > 0 ? { pinned } : {}),
     };
   }
 

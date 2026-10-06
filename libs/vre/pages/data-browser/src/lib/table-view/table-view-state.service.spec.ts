@@ -135,6 +135,83 @@ describe('TableViewStateService', () => {
     });
   });
 
+  describe('pinning', () => {
+    it('MovesAPinnedColumnRightAfterTheLabel', () => {
+      service.togglePinned('p2');
+
+      expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p2', 'p0', 'p1']);
+      expect(service.layout().pinned).toEqual(['p2']);
+    });
+
+    it('StacksPinsInTheOrderTheyWereMade', () => {
+      service.togglePinned('p2');
+      service.togglePinned('p0');
+
+      expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p2', 'p0', 'p1']);
+      expect(service.layout().pinned).toEqual(['p2', 'p0']);
+    });
+
+    /** Next to the pins it just left, not back at some earlier position it no longer has. */
+    it('PutsAnUnpinnedColumnAtTheFrontOfTheScrollingOnes', () => {
+      service.togglePinned('p1');
+      service.togglePinned('p2');
+
+      service.togglePinned('p1');
+
+      expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p2', 'p1', 'p0']);
+      expect(service.layout().pinned).toEqual(['p2']);
+    });
+
+    it('RemovesTheFieldWhenTheLastPinGoes', () => {
+      service.togglePinned('p1');
+      service.togglePinned('p1');
+
+      expect('pinned' in service.layout()).toBe(false);
+    });
+
+    it('NeverPinsTheLabelColumn', () => {
+      service.togglePinned(LABEL_COLUMN_KEY);
+
+      expect('pinned' in service.layout()).toBe(false);
+    });
+
+    it('UnpinsAColumnThatIsHidden', () => {
+      service.togglePinned('p1');
+      service.setColumnVisible('p1', false);
+      service.setColumnVisible('p1', true);
+
+      expect('pinned' in service.layout()).toBe(false);
+      expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p2', 'p1']);
+    });
+
+    /** No order may put a scrolling column in front of a pinned one, which would slide under it. */
+    it('KeepsThePinnedColumnsFirstWhateverOrderIsAskedFor', () => {
+      service.togglePinned('p2');
+
+      service.setVisibleOrder([LABEL_COLUMN_KEY, 'p0', 'p1', 'p2']);
+
+      expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p2', 'p0', 'p1']);
+    });
+
+    it('ReordersThePinsWhenTheyAreDraggedAmongThemselves', () => {
+      service.togglePinned('p0');
+      service.togglePinned('p1');
+
+      service.setVisibleOrder([LABEL_COLUMN_KEY, 'p1', 'p0', 'p2']);
+
+      expect(service.layout().pinned).toEqual(['p1', 'p0']);
+    });
+
+    it('SurvivesLeavingTheClassAndComingBack', () => {
+      service.togglePinned('p2');
+
+      service.init(CLASS_IRI, COLUMNS);
+
+      expect(service.layout().pinned).toEqual(['p2']);
+      expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p2', 'p0', 'p1']);
+    });
+  });
+
   describe('persistence', () => {
     it('SurvivesLeavingTheClassAndComingBack', () => {
       service.setColumnVisible('p1', false);
