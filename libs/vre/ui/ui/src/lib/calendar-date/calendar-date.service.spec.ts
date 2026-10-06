@@ -316,6 +316,51 @@ describe('CalendarDateService', () => {
     });
   });
 
+  // The mapping in dasch-specs `10-machine-readable-dates.md`, row by row: ISO 8601, which for
+  // everything DSP stores is also valid EDTF.
+  describe('the machine-readable form (ISO 8601 · EDTF)', () => {
+    const iso = (value: KnoraDate | KnoraPeriod) => service.machineReadableOf(value);
+
+    it('writes a day in any calendar as its Gregorian day', () => {
+      expect(iso(new KnoraDate('JULIAN', 'CE', 1582, 9, 25))).toBe('1582-10-05');
+      expect(iso(new KnoraDate('GREGORIAN', 'CE', 2020, 4, 1))).toBe('2020-04-01');
+      expect(iso(new KnoraDate('ISLAMIC', 'noEra', 1441, 8, 7))).toBe('2020-04-01');
+    });
+
+    it('keeps the precision of a Gregorian month or year', () => {
+      expect(iso(new KnoraDate('GREGORIAN', 'CE', 1850, 3))).toBe('1850-03');
+      expect(iso(new KnoraDate('GREGORIAN', 'CE', 1850))).toBe('1850');
+    });
+
+    it('writes a Julian month or year as the exact Gregorian days it covers', () => {
+      expect(iso(new KnoraDate('JULIAN', 'CE', 1582, 3))).toBe('1582-03-11/1582-04-10');
+      expect(iso(new KnoraDate('JULIAN', 'CE', 1582))).toBe('1582-01-11/1583-01-10');
+    });
+
+    it('writes an Islamic month as the Gregorian days it covers', () => {
+      const [first, last] = iso(new KnoraDate('ISLAMIC', 'noEra', 1008, 12))!.split('/');
+
+      // 12.1008 is the Islamic month 1 July 1600 falls in.
+      expect(first <= '1600-07-01' && '1600-07-01' <= last).toBe(true);
+    });
+
+    it('writes a period as an interval, each end by the same rule', () => {
+      const period = (a: KnoraDate, b: KnoraDate) => iso(new KnoraPeriod(a, b));
+
+      expect(period(new KnoraDate('GREGORIAN', 'CE', 1850, 3, 15), new KnoraDate('GREGORIAN', 'CE', 1850, 3))).toBe(
+        '1850-03-15/1850-03'
+      );
+      expect(period(new KnoraDate('JULIAN', 'CE', 1580), new KnoraDate('JULIAN', 'CE', 1585))).toBe(
+        '1580-01-11/1586-01-10'
+      );
+    });
+
+    it('numbers BCE years astronomically', () => {
+      expect(iso(new KnoraDate('GREGORIAN', 'BCE', 44))).toBe('-0043');
+      expect(iso(new KnoraDate('GREGORIAN', 'BCE', 1))).toBe('0000');
+    });
+  });
+
   describe('the days the Gregorian reform skipped', () => {
     it('marks 5–14 October 1582 Gregorian and nothing around them', () => {
       const day = (calendar: string, d: number) => new KnoraDate(calendar, 'CE', 1582, 10, d);

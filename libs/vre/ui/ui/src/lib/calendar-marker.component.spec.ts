@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -97,6 +98,21 @@ describe('CalendarMarkerComponent', () => {
 
       const note = document.querySelector('[data-cy="calendar-marker-reform-gap"]');
       expect(note?.textContent).toContain('reformGapNote');
+    });
+
+    it('offers the machine-readable value to copy, and says it is an interval when it is one', () => {
+      const copy = jest.spyOn(TestBed.inject(Clipboard), 'copy').mockReturnValue(true);
+      fixture.componentRef.setInput('facts', { machineReadable: '1582-01-11/1583-01-10' });
+      fixture.detectChanges();
+      asAny().toggle();
+      fixture.detectChanges();
+
+      expect(document.querySelector('[data-cy="calendar-marker-iso"]')?.textContent).toBe('1582-01-11/1583-01-10');
+      expect(document.querySelector('[data-cy="calendar-marker-iso-note"]')?.textContent).toContain(
+        'machineReadableInterval'
+      );
+      document.querySelector<HTMLElement>('[data-cy="calendar-marker-copy"]')!.click();
+      expect(copy).toHaveBeenCalledWith('1582-01-11/1583-01-10');
     });
 
     it('does not mutate the readings it was given', () => {

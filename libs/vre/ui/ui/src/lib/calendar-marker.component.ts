@@ -1,5 +1,6 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -46,6 +47,8 @@ export interface CalendarFacts {
   readonly durationDays?: number;
   /** Set when a day of the value lies in the ten the Gregorian reform skipped. */
   readonly reformGap?: { readonly date: string; readonly julian: string };
+  /** The value as ISO 8601, which for anything DSP stores is also valid EDTF — for copying out. */
+  readonly machineReadable?: string;
 }
 
 /**
@@ -128,6 +131,28 @@ export interface CalendarFacts {
           @if (facts().durationDays !== undefined) {
             <span class="calendar-marker-duration" data-cy="calendar-marker-duration">
               {{ 'ui.calendarMarker.periodOfDays' | translate: { count: facts().durationDays } }}
+            </span>
+          }
+
+          @if (facts().machineReadable; as iso) {
+            <code class="calendar-marker-date calendar-marker-iso" data-cy="calendar-marker-iso">{{ iso }}</code>
+            <span class="calendar-marker-name calendar-marker-iso-label">
+              {{ 'ui.calendarMarker.machineReadable' | translate }}
+              <button
+                type="button"
+                class="calendar-marker-copy"
+                data-cy="calendar-marker-copy"
+                [attr.aria-label]="'ui.calendarMarker.copy' | translate"
+                (click)="copy(iso)">
+                <mat-icon>{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
+              </button>
+            </span>
+            <!-- What the value cannot carry, so a reader does not take it for more than it is. -->
+            <span class="calendar-marker-iso-note" data-cy="calendar-marker-iso-note">
+              {{ 'ui.calendarMarker.machineReadableNote' | translate }}
+              @if (iso.includes('/')) {
+                {{ 'ui.calendarMarker.machineReadableInterval' | translate }}
+              }
             </span>
           }
 
@@ -225,6 +250,39 @@ export interface CalendarFacts {
         color: #4b5563;
       }
 
+      .calendar-marker-iso {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+      }
+
+      .calendar-marker-iso-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .calendar-marker-copy {
+        display: inline-flex;
+        padding: 2px;
+        border: 0;
+        background: none;
+        color: #336790;
+        cursor: pointer;
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .calendar-marker-iso-note {
+        grid-column: 1 / -1;
+        max-width: 280px;
+        font-size: 12px;
+        color: #4b5563;
+      }
+
       .calendar-marker-reform-gap {
         grid-column: 1 / -1;
         max-width: 280px;
@@ -255,6 +313,16 @@ export class CalendarMarkerComponent {
 
   protected readonly POPOVER_POSITIONS = POPOVER_POSITIONS;
 
+  private readonly _clipboard = inject(Clipboard);
+
+  /** Whether the machine-readable value was just copied — the icon says so for a moment. */
+  protected readonly copied = signal(false);
+
+  protected copy(text: string): void {
+    this.copied.set(this._clipboard.copy(text));
+    setTimeout(() => this.copied.set(false), 1500);
+  }
+
   private readonly _open = signal(false);
 
   protected readonly isOpen = this._open.asReadonly();
@@ -262,8 +330,8 @@ export class CalendarMarkerComponent {
   protected readonly storedLabel = computed(() => `ui.calendarMarker.calendars.${this.storedCalendar()}`);
 
   protected readonly hasFacts = computed(() => {
-    const { weekday, jdn, durationDays, reformGap } = this.facts();
-    return weekday !== undefined || jdn !== undefined || durationDays !== undefined || reformGap !== undefined;
+    const { weekday, jdn, durationDays, reformGap, machineReadable } = this.facts();
+    return [weekday, jdn, durationDays, reformGap, machineReadable].some(fact => fact !== undefined);
   });
 
   /**

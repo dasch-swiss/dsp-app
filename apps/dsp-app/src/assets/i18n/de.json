@@ -1094,7 +1094,11 @@
       "inEachCalendar": "{{calendar}}. Dieses Datum in jedem Kalender",
       "jdn": "JTZ",
       "periodOfDays": "Zeitraum von {{count}} Tagen",
-      "reformGapNote": "{{date}} liegt in den zehn Tagen, die die gregorianische Reform im Oktober 1582 übersprungen hat. Es wird wie angegeben gespeichert, im proleptischen gregorianischen Kalender — derselbe Tag wie {{julian}}."
+      "reformGapNote": "{{date}} liegt in den zehn Tagen, die die gregorianische Reform im Oktober 1582 übersprungen hat. Es wird wie angegeben gespeichert, im proleptischen gregorianischen Kalender — derselbe Tag wie {{julian}}.",
+      "machineReadable": "ISO 8601 · EDTF",
+      "copy": "Kopieren",
+      "machineReadableNote": "Proleptischer gregorianischer Kalender; der Kalender der Quelle ist nicht enthalten.",
+      "machineReadableInterval": "Ein Zeitraum wird als Intervall geschrieben."
     },
     "weekdays": {
       "monday": {

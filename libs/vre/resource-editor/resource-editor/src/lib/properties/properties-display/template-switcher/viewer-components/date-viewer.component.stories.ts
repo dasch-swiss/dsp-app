@@ -17,6 +17,10 @@ const TRANSLATIONS = {
       periodOfDays: 'Period of {{count}} days',
       reformGapNote:
         '{{date}} lies in the ten days the Gregorian reform skipped in October 1582. It is stored as given, in the proleptic Gregorian calendar — the same day as {{julian}}.',
+      machineReadable: 'ISO 8601 · EDTF',
+      copy: 'Copy',
+      machineReadableNote: "Proleptic Gregorian; the source's calendar is not included.",
+      machineReadableInterval: 'A period is written as an interval.',
     },
     // Shared with the date picker's grid header, so they sit beside calendarMarker rather than
     // inside it.
@@ -192,6 +196,27 @@ export const NotesADayTheGregorianReformSkipped: Story = {
   },
 };
 
+export const GivesTheDateAsIsoAndEdtf: Story = {
+  name: 'Gives the date as ISO 8601 · EDTF, the exact Gregorian days a Julian year covers',
+  args: {
+    value: asValue(new KnoraDate('JULIAN', 'CE', 1582)),
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('The reader opens the marker', async () => {
+      await userEvent.click(marker(canvasElement));
+    });
+    // A Julian year is no Gregorian year, so the value is its exact days — and says so.
+    await step('The value is the interval of days, labelled as such', async () => {
+      await expect(document.querySelector('[data-cy="calendar-marker-iso"]')?.textContent).toBe(
+        '1582-01-11/1583-01-10'
+      );
+      const note = document.querySelector('[data-cy="calendar-marker-iso-note"]')?.textContent;
+      await expect(note).toContain("the source's calendar is not included");
+      await expect(note).toContain('A period is written as an interval.');
+    });
+  },
+};
+
 export const ClosesOnEscape: Story = {
   name: 'Closes the popover on Escape',
   args: {
@@ -290,10 +315,13 @@ export const SaysNothingItCannotKnow: Story = {
 
     // A year covers 365 days, so it has no weekday and no one day number. Showing the first day's
     // would assert a precision the source never had.
-    await step('No facts rows appear at all', async () => {
-      await expect(factsRow('facts')).toBeNull();
+    await step('No weekday and no day number appear', async () => {
       await expect(factsRow('weekday')).toBeNull();
       await expect(factsRow('jdn')).toBeNull();
+    });
+    // The machine-readable value states the year's exact days instead, as an interval.
+    await step('The machine-readable value is still given', async () => {
+      await expect(factsRow('iso')).not.toBeNull();
     });
     await step('While the readings are still listed', async () => {
       await expect(document.querySelector('[data-cy="calendar-marker-popover"]')).not.toBeNull();

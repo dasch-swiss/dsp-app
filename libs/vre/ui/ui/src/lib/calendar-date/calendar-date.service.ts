@@ -221,6 +221,71 @@ export class CalendarDateService {
   }
 
   /**
+   * a date value as ISO 8601 — which, for anything DSP stores, is also valid EDTF.
+   *
+   * Both formats are Gregorian, so the value is written in proleptic Gregorian, as dsp-api stores
+   * it, and covers exactly the days dsp-api stores for it. A Gregorian month or year keeps its
+   * precision (`1850-03`); a Julian or Islamic month or year is no Gregorian month or year, so it
+   * becomes its exact days (`1582-01-11/1583-01-10`); a period is an interval, each end by the same
+   * rule. No uncertainty markers: DSP stores none. Years are astronomical (`0000` is 1 BCE).
+   * The mapping and its decisions: dasch-specs `10-machine-readable-dates.md`.
+   */
+  machineReadableOf(value: KnoraDate | KnoraPeriod): string | undefined {
+    if (value instanceof KnoraPeriod) {
+      const start = this._isoEnds(value.start);
+      const end = this._isoEnds(value.end);
+      return start && end ? `${start.first}/${end.last}` : undefined;
+    }
+    const ends = this._isoEnds(value);
+    if (ends === undefined) {
+      return undefined;
+    }
+    return ends.first === ends.last ? ends.first : `${ends.first}/${ends.last}`;
+  }
+
+  /**
+   * One date's ISO 8601 ends: the same string twice where ISO 8601 can state it as it is (a day, or
+   * a Gregorian month or year), else the Gregorian first and last day it covers.
+   */
+  private _isoEnds(date: KnoraDate): { first: string; last: string } | undefined {
+    const calendar = date.calendar.toUpperCase() as CalendarSystem;
+    if (calendar === 'GREGORIAN') {
+      const year = this.convertHistoricalYearToAstronomicalYear(date.year, date.era);
+      const text = [this._isoYear(year), date.month, date.day]
+        .filter(part => part !== undefined)
+        .map((part, i) => (i === 0 ? part : String(part).padStart(2, '0')))
+        .join('-');
+      return { first: text, last: text };
+    }
+    if (date.precision === Precision.dayPrecision) {
+      const day = this.convertKnoraDateTo(date, 'GREGORIAN')?.start;
+      return day && this._isoEnds(day);
+    }
+    const astronomical = this.convertHistoricalYearToAstronomicalYear(date.year, date.era);
+    const lastMonth = date.month ?? 12;
+    const firstDay = new KnoraDate(date.calendar, date.era, date.year, date.month ?? 1, 1);
+    const lastDay = new KnoraDate(
+      date.calendar,
+      date.era,
+      date.year,
+      lastMonth,
+      this.daysInMonth(calendar, astronomical, lastMonth)
+    );
+    const first = this.convertKnoraDateTo(firstDay, 'GREGORIAN')?.start;
+    const last = this.convertKnoraDateTo(lastDay, 'GREGORIAN')?.start;
+    if (first === undefined || last === undefined) {
+      return undefined;
+    }
+    return { first: this._isoEnds(first)!.first, last: this._isoEnds(last)!.first };
+  }
+
+  /** a year as ISO 8601 writes it: four digits, signed when negative (`-0043` is 44 BCE). */
+  private _isoYear(astronomical: number): string {
+    const digits = String(Math.abs(astronomical)).padStart(4, '0');
+    return astronomical < 0 ? `-${digits}` : digits;
+  }
+
+  /**
    * today, in the calendar asked for.
    *
    * Today is a Gregorian fact — that is what the system clock reports — and every other calendar is

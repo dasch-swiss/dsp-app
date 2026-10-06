@@ -68,12 +68,14 @@ export class DateViewerComponent {
         endJdn: this._calendarDates.julianDayNumber(date.end),
         durationDays: this._calendarDates.durationInDays(date),
         reformGap: this._calendarDates.reformGapOf(date),
+        machineReadable: this._calendarDates.machineReadableOf(date),
       };
     }
     return {
       weekday: this._calendarDates.weekdayOf(date),
       jdn: this._calendarDates.julianDayNumber(date),
       reformGap: this._calendarDates.reformGapOf(date),
+      machineReadable: this._calendarDates.machineReadableOf(date),
     };
   });
 
