@@ -47,6 +47,13 @@ interface RenderColumn extends TableColumn {
 }
 
 /**
+ * The trailing column that absorbs the table's spare width.
+ *
+ * `__` like the label column's key, so it can never collide with a property IRI.
+ */
+const FILLER_COLUMN_KEY = '__filler';
+
+/**
  * The Data tab's table view.
  *
  * Presentational on purpose: it takes the page's resources and a column model as inputs and knows
@@ -257,10 +264,18 @@ interface RenderColumn extends TableColumn {
           </ng-container>
         }
 
-        <tr mat-header-row *matHeaderRowDef="visibleColumns(); sticky: true"></tr>
+        <!-- Takes up whatever width the columns leave, so the table spans the container without
+             the browser stretching the real columns past their stored widths. Not a cdkDrag, so
+             column reorder never sees it. -->
+        <ng-container [matColumnDef]="fillerColumnKey">
+          <th mat-header-cell *matHeaderCellDef class="filler-cell" aria-hidden="true"></th>
+          <td mat-cell *matCellDef class="filler-cell" aria-hidden="true"></td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
         <tr
           mat-row
-          *matRowDef="let row; columns: visibleColumns()"
+          *matRowDef="let row; columns: displayedColumns()"
           [style.height.px]="rowHeightFor(row.id)"
           [style.--row-cap.px]="rowCap(row.id)"
           [class.is-selected]="row.id === selectedResourceId()"
@@ -402,6 +417,11 @@ export class DataTableComponent {
       reloaded.size === 0 ? this.resources() : this.resources().map(resource => reloaded.get(resource.id) ?? resource);
     return buildRows(resources, this.columns());
   });
+
+  protected readonly fillerColumnKey = FILLER_COLUMN_KEY;
+
+  /** The visible columns plus the trailing filler. Only the template sees the filler. */
+  protected readonly displayedColumns = computed(() => [...this.visibleColumns(), FILLER_COLUMN_KEY]);
 
   protected readonly renderColumns = computed<RenderColumn[]>(() => {
     const widths = this.columnWidths();

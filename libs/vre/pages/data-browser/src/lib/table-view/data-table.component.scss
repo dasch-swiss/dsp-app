@@ -36,13 +36,17 @@ table {
   // `fixed` is what makes the header's per-column widths authoritative, and what lets the table
   // exceed its container instead of squeezing forty columns into the viewport.
   //
-  // `min-width: 0` undoes Material's own `min-width: 100%` on `.mat-mdc-table`. When the columns add
-  // up to less than the container, that rule makes the browser spread the difference over them, so
-  // every column renders wider than its stored width. A drag then starts from the stretched width —
-  // the column jumps — and can never go below its share of the stretch. With few columns the table
-  // simply ends before the container does.
+  //
+  // Material's `min-width: 100%` stays, so the table spans the container. When the columns add up
+  // to less than that, the spare width goes to the filler column — the only one without a width.
+  // Without it the browser would spread the difference over the real columns, rendering each wider
+  // than its stored width: a drag would start from the stretched width, so the column jumps, and
+  // could never go below its share of the stretch.
   width: max-content;
-  min-width: 0;
+}
+
+.filler-cell {
+  padding: 0;
 }
 
 // The row-height tokens set `height`, which clips a cell holding three stacked values. Turning
