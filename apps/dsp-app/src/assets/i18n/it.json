@@ -630,7 +630,9 @@
       },
       "resultMeta": {
         "range": "{{start}} – {{end}} di {{total}}",
-        "pageOf": "{{current}} di {{total}}"
+        "ofPages": "di {{total}}",
+        "pageNumber": "Numero di pagina",
+        "pageNumberHint": "Inserisci un numero di pagina e premi Invio."
       },
       "sortHeader": {
         "sortBy": "Ordina per",

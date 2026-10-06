@@ -153,7 +153,9 @@ const STORY_TRANSLATIONS = {
       },
       resultMeta: {
         range: '{{start}} – {{end}} of {{total}}',
-        pageOf: '{{current}} of {{total}}',
+        ofPages: 'of {{total}}',
+        pageNumber: 'Page number',
+        pageNumberHint: 'Type a page number and press Enter.',
       },
     },
   },

@@ -29,7 +29,8 @@ export const ShowsRangeAndPagerOnTheFirstPage: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('1 – 25 of 4024')).toBeInTheDocument();
-    await expect(canvas.getByText('1 of 161')).toBeInTheDocument();
+    await expect(canvas.getByRole('spinbutton', { name: 'Page number' })).toHaveValue(1);
+    await expect(canvas.getByText('of 161')).toBeInTheDocument();
   },
 };
 
@@ -70,7 +71,52 @@ export const AdvancesThePageWhenNextIsClicked: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Next' }));
 
     await expect(canvas.getByText('26 – 50 of 4024')).toBeInTheDocument();
-    await expect(canvas.getByText('2 of 161')).toBeInTheDocument();
+    await expect(canvas.getByRole('spinbutton', { name: 'Page number' })).toHaveValue(2);
+  },
+};
+
+export const GoesToATypedPageOnEnter: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 0) }] })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('spinbutton', { name: 'Page number' });
+
+    await userEvent.click(input);
+    await userEvent.keyboard('12{Enter}');
+
+    await expect(canvas.getByText('276 – 300 of 4024')).toBeInTheDocument();
+    await expect(input).toHaveValue(12);
+  },
+};
+
+/** "999" means "as far as it goes", not an empty page. */
+export const ClampsATypedPageBeyondTheLastToTheLast: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 0) }] })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('spinbutton', { name: 'Page number' });
+
+    await userEvent.click(input);
+    await userEvent.keyboard('999{Enter}');
+
+    await expect(canvas.getByText('4001 – 4024 of 4024')).toBeInTheDocument();
+    await expect(input).toHaveValue(161);
+  },
+};
+
+/** Typing without Enter changes nothing, and leaving the field shows the page the table is on. */
+export const RestoresTheCurrentPageWhenLeftWithoutEnter: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 0) }] })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('spinbutton', { name: 'Page number' });
+
+    await userEvent.click(input);
+    await userEvent.keyboard('7');
+    await userEvent.tab();
+
+    await expect(canvas.getByText('1 – 25 of 4024')).toBeInTheDocument();
+    await expect(input).toHaveValue(1);
   },
 };
 

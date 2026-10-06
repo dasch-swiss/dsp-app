@@ -9,11 +9,11 @@ import { TranslatePipe } from '@ngx-translate/core';
 /**
  * Row 3 of the class header: the result range, then a compact pager.
  *
- * Deliberately *not* the shared `PagerComponent`. That one is a bordered, rounded card with an
- * editable page-number input, and it is what the two Search pages render — this design is an
- * inline meta line with a static `1 of 4` indicator and no box. Adding a variant flag to the shared
- * pager would put two visual languages and two interaction models in one component; the Search
- * pages keep theirs untouched.
+ * Deliberately *not* the shared `PagerComponent`. That one is a bordered, rounded card, and it is
+ * what the two Search pages render — this design is an inline meta line with no box. Adding a
+ * variant flag to the shared pager would put two visual languages in one component; the Search
+ * pages keep theirs untouched. Both let the user type a page number: in a class of thousands of
+ * resources, stepping through 161 pages one click at a time is not paging.
  */
 @Component({
   selector: 'app-data-class-result-meta',
@@ -58,11 +58,25 @@ import { TranslatePipe } from '@ngx-translate/core';
               <mat-icon>chevron_left</mat-icon>
             </button>
 
+            <!-- Applied on Enter, like the Search pager's, not on every keystroke: typing "12"
+                 would otherwise load page 1 on the way. Leaving the field without Enter puts the
+                 current page back, so it never shows a page the table is not on. -->
             <span class="page-indicator">
-              {{
-                'pages.dataBrowser.resultMeta.pageOf'
-                  | translate: { current: meta.pageIndex + 1, total: meta.lastPageIndex + 1 }
-              }}
+              <input
+                #pageInput
+                type="number"
+                class="page-input"
+                data-cy="page-input"
+                min="1"
+                [max]="meta.lastPageIndex + 1"
+                [value]="meta.pageIndex + 1"
+                [style.--page-digits]="(meta.lastPageIndex + 1).toString().length"
+                [attr.aria-label]="'pages.dataBrowser.resultMeta.pageNumber' | translate"
+                [matTooltip]="'pages.dataBrowser.resultMeta.pageNumberHint' | translate"
+                (focus)="pageInput.select()"
+                (keydown.enter)="onPageEntered(pageInput, meta.pageIndex, meta.lastPageIndex)"
+                (blur)="pageInput.value = (meta.pageIndex + 1).toString()" />
+              {{ 'pages.dataBrowser.resultMeta.ofPages' | translate: { total: meta.lastPageIndex + 1 } }}
             </span>
 
             <button
@@ -131,5 +145,23 @@ export class DataClassResultMetaComponent {
 
   goTo(pageIndex: number): void {
     this._resourceResult.updatePageIndex(pageIndex);
+  }
+
+  /**
+   * Go to the typed page, clamped into range so "999" lands on the last page rather than on
+   * nothing. Something that is not a number puts the current page back.
+   */
+  onPageEntered(input: HTMLInputElement, pageIndex: number, lastPageIndex: number): void {
+    const typed = parseInt(input.value, 10);
+    if (Number.isNaN(typed)) {
+      input.value = (pageIndex + 1).toString();
+      return;
+    }
+
+    const page = Math.min(Math.max(typed, 1), lastPageIndex + 1);
+    input.value = page.toString();
+    if (page - 1 !== pageIndex) {
+      this.goTo(page - 1);
+    }
   }
 }
