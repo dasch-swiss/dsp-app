@@ -1097,8 +1097,7 @@
       "reformGapNote": "{{date}} lies in the ten days the Gregorian reform skipped in October 1582. It is stored as given, in the proleptic Gregorian calendar — the same day as {{julian}}.",
       "machineReadable": "ISO 8601 · EDTF",
       "copy": "Copy",
-      "machineReadableNote": "Proleptic Gregorian; the source's calendar is not included.",
-      "machineReadableInterval": "A period is written as an interval."
+      "prolepticGregorian": "Proleptic Gregorian"
     },
     "weekdays": {
       "monday": {

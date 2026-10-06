@@ -96,6 +96,7 @@ export interface CalendarFacts {
         role="dialog"
         data-cy="calendar-marker-popover"
         [attr.aria-label]="'ui.calendarMarker.inEachCalendar' | translate: { calendar: storedLabel() | translate }">
+        <!-- Three columns: value, what it is, and a third for the one thing beside it. -->
         @for (reading of ordered(); track reading.calendar) {
           <span class="calendar-marker-date" [class.is-stored]="reading.calendar === storedCalendar()">
             @if (reading.date) {
@@ -110,49 +111,55 @@ export interface CalendarFacts {
             [attr.data-cy]="'calendar-reading-' + reading.calendar">
             {{ 'ui.calendarMarker.calendars.' + reading.calendar | translate }}
           </span>
+          <!-- A weekday belongs to the day, not to a calendar — true on any row — so it is stated
+          once, beside the stored value where reading starts, rather than repeated on every row. -->
+          @if (reading.calendar === storedCalendar() && weekdayText()) {
+            <span class="calendar-marker-weekdays" data-cy="calendar-marker-weekday">{{ weekdayText() }}</span>
+          } @else {
+            <span></span>
+          }
         }
 
-        <!-- One instant has one weekday and one day number whatever calendar names it, so these
-        are stated once below the readings rather than repeated on every row. They keep the same
-        two columns — value left, what it is right — so the numbers stay aligned with the dates
-        above them. -->
+        <!-- What the value is in the formats other software reads: value, what it is, copy. -->
         @if (hasFacts()) {
           <span class="calendar-marker-rule" data-cy="calendar-marker-facts"></span>
 
-          @if (jdnText()) {
-            <span class="calendar-marker-date" data-cy="calendar-marker-jdn">{{ jdnText() }}</span>
+          @if (jdnText(); as jdn) {
+            <code class="calendar-marker-code" data-cy="calendar-marker-jdn">{{ jdn }}</code>
             <span class="calendar-marker-name">{{ 'ui.calendarMarker.jdn' | translate }}</span>
+            <button
+              type="button"
+              class="calendar-marker-copy"
+              data-cy="calendar-marker-copy-jdn"
+              [attr.aria-label]="('ui.calendarMarker.copy' | translate) + ' ' + ('ui.calendarMarker.jdn' | translate)"
+              (click)="copy(jdn)">
+              <mat-icon>{{ copied() === jdn ? 'check' : 'content_copy' }}</mat-icon>
+            </button>
           }
 
-          @if (weekdayText()) {
-            <span class="calendar-marker-weekdays" data-cy="calendar-marker-weekday">{{ weekdayText() }}</span>
+          @if (facts().machineReadable; as iso) {
+            <code class="calendar-marker-code" data-cy="calendar-marker-iso">{{ iso }}</code>
+            <span class="calendar-marker-name">
+              {{ 'ui.calendarMarker.machineReadable' | translate }}
+              <span class="calendar-marker-caption" data-cy="calendar-marker-iso-note">{{
+                'ui.calendarMarker.prolepticGregorian' | translate
+              }}</span>
+            </span>
+            <button
+              type="button"
+              class="calendar-marker-copy"
+              data-cy="calendar-marker-copy"
+              [attr.aria-label]="
+                ('ui.calendarMarker.copy' | translate) + ' ' + ('ui.calendarMarker.machineReadable' | translate)
+              "
+              (click)="copy(iso)">
+              <mat-icon>{{ copied() === iso ? 'check' : 'content_copy' }}</mat-icon>
+            </button>
           }
 
           @if (facts().durationDays !== undefined) {
             <span class="calendar-marker-duration" data-cy="calendar-marker-duration">
               {{ 'ui.calendarMarker.periodOfDays' | translate: { count: facts().durationDays } }}
-            </span>
-          }
-
-          @if (facts().machineReadable; as iso) {
-            <code class="calendar-marker-date calendar-marker-iso" data-cy="calendar-marker-iso">{{ iso }}</code>
-            <span class="calendar-marker-name calendar-marker-iso-label">
-              {{ 'ui.calendarMarker.machineReadable' | translate }}
-              <button
-                type="button"
-                class="calendar-marker-copy"
-                data-cy="calendar-marker-copy"
-                [attr.aria-label]="'ui.calendarMarker.copy' | translate"
-                (click)="copy(iso)">
-                <mat-icon>{{ copied() ? 'check' : 'content_copy' }}</mat-icon>
-              </button>
-            </span>
-            <!-- What the value cannot carry, so a reader does not take it for more than it is. -->
-            <span class="calendar-marker-iso-note" data-cy="calendar-marker-iso-note">
-              {{ 'ui.calendarMarker.machineReadableNote' | translate }}
-              @if (iso.includes('/')) {
-                {{ 'ui.calendarMarker.machineReadableInterval' | translate }}
-              }
             </span>
           }
 
@@ -202,7 +209,7 @@ export interface CalendarFacts {
 
       .calendar-marker-popover {
         display: grid;
-        grid-template-columns: max-content max-content;
+        grid-template-columns: max-content max-content max-content;
         column-gap: 10px;
         row-gap: 4px;
         padding: 8px 12px;
@@ -244,25 +251,35 @@ export interface CalendarFacts {
       }
 
       /* These say one thing each, so they run the full width rather than sitting in a column. */
-      .calendar-marker-weekdays,
+      .calendar-marker-weekdays {
+        color: #4b5563;
+      }
+
       .calendar-marker-duration {
         grid-column: 1 / -1;
         color: #4b5563;
       }
 
-      .calendar-marker-iso {
+      .calendar-marker-code {
+        justify-self: start;
+        align-self: start;
+        padding: 1px 6px;
+        border-radius: 4px;
+        background: #f3f4f6;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 12px;
+        color: #111827;
       }
 
-      .calendar-marker-iso-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 2px;
+      .calendar-marker-caption {
+        display: block;
+        font-size: 11px;
+        color: #6b7280;
       }
 
       .calendar-marker-copy {
         display: inline-flex;
+        align-self: start;
         padding: 2px;
         border: 0;
         background: none;
@@ -274,13 +291,6 @@ export interface CalendarFacts {
           width: 16px;
           height: 16px;
         }
-      }
-
-      .calendar-marker-iso-note {
-        grid-column: 1 / -1;
-        max-width: 280px;
-        font-size: 12px;
-        color: #4b5563;
       }
 
       .calendar-marker-reform-gap {
@@ -315,12 +325,12 @@ export class CalendarMarkerComponent {
 
   private readonly _clipboard = inject(Clipboard);
 
-  /** Whether the machine-readable value was just copied — the icon says so for a moment. */
-  protected readonly copied = signal(false);
+  /** The value just copied, if any — its icon says so for a moment. */
+  protected readonly copied = signal<string | null>(null);
 
   protected copy(text: string): void {
-    this.copied.set(this._clipboard.copy(text));
-    setTimeout(() => this.copied.set(false), 1500);
+    this.copied.set(this._clipboard.copy(text) ? text : null);
+    setTimeout(() => this.copied.set(null), 1500);
   }
 
   private readonly _open = signal(false);
@@ -330,8 +340,8 @@ export class CalendarMarkerComponent {
   protected readonly storedLabel = computed(() => `ui.calendarMarker.calendars.${this.storedCalendar()}`);
 
   protected readonly hasFacts = computed(() => {
-    const { weekday, jdn, durationDays, reformGap, machineReadable } = this.facts();
-    return [weekday, jdn, durationDays, reformGap, machineReadable].some(fact => fact !== undefined);
+    const { jdn, durationDays, reformGap, machineReadable } = this.facts();
+    return [jdn, durationDays, reformGap, machineReadable].some(fact => fact !== undefined);
   });
 
   /**

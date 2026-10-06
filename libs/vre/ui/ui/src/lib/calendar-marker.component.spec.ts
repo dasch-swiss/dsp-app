@@ -100,19 +100,34 @@ describe('CalendarMarkerComponent', () => {
       expect(note?.textContent).toContain('reformGapNote');
     });
 
-    it('offers the machine-readable value to copy, and says it is an interval when it is one', () => {
+    it('offers the machine-readable value and the day number to copy', () => {
       const copy = jest.spyOn(TestBed.inject(Clipboard), 'copy').mockReturnValue(true);
-      fixture.componentRef.setInput('facts', { machineReadable: '1582-01-11/1583-01-10' });
+      fixture.componentRef.setInput('facts', { machineReadable: '2020-04-01', jdn: 2458941 });
       fixture.detectChanges();
       asAny().toggle();
       fixture.detectChanges();
 
-      expect(document.querySelector('[data-cy="calendar-marker-iso"]')?.textContent).toBe('1582-01-11/1583-01-10');
+      expect(document.querySelector('[data-cy="calendar-marker-iso"]')?.textContent).toBe('2020-04-01');
       expect(document.querySelector('[data-cy="calendar-marker-iso-note"]')?.textContent).toContain(
-        'machineReadableInterval'
+        'prolepticGregorian'
       );
       document.querySelector<HTMLElement>('[data-cy="calendar-marker-copy"]')!.click();
-      expect(copy).toHaveBeenCalledWith('1582-01-11/1583-01-10');
+      expect(copy).toHaveBeenCalledWith('2020-04-01');
+      document.querySelector<HTMLElement>('[data-cy="calendar-marker-copy-jdn"]')!.click();
+      expect(copy).toHaveBeenCalledWith('2458941');
+    });
+
+    // A weekday belongs to the day, so it is stated once, beside the stored reading.
+    it('names the weekday beside the stored reading only', () => {
+      fixture.componentRef.setInput('facts', { weekday: 'Wednesday' });
+      fixture.detectChanges();
+      asAny().toggle();
+      fixture.detectChanges();
+
+      const weekday = document.querySelector('[data-cy="calendar-marker-weekday"]');
+      expect(weekday?.textContent?.trim()).toBe('Wednesday');
+      expect(weekday?.previousElementSibling?.getAttribute('data-cy')).toBe('calendar-reading-JULIAN');
+      expect(document.querySelectorAll('[data-cy="calendar-marker-weekday"]').length).toBe(1);
     });
 
     it('does not mutate the readings it was given', () => {

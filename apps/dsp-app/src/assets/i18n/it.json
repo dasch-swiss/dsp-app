@@ -1097,8 +1097,7 @@
       "reformGapNote": "{{date}} cade nei dieci giorni saltati dalla riforma gregoriana nell'ottobre 1582. Viene memorizzata così com'è, nel calendario gregoriano prolettico — lo stesso giorno del {{julian}}.",
       "machineReadable": "ISO 8601 · EDTF",
       "copy": "Copia",
-      "machineReadableNote": "Calendario gregoriano prolettico; il calendario della fonte non è incluso.",
-      "machineReadableInterval": "Un periodo è scritto come un intervallo."
+      "prolepticGregorian": "Gregoriano prolettico"
     },
     "weekdays": {
       "monday": {

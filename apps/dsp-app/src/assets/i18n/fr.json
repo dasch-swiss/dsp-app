@@ -1097,8 +1097,7 @@
       "reformGapNote": "{{date}} tombe dans les dix jours supprimés par la réforme grégorienne en octobre 1582. La date est enregistrée telle quelle, dans le calendrier grégorien proleptique — le même jour que {{julian}}.",
       "machineReadable": "ISO 8601 · EDTF",
       "copy": "Copier",
-      "machineReadableNote": "Calendrier grégorien proleptique ; le calendrier de la source n'est pas inclus.",
-      "machineReadableInterval": "Une période est écrite comme un intervalle."
+      "prolepticGregorian": "Grégorien proleptique"
     },
     "weekdays": {
       "monday": {

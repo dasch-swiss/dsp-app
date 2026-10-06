@@ -19,8 +19,7 @@ const TRANSLATIONS = {
         '{{date}} lies in the ten days the Gregorian reform skipped in October 1582. It is stored as given, in the proleptic Gregorian calendar — the same day as {{julian}}.',
       machineReadable: 'ISO 8601 · EDTF',
       copy: 'Copy',
-      machineReadableNote: "Proleptic Gregorian; the source's calendar is not included.",
-      machineReadableInterval: 'A period is written as an interval.',
+      prolepticGregorian: 'Proleptic Gregorian',
     },
     // Shared with the date picker's grid header, so they sit beside calendarMarker rather than
     // inside it.
@@ -205,14 +204,14 @@ export const GivesTheDateAsIsoAndEdtf: Story = {
     await step('The reader opens the marker', async () => {
       await userEvent.click(marker(canvasElement));
     });
-    // A Julian year is no Gregorian year, so the value is its exact days — and says so.
-    await step('The value is the interval of days, labelled as such', async () => {
+    // A Julian year is no Gregorian year, so the value is its exact days, in Gregorian.
+    await step('The value is the interval of days, marked as proleptic Gregorian', async () => {
       await expect(document.querySelector('[data-cy="calendar-marker-iso"]')?.textContent).toBe(
         '1582-01-11/1583-01-10'
       );
-      const note = document.querySelector('[data-cy="calendar-marker-iso-note"]')?.textContent;
-      await expect(note).toContain("the source's calendar is not included");
-      await expect(note).toContain('A period is written as an interval.');
+      await expect(document.querySelector('[data-cy="calendar-marker-iso-note"]')?.textContent).toContain(
+        'Proleptic Gregorian'
+      );
     });
   },
 };
