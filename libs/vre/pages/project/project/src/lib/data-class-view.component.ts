@@ -61,6 +61,23 @@ import { ProjectPageService } from './project-page.service';
   `,
   styles: [
     `
+      /* A column, so the split gets the height left under the header rather than the whole page
+         area's. Sized to 100% it overflowed by exactly the header, and the page area scrolled that
+         much on top of the list's or the table's own scroll. */
+      :host {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+      }
+      app-data-class-header,
+      app-resource-list-selection {
+        flex: none;
+      }
+      as-split {
+        flex: 1 1 0;
+        min-height: 0;
+      }
       .viewer-area {
         display: flex;
         flex-direction: column;
