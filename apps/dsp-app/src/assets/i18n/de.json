@@ -655,7 +655,8 @@
         "filterByColumn": "Nach {{column}} filtern",
         "editColumnFilter": "Filter für {{column}} bearbeiten",
         "selectRow": "{{label}} zum Vergleich hinzufügen",
-        "openRow": "{{label}} öffnen"
+        "openRow": "{{label}} öffnen",
+        "resizeRow": "Zeilenhöhe für {{label}} ändern"
       },
       "viewOptions": {
         "title": "Ansichtsoptionen",

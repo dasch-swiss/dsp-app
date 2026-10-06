@@ -20,6 +20,7 @@ import {
 } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ColumnResizeDirective } from './column-resize.directive';
+import { RowResizeDirective } from './row-resize.directive';
 import { ScrollWhenTallerDirective } from './scroll-when-taller.directive';
 import { DEFAULT_DENSITY, TableColumn, TableDensity } from './table-column.model';
 import { TablePropertyCellComponent } from './table-property-cell.component';
@@ -173,6 +174,16 @@ interface RenderColumn extends TableColumn {
                    generic cell rendering below is untouched; the header's label is indented by the
                    same amount so the two line up. -->
               @if (column.isSticky) {
+                <!-- The row's own resize handle, in the one cell that is always on screen however
+                     far the table is scrolled sideways. -->
+                <span
+                  appRowResize
+                  data-cy="row-resize"
+                  [minHeight]="rowMinHeight"
+                  [height]="rowHeights()[row.id] ?? 0"
+                  (heightChanged)="onRowResized(row.id, $event)"
+                  (heightReset)="onRowHeightReset(row.id)"
+                  [attr.aria-label]="'pages.dataBrowser.table.resizeRow' | translate: { label: row.label }"></span>
                 <div class="row-controls" (click)="$event.stopPropagation()">
                   <mat-checkbox
                     data-cy="row-check"
@@ -250,6 +261,8 @@ interface RenderColumn extends TableColumn {
         <tr
           mat-row
           *matRowDef="let row; columns: visibleColumns()"
+          [class.is-row-sized]="rowHeights()[row.id] !== undefined"
+          [style.--row-height.px]="rowHeights()[row.id]"
           [class.is-selected]="row.id === selectedResourceId()"
           [class.is-checked]="checkedResourceIds().has(row.id)"
           (click)="resourceSelected.emit(row.resource)"></tr>
@@ -267,6 +280,7 @@ interface RenderColumn extends TableColumn {
     CdkDragHandle,
     ColumnResizeDirective,
     ScrollWhenTallerDirective,
+    RowResizeDirective,
     ResourceExplorerButtonComponent,
     TablePropertyCellComponent,
   ],
@@ -541,14 +555,41 @@ export class DataTableComponent {
 
   /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */
   /**
-   * Height past which a cell is marked as tall.
+   * Height past which a cell is capped and scrolls, at both densities.
    *
-   * The marking happens at both densities; only compact acts on it, because only there has the
-   * user asked to see as many rows as will fit. Measuring regardless keeps the directive's
-   * decision stable across a density switch, which it cannot re-measure for — see
-   * `ScrollWhenTallerDirective`.
+   * Density decides how tight the rows are, not whether one row may swallow the page: a resource
+   * with a dozen values would otherwise make a row a dozen lines tall and push every other row
+   * off screen, which is no more useful at default density than at compact. A row the user has
+   * dragged overrides this with its own height.
    */
   protected readonly cellMaxHeight = 200;
+
+  /** Below this a row has no room for one line of text plus its padding. */
+  protected readonly rowMinHeight = 32;
+
+  /**
+   * Heights the user has dragged rows to, by resource IRI.
+   *
+   * Held here rather than in the persisted layout, and so lost on re-query, page change or
+   * reload. A column belongs to the class and there are tens of them; a row belongs to one
+   * resource and there may be forty thousand, so persisting would grow the stored layout without
+   * any bound — and a height dragged to read one long value is rarely wanted again a week later.
+   * Keyed by IRI rather than by index so a row keeps its height while the page re-renders around
+   * it, which `trackBy` already does for the row itself.
+   */
+  protected readonly rowHeights = signal<Record<string, number>>({});
+
+  protected onRowResized(id: string, height: number): void {
+    this.rowHeights.update(heights => ({ ...heights, [id]: height }));
+  }
+
+  protected onRowHeightReset(id: string): void {
+    this.rowHeights.update(heights => {
+      const next = { ...heights };
+      delete next[id];
+      return next;
+    });
+  }
 
   protected readonly trackRow = (_: number, row: TableRow) => row.id;
 }

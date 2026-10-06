@@ -942,3 +942,91 @@ export const RevealsEveryHoverOnlyControlOnKeyboardFocus: Story = {
     }
   },
 };
+
+// ── Row height ──────────────────────────────────────────────────────────────
+
+/**
+ * Row heights are the table's own state, not an output: a row belongs to one resource and a class
+ * may have tens of thousands, so unlike column widths they are not persisted and the host is never
+ * told. These assert the rendered result instead.
+ */
+const dragVertically = (handle: HTMLElement, by: number) => {
+  // `setPointerCapture` needs a real pointer id the test never produced.
+  handle.setPointerCapture = () => undefined;
+  handle.releasePointerCapture = () => undefined;
+
+  const box = handle.getBoundingClientRect();
+  const x = box.left + box.width / 2;
+  const y = box.top + box.height / 2;
+  const fire = (type: string, clientY: number) =>
+    handle.dispatchEvent(
+      new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 7, clientX: x, clientY, buttons: 1 })
+    );
+
+  fire('pointerdown', y);
+  fire('pointermove', y + by);
+  fire('pointerup', y + by);
+};
+
+export const ResizesARowByDraggingItsBottomEdge: Story = {
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const handle = row.querySelector('[data-cy="row-resize"]') as HTMLElement;
+    const before = Math.round(row.getBoundingClientRect().height);
+
+    dragVertically(handle, 150);
+
+    await expect(row).toHaveClass('is-row-sized');
+    await expect(Math.round(row.getBoundingClientRect().height)).toBeGreaterThan(before + 100);
+  },
+};
+
+/**
+ * `height` on a table row is only ever a minimum, so a row could not be dragged shorter than its
+ * content unless the same measurement also capped the cells. This is that: the row shrinks, and
+ * the cell that no longer fits scrolls.
+ */
+export const ShrinksARowBelowItsContentAndLetsTheCellScroll: Story = {
+  args: { density: 'compact' },
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const handle = row.querySelector('[data-cy="row-resize"]') as HTMLElement;
+
+    dragVertically(handle, -200);
+
+    const height = Math.round(row.getBoundingClientRect().height);
+    await expect(height).toBeLessThanOrEqual(48);
+    await expect(row).toHaveClass('is-row-sized');
+  },
+};
+
+export const ReturnsARowToItsContentOnDoubleClick: Story = {
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const handle = row.querySelector('[data-cy="row-resize"]') as HTMLElement;
+    dragVertically(handle, 150);
+    await expect(row).toHaveClass('is-row-sized');
+
+    handle.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+
+    await expect(row).not.toHaveClass('is-row-sized');
+  },
+};
+
+/** The drag has no keyboard equivalent, so without this the whole feature is pointer-only. */
+export const ResizesARowWithTheKeyboardFromItsHandle: Story = {
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const handle = row.querySelector('[data-cy="row-resize"]') as HTMLElement;
+
+    await expect(handle).toHaveAttribute('tabindex', '0');
+    await expect(handle).toHaveAttribute('role', 'separator');
+    await expect(handle).toHaveAttribute('aria-orientation', 'horizontal');
+
+    const before = Math.round(row.getBoundingClientRect().height);
+    handle.focus();
+    await userEvent.keyboard('{ArrowDown}');
+
+    await expect(Math.round(row.getBoundingClientRect().height)).toBeGreaterThan(before);
+  },
+};

@@ -222,6 +222,56 @@ table {
   }
 }
 
+// Drags a row's bottom edge. Lives in the sticky label cell so it is reachable however far the
+// table is scrolled sideways, and spans that cell's width so it is easy to aim at without being a
+// target anywhere near the row's own click.
+.row-resize-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 6px;
+  z-index: 2;
+  cursor: row-resize;
+  opacity: 0;
+
+  &:hover {
+    background: rgba(51, 103, 144, 0.25);
+  }
+
+  // Keyboard-reachable, so it needs a ring and must stay visible while focused — the row's hover
+  // rule cannot cover a pointerless user.
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: -1px;
+  }
+}
+
+tr:hover .row-resize-handle,
+tr:focus-within .row-resize-handle {
+  opacity: 1;
+}
+
+// A row the user has sized.
+//
+// `height` on a table row is only ever a minimum — a row cannot be made shorter than its content
+// that way — so the same variable also caps the cells, which is what lets a row be dragged
+// smaller as well as larger. This overrides the density cap deliberately: dragging a row taller is
+// a request to see more of it, and leaving the cells pinned at 200px would answer that with empty
+// space.
+tr.is-row-sized {
+  height: var(--row-height);
+
+  .cell-property,
+  .cell-values {
+    max-height: var(--row-height);
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+}
+
 .is-label-cell {
   border-right: 1px solid #ebebeb;
   font-weight: 500;
@@ -385,27 +435,35 @@ tr.is-selected .row-controls [data-cy='row-check'] {
   // other row off the screen. That is the opposite of what compact is asked for. The cap is on
   // the content wrapper rather than the cell: a `td` does not honour `overflow` reliably, and
   // scrolling the cell itself would take the row-control gutter with it.
-  //
-  // Only at compact density. At default the row is allowed to grow, because the user has not
-  // asked to see as many rows as possible.
-  // Only cells the directive measured as taller than the cap. A short cell is left alone
-  // entirely — not a scroll container at all — because the editor's hover bubble is absolutely
-  // positioned and pokes out of a 28px cell, which would make it scrollable with nothing to
-  // scroll. See ScrollWhenTallerDirective.
-  .cell-property.is-capped,
-  .cell-values.is-capped {
-    max-height: 200px;
-    // Both axes, not just `overflow-y`: naming one axis `auto` and leaving the other `visible`
-    // is not a state CSS has, so the other computes to `auto` too. Nothing here scrolls
-    // sideways — a long value ellipsises — so `hidden` clips nothing that was visible.
-    overflow-x: hidden;
-    overflow-y: auto;
-    // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.
-    box-sizing: border-box;
-  }
 
   // After the padding shorthand above, which it must beat at equal specificity.
   @include label-column-gutter;
+}
+
+// A row is capped at this height at both densities, not only compact.
+//
+// Without it one resource with a dozen values makes a row a dozen lines tall and pushes every
+// other row off the screen — which is as unhelpful at default density as it is at compact. The
+// cap is what makes the table scannable at all; density changes how tight the rows are, not
+// whether one row may swallow the page.
+//
+// Only cells the directive measured as taller than the cap carry the class. A short cell is left
+// alone entirely — not a scroll container at all — because the editor's hover bubble is
+// absolutely positioned and pokes out of a 28px cell, which would otherwise make it scrollable
+// with nothing to scroll. See ScrollWhenTallerDirective.
+//
+// A row the user has dragged overrides this: see `tr.is-row-sized`, which caps the same cells at
+// the height they asked for instead.
+.cell-property.is-capped,
+.cell-values.is-capped {
+  max-height: 200px;
+  // Both axes, not just `overflow-y`: naming one axis `auto` and leaving the other `visible` is
+  // not a state CSS has, so the other computes to `auto` too. Nothing here scrolls sideways — a
+  // long value ellipsises — so `hidden` clips nothing that was visible.
+  overflow-x: hidden;
+  overflow-y: auto;
+  // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.
+  box-sizing: border-box;
 }
 
 .density-default {
