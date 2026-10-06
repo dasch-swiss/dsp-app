@@ -662,7 +662,6 @@
         "density": "Densité",
         "densityCompact": "Compact",
         "densityDefault": "Par défaut",
-        "densityComfortable": "Confortable",
         "columns": "Colonnes",
         "columnsShown": "{{count}} sur {{total}} affichées",
         "alwaysShown": "Toujours",

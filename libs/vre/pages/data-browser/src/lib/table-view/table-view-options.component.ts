@@ -9,7 +9,6 @@ import { ColumnPickerEntry } from './table-view-state.service';
 const DENSITIES: readonly { value: TableDensity; labelKey: string }[] = [
   { value: 'compact', labelKey: 'pages.dataBrowser.viewOptions.densityCompact' },
   { value: 'default', labelKey: 'pages.dataBrowser.viewOptions.densityDefault' },
-  { value: 'comfortable', labelKey: 'pages.dataBrowser.viewOptions.densityComfortable' },
 ];
 
 /**
@@ -82,7 +81,11 @@ const DENSITIES: readonly { value: TableDensity; labelKey: string }[] = [
           class="option-row bulk-row"
           data-cy="columns-bulk-toggle"
           (click)="$event.stopPropagation(); allColumnsVisibilityChanged.emit(!allShown())">
-          <mat-icon class="option-mark">{{ allShown() ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+          <!-- An eye, not a checkbox. The rows below it are checkboxes because each carries a
+               column's own on/off state; this row carries none — it performs an action on all of
+               them. Borrowing their mark would invite the reader to look for which state it is
+               reporting. The eye is also what the column header's own hide control uses. -->
+          <mat-icon class="option-mark">{{ allShown() ? 'visibility_off' : 'visibility' }}</mat-icon>
           <span class="option-label">
             {{
               (allShown() ? 'pages.dataBrowser.viewOptions.hideAll' : 'pages.dataBrowser.viewOptions.showAll')

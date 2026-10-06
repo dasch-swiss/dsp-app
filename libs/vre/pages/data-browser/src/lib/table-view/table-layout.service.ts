@@ -29,7 +29,9 @@ const SCHEMA_VERSION = 1;
 
 const KEY_PREFIX = `dsp.dataBrowser.tableLayout.v${SCHEMA_VERSION}.`;
 
-const DENSITIES: readonly TableDensity[] = ['compact', 'default', 'comfortable'];
+// A layout stored by a build that still offered `comfortable` falls through the check below and
+// comes back as `default`, which is what the reconciliation already does with any unknown value.
+const DENSITIES: readonly TableDensity[] = ['compact', 'default'];
 
 /** The stored form. Deliberately not `TableLayout` — anything read off disk is untrusted. */
 interface StoredLayout {

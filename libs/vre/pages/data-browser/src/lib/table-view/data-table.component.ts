@@ -148,18 +148,19 @@ interface RenderColumn extends TableColumn {
                 }
               </div>
 
-              @if (!column.isSticky) {
-                <span
-                  appColumnResize
-                  data-cy="column-resize"
-                  [minWidth]="column.minWidth"
-                  [defaultWidth]="column.defaultWidth"
-                  [width]="column.width"
-                  (widthChanged)="onColumnResized(column.key, $event)"
-                  [attr.aria-label]="
-                    'pages.dataBrowser.table.resizeColumn' | translate: { column: column.label }
-                  "></span>
-              }
+              <!-- The label column resizes too. It is pinned and immovable because the row's
+                   identity has to stay put while the rest scrolls past, but how wide that
+                   identity needs to be is the user's business — and labels vary more in length
+                   than anything else in the table. Its own minimum is larger than the others'
+                   because the control gutter lives inside it. -->
+              <span
+                appColumnResize
+                data-cy="column-resize"
+                [minWidth]="column.minWidth"
+                [defaultWidth]="column.defaultWidth"
+                [width]="column.width"
+                (widthChanged)="onColumnResized(column.key, $event)"
+                [attr.aria-label]="'pages.dataBrowser.table.resizeColumn' | translate: { column: column.label }"></span>
             </th>
 
             <td mat-cell *matCellDef="let row" [class.is-label-cell]="column.isSticky">

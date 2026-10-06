@@ -31,13 +31,28 @@ const DEFAULT_WIDTH = 200;
 export const LABEL_COLUMN_WIDTH = 280;
 
 /**
+ * The label column cannot shrink as far as the others.
+ *
+ * `MIN_COLUMN_WIDTH` leaves room for a header's own controls; the label column additionally
+ * carries the row-control gutter inside it, so the same floor would let the user drag the label
+ * out from under its own checkbox and open arrow.
+ *
+ * 200 rather than a tighter number because that is where the browser stops anyway: under
+ * `table-layout: fixed` a cell still cannot go below the width of content that will not shrink,
+ * and the 104px gutter plus the header's own controls add up to about this. A smaller constant
+ * would be stored and honoured as an inline width while the cell rendered wider regardless —
+ * a declared minimum nobody could ever reach.
+ */
+export const LABEL_MIN_COLUMN_WIDTH = 200;
+
+/**
  * Below this a header's own controls — grip, sort, filter, hide — no longer fit, so the column stops
  * being operable rather than merely narrow.
  */
 export const MIN_COLUMN_WIDTH = 90;
 
 /** How tall a row is, and how much air is in a cell. */
-export type TableDensity = 'compact' | 'default' | 'comfortable';
+export type TableDensity = 'compact' | 'default';
 
 export const DEFAULT_DENSITY: TableDensity = 'default';
 

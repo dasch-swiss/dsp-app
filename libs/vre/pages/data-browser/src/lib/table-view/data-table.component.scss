@@ -366,10 +366,33 @@ tr.is-selected .row-controls [data-cy='row-check'] {
     )
   );
 
+  // The viewer's property rows are padded for a panel where each one stands alone. Compact density
+  // is a request for as many rows on screen as will fit, and 16px above and below every value
+  // defeats it — a single-value cell was taller than the row height asked for.
+  --property-value-padding-block: 4px;
+
   .mat-mdc-cell,
   .mat-mdc-header-cell {
     padding: 4px 10px;
     font-size: 13px;
+  }
+
+  // A cell with many values is capped and scrolls rather than stretching its row.
+  //
+  // An editable cell renders every value — it is the viewer's own unit, which knows nothing of a
+  // table — so one resource with a dozen of them made a row a dozen lines tall and pushed every
+  // other row off the screen. That is the opposite of what compact is asked for. The cap is on
+  // the content wrapper rather than the cell: a `td` does not honour `overflow` reliably, and
+  // scrolling the cell itself would take the row-control gutter with it.
+  //
+  // Only at compact density. At default the row is allowed to grow, because the user has not
+  // asked to see as many rows as possible.
+  .cell-property,
+  .cell-values {
+    max-height: 200px;
+    overflow-y: auto;
+    // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.
+    box-sizing: border-box;
   }
 
   // After the padding shorthand above, which it must beat at equal specificity.
@@ -389,23 +412,25 @@ tr.is-selected .row-controls [data-cy='row-check'] {
     padding: 8px 12px;
   }
 
-  // After the padding shorthand above, which it must beat at equal specificity.
-  @include label-column-gutter;
-}
-
-.density-comfortable {
-  @include mat.table-overrides(
-    (
-      header-container-height: 64px,
-      row-item-container-height: 72px,
-    )
-  );
-
-  .mat-mdc-cell,
-  .mat-mdc-header-cell {
-    padding: 12px;
+  // A cell with many values is capped and scrolls rather than stretching its row.
+  //
+  // An editable cell renders every value — it is the viewer's own unit, which knows nothing of a
+  // table — so one resource with a dozen of them made a row a dozen lines tall and pushed every
+  // other row off the screen. That is the opposite of what compact is asked for. The cap is on
+  // the content wrapper rather than the cell: a `td` does not honour `overflow` reliably, and
+  // scrolling the cell itself would take the row-control gutter with it.
+  //
+  // Only at compact density. At default the row is allowed to grow, because the user has not
+  // asked to see as many rows as possible.
+  .cell-property,
+  .cell-values {
+    max-height: 200px;
+    overflow-y: auto;
+    // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.
+    box-sizing: border-box;
   }
 
   // After the padding shorthand above, which it must beat at equal specificity.
   @include label-column-gutter;
 }
+

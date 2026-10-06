@@ -7,7 +7,7 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { ApiConstants } from '@dasch-swiss/vre/core/config';
 import { buildColumnModel } from './build-column-model';
-import { LABEL_COLUMN_KEY, MIN_COLUMN_WIDTH } from './table-column.model';
+import { LABEL_COLUMN_KEY, LABEL_MIN_COLUMN_WIDTH, MIN_COLUMN_WIDTH } from './table-column.model';
 
 const ONTO = 'http://0.0.0.0:3333/ontology/0001/anything/v2#';
 
@@ -58,6 +58,17 @@ describe('buildColumnModel', () => {
       })
     );
     expect(columns[0].propertyIri).toBeUndefined();
+  });
+
+  /**
+   * Pinned and immovable, but still resizable: how wide a row's identity needs to be is the
+   * user's business, and labels vary in length more than anything else in the table.
+   */
+  it('GivesTheLabelColumnAHigherMinimumThanTheOthers', () => {
+    const [label, property] = build([propDef({})]);
+
+    expect(label.minWidth).toBeGreaterThan(property.minWidth);
+    expect(label.minWidth).toBe(LABEL_MIN_COLUMN_WIDTH);
   });
 
   it('MarksAnOrdinaryTextPropertyEditableSortableAndFilterable', () => {

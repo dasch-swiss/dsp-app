@@ -67,7 +67,7 @@ describe('TableLayoutService', () => {
     });
 
     it('KeepsLayoutsOfDifferentClassesApart', () => {
-      service.save(CLASS_IRI, { ...service.defaultLayout(columns(4)), density: 'comfortable' });
+      service.save(CLASS_IRI, { ...service.defaultLayout(columns(4)), density: 'compact' });
 
       expect(service.load('other-class', columns(4)).density).toBe('default');
     });
@@ -128,6 +128,13 @@ describe('TableLayoutService', () => {
       store('3');
 
       expect(service.load(CLASS_IRI, columns(2)).visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1']);
+    });
+
+    /** `comfortable` was offered by an earlier build; a layout still holding it must not stick. */
+    it('FallsBackToTheDefaultWhenTheStoredDensityWasRetired', () => {
+      store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: {}, density: 'comfortable' });
+
+      expect(service.load(CLASS_IRI, columns(1)).density).toBe('default');
     });
 
     it('FallsBackToTheDefaultDensityWhenTheStoredOneIsUnknown', () => {

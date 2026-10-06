@@ -137,7 +137,7 @@ describe('TableViewStateService', () => {
     it('DropsAChangeMadeBeforeAnyClassWasLoaded', () => {
       const untouched = TestBed.runInInjectionContext(() => new TableViewStateService());
 
-      expect(() => untouched.setDensity('comfortable')).not.toThrow();
+      expect(() => untouched.setDensity('compact')).not.toThrow();
       expect(localStorage.length).toBe(0);
     });
   });

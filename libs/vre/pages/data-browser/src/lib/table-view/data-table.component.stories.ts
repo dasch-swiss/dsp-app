@@ -213,7 +213,7 @@ const meta: Meta<DataTableComponent> = {
     columns: { description: 'Every column of the class, visible or not. Drives the mounted column definitions.' },
     visibleColumns: { description: 'Keys of the columns to show, in display order. Label first.' },
     columnWidths: { description: 'Pixel widths the user has set; a column absent here uses its default.' },
-    density: { description: 'Row height and cell padding: compact, default or comfortable.' },
+    density: { description: 'Row height and cell padding: compact or default.' },
     selectionActive: { description: 'Whether a comparison set is being built; every row then shows its checkbox.' },
     selectedResourceId: { description: 'IRI of the resource open in the viewer, highlighted in the table.' },
     sortedColumnKey: { description: 'Column the query is sorted by, so its header announces aria-sort.' },
@@ -874,7 +874,12 @@ export const RefusesToMoveAColumnInFrontOfTheStickyOne: Story = {
 export const ResizesAColumnWithTheKeyboardFromItsHandle: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
-    const handle = canvasElement.querySelectorAll('[data-cy="column-resize"]')[0] as HTMLElement;
+    // Found by its column, not by position: the label column is resizable too, so the first
+    // handle in the DOM is its one.
+    const titleHeader = [...canvasElement.querySelectorAll('th')].find(th =>
+      th.querySelector('.header-label')?.textContent?.includes('Title')
+    ) as HTMLElement;
+    const handle = titleHeader.querySelector('[data-cy="column-resize"]') as HTMLElement;
     // Reachable without a pointer at all: the handle is in the tab order and announces the width
     // it is changing.
     await expect(handle).toHaveAttribute('tabindex', '0');

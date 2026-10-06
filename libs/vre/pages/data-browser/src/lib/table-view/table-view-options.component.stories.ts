@@ -62,7 +62,7 @@ const meta: Meta<TableViewOptionsComponent> = {
   args: { entries: ENTRIES, density: 'default' },
   argTypes: {
     entries: { description: 'Every column of the class with its current on/off state, in ontology order.' },
-    density: { description: 'The row height currently in force: compact, default or comfortable.' },
+    density: { description: 'The row height currently in force: compact or default.' },
     densityChanged: { description: 'Emits the density the user picked.' },
     columnVisibilityChanged: { description: 'Emits the column key the user toggled and its new visibility.' },
   },

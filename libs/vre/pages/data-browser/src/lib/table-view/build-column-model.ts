@@ -8,6 +8,7 @@ import {
   defaultWidthForValueType,
   LABEL_COLUMN_KEY,
   LABEL_COLUMN_WIDTH,
+  LABEL_MIN_COLUMN_WIDTH,
   MIN_COLUMN_WIDTH,
   TableColumn,
 } from './table-column.model';
@@ -64,7 +65,7 @@ function labelColumn(label: string): TableColumn {
     isFilterable: true,
     isSticky: true,
     defaultWidth: LABEL_COLUMN_WIDTH,
-    minWidth: MIN_COLUMN_WIDTH,
+    minWidth: LABEL_MIN_COLUMN_WIDTH,
   };
 }
 
