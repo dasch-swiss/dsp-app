@@ -660,9 +660,6 @@
       },
       "viewOptions": {
         "title": "View options",
-        "density": "Density",
-        "densityCompact": "Compact",
-        "densityDefault": "Default",
         "columns": "Columns",
         "columnsShown": "{{count}} of {{total}} shown",
         "alwaysShown": "Always",

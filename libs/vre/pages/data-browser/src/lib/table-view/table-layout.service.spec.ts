@@ -41,7 +41,6 @@ describe('TableLayoutService', () => {
 
       expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6']);
       expect(layout.hidden).toEqual(['p7', 'p8', 'p9']);
-      expect(layout.density).toBe('default');
       expect(layout.widths).toEqual({});
     });
 
@@ -59,7 +58,6 @@ describe('TableLayoutService', () => {
         visible: [LABEL_COLUMN_KEY, 'p3', 'p1'],
         hidden: ['p0', 'p2'],
         widths: { p1: 320 },
-        density: 'compact',
       };
       service.save(CLASS_IRI, saved);
 
@@ -67,23 +65,23 @@ describe('TableLayoutService', () => {
     });
 
     it('KeepsLayoutsOfDifferentClassesApart', () => {
-      service.save(CLASS_IRI, { ...service.defaultLayout(columns(4)), density: 'compact' });
+      service.save(CLASS_IRI, { ...service.defaultLayout(columns(4)), widths: { p0: 333 } });
 
-      expect(service.load('other-class', columns(4)).density).toBe('default');
+      expect(service.load('other-class', columns(4)).widths).toEqual({});
     });
 
     it('ForgetsALayoutOnClear', () => {
-      service.save(CLASS_IRI, { ...service.defaultLayout(columns(4)), density: 'compact' });
+      service.save(CLASS_IRI, { ...service.defaultLayout(columns(4)), widths: { p0: 333 } });
       service.clear(CLASS_IRI);
 
-      expect(service.load(CLASS_IRI, columns(4)).density).toBe('default');
+      expect(service.load(CLASS_IRI, columns(4)).widths).toEqual({});
     });
   });
 
   // Ontologies get edited while people have the app open; all three of these are real.
   describe('reconciliation', () => {
     it('DropsAStoredColumnTheClassNoLongerDefines', () => {
-      store({ visible: [LABEL_COLUMN_KEY, 'p0', 'gone'], hidden: ['alsoGone'], widths: {}, density: 'default' });
+      store({ visible: [LABEL_COLUMN_KEY, 'p0', 'gone'], hidden: ['alsoGone'], widths: {} });
 
       const layout = service.load(CLASS_IRI, columns(2));
 
@@ -92,7 +90,7 @@ describe('TableLayoutService', () => {
     });
 
     it('AddsAColumnTheLayoutNeverHeardOfAsHidden', () => {
-      store({ visible: [LABEL_COLUMN_KEY, 'p0'], hidden: ['p1'], widths: {}, density: 'default' });
+      store({ visible: [LABEL_COLUMN_KEY, 'p0'], hidden: ['p1'], widths: {} });
 
       const layout = service.load(CLASS_IRI, columns(3));
 
@@ -101,13 +99,13 @@ describe('TableLayoutService', () => {
     });
 
     it('DropsAWidthForAColumnTheClassNoLongerDefines', () => {
-      store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: { p0: 300, gone: 400 }, density: 'default' });
+      store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: { p0: 300, gone: 400 } });
 
       expect(service.load(CLASS_IRI, columns(1)).widths).toEqual({ p0: 300 });
     });
 
     it('ReinstatesTheLabelColumnWhenAStoredLayoutLacksIt', () => {
-      store({ visible: ['p0'], hidden: [], widths: {}, density: 'default' });
+      store({ visible: ['p0'], hidden: [], widths: {} });
 
       const layout = service.load(CLASS_IRI, columns(2));
 
@@ -130,27 +128,27 @@ describe('TableLayoutService', () => {
       expect(service.load(CLASS_IRI, columns(2)).visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1']);
     });
 
-    /** `comfortable` was offered by an earlier build; a layout still holding it must not stick. */
-    it('FallsBackToTheDefaultWhenTheStoredDensityWasRetired', () => {
-      store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: {}, density: 'comfortable' });
+    /**
+     * Earlier builds stored a `density`. It is no longer read, so a layout carrying one must still
+     * restore the rest of itself rather than be discarded — and must not resurrect the field.
+     */
+    it('RestoresAnOlderLayoutThatStillCarriesADensity', () => {
+      store({ visible: [LABEL_COLUMN_KEY, 'p0'], hidden: [], widths: { p0: 250 } });
 
-      expect(service.load(CLASS_IRI, columns(1)).density).toBe('default');
-    });
+      const layout = service.load(CLASS_IRI, columns(1));
 
-    it('FallsBackToTheDefaultDensityWhenTheStoredOneIsUnknown', () => {
-      store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: {}, density: 'enormous' });
-
-      expect(service.load(CLASS_IRI, columns(1)).density).toBe('default');
+      expect(layout.widths).toEqual({ p0: 250 });
+      expect('density' in layout).toBe(false);
     });
 
     it('IgnoresNonNumericAndNonFiniteWidths', () => {
-      store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: { p0: 'wide', p1: 0, p2: -5 }, density: 'default' });
+      store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: { p0: 'wide', p1: 0, p2: -5 } });
 
       expect(service.load(CLASS_IRI, columns(3)).widths).toEqual({});
     });
 
     it('IgnoresAVisibleFieldThatIsNotAnArrayOfStrings', () => {
-      store({ visible: 'everything', hidden: [1, 2], widths: {}, density: 'default' });
+      store({ visible: 'everything', hidden: [1, 2], widths: {} });
 
       const layout = service.load(CLASS_IRI, columns(2));
 

@@ -22,7 +22,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ColumnResizeDirective } from './column-resize.directive';
 import { RowResizeDirective } from './row-resize.directive';
 import { ScrollWhenTallerDirective } from './scroll-when-taller.directive';
-import { DEFAULT_DENSITY, TableColumn, TableDensity } from './table-column.model';
+import { TableColumn } from './table-column.model';
 import { TablePropertyCellComponent } from './table-property-cell.component';
 import { buildRows, TableRow } from './table-row.model';
 
@@ -62,7 +62,7 @@ interface RenderColumn extends TableColumn {
   selector: 'app-data-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="table-scroll" [class]="scrollClasses()">
+    <div class="table-scroll" [class.selection-active]="selectionActive()">
       <!-- The drop list is the table rather than the header row, and that is not a style choice:
            cdkDrag resolves its drop list through the injector of the view it was declared in, and
            the header cells are declared inside the column definitions below, which are children of
@@ -306,7 +306,6 @@ export class DataTableComponent {
   readonly visibleColumns = input.required<string[]>();
   /** Pixel widths the user has set. A column absent here falls back to its `defaultWidth`. */
   readonly columnWidths = input<Readonly<Record<string, number>>>({});
-  readonly density = input<TableDensity>(DEFAULT_DENSITY);
   /** IRI of the resource currently open in the viewer, highlighted in the table. */
   readonly selectedResourceId = input<string | undefined>(undefined);
   /** The sort the query is running, so the matching header can announce `aria-sort`. */
@@ -440,18 +439,6 @@ export class DataTableComponent {
   });
 
   /**
-   * One binding, not `[class]` plus `[class.selection-active]`.
-   *
-   * Mixing a string `[class]` with a specific `[class.x]` on the same element leaves the two
-   * fighting over the same attribute, and which wins is a detail of Angular's binding precedence
-   * rather than something this template should depend on. Composing the string here removes the
-   * question.
-   */
-  protected readonly scrollClasses = computed(
-    () => `density-${this.density()}${this.selectionActive() ? ' selection-active' : ''}`
-  );
-
-  /**
    * Which `(rowId, columnKey)` read-only cells the user has expanded.
    *
    * Keyed by both, not stored on the row: rows are rebuilt on every data emission, and expansion
@@ -555,12 +542,10 @@ export class DataTableComponent {
 
   /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */
   /**
-   * Height past which a cell is capped and scrolls, at both densities.
+   * Height past which a cell is capped and scrolls.
    *
-   * Density decides how tight the rows are, not whether one row may swallow the page: a resource
-   * with a dozen values would otherwise make a row a dozen lines tall and push every other row
-   * off screen, which is no more useful at default density than at compact. A row the user has
-   * dragged overrides this with its own height.
+   * A resource with a dozen values would otherwise make a row a dozen lines tall and push every
+   * other row off screen. A row the user has dragged overrides this with its own height.
    */
   protected readonly cellMaxHeight = 200;
 

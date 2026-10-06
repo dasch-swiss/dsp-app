@@ -120,7 +120,6 @@ describe('TableViewStateService', () => {
 
   describe('persistence', () => {
     it('SurvivesLeavingTheClassAndComingBack', () => {
-      service.setDensity('compact');
       service.setColumnVisible('p1', false);
       service.setColumnWidth('p0', 140);
 
@@ -129,7 +128,6 @@ describe('TableViewStateService', () => {
       service.init(CLASS_IRI, COLUMNS);
 
       expect(service.layout()).toEqual(layoutStore.load(CLASS_IRI, COLUMNS));
-      expect(service.layout().density).toBe('compact');
       expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p2']);
       expect(service.layout().widths).toEqual({ p0: 140 });
     });
@@ -137,7 +135,7 @@ describe('TableViewStateService', () => {
     it('DropsAChangeMadeBeforeAnyClassWasLoaded', () => {
       const untouched = TestBed.runInInjectionContext(() => new TableViewStateService());
 
-      expect(() => untouched.setDensity('compact')).not.toThrow();
+      expect(() => untouched.setColumnVisible('p1', false)).not.toThrow();
       expect(localStorage.length).toBe(0);
     });
   });

@@ -13,9 +13,9 @@
  * The header is indented to match so the two read as one column with a control gutter, which is
  * what the design draws as two separate narrow columns.
  *
- * Mixed into each density block rather than written once outside them: those blocks set `padding`
- * on every cell through a two-class descendant selector, which outranks anything a single-class
- * rule can say about the label column no matter where in the file it sits.
+ * Mixed into the row-metrics block rather than written once at the top level: that block sets
+ * `padding` on every cell through a two-class descendant selector, which outranks anything a
+ * single-class rule can say about the label column no matter where in the file it sits.
  */
 @mixin label-column-gutter {
   .is-label-cell,
@@ -39,8 +39,8 @@ table {
   min-width: 100%;
 }
 
-// Density tokens set `height`, which clips a cell holding three stacked values. Turning them into
-// a floor keeps short rows at the chosen density and lets multi-value rows grow.
+// The row-height tokens set `height`, which clips a cell holding three stacked values. Turning
+// them into a floor keeps short rows tight and lets multi-value rows grow up to the cap.
 .mat-mdc-row,
 .mat-mdc-cell,
 .mat-mdc-header-cell {
@@ -257,7 +257,7 @@ tr:focus-within .row-resize-handle {
 //
 // `height` on a table row is only ever a minimum — a row cannot be made shorter than its content
 // that way — so the same variable also caps the cells, which is what lets a row be dragged
-// smaller as well as larger. This overrides the density cap deliberately: dragging a row taller is
+// smaller as well as larger. This overrides the default cap deliberately: dragging a row taller is
 // a request to see more of it, and leaving the cells pinned at 200px would answer that with empty
 // space.
 tr.is-row-sized {
@@ -406,10 +406,10 @@ tr.is-selected .row-controls [data-cy='row-check'] {
   }
 }
 
-// Three runtime densities. `mat.table-density` takes a whole theme object and so cannot express a
-// per-instance choice; the override mixin emits the same custom properties under a class, which
-// can.
-.density-compact {
+// The table's only row metrics. It used to offer a choice of densities; with one left there is
+// nothing to choose, so these apply unconditionally. `mat.table-overrides` rather than
+// `mat.table-density`, which takes a whole theme object, not a scale.
+.table-scroll {
   @include mat.table-overrides(
     (
       header-container-height: 48px,
@@ -417,9 +417,9 @@ tr.is-selected .row-controls [data-cy='row-check'] {
     )
   );
 
-  // The viewer's property rows are padded for a panel where each one stands alone. Compact density
-  // is a request for as many rows on screen as will fit, and 16px above and below every value
-  // defeats it — a single-value cell was taller than the row height asked for.
+  // The viewer's property rows are padded for a panel where each one stands alone; in a table
+  // that wants as many rows on screen as will fit, 16px above and below every value made a
+  // single-value cell taller than the row height asked for.
   --property-value-padding-block: 4px;
 
   .mat-mdc-cell,
@@ -428,24 +428,14 @@ tr.is-selected .row-controls [data-cy='row-check'] {
     font-size: 13px;
   }
 
-  // A cell with many values is capped and scrolls rather than stretching its row.
-  //
-  // An editable cell renders every value — it is the viewer's own unit, which knows nothing of a
-  // table — so one resource with a dozen of them made a row a dozen lines tall and pushed every
-  // other row off the screen. That is the opposite of what compact is asked for. The cap is on
-  // the content wrapper rather than the cell: a `td` does not honour `overflow` reliably, and
-  // scrolling the cell itself would take the row-control gutter with it.
-
   // After the padding shorthand above, which it must beat at equal specificity.
   @include label-column-gutter;
 }
 
-// A row is capped at this height at both densities, not only compact.
+// A row is capped at this height.
 //
 // Without it one resource with a dozen values makes a row a dozen lines tall and pushes every
-// other row off the screen — which is as unhelpful at default density as it is at compact. The
-// cap is what makes the table scannable at all; density changes how tight the rows are, not
-// whether one row may swallow the page.
+// other row off the screen. The cap is what keeps the table scannable at all.
 //
 // Only cells the directive measured as taller than the cap carry the class. A short cell is left
 // alone entirely — not a scroll container at all — because the editor's hover bubble is
@@ -465,46 +455,3 @@ tr.is-selected .row-controls [data-cy='row-check'] {
   // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.
   box-sizing: border-box;
 }
-
-.density-default {
-  @include mat.table-overrides(
-    (
-      header-container-height: 56px,
-      row-item-container-height: 52px,
-    )
-  );
-
-  .mat-mdc-cell,
-  .mat-mdc-header-cell {
-    padding: 8px 12px;
-  }
-
-  // A cell with many values is capped and scrolls rather than stretching its row.
-  //
-  // An editable cell renders every value — it is the viewer's own unit, which knows nothing of a
-  // table — so one resource with a dozen of them made a row a dozen lines tall and pushed every
-  // other row off the screen. That is the opposite of what compact is asked for. The cap is on
-  // the content wrapper rather than the cell: a `td` does not honour `overflow` reliably, and
-  // scrolling the cell itself would take the row-control gutter with it.
-  //
-  // Only at compact density. At default the row is allowed to grow, because the user has not
-  // asked to see as many rows as possible.
-  .cell-property,
-  .cell-values {
-    max-height: 200px;
-    // Both axes, not just `overflow-y`. Naming one axis `auto` and leaving the other `visible` is
-    // not a state CSS has: the other axis computes to `auto` too. Every capped cell therefore
-    // became a scroll container sideways as well, and a one-line cell flashed an overlay
-    // scrollbar on hover although it had 30px of content and nothing to scroll. Nothing here
-    // needs to scroll horizontally — a long value ellipsises, and the action bubble sits inside
-    // the cell's width — so `hidden` clips nothing that was visible.
-    overflow-x: hidden;
-    overflow-y: auto;
-    // So the cap means 200px of cell, not 200px plus whatever padding the wrapper carries.
-    box-sizing: border-box;
-  }
-
-  // After the padding shorthand above, which it must beat at equal specificity.
-  @include label-column-gutter;
-}
-

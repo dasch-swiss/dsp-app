@@ -660,9 +660,6 @@
       },
       "viewOptions": {
         "title": "Ansichtsoptionen",
-        "density": "Dichte",
-        "densityCompact": "Kompakt",
-        "densityDefault": "Standard",
         "columns": "Spalten",
         "columnsShown": "{{count}} von {{total}} angezeigt",
         "alwaysShown": "Immer",

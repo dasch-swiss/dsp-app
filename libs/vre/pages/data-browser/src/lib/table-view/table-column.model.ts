@@ -51,11 +51,6 @@ export const LABEL_MIN_COLUMN_WIDTH = 200;
  */
 export const MIN_COLUMN_WIDTH = 90;
 
-/** How tall a row is, and how much air is in a cell. */
-export type TableDensity = 'compact' | 'default';
-
-export const DEFAULT_DENSITY: TableDensity = 'default';
-
 /**
  * How many columns a class opens with.
  *

@@ -1,8 +1,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { DEFAULT_DENSITY, LABEL_COLUMN_KEY, TableColumn, TableDensity } from './table-column.model';
+import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 import { TableLayout, TableLayoutService } from './table-layout.service';
 
-const EMPTY_LAYOUT: TableLayout = { visible: [], hidden: [], widths: {}, density: DEFAULT_DENSITY };
+const EMPTY_LAYOUT: TableLayout = { visible: [], hidden: [], widths: {} };
 
 /** One row of the column picker: the column, and whether it is currently drawn. */
 export interface ColumnPickerEntry {
@@ -54,10 +54,6 @@ export class TableViewStateService {
     this._classIri = classIri;
     this.columns.set(columns);
     this.layout.set(this._layoutStore.load(classIri, columns));
-  }
-
-  setDensity(density: TableDensity): void {
-    this._update(layout => ({ ...layout, density }));
   }
 
   /**

@@ -213,7 +213,6 @@ const meta: Meta<DataTableComponent> = {
     columns: { description: 'Every column of the class, visible or not. Drives the mounted column definitions.' },
     visibleColumns: { description: 'Keys of the columns to show, in display order. Label first.' },
     columnWidths: { description: 'Pixel widths the user has set; a column absent here uses its default.' },
-    density: { description: 'Row height and cell padding: compact or default.' },
     selectionActive: { description: 'Whether a comparison set is being built; every row then shows its checkbox.' },
     selectedResourceId: { description: 'IRI of the resource open in the viewer, highlighted in the table.' },
     sortedColumnKey: { description: 'Column the query is sorted by, so its header announces aria-sort.' },
@@ -495,8 +494,8 @@ const onFilter = fn().mockName('filterRequested');
 
 /**
  * A host template rather than args, so the assertions run through the real output bindings the
- * fetcher uses. Only the inputs these stories vary are bound: `columnWidths` and `density` have
- * component defaults, and binding an absent arg would overwrite them with `undefined`.
+ * fetcher uses. Only the inputs these stories vary are bound: `columnWidths` has a component
+ * default, and binding an absent arg would overwrite it with `undefined`.
  */
 const headerControlsStory = (args: Story['args']): Story => ({
   render: storyArgs => ({
@@ -876,7 +875,8 @@ export const ResizesAColumnWithTheKeyboardFromItsHandle: Story = {
   play: async ({ canvasElement }) => {
     // Found by its column, not by position: the label column is resizable too, so the first
     // handle in the DOM is its one.
-    const titleHeader = [...canvasElement.querySelectorAll('th')].find(th =>
+    // Array.from rather than a spread: the stories tsconfig has no `dom.iterable`.
+    const titleHeader = Array.from(canvasElement.querySelectorAll('th')).find(th =>
       th.querySelector('.header-label')?.textContent?.includes('Title')
     ) as HTMLElement;
     const handle = titleHeader.querySelector('[data-cy="column-resize"]') as HTMLElement;
@@ -987,7 +987,6 @@ export const ResizesARowByDraggingItsBottomEdge: Story = {
  * the cell that no longer fits scrolls.
  */
 export const ShrinksARowBelowItsContentAndLetsTheCellScroll: Story = {
-  args: { density: 'compact' },
   play: async ({ canvasElement }) => {
     const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
     const handle = row.querySelector('[data-cy="row-resize"]') as HTMLElement;

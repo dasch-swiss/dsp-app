@@ -30,7 +30,6 @@ const ENTRIES: ColumnPickerEntry[] = [
   entry(`${ONTO}hasDate`, 'Date', false),
 ];
 
-const onDensity = fn().mockName('densityChanged');
 const onVisibility = fn().mockName('columnVisibilityChanged');
 const onAllVisibility = fn().mockName('allColumnsVisibilityChanged');
 
@@ -38,7 +37,6 @@ const onAllVisibility = fn().mockName('allColumnsVisibilityChanged');
 const overlay = () => within(document.body);
 
 const openMenu = async () => {
-  onDensity.mockClear();
   onVisibility.mockClear();
   onAllVisibility.mockClear();
   await userEvent.click(overlay().getByRole('button', { name: /View options/i }));
@@ -51,20 +49,17 @@ const meta: Meta<TableViewOptionsComponent> = {
   // A host template rather than args, so each assertion runs through the real output bindings the
   // class header uses instead of poking the component's outputs directly.
   render: args => ({
-    props: { ...args, onDensity, onVisibility, onAllVisibility },
+    props: { ...args, onVisibility, onAllVisibility },
     template: `<app-table-view-options
       [entries]="entries"
-      [density]="density"
-      (densityChanged)="onDensity($event)"
       (columnVisibilityChanged)="onVisibility($event)"
       (allColumnsVisibilityChanged)="onAllVisibility($event)" />`,
   }),
-  args: { entries: ENTRIES, density: 'default' },
+  args: { entries: ENTRIES },
   argTypes: {
     entries: { description: 'Every column of the class with its current on/off state, in ontology order.' },
-    density: { description: 'The row height currently in force: compact or default.' },
-    densityChanged: { description: 'Emits the density the user picked.' },
     columnVisibilityChanged: { description: 'Emits the column key the user toggled and its new visibility.' },
+    allColumnsVisibilityChanged: { description: 'Emits true to show every column, false to hide all but the label.' },
   },
 };
 
@@ -113,15 +108,15 @@ export const RefusesToHideTheStickyLabelColumn: Story = {
   },
 };
 
-export const ChangesTheRowDensityFromTheRadioGroup: Story = {
+/**
+ * The menu used to offer a density. With one left there was nothing to choose, so the choice went
+ * with it — and a radio group that cannot change anything is noise in a menu built for iterating.
+ */
+export const OffersNoDensityChoice: Story = {
   play: async () => {
     await openMenu();
-    const menu = overlay();
 
-    await expect(menu.getByRole('menuitemradio', { name: /Default/ })).toHaveAttribute('aria-checked', 'true');
-    await userEvent.click(menu.getByRole('menuitemradio', { name: /Compact/ }));
-
-    await expect(onDensity).toHaveBeenCalledWith('compact');
+    await expect(overlay().queryAllByRole('menuitemradio')).toHaveLength(0);
   },
 };
 

@@ -1,11 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  DEFAULT_DENSITY,
-  DEFAULT_VISIBLE_COLUMN_COUNT,
-  LABEL_COLUMN_KEY,
-  TableColumn,
-  TableDensity,
-} from './table-column.model';
+import { DEFAULT_VISIBLE_COLUMN_COUNT, LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 
 /** How a user has shaped one class's table. Column keys, not indices — the model can change under it. */
 export interface TableLayout {
@@ -15,7 +9,6 @@ export interface TableLayout {
   readonly hidden: string[];
   /** Pixel widths the user has set. A column absent here uses its `defaultWidth`. */
   readonly widths: Readonly<Record<string, number>>;
-  readonly density: TableDensity;
 }
 
 /**
@@ -29,16 +22,15 @@ const SCHEMA_VERSION = 1;
 
 const KEY_PREFIX = `dsp.dataBrowser.tableLayout.v${SCHEMA_VERSION}.`;
 
-// A layout stored by a build that still offered `comfortable` falls through the check below and
-// comes back as `default`, which is what the reconciliation already does with any unknown value.
-const DENSITIES: readonly TableDensity[] = ['compact', 'default'];
-
 /** The stored form. Deliberately not `TableLayout` — anything read off disk is untrusted. */
 interface StoredLayout {
   visible?: unknown;
   hidden?: unknown;
   widths?: unknown;
-  density?: unknown;
+  // A `density` field written by an earlier build may still be present. It is not read: the
+  // table has one set of row metrics now, and `_reconcile` builds a fresh object from the fields
+  // it knows, so the stale one simply falls away on the next save. No schema bump is needed for a
+  // field that is ignored rather than misread.
 }
 
 function isStringArray(value: unknown): value is string[] {
@@ -53,7 +45,7 @@ function isStringArray(value: unknown): value is string[] {
  *
  * `localStorage` rather than the URL, unlike the rest of the Data tab's state. Which view you are
  * looking at is part of what you are showing someone and belongs in a shareable link; eight column
- * widths, an order array and a density are personal workspace config. Serialising them would produce
+ * widths and an order array are personal workspace config. Serialising them would produce
  * a URL nobody can read and turn every drag of a column border into a history entry.
  */
 @Injectable({ providedIn: 'root' })
@@ -94,7 +86,6 @@ export class TableLayoutService {
       visible: keys.slice(0, DEFAULT_VISIBLE_COLUMN_COUNT),
       hidden: keys.slice(DEFAULT_VISIBLE_COLUMN_COUNT),
       widths: {},
-      density: DEFAULT_DENSITY,
     };
   }
 
@@ -150,7 +141,6 @@ export class TableLayoutService {
       visible,
       hidden: [...hidden, ...unknownToLayout].filter(key => key !== LABEL_COLUMN_KEY),
       widths: this._reconcileWidths(stored.widths, known),
-      density: DENSITIES.includes(stored.density as TableDensity) ? (stored.density as TableDensity) : DEFAULT_DENSITY,
     };
   }
 
