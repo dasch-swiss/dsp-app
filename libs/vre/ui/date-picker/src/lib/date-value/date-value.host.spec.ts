@@ -75,6 +75,79 @@ describe('DateValueComponent, as the resource editor renders it', () => {
   const asDate = () => value() as KnoraDate;
   const el = (hook: string) => (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>(`[data-cy="${hook}"]`);
 
+  // Every switch converts from the base — the stored value, or what the user entered — never from
+  // the previous switch's result: converting a conversion drifted, and a year counted down by one
+  // with each round trip through Islamic.
+  describe('the conversion base', () => {
+    const typeStart = (date: KnoraDate | null) => {
+      (component() as never as { onStartChange: (d: KnoraDate | null) => void }).onStartChange(date);
+      fixture.detectChanges();
+    };
+    const available = () => (component() as never as { availableCalendars: () => string[] }).availableCalendars();
+    const fieldText = () =>
+      (fixture.nativeElement as HTMLElement).querySelector('[data-cy="date-field-value"]')?.textContent?.trim();
+
+    it('keeps an entered year through any number of round trips', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2024));
+      typeStart(new KnoraDate('GREGORIAN', 'CE', 2025));
+
+      for (const calendar of ['JULIAN', 'ISLAMIC', 'JULIAN', 'GREGORIAN', 'JULIAN', 'ISLAMIC', 'JULIAN', 'GREGORIAN']) {
+        switchTo(calendar);
+      }
+
+      expect([asDate().calendar, asDate().year]).toEqual(['GREGORIAN', 2025]);
+    });
+
+    it('shows the value the form holds after a round trip', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2024));
+      typeStart(new KnoraDate('GREGORIAN', 'CE', 2025));
+      switchTo('ISLAMIC');
+      switchTo('GREGORIAN');
+
+      expect(fieldText()).toBe('2025');
+      expect(asDate().year).toBe(2025);
+    });
+
+    it('keeps the stored calendar on offer, and returns to it exactly', () => {
+      load(new KnoraDate('ISLAMIC', 'noEra', 1, 1));
+      switchTo('GREGORIAN');
+
+      expect(available()).toContain('ISLAMIC');
+      switchTo('ISLAMIC');
+      expect([asDate().calendar, asDate().year, asDate().month]).toEqual(['ISLAMIC', 1, 1]);
+    });
+
+    it('leaves a cleared start cleared when the calendar changes', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15));
+      typeStart(null);
+      switchTo('JULIAN');
+
+      expect(value()).toBeNull();
+    });
+
+    it('does not let an added end drift through Islamic', () => {
+      load(new KnoraDate('GREGORIAN', 'CE', 2024));
+      (component() as never as { onTogglePeriod: (e: Event) => void }).onTogglePeriod(new Event('click'));
+      fixture.detectChanges();
+      switchTo('ISLAMIC');
+      switchTo('GREGORIAN');
+
+      const period = value() as KnoraPeriod;
+      expect([period.start.year, period.end.year]).toEqual([2024, 2025]);
+    });
+
+    // A day converts while a month keeps its numbers, so Julian 25.12.1600 – 12.1600 would become
+    // Gregorian 04.01.1601 – 12.1600: out of order, from a calendar switch alone.
+    it('does not offer a switch that would put a period out of order', () => {
+      load(new KnoraPeriod(new KnoraDate('JULIAN', 'CE', 1600, 12, 25), new KnoraDate('JULIAN', 'CE', 1600, 12)));
+
+      expect(available()).not.toContain('GREGORIAN');
+      switchTo('GREGORIAN');
+      expect(host.control.valid).toBe(true);
+      expect((value() as KnoraPeriod).start.calendar).toBe('JULIAN');
+    });
+  });
+
   describe('switching the calendar on a stored single date', () => {
     // The reported bug: a stored 01.04.2020 Gregorian stayed 01.04.2020 when switched to Julian —
     // relabelled rather than converted — and became 19.03.2020 on the way back.

@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  computed,
   DestroyRef,
   EventEmitter,
   inject,
@@ -19,7 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
-import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
+import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { DatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule } from '@ngx-translate/core';
@@ -107,6 +108,12 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
     } else {
       const knoraDate = this.value ? this._transformDateStringToKnoraDateObject(this.value as string) : undefined;
       this.dateControl.setValue(knoraDate);
+      // A stored term is in its own calendar; telling the picker otherwise relabelled it on the
+      // next edit.
+      if (knoraDate) {
+        this.searchCalendar.set(knoraDate.calendar.toUpperCase() as CalendarSystem);
+        this._date.set(knoraDate);
+      }
     }
   }
 
@@ -119,8 +126,18 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
    */
   readonly searchCalendar = signal<CalendarSystem>('GREGORIAN');
 
+  /** The entered date, as a signal, so the calendars on offer follow it. */
+  private readonly _date = signal<KnoraDate | null>(null);
+
+  /** The calendars a switch can go to: those the entered date can be restated in, as in the editor. */
+  readonly availableCalendars = computed<readonly CalendarSystem[]>(() => {
+    const date = this._date();
+    return date ? this._calendarDates.restatableCalendarsFor(date) : CALENDAR_SYSTEMS;
+  });
+
   onDateSelected(date: KnoraDate | null) {
     this.dateControl.setValue(date);
+    this._date.set(date);
 
     // dsp-api parses this literal and compares across calendars server-side, so the term is sent in
     // the calendar the user chose rather than converted here. Formatting it is this component's job:
@@ -128,19 +145,23 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
     this.inputControl.setValue(date === null ? null : this._calendarDates.format(date, 'YYYY-MM-dd', 'gravsearch'));
   }
 
-  /** Converts the entered date into the newly chosen calendar, then re-emits the term. */
+  /**
+   * Restates the entered date in the newly chosen calendar, as the editor does — a day converts, a
+   * year or month keeps what was entered — then re-emits the term. A calendar that cannot take the
+   * date is not switched to, so the selector and the term never disagree.
+   */
   onCalendarSelected(calendar: CalendarSystem) {
-    this.searchCalendar.set(calendar);
-
     // `== null` rather than `=== null`: an untouched FormControl holds undefined, not null, and an
     // empty term has nothing to convert either way.
     const current = this.dateControl.value as KnoraDate | null | undefined;
     if (current == null) {
+      this.searchCalendar.set(calendar);
       return;
     }
-    const converted = this._calendarDates.convertKnoraDateTo(current, calendar);
-    if (converted !== undefined) {
-      this.onDateSelected(converted.start);
+    const restated = this._calendarDates.restateKnoraDateIn(current, calendar);
+    if (restated !== undefined) {
+      this.searchCalendar.set(calendar);
+      this.onDateSelected(restated);
     }
   }
 
@@ -153,7 +174,9 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
     const [datePart, eraPart] = dateAndEra.split(' ');
     const [year, month, day] = datePart.split('-').map(part => parseInt(part));
 
-    era = eraPart || 'CE';
+    // The gravsearch literal names no era for Islamic, which has none; any other calendar defaults
+    // to CE. Reading an Islamic term as CE made the calendar library refuse it.
+    era = calendar.toUpperCase() === 'ISLAMIC' ? 'noEra' : eraPart || 'CE';
 
     if (day) {
       return new KnoraDate(calendar, era, year, month, day);

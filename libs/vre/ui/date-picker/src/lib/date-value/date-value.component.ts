@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { KnoraDate, KnoraPeriod, Precision } from '@dasch-swiss/dsp-js';
-import { CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
+import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
 import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -92,13 +92,18 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   private readonly _touched = signal(false);
 
   /**
-   * What conversions measure from: the stored value, until the user edits a date.
+   * What conversions measure from, per end: the stored value's ends, until the user enters or clears
+   * one — then that entry, in the calendar it was entered in.
    *
-   * Switching away and back then restores the stored value exactly, rather than accumulating the
-   * drift of converting a conversion — an Islamic year or month restated by its first day comes back
-   * as the neighbouring Gregorian one.
+   * Every switch converts from here, never from the previous switch's result, so returning to the
+   * calendar a date was stored or entered in gives it back exactly. Converting a conversion drifts:
+   * an Islamic year restated by its first day comes back one Gregorian year earlier, so a user
+   * switching back and forth watched the year count down.
    */
-  private readonly _baseIsStored = signal(true);
+  private readonly _base = signal<{ readonly start: KnoraDate | null; readonly end: KnoraDate | null }>({
+    start: null,
+    end: null,
+  });
 
   protected readonly state = this._state.asReadonly();
   protected readonly disabled = this._disabled.asReadonly();
@@ -106,15 +111,14 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
 
   protected readonly isEditingStoredValue = computed(() => this._stored() !== null);
 
-  /** Which calendars can express this value; a period needs both ends representable. */
   /**
-   * Which calendars can express this value as this editor restates it; a period needs both ends.
-   * An offered calendar that then refused the switch would be a control that does nothing.
+   * The calendars a switch can go to: those the base converts into, a period with its ends in order.
+   * Measured from the base, as the switch is, so the calendar a date was stored in stays offered —
+   * and an offered calendar that then refused the switch would be a control that does nothing.
    */
-  protected readonly availableCalendars = computed<readonly CalendarSystem[]>(() => {
-    const value = this._asValue(this._state());
-    return value ? this._calendarDates.restatableCalendarsFor(value) : (['GREGORIAN', 'JULIAN', 'ISLAMIC'] as const);
-  });
+  protected readonly availableCalendars = computed<readonly CalendarSystem[]>(() =>
+    CALENDAR_SYSTEMS.filter(calendar => calendar === this._state().calendar || this._fromBase(calendar) !== null)
+  );
 
   /** The stored value as text, for the lines that state what is stored and what was converted. */
   protected readonly storedText = computed(() => {
@@ -239,7 +243,10 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     // save" judgement would be made against the wrong thing.
     if (!this._emitting) {
       this._stored.set(value);
-      this._baseIsStored.set(true);
+      this._base.set({
+        start: value instanceof KnoraPeriod ? value.start : value,
+        end: value instanceof KnoraPeriod ? value.end : null,
+      });
       this._touched.set(false);
     }
 
@@ -309,36 +316,24 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
    * they could disagree.
    */
   protected onCalendarChange(calendar: CalendarSystem): void {
-    const source = this._conversionSource();
-    if (source === null) {
-      this._commit({ ...this._state(), calendar });
-      return;
-    }
-
-    const start = this._convert(source.start, calendar);
-    if (start === null) {
-      // The target cannot express this date. Restoring what the value actually has is the honest
+    const converted = this._fromBase(calendar);
+    if (converted === null) {
+      // The target cannot express this value. Keeping what the value actually has is the honest
       // answer; stamping the unrepresentable calendar onto it is what relabelling looked like.
       return;
     }
-
-    const end = source.end === null ? null : this._convert(source.end, calendar);
-    if (source.end !== null && end === null) {
-      return;
-    }
-
-    this._commit({ ...this._state(), start, end, calendar });
+    this._commit({ ...this._state(), ...converted, calendar });
   }
 
   protected onStartChange(date: KnoraDate | null): void {
     this._touch();
-    this._rebaseIfEdited(date, this._state().end);
+    this._base.update(base => ({ ...base, start: date }));
     this._commit({ ...this._state(), start: date });
   }
 
   protected onEndChange(date: KnoraDate | null): void {
     this._touch();
-    this._rebaseIfEdited(this._state().start, date);
+    this._base.update(base => ({ ...base, end: date }));
     this._commit({ ...this._state(), end: date });
   }
 
@@ -347,24 +342,33 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     this._touch();
     const isPeriod = !this._state().isPeriod;
     const end = isPeriod ? (this._state().end ?? this._presetEnd(this._state().start)) : null;
-    this._rebaseIfEdited(this._state().start, end);
+    this._base.update(base => ({ ...base, end }));
     this._commit({ ...this._state(), isPeriod, end });
   }
 
   // -----------------------------------------------------------------------------------------
 
-  /** What a conversion measures from: the stored value while it is still the basis. */
-  private _conversionSource(): { start: KnoraDate; end: KnoraDate | null } | null {
-    const stored = this._stored();
-    if (this._baseIsStored() && stored !== null) {
-      // An end beside a stored single date is the user's own — entered or preset — so it converts
-      // from where it is, while the start keeps measuring from the stored date.
-      return stored instanceof KnoraPeriod
-        ? { start: stored.start, end: stored.end }
-        : { start: stored, end: this._state().end };
+  /**
+   * The value converted from its base into a calendar, or null when that calendar cannot take it:
+   * an end it cannot express, or a period whose ends the conversion would put out of order — a day
+   * converts while a month keeps its numbers, so Julian 25.12.1600 – 12.1600 would become
+   * Gregorian 04.01.1601 – 12.1600.
+   */
+  private _fromBase(calendar: CalendarSystem): { start: KnoraDate | null; end: KnoraDate | null } | null {
+    const { start, end } = this._base();
+    const convertedStart = start === null ? null : this._convert(start, calendar);
+    const convertedEnd = end === null ? null : this._convert(end, calendar);
+    if ((start !== null && convertedStart === null) || (end !== null && convertedEnd === null)) {
+      return null;
     }
-    const { start, end } = this._state();
-    return start === null ? null : { start, end };
+    if (
+      convertedStart !== null &&
+      convertedEnd !== null &&
+      this._calendarDates.isPeriodOutOfOrder(convertedStart, convertedEnd)
+    ) {
+      return null;
+    }
+    return { start: convertedStart, end: convertedEnd };
   }
 
   /** One end of the value in another calendar, as this editor restates it — see the service. */
@@ -375,39 +379,6 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
   /** The end a period starts with when the user adds one: the next day, month or year. */
   private _presetEnd(start: KnoraDate | null): KnoraDate | null {
     return start === null ? null : (this._calendarDates.nextKnoraDate(start) ?? null);
-  }
-
-  /**
-   * Moves the conversion base onto the user's entry once they change a date.
-   *
-   * Compared against what converting the stored value into the current calendar would produce,
-   * because a conversion is *supposed* to move the ends — comparing against the stored value
-   * directly would read every correct conversion as an edit.
-   */
-  private _rebaseIfEdited(start: KnoraDate | null, end: KnoraDate | null): void {
-    if (!this._baseIsStored()) {
-      return;
-    }
-    const source = this._conversionSource();
-    if (source === null || start === null) {
-      return;
-    }
-
-    const calendar = this._state().calendar;
-    const expectedStart = this._convert(source.start, calendar);
-    const startMoved = expectedStart === null || !this._calendarDates.knoraDatesDenoteSameInstant(expectedStart, start);
-
-    // Only a stored end can be moved. Removing or changing it is an edit; an end added beside a
-    // stored single date is not, so adding one — or its preset — keeps the start restoring exactly.
-    const stored = this._stored();
-    const expectedEnd = stored instanceof KnoraPeriod ? this._convert(stored.end, calendar) : null;
-    const endMoved =
-      stored instanceof KnoraPeriod &&
-      (end === null || expectedEnd === null || !this._calendarDates.knoraDatesDenoteSameInstant(expectedEnd, end));
-
-    if (startMoved || endMoved) {
-      this._baseIsStored.set(false);
-    }
   }
 
   /** The single exit: state is set, then the value is reported, in that order, once. */

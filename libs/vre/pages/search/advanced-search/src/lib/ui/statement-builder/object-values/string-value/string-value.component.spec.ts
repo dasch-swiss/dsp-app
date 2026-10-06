@@ -6,7 +6,8 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { StringValueComponent } from './string-value.component';
 
 /**
- * A date search term is sent in the calendar the user chose, unconverted (DEV-7372).
+ * A date search term is sent in the calendar the user chose, unconverted at sending (DEV-7372); a
+ * calendar switch restates the entered date as the editor does.
  *
  * The gravsearch literal carries its own calendar — "JULIAN:2024-06-02 CE" — and dsp-api compares
  * dates across calendars server-side through knora-api:toSimpleDate(). Converting here would be
@@ -126,6 +127,32 @@ describe('StringValueComponent date operand', () => {
       expect(seen).toEqual(['JULIAN:2020-03-19']);
     }));
 
+    // As in the editor: a year keeps what was entered rather than taking the start of its span
+    // (Julian 100 runs from Gregorian 31 Dec 99).
+    it('restates a year rather than taking the start of its span', fakeAsync(() => {
+      component.onDateSelected(new KnoraDate('JULIAN', 'CE', 100));
+      settle();
+      const seen = emitted();
+
+      component.onCalendarSelected('GREGORIAN');
+      settle();
+
+      expect(seen).toEqual(['GREGORIAN:100']);
+    }));
+
+    it('does not switch to a calendar that cannot take the date, so selector and term agree', fakeAsync(() => {
+      component.onDateSelected(new KnoraDate('GREGORIAN', 'CE', 500, 3, 15));
+      settle();
+      const seen = emitted();
+
+      component.onCalendarSelected('ISLAMIC');
+      settle();
+
+      expect(component.searchCalendar()).toBe('GREGORIAN');
+      expect(seen).toEqual([]);
+      expect(component.availableCalendars()).not.toContain('ISLAMIC');
+    }));
+
     it('records the chosen calendar so the picker is told it', fakeAsync(() => {
       component.onCalendarSelected('ISLAMIC');
       settle();
@@ -144,11 +171,32 @@ describe('StringValueComponent date operand', () => {
       expect(date.day).toBe(2);
     });
 
-    it('restores an Islamic term', () => {
+    it('restores an Islamic term, which has no era', () => {
       const date = component._transformDateStringToKnoraDateObject('ISLAMIC:1445-12-08');
 
       expect(date.calendar).toBe('ISLAMIC');
       expect(date.year).toBe(1445);
+      expect(date.era).toBe('noEra');
+    });
+
+    // Read back as CE, the calendar library refused the term and the switch threw.
+    it('switches a stored Islamic term to another calendar', fakeAsync(() => {
+      component.value = 'ISLAMIC:1441-08-07';
+      component.ngAfterViewInit();
+      const seen = emitted();
+
+      component.onCalendarSelected('GREGORIAN');
+      settle();
+
+      expect(seen).toEqual(['GREGORIAN:2020-04-01']);
+    }));
+
+    // Telling the picker Gregorian for a Julian term relabelled it on the next edit.
+    it('tells the picker the calendar the stored term was written in', () => {
+      component.value = 'JULIAN:2024-06-02 CE';
+      component.ngAfterViewInit();
+
+      expect(component.searchCalendar()).toBe('JULIAN');
     });
 
     it('restores a BCE term with its era', () => {
