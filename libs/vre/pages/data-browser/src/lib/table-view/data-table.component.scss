@@ -253,25 +253,6 @@ tr:focus-within .row-resize-handle {
   opacity: 1;
 }
 
-// A row the user has sized.
-//
-// `height` on a table row is only ever a minimum — a row cannot be made shorter than its content
-// that way — so the same variable also caps the cells, which is what lets a row be dragged
-// smaller as well as larger. This overrides the default cap deliberately: dragging a row taller is
-// a request to see more of it, and leaving the cells pinned at 200px would answer that with empty
-// space.
-tr.is-row-sized {
-  height: var(--row-height);
-
-  .cell-property,
-  .cell-values {
-    max-height: var(--row-height);
-    overflow-x: hidden;
-    overflow-y: auto;
-    box-sizing: border-box;
-  }
-}
-
 .is-label-cell {
   border-right: 1px solid #ebebeb;
   font-weight: 500;
@@ -442,11 +423,14 @@ tr.is-selected .row-controls [data-cy='row-check'] {
 // absolutely positioned and pokes out of a 28px cell, which would otherwise make it scrollable
 // with nothing to scroll. See ScrollWhenTallerDirective.
 //
-// A row the user has dragged overrides this: see `tr.is-row-sized`, which caps the same cells at
-// the height they asked for instead.
+// The cap is the row's `--row-cap`: its own dragged height, else the View-options row height,
+// else the 200px default — the component binds whichever applies. A row given a height also gets
+// it as a `height`, which grows it when its content is shorter; `height` on a table row is only
+// ever a minimum, so it is this cap, on the cells that exceed it, that lets a row be made shorter
+// than its content as well.
 .cell-property.is-capped,
 .cell-values.is-capped {
-  max-height: 200px;
+  max-height: var(--row-cap, 200px);
   // Both axes, not just `overflow-y`: naming one axis `auto` and leaving the other `visible` is
   // not a state CSS has, so the other computes to `auto` too. Nothing here scrolls sideways — a
   // long value ellipsises — so `hidden` clips nothing that was visible.

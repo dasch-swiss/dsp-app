@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { TranslatePipe } from '@ngx-translate/core';
+import { MatSlider, MatSliderThumb } from '@angular/material/slider';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ROW_HEIGHT_AUTO, ROW_HEIGHT_MAX, ROW_HEIGHT_MIN, ROW_HEIGHT_STEP } from './table-column.model';
 import { ColumnPickerEntry } from './table-view-state.service';
 
 /**
- * The table's shaping control: which of its columns are drawn.
+ * The table's shaping controls: how tall its rows are, and which of its columns are drawn.
  *
  * A menu rather than an inline control because the header row it sits in is already carrying the
  * result count, the pager and the view toggle.
@@ -34,6 +36,31 @@ import { ColumnPickerEntry } from './table-view-state.service';
            style attributes, so its width and scroll behaviour are set on a wrapper inside the
            projected content instead. -->
       <div class="view-options-panel">
+        <h4 class="section-header">
+          {{ 'pages.dataBrowser.viewOptions.rowHeight' | translate }}
+          <span class="section-meta" data-cy="row-height-value">{{ rowHeightLabel() }}</span>
+        </h4>
+
+        <!-- Not a menu item, so the panel's own click handler would close the menu on the first
+             touch of the thumb; the wrapper swallows it. A slider rather than steps because the
+             right height depends on what is in the cells, and that is not something a short list
+             of presets can anticipate. -->
+        <div class="row-height-control" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+          <mat-slider
+            data-cy="row-height-slider"
+            [min]="sliderMin"
+            [max]="sliderMax"
+            [step]="sliderStep"
+            [discrete]="true"
+            [displayWith]="formatSliderValue">
+            <input
+              matSliderThumb
+              [value]="rowHeight() ?? sliderMin"
+              [attr.aria-label]="'pages.dataBrowser.viewOptions.rowHeight' | translate"
+              (valueChange)="onSliderChange($event)" />
+          </mat-slider>
+        </div>
+
         <!-- Every click inside a mat-menu bubbles to the panel, which closes on it. Shaping a table
            is iterative, so each row stops the event: a user ticking four columns should not have
            to reopen the menu four times. -->
@@ -95,11 +122,18 @@ import { ColumnPickerEntry } from './table-view-state.service';
     </mat-menu>
   `,
   styleUrl: './table-view-options.component.scss',
-  imports: [MatButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, TranslatePipe],
+  imports: [MatButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatSlider, MatSliderThumb, TranslatePipe],
 })
 export class TableViewOptionsComponent {
+  private readonly _translate = inject(TranslateService);
+
   /** Every column of the class with its current on/off state, in the ontology's own order. */
   readonly entries = input.required<ColumnPickerEntry[]>();
+  /** The height every row is drawn at, or undefined for Auto. */
+  readonly rowHeight = input<number | undefined>(undefined);
+
+  /** A height in pixels, or undefined when the slider is returned to Auto. */
+  readonly rowHeightChanged = output<number | undefined>();
 
   readonly columnVisibilityChanged = output<{ key: string; isVisible: boolean }>();
   /** True to show every column, false to hide every column but the sticky one. */
@@ -115,4 +149,31 @@ export class TableViewOptionsComponent {
    * would offer to hide what is already hidden.
    */
   protected readonly allShown = computed(() => this.entries().every(entry => entry.column.isSticky || entry.isVisible));
+
+  protected readonly sliderMin = ROW_HEIGHT_AUTO;
+  protected readonly sliderMax = ROW_HEIGHT_MAX;
+  protected readonly sliderStep = ROW_HEIGHT_STEP;
+
+  protected readonly rowHeightLabel = computed(() => this.formatSliderValue(this.rowHeight() ?? ROW_HEIGHT_AUTO));
+
+  /**
+   * The thumb's label and the section's value, in one place so they cannot disagree.
+   *
+   * An arrow function because MatSlider calls it detached from the component, and a method would
+   * lose `this` — and with it the translation.
+   */
+  protected readonly formatSliderValue = (value: number): string =>
+    value <= ROW_HEIGHT_AUTO ? this._translate.instant('pages.dataBrowser.viewOptions.rowHeightAuto') : `${value}px`;
+
+  /**
+   * The bottom stop is Auto rather than a height. It sits one step below the smallest real height
+   * so the slider has somewhere to return to, and it emits `undefined` rather than a number so the
+   * layout stores nothing at all instead of a sentinel every reader would have to know about.
+   *
+   * `valueChange` rather than `input`: it fires once, on release, so the layout is written once per
+   * gesture rather than once per pixel the thumb passes through.
+   */
+  protected onSliderChange(value: number): void {
+    this.rowHeightChanged.emit(value <= ROW_HEIGHT_AUTO ? undefined : Math.max(ROW_HEIGHT_MIN, value));
+  }
 }

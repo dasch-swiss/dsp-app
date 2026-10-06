@@ -213,6 +213,7 @@ const meta: Meta<DataTableComponent> = {
     columns: { description: 'Every column of the class, visible or not. Drives the mounted column definitions.' },
     visibleColumns: { description: 'Keys of the columns to show, in display order. Label first.' },
     columnWidths: { description: 'Pixel widths the user has set; a column absent here uses its default.' },
+    rowHeight: { description: 'Height every row is drawn at from View options; undefined for Auto.' },
     selectionActive: { description: 'Whether a comparison set is being built; every row then shows its checkbox.' },
     selectedResourceId: { description: 'IRI of the resource open in the viewer, highlighted in the table.' },
     sortedColumnKey: { description: 'Column the query is sorted by, so its header announces aria-sort.' },
@@ -976,26 +977,8 @@ export const ResizesARowByDraggingItsBottomEdge: Story = {
 
     dragVertically(handle, 150);
 
-    await expect(row).toHaveClass('is-row-sized');
     await expect(Math.round(row.getBoundingClientRect().height)).toBeGreaterThan(before + 100);
-  },
-};
-
-/**
- * `height` on a table row is only ever a minimum, so a row could not be dragged shorter than its
- * content unless the same measurement also capped the cells. This is that: the row shrinks, and
- * the cell that no longer fits scrolls.
- */
-export const ShrinksARowBelowItsContentAndLetsTheCellScroll: Story = {
-  play: async ({ canvasElement }) => {
-    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
-    const handle = row.querySelector('[data-cy="row-resize"]') as HTMLElement;
-
-    dragVertically(handle, -200);
-
-    const height = Math.round(row.getBoundingClientRect().height);
-    await expect(height).toBeLessThanOrEqual(48);
-    await expect(row).toHaveClass('is-row-sized');
+    await expect(row.style.getPropertyValue('--row-cap')).not.toBe('');
   },
 };
 
@@ -1003,12 +986,57 @@ export const ReturnsARowToItsContentOnDoubleClick: Story = {
   play: async ({ canvasElement }) => {
     const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
     const handle = row.querySelector('[data-cy="row-resize"]') as HTMLElement;
+    const natural = Math.round(row.getBoundingClientRect().height);
     dragVertically(handle, 150);
-    await expect(row).toHaveClass('is-row-sized');
+    await expect(Math.round(row.getBoundingClientRect().height)).toBeGreaterThan(natural + 100);
 
     handle.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
 
-    await expect(row).not.toHaveClass('is-row-sized');
+    await expect(Math.round(row.getBoundingClientRect().height)).toBe(natural);
+  },
+};
+
+/** One control, every row: the slider's height applies to rows nobody has dragged. */
+export const DrawsEveryRowAtTheViewOptionsHeight: Story = {
+  args: { rowHeight: 160 },
+  play: async ({ canvasElement }) => {
+    const rows = Array.from(canvasElement.querySelectorAll('tr.mat-mdc-row'));
+
+    for (const row of rows) {
+      await expect(Math.round(row.getBoundingClientRect().height)).toBeGreaterThanOrEqual(160);
+    }
+  },
+};
+
+/** A row the user dragged is a more specific request than the slider's, so it wins. */
+export const LetsADraggedRowOverrideTheViewOptionsHeight: Story = {
+  args: { rowHeight: 160 },
+  play: async ({ canvasElement }) => {
+    const [dragged, other] = Array.from(canvasElement.querySelectorAll('tr.mat-mdc-row')) as HTMLElement[];
+    const before = Math.round(dragged.getBoundingClientRect().height);
+
+    dragVertically(dragged.querySelector('[data-cy="row-resize"]') as HTMLElement, 120);
+
+    await expect(Math.round(dragged.getBoundingClientRect().height)).toBeGreaterThan(before + 80);
+    await expect(Math.round(other.getBoundingClientRect().height)).toBe(before);
+  },
+};
+
+/**
+ * The regression the cap directive exists to prevent, under a set row height. Giving a row a
+ * height must not turn its short cells into scroll containers, or the editor's hover bubble — which
+ * overhangs a short cell — gives each of them a scrollbar with nothing to scroll.
+ */
+export const LeavesShortCellsUnscrollableInASizedRow: Story = {
+  args: { rowHeight: 160 },
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const cells = Array.from(row.querySelectorAll('.cell-property, .cell-values')) as HTMLElement[];
+
+    for (const cell of cells) {
+      await expect(cell).not.toHaveClass('is-capped');
+      await expect(getComputedStyle(cell).overflowY).toBe('visible');
+    }
   },
 };
 

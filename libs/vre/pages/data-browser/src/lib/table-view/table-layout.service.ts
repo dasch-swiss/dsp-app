@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { DEFAULT_VISIBLE_COLUMN_COUNT, LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
+import {
+  DEFAULT_VISIBLE_COLUMN_COUNT,
+  LABEL_COLUMN_KEY,
+  ROW_HEIGHT_MAX,
+  ROW_HEIGHT_MIN,
+  TableColumn,
+} from './table-column.model';
 
 /** How a user has shaped one class's table. Column keys, not indices — the model can change under it. */
 export interface TableLayout {
@@ -9,6 +15,14 @@ export interface TableLayout {
   readonly hidden: string[];
   /** Pixel widths the user has set. A column absent here uses its `defaultWidth`. */
   readonly widths: Readonly<Record<string, number>>;
+  /**
+   * The height every row is set to, from the View-options slider. Absent means Auto: rows hug
+   * their content up to the default cap.
+   *
+   * Persisted, unlike a single row's dragged height. This is one number per class, like a column
+   * width; a dragged row belongs to one resource, of which a class may hold tens of thousands.
+   */
+  readonly rowHeight?: number;
 }
 
 /**
@@ -27,6 +41,7 @@ interface StoredLayout {
   visible?: unknown;
   hidden?: unknown;
   widths?: unknown;
+  rowHeight?: unknown;
   // A `density` field written by an earlier build may still be present. It is not read: the
   // table has one set of row metrics now, and `_reconcile` builds a fresh object from the fields
   // it knows, so the stale one simply falls away on the next save. No schema bump is needed for a
@@ -141,7 +156,22 @@ export class TableLayoutService {
       visible,
       hidden: [...hidden, ...unknownToLayout].filter(key => key !== LABEL_COLUMN_KEY),
       widths: this._reconcileWidths(stored.widths, known),
+      ...this._reconcileRowHeight(stored.rowHeight),
     };
+  }
+
+  /**
+   * A stored row height survives only if it is a height the slider could have produced; anything
+   * else — a hand-edited value, a range that has since changed — falls back to Auto rather than
+   * pinning every row of the class to a size the control can no longer show.
+   */
+  private _reconcileRowHeight(rowHeight: unknown): { rowHeight?: number } {
+    return typeof rowHeight === 'number' &&
+      Number.isFinite(rowHeight) &&
+      rowHeight >= ROW_HEIGHT_MIN &&
+      rowHeight <= ROW_HEIGHT_MAX
+      ? { rowHeight }
+      : {};
   }
 
   private _reconcileWidths(widths: unknown, known: Set<string>): Record<string, number> {

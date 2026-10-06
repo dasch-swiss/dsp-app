@@ -31,6 +31,14 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
+.row-height-control {
+  padding: 0 8px 4px;
+
+  mat-slider {
+    width: 100%;
+  }
+}
+
 .section-meta {
   margin-left: auto;
   letter-spacing: normal;

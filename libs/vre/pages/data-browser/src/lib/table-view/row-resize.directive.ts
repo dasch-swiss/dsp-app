@@ -8,11 +8,13 @@ import { DestroyRef, Directive, ElementRef, inject, input, NgZone, output } from
  * except on the few pixels that mean "resize". The label cell is the right host because it is the
  * one cell always on screen, however far the table is scrolled sideways.
  *
- * The height is written as a custom property on the `<tr>` rather than as a `height`, because it
- * has to do two jobs at once: grow a short row, and cap a tall one. `height` on a table row is
- * only ever a minimum — a row cannot be made shorter than its content that way — so the cells
- * read the same variable to cap and scroll their own content. See `.is-row-sized` in the
- * component's stylesheet.
+ * During the drag the height is written straight onto the `<tr>`, as the same two properties the
+ * component's template binds once the gesture is committed: a `height`, which grows a short row,
+ * and `--row-cap`, which caps a tall one. Two because `height` on a table row is only ever a
+ * minimum — a row cannot be made shorter than its content that way — so the cells that are taller
+ * than the cap scroll instead. Which cells those are is `ScrollWhenTallerDirective`'s decision;
+ * capping every cell of the row would make the short ones scroll containers too, and the editor's
+ * hover bubble would give each of them a scrollbar with nothing to scroll.
  */
 /** How much one arrow-key press moves the edge. Matches the column handle's step. */
 const KEYBOARD_STEP_PX = 16;
@@ -153,13 +155,15 @@ export class RowResizeDirective {
       return;
     }
 
+    // On reset the template's bindings take over again on the next pass, from the row height the
+    // rest of the table uses; clearing here just stops the dragged value lingering until then.
     if (height === undefined) {
-      row.style.removeProperty('--row-height');
-      row.classList.remove('is-row-sized');
+      row.style.removeProperty('height');
+      row.style.removeProperty('--row-cap');
       return;
     }
 
-    row.style.setProperty('--row-height', `${Math.round(height)}px`);
-    row.classList.add('is-row-sized');
+    row.style.height = `${Math.round(height)}px`;
+    row.style.setProperty('--row-cap', `${Math.round(height)}px`);
   }
 }

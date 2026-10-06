@@ -664,7 +664,9 @@
         "columnsShown": "{{count}} von {{total}} angezeigt",
         "alwaysShown": "Immer",
         "showAll": "Alle Spalten anzeigen",
-        "hideAll": "Alle Spalten ausblenden"
+        "hideAll": "Alle Spalten ausblenden",
+        "rowHeight": "Zeilenhöhe",
+        "rowHeightAuto": "Automatisch"
       }
     }
   },

@@ -64,6 +64,7 @@ import { ProjectPageService } from '../../project-page.service';
             [columns]="columns()"
             [visibleColumns]="layout().visible"
             [columnWidths]="layout().widths"
+            [rowHeight]="layout().rowHeight"
             [selectedResourceId]="selectedResourceId()"
             [checkedResourceIds]="checkedResourceIds()"
             [selectionActive]="selectionActive()"

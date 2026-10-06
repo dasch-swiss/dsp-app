@@ -81,6 +81,8 @@ interface CreateResourceDialogProps {
         @if ((view$ | async) === 'table' && tableState.columns().length > 0) {
           <app-table-view-options
             [entries]="tableState.pickerEntries()"
+            [rowHeight]="tableState.layout().rowHeight"
+            (rowHeightChanged)="tableState.setRowHeight($event)"
             (columnVisibilityChanged)="tableState.setColumnVisible($event.key, $event.isVisible)"
             (allColumnsVisibilityChanged)="tableState.setAllColumnsVisible($event)" />
           <span class="meta-divider"></span>

@@ -32,6 +32,7 @@ const ENTRIES: ColumnPickerEntry[] = [
 
 const onVisibility = fn().mockName('columnVisibilityChanged');
 const onAllVisibility = fn().mockName('allColumnsVisibilityChanged');
+const onRowHeight = fn().mockName('rowHeightChanged');
 
 /** The menu renders into a CDK overlay, which is attached to the body rather than to the canvas. */
 const overlay = () => within(document.body);
@@ -39,6 +40,7 @@ const overlay = () => within(document.body);
 const openMenu = async () => {
   onVisibility.mockClear();
   onAllVisibility.mockClear();
+  onRowHeight.mockClear();
   await userEvent.click(overlay().getByRole('button', { name: /View options/i }));
 };
 
@@ -49,9 +51,11 @@ const meta: Meta<TableViewOptionsComponent> = {
   // A host template rather than args, so each assertion runs through the real output bindings the
   // class header uses instead of poking the component's outputs directly.
   render: args => ({
-    props: { ...args, onVisibility, onAllVisibility },
+    props: { ...args, onVisibility, onAllVisibility, onRowHeight },
     template: `<app-table-view-options
       [entries]="entries"
+      [rowHeight]="rowHeight"
+      (rowHeightChanged)="onRowHeight($event)"
       (columnVisibilityChanged)="onVisibility($event)"
       (allColumnsVisibilityChanged)="onAllVisibility($event)" />`,
   }),
@@ -59,6 +63,8 @@ const meta: Meta<TableViewOptionsComponent> = {
   argTypes: {
     entries: { description: 'Every column of the class with its current on/off state, in ontology order.' },
     columnVisibilityChanged: { description: 'Emits the column key the user toggled and its new visibility.' },
+    rowHeight: { description: 'Height every row is drawn at, or undefined for Auto.' },
+    rowHeightChanged: { description: 'Emits the height picked on release, or undefined at the Auto stop.' },
     allColumnsVisibilityChanged: { description: 'Emits true to show every column, false to hide all but the label.' },
   },
 };
@@ -160,5 +166,56 @@ export const IgnoresTheStickyColumnWhenDecidingWhichActionToOffer: Story = {
     await openMenu();
 
     await expect(overlay().getByRole('menuitem', { name: /Show all columns/ })).toBeInTheDocument();
+  },
+};
+
+// ── Row height ──────────────────────────────────────────────────────────────
+
+/** The slider's bottom stop is Auto, and the section says so rather than showing a pixel value. */
+export const StartsTheRowHeightSliderAtAuto: Story = {
+  play: async () => {
+    await openMenu();
+
+    await expect(document.querySelector('[data-cy="row-height-value"]')).toHaveTextContent('Auto');
+  },
+};
+
+export const ShowsTheCurrentRowHeight: Story = {
+  args: { rowHeight: 120 },
+  play: async () => {
+    await openMenu();
+
+    await expect(document.querySelector('[data-cy="row-height-value"]')).toHaveTextContent('120px');
+  },
+};
+
+/**
+ * Setting the thumb's value and firing `change` is how a release reaches MatSlider; the slider
+ * emits on release only, so the layout is written once per gesture rather than once per pixel.
+ */
+export const EmitsTheHeightTheSliderIsReleasedAt: Story = {
+  play: async () => {
+    await openMenu();
+    const thumb = document.querySelector('[data-cy="row-height-slider"] input') as HTMLInputElement;
+
+    thumb.value = '200';
+    thumb.dispatchEvent(new Event('input', { bubbles: true }));
+    thumb.dispatchEvent(new Event('change', { bubbles: true }));
+
+    await expect(onRowHeight).toHaveBeenCalledWith(200);
+  },
+};
+
+export const EmitsAutoWhenTheSliderReturnsToItsBottomStop: Story = {
+  args: { rowHeight: 200 },
+  play: async () => {
+    await openMenu();
+    const thumb = document.querySelector('[data-cy="row-height-slider"] input') as HTMLInputElement;
+
+    thumb.value = '40';
+    thumb.dispatchEvent(new Event('input', { bubbles: true }));
+    thumb.dispatchEvent(new Event('change', { bubbles: true }));
+
+    await expect(onRowHeight).toHaveBeenCalledWith(undefined);
   },
 };

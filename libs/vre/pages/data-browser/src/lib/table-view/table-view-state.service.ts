@@ -67,6 +67,14 @@ export class TableViewStateService {
    * A hidden column, by contrast, goes back into `hidden` in model order, because that list is only
    * ever read as the picker's own ordering.
    */
+  /** `undefined` is Auto, and removes the field rather than storing a sentinel. */
+  setRowHeight(rowHeight: number | undefined): void {
+    this._update(layout => {
+      const { rowHeight: _previous, ...rest } = layout;
+      return rowHeight === undefined ? rest : { ...rest, rowHeight };
+    });
+  }
+
   setColumnVisible(key: string, isVisible: boolean): void {
     // The label column carries the row's identity while the rest of the table scrolls horizontally
     // past it, so hiding it is not offered (REQ-2.10). Guarded here as well as in the picker: a

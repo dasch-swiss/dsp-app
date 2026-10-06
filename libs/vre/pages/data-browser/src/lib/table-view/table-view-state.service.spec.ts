@@ -118,6 +118,23 @@ describe('TableViewStateService', () => {
     });
   });
 
+  describe('row height', () => {
+    it('SetsAndPersistsAHeightForEveryRowOfTheClass', () => {
+      service.setRowHeight(160);
+
+      expect(service.layout().rowHeight).toBe(160);
+      expect(layoutStore.load(CLASS_IRI, COLUMNS).rowHeight).toBe(160);
+    });
+
+    /** Auto is the absence of a height, not a sentinel every reader would have to know about. */
+    it('RemovesTheFieldWhenReturnedToAuto', () => {
+      service.setRowHeight(160);
+      service.setRowHeight(undefined);
+
+      expect('rowHeight' in service.layout()).toBe(false);
+    });
+  });
+
   describe('persistence', () => {
     it('SurvivesLeavingTheClassAndComingBack', () => {
       service.setColumnVisible('p1', false);

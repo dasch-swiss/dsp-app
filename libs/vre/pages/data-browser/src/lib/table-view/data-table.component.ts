@@ -22,7 +22,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ColumnResizeDirective } from './column-resize.directive';
 import { RowResizeDirective } from './row-resize.directive';
 import { ScrollWhenTallerDirective } from './scroll-when-taller.directive';
-import { TableColumn } from './table-column.model';
+import { DEFAULT_CELL_CAP, TableColumn } from './table-column.model';
 import { TablePropertyCellComponent } from './table-property-cell.component';
 import { buildRows, TableRow } from './table-row.model';
 
@@ -180,7 +180,7 @@ interface RenderColumn extends TableColumn {
                   appRowResize
                   data-cy="row-resize"
                   [minHeight]="rowMinHeight"
-                  [height]="rowHeights()[row.id] ?? 0"
+                  [height]="rowHeightFor(row.id) ?? 0"
                   (heightChanged)="onRowResized(row.id, $event)"
                   (heightReset)="onRowHeightReset(row.id)"
                   [attr.aria-label]="'pages.dataBrowser.table.resizeRow' | translate: { label: row.label }"></span>
@@ -214,14 +214,14 @@ interface RenderColumn extends TableColumn {
               @if (cell.text !== undefined) {
                 <!-- The label column. Kept inside the same wrapper as a property cell so the two
                      line up: cell-value only truncates as a flex item. -->
-                <div class="cell-values" [appScrollWhenTaller]="cellMaxHeight">
+                <div class="cell-values" [appScrollWhenTaller]="rowCap(row.id)">
                   <span class="cell-value">{{ cell.text }}</span>
                 </div>
               } @else if (cell.propertyInfo; as propertyInfo) {
                 <!-- Every click inside the cell is also a click on the row, which selects the
                      resource in the viewer. Stopped once here rather than on each of the dozen
                      controls the viewer's unit brings with it. -->
-                <div class="cell-property" [appScrollWhenTaller]="cellMaxHeight" (click)="$event.stopPropagation()">
+                <div class="cell-property" [appScrollWhenTaller]="rowCap(row.id)" (click)="$event.stopPropagation()">
                   <app-table-property-cell
                     [dspResource]="row.dspResource!"
                     [myProperty]="propertyInfo"
@@ -233,7 +233,7 @@ interface RenderColumn extends TableColumn {
                      is no PropertyInfoValues to hand the viewer and no editor to mount — they
                      render as text, and keep the collapse a viewer cell cannot have (REQ-4.7). -->
                 @let expanded = isExpanded(row.id, column.key);
-                <div class="cell-values" [appScrollWhenTaller]="cellMaxHeight">
+                <div class="cell-values" [appScrollWhenTaller]="rowCap(row.id)">
                   @for (value of expanded ? cell.values : cell.collapsedValues; track value.id) {
                     <span class="cell-value">{{ value.strval }}</span>
                   }
@@ -261,8 +261,8 @@ interface RenderColumn extends TableColumn {
         <tr
           mat-row
           *matRowDef="let row; columns: visibleColumns()"
-          [class.is-row-sized]="rowHeights()[row.id] !== undefined"
-          [style.--row-height.px]="rowHeights()[row.id]"
+          [style.height.px]="rowHeightFor(row.id)"
+          [style.--row-cap.px]="rowCap(row.id)"
           [class.is-selected]="row.id === selectedResourceId()"
           [class.is-checked]="checkedResourceIds().has(row.id)"
           (click)="resourceSelected.emit(row.resource)"></tr>
@@ -542,12 +542,32 @@ export class DataTableComponent {
 
   /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */
   /**
-   * Height past which a cell is capped and scrolls.
-   *
-   * A resource with a dozen values would otherwise make a row a dozen lines tall and push every
-   * other row off screen. A row the user has dragged overrides this with its own height.
+   * The height every row is set to from View options, or undefined for Auto — rows hug their
+   * content up to the default cap.
    */
-  protected readonly cellMaxHeight = 200;
+  readonly rowHeight = input<number | undefined>(undefined);
+
+  /**
+   * The height a row is drawn at: its own dragged height, else the View-options height, else
+   * none, which leaves it to its content.
+   *
+   * A method rather than a computed map because it is called once per row, not per cell, and a
+   * map rebuilt on every height change would cost more than the twenty-five lookups it replaces.
+   */
+  protected rowHeightFor(id: string): number | undefined {
+    return this.rowHeights()[id] ?? this.rowHeight();
+  }
+
+  /**
+   * The height past which a cell in this row scrolls rather than stretching it.
+   *
+   * Whatever the row is drawn at, when it is drawn at something; the default otherwise. Read both
+   * by the row, as `--row-cap`, and by each cell's `ScrollWhenTallerDirective`, which decides
+   * whether that particular cell is tall enough to need it.
+   */
+  protected rowCap(id: string): number {
+    return this.rowHeightFor(id) ?? DEFAULT_CELL_CAP;
+  }
 
   /** Below this a row has no room for one line of text plus its padding. */
   protected readonly rowMinHeight = 32;

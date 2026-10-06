@@ -141,6 +141,22 @@ describe('TableLayoutService', () => {
       expect('density' in layout).toBe(false);
     });
 
+    it('RestoresARowHeightTheSliderCouldHaveSet', () => {
+      store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: {}, rowHeight: 120 });
+
+      expect(service.load(CLASS_IRI, columns(1)).rowHeight).toBe(120);
+    });
+
+    /**
+     * Out of range or not a number falls back to Auto rather than pinning every row of the class
+     * to a size the slider can no longer show.
+     */
+    it.each([[12], [9999], ['tall'], [Number.NaN]])('FallsBackToAutoForAStoredRowHeightOf %p', rowHeight => {
+      store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: {}, rowHeight });
+
+      expect('rowHeight' in service.load(CLASS_IRI, columns(1))).toBe(false);
+    });
+
     it('IgnoresNonNumericAndNonFiniteWidths', () => {
       store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: { p0: 'wide', p1: 0, p2: -5 } });
 
