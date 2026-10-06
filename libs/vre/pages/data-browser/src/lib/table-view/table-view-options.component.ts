@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, output } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -46,17 +46,17 @@ import { ColumnPickerEntry } from './table-view-state.service';
              right height depends on what is in the cells, and that is not something a short list
              of presets can anticipate. -->
         <div class="row-height-control" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
-          <mat-slider
-            data-cy="row-height-slider"
-            [min]="sliderMin"
-            [max]="sliderMax"
-            [step]="sliderStep"
-            [discrete]="true"
-            [displayWith]="formatSliderValue">
+          <!-- Not discrete: its value bubble floats above the thumb and, at either end of the
+               track, past the panel's edge, where the panel — which must not scroll sideways —
+               clips it. In German the bottom stop reads Automatisch, twice the width of Auto. The
+               section header above shows the same value, live while dragging, with room to spare. -->
+          <mat-slider data-cy="row-height-slider" [min]="sliderMin" [max]="sliderMax" [step]="sliderStep">
             <input
               matSliderThumb
               [value]="rowHeight() ?? sliderMin"
               [attr.aria-label]="'pages.dataBrowser.viewOptions.rowHeight' | translate"
+              [attr.aria-valuetext]="rowHeightLabel()"
+              (input)="onSliderInput($event)"
               (valueChange)="onSliderChange($event)" />
           </mat-slider>
         </div>
@@ -154,16 +154,32 @@ export class TableViewOptionsComponent {
   protected readonly sliderMax = ROW_HEIGHT_MAX;
   protected readonly sliderStep = ROW_HEIGHT_STEP;
 
-  protected readonly rowHeightLabel = computed(() => this.formatSliderValue(this.rowHeight() ?? ROW_HEIGHT_AUTO));
+  /**
+   * Where the thumb is while it is being dragged, before the release commits it.
+   *
+   * Linked to the committed height so it clears itself once the release has round-tripped
+   * through the layout — the header then reads the input again, with no flicker back to the old
+   * value in between, because both hold the same number by then.
+   */
+  private readonly _preview = linkedSignal<number | undefined, number | undefined>({
+    source: this.rowHeight,
+    computation: () => undefined,
+  });
 
   /**
-   * The thumb's label and the section's value, in one place so they cannot disagree.
-   *
-   * An arrow function because MatSlider calls it detached from the component, and a method would
-   * lose `this` — and with it the translation.
+   * The section's value, and the thumb's `aria-valuetext`, so a screen reader hears "Auto" rather
+   * than the sentinel 40. Live during a drag: the header is the only place the value is shown.
    */
-  protected readonly formatSliderValue = (value: number): string =>
-    value <= ROW_HEIGHT_AUTO ? this._translate.instant('pages.dataBrowser.viewOptions.rowHeightAuto') : `${value}px`;
+  protected readonly rowHeightLabel = computed(() => {
+    const value = this._preview() ?? this.rowHeight() ?? ROW_HEIGHT_AUTO;
+    return value <= ROW_HEIGHT_AUTO
+      ? this._translate.instant('pages.dataBrowser.viewOptions.rowHeightAuto')
+      : `${value}px`;
+  });
+
+  protected onSliderInput(event: Event): void {
+    this._preview.set(Number((event.target as HTMLInputElement).value));
+  }
 
   /**
    * The bottom stop is Auto rather than a height. It sits one step below the smallest real height

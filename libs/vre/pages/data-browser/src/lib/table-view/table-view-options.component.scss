@@ -16,6 +16,11 @@
   // columns at the end of the list.
   width: 260px;
   max-height: 520px;
+  // Both axes, not just `overflow-y`: naming one axis `auto` while the other is `visible` is not a
+  // state CSS has, so the other computes to `auto` too and the panel scrolled sideways the moment
+  // anything inside it was a pixel too wide. Nothing here is meant to be reached by scrolling
+  // sideways — labels ellipsise — so `hidden` is the honest value.
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -32,10 +37,17 @@
 }
 
 .row-height-control {
-  padding: 0 8px 4px;
+  // Wide enough that the thumb's value bubble fits at both ends of its travel. The panel no longer
+  // scrolls sideways, so anything that reaches past its edge is clipped rather than reachable — and
+  // at 16px the "400px" bubble at the far end lost its last few pixels.
+  padding: 0 24px 8px;
 
   mat-slider {
-    width: 100%;
+    // `block` with `auto` rather than `width: 100%`. MatSlider carries `margin: 0 8px` of its own,
+    // and `100%` fills the content box before that margin is added — so the slider was 16px wider
+    // than its row and pushed the whole panel into a horizontal scroll.
+    display: block;
+    width: auto;
   }
 }
 
