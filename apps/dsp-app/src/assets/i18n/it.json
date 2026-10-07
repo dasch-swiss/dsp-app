@@ -497,7 +497,9 @@
       },
       "termValidation": {
         "tooShort": "Inserisci almeno 3 caratteri",
-        "wildcardTooShort": "Un carattere jolly richiede almeno altri 3 caratteri nella stessa parola"
+        "wildcardTooShort": "Un carattere jolly richiede almeno altri 3 caratteri nella stessa parola",
+        "unclosedPhrase": "Chiudi le virgolette per cercare una frase",
+        "trailingEscape": "Una barra rovesciata deve essere seguita da un carattere"
       },
       "searchTips": {
         "title": "Suggerimenti per la ricerca",
