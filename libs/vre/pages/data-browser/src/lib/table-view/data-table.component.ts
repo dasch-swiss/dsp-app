@@ -1,4 +1,4 @@
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,6 +25,7 @@ import { ColumnResizeDirective } from './column-resize.directive';
 import { RowResizeDirective } from './row-resize.directive';
 import { ScrollWhenTallerDirective } from './scroll-when-taller.directive';
 import { TableColumn } from './table-column.model';
+import { TableImageCellComponent } from './table-image-cell.component';
 import { TablePropertyCellComponent } from './table-property-cell.component';
 import { buildRows, TableRow } from './table-row.model';
 import { TruncatedTooltipDirective } from './truncated-tooltip.directive';
@@ -103,9 +104,13 @@ const FILLER_COLUMN_KEY = '__filler';
                  widths, so binding it on every cell would be 25x the bindings for the same result.
                  MatTable emits role=columnheader but no scope, and no aria-sort unless matSort is
                  used — the Data tab's sort lives in the URL, so both are set here. The name is
-                 given explicitly too: the grip and the resize handle sit inside the cell and carry
-                 labels of their own, which would otherwise be read out as part of the column's
-                 name. -->
+                 given explicitly too: the buttons and the resize handle sit inside the cell and
+                 carry labels of their own, which would otherwise be read out as part of the
+                 column's name.
+
+                 The whole cell is the drag handle. A click on one of its buttons is not a drag:
+                 CDK only starts one once the pointer has moved a few pixels. And it is focusable,
+                 so the arrow keys move it too — CDK drag-drop has no keyboard reorder of its own. -->
             <th
               mat-header-cell
               *matHeaderCellDef
@@ -116,23 +121,12 @@ const FILLER_COLUMN_KEY = '__filler';
               [attr.aria-sort]="column.ariaSort"
               cdkDrag
               [cdkDragData]="column.key"
-              [cdkDragDisabled]="column.isSticky">
+              [cdkDragDisabled]="column.isSticky"
+              [class.is-movable]="!column.isSticky"
+              [attr.tabindex]="column.isSticky ? null : 0"
+              [attr.aria-keyshortcuts]="column.isSticky ? null : 'ArrowLeft ArrowRight'"
+              (keydown)="onHeaderKeydown(column.key, $event)">
               <div class="header-content">
-                @if (!column.isSticky) {
-                  <!-- The drag lives on a handle, not on the whole cell: a cell-wide drag would
-                       turn every click on the sort and filter buttons below into a one-pixel
-                       column move. -->
-                  <button
-                    type="button"
-                    class="header-grip"
-                    cdkDragHandle
-                    data-cy="column-grip"
-                    [attr.aria-label]="'pages.dataBrowser.table.moveColumn' | translate: { column: column.label }"
-                    [attr.aria-keyshortcuts]="'ArrowLeft ArrowRight'"
-                    (keydown)="onGripKeydown(column.key, $event)">
-                    <mat-icon>drag_indicator</mat-icon>
-                  </button>
-                }
                 <span class="header-label" [appTruncatedTooltip]="column.label">{{ column.label }}</span>
 
                 <!-- Only where the Data tab's own sort rule allows it (REQ-3.2). A control the
@@ -267,6 +261,8 @@ const FILLER_COLUMN_KEY = '__filler';
                     <span class="cell-value">{{ cell.text }}</span>
                   }
                 </div>
+              } @else if (cell.image; as image) {
+                <app-table-image-cell [image]="image" [label]="row.label" />
               } @else if (cell.propertyInfo; as propertyInfo) {
                 <div class="cell-property" [appScrollWhenTaller]="rowCap(row.id)">
                   <app-table-property-cell
@@ -330,11 +326,11 @@ const FILLER_COLUMN_KEY = '__filler';
     MatCheckbox,
     CdkDropList,
     CdkDrag,
-    CdkDragHandle,
     ColumnResizeDirective,
     ScrollWhenTallerDirective,
     RowResizeDirective,
     ResourceExplorerButtonComponent,
+    TableImageCellComponent,
     TablePropertyCellComponent,
     TruncatedTooltipDirective,
   ],
@@ -559,14 +555,19 @@ export class DataTableComponent {
   }
 
   /**
-   * Move a column with the keyboard.
+   * Move a column with the keyboard, from its focused header cell.
    *
    * CDK drag-drop has no keyboard equivalent at all — a pointer is the only way to reorder a
    * `cdkDropList` — so without this the whole reorder feature is unavailable to anyone not using a
-   * mouse. The grip is already a button with an accessible name; the arrow keys give it the action
-   * its name promises.
+   * mouse.
+   *
+   * Only for a key pressed on the cell itself. The resize handle inside it takes the same arrow
+   * keys to change the width, and its keydown bubbles up here.
    */
-  protected onGripKeydown(key: string, event: KeyboardEvent): void {
+  protected onHeaderKeydown(key: string, event: KeyboardEvent): void {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
     const delta = event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0;
     if (delta === 0) {
       return;

@@ -845,14 +845,14 @@ const keyboardStory = (): Story => ({
 });
 
 /**
- * CDK drag-drop offers no keyboard reorder at all, so without the arrow keys on the grip the whole
- * feature is pointer-only.
+ * CDK drag-drop offers no keyboard reorder at all, so without the arrow keys on the header cell the
+ * whole feature is pointer-only.
  */
-export const MovesAColumnWithTheKeyboardFromItsGrip: Story = {
+export const MovesAColumnWithTheKeyboardFromItsHeader: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
-    const grip = canvasElement.querySelectorAll('[data-cy="column-grip"]')[0] as HTMLElement;
-    grip.focus();
+    const header = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    header.focus();
     await userEvent.keyboard('{ArrowRight}');
 
     await expect(onReorder).toHaveBeenCalledWith([LABEL_COLUMN_KEY, `${ONTO}hasPlace`, `${ONTO}hasTitle`]);
@@ -863,8 +863,8 @@ export const MovesAColumnWithTheKeyboardFromItsGrip: Story = {
 export const RefusesToMoveAColumnInFrontOfTheStickyOne: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
-    const grip = canvasElement.querySelectorAll('[data-cy="column-grip"]')[0] as HTMLElement;
-    grip.focus();
+    const header = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    header.focus();
     await userEvent.keyboard('{ArrowLeft}');
 
     await expect(onReorder).not.toHaveBeenCalled();
@@ -903,7 +903,15 @@ export const ResizesAColumnWithTheKeyboardFromItsHandle: Story = {
  * on screen is noise on a row the pointer crosses constantly.
  */
 export const ShowsATruncatedHeaderNameInFullOnHover: Story = {
-  args: { columnWidths: { [`${ONTO}hasTitle`]: 90 } },
+  // A name too long for its column even with the header's controls hidden, which they are at rest.
+  args: {
+    columns: [
+      column(LABEL_COLUMN_KEY, 'Label'),
+      column(`${ONTO}hasTitle`, 'Title of the photograph as published'),
+      column(`${ONTO}hasPlace`, 'Place'),
+    ],
+    columnWidths: { [`${ONTO}hasTitle`]: 90 },
+  },
   play: async ({ canvasElement }) => {
     const label = (name: string) =>
       Array.from(canvasElement.querySelectorAll('th .header-label')).find(element =>
@@ -917,7 +925,7 @@ export const ShowsATruncatedHeaderNameInFullOnHover: Story = {
     await userEvent.unhover(label('Place'));
 
     await userEvent.hover(label('Title'));
-    await waitFor(() => expect(tooltip()).toHaveTextContent('Title'));
+    await waitFor(() => expect(tooltip()).toHaveTextContent('Title of the photograph as published'));
     await userEvent.unhover(label('Title'));
   },
 };
@@ -985,8 +993,8 @@ export const KeepsAPinnedColumnInViewWhileTheTableScrolls: Story = {
 export const RefusesToMoveAScrollingColumnInFrontOfAPin: Story = {
   ...pinnedStory(),
   play: async ({ canvasElement }) => {
-    const titleGrip = canvasElement.querySelector('th[aria-label="Title"] [data-cy="column-grip"]') as HTMLElement;
-    titleGrip.focus();
+    const titleHeader = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    titleHeader.focus();
     await userEvent.keyboard('{ArrowLeft}');
 
     await expect(onReorder).not.toHaveBeenCalled();

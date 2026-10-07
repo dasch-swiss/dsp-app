@@ -47,6 +47,7 @@ table {
 
 .filler-cell {
   padding: 0;
+  border-right: none;
 }
 
 // The row-height tokens set `height`, which clips a cell holding three stacked values. Turning
@@ -64,26 +65,52 @@ table {
   background: #f9fafb;
   // Anchors the resize handle, which hangs off the cell's right edge.
   position: relative;
+  // Where one column ends and the next begins, which the header is where you look for it.
+  border-right: 1px solid #e5e7eb;
 
-  // Both affordances are noise until the pointer is near the column they belong to; at forty
-  // columns, always-on grips and handles read as a row of dense clutter rather than as controls.
+  &:first-child {
+    border-left: 1px solid #e5e7eb;
+  }
+
+  // The controls are noise until the pointer is near the column they belong to; at forty columns,
+  // always-on grips and buttons read as a row of dense clutter rather than as controls.
   // `focus-within` keeps them reachable without a pointer.
   &:hover,
   &:focus-within {
-    .header-grip,
-    .column-resize-handle,
     .header-sort,
     .header-filter,
     .header-pin {
+      width: var(--header-control-width);
+      opacity: 1;
+    }
+
+    .header-sort,
+    .header-filter,
+    .header-pin {
+      margin-left: 4px;
+    }
+
+    .column-resize-handle {
       opacity: 1;
     }
   }
 }
 
+// A hidden control takes no room, not just no ink: the name gets the whole width and shows in full,
+// and only gives way — ellipsising if it must — when hovering brings the controls in. An active
+// control (the sorted, filtered or pinned column's) is always drawn, and always takes its room.
+.header-sort,
+.header-filter,
+.header-pin {
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  box-sizing: border-box;
+}
+
 .header-content {
   display: flex;
   align-items: center;
-  gap: 4px;
   min-width: 0;
   // Under `table-layout: fixed` a column still cannot render narrower than its cells' min-content,
   // and a flex row's min-content counts the label's full text however `min-width` is set on the
@@ -92,31 +119,18 @@ table {
   contain: inline-size;
 }
 
-.header-grip {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  border: none;
-  background: transparent;
-  padding: 0;
+// The whole header cell moves its column, so it says so — except over its buttons, which keep
+// their own pointer, and the resize handle, which keeps its own.
+.mat-mdc-header-cell.is-movable {
   cursor: grab;
-  color: rgba(0, 0, 0, 0.38);
-  opacity: 0;
 
   &:active {
     cursor: grabbing;
   }
 
   &:focus-visible {
-    opacity: 1;
     outline: 2px solid var(--primary, #336790);
-    outline-offset: 1px;
-  }
-
-  mat-icon {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
+    outline-offset: -2px;
   }
 }
 
@@ -126,6 +140,8 @@ table {
 .header-sort,
 .header-filter,
 .header-pin {
+  --header-control-width: 18px;
+
   flex: none;
   display: inline-flex;
   align-items: center;
@@ -133,7 +149,8 @@ table {
   border: none;
   border-radius: 3px;
   background: transparent;
-  padding: 1px;
+  // None: the 18px width centres the 16px icon, and a padding would keep a hidden control 2px wide.
+  padding: 0;
   cursor: pointer;
   color: rgba(0, 0, 0, 0.45);
 
@@ -150,11 +167,12 @@ table {
   }
 }
 
-.header-sort {
-  opacity: 0;
-
+.header-sort,
+.header-filter,
+.header-pin {
   &.is-active {
-    // Beats the hover rule above, which only ever raises opacity.
+    width: var(--header-control-width);
+    margin-left: 4px;
     opacity: 1;
     color: var(--primary, #336790);
   }
@@ -163,13 +181,6 @@ table {
 // Hover-only like the sort, unless the column is pinned: then it stays, both as the way to unpin
 // and as the sign of why the column does not scroll.
 .header-pin {
-  opacity: 0;
-
-  &.is-active {
-    opacity: 1;
-    color: var(--primary, #336790);
-  }
-
   mat-icon {
     transform: rotate(45deg);
   }
@@ -179,14 +190,8 @@ table {
   }
 }
 
-.header-filter {
-  opacity: 0;
-
-  &.is-active {
-    opacity: 1;
-    background: #d6e0e8;
-    color: var(--primary, #336790);
-  }
+.header-filter.is-active {
+  background: #d6e0e8;
 }
 
 .column-resize-handle {
