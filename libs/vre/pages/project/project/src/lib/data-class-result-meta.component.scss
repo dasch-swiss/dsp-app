@@ -5,6 +5,11 @@
   min-height: 36px;
 }
 
+.result-meta.is-refreshing .range,
+.result-meta.is-refreshing .page-indicator {
+  color: rgba(0, 0, 0, 0.38);
+}
+
 .range {
   font: 400 13px/20px Roboto, sans-serif;
   color: rgba(0, 0, 0, 0.7);

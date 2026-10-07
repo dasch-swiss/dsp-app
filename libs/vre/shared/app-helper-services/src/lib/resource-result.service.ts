@@ -28,6 +28,42 @@ export class ResourceResultService {
   }
   readonly MAX_RESULTS_PER_PAGE = 25;
 
+  /**
+   * True while a page of results is being fetched to replace the one on screen — after a filter,
+   * sort, search or page change. Not set for a view's first load, which has nothing on screen to
+   * keep and shows its own spinner instead.
+   *
+   * Here rather than on the fetching components so the class header, which sits above both views,
+   * can show the one wait for either: it holds the count and pager that are about to change.
+   */
+  readonly isRefreshing = signal(false);
+
+  private _hasResults = false;
+
+  /** A view is (re)starting from nothing: its first load is not a refresh. */
+  resetLoading(): void {
+    this._hasResults = false;
+    this.isRefreshing.set(false);
+  }
+
+  /** A fetch has started. A refresh only once some results are on screen. */
+  markLoading(): void {
+    if (this._hasResults) {
+      this.isRefreshing.set(true);
+    }
+  }
+
+  /** Results are on screen. */
+  markLoaded(): void {
+    this._hasResults = true;
+    this.isRefreshing.set(false);
+  }
+
+  /** The fetch failed; the failure panel replaces the results, so there is nothing to wait on. */
+  markFailed(): void {
+    this.isRefreshing.set(false);
+  }
+
   updatePageIndex(newIndex: number): void {
     this._pageIndexSubject.next(newIndex);
   }

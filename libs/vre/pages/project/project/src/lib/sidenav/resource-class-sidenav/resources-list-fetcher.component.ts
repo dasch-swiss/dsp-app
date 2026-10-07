@@ -11,7 +11,7 @@ import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-servic
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { CenteredBoxComponent, CenteredMessageComponent, SearchFailedComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import { BehaviorSubject, catchError, combineLatest, first, map, Observable, of, skip, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, first, map, Observable, of, skip, switchMap, tap } from 'rxjs';
 import { DataBrowserPageService } from '../../data-browser-page.service';
 import { DataClassQueryService } from '../../data-class-query.service';
 import { ProjectPageService } from '../../project-page.service';
@@ -109,6 +109,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
     this.failed.set(false);
     this.failureReason.set(undefined);
 
+    this._resourceResult.resetLoading();
     this.data$ = this._retrySubject.pipe(switchMap(() => this._data$()));
   }
 
@@ -122,6 +123,8 @@ export class ResourcesListFetcherComponent implements OnChanges {
     // were — a retry repeats the request that failed rather than silently returning to page 1 of an
     // unfiltered list.
     this.failed.set(false);
+    // The failure panel replaced the results, so the retry is a first load, not a refresh.
+    this._resourceResult.resetLoading();
     this._retrySubject.next();
   }
 
@@ -150,11 +153,15 @@ export class ResourcesListFetcherComponent implements OnChanges {
               this._resourceResult.updatePageIndex(0);
             }
 
+            this._resourceResult.markLoading();
             return combineLatest([this._pagedResources$(query, project.id), this._countQuery$(query, project.id)]);
           })
         )
       ),
-      map(([{ resources, pageIndex }, numberOfResults]) => this._applyCount(resources, pageIndex, numberOfResults))
+      map(([{ resources, pageIndex }, numberOfResults]) => this._applyCount(resources, pageIndex, numberOfResults)),
+      // The class header's refresh bar: on for a page, filter or sort change while the list stays
+      // on screen, off once the new results are in.
+      tap(() => this._resourceResult.markLoaded())
     );
 
     return resources$.pipe(
@@ -163,6 +170,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
         // Drop any previously known total: after a failed page change the old count describes results
         // that are no longer on screen, and leaving it would break the service's "null means genuinely
         // unknown" contract for as long as the failure state lasts.
+        this._resourceResult.markFailed();
         this._resourceResult.numberOfResults = null;
         // A rejected request explains itself; the panel says so instead of "try again", which cannot
         // work for a request the server will keep rejecting (DEV-6866).
@@ -227,6 +235,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
 
   private _pagedResources$(query: string, projectIri: string) {
     return this._resourceResult.pageIndex$.pipe(
+      tap(() => this._resourceResult.markLoading()),
       switchMap(pageIndex =>
         this._performGravSearch(query, pageIndex, projectIri).pipe(
           map(response => ({ resources: response.resources, pageIndex }))

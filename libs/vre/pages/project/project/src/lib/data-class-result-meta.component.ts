@@ -20,7 +20,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   template: `
     @let meta = vm();
     <!-- Announced, not just rendered: filtering changes these numbers without moving focus. -->
-    <div class="result-meta" aria-live="polite">
+    <div class="result-meta" aria-live="polite" [class.is-refreshing]="meta.refreshing">
       @if (meta.countUnavailable) {
         <!-- The count query failed. The pager cannot be sized either, so paging is unavailable
              until the next successful load. -->
@@ -43,7 +43,7 @@ import { TranslatePipe } from '@ngx-translate/core';
               class="pager-button"
               [matTooltip]="'ui.pager.firstPage' | translate"
               [attr.aria-label]="'ui.pager.firstPage' | translate"
-              [disabled]="meta.atFirst"
+              [disabled]="meta.atFirst || meta.refreshing"
               (click)="goTo(0)">
               <mat-icon>first_page</mat-icon>
             </button>
@@ -53,7 +53,7 @@ import { TranslatePipe } from '@ngx-translate/core';
               class="pager-button"
               [matTooltip]="'ui.pager.previousPage' | translate"
               [attr.aria-label]="'ui.pager.previousPage' | translate"
-              [disabled]="meta.atFirst"
+              [disabled]="meta.atFirst || meta.refreshing"
               (click)="goTo(meta.pageIndex - 1)">
               <mat-icon>chevron_left</mat-icon>
             </button>
@@ -70,6 +70,7 @@ import { TranslatePipe } from '@ngx-translate/core';
                 min="1"
                 [max]="meta.lastPageIndex + 1"
                 [value]="meta.pageIndex + 1"
+                [disabled]="meta.refreshing"
                 [style.--page-digits]="(meta.lastPageIndex + 1).toString().length"
                 [attr.aria-label]="'pages.dataBrowser.resultMeta.pageNumber' | translate"
                 [matTooltip]="'pages.dataBrowser.resultMeta.pageNumberHint' | translate"
@@ -86,7 +87,7 @@ import { TranslatePipe } from '@ngx-translate/core';
               data-testid="next-page"
               [matTooltip]="'ui.common.actions.next' | translate"
               [attr.aria-label]="'ui.common.actions.next' | translate"
-              [disabled]="meta.atLast"
+              [disabled]="meta.atLast || meta.refreshing"
               (click)="goTo(meta.pageIndex + 1)">
               <mat-icon>chevron_right</mat-icon>
             </button>
@@ -96,7 +97,7 @@ import { TranslatePipe } from '@ngx-translate/core';
               class="pager-button"
               [matTooltip]="'ui.pager.lastPage' | translate"
               [attr.aria-label]="'ui.pager.lastPage' | translate"
-              [disabled]="meta.atLast"
+              [disabled]="meta.atLast || meta.refreshing"
               (click)="goTo(meta.lastPageIndex)">
               <mat-icon>last_page</mat-icon>
             </button>
@@ -124,7 +125,7 @@ export class DataClassResultMetaComponent {
     const pageIndex = this._pageIndex();
 
     if (total === null) {
-      return { countUnavailable: true as const };
+      return { countUnavailable: true as const, refreshing: false };
     }
 
     const lastPageIndex = total ? Math.ceil(total / pageSize) - 1 : 0;
@@ -140,6 +141,9 @@ export class DataClassResultMetaComponent {
       hasPages: total > pageSize,
       atFirst: pageIndex === 0,
       atLast: pageIndex === lastPageIndex,
+      // The count and pager describe the results being replaced, so they wait with the table:
+      // greyed, and not clickable into a page of a result set that is about to change.
+      refreshing: this._resourceResult.isRefreshing(),
     };
   });
 

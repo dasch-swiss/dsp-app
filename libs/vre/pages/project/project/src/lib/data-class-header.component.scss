@@ -4,6 +4,26 @@
   // LABEL column header read as one stack, and the boundary between "this is about the whole
   // result set" and "this is the list" disappears.
   border-bottom: 1px solid #dcdcdc;
+  // Anchors the refresh bar to the bottom edge.
+  position: relative;
+}
+
+// Over the border, full width — the line the results hang from is the one that moves.
+.refresh-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  // A request that answers within a blink should not flash a bar: it fades in only once the wait
+  // has lasted long enough to notice.
+  opacity: 0;
+  animation: refresh-bar-in 150ms ease-out 200ms forwards;
+}
+
+@keyframes refresh-bar-in {
+  to {
+    opacity: 1;
+  }
 }
 
 .identity-row {

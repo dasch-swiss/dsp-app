@@ -1,8 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, Input, ViewContainerRef } from '@angular/core';
+import { Component, computed, inject, Input, ViewContainerRef } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
@@ -13,6 +14,7 @@ import {
 } from '@dasch-swiss/vre/pages/data-browser';
 import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search-filters';
 import { filterUndefined, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
+import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -89,6 +91,16 @@ interface CreateResourceDialogProps {
         }
         <app-data-class-view-toggle />
       </div>
+
+      <!-- On the header's bottom edge while new results load, for the list and the table alike: the
+           results stay on screen, and this says they are about to change. -->
+      @if (isRefreshing()) {
+        <mat-progress-bar
+          class="refresh-bar"
+          mode="indeterminate"
+          data-cy="results-refreshing"
+          [attr.aria-label]="'pages.dataBrowser.resultMeta.updating' | translate" />
+      }
     </div>
   `,
   styleUrl: './data-class-header.component.scss',
@@ -96,6 +108,7 @@ interface CreateResourceDialogProps {
     AsyncPipe,
     MatButton,
     MatIcon,
+    MatProgressBar,
     TranslatePipe,
     StringifyStringLiteralPipe,
     AdvancedSearchBarComponent,
@@ -110,6 +123,10 @@ export class DataClassHeaderComponent {
   readonly tableState = inject(TableViewStateService);
 
   readonly view$ = inject(DataClassUrlStateService).view$;
+
+  /** Whether the results below are being replaced. See `ResourceResultService.isRefreshing`. */
+  readonly isRefreshing = computed(() => this._resourceResult.isRefreshing());
+  private readonly _resourceResult = inject(ResourceResultService);
 
   @Input({ required: true }) classSelected!: {
     classLabel: string;

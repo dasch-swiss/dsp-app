@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ReadResource, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { MultipleViewerService, ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
+import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -137,6 +138,8 @@ describe('DataClassHeaderComponent', () => {
         // The header reads the view out of the URL to decide whether to offer the table's View
         // options menu. The real service is route-scoped, which this isolated fixture has none of.
         { provide: DataClassUrlStateService, useValue: { view$: of('list') } },
+        // Route-scoped like the URL state: the class view provides it, so the fixture does too.
+        ResourceResultService,
         provideTranslateService(),
         TranslateService,
       ],
