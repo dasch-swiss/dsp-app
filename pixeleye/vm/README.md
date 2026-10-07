@@ -1,7 +1,7 @@
 # Pixeleye VM deployment
 
-Hardened single-VM deployment of self-hosted pixeleye for the advisory CI trial
-(DEV-7238). See the
+Hardened single-VM deployment of self-hosted pixeleye, started as an advisory CI trial
+(DEV-7238) and now a required check on `main` (DEV-7471, see [Review flow](#review-flow)). See the
 [plan](https://github.com/dasch-swiss/dasch-specs/blob/main/specs/2026-09-11-pixeleye-visual-regression-ci/02-feat-pixeleye-visual-regression-ci-plan.md).
 
 ## Why this is a standalone compose file
@@ -60,11 +60,27 @@ openssl rand -base64 32 | tr -d '/+=' | head -c 32
    rejected with `401`. A usable token is that value **plus `:<projectID>`**:
    `pxi__<secret>:<projectID>`. The UI does this concatenation for you; the API does not.
 4. Set the project's **`autoApprove` to `main`**, or every baseline needs manual
-   approval and "advisory" quietly becomes recurring manual work. The endpoint is
+   approval and every PR is blocked on reviewing its own baseline. The endpoint is
    `PATCH /v1/projects/<projectID>/admin` — note the `/admin` suffix; without it you get
    a `404`.
 5. Add `PIXELEYE_TOKEN` and `PIXELEYE_ENDPOINT=https://api.<HOST_BASE>` as `dsp-das`
    repository secrets.
+
+## Review flow
+
+CI has two pixeleye jobs: `Pixeleye Snapshots` captures and uploads, `Pixeleye Visual
+Review` is the required check that reads the verdict.
+
+| build status | check |
+|---|---|
+| `unchanged`, `approved`, `orphaned` | passes |
+| `unreviewed`, `rejected` | fails |
+| `failed`, `aborted`, no build | passes with a warning — a dead VM must not block every merge |
+
+Approving in the dashboard does **not** notify GitHub. Approve the build, then **re-run
+`Pixeleye Visual Review`** — never the snapshots job: re-uploading the same SHA creates a
+new build that is `unreviewed` again and discards the approval. The check name is what
+branch protection matches on; renaming the job silently drops the protection.
 
 ## Verify hardening
 
