@@ -144,8 +144,9 @@ export class TableLayoutService {
    * Three cases, and all three are real rather than defensive: ontologies are edited while people
    * have the app open.
    *   - a stored key the class no longer defines is dropped (REQ-2.9);
-   *   - a column the layout never heard of is added visible, at the end — the same as it would be in
-   *     a layout made today, where every column starts visible;
+   *   - a column the layout never heard of is added visible, as in a layout made today, and where it
+   *     sits in the model: right after the column before it there. A new image column lands next to
+   *     the label rather than at the far end, and the rights columns after the last property;
    *   - a malformed field falls back to its default rather than failing the whole layout.
    */
   private _reconcile(stored: StoredLayout, columns: TableColumn[]): TableLayout {
@@ -165,7 +166,11 @@ export class TableLayoutService {
       visible.unshift(LABEL_COLUMN_KEY);
     }
 
-    const allVisible = [...visible, ...unknownToLayout.filter(key => key !== LABEL_COLUMN_KEY)];
+    const allVisible = this._insertInModelPosition(
+      visible,
+      unknownToLayout.filter(key => key !== LABEL_COLUMN_KEY),
+      columns
+    );
     // Only pins on columns that are still there and still shown; a hidden column cannot be pinned.
     const pinned = (isStringArray(stored.pinned) ? stored.pinned : []).filter(
       key => key !== LABEL_COLUMN_KEY && allVisible.includes(key)
@@ -178,6 +183,25 @@ export class TableLayoutService {
       ...this._reconcileRowHeight(stored.rowHeight),
       ...(pinned.length > 0 ? { pinned } : {}),
     };
+  }
+
+  /**
+   * Insert each new key after the nearest column before it in the model that is already shown —
+   * the label at worst, which always is. Keys go in model order, so several new neighbours keep
+   * their relative order.
+   */
+  private _insertInModelPosition(visible: string[], added: string[], columns: TableColumn[]): string[] {
+    const order = columns.map(column => column.key);
+    const result = [...visible];
+
+    for (const key of added) {
+      const before = order
+        .slice(0, order.indexOf(key))
+        .reverse()
+        .find(previous => result.includes(previous));
+      result.splice(before === undefined ? result.length : result.indexOf(before) + 1, 0, key);
+    }
+    return result;
   }
 
   /**

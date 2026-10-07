@@ -1,4 +1,10 @@
-import { ReadResource, ReadValue } from '@dasch-swiss/dsp-js';
+import {
+  Constants,
+  ReadResource,
+  ReadStillImageExternalFileValue,
+  ReadStillImageFileValue,
+  ReadValue,
+} from '@dasch-swiss/dsp-js';
 import {
   DspResource,
   generateDspResource,
@@ -38,6 +44,8 @@ export interface TableCell {
    * value: there is no `ReadValue` behind them and no property definition, so they stay plain text.
    */
   readonly text?: string;
+  /** The image column's image. See {@link TableImage}. */
+  readonly image?: TableImage;
   /** Where the text links to. Only the license, to its Creative Commons deed. */
   readonly href?: string;
   /**
@@ -59,6 +67,16 @@ export interface TableCell {
   readonly isCollapsible: boolean;
   /** True when there is nothing to render: no value for this property, or an empty label. */
   readonly isEmpty: boolean;
+}
+
+/** A resource's still image, as the image column shows it. */
+export interface TableImage {
+  /** IIIF request for the small rendition drawn in the cell. */
+  readonly url: string;
+  /** IIIF request for the larger rendition the hover preview shows, fetched only when it opens. */
+  readonly previewUrl: string;
+  /** Served by DSP's own Sipi, which needs the user's token to serve a non-public image. */
+  readonly isSipi: boolean;
 }
 
 /**
@@ -171,6 +189,54 @@ function _rightsCell(
   }
 }
 
+/**
+ * The IIIF size a thumbnail is requested at: the image scaled to fit inside this box. Twice the
+ * largest it is drawn at in an Auto-height row, so it stays sharp on a high-density screen; a taller
+ * row from View options draws it larger, and it softens rather than costing every row a bigger file.
+ */
+const THUMBNAIL_BOX = '!256,256';
+
+/** The hover preview's rendition: twice the box it is drawn in, for the same reason. */
+const PREVIEW_BOX = '!640,640';
+
+/**
+ * An external image is a full IIIF image request, often for the whole image at full size. Its
+ * size segment is swapped for the thumbnail box when the URL has the IIIF shape; anything else is
+ * used as given, since there is no telling what a server makes of a rewritten path.
+ */
+function _withSize(url: string, box: string): string {
+  return url.replace(/\/([^/]+)\/([^/]+)\/(!?\d+(?:\.\d+)?)\/(\w+)\.(jpg|png|webp|gif|tif)$/, `/$1/${box}/$3/$4.$5`);
+}
+
+function _imageCell(resource: ReadResource, column: TableColumn): TableCell {
+  const file = resource.properties[Constants.HasStillImageFileValue]?.[0];
+  let image: TableImage | undefined;
+  if (file instanceof ReadStillImageFileValue && file.iiifBaseUrl && file.filename) {
+    const base = `${file.iiifBaseUrl}/${file.filename}/full`;
+    image = {
+      url: `${base}/${THUMBNAIL_BOX}/0/default.jpg`,
+      previewUrl: `${base}/${PREVIEW_BOX}/0/default.jpg`,
+      isSipi: true,
+    };
+  } else if (file instanceof ReadStillImageExternalFileValue && file.externalUrl) {
+    image = {
+      url: _withSize(file.externalUrl, THUMBNAIL_BOX),
+      previewUrl: _withSize(file.externalUrl, PREVIEW_BOX),
+      isSipi: false,
+    };
+  }
+
+  return {
+    columnKey: column.key,
+    image,
+    values: EMPTY_VALUES,
+    collapsedValues: EMPTY_VALUES,
+    hiddenCount: 0,
+    isCollapsible: false,
+    isEmpty: image === undefined,
+  };
+}
+
 /** What a row needs beyond its resource to render the rights-statement columns. */
 export interface RowRights {
   /** The project's legal info; undefined while it loads, or if it could not be loaded. */
@@ -187,6 +253,9 @@ function cellFor(
 ): TableCell {
   if (column.key === LABEL_COLUMN_KEY) {
     return _textCell(column, resource.label);
+  }
+  if (column.isImage) {
+    return _imageCell(resource, column);
   }
   if (column.rightsField) {
     return _rightsCell(resource, column, column.rightsField, rowRights.rights, rowRights.placeholderLabel);

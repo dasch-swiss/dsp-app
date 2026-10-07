@@ -83,13 +83,30 @@ describe('TableLayoutService', () => {
       expect(layout.hidden).toEqual([]);
     });
 
-    it('AddsAColumnTheLayoutNeverHeardOfAsVisibleAtTheEnd', () => {
+    it('AddsAColumnTheLayoutNeverHeardOfAsVisible', () => {
       store({ visible: [LABEL_COLUMN_KEY, 'p0'], hidden: ['p1'], widths: {} });
 
       const layout = service.load(CLASS_IRI, columns(3));
 
       expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p2']);
       expect(layout.hidden).toEqual(['p1']);
+    });
+
+    /** Where the model has it, not at the far end: a new image column belongs next to the label. */
+    it('PutsANewColumnAfterTheOneBeforeItInTheModel', () => {
+      store({ visible: [LABEL_COLUMN_KEY, 'p2', 'p1'], hidden: [], widths: {} });
+
+      const layout = service.load(CLASS_IRI, columns(3));
+
+      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p2', 'p1']);
+    });
+
+    it('KeepsANewColumnBehindThePins', () => {
+      store({ visible: [LABEL_COLUMN_KEY, 'p2', 'p1'], hidden: [], widths: {}, pinned: ['p2'] });
+
+      const layout = service.load(CLASS_IRI, columns(3));
+
+      expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p2', 'p0', 'p1']);
     });
 
     it('DropsAPinOnAColumnThatIsGoneOrHiddenAndKeepsThePinsFirst', () => {

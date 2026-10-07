@@ -1,7 +1,13 @@
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import {
+  Constants,
+  ReadResource,
+  ReadStillImageExternalFileValue,
+  ReadStillImageFileValue,
+  ReadValue,
+} from '@dasch-swiss/dsp-js';
 import { ProjectDataRights } from '@dasch-swiss/vre/shared/app-helper-services';
-import { rightsColumns } from './build-column-model';
-import { RIGHTS_COLUMN_KEYS } from './table-column.model';
+import { imageColumn, rightsColumns } from './build-column-model';
+import { IMAGE_COLUMN_KEY, RIGHTS_COLUMN_KEYS } from './table-column.model';
 import { buildRows, RowRights } from './table-row.model';
 
 const PLACEHOLDER = 'urn:dasch:placeholder';
@@ -90,5 +96,55 @@ describe('buildRows — rights statement', () => {
     expect(row[RIGHTS_COLUMN_KEYS.license]).toMatchObject({ text: '', isEmpty: false });
     expect(row[RIGHTS_COLUMN_KEYS.copyrightHolder]).toMatchObject({ text: '', isEmpty: false });
     expect(row[RIGHTS_COLUMN_KEYS.authorship]).toMatchObject({ text: 'Ada' });
+  });
+});
+
+describe('buildRows — image', () => {
+  const IMAGE_COLUMNS = imageColumn(
+    { id: 'x', propertiesList: [{ propertyIndex: Constants.HasStillImageFileValue }] } as never,
+    'Image'
+  );
+
+  function withImage(file?: ReadValue): ReadResource {
+    const res = resource();
+    res.properties = file ? { [Constants.HasStillImageFileValue]: [file] } : {};
+    return res;
+  }
+
+  function imageCell(res: ReadResource) {
+    return buildRows([res], IMAGE_COLUMNS)[0].cells[IMAGE_COLUMN_KEY];
+  }
+
+  it('AsksSipiForAThumbnailOfAnInternalImage', () => {
+    const file = Object.assign(new ReadStillImageFileValue(), {
+      iiifBaseUrl: 'https://iiif.example.org/0803',
+      filename: 'page.jp2',
+    });
+
+    expect(imageCell(withImage(file)).image).toEqual({
+      url: 'https://iiif.example.org/0803/page.jp2/full/!256,256/0/default.jpg',
+      previewUrl: 'https://iiif.example.org/0803/page.jp2/full/!640,640/0/default.jpg',
+      isSipi: true,
+    });
+  });
+
+  /** A full-size request swapped for the thumbnail, and not routed through Sipi's token fetch. */
+  it('ShrinksAnExternalIiifImageRequestToAThumbnail', () => {
+    const file = Object.assign(new ReadStillImageExternalFileValue(), {
+      externalUrl: 'https://iiif.other.org/iiif/3/abc/full/max/0/default.jpg',
+    });
+
+    expect(imageCell(withImage(file)).image).toEqual({
+      url: 'https://iiif.other.org/iiif/3/abc/full/!256,256/0/default.jpg',
+      previewUrl: 'https://iiif.other.org/iiif/3/abc/full/!640,640/0/default.jpg',
+      isSipi: false,
+    });
+  });
+
+  it('ReportsAResourceWithoutAnImageAsEmpty', () => {
+    const cell = imageCell(withImage());
+
+    expect(cell.image).toBeUndefined();
+    expect(cell.isEmpty).toBe(true);
   });
 });

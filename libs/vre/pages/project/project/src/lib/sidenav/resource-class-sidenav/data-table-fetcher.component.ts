@@ -13,6 +13,7 @@ import { ErrorReportingService, userFacingReason } from '@dasch-swiss/vre/core/e
 import {
   buildColumnModel,
   DataTableComponent,
+  imageColumn,
   LABEL_COLUMN_KEY,
   MultipleViewerService,
   rightsColumns,
@@ -28,7 +29,7 @@ import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indi
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { CenteredBoxComponent, CenteredMessageComponent, SearchFailedComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, catchError, combineLatest, first, map, Observable, of, skip, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, first, map, Observable, of, skip, switchMap, tap } from 'rxjs';
 import { DataBrowserPageService } from '../../data-browser-page.service';
 import { DataClassQueryService } from '../../data-class-query.service';
 import { DataClassUrlStateService } from '../../data-class-url-state.service';
@@ -60,7 +61,9 @@ import { ProjectPageService } from '../../project-page.service';
     } @else if (data) {
       @if (userCanViewResources) {
         @if (data.resources.length > 0) {
+          <!-- The rows stay while the next results load; the class header shows the wait. -->
           <app-data-table
+            [attr.aria-busy]="isRefreshing()"
             [resources]="data.resources"
             [columns]="columns()"
             [projectRights]="projectRights()"
@@ -132,6 +135,9 @@ export class DataTableFetcherComponent implements OnChanges {
    */
   private readonly _tableState = inject(TableViewStateService);
   readonly columns = this._tableState.columns;
+
+  /** Whether the rows on screen are about to be replaced. See `ResourceResultService.isRefreshing`. */
+  readonly isRefreshing = computed(() => this._resourceResult.isRefreshing());
 
   /**
    * The project's legal info, for the rights-statement columns — the same cached lookup the
@@ -273,11 +279,14 @@ export class DataTableFetcherComponent implements OnChanges {
     this.failureReason.set(undefined);
 
     this._rebuildColumns();
+    this._resourceResult.resetLoading();
     this.data$ = this._retrySubject.pipe(switchMap(() => this._data$()));
   }
 
   onRetry() {
     this.failed.set(false);
+    // The failure panel replaced the results, so the retry is a first load, not a refresh.
+    this._resourceResult.resetLoading();
     this._retrySubject.next();
   }
 
@@ -375,8 +384,18 @@ export class DataTableFetcherComponent implements OnChanges {
         .map(propDef => [propDef.id, propDef])
     );
 
+    const [label, ...properties] = buildColumnModel(
+      this.resClass,
+      definitions,
+      propDef => this._stringify.transform(propDef.labels),
+      'Label'
+    );
+    // The image right after the label: for a class of pages or photographs it is what identifies a
+    // row at a glance, more than any property does.
     const columns = [
-      ...buildColumnModel(this.resClass, definitions, propDef => this._stringify.transform(propDef.labels), 'Label'),
+      label,
+      ...imageColumn(this.resClass, this._translate.instant('pages.dataBrowser.table.imageColumn')),
+      ...properties,
       ...rightsColumns({
         license: this._translate.instant('legal.dataSide.license'),
         copyrightHolder: this._translate.instant('legal.dataSide.copyrightHolder'),
@@ -399,16 +418,19 @@ export class DataTableFetcherComponent implements OnChanges {
               this._resourceResult.updatePageIndex(0);
             }
 
+            this._resourceResult.markLoading();
             return combineLatest([this._pagedResources$(query, project.id), this._countQuery$(query, project.id)]);
           })
         )
       ),
-      map(([{ resources, pageIndex }, numberOfResults]) => this._applyCount(resources, pageIndex, numberOfResults))
+      map(([{ resources, pageIndex }, numberOfResults]) => this._applyCount(resources, pageIndex, numberOfResults)),
+      tap(() => this._resourceResult.markLoaded())
     );
 
     return resources$.pipe(
       map(resources => ({ resources })),
       catchError((error: unknown) => {
+        this._resourceResult.markFailed();
         this._resourceResult.numberOfResults = null;
         this.failureReason.set(userFacingReason(error));
         this.failed.set(true);
@@ -437,6 +459,7 @@ export class DataTableFetcherComponent implements OnChanges {
 
   private _pagedResources$(query: string, projectIri: string) {
     return this._resourceResult.pageIndex$.pipe(
+      tap(() => this._resourceResult.markLoading()),
       switchMap(pageIndex =>
         this._performGravSearch(query, pageIndex, projectIri).pipe(
           // The second fetch. Errors are *not* absorbed here: unlike the count, a failed batch

@@ -6,8 +6,14 @@ import {
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { ApiConstants } from '@dasch-swiss/vre/core/config';
-import { buildColumnModel, rightsColumns } from './build-column-model';
-import { LABEL_COLUMN_KEY, LABEL_MIN_COLUMN_WIDTH, MIN_COLUMN_WIDTH, RIGHTS_COLUMN_KEYS } from './table-column.model';
+import { buildColumnModel, imageColumn, rightsColumns } from './build-column-model';
+import {
+  IMAGE_COLUMN_KEY,
+  LABEL_COLUMN_KEY,
+  LABEL_MIN_COLUMN_WIDTH,
+  MIN_COLUMN_WIDTH,
+  RIGHTS_COLUMN_KEYS,
+} from './table-column.model';
 
 const ONTO = 'http://0.0.0.0:3333/ontology/0001/anything/v2#';
 
@@ -241,5 +247,25 @@ describe('rightsColumns', () => {
     for (const column of columns) {
       expect(column).toMatchObject({ isEditable: false, isSortable: false, isFilterable: false, isSticky: false });
     }
+  });
+});
+
+describe('imageColumn', () => {
+  it('GivesAStillImageClassAReadOnlyImageColumn', () => {
+    const columns = imageColumn(resClass([hasProperty(Constants.HasStillImageFileValue)]), 'Image');
+
+    expect(columns).toHaveLength(1);
+    expect(columns[0]).toMatchObject({
+      key: IMAGE_COLUMN_KEY,
+      label: 'Image',
+      isImage: true,
+      isEditable: false,
+      isSortable: false,
+      isFilterable: false,
+    });
+  });
+
+  it('GivesAnyOtherClassNone', () => {
+    expect(imageColumn(resClass([hasProperty(`${ONTO}hasText`)]), 'Image')).toEqual([]);
   });
 });

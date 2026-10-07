@@ -16,6 +16,7 @@ export * from './lib/properties/properties-display/template-switcher/create-reso
 export { PropertyValuesComponent } from './lib/properties/properties-display/property-value/property-values.component';
 export { PropertiesDisplayService } from './lib/properties/properties-display/property-value/properties-display.service';
 export { ResourceFetcherService } from './lib/representation/resource-fetcher.service';
+export { RepresentationService } from './lib/representation/representation.service';
 export { FootnoteService } from './lib/properties/properties-display/footnotes/footnote.service';
 
 // The drawer-dialog open control. Shared with the data browser's table so a row opens a resource

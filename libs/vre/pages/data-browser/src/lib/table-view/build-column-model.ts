@@ -7,6 +7,7 @@ import { ApiConstants } from '@dasch-swiss/vre/core/config';
 import {
   DEFAULT_WIDTH,
   defaultWidthForValueType,
+  IMAGE_COLUMN_KEY,
   LABEL_COLUMN_KEY,
   LABEL_COLUMN_WIDTH,
   LABEL_MIN_COLUMN_WIDTH,
@@ -176,4 +177,40 @@ export function rightsColumns(titles: Readonly<Record<RightsField, string>>): Ta
     defaultWidth: DEFAULT_WIDTH,
     minWidth: MIN_COLUMN_WIDTH,
   }));
+}
+
+/** Wide enough for a thumbnail to be recognisable, narrow enough not to crowd out the values. */
+const IMAGE_COLUMN_WIDTH = 120;
+
+/**
+ * An image column, for a class whose resources are still images; none for any other class.
+ *
+ * Its own column rather than the file-value property's: `hasStillImageFileValue` is defined in the
+ * knora-api ontology, not the project's, so {@link buildColumnModel} never sees a definition for it
+ * — and its value is a file, which reads as a filename rather than as the image it is.
+ *
+ * @param title the header, already localised
+ */
+export function imageColumn(resClass: ResourceClassDefinitionWithAllLanguages, title: string): TableColumn[] {
+  const hasImage = resClass.propertiesList.some(
+    hasProperty => hasProperty.propertyIndex === Constants.HasStillImageFileValue
+  );
+  if (!hasImage) {
+    return [];
+  }
+
+  return [
+    {
+      key: IMAGE_COLUMN_KEY,
+      label: title,
+      valueType: Constants.StillImageFileValue,
+      isImage: true,
+      isEditable: false,
+      isSortable: false,
+      isFilterable: false,
+      isSticky: false,
+      defaultWidth: IMAGE_COLUMN_WIDTH,
+      minWidth: MIN_COLUMN_WIDTH,
+    },
+  ];
 }
