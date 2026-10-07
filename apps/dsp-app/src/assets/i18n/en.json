@@ -632,7 +632,8 @@
         "range": "{{start}} – {{end}} of {{total}}",
         "ofPages": "of {{total}}",
         "pageNumber": "Page number",
-        "pageNumberHint": "Type a page number and press Enter."
+        "pageNumberHint": "Type a page number and press Enter.",
+        "updating": "Updating results"
       },
       "sortHeader": {
         "sortBy": "Sort by",
@@ -650,13 +651,14 @@
         "notSet": "— not set",
         "showMore": "Show {{count}} more",
         "showLess": "Show less",
-        "moveColumn": "Move the {{column}} column",
         "resizeColumn": "Resize the {{column}} column",
         "sortColumnAscending": "Sort by {{column}}, ascending",
         "sortColumnDescending": "Sort by {{column}}, descending",
         "filterByColumn": "Filter by {{column}}",
         "pinColumn": "Pin {{column}}",
         "unpinColumn": "Unpin {{column}}",
+        "imageColumn": "Image",
+        "previewImage": "Preview the image of {{label}}",
         "editColumnFilter": "Edit the filter on {{column}}",
         "selectRow": "Add {{label}} to the comparison",
         "openRow": "Open {{label}}",
@@ -670,7 +672,8 @@
         "showAll": "Show all columns",
         "hideAll": "Hide all columns",
         "rowHeight": "Row height",
-        "rowHeightAuto": "Auto"
+        "rowHeightAuto": "Auto",
+        "rowHeightManual": "Manual"
       }
     }
   },

@@ -9,6 +9,9 @@ import { Cardinality, Constants, ResourcePropertyDefinitionWithAllLanguages } fr
  */
 export const LABEL_COLUMN_KEY = '__label';
 
+/** Synthetic key of the image column, which classes of still-image resources get after the label. */
+export const IMAGE_COLUMN_KEY = '__image';
+
 /**
  * The three fields of the Resource Rights Statement, as the viewer shows it under a resource's
  * properties. License and copyright holder are the project's, so they read the same on every row;
@@ -66,16 +69,14 @@ export const LABEL_MIN_COLUMN_WIDTH = 200;
 export const MIN_COLUMN_WIDTH = 90;
 
 /**
- * The range of the View-options row-height slider.
- *
- * The bottom stop is not a height but "Auto": rows hug their content, however tall, which is how
- * the table behaves until the user asks otherwise. It sits one step below the smallest real height
- * so the slider has somewhere to return to.
+ * The range of the View-options row-height slider, shown once the user picks Manual over Auto —
+ * where rows hug their content, however tall, which is how the table behaves until asked otherwise.
  */
-export const ROW_HEIGHT_AUTO = 40;
 export const ROW_HEIGHT_MIN = 48;
 export const ROW_HEIGHT_MAX = 400;
 export const ROW_HEIGHT_STEP = 8;
+/** Where Manual starts the first time it is picked: two lines of text, or a legible thumbnail. */
+export const ROW_HEIGHT_MANUAL_DEFAULT = 96;
 
 /**
  * One column of the table.
@@ -124,6 +125,8 @@ export interface TableColumn {
   readonly isSortable: boolean;
   /** Whether the header offers a filter control. Mirrors what the shared filter bar can express. */
   readonly isFilterable: boolean;
+  /** True on the image column, which shows each resource's still image as a thumbnail. */
+  readonly isImage?: boolean;
   /** Which rights-statement field the column shows. Absent on every other column. */
   readonly rightsField?: RightsField;
   /** Pinned to the left edge and excluded from hide, move and resize. Only the label column. */

@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, output } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { ROW_HEIGHT_AUTO, ROW_HEIGHT_MAX, ROW_HEIGHT_MIN, ROW_HEIGHT_STEP } from './table-column.model';
+import { ROW_HEIGHT_MANUAL_DEFAULT, ROW_HEIGHT_MAX, ROW_HEIGHT_MIN, ROW_HEIGHT_STEP } from './table-column.model';
 import { ColumnPickerEntry } from './table-view-state.service';
 
 /**
@@ -36,28 +37,44 @@ import { ColumnPickerEntry } from './table-view-state.service';
            style attributes, so its width and scroll behaviour are set on a wrapper inside the
            projected content instead. -->
       <div class="view-options-panel">
-        <h4 class="section-header">
+        <h4 class="section-header" id="row-height-heading">
           {{ 'pages.dataBrowser.viewOptions.rowHeight' | translate }}
           <span class="section-meta" data-cy="row-height-value">{{ rowHeightLabel() }}</span>
         </h4>
 
-        <!-- Not a menu item, so the panel's own click handler would close the menu on the first
-             touch of the thumb; the wrapper swallows it. A slider rather than steps because the
-             right height depends on what is in the cells, and that is not something a short list
-             of presets can anticipate. -->
+        <!-- Not menu items, so the panel's own click handler would close the menu on the first
+             touch; the wrapper swallows it. Auto lets each row hug its content; Manual sets them
+             all to one height, from a slider rather than presets because the right height depends
+             on what is in the cells. -->
         <div class="row-height-control" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
-          <!-- Not discrete: its value bubble floats above the thumb and, at either end of the
-               track, past the panel's edge, where the panel — which must not scroll sideways —
-               clips it. In German the bottom stop reads Automatisch, twice the width of Auto. The
-               section header above shows the same value, with room to spare. -->
-          <mat-slider data-cy="row-height-slider" [min]="sliderMin" [max]="sliderMax" [step]="sliderStep">
-            <input
-              matSliderThumb
-              [value]="rowHeight() ?? sliderMin"
-              [attr.aria-label]="'pages.dataBrowser.viewOptions.rowHeight' | translate"
-              [attr.aria-valuetext]="rowHeightLabel()"
-              (input)="onSliderInput($event)" />
-          </mat-slider>
+          <mat-button-toggle-group
+            class="row-height-mode"
+            data-cy="row-height-mode"
+            hideSingleSelectionIndicator
+            aria-labelledby="row-height-heading"
+            [value]="isManual() ? 'manual' : 'auto'"
+            (change)="onModeChange($event.value)">
+            <mat-button-toggle value="auto" data-cy="row-height-auto">
+              {{ 'pages.dataBrowser.viewOptions.rowHeightAuto' | translate }}
+            </mat-button-toggle>
+            <mat-button-toggle value="manual" data-cy="row-height-manual">
+              {{ 'pages.dataBrowser.viewOptions.rowHeightManual' | translate }}
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+
+          @if (isManual()) {
+            <!-- Not discrete: its value bubble floats above the thumb and, at either end of the
+                 track, past the panel's edge, where the panel — which must not scroll sideways —
+                 clips it. The section header above shows the same value. -->
+            <mat-slider data-cy="row-height-slider" [min]="sliderMin" [max]="sliderMax" [step]="sliderStep">
+              <input
+                matSliderThumb
+                [value]="rowHeight() ?? lastManualHeight()"
+                [attr.aria-label]="'pages.dataBrowser.viewOptions.rowHeight' | translate"
+                [attr.aria-valuetext]="rowHeightLabel()"
+                (input)="onSliderInput($event)" />
+            </mat-slider>
+          }
         </div>
 
         <!-- Every click inside a mat-menu bubbles to the panel, which closes on it. Shaping a table
@@ -121,7 +138,18 @@ import { ColumnPickerEntry } from './table-view-state.service';
     </mat-menu>
   `,
   styleUrl: './table-view-options.component.scss',
-  imports: [MatButton, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatSlider, MatSliderThumb, TranslatePipe],
+  imports: [
+    MatButton,
+    MatButtonToggle,
+    MatButtonToggleGroup,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatSlider,
+    MatSliderThumb,
+    TranslatePipe,
+  ],
 })
 export class TableViewOptionsComponent {
   private readonly _translate = inject(TranslateService);
@@ -131,7 +159,7 @@ export class TableViewOptionsComponent {
   /** The height every row is drawn at, or undefined for Auto. */
   readonly rowHeight = input<number | undefined>(undefined);
 
-  /** A height in pixels, or undefined when the slider is returned to Auto. */
+  /** A height in pixels, or undefined when the user picks Auto. */
   readonly rowHeightChanged = output<number | undefined>();
 
   readonly columnVisibilityChanged = output<{ key: string; isVisible: boolean }>();
@@ -149,33 +177,47 @@ export class TableViewOptionsComponent {
    */
   protected readonly allShown = computed(() => this.entries().every(entry => entry.column.isSticky || entry.isVisible));
 
-  protected readonly sliderMin = ROW_HEIGHT_AUTO;
+  protected readonly sliderMin = ROW_HEIGHT_MIN;
   protected readonly sliderMax = ROW_HEIGHT_MAX;
   protected readonly sliderStep = ROW_HEIGHT_STEP;
 
+  /** Manual whenever rows have a height; Auto when they hug their content. */
+  protected readonly isManual = computed(() => this.rowHeight() !== undefined);
+
   /**
-   * The section's value, and the thumb's `aria-valuetext`, so a screen reader hears "Auto" rather
-   * than the sentinel 40. Live during a drag, because the height is applied as the thumb moves.
+   * The height Manual returns to: the last one set, so switching to Auto and back does not lose
+   * it, or a default the first time. Kept here rather than in the layout, which stores only the
+   * height in force — Auto stores nothing.
    */
+  protected readonly lastManualHeight = linkedSignal<number | undefined, number>({
+    source: this.rowHeight,
+    computation: (height, previous) => height ?? previous?.value ?? ROW_HEIGHT_MANUAL_DEFAULT,
+  });
+
+  /** The section's value, and the thumb's `aria-valuetext`. Live during a drag. */
   protected readonly rowHeightLabel = computed(() => {
-    const value = this.rowHeight() ?? ROW_HEIGHT_AUTO;
-    return value <= ROW_HEIGHT_AUTO
+    const height = this.rowHeight();
+    return height === undefined
       ? this._translate.instant('pages.dataBrowser.viewOptions.rowHeightAuto')
-      : `${value}px`;
+      : `${height}px`;
   });
 
   /**
-   * The bottom stop is Auto rather than a height. It sits one step below the smallest real height
-   * so the slider has somewhere to return to, and it emits `undefined` rather than a number so the
-   * layout stores nothing at all instead of a sentinel every reader would have to know about.
-   *
+   * Auto emits `undefined` rather than a number, so the layout stores nothing at all instead of a
+   * sentinel every reader would have to know about. Manual applies a height at once — the slider
+   * then starts from what the table is showing, rather than from a position nothing reflects.
+   */
+  protected onModeChange(mode: 'auto' | 'manual'): void {
+    this.rowHeightChanged.emit(mode === 'auto' ? undefined : this.lastManualHeight());
+  }
+
+  /**
    * `input` rather than MatSlider's `valueChange`: the table follows the thumb while it is dragged
    * instead of jumping once on release. The range input only fires when the value crosses a step,
    * so a gesture writes the layout once per 8px, not once per pixel.
    */
   protected onSliderInput(event: Event): void {
-    const value = Number((event.target as HTMLInputElement).value);
-    const height = value <= ROW_HEIGHT_AUTO ? undefined : Math.max(ROW_HEIGHT_MIN, value);
+    const height = Number((event.target as HTMLInputElement).value);
     if (height !== this.rowHeight()) {
       this.rowHeightChanged.emit(height);
     }

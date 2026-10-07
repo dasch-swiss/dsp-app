@@ -64,7 +64,7 @@ const meta: Meta<TableViewOptionsComponent> = {
     entries: { description: 'Every column of the class with its current on/off state, in ontology order.' },
     columnVisibilityChanged: { description: 'Emits the column key the user toggled and its new visibility.' },
     rowHeight: { description: 'Height every row is drawn at, or undefined for Auto.' },
-    rowHeightChanged: { description: 'Emits the height as the thumb moves, or undefined at the Auto stop.' },
+    rowHeightChanged: { description: 'Emits the height as the thumb moves, or undefined when Auto is picked.' },
     allColumnsVisibilityChanged: { description: 'Emits true to show every column, false to hide all but the label.' },
   },
 };
@@ -171,21 +171,47 @@ export const IgnoresTheStickyColumnWhenDecidingWhichActionToOffer: Story = {
 
 // ── Row height ──────────────────────────────────────────────────────────────
 
-/** The slider's bottom stop is Auto, and the section says so rather than showing a pixel value. */
-export const StartsTheRowHeightSliderAtAuto: Story = {
+/** Auto by default: no slider until the user asks for a height of their own. */
+export const StartsOnAutoWithNoSlider: Story = {
   play: async () => {
     await openMenu();
 
     await expect(document.querySelector('[data-cy="row-height-value"]')).toHaveTextContent('Auto');
+    await expect(overlay().getByRole('radio', { name: 'Auto' })).toBeChecked();
+    await expect(document.querySelector('[data-cy="row-height-slider"]')).toBeNull();
   },
 };
 
-export const ShowsTheCurrentRowHeight: Story = {
+export const ShowsTheCurrentRowHeightOnManual: Story = {
   args: { rowHeight: 120 },
   play: async () => {
     await openMenu();
 
     await expect(document.querySelector('[data-cy="row-height-value"]')).toHaveTextContent('120px');
+    await expect(overlay().getByRole('radio', { name: 'Manual' })).toBeChecked();
+    await expect(document.querySelector('[data-cy="row-height-slider"]')).not.toBeNull();
+  },
+};
+
+/** Manual applies a height at once, so the slider starts from what the table is showing. */
+export const AppliesADefaultHeightWhenManualIsPicked: Story = {
+  play: async () => {
+    await openMenu();
+
+    await userEvent.click(overlay().getByRole('radio', { name: 'Manual' }));
+
+    await expect(onRowHeight).toHaveBeenCalledWith(96);
+  },
+};
+
+export const EmitsAutoWhenAutoIsPicked: Story = {
+  args: { rowHeight: 200 },
+  play: async () => {
+    await openMenu();
+
+    await userEvent.click(overlay().getByRole('radio', { name: 'Auto' }));
+
+    await expect(onRowHeight).toHaveBeenCalledWith(undefined);
   },
 };
 
@@ -194,6 +220,7 @@ export const ShowsTheCurrentRowHeight: Story = {
  * without waiting for the release.
  */
 export const EmitsTheHeightWhileTheSliderIsDragged: Story = {
+  args: { rowHeight: 120 },
   play: async () => {
     await openMenu();
     const thumb = document.querySelector('[data-cy="row-height-slider"] input') as HTMLInputElement;
@@ -202,18 +229,5 @@ export const EmitsTheHeightWhileTheSliderIsDragged: Story = {
     thumb.dispatchEvent(new Event('input', { bubbles: true }));
 
     await expect(onRowHeight).toHaveBeenCalledWith(200);
-  },
-};
-
-export const EmitsAutoWhenTheSliderReturnsToItsBottomStop: Story = {
-  args: { rowHeight: 200 },
-  play: async () => {
-    await openMenu();
-    const thumb = document.querySelector('[data-cy="row-height-slider"] input') as HTMLInputElement;
-
-    thumb.value = '40';
-    thumb.dispatchEvent(new Event('input', { bubbles: true }));
-
-    await expect(onRowHeight).toHaveBeenCalledWith(undefined);
   },
 };

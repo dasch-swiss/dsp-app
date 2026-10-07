@@ -632,7 +632,8 @@
         "range": "{{start}} – {{end}} von {{total}}",
         "ofPages": "von {{total}}",
         "pageNumber": "Seitenzahl",
-        "pageNumberHint": "Seitenzahl eingeben und mit Enter bestätigen."
+        "pageNumberHint": "Seitenzahl eingeben und mit Enter bestätigen.",
+        "updating": "Ergebnisse werden aktualisiert"
       },
       "sortHeader": {
         "sortBy": "Sortieren nach",
@@ -650,13 +651,14 @@
         "notSet": "— nicht gesetzt",
         "showMore": "{{count}} weitere anzeigen",
         "showLess": "Weniger anzeigen",
-        "moveColumn": "Spalte {{column}} verschieben",
         "resizeColumn": "Breite der Spalte {{column}} ändern",
         "sortColumnAscending": "Nach {{column}} aufsteigend sortieren",
         "sortColumnDescending": "Nach {{column}} absteigend sortieren",
         "filterByColumn": "Nach {{column}} filtern",
         "pinColumn": "{{column}} fixieren",
         "unpinColumn": "{{column}} lösen",
+        "imageColumn": "Bild",
+        "previewImage": "Bild von {{label}} anzeigen",
         "editColumnFilter": "Filter für {{column}} bearbeiten",
         "selectRow": "{{label}} zum Vergleich hinzufügen",
         "openRow": "{{label}} öffnen",
@@ -670,7 +672,8 @@
         "showAll": "Alle Spalten anzeigen",
         "hideAll": "Alle Spalten ausblenden",
         "rowHeight": "Zeilenhöhe",
-        "rowHeightAuto": "Automatisch"
+        "rowHeightAuto": "Automatisch",
+        "rowHeightManual": "Manuell"
       }
     }
   },

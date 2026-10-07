@@ -37,10 +37,22 @@
 }
 
 .row-height-control {
-  // Wide enough that the thumb's value bubble fits at both ends of its travel. The panel no longer
-  // scrolls sideways, so anything that reaches past its edge is clipped rather than reachable — and
-  // at 16px the "400px" bubble at the far end lost its last few pixels.
-  padding: 0 24px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  // In line with the section headers. The slider's own 8px margin insets its track from there.
+  padding: 0 16px 8px;
+
+  .row-height-mode {
+    align-self: stretch;
+    height: 32px;
+    font-size: 13px;
+
+    mat-button-toggle {
+      flex: 1;
+    }
+  }
 
   mat-slider {
     // `block` with `auto` rather than `width: 100%`. MatSlider carries `margin: 0 8px` of its own,
