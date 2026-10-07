@@ -8,7 +8,7 @@ import { HumanReadableErrorPipe } from './human-readable-error.pipe';
 @Component({
   selector: 'app-common-input',
   template: `
-    <mat-form-field style="width: 100%" subscriptSizing="dynamic">
+    <mat-form-field style="width: 100%" [subscriptSizing]="showsError ? 'dynamic' : 'fixed'">
       @if (withLabel) {
         <mat-label data-cy="common-input-label">{{ label }}</mat-label>
       }
@@ -38,4 +38,24 @@ export class CommonInputComponent {
   @Input() prefixIcon: string | null = null;
   @Input() validatorErrors: { errorKey: string; message: string }[] | null = null;
   @Input() type: 'number' | 'text' = 'text';
+
+  /**
+   * Whether the form field is currently displaying its error message, which decides how the
+   * subscript below the field is sized (DEV-7450).
+   *
+   * `fixed` reserves one line of space whether or not a message is shown; that reserved line is
+   * what separates stacked fields in every form built on this component. `dynamic` collapses it
+   * to nothing when there is no message, which is why switching this component to `dynamic`
+   * unconditionally made adjacent fields touch across the app.
+   *
+   * `dynamic` is still needed while a message *is* shown: a long translated error wraps onto a
+   * second line and a fixed subscript clips it (DEV-7283). Sizing per state satisfies both.
+   *
+   * The condition mirrors Angular Material's default ErrorStateMatcher (invalid *and* touched)
+   * rather than `control.errors` alone — an untouched empty required field has errors but shows
+   * none, and sizing on that would collapse the spacing of every pristine form on load.
+   */
+  get showsError(): boolean {
+    return this.control.invalid && this.control.touched;
+  }
 }
