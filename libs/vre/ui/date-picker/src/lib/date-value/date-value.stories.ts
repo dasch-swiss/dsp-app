@@ -96,10 +96,10 @@ export const ShowsBothDatesAndTheSameDayAfterASwitch: Story = {
 
     // The one thing the numerals cannot show: 01.04.2020 Gregorian and 19.03.2020 Julian are the
     // same day. One hint says what the stored value became, and that the day is unchanged.
-    await step('The hint names both dates, says it is the same day, and names the calendar', async () => {
+    await step('The hint names both dates and says it is the same day', async () => {
       const hint = canvasElement.querySelector('[data-cy="converted-from"]');
       await expect(hint?.textContent).toContain(
-        '19.03.2020 Julian has been converted from 01.04.2020 Gregorian (stored value): same day, simply expressed in Julian.'
+        '19.03.2020 Julian has been converted from 01.04.2020 Gregorian (stored value), which equals the same day.'
       );
     });
   },

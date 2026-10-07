@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { KnoraDate, KnoraPeriod, Precision } from '@dasch-swiss/dsp-js';
 import {
   CALENDAR_SYSTEMS,
@@ -63,6 +63,23 @@ export class CalendarDateService {
    * rendered before translation existed.
    */
   private readonly _translate = CalendarDateService._injectTranslateIfPossible();
+
+  /**
+   * Bumped whenever the language or its translations change, and read by {@link calendarName}.
+   *
+   * Calendar names are read inside components' `computed`s, which cache: one first computed before
+   * the translations had loaded kept the English fallback for good — the stored-value line said
+   * "Gregorian" in a German UI while the hint beside it, computed later, said "Julianisch". Reading
+   * this signal makes every such `computed` recompute when the language does.
+   */
+  private readonly _language = signal(0);
+
+  constructor() {
+    const bump = () => this._language.update(n => n + 1);
+    this._translate?.onLangChange.subscribe(bump);
+    this._translate?.onTranslationChange.subscribe(bump);
+    this._translate?.onDefaultLangChange.subscribe(bump);
+  }
 
   private static _injectTranslateIfPossible(): TranslateService | null {
     try {
@@ -597,6 +614,7 @@ export class CalendarDateService {
    * a day or two, so a bare "Islamic" claims more than the app can back (DEV-7429).
    */
   calendarName(calendar: string): string {
+    this._language();
     const key = `ui.calendarMarker.calendars.${calendar.toUpperCase()}`;
     const translated = this._translate?.instant(key);
     return translated && translated !== key ? translated : this._titleCase(calendar);

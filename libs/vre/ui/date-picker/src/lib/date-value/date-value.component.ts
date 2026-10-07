@@ -205,9 +205,6 @@ export class DateValueComponent implements ControlValueAccessor, Validator {
     return value === null ? undefined : this._calendarDates.reformGapOf(value);
   });
 
-  /** The calendar now chosen, for the hint that names it. */
-  protected readonly calendarLabel = computed(() => `ui.calendarMarker.calendars.${this._state().calendar}`);
-
   /** The period's ends are out of order — shown in the card, not only as a form error. */
   protected readonly endBeforeStart = computed(() => {
     const { start, end, isPeriod } = this._state();

@@ -1,6 +1,7 @@
+import { computed } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 
 import { CalendarDateService } from './calendar-date.service';
 
@@ -318,6 +319,21 @@ describe('CalendarDateService', () => {
 
   // The mapping in dasch-specs `10-machine-readable-dates.md`, row by row: ISO 8601, which for
   // everything DSP stores is also valid EDTF.
+  // Read inside components' computeds, which cache: one computed before the translations loaded kept
+  // the English fallback, so the stored-value line said "Gregorian" in a German UI.
+  describe('calendar names', () => {
+    it('follow the language, also inside a computed made before the translations loaded', () => {
+      const name = computed(() => service.calendarName('GREGORIAN'));
+      expect(name()).toBe('Gregorian');
+
+      const translate = TestBed.inject(TranslateService);
+      translate.setTranslation('de', { ui: { calendarMarker: { calendars: { GREGORIAN: 'Gregorianisch' } } } });
+      translate.use('de');
+
+      expect(name()).toBe('Gregorianisch');
+    });
+  });
+
   describe('the machine-readable form (ISO 8601 · EDTF)', () => {
     const iso = (value: KnoraDate | KnoraPeriod) => service.machineReadableOf(value);
 

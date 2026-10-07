@@ -61,7 +61,7 @@
     @if (conversionHint(); as hint) {
     <span class="converted" data-cy="converted-from">
       <mat-icon class="line-icon">swap_horiz</mat-icon>
-      {{ hint.key | translate: { from: hint.from, to: hint.to, calendar: calendarLabel() | translate } }}
+      {{ hint.key | translate: { from: hint.from, to: hint.to } }}
     </span>
     } @if (reformGap(); as gap) {
     <span class="reform-gap" data-cy="reform-gap">
