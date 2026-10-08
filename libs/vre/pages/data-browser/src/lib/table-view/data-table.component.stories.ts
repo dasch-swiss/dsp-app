@@ -12,6 +12,7 @@ import {
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { EDITABLE_PROPERTY_IRI, makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
+import { rightsColumns } from './build-column-model';
 import { DataTableComponent } from './data-table.component';
 import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 
@@ -998,6 +999,221 @@ export const RefusesToMoveAScrollingColumnInFrontOfAPin: Story = {
     await userEvent.keyboard('{ArrowLeft}');
 
     await expect(onReorder).not.toHaveBeenCalled();
+  },
+};
+
+/** A column's right edge, dragged by `by` pixels with the pointer. */
+const dragColumnEdge = (header: HTMLElement, by: number) => {
+  const handle = header.querySelector('[data-cy="column-resize"]') as HTMLElement;
+  // `setPointerCapture` needs a real pointer id the test never produced.
+  handle.setPointerCapture = () => undefined;
+  handle.releasePointerCapture = () => undefined;
+
+  const box = handle.getBoundingClientRect();
+  const x = box.left + box.width / 2;
+  const y = box.top + box.height / 2;
+  const fire = (type: string, clientX: number) =>
+    handle.dispatchEvent(
+      new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 7, clientX, clientY: y, buttons: 1 })
+    );
+
+  fire('pointerdown', x);
+  fire('pointermove', x + by);
+  return () => fire('pointerup', x + by);
+};
+
+const titleHeader = (canvasElement: HTMLElement) =>
+  canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+
+/**
+ * The column follows the pointer, and the new width is reported once, on release — not per frame,
+ * which would write the persisted layout on every pixel of the drag.
+ */
+export const ResizesAColumnByDraggingItsEdge: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const header = titleHeader(canvasElement);
+    const before = Math.round(header.getBoundingClientRect().width);
+
+    const release = dragColumnEdge(header, 120);
+    await expect(Math.round(header.getBoundingClientRect().width)).toBe(before + 120);
+    await expect(onResize).not.toHaveBeenCalled();
+
+    release();
+    await expect(onResize).toHaveBeenCalledTimes(1);
+    await expect(onResize).toHaveBeenCalledWith({ key: `${ONTO}hasTitle`, width: before + 120 });
+  },
+};
+
+/** Below the minimum a header's own controls no longer fit, so the drag stops there. */
+export const StopsAColumnAtItsMinimumWidth: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const release = dragColumnEdge(titleHeader(canvasElement), -1000);
+    release();
+
+    await expect(onResize).toHaveBeenCalledWith({ key: `${ONTO}hasTitle`, width: 90 });
+  },
+};
+
+export const ReturnsAColumnToItsDefaultWidthOnDoubleClick: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const header = titleHeader(canvasElement);
+    dragColumnEdge(header, 120)();
+    onResize.mockClear();
+
+    header.querySelector('[data-cy="column-resize"]')!.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+
+    await expect(onResize).toHaveBeenCalledWith({ key: `${ONTO}hasTitle`, width: 200 });
+    await expect(Math.round(header.getBoundingClientRect().width)).toBe(200);
+  },
+};
+
+// ── Rights statement ────────────────────────────────────────────────────────
+
+const RIGHTS_COLUMNS: TableColumn[] = [
+  column(LABEL_COLUMN_KEY, 'Label'),
+  ...rightsColumns({ license: 'License', copyrightHolder: 'Copyright holder', authorship: 'Authorship' }),
+];
+
+/** One resource with its own authorship, one without, so both readings show side by side. */
+const RIGHTS_ROWS = [
+  Object.assign(resource('http://rdfh.ch/0001/own', 'With authorship', {}, RIGHTS_COLUMNS), {
+    resourceAuthorship: ['Ada Lovelace'],
+  }),
+  Object.assign(resource('http://rdfh.ch/0001/none', 'Without authorship', {}, RIGHTS_COLUMNS), {
+    resourceAuthorship: [],
+  }),
+];
+
+const PROJECT_RIGHTS = {
+  licenseLabel: 'CC BY 4.0',
+  licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+  copyrightHolder: 'DaSCH',
+  defaultDataAuthorship: ['Project Team'],
+  isPlaceholderLicense: false,
+  isPlaceholderCopyrightHolder: false,
+};
+
+const rightsStory = (): Story => ({
+  render: storyArgs => ({
+    props: {
+      ...storyArgs,
+      rows: RIGHTS_ROWS,
+      columns: RIGHTS_COLUMNS,
+      visible: RIGHTS_COLUMNS.map(rightsColumn => rightsColumn.key),
+      rights: PROJECT_RIGHTS,
+    },
+    template: `<app-data-table
+      [resources]="rows"
+      [columns]="columns"
+      [visibleColumns]="visible"
+      [projectRights]="rights" />`,
+  }),
+});
+
+const cellOf = (canvasElement: HTMLElement, rowLabel: string, columnLabel: string) => {
+  const headers = Array.from(canvasElement.querySelectorAll('thead th'));
+  const index = headers.findIndex(th => th.getAttribute('aria-label') === columnLabel);
+  const row = Array.from(canvasElement.querySelectorAll('tbody tr')).find(tr => tr.textContent?.includes(rowLabel));
+  return row?.children[index] as HTMLElement;
+};
+
+/** The license opens its Creative Commons deed, in a new tab, and says so to a screen reader. */
+export const LinksTheLicenseToItsDeed: Story = {
+  ...rightsStory(),
+  play: async ({ canvasElement }) => {
+    const link = cellOf(canvasElement, 'With authorship', 'License').querySelector('a') as HTMLAnchorElement;
+
+    await expect(link).toHaveTextContent('CC BY 4.0');
+    await expect(link).toHaveAttribute('href', PROJECT_RIGHTS.licenseUrl);
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link.getAttribute('aria-label')).toContain('CC BY 4.0');
+  },
+};
+
+export const ShowsTheProjectsCopyrightHolderOnEveryRow: Story = {
+  ...rightsStory(),
+  play: async ({ canvasElement }) => {
+    await expect(cellOf(canvasElement, 'With authorship', 'Copyright holder')).toHaveTextContent('DaSCH');
+    await expect(cellOf(canvasElement, 'Without authorship', 'Copyright holder')).toHaveTextContent('DaSCH');
+  },
+};
+
+/**
+ * A resource's own authorship reads as plain text; the project default standing in for a missing
+ * one is marked as such, never asserted as the resource's.
+ */
+export const MarksTheProjectDefaultAuthorshipAsAFallback: Story = {
+  ...rightsStory(),
+  play: async ({ canvasElement }) => {
+    const own = cellOf(canvasElement, 'With authorship', 'Authorship');
+    await expect(own).toHaveTextContent('Ada Lovelace');
+    await expect(own.querySelector('.cell-fallback')).toBeNull();
+
+    const fallback = cellOf(canvasElement, 'Without authorship', 'Authorship').querySelector('.cell-fallback');
+    await expect(fallback).toHaveTextContent('Project Team');
+    await expect(fallback?.getAttribute('title')).toContain('Project Team');
+  },
+};
+
+/**
+ * A header's sort, filter and pin buttons take no room until the column is hovered or focused, so
+ * the name gets the whole width at rest and only gives way when the controls come in.
+ */
+export const GivesTheHeaderNameTheWholeWidthUntilItsControlsShow: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const header = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    const label = header.querySelector('.header-label') as HTMLElement;
+    const controls = () =>
+      Array.from(header.querySelectorAll('.header-sort, .header-filter, .header-pin')).map(control =>
+        Math.round(control.getBoundingClientRect().width)
+      );
+
+    await expect(controls().every(width => width === 0)).toBe(true);
+    await expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth);
+
+    // Focus stands in for hover, which a synthetic event cannot produce; both reveal the controls.
+    header.focus();
+
+    await waitFor(() => expect(controls().every(width => width > 0)).toBe(true));
+    // In beside the name, not spilling out of the cell: the name is what gives way.
+    const content = header.querySelector('.header-content') as HTMLElement;
+    await expect(content.scrollWidth).toBeLessThanOrEqual(content.clientWidth);
+  },
+};
+
+/** The whole header cell is the drag handle: there is no grip to aim at. */
+export const MovesAColumnByDraggingItsHeader: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    await expect(canvasElement.querySelector('[data-cy="column-grip"]')).toBeNull();
+
+    const title = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    const place = canvasElement.querySelector('th[aria-label="Place"]') as HTMLElement;
+    const from = title.getBoundingClientRect();
+    const to = place.getBoundingClientRect();
+    const y = from.top + from.height / 2;
+    const mouse = (target: EventTarget, type: string, x: number) =>
+      // `buttons` and `detail` set: CDK takes a press with either at 0 for a screen reader's
+      // synthetic click and ignores it.
+      target.dispatchEvent(
+        new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, buttons: 1, detail: 1 })
+      );
+
+    mouse(title.querySelector('.header-label') as HTMLElement, 'mousedown', from.left + 20);
+    // Past CDK's start threshold, then across to the far side of the next column.
+    for (const x of [from.left + 30, from.left + 60, to.left + to.width / 2, to.right - 5]) {
+      mouse(document, 'mousemove', x);
+      await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+    mouse(document, 'mouseup', to.right - 5);
+
+    await waitFor(() =>
+      expect(onReorder).toHaveBeenCalledWith([LABEL_COLUMN_KEY, `${ONTO}hasPlace`, `${ONTO}hasTitle`])
+    );
   },
 };
 

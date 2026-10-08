@@ -120,6 +120,31 @@ export const RestoresTheCurrentPageWhenLeftWithoutEnter: Story = {
   },
 };
 
+/** Results already on screen and the next ones on their way, as after a filter or page change. */
+const refreshing = () => {
+  const service = seeded(4024, 0);
+  service.markLoaded();
+  service.markLoading();
+  return service;
+};
+
+/**
+ * The count and pager describe the results being replaced, so they wait with them: greyed, and
+ * not clickable into a page of a result set that is about to change.
+ */
+export const GreysAndLocksThePagerWhileResultsReload: Story = {
+  decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: refreshing() }] })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvasElement.querySelector('.result-meta')).toHaveClass('is-refreshing');
+    for (const button of Array.from(canvasElement.querySelectorAll('[data-cy=result-pager] button'))) {
+      await expect(button).toBeDisabled();
+    }
+    await expect(canvas.getByRole('spinbutton', { name: 'Page number' })).toBeDisabled();
+  },
+};
+
 export const StatesTheCountIsUnavailableWhenTheCountQueryFailed: Story = {
   decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(null, 0) }] })],
   play: async ({ canvasElement }) => {

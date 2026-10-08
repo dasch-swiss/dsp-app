@@ -9,7 +9,7 @@ import { DataBrowserPageService, ProjectPageService } from '@dasch-swiss/vre/pag
 import { SearchFilterState } from '@dasch-swiss/vre/pages/search/search-filters';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, of, Subject, throwError } from 'rxjs';
 import { DataClassQueryService } from '../../data-class-query.service';
 import { ResourcesListFetcherComponent } from './resources-list-fetcher.component';
 
@@ -416,6 +416,86 @@ describe('ResourcesListFetcherComponent', () => {
    * binding would pass every one of them. This component has no stories, so the real template is
    * mounted here instead to cover the click path end to end.
    */
+  /**
+   * The class header's progress bar reads `isRefreshing`: on while a page, filter or sort change
+   * loads with the list still on screen, never for the first load, which has its own spinner.
+   */
+  describe('refresh state (DEV-7466)', () => {
+    let resourceResult: ResourceResultService;
+    /** The next page's response, held back so the in-between state can be observed. */
+    let pending: Subject<{ resources: ReadResource[] }>;
+
+    beforeEach(() => {
+      resourceResult = fixture.debugElement.injector.get(ResourceResultService);
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1] }));
+      mockDspApiConnection.v2.search.doExtendedSearchCountQuery.mockReturnValue(of({ numberOfResults: 100 }));
+    });
+
+    /** Load the first page, then hold back whatever is requested next. */
+    const loadThenHoldNext = () => {
+      component.ngOnChanges();
+      const sub = component.data$.subscribe();
+      pending = new Subject();
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(pending);
+      return sub;
+    };
+
+    it('does not mark the first load as a refresh', () => {
+      pending = new Subject();
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(pending);
+
+      component.ngOnChanges();
+      const sub = component.data$.subscribe();
+
+      expect(resourceResult.isRefreshing()).toBe(false);
+      sub.unsubscribe();
+    });
+
+    it('marks a page change as a refresh until the new page arrives', () => {
+      const sub = loadThenHoldNext();
+
+      resourceResult.updatePageIndex(1);
+      expect(resourceResult.isRefreshing()).toBe(true);
+
+      pending.next({ resources: [mockResource2] });
+      expect(resourceResult.isRefreshing()).toBe(false);
+      sub.unsubscribe();
+    });
+
+    it('marks a query change as a refresh', () => {
+      const sub = loadThenHoldNext();
+
+      querySubject.next(`${QUERY} FILTER(?x)`);
+
+      expect(resourceResult.isRefreshing()).toBe(true);
+      sub.unsubscribe();
+    });
+
+    it('ends the refresh when the new page fails', () => {
+      const sub = loadThenHoldNext();
+      resourceResult.updatePageIndex(1);
+
+      pending.error(new Error('page 2 timed out'));
+
+      expect(resourceResult.isRefreshing()).toBe(false);
+      sub.unsubscribe();
+    });
+
+    /** The failure panel replaced the list, so the retry starts from nothing, like a first load. */
+    it('does not mark a retry as a refresh', () => {
+      const sub = loadThenHoldNext();
+      resourceResult.updatePageIndex(1);
+      pending.error(new Error('page 2 timed out'));
+
+      pending = new Subject();
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(pending);
+      component.onRetry();
+
+      expect(resourceResult.isRefreshing()).toBe(false);
+      sub.unsubscribe();
+    });
+  });
+
   describe('retry binding with the real template (DEV-6871)', () => {
     beforeEach(async () => {
       TestBed.resetTestingModule();
