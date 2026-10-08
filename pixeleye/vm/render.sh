@@ -18,15 +18,26 @@ set -a; . ./.env; set +a
 : "${ACME_EMAIL:?must be set in .env}"
 : "${KRATOS_COOKIE_SECRET:?must be set in .env}"
 : "${KRATOS_CIPHER_SECRET:?must be set in .env}"
+: "${GITHUB_APP_ID:?must be set in .env (GitHub App settings page)}"
+: "${GITHUB_APP_NAME:?must be set in .env (the URL slug in github.com/apps/<slug>)}"
+: "${GITHUB_APP_CLIENT_ID:?must be set in .env}"
+: "${GITHUB_APP_CLIENT_SECRET:?must be set in .env}"
+: "${GITHUB_APP_PRIVATE_KEY:?must be set in .env (contents of the .pem, double-quoted)}"
 
 # Fail loudly rather than deploying a stack with shipped default credentials.
-for var in MINIO_ROOT_PASSWORD DB_PASSWORD AMQP_PASSWORD S3_KEY_SECRET; do
+for var in MINIO_ROOT_PASSWORD DB_PASSWORD AMQP_PASSWORD S3_KEY_SECRET \
+           GITHUB_APP_ID GITHUB_APP_NAME GITHUB_APP_CLIENT_ID GITHUB_APP_CLIENT_SECRET; do
   val="${!var:-}"
   if [ -z "$val" ] || [ "$val" = "CHANGEME" ]; then
     echo "error: $var is unset or still CHANGEME" >&2
     exit 1
   fi
 done
+
+if [[ "$GITHUB_APP_PRIVATE_KEY" == *CHANGEME* ]] || [[ "$GITHUB_APP_PRIVATE_KEY" != *"PRIVATE KEY-----"* ]]; then
+  echo "error: GITHUB_APP_PRIVATE_KEY must be the full .pem contents, double-quoted" >&2
+  exit 1
+fi
 
 if [ "${#KRATOS_CIPHER_SECRET}" -ne 32 ]; then
   echo "error: KRATOS_CIPHER_SECRET must be exactly 32 characters (got ${#KRATOS_CIPHER_SECRET})" >&2

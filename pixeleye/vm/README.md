@@ -82,6 +82,35 @@ Approving in the dashboard does **not** notify GitHub. Approve the build, then *
 new build that is `unreviewed` again and discards the approval. The check name is what
 branch protection matches on; renaming the job silently drops the protection.
 
+## GitHub App
+
+With the app installed, pixeleye posts each build's verdict as a commit status named
+`Pixeleye – <team>/<project>`, and updates it the moment a build is approved — no CI
+re-run. It only does this for a project created **from the GitHub repo** by a team linked
+to the installation; a project created over the REST API (as in "After first start")
+never reports.
+
+App settings (org `dasch-swiss` → Developer settings → GitHub Apps):
+
+| Field | Value |
+|---|---|
+| Homepage URL | `https://<HOST_BASE>` |
+| Callback URLs | `https://auth.<HOST_BASE>/self-service/methods/oidc/callback/github` (GitHub login, via Kratos) and `https://api.<HOST_BASE>/v1/git/github/callback` (account linking) |
+| Setup URL | `https://<HOST_BASE>/add/github`, with *Redirect on update* on |
+| Webhook | inactive — the backend has no webhook route |
+| Permissions | Repository: Commit statuses read/write, Metadata read. Account: Email addresses read |
+
+Then:
+
+1. Put the five `GITHUB_APP_*` values in `.env` (see `.env.example`; the private key is
+   the whole `.pem`, double-quoted), `./render.sh`, `docker compose up -d`.
+2. Log in to the dashboard **with GitHub**, then `/add` → *Github* → install the app on
+   `dsp-app` only.
+3. Create the project from the `dsp-app` repo. Set `autoApprove` to `main` on it (see
+   "After first start") and replace the `PIXELEYE_TOKEN` repository secret with the new
+   project's token. Baselines do not carry over; the next build on `main` reseeds them.
+4. After a build has posted once, the status can be added to required checks.
+
 ## Verify hardening
 
 From **outside** GCP, all of these must fail to connect:

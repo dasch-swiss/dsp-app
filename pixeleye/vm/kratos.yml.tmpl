@@ -18,17 +18,21 @@ selfservice:
   methods:
     password:
       enabled: true
-    # oidc:
-    #   config:
-    #     providers:
-    #       - client_id: CHANGE_ME
-    #         client_secret: CHANGE_ME
-    #         id: github
-    #         label: github
-    #         mapper_url: file:///etc/config/kratos/github.jsonnet
-    #         provider: github-app
-    #         scope: []
-    #   enabled: true
+    # GitHub login. A pixeleye project only reports commit statuses when its
+    # team is linked to the GitHub App installation, which requires a session
+    # created through this provider. `id: github` fixes the callback URL:
+    # https://auth.<HOST_BASE>/self-service/methods/oidc/callback/github
+    oidc:
+      config:
+        providers:
+          - client_id: ${GITHUB_APP_CLIENT_ID}
+            client_secret: ${GITHUB_APP_CLIENT_SECRET}
+            id: github
+            label: github
+            mapper_url: file:///etc/config/kratos/github.jsonnet
+            provider: github-app
+            scope: []
+      enabled: true
 
   flows:
     error:
