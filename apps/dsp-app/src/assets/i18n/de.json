@@ -497,7 +497,9 @@
       },
       "termValidation": {
         "tooShort": "Mindestens 3 Zeichen eingeben",
-        "wildcardTooShort": "Ein Platzhalter benötigt mindestens 3 weitere Zeichen im selben Wort"
+        "wildcardTooShort": "Ein Platzhalter benötigt mindestens 3 weitere Zeichen im selben Wort",
+        "unclosedPhrase": "Anführungszeichen schliessen, um nach einer Phrase zu suchen",
+        "trailingEscape": "Auf einen Backslash muss ein Zeichen folgen"
       },
       "searchTips": {
         "title": "Suchtipps",

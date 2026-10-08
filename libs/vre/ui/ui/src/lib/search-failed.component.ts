@@ -12,6 +12,9 @@ import { CenteredMessageComponent } from './centered-message.component';
  */
 @Component({
   selector: 'app-search-failed',
+  // Announced when it appears: for a query dsp-api rejected, this panel is the only feedback, as the
+  // advanced search shows no snackbar for it (DEV-7370).
+  host: { role: 'alert' },
   template: `
     <app-centered-message
       [icon]="'error_outline'"

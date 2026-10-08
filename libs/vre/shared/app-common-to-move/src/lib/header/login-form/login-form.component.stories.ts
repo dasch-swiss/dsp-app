@@ -1,5 +1,3 @@
-import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AuthService } from '@dasch-swiss/vre/core/session';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -12,10 +10,7 @@ const meta: Meta<LoginFormComponent> = {
   component: LoginFormComponent,
   decorators: [
     applicationConfig({
-      providers: [
-        { provide: DspApiConnectionToken, useValue: {} as KnoraApiConnection },
-        { provide: AuthService, useValue: { login: () => of(null) } },
-      ],
+      providers: [{ provide: AuthService, useValue: { login$: () => of(null) } }],
     }),
   ],
 };
