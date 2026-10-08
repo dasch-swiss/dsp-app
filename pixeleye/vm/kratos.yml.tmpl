@@ -73,9 +73,11 @@ selfservice:
           hooks:
             - hook: session
             - hook: show_verification_ui
+        # No show_verification_ui: GitHub has already verified the address
+        # (github.jsonnet carries that over), and the code would land in
+        # mailslurper, which is not reachable from outside the VM.
         oidc:
           hooks:
-            - hook: show_verification_ui
             - hook: session
 
 log:
