@@ -216,6 +216,40 @@ export const EmitsAutoWhenAutoIsPicked: Story = {
 };
 
 /**
+ * Back to Auto and on to Manual again restores the height the user had set, not the default:
+ * switching modes is not a reason to lose it. The host feeds each emission back, as the layout does.
+ */
+export const RestoresTheLastManualHeightWhenManualIsPickedAgain: Story = {
+  args: { rowHeight: 200 },
+  render: args => ({
+    props: {
+      ...args,
+      onVisibility,
+      onAllVisibility,
+      onRowHeight,
+      apply(this: { rowHeight?: number }, height: number | undefined) {
+        this.rowHeight = height;
+        onRowHeight(height);
+      },
+    },
+    template: `<app-table-view-options
+      [entries]="entries"
+      [rowHeight]="rowHeight"
+      (rowHeightChanged)="apply($event)" />`,
+  }),
+  play: async () => {
+    await openMenu();
+
+    await userEvent.click(overlay().getByRole('radio', { name: 'Auto' }));
+    await expect(document.querySelector('[data-cy="row-height-slider"]')).toBeNull();
+
+    await userEvent.click(overlay().getByRole('radio', { name: 'Manual' }));
+    await expect(onRowHeight).toHaveBeenLastCalledWith(200);
+    await expect(document.querySelector('[data-cy="row-height-value"]')).toHaveTextContent('200px');
+  },
+};
+
+/**
  * The table follows the thumb while it is dragged: each step it crosses is emitted on `input`,
  * without waiting for the release.
  */

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
@@ -188,11 +188,21 @@ export class TableViewOptionsComponent {
    * The height Manual returns to: the last one set, so switching to Auto and back does not lose
    * it, or a default the first time. Kept here rather than in the layout, which stores only the
    * height in force — Auto stores nothing.
+   *
+   * Recorded by an effect, not derived with `linkedSignal`. A linked signal only computes when it
+   * is read, and nothing reads this while a height is in force — so its first read came after the
+   * switch to Auto, when the height was already gone, and Manual came back at the default.
    */
-  protected readonly lastManualHeight = linkedSignal<number | undefined, number>({
-    source: this.rowHeight,
-    computation: (height, previous) => height ?? previous?.value ?? ROW_HEIGHT_MANUAL_DEFAULT,
-  });
+  protected readonly lastManualHeight = signal(ROW_HEIGHT_MANUAL_DEFAULT);
+
+  constructor() {
+    effect(() => {
+      const height = this.rowHeight();
+      if (height !== undefined) {
+        this.lastManualHeight.set(height);
+      }
+    });
+  }
 
   /** The section's value, and the thumb's `aria-valuetext`. Live during a drag. */
   protected readonly rowHeightLabel = computed(() => {
