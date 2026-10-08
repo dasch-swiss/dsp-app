@@ -18,7 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { searchTermMinLengthValidator } from '@dasch-swiss/vre/shared/app-common';
+import { searchTermCompleteSyntaxValidator, searchTermMinLengthValidator } from '@dasch-swiss/vre/shared/app-common';
 import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, first, map } from 'rxjs';
 import { FilterParam } from '../../filter-params.codec';
@@ -31,6 +31,16 @@ import { StatementDraftStore } from '../../service/statement-draft.store';
 import { AddFilterButtonComponent } from './add-filter-button.component';
 import { OPEN_CHIP_NONE, OpenChipId } from './chip-bar.helpers';
 import { FilterChipComponent } from './filter-chip.component';
+
+/** The inline message for each way the fulltext term can be refused, in the order they are checked. */
+const FULLTEXT_ERROR_MESSAGES: Record<
+  'searchTermTooShort' | 'searchTermUnclosedPhrase' | 'searchTermTrailingEscape',
+  string
+> = {
+  searchTermTooShort: 'pages.search.termValidation.tooShort',
+  searchTermUnclosedPhrase: 'pages.search.termValidation.unclosedPhrase',
+  searchTermTrailingEscape: 'pages.search.termValidation.trailingEscape',
+};
 
 @Component({
   selector: 'app-advanced-search-bar',
@@ -82,8 +92,8 @@ import { FilterChipComponent } from './filter-chip.component';
         } @else if (searchIconPosition === 'trailing') {
           <mat-icon matSuffix>search</mat-icon>
         }
-        @if (fulltextTooShort()) {
-          <mat-error>{{ 'pages.search.termValidation.tooShort' | translate }}</mat-error>
+        @if (fulltextError(); as message) {
+          <mat-error>{{ message | translate }}</mat-error>
         }
       </mat-form-field>
       <div class="chip-bar">
@@ -172,11 +182,15 @@ export class AdvancedSearchBarComponent implements OnInit {
   readonly openChipId = signal<OpenChipId>(OPEN_CHIP_NONE);
   // Only the min-length half of the term rules: this term travels through Gravsearch `matchFulltext`,
   // which — unlike `/v2/search/:term` — accepts a wildcard on a short stem ("de*" returns 200), so the
-  // per-token wildcard rule would block searches the API is happy to run (DEV-6930).
-  readonly fulltextControl = new FormControl<string>('', searchTermMinLengthValidator());
-  // Raised at the debounce, i.e. the moment the term would have been searched — validating on every
-  // keystroke instead would flag "de" on the way to "deutsch".
-  readonly fulltextTooShort = signal(false);
+  // per-token wildcard rule would block searches the API is happy to run (DEV-6930). The syntax rule
+  // holds back a phrase whose closing quote is not typed yet, which Lucene cannot parse (DEV-7370).
+  readonly fulltextControl = new FormControl<string>('', [
+    searchTermMinLengthValidator(),
+    searchTermCompleteSyntaxValidator(),
+  ]);
+  // Translation key of the inline message, raised at the debounce, i.e. the moment the term would have
+  // been searched — validating on every keystroke instead would flag "de" on the way to "deutsch".
+  readonly fulltextError = signal<string | null>(null);
   // Top-level confirmed filters shown as chips. Subcriteria (child statements) are not shown as chips —
   // they are edited inside the parent's popover and travel with it when confirmed.
   readonly confirmedStatements = signal<StatementElement[]>([]);
@@ -243,9 +257,12 @@ export class AdvancedSearchBarComponent implements OnInit {
    * whole change exists to avoid.
    */
   private _refreshFulltextError(): void {
-    const invalid = this.fulltextControl.invalid;
-    this.fulltextTooShort.set(invalid);
-    if (invalid) {
+    const errors = this.fulltextControl.errors ?? {};
+    const errorKey = (Object.keys(FULLTEXT_ERROR_MESSAGES) as (keyof typeof FULLTEXT_ERROR_MESSAGES)[]).find(
+      key => key in errors
+    );
+    this.fulltextError.set(errorKey ? FULLTEXT_ERROR_MESSAGES[errorKey] : null);
+    if (this.fulltextControl.invalid) {
       this.fulltextControl.markAsTouched();
     }
   }

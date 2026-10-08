@@ -497,7 +497,9 @@
       },
       "termValidation": {
         "tooShort": "Saisissez au moins 3 caractères",
-        "wildcardTooShort": "Un caractère générique nécessite au moins 3 autres caractères dans le même mot"
+        "wildcardTooShort": "Un caractère générique nécessite au moins 3 autres caractères dans le même mot",
+        "unclosedPhrase": "Fermez les guillemets pour rechercher une expression",
+        "trailingEscape": "Une barre oblique inverse doit être suivie d'un caractère"
       },
       "searchTips": {
         "title": "Conseils de recherche",

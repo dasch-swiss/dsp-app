@@ -342,6 +342,31 @@ describe('AdvancedSearchBarComponent fulltext term rules (DEV-6930)', () => {
     expect(errorText()).toBe('pages.search.termValidation.tooShort');
   });
 
+  it('does not search a phrase whose closing quote is not typed yet (DEV-7370)', () => {
+    component.fulltextControl.setValue('"rod of asclepious');
+    jest.advanceTimersByTime(400);
+    fixture.detectChanges();
+
+    expect(statePort.setFulltextTerm).not.toHaveBeenCalled();
+    expect(errorText()).toBe('pages.search.termValidation.unclosedPhrase');
+  });
+
+  it('searches the phrase once it is closed', () => {
+    component.fulltextControl.setValue('"rod of asclepious"');
+    jest.advanceTimersByTime(400);
+    fixture.detectChanges();
+
+    expect(statePort.setFulltextTerm).toHaveBeenCalledWith('"rod of asclepious"');
+    expect(errorText()).toBeNull();
+  });
+
+  it('searches a term whose quotes are escaped', () => {
+    component.fulltextControl.setValue('\\"rod of asclepious');
+    jest.advanceTimersByTime(400);
+
+    expect(statePort.setFulltextTerm).toHaveBeenCalledWith('\\"rod of asclepious');
+  });
+
   it('searches a three-character term', () => {
     component.fulltextControl.setValue('ide');
     jest.advanceTimersByTime(400);
