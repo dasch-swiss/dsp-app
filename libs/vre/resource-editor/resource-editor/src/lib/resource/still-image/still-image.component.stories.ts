@@ -133,6 +133,7 @@ const sharedProviders = [
       downloadProjectFile: () => {},
       getFileInfo: () => of({ originalFilename: 'image.jp2' }),
       getIngestOriginalUrl: () => of(''),
+      getIiifImageInfo: () => of({ width: 1333, height: 1815 }),
     },
   },
   { provide: NotificationService, useValue: { openSnackBar: () => {} } },

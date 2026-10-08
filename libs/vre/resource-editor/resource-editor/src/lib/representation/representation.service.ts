@@ -26,6 +26,16 @@ export class RepresentationService {
     return this._http.get<{ originalFilename?: string }>(pathToJson, { withCredentials: true });
   }
 
+  /**
+   * Sipi's IIIF info.json for an image, sent with the same Bearer token as OpenSeadragon's tile requests.
+   * For a size-restricted view, Sipi reports the reduced width/height the requesting user will get.
+   */
+  getIiifImageInfo(iiifBaseUrl: string, filename: string): Observable<{ width: number; height: number }> {
+    const authToken = this._accessTokenService.getAccessToken();
+    const headers = authToken ? new HttpHeaders({ Authorization: `Bearer ${authToken}` }) : undefined;
+    return this._http.get<{ width: number; height: number }>(`${iiifBaseUrl}/${filename}/info.json`, { headers });
+  }
+
   // A bare <img src> can't carry the JWT, so Sipi treats it as anonymous and denies non-public
   // images even for admins. Any future Sipi image shown outside OpenSeadragon must fetch through
   // here (Bearer header) and render the resulting blob, not bind the URL to <img> directly.
