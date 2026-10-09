@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v40.0.0-7-g4823ba0
+  version: v40.3.0-6-gc06f4c4
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -1930,7 +1930,11 @@ paths:
         required: true
         schema:
           type: string
-        example: fix-top-left
+        examples:
+          Example0:
+            value: fix-top-left
+          Example1:
+            value: backfill-value-has-xml
       requestBody:
         description: |
           The optional parameters as json for the maintenance action.
@@ -5509,7 +5513,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       responses:
         '200':
           description: ''
@@ -5573,7 +5577,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       responses:
         '200':
           description: ''
@@ -5637,7 +5641,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       responses:
         '200':
           description: ''
@@ -5826,7 +5830,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       responses:
         '200':
           description: ''
@@ -5892,7 +5896,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       responses:
         '200':
           description: ''
@@ -6096,7 +6100,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6169,7 +6173,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6243,7 +6247,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6316,7 +6320,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6390,7 +6394,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6463,7 +6467,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6537,7 +6541,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       requestBody:
         content:
           application/json:
@@ -6610,7 +6614,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       requestBody:
         content:
           application/json:
@@ -6683,7 +6687,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       requestBody:
         content:
           application/json:
@@ -6756,7 +6760,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/2kD8DC_tQmOgoD7rfl1EOg
+        example: http://rdfh.ch/users/61p7qyQfShi8dcqGhWe5UQ
       requestBody:
         content:
           application/json:
@@ -7656,7 +7660,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/8m8iBeP3Re6VtpqzOE94Hw
+        example: http://rdfh.ch/lists/0001/nlUkLAfAQceQlihPOZ-Ceg
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7784,7 +7788,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/8m8iBeP3Re6VtpqzOE94Hw
+        example: http://rdfh.ch/lists/0001/nlUkLAfAQceQlihPOZ-Ceg
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -11184,6 +11188,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTimeoutException'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11309,6 +11319,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTimeoutException'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11435,6 +11451,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTimeoutException'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -11560,6 +11582,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTimeoutException'
       security:
       - httpAuth: []
       - httpAuth1: []
@@ -16267,8 +16295,10 @@ paths:
     get:
       tags:
       - API v3
-      description: Checks the status of an export. The response will indicate whether
+      description: 'Checks the status of an export. The response will indicate whether
         the export is still in progress, has completed successfully, or has failed.
+        The `projectIri` in the path is not validated: the export is resolved by its
+        id alone and need not belong to a project that still exists.'
       operationId: getV3ProjectsProjectiriExportsExportid
       parameters:
       - name: projectIri
@@ -16315,19 +16345,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotFound'
               examples:
-                project_not_found:
-                  description: |-
-                    Example template string for code `project_not_found`:
-                    ```
-                    The project '{id}' was not found.
-                    ```
-                  value:
-                    message: The project '{id}' was not found.
-                    errors:
-                    - code: project_not_found
-                      message: The project '{id}' was not found.
-                      details:
-                        id: example_id
                 export_not_found:
                   description: |-
                     Example template string for code `export_not_found`:
@@ -16348,8 +16365,10 @@ paths:
     delete:
       tags:
       - API v3
-      description: Deletes an export irrevocably. Only exports in state failed or
-        completed can be deleted.
+      description: 'Deletes an export irrevocably. Only exports in state failed or
+        completed can be deleted. The `projectIri` in the path is not validated: the
+        export is resolved by its id alone and need not belong to a project that still
+        exists.'
       operationId: deleteV3ProjectsProjectiriExportsExportid
       parameters:
       - name: projectIri
@@ -16392,19 +16411,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotFound'
               examples:
-                project_not_found:
-                  description: |-
-                    Example template string for code `project_not_found`:
-                    ```
-                    The project '{id}' was not found.
-                    ```
-                  value:
-                    message: The project '{id}' was not found.
-                    errors:
-                    - code: project_not_found
-                      message: The project '{id}' was not found.
-                      details:
-                        id: example_id
                 export_not_found:
                   description: |-
                     Example template string for code `export_not_found`:
@@ -16447,9 +16453,10 @@ paths:
     get:
       tags:
       - API v3
-      description: Download an export. An export can only be downloaded when it has
+      description: 'Download an export. An export can only be downloaded when it has
         completed successfully. If it is still in progress or has failed, the response
-        will be 409 Conflict.
+        will be 409 Conflict. The `projectIri` in the path is not validated: the export
+        is resolved by its id alone and need not belong to a project that still exists.'
       operationId: getV3ProjectsProjectiriExportsExportidDownload
       parameters:
       - name: projectIri
@@ -16502,19 +16509,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotFound'
               examples:
-                project_not_found:
-                  description: |-
-                    Example template string for code `project_not_found`:
-                    ```
-                    The project '{id}' was not found.
-                    ```
-                  value:
-                    message: The project '{id}' was not found.
-                    errors:
-                    - code: project_not_found
-                      message: The project '{id}' was not found.
-                      details:
-                        id: example_id
                 export_not_found:
                   description: |-
                     Example template string for code `export_not_found`:
@@ -17174,12 +17168,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v40.0.0-7-g4823ba0
-                buildCommit: 4823ba048
+                webapi: v40.3.0-6-gc06f4c4
+                buildCommit: c06f4c4e6
                 buildTime: dev
                 fuseki: 6.2.0
                 scala: 3.8.4
-                sipi: v9.1.0
+                sipi: v9.1.1
                 name: version
         '400':
           description: ''
