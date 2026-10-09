@@ -1,5 +1,25 @@
 # Changelog
 
+## [13.16.0](https://github.com/dasch-swiss/dsp-app/compare/v13.15.3...v13.16.0) (2026-10-09)
+
+
+### Enhancements
+
+* **ci:** let the pixeleye app status replace the visual review gate (DEV-7471) ([#3512](https://github.com/dasch-swiss/dsp-app/issues/3512)) ([12588c4](https://github.com/dasch-swiss/dsp-app/commit/12588c4825cf160c0d4b213a7f7281b28530ce30))
+* **ci:** make pixeleye visual review a required check (DEV-7471) ([#3507](https://github.com/dasch-swiss/dsp-app/issues/3507)) ([4840031](https://github.com/dasch-swiss/dsp-app/commit/4840031b7a10a88924402cc4f838f2eaafb38119))
+
+
+### Bug Fixes
+
+* **advanced-search:** hold back half-typed Lucene syntax and drop the snackbar for rejected queries (DEV-7370) ([#3488](https://github.com/dasch-swiss/dsp-app/issues/3488)) ([6c3ccc4](https://github.com/dasch-swiss/dsp-app/commit/6c3ccc490849fc91fc0f4710e3cca93e353dd1a5))
+* **storybook:** serve the compound story's images locally (DEV-7471) ([#3511](https://github.com/dasch-swiss/dsp-app/issues/3511)) ([e440fd9](https://github.com/dasch-swiss/dsp-app/commit/e440fd9401807f2150ab51ca769dcd6d987e3869))
+
+
+### Maintenances
+
+* **deps:** Update dependency postcss-preset-env from 11.5.5 to 11.6.0 ([#3504](https://github.com/dasch-swiss/dsp-app/issues/3504)) ([4c8f86b](https://github.com/dasch-swiss/dsp-app/commit/4c8f86b3b8001681e0dcf5a582fc9a14d916659c))
+* **open-api:** bump dsp-api spec v40.0.0-7-g4823ba0 → v40.3.0-6-gc06f4c4 ([#3513](https://github.com/dasch-swiss/dsp-app/issues/3513)) ([0886b4b](https://github.com/dasch-swiss/dsp-app/commit/0886b4bfae5400bc7dc755d695a70d6f0cc13bce))
+
 ## [13.15.3](https://github.com/dasch-swiss/dsp-app/compare/v13.15.2...v13.15.3) (2026-10-05)
 
 
