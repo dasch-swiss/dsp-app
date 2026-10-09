@@ -447,17 +447,20 @@ jobs:
           npx nx run dsp-app:test-storybook:ci -- --maxWorkers=2
 
   pixeleye:
-    name: Pixeleye Visual Regression (advisory)
+    name: Pixeleye Snapshots
     needs: [changes]
     if: |
       needs.changes.result == 'success' &&
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     runs-on: ubuntu-latest
-    # Advisory trial (DEV-7238): this job must never block a merge. It is
-    # deliberately absent from required status checks. Note the pixeleye CLI
-    # exits 0 even on a changed/rejected verdict, so continue-on-error guards
-    # infrastructure failure (VM down, expired token), not visual diffs.
+    # Capture only: this job uploads snapshots and never decides anything. The
+    # verdict is read by `pixeleye-gate`, which is the required check. Keeping
+    # them apart is what makes approval cheap: re-running the gate re-reads the
+    # build, whereas re-running this job uploads a NEW build for the same SHA,
+    # which is `unreviewed` again and discards the approval. continue-on-error
+    # guards infrastructure failure (VM down, expired token); the CLI exits 0 on
+    # every verdict, so a visual diff never fails this job anyway.
     continue-on-error: true
     timeout-minutes: 20
     concurrency:
@@ -465,7 +468,6 @@ jobs:
       cancel-in-progress: false
     permissions:
       contents: read
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -518,44 +520,88 @@ jobs:
         env:
           PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
-      - name: Resolve build and report
+
+  pixeleye-gate:
+    # Required status check on main (DEV-7471) — the name below is what branch
+    # protection matches on, so renaming it silently drops the protection.
+    name: Pixeleye Visual Review
+    needs: [changes, pixeleye]
+    # always(): a required check that never reports blocks the PR forever, so
+    # this job must run even when the capture job was skipped.
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Wait for the verdict
         id: build
+        # Approving in the dashboard does not notify GitHub. The reviewer loop is:
+        # approve the build, then "Re-run" this job — it re-reads the same build
+        # in seconds, without recapturing.
         env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          CAPTURE_RESULT: ${{ needs.pixeleye.result }}
           PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
           PIXELEYE_FRONTEND_URL: ${{ vars.PIXELEYE_FRONTEND_URL }}
           SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          RESP=$(curl -sS -m 30 -X POST "${PIXELEYE_ENDPOINT}/v1/client/latestBuilds" \
-            -H "Authorization: Bearer ${PIXELEYE_TOKEN}" \
-            -H 'Content-Type: application/json' \
-            -d "{\"shas\":[\"${SHA}\"]}" || echo '[]')
-
-          ID=$(echo "$RESP" | jq -r '.[0].id // empty')
-          if [ -z "$ID" ]; then
-            # Liveness assertion. Without this a dead trial (VM stopped, token
-            # expired, disk full) reports green forever, and the resulting
-            # silence reads as "no regressions" rather than "broken instrument".
-            echo "::warning::No pixeleye build found for ${SHA} — the instance may be unreachable. This run produced no visual coverage."
-            echo "found=false" >> "$GITHUB_OUTPUT"
+          if [ "$CHANGES_RESULT" != "success" ]; then
+            echo "::error::changes job failed (${CHANGES_RESULT}); refusing to report green"
             exit 1
           fi
+          if [ "$CAPTURE_RESULT" = "skipped" ]; then
+            echo "No UI-relevant changes; nothing to review."
+            exit 0
+          fi
 
-          echo "found=true"                                            >> "$GITHUB_OUTPUT"
-          echo "id=${ID}"                                              >> "$GITHUB_OUTPUT"
-          echo "number=$(echo "$RESP" | jq -r '.[0].buildNumber')"     >> "$GITHUB_OUTPUT"
-          echo "status=$(echo "$RESP" | jq -r '.[0].status')"          >> "$GITHUB_OUTPUT"
-          echo "url=${PIXELEYE_FRONTEND_URL}/builds/${ID}"             >> "$GITHUB_OUTPUT"
+          # `waitForStatus` is a no-op in CLI 0.8.8, so poll the build ourselves
+          # until it leaves uploading/processing. 40 × 15s = 10 minutes.
+          STATUS=""
+          for _ in $(seq 1 40); do
+            RESP=$(curl -sS -m 30 -X POST "${PIXELEYE_ENDPOINT}/v1/client/latestBuilds" \
+              -H "Authorization: Bearer ${PIXELEYE_TOKEN}" \
+              -H 'Content-Type: application/json' \
+              -d "{\"shas\":[\"${SHA}\"]}" || echo '[]')
+            STATUS=$(echo "$RESP" | jq -r '.[0].status // empty' 2>/dev/null || true)
+            case "$STATUS" in
+              uploading|queued-uploading|processing|queued-processing|"") sleep 15 ;;
+              *) break ;;
+            esac
+          done
+
+          ID=$(echo "$RESP" | jq -r '.[0].id // empty' 2>/dev/null || true)
+          if [ -n "$ID" ]; then
+            echo "found=true"                                          >> "$GITHUB_OUTPUT"
+            echo "number=$(echo "$RESP" | jq -r '.[0].buildNumber')"   >> "$GITHUB_OUTPUT"
+            echo "url=${PIXELEYE_FRONTEND_URL}/builds/${ID}"           >> "$GITHUB_OUTPUT"
+          fi
+          echo "status=${STATUS:-missing}" >> "$GITHUB_OUTPUT"
+
+          # Fail closed on a real verdict, open on a broken instrument: the
+          # instance is a single VM with a known DB-pool wedge, and blocking
+          # every merge on it is worse than one PR without visual coverage.
+          case "$STATUS" in
+            unchanged|approved|orphaned)
+              echo "Visual review passed (${STATUS})." ;;
+            unreviewed|rejected)
+              echo "::error::Visual changes are ${STATUS}. Approve the build in pixeleye, then re-run this job."
+              exit 1 ;;
+            *)
+              echo "::warning::No pixeleye verdict for ${SHA} (status: ${STATUS:-no build}) — the instance may be unreachable. This commit has no visual coverage." ;;
+          esac
       - name: Comment on PR
         # Builds are not viewable without a dashboard login, so the comment
         # carries the verdict rather than only a link. Per-snapshot counts are
         # unavailable to CI (that endpoint requires a user session).
-        if: steps.build.outputs.found == 'true'
+        if: always() && steps.build.outputs.found == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           NUMBER: ${{ steps.build.outputs.number }}
           STATUS: ${{ steps.build.outputs.status }}
           URL: ${{ steps.build.outputs.url }}
@@ -570,11 +616,11 @@ jobs:
           case "$STATUS" in
             unchanged)            SUMMARY="✅ No visual changes." ;;
             approved)             SUMMARY="✅ Visual changes approved." ;;
-            unreviewed)           SUMMARY="👀 **Visual changes detected** — needs a look." ;;
-            rejected)             SUMMARY="❌ Visual changes rejected." ;;
+            unreviewed)           SUMMARY="👀 **Visual changes detected** — [approve the build](${URL}), then [re-run *Pixeleye Visual Review*](${RUN_URL}) to unblock the merge." ;;
+            rejected)             SUMMARY="❌ **Visual changes rejected** — fix them, or [approve the build](${URL}) and [re-run *Pixeleye Visual Review*](${RUN_URL})." ;;
             orphaned)             SUMMARY="🌱 No baseline to compare against yet (first build on this branch)." ;;
-            failed|aborted)       SUMMARY="⚠️ Build did not complete." ;;
-            *)                    SUMMARY="Status: \`${STATUS}\`" ;;
+            failed|aborted)       SUMMARY="⚠️ Build did not complete — this commit has no visual coverage." ;;
+            *)                    SUMMARY="⚠️ No verdict yet (status \`${STATUS}\`) — this commit has no visual coverage." ;;
           esac
 
           MARKER='<!-- pixeleye-visual-regression -->'
@@ -596,7 +642,7 @@ jobs:
 
           [Open build #${NUMBER}](${URL}) · status \`${STATUS}\`
 
-          <sub>Advisory only — this never blocks the PR. Opening the build requires a pixeleye dashboard login.</sub>
+          <sub>Required check. Opening the build requires a pixeleye dashboard login.</sub>
           EOF
 
   docs-build-test:
