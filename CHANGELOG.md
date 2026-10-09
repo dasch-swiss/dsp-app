@@ -1,5 +1,62 @@
 # Changelog
 
+## [13.15.3](https://github.com/dasch-swiss/dsp-app/compare/v13.15.2...v13.15.3) (2026-10-05)
+
+
+### Bug Fixes
+
+* **auth:** reload the page after login so permission-dependent data is re-fetched (DEV-7410) ([#3485](https://github.com/dasch-swiss/dsp-app/issues/3485)) ([a5c8a28](https://github.com/dasch-swiss/dsp-app/commit/a5c8a28272127fcd1aeb56c48dd75a8fa48d788f))
+* **ui:** restore the gap between stacked form fields (DEV-7450) ([#3501](https://github.com/dasch-swiss/dsp-app/issues/3501)) ([52d733e](https://github.com/dasch-swiss/dsp-app/commit/52d733edccfa464905ae464d211fcbf248d98ee1))
+
+
+### Maintenances
+
+* **deps:** Lock file maintenance ([#3496](https://github.com/dasch-swiss/dsp-app/issues/3496)) ([43c8cfc](https://github.com/dasch-swiss/dsp-app/commit/43c8cfcecd2a12c8e4f2bd18eedc58aaf85db3fb))
+* **deps:** Lock file maintenance ([#3497](https://github.com/dasch-swiss/dsp-app/issues/3497)) ([2ef9082](https://github.com/dasch-swiss/dsp-app/commit/2ef908244be8f38857ed01d2169aee7e091158f5))
+* **deps:** Lock file maintenance ([#3498](https://github.com/dasch-swiss/dsp-app/issues/3498)) ([a7bd9c8](https://github.com/dasch-swiss/dsp-app/commit/a7bd9c88c3f88d7d808332dd1754a25f8e03aacc))
+* **deps:** Update dependency postcss-preset-env from 11.5.4 to 11.5.5 ([#3493](https://github.com/dasch-swiss/dsp-app/issues/3493)) ([548a01a](https://github.com/dasch-swiss/dsp-app/commit/548a01ac970062a3bad4f1bc55c8380e7d8b4d3c))
+* **deps:** Update dependency wait-on from 9.1.0 to 9.4.0 ([#3490](https://github.com/dasch-swiss/dsp-app/issues/3490)) ([2acc6c7](https://github.com/dasch-swiss/dsp-app/commit/2acc6c71059f5d1ff785ec35b87fe9dadf6a2844))
+* **deps:** Update grafana/grafana Docker tag to v13.2.3 ([#3494](https://github.com/dasch-swiss/dsp-app/issues/3494)) ([b003f61](https://github.com/dasch-swiss/dsp-app/commit/b003f6148d100253107e57acb30266fbb773690a))
+* **deps:** Update storybook monorepo from 10.6.0 to 10.6.1 ([#3495](https://github.com/dasch-swiss/dsp-app/issues/3495)) ([de8404c](https://github.com/dasch-swiss/dsp-app/commit/de8404c43e0581a7ef77207ebdecaea7b7416540))
+* **deps:** Update typescript-eslint monorepo from 8.70.1 to 8.71.0 ([#3491](https://github.com/dasch-swiss/dsp-app/issues/3491)) ([87e7975](https://github.com/dasch-swiss/dsp-app/commit/87e79757e2075b6562a5c553ee444c80fa0bbacb))
+
+## [13.15.2](https://github.com/dasch-swiss/dsp-app/compare/v13.15.1...v13.15.2) (2026-09-30)
+
+
+### Bug Fixes
+
+* guard hasDescription property from being displayed for all but s… ([#3484](https://github.com/dasch-swiss/dsp-app/issues/3484)) ([f4b9711](https://github.com/dasch-swiss/dsp-app/commit/f4b97116491ca382bb05745caa02f0086cfa70b0))
+
+
+### Maintenances
+
+* **deps:** Update grafana/grafana Docker tag to v13.2.2 ([#3480](https://github.com/dasch-swiss/dsp-app/issues/3480)) ([2b3c56b](https://github.com/dasch-swiss/dsp-app/commit/2b3c56bb818dc192b8e765df8fa6be31522f2d07))
+* **deps:** Update jest-deps ([#3481](https://github.com/dasch-swiss/dsp-app/issues/3481)) ([b8ea4b6](https://github.com/dasch-swiss/dsp-app/commit/b8ea4b6cb61f32a8912dcb88ade2928cf233c606))
+
+## [13.15.1](https://github.com/dasch-swiss/dsp-app/compare/v13.15.0...v13.15.1) (2026-09-28)
+
+
+### Bug Fixes
+
+* **advanced-search:** show empty state instead of an endless progress bar when a project has no data model (DEV-6738) ([#3450](https://github.com/dasch-swiss/dsp-app/issues/3450)) ([a783f6b](https://github.com/dasch-swiss/dsp-app/commit/a783f6bd25aef8499afdaa05612d2f0790068f2a))
+* **analytics:** load Fathom only on the production deployment ([#3464](https://github.com/dasch-swiss/dsp-app/issues/3464)) ([422ba7d](https://github.com/dasch-swiss/dsp-app/commit/422ba7ddb4bf2bcc300bd5c92d901f112281667b))
+* **ontology:** show real labels in the cardinality dialog, resolved client-side (DEV-6649) ([#3462](https://github.com/dasch-swiss/dsp-app/issues/3462)) ([79e743a](https://github.com/dasch-swiss/dsp-app/commit/79e743a7f9992be5eca1e19bc88484cf45323000))
+* **project:** drop the leading space from the 0118 cover image filename ([#3472](https://github.com/dasch-swiss/dsp-app/issues/3472)) ([cc6800c](https://github.com/dasch-swiss/dsp-app/commit/cc6800c47536e8f1e3be0510950b3ae7081090ff))
+* **project:** replace the 0803 and 081C cover images and add captions ([#3473](https://github.com/dasch-swiss/dsp-app/issues/3473)) ([f4bf764](https://github.com/dasch-swiss/dsp-app/commit/f4bf7646279455a5c5301b1eab69d2a6ac6913a1))
+* **resource-editor:** localize the compound representation tab label (DEV-7043) ([#3440](https://github.com/dasch-swiss/dsp-app/issues/3440)) ([71d51d8](https://github.com/dasch-swiss/dsp-app/commit/71d51d84eca95710454c4abb8a50f3c222119f72))
+
+
+### Maintenances
+
+* **ci:** pin the lockfile npm major via devEngines for Renovate and CI ([#3465](https://github.com/dasch-swiss/dsp-app/issues/3465)) ([4ee9d55](https://github.com/dasch-swiss/dsp-app/commit/4ee9d55972ba3dae43e319f97e4e27fa3061c3ec))
+* correct stale commands and trim ask-first rules in CLAUDE.md ([#3474](https://github.com/dasch-swiss/dsp-app/issues/3474)) ([cc2c7ee](https://github.com/dasch-swiss/dsp-app/commit/cc2c7ee0c363cd4618b7f1774b5a510a6fee2f11))
+* **deps:** Lock file maintenance ([#3477](https://github.com/dasch-swiss/dsp-app/issues/3477)) ([3de0b2b](https://github.com/dasch-swiss/dsp-app/commit/3de0b2bbf37bf440460ef33e17959a4924a89668))
+* **deps:** Update dependency autoprefixer from 10.6.0 to 10.6.1 ([#3458](https://github.com/dasch-swiss/dsp-app/issues/3458)) ([ae00bf5](https://github.com/dasch-swiss/dsp-app/commit/ae00bf57dd45ebd5ce6574aeb0c4106f99c437fa))
+* **deps:** Update dependency prettier from 3.9.6 to 3.9.8 ([#3459](https://github.com/dasch-swiss/dsp-app/issues/3459)) ([2205653](https://github.com/dasch-swiss/dsp-app/commit/22056531e4dfc453ec4a63d745afe97a2bbc894e))
+* **open-api:** bump dsp-api spec v39.0.0-17-g9ddad36 → v40.0.0-7-g4823ba0 ([#3476](https://github.com/dasch-swiss/dsp-app/issues/3476)) ([b425fed](https://github.com/dasch-swiss/dsp-app/commit/b425feddc907d85a3883e68e63e273393c985840))
+* **pixeleye:** bound the job with a timeout and serialize it across refs (DEV-7238) ([#3461](https://github.com/dasch-swiss/dsp-app/issues/3461)) ([c4258c5](https://github.com/dasch-swiss/dsp-app/commit/c4258c59a0d12102b0a42ba4b36bf1a384d23752))
+* **pixeleye:** restart the backend automatically when its DB pool wedges (DEV-7238) ([#3466](https://github.com/dasch-swiss/dsp-app/issues/3466)) ([c9af361](https://github.com/dasch-swiss/dsp-app/commit/c9af361f9687966f0ecd454c80764fe1bca66d5b))
+
 ## [13.15.0](https://github.com/dasch-swiss/dsp-app/compare/v13.14.2...v13.15.0) (2026-09-21)
 
 

@@ -189,6 +189,14 @@ services:
       - SMTP_USER=test
       - SMTP_PASSWORD=test
       - SMTP_SENDER=no-reply@pixeleye.local
+      # GitHub App (DEV-7471): posts each build's verdict as a commit status, so
+      # approving in the dashboard turns the PR check green without a CI re-run.
+      # The git routes only register when GITHUB_APP_NAME is set.
+      - GITHUB_APP_ID=${GITHUB_APP_ID}
+      - GITHUB_APP_NAME=${GITHUB_APP_NAME}
+      - GITHUB_APP_CLIENT_ID=${GITHUB_APP_CLIENT_ID}
+      - GITHUB_APP_CLIENT_SECRET=${GITHUB_APP_CLIENT_SECRET}
+      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY}
     networks:
       - intranet
 
@@ -212,6 +220,9 @@ services:
       - BACKEND_URL=https://api.${PIXELEYE_HOST_BASE}
       - ORY_URL=http://kratos:4433
       - CLIENT_ORY_URL=https://auth.${PIXELEYE_HOST_BASE}
+      # Read at runtime (experimental__runtimeEnv), so the prebuilt image picks
+      # it up. Shows the "Github" source on /add, linking to the app install.
+      - NEXT_PUBLIC_GITHUB_APP_NAME=${GITHUB_APP_NAME}
     networks:
       - intranet
 
