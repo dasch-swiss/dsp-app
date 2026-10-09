@@ -1218,6 +1218,89 @@ export const MovesAColumnByDraggingItsHeader: Story = {
 };
 
 /**
+ * In an Auto-height row, a tall cell sets the row's height and every other cell reads from the
+ * top, like the lines of a spreadsheet — not centred, and not at the bottom, where a short value
+ * beside a long text looked unrelated to its row (DEV-7494).
+ */
+export const AlignsEveryCellToTheTopOfATallRow: Story = {
+  args: {
+    resources: [
+      resource('http://rdfh.ch/0001/tall', 'BRAUT001a', {
+        ...texts(`${ONTO}hasTitle`, 'Brautpaar in Tracht'),
+        ...texts(
+          `${ONTO}hasPlace`,
+          'Moskau, aufgenommen im Atelier des Fotografen an der Twerskaja, an einem Wintermorgen des Jahres 1912, ' +
+            'als das Brautpaar nach der Trauung in der Christ-Erlöser-Kathedrale mit der ganzen Familie herkam, ' +
+            'um sich in Tracht ablichten zu lassen — die Braut im Sarafan ihrer Großmutter, der Bräutigam in der ' +
+            'Uniform seines Regiments, beide ernst, wie es sich für ein solches Bild gehörte, und hinter ihnen die ' +
+            'gemalte Kulisse eines Birkenwaldes im Sommer, die der Fotograf für alle Hochzeitsbilder verwendete.'
+        ),
+      }),
+    ],
+    columnWidths: { [`${ONTO}hasPlace`]: 220 },
+  },
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tbody tr') as HTMLElement;
+    const cells = Array.from(row.querySelectorAll('td'));
+    const top = (cell: Element, selector: string) =>
+      (cell.querySelector(selector) as HTMLElement).getBoundingClientRect().top - cell.getBoundingClientRect().top;
+    const [labelCell, titleCell, placeCell] = cells;
+
+    // The long text made the row tall.
+    await expect(row.getBoundingClientRect().height).toBeGreaterThan(150);
+    // Every cell's content starts at the same height, at the top of the row.
+    const titleTop = top(titleCell, '.cell-property');
+    await expect(titleTop).toBeLessThan(12);
+    await expect(Math.abs(top(placeCell, '.cell-property') - titleTop)).toBeLessThan(2);
+    await expect(top(labelCell, '.cell-values')).toBeLessThan(12);
+  },
+};
+
+/**
+ * Column separators run the full height of the table, not just through the header — and stop at
+ * the last real column, since the filler after it is spare width rather than a column.
+ */
+export const DrawsColumnSeparatorsDownEveryRow: Story = {
+  play: async ({ canvasElement }) => {
+    const separator = (cell: Element) => getComputedStyle(cell).borderRightWidth;
+
+    for (const row of Array.from(canvasElement.querySelectorAll('thead tr, tbody tr'))) {
+      const cells = Array.from(row.children);
+      const filler = cells.pop() as Element;
+
+      for (const cell of cells) {
+        await expect(separator(cell)).toBe('1px');
+      }
+      await expect(separator(filler)).toBe('0px');
+    }
+  },
+};
+
+/**
+ * A long label does not hold its column open: the column takes the width it was given, and the
+ * label ellipsises within it (DEV-7494 — a class of video titles could not be narrowed at all).
+ */
+export const NarrowsTheLabelColumnBelowItsLongestLabel: Story = {
+  args: {
+    resources: [
+      resource(
+        'http://rdfh.ch/0001/long',
+        'From Geovistory to LOD4HSS: Sustaining FAIR Knowledge Graph Practices in the Humanities and Social Sciences (DaSCHCon 2025)',
+        texts(`${ONTO}hasTitle`, 'Talk')
+      ),
+    ],
+    columnWidths: { [LABEL_COLUMN_KEY]: 220 },
+  },
+  play: async ({ canvasElement }) => {
+    const header = canvasElement.querySelector('th[aria-label="Label"]') as HTMLElement;
+    const label = canvasElement.querySelector('tbody td .cell-value') as HTMLElement;
+
+    await expect(Math.round(header.getBoundingClientRect().width)).toBe(220);
+    await expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+  },
+};
+
+/**
  * REQ-1.12: a class wider than the viewport scrolls sideways rather than reflowing. The columns
  * keep the widths they were given — a table that reflowed would silently stop being a grid the
  * user can scan a property down.

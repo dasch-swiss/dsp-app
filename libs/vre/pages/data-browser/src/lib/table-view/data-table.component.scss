@@ -45,8 +45,21 @@ table {
   width: max-content;
 }
 
+// Where one column ends and the next begins, down the whole table: a long value in one column and
+// a short one beside it otherwise read as one ragged block, with nothing to say where either stops.
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+  border-right: 1px solid #e5e7eb;
+
+  &:first-child {
+    border-left: 1px solid #e5e7eb;
+  }
+}
+
 .filler-cell {
   padding: 0;
+  // After the separator rule above, which it must beat at equal specificity: the filler is spare
+  // width, not a column, and a line down its right edge would draw a column that is not there.
   border-right: none;
 }
 
@@ -65,12 +78,6 @@ table {
   background: #f9fafb;
   // Anchors the resize handle, which hangs off the cell's right edge.
   position: relative;
-  // Where one column ends and the next begins, which the header is where you look for it.
-  border-right: 1px solid #e5e7eb;
-
-  &:first-child {
-    border-left: 1px solid #e5e7eb;
-  }
 
   // The controls are noise until the pointer is near the column they belong to; at forty columns,
   // always-on grips and buttons read as a row of dense clutter rather than as controls.
@@ -294,15 +301,15 @@ tr:focus-within .row-resize-handle {
 }
 
 .is-label-cell {
-  border-right: 1px solid #ebebeb;
   font-weight: 500;
 }
 
 .row-controls {
   position: absolute;
   left: 4px;
-  top: 50%;
-  transform: translateY(-50%);
+  // On the label's first line, where the cells now start, rather than halfway down a tall row: the
+  // cluster is 48px tall (the open arrow's touch target), the line's middle 16px down the cell.
+  top: -8px;
   display: flex;
   align-items: center;
   gap: 0;
@@ -365,7 +372,8 @@ tr.is-checked .row-controls [data-cy='row-check'] {
 // The edge of the frozen columns — the label and any pinned after it. MatTable marks the last
 // left-sticky cell of each row with this class, so the line follows the pins as they change.
 .mat-mdc-table-sticky-border-elem-left {
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.12);
+  // The column separator itself, darker: an inset shadow beside it drew a double line.
+  border-right-color: rgba(0, 0, 0, 0.2);
 }
 
 .cell-values {
@@ -374,6 +382,11 @@ tr.is-checked .row-controls [data-cy='row-check'] {
   gap: 2px;
   min-width: 0;
   padding: 2px 0;
+  // The label and the read-only values do not wrap, so a cell's min-content is its longest line —
+  // and under `table-layout: fixed` a column still cannot render narrower than that. A long label
+  // held its column at the label's full length, however narrow it was dragged (DEV-7494).
+  // Containment drops the text's say in the column's width, as on the header, and it ellipsises.
+  contain: inline-size;
 }
 
 .cell-value {
@@ -398,6 +411,9 @@ tr.is-checked .row-controls [data-cy='row-check'] {
   // positioned against the nearest positioned ancestor, and without this that would be the scroll
   // container — so every row's bubble would pile up at the top-left corner of the table.
   position: relative;
+  // From the top, as a spreadsheet reads. Centred, a short value beside a tall one floated halfway
+  // down the row and read as belonging to nothing in particular (DEV-7494).
+  vertical-align: top;
 }
 
 // The viewer's property unit, dropped into a cell.
