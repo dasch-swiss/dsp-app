@@ -68,19 +68,26 @@ openssl rand -base64 32 | tr -d '/+=' | head -c 32
 
 ## Review flow
 
-CI has two pixeleye jobs: `Pixeleye Snapshots` captures and uploads, `Pixeleye Visual
-Review` is the required check that reads the verdict.
+The PR check is the commit status **`Pixeleye – dasch-swiss/dsp-app`** (en dash), posted
+by the pixeleye GitHub App (see [GitHub App](#github-app)). Approving a build in the
+dashboard turns it green within seconds — no CI re-run.
 
 | build status | check |
 |---|---|
 | `unchanged`, `approved`, `orphaned` | passes |
 | `unreviewed`, `rejected` | fails |
-| `failed`, `aborted`, no build | passes with a warning — a dead VM must not block every merge |
+| no snapshots uploaded | passes, posted by CI's `Pixeleye Status Fallback` job |
 
-Approving in the dashboard does **not** notify GitHub. Approve the build, then **re-run
-`Pixeleye Visual Review`** — never the snapshots job: re-uploading the same SHA creates a
-new build that is `unreviewed` again and discards the approval. The check name is what
-branch protection matches on; renaming the job silently drops the protection.
+The app only reports commits it received snapshots for, so `Pixeleye Status Fallback`
+posts a green status under the same context when the `Pixeleye Snapshots` job was skipped
+(release-please, bot workflow-only PRs) or could not upload (VM down — fails open, so a
+dead VM does not block every merge). For this to satisfy branch protection, the required
+check must accept **any source**, not only the pixeleye app.
+
+Never re-run `Pixeleye Snapshots` to refresh the status: re-uploading the same SHA
+creates a new build that is `unreviewed` again and discards the approval. The context
+contains the pixeleye team and project names — renaming either changes it and silently
+drops the protection.
 
 ## GitHub App
 
