@@ -21,9 +21,8 @@ import {
   makeTextValue,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
+import { STORY_IIIF_BASE_URL, STORY_IMAGE_URL } from '../../stories.helpers';
 import { ResourceCompoundComponent } from './resource-compound.component';
-
-const IIIF_BASE = 'https://iiif.wellcomecollection.org/image';
 
 const PAGES: { filename: string; dimX: number; dimY: number }[] = [
   { filename: 'b20432033_B0008608.JP2', dimX: 3543, dimY: 2480 },
@@ -37,13 +36,13 @@ const makeStillImageFileValue = (page: number): ReadStillImageFileValue => {
   const { filename, dimX, dimY } = PAGES[page];
   return {
     type: Constants.StillImageFileValue,
-    fileUrl: `${IIIF_BASE}/${filename}/full/200,/0/default.jpg`,
+    fileUrl: STORY_IMAGE_URL,
     filename,
     userHasPermission: 'RV',
     copyrightHolder: null,
     authorship: [],
     license: null,
-    iiifBaseUrl: IIIF_BASE,
+    iiifBaseUrl: STORY_IIIF_BASE_URL,
     dimX,
     dimY,
   } as unknown as ReadStillImageFileValue;
