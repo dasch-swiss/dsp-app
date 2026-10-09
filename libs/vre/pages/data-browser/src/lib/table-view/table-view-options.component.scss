@@ -1,0 +1,114 @@
+@use '@angular/material' as mat;
+
+.view-options-trigger {
+  height: 36px;
+  color: rgba(0, 0, 0, 0.6);
+  font: 500 13px/18px var(--font-sans, inherit);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.view-options-panel {
+  // A class with forty properties produces forty picker rows. Capped and scrolled rather than
+  // allowed to grow, so the menu never runs past the bottom of the viewport and strands the
+  // columns at the end of the list.
+  width: 260px;
+  max-height: 520px;
+  // Both axes, not just `overflow-y`: naming one axis `auto` while the other is `visible` is not a
+  // state CSS has, so the other computes to `auto` too and the panel scrolled sideways the moment
+  // anything inside it was a pixel too wide. Nothing here is meant to be reached by scrolling
+  // sideways — labels ellipsise — so `hidden` is the honest value.
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 16px 4px;
+  font: 500 11px/16px var(--font-sans, inherit);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.row-height-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  // In line with the section headers. The slider's own 8px margin insets its track from there.
+  padding: 0 16px 8px;
+
+  // A compact segmented control. Through Material's own tokens rather than overriding its internals:
+  // left alone it is 48px tall, so in a 32px box the labels sat on the bottom edge.
+  .row-height-mode {
+    @include mat.button-toggle-overrides(
+      (
+        height: 30px,
+        shape: 6px,
+        label-text-size: 13px,
+        label-text-weight: 500,
+        text-color: rgba(0, 0, 0, 0.6),
+        background-color: #fff,
+        divider-color: #c9d1d9,
+        selected-state-background-color: #e3ebf1,
+        selected-state-text-color: #234a69,
+      )
+    );
+
+    align-self: stretch;
+    border-color: #c9d1d9;
+
+    mat-button-toggle {
+      flex: 1;
+    }
+  }
+
+  mat-slider {
+    // `block` with `auto` rather than `width: 100%`. MatSlider carries `margin: 0 8px` of its own,
+    // and `100%` fills the content box before that margin is added — so the slider was 16px wider
+    // than its row and pushed the whole panel into a horizontal scroll.
+    display: block;
+    width: auto;
+  }
+}
+
+.section-meta {
+  margin-left: auto;
+  letter-spacing: normal;
+  text-transform: none;
+  font-size: 11px;
+}
+
+.option-row {
+  // Material's own menu-item height leaves a 40-column list taller than the cap above; 36px keeps
+  // roughly a dozen rows in view without the list reading as cramped.
+  height: 36px;
+  font: 400 14px/20px var(--font-sans, inherit);
+
+  .option-mark {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    color: var(--primary, #336790);
+  }
+}
+
+.option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.option-meta {
+  margin-left: 8px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+}

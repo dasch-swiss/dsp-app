@@ -1,0 +1,216 @@
+import {
+  Constants,
+  ResourceClassDefinitionWithAllLanguages,
+  ResourcePropertyDefinitionWithAllLanguages,
+} from '@dasch-swiss/dsp-js';
+import { ApiConstants } from '@dasch-swiss/vre/core/config';
+import {
+  DEFAULT_WIDTH,
+  defaultWidthForValueType,
+  IMAGE_COLUMN_KEY,
+  LABEL_COLUMN_KEY,
+  LABEL_COLUMN_WIDTH,
+  LABEL_MIN_COLUMN_WIDTH,
+  MIN_COLUMN_WIDTH,
+  RIGHTS_COLUMN_KEYS,
+  RightsField,
+  TableColumn,
+} from './table-column.model';
+
+/** What `GenerateProperty.commonProperty` matches on to drop file-value properties. */
+const HAS_FILE_VALUE = `${ApiConstants.apiKnoraOntologyUrl}#hasFileValue`;
+
+/**
+ * Whether the resource editor can edit this property.
+ *
+ * Deliberately mirrors `GenerateProperty.commonProperty` rather than restating a rule of its own.
+ * That function is what builds the `PropertyInfoValues` the editor components consume, so a property
+ * it drops has no editor to mount — and a table that offered an edit affordance there would open a
+ * cell that could never render. Keeping the two predicates in step is the whole reason this is a
+ * named function instead of an inline filter: when `commonProperty` grows an exclusion, this is the
+ * one other place that must learn about it.
+ */
+function isEditableInResourceEditor(propDef: ResourcePropertyDefinitionWithAllLanguages): boolean {
+  return (
+    propDef.isEditable &&
+    !propDef.isLinkProperty &&
+    !propDef.subPropertyOf.includes(HAS_FILE_VALUE) &&
+    propDef.objectType !== Constants.GeomValue
+  );
+}
+
+/**
+ * Whether the header offers a sort control.
+ *
+ * The same rule `DataClassSortHeaderComponent` applies to its own menu. Both surfaces write the same
+ * `orderBy`, so offering a property in one and not the other would let the user reach a sort through
+ * the table that the list view cannot display or undo.
+ */
+function isSortableProperty(propDef: ResourcePropertyDefinitionWithAllLanguages): boolean {
+  // `isLinkValueProperty` as well as `isLinkProperty`. The sort header's rule names only the
+  // latter because `OntologyDataService` has already dropped every reified `…Value` property
+  // before it sees the list — the table builds its columns from the ontology directly, so it has
+  // to exclude them itself or it would offer a sort the list view cannot show, on a `LinkValue`
+  // whose ordering means nothing anyway.
+  return !propDef.isLinkProperty && !propDef.isLinkValueProperty && propDef.objectType !== Constants.ListValue;
+}
+
+/**
+ * The label column, prepended to every class.
+ *
+ * Sortable — label is the Data tab's default sort. Not editable: the resource label is not a
+ * property value, so it has no `PropertyInfoValues` and no editor component; changing it goes
+ * through the resource editor's own header. Sticky, and therefore also immovable and un-hideable
+ * (PRD REQ-2.10) — with no cap on visible columns, horizontal scrolling is the normal case, and a
+ * table whose rows lose their identity as you scroll right is not readable.
+ */
+function labelColumn(label: string): TableColumn {
+  return {
+    key: LABEL_COLUMN_KEY,
+    label,
+    valueType: '',
+    isEditable: false,
+    isSortable: true,
+    isFilterable: true,
+    isSticky: true,
+    defaultWidth: LABEL_COLUMN_WIDTH,
+    minWidth: LABEL_MIN_COLUMN_WIDTH,
+  };
+}
+
+/**
+ * Turn a resource class into the table's columns.
+ *
+ * Pure, and takes its property definitions as an argument rather than reaching for a service, so the
+ * classification rules above can be unit-tested without an ontology cache or an HTTP layer.
+ *
+ * Two sources are needed because neither is sufficient alone. `resClass.propertiesList` carries the
+ * cardinality and the `guiOrder` but only an IRI for the property itself; the definitions carry the
+ * label, the value type and the flags the classification turns on, but say nothing about how this
+ * particular class uses them. A property the class lists but the ontology has no definition for is
+ * skipped rather than rendered as a column with no header.
+ *
+ * @param resClass the selected class
+ * @param propertyDefinitions every property definition of the class's ontology, keyed by IRI
+ * @param localise picks a display string out of the definition's multi-language labels
+ */
+export function buildColumnModel(
+  resClass: ResourceClassDefinitionWithAllLanguages,
+  propertyDefinitions: ReadonlyMap<string, ResourcePropertyDefinitionWithAllLanguages>,
+  localise: (propDef: ResourcePropertyDefinitionWithAllLanguages) => string,
+  labelColumnTitle: string
+): TableColumn[] {
+  const propertyColumns = resClass.propertiesList
+    .map((hasProperty): TableColumn | undefined => {
+      const propDef = propertyDefinitions.get(hasProperty.propertyIndex);
+      if (!propDef) {
+        return undefined;
+      }
+
+      // dsp-api reifies every link property into a `…Value` sibling — `linkToAuthor` and
+      // `linkToAuthorValue` — and both carry the same `rdfs:label`. A class listing both would
+      // otherwise produce two columns headed "Author(s)": one holding the values, and one that
+      // can never hold anything, because `getValues(linkToAuthor)` has nothing to return.
+      //
+      // The `…Value` sibling is the one that survives, which is the same choice
+      // `GenerateProperty.commonProperty` makes when it filters `isLinkProperty` out — so the
+      // column that remains is the one the resource editor can actually render and edit.
+      if (propDef.isLinkProperty) {
+        return undefined;
+      }
+
+      const valueType = propDef.objectType ?? '';
+
+      return {
+        key: propDef.id,
+        propertyIri: propDef.id,
+        label: localise(propDef),
+        valueType,
+        propertyDefinition: propDef,
+        cardinality: hasProperty.cardinality,
+        guiOrder: hasProperty.guiOrder,
+        isEditable: isEditableInResourceEditor(propDef),
+        isSortable: isSortableProperty(propDef),
+        // Every property the shared chip bar can build a statement for. It applies the same
+        // editable-and-not-a-link-value rule, so a column outside it has no filter editor to open.
+        isFilterable: propDef.isEditable && !propDef.isLinkValueProperty,
+        isSticky: false,
+        defaultWidth: defaultWidthForValueType(valueType),
+        minWidth: MIN_COLUMN_WIDTH,
+      };
+    })
+    .filter((column): column is TableColumn => column !== undefined);
+
+  // `guiOrder` is optional, and a property without one must not sort ahead of the ontology's own
+  // ordering just because `undefined` compares low. Unordered properties go last, keeping their
+  // relative order — the same shape `GenerateProperty._initProps` produces, so the table's columns
+  // run in the order the resource editor shows the properties in.
+  const ordered = [...propertyColumns].sort((a, b) => {
+    if (a.guiOrder === undefined && b.guiOrder === undefined) return 0;
+    if (a.guiOrder === undefined) return 1;
+    if (b.guiOrder === undefined) return -1;
+    return a.guiOrder - b.guiOrder;
+  });
+
+  return [labelColumn(labelColumnTitle), ...ordered];
+}
+
+/**
+ * The Resource Rights Statement as three trailing columns: license, copyright holder, authorship.
+ *
+ * Kept out of {@link buildColumnModel}, which turns a class's properties into columns — these are
+ * not properties, and every class gets them alike. Read-only, like the statement's license and
+ * holder in the viewer; neither sortable nor filterable, because Gravsearch can do neither on them.
+ *
+ * @param titles the header of each column, already localised
+ */
+export function rightsColumns(titles: Readonly<Record<RightsField, string>>): TableColumn[] {
+  return (['license', 'copyrightHolder', 'authorship'] as const).map(field => ({
+    key: RIGHTS_COLUMN_KEYS[field],
+    label: titles[field],
+    valueType: '',
+    rightsField: field,
+    isEditable: false,
+    isSortable: false,
+    isFilterable: false,
+    isSticky: false,
+    defaultWidth: DEFAULT_WIDTH,
+    minWidth: MIN_COLUMN_WIDTH,
+  }));
+}
+
+/** Wide enough for a thumbnail to be recognisable, narrow enough not to crowd out the values. */
+const IMAGE_COLUMN_WIDTH = 120;
+
+/**
+ * An image column, for a class whose resources are still images; none for any other class.
+ *
+ * Its own column rather than the file-value property's: `hasStillImageFileValue` is defined in the
+ * knora-api ontology, not the project's, so {@link buildColumnModel} never sees a definition for it
+ * — and its value is a file, which reads as a filename rather than as the image it is.
+ *
+ * @param title the header, already localised
+ */
+export function imageColumn(resClass: ResourceClassDefinitionWithAllLanguages, title: string): TableColumn[] {
+  const hasImage = resClass.propertiesList.some(
+    hasProperty => hasProperty.propertyIndex === Constants.HasStillImageFileValue
+  );
+  if (!hasImage) {
+    return [];
+  }
+
+  return [
+    {
+      key: IMAGE_COLUMN_KEY,
+      label: title,
+      valueType: Constants.StillImageFileValue,
+      isImage: true,
+      isEditable: false,
+      isSortable: false,
+      isFilterable: false,
+      isSticky: false,
+      defaultWidth: IMAGE_COLUMN_WIDTH,
+      minWidth: MIN_COLUMN_WIDTH,
+    },
+  ];
+}

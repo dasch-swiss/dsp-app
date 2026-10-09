@@ -1,9 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import {
+  decodeFilters,
+  encodeFilters,
+  FilterParam,
+  FilterParamInput,
+} from '@dasch-swiss/vre/pages/search/search-filters';
+import { OrderDirection } from '@dasch-swiss/vre/pages/search/search-filters';
+import { SearchFilterState } from '@dasch-swiss/vre/pages/search/search-filters';
+import { SearchFlowLogger } from '@dasch-swiss/vre/pages/search/search-filters';
 import { distinctUntilChanged, map, Observable } from 'rxjs';
-import { OrderDirection } from '../model';
-import { Operator } from '../operators.config';
-import { SearchFlowLogger } from './search-flow-logger.service';
 
 export interface SearchUrlParams {
   q?: string;
@@ -15,24 +21,9 @@ export interface SearchUrlParams {
   orderDir?: OrderDirection;
 }
 
-export interface FilterParam {
-  parentIndex: number | null;
-  predicateIri: string;
-  operator: Operator;
-  value: string;
-  /**
-   * Display label for a linked-*resource* `value` (its IRI) — the "Rita" in "author equals Rita". Only
-   * written for the link-value chip case, where the label has no multi-language source the search page
-   * already fetches and re-deriving it on rehydration would need a per-chip network round-trip.
-   *
-   * DEV-6857: list values and resource-class `Matches` chips deliberately do NOT populate this — their
-   * labels live in the loaded list tree / ontology and are resolved at chip-render time by
-   * `ChipLabelPipe`. Persisting a single-language string here for those cases fossilises the display in
-   * the writer's language. Plain string values (typed literals, IsLike patterns, label text) never
-   * populate this field either (the value IS the label).
-   */
-  valueLabel?: string;
-}
+// The filter wire format is shared across every page that hosts the chip bar, so it lives in the codec
+// rather than here. Re-exported because this service is still the import site for most callers.
+export type { FilterParam } from '@dasch-swiss/vre/pages/search/search-filters';
 
 /**
  * Each URL parameter name must be spelled identically to its `SearchUrlParams` key.
@@ -90,30 +81,8 @@ function copyParam<K extends keyof SearchUrlParams>(
 /** The only `orderDir` value ever written to the URL; `asc` is the default and stays out of it. */
 const ORDER_DIR_DESC: OrderDirection = 'desc';
 
-const VALID_OPERATORS = new Set<string>(Object.values(Operator));
-
-/**
- * Structural validation for a single decoded filter entry from the untrusted `filters` URL param.
- * Requires string `predicateIri` and `value` (empty allowed — Exists/NotExists carry no value) and a
- * recognised `operator`. `parentIndex` is not validated here: it is optional metadata that the caller
- * coerces to null when it is not a number, so a bad `parentIndex` should not discard an otherwise-valid
- * filter. Everything failing the required checks is dropped.
- */
-function isValidFilterParam(
-  s: unknown
-): s is { predicateIri: string; operator: Operator; value: string; valueLabel?: unknown; parentIndex?: unknown } {
-  if (typeof s !== 'object' || s === null) return false;
-  const f = s as Record<string, unknown>;
-  return (
-    typeof f['predicateIri'] === 'string' &&
-    typeof f['value'] === 'string' &&
-    typeof f['operator'] === 'string' &&
-    VALID_OPERATORS.has(f['operator'])
-  );
-}
-
 @Injectable()
-export class SearchUrlSyncService {
+export class SearchUrlSyncService implements SearchFilterState {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _logger = inject(SearchFlowLogger);
@@ -123,6 +92,9 @@ export class SearchUrlSyncService {
    * Emits on every navigation (initial, user action, back/forward), deduped on the decoded shape so
    * identical params do not re-trigger downstream work. Fires immediately with the current params on
    * subscribe (Router's `queryParams` replays the latest value).
+   *
+   * Declared before the port members below: they are field initialisers that read it, and class fields
+   * initialise in source order.
    */
   readonly params$: Observable<SearchUrlParams> = this._route.queryParams.pipe(
     map(p => this._mapParams(p)),
@@ -136,6 +108,71 @@ export class SearchUrlSyncService {
         a.orderDir === b.orderDir
     )
   );
+
+  // ── SearchFilterState port ────────────────────────────────────────────────
+  // The Search tab's answer to "where does search state live": all six params in the URL. The chip bar
+  // reads only through these; everything below them is this page's own business.
+
+  readonly filters$: Observable<FilterParam[]> = this.params$.pipe(
+    map(p => (p.filters ? decodeFilters(p.filters) : [])),
+    distinctUntilChanged((a, b) => a.length === b.length && a.every((f, i) => f === b[i]))
+  );
+
+  readonly fulltextTerm$: Observable<string> = this.params$.pipe(
+    map(p => p.q ?? ''),
+    distinctUntilChanged()
+  );
+
+  readonly ontologyIri$: Observable<string | undefined> = this.params$.pipe(
+    map(p => p.ontology),
+    distinctUntilChanged()
+  );
+
+  readonly resourceClassIri$: Observable<string | undefined> = this.params$.pipe(
+    map(p => p.class),
+    distinctUntilChanged()
+  );
+
+  /**
+   * Any of the persisted search params counts as active state — reset wipes them all. `orderDir` is
+   * deliberately absent: on this page a direction without an `orderBy` is meaningless and is dropped on
+   * read, so it can never be the only thing set.
+   */
+  readonly hasActiveState$: Observable<boolean> = this.params$.pipe(
+    map(p => !!(p.q || p.ontology || p.class || p.filters || p.orderBy)),
+    distinctUntilChanged()
+  );
+
+  setFulltextTerm(term: string | undefined): void {
+    this._logger.fulltextChanged(term ?? '');
+    this.writeState({ q: term || undefined }, { replaceUrl: false });
+  }
+
+  /**
+   * Persist the confirmed filters, folding a now-orphaned sort into the same navigation.
+   *
+   * This page sorts by a *filter's predicate*, so removing the filter that is currently sorted on leaves
+   * `orderBy` dangling. Clearing it has to ride along in this one `writeState`: two synchronous router
+   * navigations are coalesced and the second discards the first, which would lose the filter change.
+   */
+  setFilters(filters: FilterParam[], removedPredicateIri?: string): void {
+    // `parentIndex` is `null` in the decoded shape but omitted in the encoded one, so a top-level filter
+    // keeps serialising to the same string it always has — shared links stay byte-identical.
+    const encoded = filters.length
+      ? encodeFilters(filters.map(f => ({ ...f, parentIndex: f.parentIndex ?? undefined })))
+      : undefined;
+    const clearsOrderBy = !!removedPredicateIri && removedPredicateIri === this.readParams().orderBy;
+    this.writeState(
+      { filters: encoded, ...(clearsOrderBy ? { orderBy: undefined, orderDir: undefined } : {}) },
+      { replaceUrl: false }
+    );
+  }
+
+  reset(): void {
+    this.clearAll();
+  }
+
+  // ── URL plumbing ──────────────────────────────────────────────────────────
 
   readParams(): SearchUrlParams {
     const params = this._mapParams(this._route.snapshot.queryParams);
@@ -170,37 +207,14 @@ export class SearchUrlSyncService {
     });
   }
 
-  encodeFilters(
-    statements: {
-      predicateIri: string;
-      operator: Operator;
-      value: string;
-      valueLabel?: string;
-      parentIndex?: number;
-    }[]
-  ): string {
-    return encodeURIComponent(JSON.stringify(statements));
+  // Thin delegations to the shared codec. Kept as instance methods so the many existing call sites that
+  // reach them through this service keep compiling; the encoding itself is page-agnostic.
+  encodeFilters(statements: FilterParamInput[]): string {
+    return encodeFilters(statements);
   }
 
   decodeFilters(raw: string): FilterParam[] {
-    if (!raw) return [];
-    try {
-      const parsed = JSON.parse(decodeURIComponent(raw));
-      if (!Array.isArray(parsed)) return [];
-      // The `filters` param is untrusted (bookmarked/shared URLs, hand-edited). Validate each entry
-      // against the expected shape and drop anything malformed, so only well-formed filters reach the
-      // hydration/query pipeline. This is defence in depth — the Gravsearch writer also escapes values.
-      return parsed.filter(isValidFilterParam).map(s => ({
-        predicateIri: s.predicateIri,
-        operator: s.operator,
-        value: s.value,
-        // Optional display label for a linked-resource value; only keep a non-empty string.
-        valueLabel: typeof s.valueLabel === 'string' && s.valueLabel ? s.valueLabel : undefined,
-        parentIndex: typeof s.parentIndex === 'number' ? s.parentIndex : null,
-      }));
-    } catch {
-      return [];
-    }
+    return decodeFilters(raw);
   }
 
   private _mapParams(p: Record<string, string>): SearchUrlParams {

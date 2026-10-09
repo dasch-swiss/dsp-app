@@ -1,0 +1,65 @@
+.data-class-header {
+  padding: 16px 16px 0;
+  // Closes the header off against the split below it. Without it the result meta line and the
+  // LABEL column header read as one stack, and the boundary between "this is about the whole
+  // result set" and "this is the list" disappears.
+  border-bottom: 1px solid #dcdcdc;
+  // Anchors the refresh bar to the bottom edge.
+  position: relative;
+}
+
+// Over the border, full width — the line the results hang from is the one that moves.
+.refresh-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  // A request that answers within a blink should not flash a bar: it fades in only once the wait
+  // has lasted long enough to notice.
+  opacity: 0;
+  animation: refresh-bar-in 150ms ease-out 200ms forwards;
+}
+
+@keyframes refresh-bar-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.identity-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.class-label {
+  flex: 1;
+  margin: 0;
+}
+
+.class-description {
+  font-style: italic;
+  margin: 8px 0 0;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+// A spacer rather than `justify-content: space-between`: the result meta is one child today but
+// grows more, and space-between would start distributing gaps between those instead of keeping the
+// toggle pinned right.
+.meta-spacer {
+  flex: 1;
+}
+
+// Separates the two things on the right of the row: what the table looks like, and which view is
+// drawn. Without it the View options button reads as a third tab next to List and Table.
+.meta-divider {
+  width: 1px;
+  height: 20px;
+  background: #dcdcdc;
+  margin: 0 4px;
+}

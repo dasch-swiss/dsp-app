@@ -1,0 +1,28 @@
+{
+  "name": "vre-pages-search-search-filters",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/vre/pages/search/search-filters/src",
+  "prefix": "dasch-swiss",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "runInBand": true,
+          "coverage": true
+        }
+      }
+    },
+    "tsc-errors": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit --project {projectRoot}/tsconfig.lib.json"
+      }
+    }
+  }
+}

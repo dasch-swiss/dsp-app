@@ -534,6 +534,7 @@
         "usePreviousSearch": "Utiliser la recherche précédente",
         "fulltextSearch": "Recherche plein texte",
         "reset": "Réinitialiser",
+        "clearSearch": "Effacer la recherche",
         "addFilter": "Ajouter un filtre",
         "add": "Ajouter",
         "operator": "Opérateur",
@@ -588,7 +589,8 @@
       "resourcesListFetcher": {
         "noResourcesFound": "Aucune ressource trouvée pour cette classe.",
         "noPermissions": "Il semble que vous n'ayez pas les autorisations nécessaires.",
-        "checkPermissions": "Vérifiez auprès d'un administrateur de projet si vous avez les autorisations nécessaires ou si vous êtes connecté."
+        "checkPermissions": "Vérifiez auprès d'un administrateur de projet si vous avez les autorisations nécessaires ou si vous êtes connecté.",
+        "noResourcesMatchFilters": "Aucune ressource ne correspond à ces filtres."
       },
       "multipleViewer": {
         "selectResource": "Sélectionnez une ressource dans le panneau de gauche",
@@ -621,7 +623,59 @@
         "largeExportWarning": "Cet export contient {{count}} ressources et peut prendre plusieurs minutes. Veuillez garder cet onglet ouvert.",
         "progressXofN": "{{x}} sur {{n}} ressources exportées",
         "buildingCsv": "Création de votre fichier CSV — veuillez garder cet onglet ouvert. Le téléchargement démarrera dès que le fichier sera prêt.",
-        "preparing": "Préparation…"
+        "preparing": "Préparation…",
+        "scopeNote": "L'export porte sur toutes les ressources de cette classe, indépendamment des filtres appliqués."
+      },
+      "dataClassHeader": {
+        "searchLabel": "Rechercher",
+        "searchPlaceholder": "Rechercher dans cette classe"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} sur {{total}}",
+        "ofPages": "sur {{total}}",
+        "pageNumber": "Numéro de page",
+        "pageNumberHint": "Saisissez un numéro de page et appuyez sur Entrée.",
+        "updating": "Mise à jour des résultats"
+      },
+      "sortHeader": {
+        "sortBy": "Trier par",
+        "chooseProperty": "Choisir une propriété de tri",
+        "sortAscending": "Trier par ordre croissant",
+        "sortDescending": "Trier par ordre décroissant"
+      },
+      "viewToggle": {
+        "label": "Afficher les ressources en",
+        "list": "Liste",
+        "table": "Tableau"
+      },
+      "table": {
+        "label": "Ressources de cette classe",
+        "notSet": "— non défini",
+        "showMore": "Afficher {{count}} de plus",
+        "showLess": "Afficher moins",
+        "resizeColumn": "Redimensionner la colonne {{column}}",
+        "sortColumnAscending": "Trier par {{column}}, ordre croissant",
+        "sortColumnDescending": "Trier par {{column}}, ordre décroissant",
+        "filterByColumn": "Filtrer par {{column}}",
+        "pinColumn": "Épingler {{column}}",
+        "unpinColumn": "Désépingler {{column}}",
+        "imageColumn": "Image",
+        "previewImage": "Aperçu de l'image de {{label}}",
+        "editColumnFilter": "Modifier le filtre sur {{column}}",
+        "selectRow": "Ajouter {{label}} à la comparaison",
+        "openRow": "Ouvrir {{label}}",
+        "resizeRow": "Redimensionner la ligne de {{label}}"
+      },
+      "viewOptions": {
+        "title": "Options d'affichage",
+        "columns": "Colonnes",
+        "columnsShown": "{{count}} sur {{total}} affichées",
+        "alwaysShown": "Toujours",
+        "showAll": "Afficher toutes les colonnes",
+        "hideAll": "Masquer toutes les colonnes",
+        "rowHeight": "Hauteur des lignes",
+        "rowHeightAuto": "Auto",
+        "rowHeightManual": "Manuelle"
       }
     }
   },

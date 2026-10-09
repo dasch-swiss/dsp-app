@@ -7,6 +7,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { combineLatest, filter, first, map, of, startWith, switchMap } from 'rxjs';
+import { DATA_CLASS_PARAM } from '../../data-class-url-state.service';
 import { ProjectPageService } from '../../project-page.service';
 
 @Component({
@@ -116,6 +117,24 @@ export class ResourceClassSidenavItemComponent {
     const [ontologyIri, className] = this.iri.split('#');
     const ontologyName = OntologyService.getOntologyNameFromIri(ontologyIri);
 
-    this._router.navigate([ontologyName, className], { relativeTo: this._route });
+    // The view carries across a class switch; the query does not.
+    //
+    // Which view you are reading in is a property of the user, not of the class — switching class
+    // in table view and landing back in the list is the app forgetting what you were doing. The
+    // filters, term and sort are the opposite: they address *this* class's properties, and the
+    // class view resets them on switch for exactly that reason.
+    //
+    // So `view` is named explicitly rather than preserving the whole query string. Naming the
+    // params replaces them wholesale, which drops the rest — the same outcome the reset produces,
+    // but without the extra navigation and the flash of a stale filter bar it would cause.
+    //
+    // Read off the router's current URL rather than this route's snapshot: query params belong to
+    // the whole URL, and the sidenav sits outside the class view that owns the state service.
+    const view = this._router.routerState.snapshot.root.queryParamMap.get(DATA_CLASS_PARAM.view);
+
+    this._router.navigate([ontologyName, className], {
+      relativeTo: this._route,
+      queryParams: { [DATA_CLASS_PARAM.view]: view },
+    });
   }
 }

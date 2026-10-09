@@ -1,10 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
-import { PagerComponent } from '@dasch-swiss/vre/ui/ui';
-import { TranslatePipe } from '@ngx-translate/core';
 import { ResourceListComponent } from './resource-list.component';
+import { ResultCountComponent } from './result-count.component';
 
 @Component({
   selector: 'app-resources-list',
@@ -12,19 +10,8 @@ import { ResourceListComponent } from './resource-list.component';
     @if (loading) {
       <app-progress-indicator data-testid="loader" />
     } @else {
-      @let numberOfResults = resourceResultService.numberOfResults;
-      @if (numberOfResults === null) {
-        <!-- The count query failed. Say so rather than asserting a total we do not have: the pager
-             cannot be sized either, so paging is unavailable until the next successful load. -->
-        <div class="results-count" data-cy="count-unavailable">
-          {{ 'pages.dataBrowser.resourcesList.countUnavailable' | translate }}
-        </div>
-      } @else if (numberOfResults > resourceResultService.MAX_RESULTS_PER_PAGE) {
-        <app-pager (pageIndexChanged)="updatePageIndex($event)" [numberOfAllResults]="numberOfResults" />
-      } @else {
-        <div class="results-count">
-          {{ 'pages.dataBrowser.resourcesList.resultsCount' | translate: { count: numberOfResults } }}
-        </div>
+      @if (showResultCount) {
+        <app-result-count />
       }
       <app-resource-list
         [resources]="resources"
@@ -32,8 +19,7 @@ import { ResourceListComponent } from './resource-list.component';
         [showResourceClass]="showResourceClass" />
     }
   `,
-  styleUrls: ['./resources-list.component.scss'],
-  imports: [AppProgressIndicatorComponent, PagerComponent, ResourceListComponent, TranslatePipe],
+  imports: [AppProgressIndicatorComponent, ResourceListComponent, ResultCountComponent],
 })
 export class ResourcesListComponent {
   @Input({ required: true }) resources!: ReadResource[];
@@ -41,9 +27,12 @@ export class ResourcesListComponent {
   @Input() showResourceClass = false;
   @Input() loading = false;
 
-  constructor(public resourceResultService: ResourceResultService) {}
-
-  updatePageIndex(index: number) {
-    this.resourceResultService.updatePageIndex(index);
-  }
+  /**
+   * Whether to render the count and pager above the list.
+   *
+   * The two Search pages keep them here. The Data tab turns them off: its class header renders
+   * `app-data-class-result-meta` instead — a different design (inline range plus a compact pager,
+   * no bordered card, no page input) sitting above the split rather than inside the list column.
+   */
+  @Input() showResultCount = true;
 }

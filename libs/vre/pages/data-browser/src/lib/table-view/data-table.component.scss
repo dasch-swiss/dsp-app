@@ -1,0 +1,511 @@
+@use '@angular/material' as mat;
+
+/**
+ * Room for the absolutely positioned row-control cluster.
+ *
+ * Measured rather than guessed: 4px offset + the checkbox's full 40px touch target + the
+ * explorer button's 48px host = 92px, so 104px leaves the label clear air. The two controls sit
+ * flush against each other; their own touch targets already carry the visual spacing, and a gap
+ * on top of those pushed the arrow into the label. The previous 76px gutter was narrower than
+ * the cluster itself, and the arrow sat on the first characters of every label. Shrinking either
+ * control to save width would be the wrong trade — they are the row's only affordances.
+ *
+ * The header is indented to match so the two read as one column with a control gutter, which is
+ * what the design draws as two separate narrow columns.
+ *
+ * Mixed into the row-metrics block rather than written once at the top level: that block sets
+ * `padding` on every cell through a two-class descendant selector, which outranks anything a
+ * single-class rule can say about the label column no matter where in the file it sits.
+ */
+@mixin label-column-gutter {
+  .is-label-cell,
+  .is-label-header {
+    padding-left: 104px;
+  }
+}
+
+.table-scroll {
+  // The table is allowed to be wider than the viewport at any width — there is no column cap and
+  // no responsive fallback, so horizontal scroll is the normal case rather than an edge case.
+  overflow: auto;
+  height: 100%;
+  min-height: 0;
+}
+
+table {
+  // `fixed` is what makes the header's per-column widths authoritative, and what lets the table
+  // exceed its container instead of squeezing forty columns into the viewport.
+  //
+  //
+  // Material's `min-width: 100%` stays, so the table spans the container. When the columns add up
+  // to less than that, the spare width goes to the filler column — the only one without a width.
+  // Without it the browser would spread the difference over the real columns, rendering each wider
+  // than its stored width: a drag would start from the stretched width, so the column jumps, and
+  // could never go below its share of the stretch.
+  width: max-content;
+}
+
+// Where one column ends and the next begins, down the whole table: a long value in one column and
+// a short one beside it otherwise read as one ragged block, with nothing to say where either stops.
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+  border-right: 1px solid #e5e7eb;
+
+  &:first-child {
+    border-left: 1px solid #e5e7eb;
+  }
+}
+
+.filler-cell {
+  padding: 0;
+  // After the separator rule above, which it must beat at equal specificity: the filler is spare
+  // width, not a column, and a line down its right edge would draw a column that is not there.
+  border-right: none;
+}
+
+// The row-height tokens set `height`, which clips a cell holding three stacked values. Turning
+// them into a floor keeps short rows tight and lets multi-value rows grow up to the cap.
+.mat-mdc-row,
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  height: auto;
+  min-height: var(--mat-table-row-item-container-height);
+}
+
+.mat-mdc-header-cell {
+  // Sticky cells are transparent by default, so rows would show through the header as they scroll
+  // under it.
+  background: #f9fafb;
+  // Anchors the resize handle, which hangs off the cell's right edge.
+  position: relative;
+
+  // The controls are noise until the pointer is near the column they belong to; at forty columns,
+  // always-on grips and buttons read as a row of dense clutter rather than as controls.
+  // `focus-within` keeps them reachable without a pointer.
+  &:hover,
+  &:focus-within {
+    .header-sort,
+    .header-filter,
+    .header-pin {
+      width: var(--header-control-width);
+      opacity: 1;
+    }
+
+    .header-sort,
+    .header-filter,
+    .header-pin {
+      margin-left: 4px;
+    }
+
+    .column-resize-handle {
+      opacity: 1;
+    }
+  }
+}
+
+// A hidden control takes no room, not just no ink: the name gets the whole width and shows in full,
+// and only gives way — ellipsising if it must — when hovering brings the controls in. An active
+// control (the sorted, filtered or pinned column's) is always drawn, and always takes its room.
+.header-sort,
+.header-filter,
+.header-pin {
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  box-sizing: border-box;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  // Under `table-layout: fixed` a column still cannot render narrower than its cells' min-content,
+  // and a flex row's min-content counts the label's full text however `min-width` is set on the
+  // label. Containment drops the header's say in that, so the column goes down to the width it is
+  // dragged to and the label ellipsises instead.
+  contain: inline-size;
+}
+
+// The whole header cell moves its column, so it says so — except over its buttons, which keep
+// their own pointer, and the resize handle, which keeps its own.
+.mat-mdc-header-cell.is-movable {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: -2px;
+  }
+}
+
+// Shared shape for the header controls. Each hides until the column is hovered *unless* it is
+// active — the sorted column, a filtered one, a pinned one — which must stay readable from across
+// the table (REQ-3.3).
+.header-sort,
+.header-filter,
+.header-pin {
+  --header-control-width: 18px;
+
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  // None: the 18px width centres the 16px icon, and a padding would keep a hidden control 2px wide.
+  padding: 0;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.45);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: 1px;
+  }
+}
+
+.header-sort,
+.header-filter,
+.header-pin {
+  &.is-active {
+    width: var(--header-control-width);
+    margin-left: 4px;
+    opacity: 1;
+    color: var(--primary, #336790);
+  }
+}
+
+// Hover-only like the sort, unless the column is pinned: then it stays, both as the way to unpin
+// and as the sign of why the column does not scroll.
+.header-pin {
+  mat-icon {
+    transform: rotate(45deg);
+  }
+
+  &.is-active mat-icon {
+    transform: none;
+  }
+}
+
+.header-filter.is-active {
+  background: #d6e0e8;
+}
+
+.column-resize-handle {
+  // Overhangs the border so the grab area straddles the line the user is aiming at, rather than
+  // sitting entirely inside one of the two columns it separates.
+  position: absolute;
+  top: 0;
+  right: -4px;
+  bottom: 0;
+  width: 8px;
+  z-index: 1;
+  cursor: col-resize;
+  opacity: 0;
+
+  &:hover {
+    background: rgba(51, 103, 144, 0.25);
+  }
+
+  // Keyboard-reachable, so it needs a focus ring and must stay visible while it has focus — the
+  // hover rule on the header cell cannot cover a pointerless user.
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: -1px;
+  }
+}
+
+// The preview is cloned out of the table and so loses `display: table-cell`, which is what was
+// giving the cell its width — without a box model of its own it would collapse to the width of its
+// text. The clone keeps the inline width this component binds on the header cell, so making it a
+// border-box flex row is enough to hold the column's real width.
+.cdk-drag-preview {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.35;
+}
+
+.header-label {
+  display: block;
+  // A flex item's `min-width: auto` is its text, so without this the ellipsis never kicks in and
+  // the label holds the column wider than the width it was dragged to.
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 500 12px/16px var(--font-sans, inherit);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.mat-mdc-row {
+  &:hover {
+    background: #f5f7f9;
+  }
+
+  &.is-checked {
+    background: #eef3f7;
+  }
+}
+
+// Drags a row's bottom edge. Lives in the sticky label cell so it is reachable however far the
+// table is scrolled sideways, and spans that cell's width so it is easy to aim at.
+.row-resize-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 6px;
+  z-index: 2;
+  cursor: row-resize;
+  opacity: 0;
+
+  &:hover {
+    background: rgba(51, 103, 144, 0.25);
+  }
+
+  // Keyboard-reachable, so it needs a ring and must stay visible while focused — the row's hover
+  // rule cannot cover a pointerless user.
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: -1px;
+  }
+}
+
+tr:hover .row-resize-handle,
+tr:focus-within .row-resize-handle {
+  opacity: 1;
+}
+
+.is-label-cell {
+  font-weight: 500;
+}
+
+.row-controls {
+  position: absolute;
+  left: 4px;
+  // On the label's first line, where the cells now start, rather than halfway down a tall row: the
+  // cluster is 48px tall (the open arrow's touch target), the line's middle 16px down the cell.
+  top: -8px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  // Material's own token, so the checkbox shrinks to fit the gutter without reaching into its
+  // internals — `::ng-deep` is not available to us and would not survive a Material upgrade.
+  --mdc-checkbox-state-layer-size: 28px;
+}
+
+// Opacity sits on the two controls rather than on the cluster around them, because they do not
+// appear under the same conditions: the checkbox outlives the pointer while a selection is being
+// built, the open arrow never does.
+.row-controls [data-cy='row-check'],
+.row-controls .row-open {
+  opacity: 0;
+}
+
+// Idle rows show no controls: at twenty-five rows a permanent column of checkboxes and arrows
+// reads as chrome rather than as a thing to act on. Hover is only half of that — `focus-within`
+// is what keeps both controls reachable from the keyboard, which is the only way in without a
+// pointer.
+tr:hover .row-controls [data-cy='row-check'],
+tr:focus-within .row-controls [data-cy='row-check'],
+tr:hover .row-controls .row-open,
+tr:focus-within .row-controls .row-open {
+  opacity: 1;
+}
+
+// Three ways a row keeps its *checkbox* once the pointer has moved on — and only its checkbox.
+//
+// `.selection-active` is the list view's rule: `resource-list-item` renders its checkbox on
+// `showCheckbox || selectMode`, so while a comparison set is being built every row offers one. The
+// other two are the row the user is actually working with — a set you assemble one hover at a time
+// is a set you can never see.
+//
+// The open arrow is deliberately absent. It acts on one row and says nothing about the selection,
+// so leaving it drawn on all twenty-five rows turns a quiet gutter into a column of arrows.
+.selection-active .row-controls [data-cy='row-check'],
+tr.is-checked .row-controls [data-cy='row-check'] {
+  opacity: 1;
+}
+
+.row-open {
+  flex: none;
+
+  // The shared explorer button is laid out for the properties pane, where it hangs off a row of
+  // text: zero-height host, scaled down, nudged 15px up. None of that is true in this gutter, so
+  // the offsets are reset through the custom properties the component exposes rather than fought
+  // with ::ng-deep.
+  --resource-explorer-display: inline-flex;
+  --resource-explorer-height: auto;
+  --resource-explorer-scale: 0.75;
+  --resource-explorer-top: 0;
+}
+
+// Sticky columns inherit the row background so the scrolling columns do not show through them.
+.mat-mdc-table-sticky {
+  background: inherit;
+}
+
+// The edge of the frozen columns — the label and any pinned after it. MatTable marks the last
+// left-sticky cell of each row with this class, so the line follows the pins as they change.
+.mat-mdc-table-sticky-border-elem-left {
+  // The column separator itself, darker: an inset shadow beside it drew a double line.
+  border-right-color: rgba(0, 0, 0, 0.2);
+}
+
+.cell-values {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 2px 0;
+  // The label and the read-only values do not wrap, so a cell's min-content is its longest line —
+  // and under `table-layout: fixed` a column still cannot render narrower than that. A long label
+  // held its column at the label's full length, however narrow it was dragged (DEV-7494).
+  // Containment drops the text's say in the column's width, as on the header, and it ellipsises.
+  contain: inline-size;
+}
+
+.cell-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// The project's default authorship standing in for a resource's own: muted, so it does not read as
+// something the resource asserts.
+.cell-fallback {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.cell-empty {
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.mat-mdc-cell {
+  // Anchors the action bubble the viewer's own value display floats over its value. The bubble is
+  // positioned against the nearest positioned ancestor, and without this that would be the scroll
+  // container — so every row's bubble would pile up at the top-left corner of the table.
+  position: relative;
+  // From the top, as a spreadsheet reads. Centred, a short value beside a tall one floated halfway
+  // down the row and read as belonging to nothing in particular (DEV-7494).
+  vertical-align: top;
+}
+
+// The viewer's property unit, dropped into a cell.
+//
+// It is laid out for the properties panel, which is several hundred pixels wide and has one row
+// per property. A column is 200px and has twenty-five of them, so the only thing done to it here
+// is to stop it widening its column: everything else — the bubble, the comment line, the drag
+// handles, the add control — is left exactly as the viewer draws it, which is the point.
+.cell-property {
+  min-width: 0;
+
+  // The bubble is absolutely positioned and sits above the value it belongs to. A cell that
+  // clipped its overflow would cut it in half against the row above.
+  overflow: visible;
+}
+
+.cell-more {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  color: var(--primary, #336790);
+  font: 500 12px/18px var(--font-sans, inherit);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// The table's only row metrics. It used to offer a choice of densities; with one left there is
+// nothing to choose, so these apply unconditionally. `mat.table-overrides` rather than
+// `mat.table-density`, which takes a whole theme object, not a scale.
+.table-scroll {
+  @include mat.table-overrides(
+    (
+      header-container-height: 48px,
+      row-item-container-height: 44px,
+    )
+  );
+
+  // The viewer's property rows are padded for a panel where each one stands alone; in a table
+  // that wants as many rows on screen as will fit, 16px above and below every value made a
+  // single-value cell taller than the row height asked for.
+  --property-value-padding-block: 4px;
+  // At that padding a one-line value is 28px tall, and the viewer's fixed 8px offset left the 32px
+  // bubble hanging 12px below it. Centred on the value instead, whatever its height.
+  --action-bubble-top: 50%;
+  --action-bubble-shift: -50%;
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 4px 10px;
+    font-size: 13px;
+  }
+
+  // After the padding shorthand above, which it must beat at equal specificity.
+  @include label-column-gutter;
+}
+
+// A cell taller than its row's chosen height scrolls instead of stretching the row.
+//
+// Only when a height has been chosen — the row's own dragged height, else the View-options row
+// height — which the component binds as `--row-cap`. A row with neither has no cap: it grows to
+// whatever its content needs, the component binds nothing, and no cell in it is ever marked.
+//
+// A row given a height also gets it as `height`, which grows the row when its content is
+// shorter. `height` on a table row is only ever a minimum, so it is this cap, on the cells that
+// exceed it, that lets a row be made shorter than its content as well.
+//
+// Only cells the directive measured as taller than the cap carry the class. A short cell is left
+// alone entirely — not a scroll container at all — because the editor's hover bubble is
+// absolutely positioned and pokes out of a 28px cell, which would otherwise make it scrollable
+// with nothing to scroll. See ScrollWhenTallerDirective.
+.cell-property.is-capped,
+.cell-values.is-capped {
+  max-height: var(--row-cap);
+  // Both axes, not just `overflow-y`: naming one axis `auto` and leaving the other `visible` is
+  // not a state CSS has, so the other computes to `auto` too. Nothing here scrolls sideways — a
+  // long value ellipsises — so `hidden` clips nothing that was visible.
+  overflow-x: hidden;
+  overflow-y: auto;
+  // So the cap means that many pixels of cell, not that plus whatever padding the wrapper carries.
+  box-sizing: border-box;
+}

@@ -1,0 +1,83 @@
+.result-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+}
+
+.result-meta.is-refreshing .range,
+.result-meta.is-refreshing .page-indicator {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.range {
+  font: 400 13px/20px Roboto, sans-serif;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+}
+
+.page-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 13px/20px Roboto, sans-serif;
+  color: rgba(0, 0, 0, 0.7);
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+/* As wide as the last page number needs and no wider, so the row does not shift between classes
+   with 4 pages and with 400. */
+.page-input {
+  box-sizing: content-box;
+  width: calc(var(--page-digits, 1) * 1ch);
+  height: 20px;
+  padding: 2px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
+  font: inherit;
+  color: rgba(0, 0, 0, 0.87);
+  text-align: center;
+  background: transparent;
+  // The spinner arrows would double the field's width to step by one — what the chevrons already do.
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--mat-sys-primary, #336790);
+  }
+}
+
+/* Compact icon buttons: Material's default 40px touch target is far too tall for a 36px meta row
+   sitting between the filter bar and the list header. */
+.pager-button {
+  --mdc-icon-button-state-layer-size: 28px;
+
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  /* Ends stay in place when they go dead rather than disappearing — a pager that changes width as
+     you reach its edges makes the next target move under the cursor. */
+  &:disabled {
+    opacity: 0.35;
+  }
+}

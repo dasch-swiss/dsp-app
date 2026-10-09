@@ -10,7 +10,11 @@
 
 .value {
   flex: 1;
-  padding: 16px 0;
+  // 16px is the viewer's own rhythm, where a property is a row of its own on a wide panel. A host
+  // that stacks these into something tighter — the Data tab's table at compact density — overrides
+  // the variable rather than reaching in with ::ng-deep, which is not available to us and would
+  // not survive a Material upgrade.
+  padding: var(--property-value-padding-block, 16px) 0;
 
   &.highlighted {
     background: $yellow_100;

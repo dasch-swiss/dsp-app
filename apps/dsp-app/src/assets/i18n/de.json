@@ -534,6 +534,7 @@
         "usePreviousSearch": "Vorherige Suche verwenden",
         "fulltextSearch": "Volltextsuche",
         "reset": "Zurücksetzen",
+        "clearSearch": "Suche löschen",
         "addFilter": "Filter hinzufügen",
         "add": "Hinzufügen",
         "operator": "Operator",
@@ -588,7 +589,8 @@
       "resourcesListFetcher": {
         "noResourcesFound": "Keine Ressourcen für diese Klasse gefunden.",
         "noPermissions": "Es scheint, dass Sie nicht über die erforderlichen Berechtigungen verfügen.",
-        "checkPermissions": "Überprüfen Sie bei einem Projektadministrator, ob Sie über die erforderliche Berechtigung verfügen oder ob Sie angemeldet sind."
+        "checkPermissions": "Überprüfen Sie bei einem Projektadministrator, ob Sie über die erforderliche Berechtigung verfügen oder ob Sie angemeldet sind.",
+        "noResourcesMatchFilters": "Keine Ressourcen entsprechen diesen Filtern."
       },
       "multipleViewer": {
         "selectResource": "Wählen Sie eine Ressource im linken Bereich aus",
@@ -621,7 +623,59 @@
         "largeExportWarning": "Dieser Export enthält {{count}} Ressourcen und kann mehrere Minuten dauern. Bitte lassen Sie diesen Tab geöffnet.",
         "progressXofN": "{{x}} von {{n}} Ressourcen exportiert",
         "buildingCsv": "Ihre CSV-Datei wird erstellt — bitte lassen Sie diesen Tab geöffnet. Der Download startet, sobald die Datei bereit ist.",
-        "preparing": "Wird vorbereitet…"
+        "preparing": "Wird vorbereitet…",
+        "scopeNote": "Der Export umfasst alle Ressourcen dieser Klasse, unabhängig von den aktuell gesetzten Filtern."
+      },
+      "dataClassHeader": {
+        "searchLabel": "Suche",
+        "searchPlaceholder": "In dieser Klasse suchen"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} von {{total}}",
+        "ofPages": "von {{total}}",
+        "pageNumber": "Seitenzahl",
+        "pageNumberHint": "Seitenzahl eingeben und mit Enter bestätigen.",
+        "updating": "Ergebnisse werden aktualisiert"
+      },
+      "sortHeader": {
+        "sortBy": "Sortieren nach",
+        "chooseProperty": "Eigenschaft zum Sortieren wählen",
+        "sortAscending": "Aufsteigend sortieren",
+        "sortDescending": "Absteigend sortieren"
+      },
+      "viewToggle": {
+        "label": "Ressourcen anzeigen als",
+        "list": "Liste",
+        "table": "Tabelle"
+      },
+      "table": {
+        "label": "Ressourcen dieser Klasse",
+        "notSet": "— nicht gesetzt",
+        "showMore": "{{count}} weitere anzeigen",
+        "showLess": "Weniger anzeigen",
+        "resizeColumn": "Breite der Spalte {{column}} ändern",
+        "sortColumnAscending": "Nach {{column}} aufsteigend sortieren",
+        "sortColumnDescending": "Nach {{column}} absteigend sortieren",
+        "filterByColumn": "Nach {{column}} filtern",
+        "pinColumn": "{{column}} fixieren",
+        "unpinColumn": "{{column}} lösen",
+        "imageColumn": "Bild",
+        "previewImage": "Bild von {{label}} anzeigen",
+        "editColumnFilter": "Filter für {{column}} bearbeiten",
+        "selectRow": "{{label}} zum Vergleich hinzufügen",
+        "openRow": "{{label}} öffnen",
+        "resizeRow": "Zeilenhöhe für {{label}} ändern"
+      },
+      "viewOptions": {
+        "title": "Ansichtsoptionen",
+        "columns": "Spalten",
+        "columnsShown": "{{count}} von {{total}} angezeigt",
+        "alwaysShown": "Immer",
+        "showAll": "Alle Spalten anzeigen",
+        "hideAll": "Alle Spalten ausblenden",
+        "rowHeight": "Zeilenhöhe",
+        "rowHeightAuto": "Automatisch",
+        "rowHeightManual": "Manuell"
       }
     }
   },
