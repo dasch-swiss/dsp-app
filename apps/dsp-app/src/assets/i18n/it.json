@@ -629,7 +629,11 @@
     "properties": "Proprietà",
     "labelAnnotations": "Annotazioni",
     "representation": "Rappresentazione",
-    "restricted": "Accesso limitato: le immagini potrebbero essere mostrate in bassa risoluzione e alcuni contenuti potrebbero essere nascosti.",
+    "restricted": "Accesso limitato: alcuni valori di questa risorsa sono nascosti.",
+    "restrictedAsset": {
+      "label": "Qualità ridotta",
+      "hint": "Il tuo accesso a questo file è limitato, pertanto potrebbe essere servito in qualità ridotta."
+    },
     "versioned": "Questa è una versione obsoleta di questa risorsa.",
     "seeCurrentVersion": "Vai alla versione più recente",
     "versionNotValid": "La versione richiesta non è valida. Verrà mostrata la versione più recente.",

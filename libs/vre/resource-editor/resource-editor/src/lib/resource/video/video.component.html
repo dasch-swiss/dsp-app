@@ -1,4 +1,4 @@
-<app-resource-representation-container height="auto">
+<app-resource-representation-container height="auto" [restrictedView]="isRestrictedAsset(src)">
   <div appDisableContextMenu>
     @if (videoError) {
     <app-representation-error-message />

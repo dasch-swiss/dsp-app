@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Constants, ReadStillImageFileValue, ReadValue } from '@dasch-swiss/dsp-js';
 import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
 import { filter, map } from 'rxjs';
+import { isRestrictedFileValue } from '../../representation/is-restricted-file-value';
 import { ResourceLegalComponent } from '../../representation/resource-legal.component';
 import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
 import { StillImageComponent } from '../still-image/still-image.component';
@@ -12,7 +13,7 @@ import { CompoundService } from './compound.service';
 @Component({
   selector: 'app-compound-viewer',
   template: `
-    <app-resource-representation-container>
+    <app-resource-representation-container [restrictedView]="isRestrictedAsset(fileValue$ | async)">
       @if (compoundService.incomingResource$ | async; as incomingResource) {
         @if (fileValue$ | async; as fileValue) {
           <app-resource-legal [fileValue]="fileValue" />
@@ -45,6 +46,9 @@ export class CompoundViewerComponent {
       return value.res.properties[Constants.HasStillImageFileValue][0] as ReadStillImageFileValue;
     })
   );
+
+  /** Asset-level restriction: read off the page's file value, never the compound resource (DEV-7392). */
+  protected readonly isRestrictedAsset = isRestrictedFileValue;
 
   constructor(public readonly compoundService: CompoundService) {}
 
