@@ -10,6 +10,6 @@ export default {
   // CI caches ~/.cache/ms-playwright rather than relying on this to save time.
   devices: [devices["Desktop Chrome"]],
   // Leave false: the -w/--wait CLI flag is a no-op in 0.8.8 (stored as `wait`,
-  // read as `waitForStatus`). CI's `pixeleye-gate` job polls for the verdict instead.
+  // read as `waitForStatus`). The verdict reaches PRs as the GitHub App's commit status instead.
   waitForStatus: false,
 };
