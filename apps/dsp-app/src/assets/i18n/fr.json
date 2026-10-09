@@ -497,7 +497,9 @@
       },
       "termValidation": {
         "tooShort": "Saisissez au moins 3 caractères",
-        "wildcardTooShort": "Un caractère générique nécessite au moins 3 autres caractères dans le même mot"
+        "wildcardTooShort": "Un caractère générique nécessite au moins 3 autres caractères dans le même mot",
+        "unclosedPhrase": "Fermez les guillemets pour rechercher une expression",
+        "trailingEscape": "Une barre oblique inverse doit être suivie d'un caractère"
       },
       "searchTips": {
         "title": "Conseils de recherche",
@@ -626,6 +628,7 @@
   "resourceEditor": {
     "properties": "Propriétés",
     "labelAnnotations": "Annotations",
+    "representation": "Représentation",
     "restricted": "Accès restreint : les images sont susceptibles d'être de qualité inférieure et certaines valeurs d'être masquées.",
     "versioned": "Ceci est une version obsolète de cette ressource.",
     "seeCurrentVersion": "Aller à la version actuelle",

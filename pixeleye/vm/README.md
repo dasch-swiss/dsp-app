@@ -1,7 +1,7 @@
 # Pixeleye VM deployment
 
-Hardened single-VM deployment of self-hosted pixeleye for the advisory CI trial
-(DEV-7238). See the
+Hardened single-VM deployment of self-hosted pixeleye, started as an advisory CI trial
+(DEV-7238) and now a required check on `main` (DEV-7471, see [Review flow](#review-flow)). See the
 [plan](https://github.com/dasch-swiss/dasch-specs/blob/main/specs/2026-09-11-pixeleye-visual-regression-ci/02-feat-pixeleye-visual-regression-ci-plan.md).
 
 ## Why this is a standalone compose file
@@ -60,11 +60,63 @@ openssl rand -base64 32 | tr -d '/+=' | head -c 32
    rejected with `401`. A usable token is that value **plus `:<projectID>`**:
    `pxi__<secret>:<projectID>`. The UI does this concatenation for you; the API does not.
 4. Set the project's **`autoApprove` to `main`**, or every baseline needs manual
-   approval and "advisory" quietly becomes recurring manual work. The endpoint is
+   approval and every PR is blocked on reviewing its own baseline. The endpoint is
    `PATCH /v1/projects/<projectID>/admin` — note the `/admin` suffix; without it you get
    a `404`.
 5. Add `PIXELEYE_TOKEN` and `PIXELEYE_ENDPOINT=https://api.<HOST_BASE>` as `dsp-das`
    repository secrets.
+
+## Review flow
+
+The PR check is the commit status **`Pixeleye – dasch-swiss/dsp-app`** (en dash), posted
+by the pixeleye GitHub App (see [GitHub App](#github-app)). Approving a build in the
+dashboard turns it green within seconds — no CI re-run.
+
+| build status | check |
+|---|---|
+| `unchanged`, `approved`, `orphaned` | passes |
+| `unreviewed`, `rejected` | fails |
+| no snapshots uploaded | passes, posted by CI's `Pixeleye Status Fallback` job |
+
+The app only reports commits it received snapshots for, so `Pixeleye Status Fallback`
+posts a green status under the same context when the `Pixeleye Snapshots` job was skipped
+(release-please, bot workflow-only PRs) or could not upload (VM down — fails open, so a
+dead VM does not block every merge). For this to satisfy branch protection, the required
+check must accept **any source**, not only the pixeleye app.
+
+Never re-run `Pixeleye Snapshots` to refresh the status: re-uploading the same SHA
+creates a new build that is `unreviewed` again and discards the approval. The context
+contains the pixeleye team and project names — renaming either changes it and silently
+drops the protection.
+
+## GitHub App
+
+With the app installed, pixeleye posts each build's verdict as a commit status named
+`Pixeleye – <team>/<project>`, and updates it the moment a build is approved — no CI
+re-run. It only does this for a project created **from the GitHub repo** by a team linked
+to the installation; a project created over the REST API (as in "After first start")
+never reports.
+
+App settings (org `dasch-swiss` → Developer settings → GitHub Apps):
+
+| Field | Value |
+|---|---|
+| Homepage URL | `https://<HOST_BASE>` |
+| Callback URLs | `https://auth.<HOST_BASE>/self-service/methods/oidc/callback/github` (GitHub login, via Kratos) and `https://api.<HOST_BASE>/v1/git/github/callback` (account linking) |
+| Setup URL | `https://<HOST_BASE>/add/github`, with *Redirect on update* on |
+| Webhook | inactive — the backend has no webhook route |
+| Permissions | Repository: Commit statuses read/write, Metadata read. Account: Email addresses read |
+
+Then:
+
+1. Put the five `GITHUB_APP_*` values in `.env` (see `.env.example`; the private key is
+   the whole `.pem`, double-quoted), `./render.sh`, `docker compose up -d`.
+2. Log in to the dashboard **with GitHub**, then `/add` → *Github* → install the app on
+   `dsp-app` only.
+3. Create the project from the `dsp-app` repo. Set `autoApprove` to `main` on it (see
+   "After first start") and replace the `PIXELEYE_TOKEN` repository secret with the new
+   project's token. Baselines do not carry over; the next build on `main` reseeds them.
+4. After a build has posted once, the status can be added to required checks.
 
 ## Verify hardening
 
@@ -78,6 +130,24 @@ done
 
 Only 80 and 443 should answer. Port 9000 closing is correct — MinIO is reached through
 Caddy on `s3.<HOST_BASE>`, not directly.
+
+## Watchdog
+
+The backend leaks DB transactions when snapshot ingestion hits `lock_timeout` (typically
+two builds ingesting concurrently). Once all `DB_MAX_CONNECTIONS` pool slots are bound to
+dead transactions, every DB-touching request hangs forever while the container stays
+`Up` — the dashboard spins, CI uploads hang, unauthenticated probes still answer. Upstream
+is dormant, so [`watchdog/`](watchdog/) probes an authenticated endpoint every 2 minutes
+and restarts `pixeleye-backend` after 2 consecutive failures (10-minute cooldown).
+
+Install (copy `watchdog/` to the VM first):
+
+```bash
+sudo ./watchdog/install.sh   # creates /etc/pixeleye-watchdog.env (0600)
+sudo $EDITOR /etc/pixeleye-watchdog.env   # set PIXELEYE_TOKEN
+sudo ./watchdog/install.sh   # enables the timer and runs a first probe
+journalctl -u pixeleye-watchdog -f
+```
 
 ## Known gotchas
 

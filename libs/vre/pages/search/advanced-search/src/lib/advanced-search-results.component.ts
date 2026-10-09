@@ -12,7 +12,7 @@ import {
 import { Title } from '@angular/platform-browser';
 import { KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ErrorReportingService, userFacingReason } from '@dasch-swiss/vre/core/error-handler';
+import { ErrorReportingService, isRequestRejection, userFacingReason } from '@dasch-swiss/vre/core/error-handler';
 import { ResourceBrowserComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { filterNull } from '@dasch-swiss/vre/shared/app-common';
@@ -116,6 +116,17 @@ export class AdvancedSearchResultsComponent implements OnChanges {
           this.failureReason.set(userFacingReason(err));
           this.queryIsExecuting.set(false);
           this.failed.set(true);
+          // A 400 or 409 is dsp-api rejecting the query, and the failure panel already says so. A snackbar
+          // on top outlives it: search-as-you-type can send half-typed Lucene syntax the input does
+          // not catch, such as `(foo`, and the toast stayed up over the results of the finished term
+          // (DEV-7370). Report it without notifying the user.
+          if (isRequestRejection(err)) {
+            this._errorReporting.report(err, {
+              component: 'AdvancedSearchResultsComponent',
+              operation: 'gravsearchQuery',
+            });
+            return of(null);
+          }
           // Last, so the failure state is committed before the global handler runs and a throw there
           // cannot bring the eternal spinner back (DEV-6872). It would still error this stream and
           // leave retry dead, which is why `AppErrorHandler.handleError` is written not to throw.

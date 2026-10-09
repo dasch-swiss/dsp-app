@@ -497,7 +497,9 @@
       },
       "termValidation": {
         "tooShort": "Enter at least 3 characters",
-        "wildcardTooShort": "A wildcard needs at least 3 other characters in the same word"
+        "wildcardTooShort": "A wildcard needs at least 3 other characters in the same word",
+        "unclosedPhrase": "Close the quotation mark to search for a phrase",
+        "trailingEscape": "A backslash needs a character after it"
       },
       "searchTips": {
         "title": "Search tips",
@@ -626,6 +628,7 @@
   "resourceEditor": {
     "properties": "Properties",
     "labelAnnotations": "Annotations",
+    "representation": "Representation",
     "restricted": "Access restricted: Images may be of lower quality and some values may be hidden.",
     "versioned": "This is an outdated version of the resource.",
     "seeCurrentVersion": "Go to current version",

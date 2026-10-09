@@ -31,6 +31,47 @@ export function searchTermMinLengthValidator(): ValidatorFn {
 }
 
 /**
+ * Where a term stops in the middle of Lucene syntax, so dsp-api could only answer it with a parse error:
+ * `'unclosedPhrase'` when a quoted phrase is still open, `'trailingEscape'` when the term ends on a lone
+ * backslash, `null` when it is complete. Search-as-you-type sends such a term whenever the user pauses
+ * before the closing quote (DEV-7370).
+ *
+ * Follows Lucene's escaping rule: a backslash escapes the next character, whatever it is. So `\"` is a
+ * literal quote and opens no phrase, while `\\"` is a literal backslash followed by a real quote. Check
+ * the term as typed: the SPARQL escaping of the query literal is undone by dsp-api before Lucene sees it.
+ */
+export function incompleteLuceneSyntax(term: string): 'unclosedPhrase' | 'trailingEscape' | null {
+  let inPhrase = false;
+  for (let i = 0; i < term.length; i++) {
+    if (term[i] === '\\') {
+      if (i === term.length - 1) {
+        return 'trailingEscape';
+      }
+      i++;
+    } else if (term[i] === '"') {
+      inPhrase = !inPhrase;
+    }
+  }
+  return inPhrase ? 'unclosedPhrase' : null;
+}
+
+/**
+ * Rejects a term Lucene cannot parse yet (see {@link incompleteLuceneSyntax}). Applied by the advanced
+ * search bar, which searches as the user types. Not part of {@link fulltextSearchTermValidator}: the
+ * simple search runs only on submit, so it was left out of DEV-7370 and is unverified against
+ * `/v2/search/:term`, not known to be unneeded there.
+ */
+export function searchTermCompleteSyntaxValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const incomplete = incompleteLuceneSyntax((control.value ?? '').trim());
+    if (incomplete === 'unclosedPhrase') {
+      return { searchTermUnclosedPhrase: true };
+    }
+    return incomplete === 'trailingEscape' ? { searchTermTrailingEscape: true } : null;
+  };
+}
+
+/**
  * Splits a term the way dsp-api's `LuceneQueryString.termsAndPhrases` does, keeping a quoted phrase
  * (`"down the rabbit hole"`) whole instead of chopping it on its spaces. Same expression as
  * `ApacheLuceneSupport.separateTermsAndPhrasesRegex`, and it has to stay the same: splitting a phrase

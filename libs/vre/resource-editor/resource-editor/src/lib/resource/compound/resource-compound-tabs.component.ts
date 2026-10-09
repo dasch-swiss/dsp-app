@@ -2,8 +2,9 @@ import { AsyncPipe, NgClass } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { ResourceClassDefinitionWithPropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspResource } from '@dasch-swiss/vre/shared/app-common';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { IncomingResourceHeaderComponent } from '../../header/incoming-resource-header.component';
@@ -26,7 +27,10 @@ import { CompoundService } from './compound.service';
       </mat-tab>
 
       @if (incomingResource) {
-        <mat-tab [label]="resourceClassLabel(incomingResource.res)">
+        <mat-tab
+          [label]="
+            (incomingResourceClass?.labels | appStringifyStringLiteral) || ('resourceEditor.representation' | translate)
+          ">
           <app-incoming-resource-header [resource]="incomingResource.res" />
           <app-properties-display [resource]="incomingResource" [parentResourceId]="resource.res.id" />
         </mat-tab>
@@ -83,6 +87,7 @@ import { CompoundService } from './compound.service';
     NgClass,
     MatBadgeModule,
     MatTabsModule,
+    StringifyStringLiteralPipe,
     TranslatePipe,
     AnnotationTabComponent,
     IncomingResourceHeaderComponent,
@@ -100,14 +105,22 @@ export class ResourceCompoundTabsComponent implements OnInit, OnDestroy {
 
   private readonly _destroy$ = new Subject<void>();
 
+  /**
+   * The ontology class definition of the incoming representation, e.g. `daschland:ImageOriginal`.
+   * Its `labels` carry every language the project authored (the ontology cache fetches with
+   * `allLanguages=true`), which `appStringifyStringLiteral` narrows to the current UI language.
+   */
+  get incomingResourceClass(): ResourceClassDefinitionWithPropertyDefinition | undefined {
+    const res = this.incomingResource?.res;
+    return res ? res.entityInfo?.classes[res.type] : undefined;
+  }
+
   constructor(
     private readonly _cdr: ChangeDetectorRef,
     public readonly regionService: RegionService,
     private readonly _compoundService: CompoundService,
     public readonly propertiesDisplayService: PropertiesDisplayService
   ) {}
-
-  resourceClassLabel = (resource: ReadResource | undefined) => resource?.entityInfo?.classes[resource.type].label || '';
 
   ngOnInit() {
     this._compoundService.incomingResource$.pipe(takeUntil(this._destroy$)).subscribe(resource => {

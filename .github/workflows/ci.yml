@@ -447,25 +447,29 @@ jobs:
           npx nx run dsp-app:test-storybook:ci -- --maxWorkers=2
 
   pixeleye:
-    name: Pixeleye Visual Regression (advisory)
+    name: Pixeleye Snapshots
     needs: [changes]
     if: |
       needs.changes.result == 'success' &&
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     runs-on: ubuntu-latest
-    # Advisory trial (DEV-7238): this job must never block a merge. It is
-    # deliberately absent from required status checks. Note the pixeleye CLI
-    # exits 0 even on a changed/rejected verdict, so continue-on-error guards
-    # infrastructure failure (VM down, expired token), not visual diffs.
+    # Capture only: this job uploads snapshots and never decides anything. The
+    # verdict reaches the PR as the commit status `Pixeleye – dasch-swiss/dsp-app`,
+    # posted by the pixeleye GitHub App and updated the moment a build is approved
+    # (DEV-7471). Never re-run this job to refresh that status: it uploads a NEW
+    # build for the same SHA, which is `unreviewed` again and discards the
+    # approval. continue-on-error guards infrastructure failure (VM down, expired
+    # token); the CLI exits 0 on every verdict, so a visual diff never fails it.
     continue-on-error: true
+    outputs:
+      uploaded: ${{ steps.capture.outputs.uploaded }}
     timeout-minutes: 20
     concurrency:
       group: pixeleye-shared-vm
       cancel-in-progress: false
     permissions:
       contents: read
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -511,93 +515,61 @@ jobs:
         # the binary the pixeleye booth server launches.
         run: node node_modules/playwright-core/cli.js install --with-deps chromium chromium-headless-shell
       - name: Capture and upload snapshots
+        id: capture
         run: |
           npx http-server dist/storybook --port 6006 --silent &
           npx wait-on tcp:6006 --timeout 60000
           npm run pixeleye:ci
+          echo "uploaded=true" >> "$GITHUB_OUTPUT"
         env:
           PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
-      - name: Resolve build and report
-        id: build
-        env:
-          PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
-          PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
-          PIXELEYE_FRONTEND_URL: ${{ vars.PIXELEYE_FRONTEND_URL }}
-          SHA: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          RESP=$(curl -sS -m 30 -X POST "${PIXELEYE_ENDPOINT}/v1/client/latestBuilds" \
-            -H "Authorization: Bearer ${PIXELEYE_TOKEN}" \
-            -H 'Content-Type: application/json' \
-            -d "{\"shas\":[\"${SHA}\"]}" || echo '[]')
 
-          ID=$(echo "$RESP" | jq -r '.[0].id // empty')
-          if [ -z "$ID" ]; then
-            # Liveness assertion. Without this a dead trial (VM stopped, token
-            # expired, disk full) reports green forever, and the resulting
-            # silence reads as "no regressions" rather than "broken instrument".
-            echo "::warning::No pixeleye build found for ${SHA} — the instance may be unreachable. This run produced no visual coverage."
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            exit 1
-          fi
-
-          echo "found=true"                                            >> "$GITHUB_OUTPUT"
-          echo "id=${ID}"                                              >> "$GITHUB_OUTPUT"
-          echo "number=$(echo "$RESP" | jq -r '.[0].buildNumber')"     >> "$GITHUB_OUTPUT"
-          echo "status=$(echo "$RESP" | jq -r '.[0].status')"          >> "$GITHUB_OUTPUT"
-          echo "url=${PIXELEYE_FRONTEND_URL}/builds/${ID}"             >> "$GITHUB_OUTPUT"
-      - name: Comment on PR
-        # Builds are not viewable without a dashboard login, so the comment
-        # carries the verdict rather than only a link. Per-snapshot counts are
-        # unavailable to CI (that endpoint requires a user session).
-        if: steps.build.outputs.found == 'true'
+  pixeleye-status-fallback:
+    # The pixeleye app only posts its status for a commit it received snapshots
+    # for. When none were uploaded — capture skipped (release-please, bot
+    # workflow-only PRs) or pixeleye unreachable — post a green status under the
+    # app's context, or a required `Pixeleye – dasch-swiss/dsp-app` check would
+    # stay pending forever and block the PR. Failing open on an unreachable
+    # instance is deliberate: one VM with a known DB-pool wedge must not block
+    # every merge. The required check must accept any source, not only the app.
+    name: Pixeleye Status Fallback
+    needs: [changes, pixeleye]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Report status when no snapshots were uploaded
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          BRANCH: ${{ github.ref_name }}
-          NUMBER: ${{ steps.build.outputs.number }}
-          STATUS: ${{ steps.build.outputs.status }}
-          URL: ${{ steps.build.outputs.url }}
+          SHA: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          CAPTURE_RESULT: ${{ needs.pixeleye.result }}
+          UPLOADED: ${{ needs.pixeleye.outputs.uploaded }}
+          # Must match the app's context exactly — note the en dash.
+          CONTEXT: 'Pixeleye – dasch-swiss/dsp-app'
         run: |
           set -euo pipefail
-          PR_NUMBER=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
-          if [ -z "$PR_NUMBER" ]; then
-            echo "No open PR for branch '${BRANCH}'; skipping comment."
+          if [ "$CHANGES_RESULT" != "success" ]; then
+            echo "::error::changes job failed (${CHANGES_RESULT}); refusing to report green"
+            exit 1
+          fi
+          if [ "$UPLOADED" = "true" ]; then
+            echo "Snapshots uploaded; the pixeleye app reports the verdict itself."
             exit 0
           fi
-
-          case "$STATUS" in
-            unchanged)            SUMMARY="✅ No visual changes." ;;
-            approved)             SUMMARY="✅ Visual changes approved." ;;
-            unreviewed)           SUMMARY="👀 **Visual changes detected** — needs a look." ;;
-            rejected)             SUMMARY="❌ Visual changes rejected." ;;
-            orphaned)             SUMMARY="🌱 No baseline to compare against yet (first build on this branch)." ;;
-            failed|aborted)       SUMMARY="⚠️ Build did not complete." ;;
-            *)                    SUMMARY="Status: \`${STATUS}\`" ;;
-          esac
-
-          MARKER='<!-- pixeleye-visual-regression -->'
-          COMMENT_ID=$(gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" --paginate \
-            --jq ".[] | select(.user.login == \"github-actions[bot]\") | select(.body | contains(\"${MARKER}\")) | .id" \
-            | head -n1 || true)
-
-          if [ -n "${COMMENT_ID}" ]; then
-            ENDPOINT="repos/${REPO}/issues/comments/${COMMENT_ID}"; METHOD="PATCH"
+          if [ "$CAPTURE_RESULT" = "skipped" ]; then
+            DESC="No UI-relevant changes — no snapshots taken"
           else
-            ENDPOINT="repos/${REPO}/issues/${PR_NUMBER}/comments"; METHOD="POST"
+            DESC="Pixeleye unreachable — this commit has no visual coverage"
+            echo "::warning::${DESC}"
           fi
-
-          gh api -X "${METHOD}" "${ENDPOINT}" -F body=@- >/dev/null <<EOF
-          ${MARKER}
-          ### Visual regression — build #${NUMBER}
-
-          ${SUMMARY}
-
-          [Open build #${NUMBER}](${URL}) · status \`${STATUS}\`
-
-          <sub>Advisory only — this never blocks the PR. Opening the build requires a pixeleye dashboard login.</sub>
-          EOF
+          gh api -X POST "repos/${REPO}/statuses/${SHA}" \
+            -f state=success -f context="$CONTEXT" -f description="$DESC" -f target_url="$RUN_URL" >/dev/null
+          echo "Posted '${CONTEXT}': ${DESC}"
 
   docs-build-test:
     name: Docs Build Test

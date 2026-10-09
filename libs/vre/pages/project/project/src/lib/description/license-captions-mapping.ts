@@ -25,8 +25,16 @@ Belltower of Aurigeno. © Romeo Dell’Era`,
     '0121',
     `Préambule d'un compte de la trésorerie générale de Savoie, Archivio di Stato di Tornino, Sezioni riunite, Camera bei Conti di Savoia, Inventario 16, n° 87 (1441), fol. 1r. @ Eva Pibiri, 2023.`,
   ],
+  [
+    '0803',
+    'Sebastian Brant, Stultifera navis, Basel: Johann Bergmann von Olpe, 1. März 1497, Titelblatt (Detail). Universitätsbibliothek Basel, Ai II 22a. CC BY 4.0.',
+  ],
   ['0810', 'Subtitle image: © DaSCH. Design: Rebecca Sigloch (2022), CC BY 4.0'],
   ['0813', 'Foto: Alberto Venzago.'],
+  [
+    '081C',
+    "Max van Berchem, Bern, Hôtel de musique, façade, vue d'ensemble, 1902. Schweizerische Nationalbibliothek, Collection Max van Berchem, EAD-6611. Public domain.",
+  ],
   [
     '0846',
     'The Wheel of Motion (1920-1928). Source: Frank Bunker Gilbreth, Lilliane Moller Gilbreth: DieMagie des Bewegungsstudiums, hg. von Bernd Stiegler. München: Wilhelm Fink 2012, S. 185f.',
