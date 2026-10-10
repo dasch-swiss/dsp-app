@@ -31,28 +31,71 @@ export function searchTermMinLengthValidator(): ValidatorFn {
 }
 
 /**
+ * Boolean operators that need a term after them, and those that also need one before them. Measured
+ * against the dev API: `foo AND`, `foo NOT`, `AND foo`, `foo &&` and `(foo AND)` are parse errors, while
+ * `NOT foo` and `foo AND bar` run. Lucene only reads them in uppercase, so `foo and` is an ordinary term.
+ */
+const OPERATORS_NEEDING_A_TERM_AFTER = new Set(['AND', 'OR', 'NOT', '&&', '||']);
+const OPERATORS_NEEDING_A_TERM_BEFORE = new Set(['AND', 'OR', '&&', '||']);
+
+export type IncompleteLuceneSyntax = 'unclosedPhrase' | 'trailingEscape' | 'danglingOperator';
+
+/**
  * Where a term stops in the middle of Lucene syntax, so dsp-api could only answer it with a parse error:
  * `'unclosedPhrase'` when a quoted phrase is still open, `'trailingEscape'` when the term ends on a lone
- * backslash, `null` when it is complete. Search-as-you-type sends such a term whenever the user pauses
- * before the closing quote (DEV-7370).
+ * backslash, `'danglingOperator'` when a Boolean operator lacks its term (at either end of the term or
+ * of a group), `null` when it is complete. Search-as-you-type sends such a term whenever the user pauses
+ * before the closing quote (DEV-7370) or before the term after an `AND` (DEV-7441).
  *
  * Follows Lucene's escaping rule: a backslash escapes the next character, whatever it is. So `\"` is a
  * literal quote and opens no phrase, while `\\"` is a literal backslash followed by a real quote. Check
  * the term as typed: the SPARQL escaping of the query literal is undone by dsp-api before Lucene sees it.
  */
-export function incompleteLuceneSyntax(term: string): 'unclosedPhrase' | 'trailingEscape' | null {
+export function incompleteLuceneSyntax(term: string): IncompleteLuceneSyntax | null {
+  // The tokens outside phrases, with `(` and `)` as tokens of their own. A phrase stays one token with
+  // its quotes, and an escaped character stays in its token with its backslash, so neither can read as
+  // an operator.
+  const tokens: string[] = [];
+  let token = '';
+  const endToken = () => {
+    if (token) {
+      tokens.push(token);
+      token = '';
+    }
+  };
   let inPhrase = false;
   for (let i = 0; i < term.length; i++) {
-    if (term[i] === '\\') {
+    const char = term[i];
+    if (char === '\\') {
       if (i === term.length - 1) {
         return 'trailingEscape';
       }
-      i++;
-    } else if (term[i] === '"') {
+      token += char + term[++i];
+    } else if (char === '"') {
       inPhrase = !inPhrase;
+      token += char;
+    } else if (inPhrase) {
+      token += char;
+    } else if (/\s/.test(char)) {
+      endToken();
+    } else if (char === '(' || char === ')') {
+      endToken();
+      tokens.push(char);
+    } else {
+      token += char;
     }
   }
-  return inPhrase ? 'unclosedPhrase' : null;
+  if (inPhrase) {
+    return 'unclosedPhrase';
+  }
+  endToken();
+
+  const dangling = tokens.some(
+    (t, i) =>
+      (OPERATORS_NEEDING_A_TERM_AFTER.has(t) && (i === tokens.length - 1 || tokens[i + 1] === ')')) ||
+      (OPERATORS_NEEDING_A_TERM_BEFORE.has(t) && (i === 0 || tokens[i - 1] === '('))
+  );
+  return dangling ? 'danglingOperator' : null;
 }
 
 /**
@@ -64,10 +107,17 @@ export function incompleteLuceneSyntax(term: string): 'unclosedPhrase' | 'traili
 export function searchTermCompleteSyntaxValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const incomplete = incompleteLuceneSyntax((control.value ?? '').trim());
-    if (incomplete === 'unclosedPhrase') {
-      return { searchTermUnclosedPhrase: true };
+    switch (incomplete) {
+      case 'unclosedPhrase':
+        return { searchTermUnclosedPhrase: true };
+      case 'trailingEscape':
+        return { searchTermTrailingEscape: true };
+      case 'danglingOperator':
+        return { searchTermDanglingOperator: true };
+      // No default: a new outcome without its error must fail to compile, not pass as complete.
+      case null:
+        return null;
     }
-    return incomplete === 'trailingEscape' ? { searchTermTrailingEscape: true } : null;
   };
 }
 

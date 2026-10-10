@@ -499,7 +499,8 @@
         "tooShort": "Inserisci almeno 3 caratteri",
         "wildcardTooShort": "Un carattere jolly richiede almeno altri 3 caratteri nella stessa parola",
         "unclosedPhrase": "Chiudi le virgolette per cercare una frase",
-        "trailingEscape": "Una barra rovesciata deve essere seguita da un carattere"
+        "trailingEscape": "Una barra rovesciata deve essere seguita da un carattere",
+        "danglingOperator": "AND, OR e NOT richiedono un termine di ricerca accanto"
       },
       "searchTips": {
         "title": "Suggerimenti per la ricerca",

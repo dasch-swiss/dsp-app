@@ -499,7 +499,8 @@
         "tooShort": "Mindestens 3 Zeichen eingeben",
         "wildcardTooShort": "Ein Platzhalter benötigt mindestens 3 weitere Zeichen im selben Wort",
         "unclosedPhrase": "Anführungszeichen schliessen, um nach einer Phrase zu suchen",
-        "trailingEscape": "Auf einen Backslash muss ein Zeichen folgen"
+        "trailingEscape": "Auf einen Backslash muss ein Zeichen folgen",
+        "danglingOperator": "AND, OR und NOT brauchen einen Suchbegriff daneben"
       },
       "searchTips": {
         "title": "Suchtipps",

@@ -24,12 +24,13 @@ import { ResourceClassChipComponent } from './resource-class-chip.component';
 
 /** The inline message for each way the fulltext term can be refused, in the order they are checked. */
 const FULLTEXT_ERROR_MESSAGES: Record<
-  'searchTermTooShort' | 'searchTermUnclosedPhrase' | 'searchTermTrailingEscape',
+  'searchTermTooShort' | 'searchTermUnclosedPhrase' | 'searchTermTrailingEscape' | 'searchTermDanglingOperator',
   string
 > = {
   searchTermTooShort: 'pages.search.termValidation.tooShort',
   searchTermUnclosedPhrase: 'pages.search.termValidation.unclosedPhrase',
   searchTermTrailingEscape: 'pages.search.termValidation.trailingEscape',
+  searchTermDanglingOperator: 'pages.search.termValidation.danglingOperator',
 };
 
 @Component({
