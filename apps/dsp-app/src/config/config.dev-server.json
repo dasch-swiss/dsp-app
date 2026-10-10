@@ -36,6 +36,7 @@
     }
   },
   "featureFlags": {
-    "allowEraseProjects": true
+    "allowEraseProjects": true,
+    "resourceDescription": true
   }
 }

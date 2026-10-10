@@ -867,6 +867,11 @@
         "subtitle": "Modifica etichetta della risorsa",
         "label": "Etichetta"
       },
+      "editDescription": {
+        "subtitle": "Modifica la descrizione della risorsa",
+        "add": "Aggiungi una descrizione",
+        "edit": "Modifica descrizione"
+      },
       "eraseResource": {
         "title": "Vuoi cancellare definitivamente questa risorsa?",
         "subtitle": "Cancella istanza della risorsa",

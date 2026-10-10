@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { DspApiConnectionToken, RESOURCE_DESCRIPTION_ENABLED } from '@dasch-swiss/vre/core/config';
 import { ProjectDataRightsService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -50,6 +50,7 @@ describe('CreateResourceDialogComponent', () => {
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ResourceFetcherService, useValue: mockResourceFetcherService },
         { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
+        { provide: RESOURCE_DESCRIPTION_ENABLED, useValue: false },
         // The hosted create-resource form loads project legal info on init; stub the rights service.
         {
           provide: ProjectDataRightsService,

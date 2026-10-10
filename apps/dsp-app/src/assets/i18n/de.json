@@ -822,6 +822,11 @@
         "subtitle": "Ressourcen-Label bearbeiten",
         "label": "Label"
       },
+      "editDescription": {
+        "subtitle": "Ressourcenbeschreibung bearbeiten",
+        "add": "Beschreibung hinzufügen",
+        "edit": "Beschreibung bearbeiten"
+      },
       "eraseResource": {
         "title": "Möchten Sie diese Ressource endgültig löschen?",
         "subtitle": "Ressourceninstanz löschen",
