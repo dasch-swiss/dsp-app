@@ -1,22 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { VersionApiService, VersionResponse } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AppConfigService, DspConfig } from '@dasch-swiss/vre/core/config';
 import { TranslatePipe } from '@ngx-translate/core';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import packageJson from '../../../../../../../package.json';
 import { FooterComponent } from '../footer/footer.component';
 import { GridComponent, GridItem } from '../grid/grid.component';
-
-interface VersionResponse {
-  webapi: string;
-  buildCommit: string;
-  buildTime: string;
-  fuseki: string;
-  scala: string;
-  sipi: string;
-  name: string;
-}
 
 @Component({
   selector: 'app-help',
@@ -102,7 +92,7 @@ export class HelpPageComponent implements OnInit {
   ];
 
   constructor(
-    private readonly _http: HttpClient,
+    private readonly _versionApiService: VersionApiService,
     private readonly _appConfigService: AppConfigService
   ) {}
 
@@ -113,10 +103,7 @@ export class HelpPageComponent implements OnInit {
 
     this.releaseNotesUrl = `https://github.com/dasch-swiss/dsp-app/releases/tag/v${this.appVersion}`;
 
-    const apiConfig = this._appConfigService.dspApiConfig;
-    const portSuffix = apiConfig.apiPort !== null ? `:${apiConfig.apiPort}` : '';
-    const versionUrl = `${apiConfig.apiProtocol}://${apiConfig.apiHost}${portSuffix}/version`;
-    this._http.get<VersionResponse>(versionUrl).subscribe(apiVersion => {
+    this._versionApiService.getVersion().subscribe(apiVersion => {
       this.apiVersion = apiVersion;
 
       // set dsp-app version

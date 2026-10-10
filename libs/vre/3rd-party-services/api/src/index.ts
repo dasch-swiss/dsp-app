@@ -3,3 +3,4 @@ export * from './lib/services/admin/list-api.service';
 export * from './lib/services/admin/project-api.service';
 export * from './lib/services/admin/user-api.service';
 export * from './lib/services/v2/resource-legal-v2-api.service';
+export * from './lib/services/version-api.service';

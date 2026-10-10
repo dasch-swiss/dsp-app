@@ -21,17 +21,16 @@ import { VectorImageComponent } from './vector-image.component';
 // Helpers
 // ---------------------------------------------------------------------------
 
-// Minimal SVG encoded as a data: URI so no network request is needed.
-const INLINE_SVG_URL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+// Minimal SVG served by the RepresentationService stub so no network request is needed.
+const INLINE_SVG =
   '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">' +
-    '<rect width="400" height="300" fill="#2a2a2a"/>' +
-    '<circle cx="200" cy="150" r="80" fill="none" stroke="#4fc3f7" stroke-width="4"/>' +
-    '<line x1="50" y1="50" x2="350" y2="250" stroke="#ef9a9a" stroke-width="2"/>' +
-    '<text x="200" y="155" text-anchor="middle" fill="white" font-size="18">SVG Vector</text>' +
-    '</svg>'
-)}`;
+  '<rect width="400" height="300" fill="#2a2a2a"/>' +
+  '<circle cx="200" cy="150" r="80" fill="none" stroke="#4fc3f7" stroke-width="4"/>' +
+  '<line x1="50" y1="50" x2="350" y2="250" stroke="#ef9a9a" stroke-width="2"/>' +
+  '<text x="200" y="155" text-anchor="middle" fill="white" font-size="18">SVG Vector</text>' +
+  '</svg>';
 
-const makeVectorResource = (fileUrl = INLINE_SVG_URL): ReadResource =>
+const makeVectorResource = (fileUrl = 'http://example.com/diagram.svg'): ReadResource =>
   ({
     id: 'http://rdfh.ch/resource/vector-1',
     attachedToProject: 'http://rdfh.ch/project/1',
@@ -71,7 +70,7 @@ const sharedProviders = [
   },
   { provide: DspApiConnectionToken, useValue: { v2: { res: { getResource: () => NEVER } } } },
   { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
-  { provide: RepresentationService, useValue: representationServiceStub },
+  { provide: RepresentationService, useValue: { ...representationServiceStub, getSvgContent: () => of(INLINE_SVG) } },
   { provide: NotificationService, useValue: notificationServiceStub },
 ];
 
