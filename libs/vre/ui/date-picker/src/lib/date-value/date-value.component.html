@@ -1,0 +1,83 @@
+<div class="date-value">
+  <!-- what is stored, so a user editing it can see what they are changing -->
+  @if (isEditingStoredValue()) {
+  <p class="stored-value-line" data-cy="stored-value-line">
+    <mat-icon class="line-icon">lock</mat-icon>
+    {{ 'ui.datePicker.storedValue' | translate: { date: storedText() } }}
+  </p>
+  }
+
+  <!-- one calendar for the whole value: CreateDateValue and UpdateDateValue carry a single
+  `calendar` field, so it belongs to the value rather than to either end -->
+  <app-calendar-selector
+    [calendar]="state().calendar"
+    [available]="availableCalendars()"
+    [disabled]="disabled()"
+    (calendarChange)="onCalendarChange($event)" />
+
+  <!-- Start and end read as the two ends of one value, so they sit on one line. Each picker is a
+  field that opens its own panel, which is what keeps the row one line tall. -->
+  <div class="date-fields">
+    <app-date-picker
+      class="start-date"
+      data-cy="start-picker"
+      [date]="state().start"
+      [calendar]="state().calendar"
+      [disabled]="disabled()"
+      [label]="state().isPeriod ? 'ui.datePicker.startDate' : null"
+      (dateChange)="onStartChange($event)" />
+
+    @if (state().isPeriod && state().start) {
+    <span class="date-fields-separator" aria-hidden="true">–</span>
+
+    <app-date-picker
+      class="end-date"
+      data-cy="end-picker"
+      [date]="state().end"
+      [calendar]="state().calendar"
+      [disabled]="disabled()"
+      label="ui.datePicker.endDate"
+      (dateChange)="onEndChange($event)" />
+    }
+
+    <button
+      mat-button
+      class="toggle-period-control"
+      data-cy="toggle-period"
+      [disabled]="disabled() || !state().start"
+      [matTooltip]="(state().isPeriod ? 'ui.datePicker.removeEndDate' : 'ui.datePicker.addEndDate') | translate"
+      matTooltipPosition="above"
+      (click)="onTogglePeriod($event)">
+      <mat-icon>{{ state().isPeriod ? 'close' : 'keyboard_tab' }}</mat-icon>
+    </button>
+  </div>
+
+  <!-- A status region, so a screen reader announces the hint when a calendar switch brings it. It
+  is always rendered: a live region added together with its content is not announced. -->
+  <div class="date-value-footer" role="status">
+    <!-- What the stored value became in the calendar now chosen, and — the one thing the numerals
+    cannot show — whether it is still the same day. Below the fields rather than above them, so
+    appearing on a calendar switch does not push the fields down. -->
+    @if (conversionHint(); as hint) {
+    <span class="converted" data-cy="converted-from">
+      <mat-icon class="line-icon">swap_horiz</mat-icon>
+      {{ hint.key | translate: { from: hint.from, to: hint.to } }}
+    </span>
+    } @if (reformGap(); as gap) {
+    <span class="reform-gap" data-cy="reform-gap">
+      <mat-icon class="line-icon">info</mat-icon>
+      {{ 'ui.calendarMarker.reformGapNote' | translate: gap }}
+    </span>
+    }
+  </div>
+
+  <div class="date-value-errors">
+    @if (showStartRequired()) {
+    <p class="error-message" data-cy="start-required">{{ 'ui.datePicker.dateRequired' | translate }}</p>
+    } @if (showEndRequired()) {
+    <p class="error-message" data-cy="end-required">{{ 'ui.datePicker.endDateRequired' | translate }}</p>
+    } @if (endBeforeStart()) {
+    <p class="error-message" data-cy="period-order-error">{{ 'ui.datePicker.endBeforeStart' | translate }}</p>
+    }
+  </div>
+</div>

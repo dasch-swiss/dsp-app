@@ -45,7 +45,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Key entities**: `AppComponent`, `appConfig`, `routes`, `AuthGuard`, `SysAdminGuard`, `authInterceptorFn`, `iiifWithCredentialsInterceptorFn`, `I18nFallbackTranslateLoader`, `CookieBannerComponent`, `buildTagFactory`
 - **Public interface**: None. Nothing imports `@dsp-app/*`; this is a leaf consumer.
 - **Local-context kit**: `src/main.ts`, `src/app/app.config.ts`, `src/app/app.routes.ts`, `libs/vre/core/config/src/lib/app-config/app-constants.ts`, `src/assets/i18n/en.json`, `src/assets/i18n/CLAUDE.md`, `project.json`
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/analytics`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/date-picker`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/analytics`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/ui`
 - **Used by**: none
 - **Boundary rules**:
   - `src/app/app.routes.ts` is the only URL surface. `RouteConstants` in `vre/core/config` supplies the strings, and #3433 and #3437 took it from 74 members to 51 by deleting the dead ones. All 51 are now reachable, but three are referenced only from inside the class: `ontologyRelative` is composed into `ontologyEditorRelative`, and `projectParameter` and `resourceParameter` into `projectResourceRelative`. `app-constants.ts:59` warns about exactly this, so a repo-wide search for `RouteConstants.<member>` returning nothing is not evidence that the member is dead. `docs-only`
@@ -179,30 +179,33 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Nx project**: `vre-ui-ui`
 - **Paths**: `libs/vre/ui/ui/**`
 - **Purpose**: The shared component kit: dialogs, form controls, layout primitives, pipes and directives. It also carries a tail of page-shaped and domain-specific components that do not belong in a kit.
-- **Key entities**: `DialogService`, `ConfirmDialogComponent`, `DialogHeaderComponent`, `CkEditorComponent`, `CommonInputComponent`, `ChipListInputComponent`, `TimeInputComponent`, `PagerComponent`, `KnoraDatePipe`, `HumanReadableErrorPipe`, `AdminImageDirective`, `NotAllowedPageComponent`, `NoResultsFoundPageComponent`, `ResourceRightsStatementComponent`
-- **Public interface**: 46 `export *` lines from `src/index.ts`.
+- **Key entities**: `DialogService`, `ConfirmDialogComponent`, `DialogHeaderComponent`, `CkEditorComponent`, `CommonInputComponent`, `ChipListInputComponent`, `TimeInputComponent`, `PagerComponent`, `KnoraDatePipe`, `HumanReadableErrorPipe`, `AdminImageDirective`, `NotAllowedPageComponent`, `NoResultsFoundPageComponent`, `ResourceRightsStatementComponent`, `CalendarMarkerComponent`, `CalendarDateService`
+- **Public interface**: 46 `export *` lines from `src/index.ts`, plus one curated named export (`CalendarMarkerComponent`).
 - **Local-context kit**: `src/index.ts`, `src/lib/dialog/dialog.service.ts`, `src/lib/dialog/confirm-dialog.component.ts`, `src/lib/common-input.component.ts`, `src/lib/pipes/formatting/knoradate.pipe.ts`, `src/lib/search-failed.component.ts`
-- **Depends on**: `dsp-js`, `vre/shared/app-common`
-- **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/ui/string-literal`
+- **Depends on**: `dsp-js`, `vre/shared/app-common`, `vre/shared/calendar`
+- **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/ui/date-picker`, `vre/ui/string-literal`
 - **Boundary rules**:
   - `NotAllowedPageComponent` and `NoResultsFoundPageComponent` are mounted as routes at `/403` and `/404`. Routed pages in a component kit are an exception, not a pattern to copy. `docs-only`
   - `ResourceRightsStatementComponent`, `AuthorshipChipEditorComponent`, `AdminImageDirective` and `KnoraDatePipe` carry DSP domain knowledge and are kit members only by location. `docs-only`
+  - `CalendarDateService` is the one home of the calendar rules applied to a `KnoraDate`: the viewer's reading (`convertKnoraDateTo`, spans), the editor's restating (`restateKnoraDateIn`, `restatableCalendarsFor`), an added end's preset (`nextKnoraDate`), period order (`isPeriodOutOfOrder`) and the Gregorian reform's skipped days (`isSkippedByGregorianReform`, `reformGapOf`). It adapts `vre/shared/calendar` — astronomical years, eras, precision — and keeps the arithmetic there. `docs-only`
 - **Durable state**: none. `DialogService` is a stateless wrapper over `MatDialog`.
 
 ### vre/ui/date-picker
 
 - **Nx project**: `vre-ui-date-picker`
 - **Paths**: `libs/vre/ui/date-picker/**`
-- **Purpose**: The adapter layer binding DSP's `KnoraDate` and the `shared/calendar` `CalendarDate` model onto Angular Material's datepicker. It carries translation logic, not calendar arithmetic.
-- **Key entities**: `AppDatePickerComponent`, `DateValueHandlerComponent`, `CalendarDateAdapter`, `CALENDAR_DATE_FORMATS`, `provideCalendarDateAdapter`, `ValueService`
-- **Public interface**: Components, adapters, `provideCalendarDateAdapter()` and validators, from `src/index.ts`.
-- **Local-context kit**: `src/index.ts`, `src/lib/adapters/calendar-date.adapter.ts`, `src/lib/adapters/calendar-date-adapter.providers.ts`, `src/lib/date-value-handler/value.service.ts`, `src/lib/validators/date.validators.ts`, `apps/dsp-app/src/app/app.config.ts`
-- **Depends on**: `dsp-js`, `vre/shared/calendar`
-- **Used by**: `dsp-app`, `vre/pages/search/advanced-search`, `vre/resource-editor/resource-editor`
+- **Purpose**: The date editor: a calendar choice, a picker that picks a date in the calendar it is told, and a form control for a DSP date value — one date or a period, edited against what is stored. It orchestrates; the calendar rules it applies live in `CalendarDateService` (`vre/ui/ui`).
+- **Key entities**: `CalendarSelectorComponent`, `DatePickerComponent`, `DateValueComponent`
+- **Public interface**: `CalendarSelectorComponent`, `DatePickerComponent` and `DateValueComponent`, from `src/index.ts`.
+- **Local-context kit**: `src/index.ts`, `src/lib/date-value/date-value.component.ts`, `src/lib/date-picker/date-picker.component.ts`, `src/lib/calendar-selector/calendar-selector.component.ts`, `src/lib/date-value/date-value.host.spec.ts`, `../ui/src/lib/calendar-date/calendar-date.service.ts`
+- **Depends on**: `dsp-js`, `vre/shared/calendar`, `vre/ui/ui`
+- **Used by**: `vre/pages/search/advanced-search`, `vre/resource-editor/resource-editor`
 - **Boundary rules**:
-  - There is one `KnoraDate` to `CalendarDate` conversion path, `src/lib/date-value-handler/value.service.ts`, which applies the astronomical-year conversion for BCE. A second, unreachable adapter negated the year instead and disagreed by one year; #3441 deleted it. `docs-only`
-  - Era vocabulary differs between layers: dsp-js uses `AD` and `noEra`, `shared/calendar` uses `CE` and `NONE`. The normalisation lives in `value.service.ts`. `docs-only`
-- **Durable state**: `provideCalendarDateAdapter()` replaces Angular Material's root `DateAdapter` and `MAT_DATE_FORMATS` application-wide at `apps/dsp-app/src/app/app.config.ts`. Single writer, but every Material datepicker in the application is affected.
+  - One writer per piece: `app-calendar-selector` reports a choice and converts nothing; `app-date-picker` cannot write a calendar, so it cannot relabel a date; `app-date-value` owns periods, the stored value and every emission, with one writable state signal and no `valueChanges` feeding back into it. `review`
+  - The editor *restates* a year or month when the calendar changes — the same numbers between Julian and Gregorian, the Islamic year or month containing its first day — and converts only a day. The viewer *reads* spans. The two differ on purpose; both rules live in `CalendarDateService` (`restateKnoraDateIn` versus `convertKnoraDateTo`), not here. `docs-only`
+  - Conversions measure from the stored value until the user edits a date that came from it, so switching away and back restores it exactly. An end added beside a stored single date — entered or preset — is not such an edit. `review`
+  - Nothing converts silently: a converted day is named in a hint; a day the Gregorian reform skipped (5–14 October 1582, valid in the proleptic calendar and stored as given) is marked in the grid and noted. `docs-only`
+- **Durable state**: none. The rewrite in DEV-7372 deleted the Material `DateAdapter` stack and `provideCalendarDateAdapter()`; `time-value.component.ts` supplies its own `CustomDateAdapter` at component level.
 
 ### vre/ui/string-literal
 
@@ -326,14 +329,19 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Nx project**: `calendar`
 - **Paths**: `libs/vre/shared/calendar/**`
 - **Purpose**: A framework-free multi-calendar date library (Gregorian, Julian, Islamic) using the Julian Day Number as the conversion pivot, with comparison and period validation.
-- **Key entities**: `CalendarSystem`, `CALENDAR_SYSTEMS`, `Era`, `ERAS`, `DatePrecision`, `CalendarDate`, `CalendarPeriod`, `CalendarOperations`, `CalendarError`, `createDate`, `convertCalendar`, `compareDates`, `validatePeriod`, `GregorianCalendar`, `JulianCalendar`, `IslamicCalendar`, `getCalendar`
+- **Key entities**: `CalendarSystem`, `CALENDAR_SYSTEMS`, `Era`, `ERAS`, `DatePrecision`, `CalendarDate`, `CalendarPeriod`, `CalendarOperations`, `CalendarError`, `createDate`, `convertCalendar`, `compareDates`, `isPeriodOutOfOrder`, `validatePeriod`, `GregorianCalendar`, `JulianCalendar`, `IslamicCalendar`, `getCalendar`, `convertCalendarResult`, `ConversionResult`, `ConversionRefusalReason`, `ISLAMIC_EPOCH_JDN`
 - **Public interface**: The only hand-curated barrel in the repository: named `export` and `export type` blocks with a `@packageDocumentation` usage example, no `export *`.
 - **Local-context kit**: `src/index.ts`, `src/lib/types/calendar.types.ts`, `src/lib/factories/calendar.factory.ts`, `src/lib/factories/date.factory.ts`, `src/lib/converters/calendar.converter.ts`, `src/lib/calendars/gregorian.calendar.ts`, `README.md`
 - **Depends on**: none
-- **Used by**: `vre/ui/date-picker`
+- **Used by**: `vre/pages/search/advanced-search`, `vre/resource-editor/resource-editor`, `vre/ui/date-picker`, `vre/ui/ui`
 - **Boundary rules**:
   - Zero `@dasch-swiss` imports, no Angular DI, pure functions and immutable value objects. This is the reference example in the repository for how a library should be shaped. `structure`
   - It is the only library with its own `package.json` and a real `build` target, and the only one with one spec per implementation file. `docs-only`
+  - It knows nothing of `KnoraDate`, and must not. The layer above — `CalendarDateService` in `vre/ui/ui` — maps astronomical years to historical ones and `NONE` to `noEra` before and after calling here, so a BCE or era defect can live in either layer. `docs-only`
+  - `convertCalendarResult` reports three outcomes: an exact date, a span, or a refusal. A year or month rarely maps onto a single unit of another calendar, and the Islamic calendar has no date before `ISLAMIC_EPOCH_JDN`. Returning a single date would fabricate precision or a date that does not exist. `docs-only`
+  - `toJDN`/`fromJDN` must be mutual inverses, and the round-trip suite asserts it over every JDN in range rather than sampling. Two calendars have already drifted apart here — Gregorian in DEV-7264, Islamic in DEV-7372 — both because the pair was derived from two sources instead of one. `docs-only`
+  - `isPeriodOutOfOrder` is the one place a period's order is decided: the first day the start covers against the last day the end covers, as dsp-api checks, so an imprecise end may contain the start (15.03.1850 – 03.1850) — how projects record uncertain dates. `validatePeriod` and the editor both use it. `docs-only`
+  - The Gregorian calendar is proleptic, as in dsp-api: 5–14 October 1582 are valid dates. `docs-only`
 - **Durable state**: none.
 
 ### vre/pages/project/project
@@ -413,7 +421,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Key entities**: `StatementElement`, `Predicate`, `Operator`, `PropertyObjectType`, `OrderByItem`, `GravsearchWriter`, `GravsearchService`, `generateGravSearchQuery`, `DerivedSearchStateService`, `StatementDraftStore`, `SearchUrlSyncService`, `OntologyDataService`, `buildStatementsFromFilterParams`
 - **Public interface**: Five exports, including `provideAdvancedSearch()`. All services are internal.
 - **Local-context kit**: `src/lib/service/search-url-sync.service.ts`, `src/lib/service/derived-search-state.service.ts`, `src/lib/service/gravsearch.service.ts`, `src/lib/service/gravsearch-writer.ts`, `src/lib/model.ts`, `src/lib/service/statement-draft.store.ts`, `README.md`
-- **Depends on**: `dsp-js`, `vre/core/config`, `vre/core/error-handler`, `vre/pages/data-browser`, `vre/pages/project/project`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/date-picker`, `vre/ui/nested-menu`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/core/config`, `vre/core/error-handler`, `vre/pages/data-browser`, `vre/pages/project/project`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/shared/calendar`, `vre/ui/date-picker`, `vre/ui/nested-menu`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/ui`
 - **Used by**: `dsp-app`
 - **Boundary rules**:
   - Gravsearch is assembled by string concatenation of template-literal fragments in `gravsearch-writer.ts` and `gravsearch.service.ts`. The injection defences live in `model.ts`, not in the writer: `escapeForGravsearchStringLiteral`, `escapeSparqlStringLiteral` and `sanitizeSparqlIri`. Values reach them from the untrusted `filters` URL parameter, so any new value path must route through an escaper. `review`
@@ -483,7 +491,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Resource-type axis: `src/lib/resource-type.ts`, `src/lib/get-resource-type.ts`, `src/lib/resource-dispatcher.component.ts`, a sibling wrapper such as `src/lib/resource/plain/resource-plain.component.ts`, `src/lib/representation/resource-fetcher.service.ts`, `src/lib/representation/region.service.ts`
   - Value-type axis: `src/lib/properties/properties-display/template-switcher/template-viewer-switcher.component.ts`, `.../template-editor-switcher.component.ts`, `.../property-value/resource-payloads-mapping.ts`, `.../property-value/property-values.component.ts`, `.../property-value/property-value.service.ts`, `src/lib/representation/resource-fetcher.service.ts`
   - Sufficiency note: for a cross-cutting change, such as a new state flow or a permission rule, no bounded set exists. `RegionService` has eight writers on selection and `ResourceFetcherService.reload()` has eleven callers, so such a change needs roughly fifteen files open. This is the strongest case in the repository for a colocated CLAUDE.md.
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/ui/date-picker`, `vre/ui/nested-menu`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/shared/calendar`, `vre/ui/date-picker`, `vre/ui/nested-menu`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/ui`
 - **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/project/project`
 - **Boundary rules**:
   - `template-viewer-switcher.component.ts` and `template-editor-switcher.component.ts` carry thirteen mirrored cases each and must be kept in sync by hand. Nothing enforces the mirror. `docs-only`

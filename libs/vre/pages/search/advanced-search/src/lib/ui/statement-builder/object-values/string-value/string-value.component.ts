@@ -1,9 +1,11 @@
 import {
   AfterViewInit,
   Component,
+  computed,
   DestroyRef,
   EventEmitter,
   inject,
+  signal,
   Input,
   OnChanges,
   OnInit,
@@ -18,7 +20,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
-import { AppDatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
+import { CALENDAR_SYSTEMS, CalendarSystem } from '@dasch-swiss/vre/shared/calendar';
+import { DatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
+import { CalendarDateService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ResourceLabel } from '../../../../constants';
@@ -44,7 +48,7 @@ class ValueErrorStateMatcher implements ErrorStateMatcher {
   standalone: true,
   selector: 'app-string-value',
   imports: [
-    AppDatePickerComponent,
+    DatePickerComponent,
     MatButtonModule,
     MatInputModule,
     MatMenuModule,
@@ -72,6 +76,8 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   inputControl = new FormControl();
 
   // separate control and FormGroup needed for the date picker
+  private readonly _calendarDates = inject(CalendarDateService);
+
   dateControl = new FormControl();
   dateFormGroup = new FormGroup({ date: this.dateControl });
 
@@ -102,11 +108,61 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
     } else {
       const knoraDate = this.value ? this._transformDateStringToKnoraDateObject(this.value as string) : undefined;
       this.dateControl.setValue(knoraDate);
+      // A stored term is in its own calendar; telling the picker otherwise relabelled it on the
+      // next edit.
+      if (knoraDate) {
+        this.searchCalendar.set(knoraDate.calendar.toUpperCase() as CalendarSystem);
+        this._date.set(knoraDate);
+      }
     }
   }
 
-  onDateSelected(value: string) {
-    this.inputControl.setValue(value);
+  /**
+   * The calendar this search term is expressed in.
+   *
+   * Held here rather than in the picker: advanced search stores its date as a gravsearch literal,
+   * which carries its own calendar, so the calendar is part of the term rather than a display
+   * choice. The picker is told this and never changes it.
+   */
+  readonly searchCalendar = signal<CalendarSystem>('GREGORIAN');
+
+  /** The entered date, as a signal, so the calendars on offer follow it. */
+  private readonly _date = signal<KnoraDate | null>(null);
+
+  /** The calendars a switch can go to: those the entered date can be restated in, as in the editor. */
+  readonly availableCalendars = computed<readonly CalendarSystem[]>(() => {
+    const date = this._date();
+    return date ? this._calendarDates.restatableCalendarsFor(date) : CALENDAR_SYSTEMS;
+  });
+
+  onDateSelected(date: KnoraDate | null) {
+    this.dateControl.setValue(date);
+    this._date.set(date);
+
+    // dsp-api parses this literal and compares across calendars server-side, so the term is sent in
+    // the calendar the user chose rather than converted here. Formatting it is this component's job:
+    // the gravsearch shape is a query format, not something a date picker should know about.
+    this.inputControl.setValue(date === null ? null : this._calendarDates.format(date, 'YYYY-MM-dd', 'gravsearch'));
+  }
+
+  /**
+   * Restates the entered date in the newly chosen calendar, as the editor does — a day converts, a
+   * year or month keeps what was entered — then re-emits the term. A calendar that cannot take the
+   * date is not switched to, so the selector and the term never disagree.
+   */
+  onCalendarSelected(calendar: CalendarSystem) {
+    // `== null` rather than `=== null`: an untouched FormControl holds undefined, not null, and an
+    // empty term has nothing to convert either way.
+    const current = this.dateControl.value as KnoraDate | null | undefined;
+    if (current == null) {
+      this.searchCalendar.set(calendar);
+      return;
+    }
+    const restated = this._calendarDates.restateKnoraDateIn(current, calendar);
+    if (restated !== undefined) {
+      this.searchCalendar.set(calendar);
+      this.onDateSelected(restated);
+    }
   }
 
   // we need to provide the date-picker with a KnoraDate but we store the value as a string
@@ -118,7 +174,9 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
     const [datePart, eraPart] = dateAndEra.split(' ');
     const [year, month, day] = datePart.split('-').map(part => parseInt(part));
 
-    era = eraPart || 'CE';
+    // The gravsearch literal names no era for Islamic, which has none; any other calendar defaults
+    // to CE. Reading an Islamic term as CE made the calendar library refuse it.
+    era = calendar.toUpperCase() === 'ISLAMIC' ? 'noEra' : eraPart || 'CE';
 
     if (day) {
       return new KnoraDate(calendar, era, year, month, day);

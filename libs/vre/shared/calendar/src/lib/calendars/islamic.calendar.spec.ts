@@ -6,6 +6,37 @@ import { createDate } from '../factories/date.factory';
 import { IslamicCalendar } from './islamic.calendar';
 
 describe('IslamicCalendar', () => {
+  describe('agreement with dsp-api', () => {
+    // There is no single Islamic calendar. This one is the tabular *civil* variant (ICU's
+    // `islamic-civil`): epoch JDN 1948440, months alternating 30/29, eleven leap years per
+    // 30-year cycle. The observation-based variants disagree — ICU's `islamic` and
+    // `islamic-umalqura` both place AH 1432-08-29 a day earlier, at JDN 2455773.
+    //
+    // dsp-api resolves to the same civil calendar and stores dates as JDN, so agreement is not a
+    // matter of taste: a date entered here under a different variant would be stored as a
+    // different day. These anchors are dsp-api's own committed test values
+    // (CalendarDateUtilV2Spec), so a divergence on either side fails here.
+    //
+    // The tests below this block assert only that a JDN is a positive number, which every variant
+    // satisfies; these are what actually pin the model.
+    const anchors: [string, number, number, number, number][] = [
+      ['the Hijra, AH 1-01-01', 1, 1, 1, 1948440],
+      ['AH 1407-01-15', 1407, 1, 15, 2446694],
+      ['AH 1407-01-26', 1407, 1, 26, 2446705],
+      ['AH 1432-08-29', 1432, 8, 29, 2455774],
+      ['AH 1436-09-14', 1436, 9, 14, 2457205],
+    ];
+
+    it.each(anchors)('places %s at the JDN dsp-api stores', (_label, year, month, day, expected) => {
+      expect(IslamicCalendar.toJDN(createDate('ISLAMIC', year, month, day))).toBe(expected);
+    });
+
+    it.each(anchors)('reads %s back from that JDN', (_label, year, month, day, jdn) => {
+      const date = IslamicCalendar.fromJDN(jdn);
+      expect([date.year, date.month, date.day]).toEqual([year, month, day]);
+    });
+  });
+
   describe('toJDN', () => {
     it('should convert Muharram 1, 1445 to a valid JDN', () => {
       const date = createDate('ISLAMIC', 1445, 1, 1);

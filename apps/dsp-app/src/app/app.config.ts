@@ -15,7 +15,6 @@ import {
 import { provideAppErrorHandler } from '@dasch-swiss/vre/core/error-handler';
 import { apiConnectionTokenProvider } from '@dasch-swiss/vre/core/session';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { provideCalendarDateAdapter } from '@dasch-swiss/vre/ui/date-picker';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { TRANSLATE_HTTP_LOADER_CONFIG } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
@@ -76,6 +75,5 @@ export const appConfig: ApplicationConfig = {
     },
     ...provideAppErrorHandler(),
     LocalizationService,
-    ...provideCalendarDateAdapter(),
   ],
 };

@@ -1,0 +1,420 @@
+// Design tokens from the DEV-7372 handoff. Local rather than global: this is the first surface
+// built to them, and inventing a shared theme layer for one component would be guesswork.
+$primary-600: #336790;
+$primary-700: #2a5577;
+$primary-100: #dbe6ef;
+$neutral-50: #f9fafb;
+$neutral-100: #f3f4f6;
+$neutral-300: #d1d5db;
+$border-default: #e5e7eb;
+$fg-strong: #111827;
+$fg-default: #374151;
+$fg-muted: #4b5563;
+$fg-subtle: #9ca3af;
+
+// Two of these sit side by side as the ends of a period, so the field has to be able to shrink:
+// `min-width: 0` is what stops a long date forcing the pair onto two lines.
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.date-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid $neutral-300;
+  border-radius: 6px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+
+  &:hover:not(:disabled) {
+    border-color: $primary-600;
+  }
+
+  // Open is a state worth seeing at a glance: with two fields in a row, the ring is what says
+  // which one the panel belongs to.
+  &.is-open {
+    border-color: $primary-600;
+    box-shadow: 0 0 0 3px $primary-100;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-600;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    background: $neutral-50;
+    color: $fg-subtle;
+    cursor: default;
+  }
+}
+
+.date-field-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.date-field-caption {
+  font-size: 12px;
+  line-height: 1.2;
+  color: $fg-muted;
+}
+
+.date-field-value {
+  font-size: 14px;
+  line-height: 1.3;
+  color: $fg-strong;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  // Placeholder grey is below 4.5:1, so it is only ever used for text that says nothing.
+  &.is-placeholder {
+    color: $fg-subtle;
+  }
+}
+
+.date-field-icon {
+  flex: none;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: $primary-600;
+}
+
+.date-picker-panel {
+  width: 320px;
+  background: #fff;
+  border: 1px solid $border-default;
+  border-radius: 8px;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.05);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 0;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: $fg-strong;
+}
+
+.calendar-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: $neutral-100;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: #1f2937;
+}
+
+// Sits above the month/year/era row, so the calendar is chosen before the date it applies to.
+.panel-calendar {
+  padding: 8px 14px 0;
+}
+
+// Month, year and era as one row of equal-height boxes, each captioned above.
+.panel-controls {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: $fg-muted;
+
+  &.month {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  &.year {
+    flex: 0 0 78px;
+  }
+
+  &.era {
+    flex: none;
+  }
+}
+
+.control-caption {
+  line-height: 1.2;
+}
+
+.control-input {
+  height: 34px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 0 8px;
+  border: 1px solid $neutral-300;
+  border-radius: 6px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  color: $fg-strong;
+  font-variant-numeric: tabular-nums;
+
+  &:focus-visible {
+    outline: 2px solid $primary-600;
+    outline-offset: -1px;
+  }
+
+  &:disabled {
+    background: $neutral-50;
+    color: $fg-subtle;
+  }
+}
+
+// A segmented control: one choice among a few, so the options share a border and the selected one
+// is filled rather than ticked. A checkmark left the label unreadable.
+.segmented {
+  display: flex;
+  height: 34px;
+  border: 1px solid $neutral-300;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.segment {
+  padding: 0 9px;
+  border: 0;
+  background: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  color: $fg-default;
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms;
+
+  &:hover:not(:disabled):not(.is-selected) {
+    background: $neutral-100;
+  }
+
+  &.is-selected {
+    background: $primary-600;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+}
+
+.era-fixed {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border: 1px solid $border-default;
+  border-radius: 6px;
+  background: $neutral-50;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: $fg-muted;
+}
+
+.panel-days {
+  padding: 0 14px 12px;
+}
+
+.bce-warning {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: $fg-muted;
+  text-align: center;
+}
+
+.weekday-row,
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.weekday-row {
+  margin-bottom: 4px;
+  text-align: center;
+  font-size: 12px;
+  color: $fg-subtle;
+}
+
+.weekday {
+  padding: 4px 0;
+}
+
+.day-cell {
+  height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+  color: $fg-strong;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background 150ms;
+
+  &:hover:not(.is-selected) {
+    outline: 1px solid $primary-100;
+  }
+
+  &.is-selected {
+    background: $primary-600;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-600;
+  }
+}
+
+// A day the Gregorian reform skipped: pickable, but marked as one that never occurred.
+.day-cell.is-reform-gap:not(.is-selected) {
+  color: #92400e;
+  text-decoration: line-through;
+}
+
+// The suggested year and month: shown, not entered. Muted and italic so they do not read as a value.
+.control-input.is-suggested {
+  color: $fg-muted;
+  font-style: italic;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.precision-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 16px;
+}
+
+.link-button {
+  margin-top: 8px;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  color: $primary-600;
+  cursor: pointer;
+
+  &:hover {
+    color: $primary-700;
+  }
+}
+
+// Stated rather than hidden: a reader who sees no grid should be told why, not left guessing.
+.day-grid-empty {
+  margin: 0;
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 13px;
+  color: $fg-muted;
+  background: $neutral-50;
+  border-radius: 6px;
+}
+
+.panel-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid $border-default;
+}
+
+.ghost-button,
+.primary-button {
+  height: 32px;
+  border: 0;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 150ms;
+
+  &:focus-visible {
+    outline: 2px solid $primary-600;
+    outline-offset: 2px;
+  }
+}
+
+.ghost-button {
+  padding: 0 10px;
+  background: transparent;
+  color: $fg-default;
+
+  &:hover:not(:disabled) {
+    background: $neutral-100;
+  }
+
+  &:disabled {
+    color: $fg-subtle;
+    cursor: default;
+  }
+}
+
+.primary-button {
+  padding: 0 14px;
+  background: $primary-600;
+  color: #fff;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.04);
+
+  &:hover {
+    background: $primary-700;
+  }
+}
+
+.fill-remaining-space {
+  flex: 1 1 auto;
+}

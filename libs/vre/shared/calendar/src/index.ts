@@ -32,6 +32,8 @@ export type {
   CalendarOperations,
   DateFormat,
   DateFormatOptions,
+  ConversionResult,
+  ConversionRefusalReason,
 } from './lib/types/calendar.types';
 
 export { CalendarError, CALENDAR_SYSTEMS, ERAS, DATE_PRECISIONS } from './lib/types/calendar.types';
@@ -44,14 +46,16 @@ export { getCalendar } from './lib/factories/calendar.factory';
 // Calendars
 export { GregorianCalendar } from './lib/calendars/gregorian.calendar';
 export { JulianCalendar } from './lib/calendars/julian.calendar';
-export { IslamicCalendar } from './lib/calendars/islamic.calendar';
+export { IslamicCalendar, ISLAMIC_EPOCH_JDN } from './lib/calendars/islamic.calendar';
 
 // Converters
 export {
   convertCalendar,
+  convertCalendarResult,
   compareDates,
   isBefore,
   isAfter,
   isEqual,
+  isPeriodOutOfOrder,
   validatePeriod,
 } from './lib/converters/calendar.converter';

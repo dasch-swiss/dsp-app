@@ -1059,12 +1059,77 @@
     },
     "datePicker": {
       "clickToSelect": "Klicken Sie, um ein Datum auszuwählen",
+      "startDate": "Startdatum",
+      "endDate": "Enddatum",
+      "done": "Fertig",
       "calendar": "Kalender",
       "today": "Heute",
       "month": "Monat",
       "none": "Keine",
+      "noDay": "Monatsgenauigkeit (kein Tag)",
+      "yearPrecisionShortcut": "Jahresgenauigkeit",
+      "suggestedMonth": "Der aktuelle Monat ist als Vorschlag angezeigt. Erst wenn Sie einen Tag oder Monat wählen, wird etwas eingetragen.",
+      "skippedByReform": "Durch die gregorianische Reform übersprungen",
+      "yearPrecision": "Jahresgenauigkeit. Wählen Sie einen Monat, um einen Tag auszuwählen.",
       "year": "Jahr",
-      "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>."
+      "bceWarning": "Achtung: Datum <strong>vor der Zeitrechnung</strong>.",
+      "storedValue": "Gespeicherter Wert: {{date}}",
+      "convertedStored": "{{to}} wurde aus {{from}} (gespeicherter Wert) umgerechnet.",
+      "convertedStoredSameDay": "{{to}} wurde aus {{from}} (gespeicherter Wert) umgerechnet, was demselben Tag entspricht.",
+      "convertedStoredSamePeriod": "{{to}} wurde aus {{from}} (gespeicherter Wert) umgerechnet, was demselben Zeitraum entspricht.",
+      "preHijraNote": "Islamisch ist nicht verfügbar: Dieses Datum liegt vor der Hidschra. Islamische Jahre beginnen mit 1 AH und haben keine negativen Jahre.",
+      "endBeforeStart": "Das Enddatum muss nach dem Startdatum liegen.",
+      "era": "Ära",
+      "yearMustBePositive": "Ein gültiges Jahr ist grösser als 0.",
+      "addEndDate": "Enddatum hinzufügen",
+      "removeEndDate": "Enddatum löschen",
+      "dateRequired": "Ein Datum ist erforderlich",
+      "endDateRequired": "Ein Enddatum ist erforderlich"
+    },
+    "calendarMarker": {
+      "calendars": {
+        "GREGORIAN": "Gregorianisch",
+        "JULIAN": "Julianisch",
+        "ISLAMIC": "Islamisch (tabellarisch)"
+      },
+      "beforeHijra": "Vor der Hidschra",
+      "inEachCalendar": "{{calendar}}. Dieses Datum in jedem Kalender",
+      "jdn": "JTZ",
+      "periodOfDays": "Zeitraum von {{count}} Tagen",
+      "reformGapNote": "{{date}} liegt in den zehn Tagen, die die gregorianische Reform im Oktober 1582 übersprungen hat. Es wird wie angegeben gespeichert, im proleptischen gregorianischen Kalender — derselbe Tag wie {{julian}}.",
+      "machineReadable": "ISO 8601 · EDTF",
+      "copy": "Kopieren",
+      "prolepticGregorian": "Proleptisch gregorianisch"
+    },
+    "weekdays": {
+      "monday": {
+        "long": "Montag",
+        "short": "M"
+      },
+      "tuesday": {
+        "long": "Dienstag",
+        "short": "D"
+      },
+      "wednesday": {
+        "long": "Mittwoch",
+        "short": "M"
+      },
+      "thursday": {
+        "long": "Donnerstag",
+        "short": "D"
+      },
+      "friday": {
+        "long": "Freitag",
+        "short": "F"
+      },
+      "saturday": {
+        "long": "Samstag",
+        "short": "S"
+      },
+      "sunday": {
+        "long": "Sonntag",
+        "short": "S"
+      }
     }
   },
   "shared": {

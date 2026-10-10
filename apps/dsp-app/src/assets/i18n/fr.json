@@ -1059,12 +1059,77 @@
     },
     "datePicker": {
       "clickToSelect": "Cliquez pour sélectionner une date",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "done": "Terminé",
       "calendar": "Calendrier",
       "today": "Aujourd'hui",
       "month": "Mois",
       "none": "Aucun",
+      "noDay": "Précision au mois (aucun jour)",
+      "yearPrecisionShortcut": "Précision à l'année",
+      "suggestedMonth": "Le mois en cours est affiché comme suggestion. Rien n'est saisi tant que vous ne choisissez pas un jour ou un mois.",
+      "skippedByReform": "Supprimé par la réforme grégorienne",
+      "yearPrecision": "Précision à l'année. Choisissez un mois pour sélectionner un jour.",
       "year": "Année",
-      "bceWarning": "Attention : Date <strong>avant l'ère commune</strong>."
+      "bceWarning": "Attention : Date <strong>avant l'ère commune</strong>.",
+      "storedValue": "Valeur enregistrée : {{date}}",
+      "convertedStored": "{{to}} a été converti depuis {{from}} (valeur enregistrée).",
+      "convertedStoredSameDay": "{{to}} a été converti depuis {{from}} (valeur enregistrée), ce qui correspond au même jour.",
+      "convertedStoredSamePeriod": "{{to}} a été converti depuis {{from}} (valeur enregistrée), ce qui correspond à la même période.",
+      "preHijraNote": "Le calendrier islamique n'est pas disponible : cette date est antérieure à l'Hégire. Les années islamiques commencent à 1 AH et n'ont pas d'années négatives.",
+      "endBeforeStart": "La date de fin doit être postérieure à la date de début.",
+      "era": "Ère",
+      "yearMustBePositive": "Une année valide est supérieure à 0.",
+      "addEndDate": "Ajouter une date de fin",
+      "removeEndDate": "Supprimer la date de fin",
+      "dateRequired": "Une date est requise",
+      "endDateRequired": "Une date de fin est requise"
+    },
+    "calendarMarker": {
+      "calendars": {
+        "GREGORIAN": "grégorien",
+        "JULIAN": "julien",
+        "ISLAMIC": "islamique (tabulaire)"
+      },
+      "beforeHijra": "Avant l'Hégire",
+      "inEachCalendar": "{{calendar}}. Cette date dans chaque calendrier",
+      "jdn": "JJ",
+      "periodOfDays": "Période de {{count}} jours",
+      "reformGapNote": "{{date}} tombe dans les dix jours supprimés par la réforme grégorienne en octobre 1582. La date est enregistrée telle quelle, dans le calendrier grégorien proleptique — le même jour que {{julian}}.",
+      "machineReadable": "ISO 8601 · EDTF",
+      "copy": "Copier",
+      "prolepticGregorian": "Grégorien proleptique"
+    },
+    "weekdays": {
+      "monday": {
+        "long": "lundi",
+        "short": "L"
+      },
+      "tuesday": {
+        "long": "mardi",
+        "short": "M"
+      },
+      "wednesday": {
+        "long": "mercredi",
+        "short": "M"
+      },
+      "thursday": {
+        "long": "jeudi",
+        "short": "J"
+      },
+      "friday": {
+        "long": "vendredi",
+        "short": "V"
+      },
+      "saturday": {
+        "long": "samedi",
+        "short": "S"
+      },
+      "sunday": {
+        "long": "dimanche",
+        "short": "D"
+      }
     }
   },
   "shared": {

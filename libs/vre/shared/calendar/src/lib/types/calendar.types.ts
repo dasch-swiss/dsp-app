@@ -267,3 +267,33 @@ export class CalendarError extends Error {
     this.name = 'CalendarError';
   }
 }
+
+/**
+ * Why a conversion could not be represented in the target calendar.
+ *
+ * A closed union rather than a free-form string: the display marker, the date picker and the
+ * advanced-search operand all read this one contract, and an open string would let each interpret
+ * a refusal differently while still type-checking.
+ *
+ * - **BEFORE_TARGET_EPOCH**: the date precedes the target calendar's first representable day,
+ *   as a pre-Hijra date does for the Islamic calendar.
+ */
+export type ConversionRefusalReason = 'BEFORE_TARGET_EPOCH';
+
+/**
+ * The outcome of converting a date into another calendar.
+ *
+ * Conversion has three outcomes, not one, and the type makes all three unavoidable at every call
+ * site. A converted year or month usually straddles two of the target calendar's, so returning a
+ * single date would assert a precision the source never had; and some dates cannot be represented
+ * at all, so returning a date there would fabricate one.
+ *
+ * - **exact**: the source maps onto a single date in the target calendar.
+ * - **span**: the source covers a range, given by its first and last day in the target calendar.
+ *   Julian year 1582 is Gregorian 1582/1583, so `start.year` is 1582 and `end.year` is 1583.
+ * - **refused**: the target calendar cannot represent the date, with the reason why.
+ */
+export type ConversionResult =
+  | { readonly kind: 'exact'; readonly date: CalendarDate }
+  | { readonly kind: 'span'; readonly start: CalendarDate; readonly end: CalendarDate }
+  | { readonly kind: 'refused'; readonly reason: ConversionRefusalReason };

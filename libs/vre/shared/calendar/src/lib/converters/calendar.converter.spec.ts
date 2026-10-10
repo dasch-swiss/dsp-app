@@ -297,6 +297,20 @@ describe('CalendarConverter', () => {
       expect(() => validatePeriod(start, end)).toThrow(CalendarError);
     });
 
+    // dsp-api accepts these: they are how projects record uncertain historical dates.
+    it('should not throw when an imprecise end contains the start', () => {
+      expect(() =>
+        validatePeriod(createDate('GREGORIAN', 1850, 3, 15), createDate('GREGORIAN', 1850, 3))
+      ).not.toThrow();
+      expect(() => validatePeriod(createDate('GREGORIAN', 1850, 5), createDate('GREGORIAN', 1850))).not.toThrow();
+    });
+
+    it('should throw when an imprecise end lies wholly before the start', () => {
+      expect(() => validatePeriod(createDate('GREGORIAN', 1850, 5, 15), createDate('GREGORIAN', 1850, 4))).toThrow(
+        CalendarError
+      );
+    });
+
     it('should throw when mixing Gregorian and Islamic', () => {
       const start = createDate('GREGORIAN', 2024, 1, 1);
       const end = createDate('ISLAMIC', 1445, 12, 30);

@@ -60,14 +60,14 @@
 }
 
 /* Remove number up/down buttons For Chrome, Edge, and Safari */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   appearance: none;
   margin: 0;
 }
 
 /* Remove number up/down buttons for Firefox */
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }

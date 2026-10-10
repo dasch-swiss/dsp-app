@@ -53,6 +53,38 @@ const STORY_TRANSLATIONS = {
         retry: 'Retry',
       },
     },
+    // The date operand renders app-date-picker, so its keys have to be here too or a story
+    // showing a date term displays raw key ids instead of calendar names.
+    datePicker: {
+      clickToSelect: 'Click to select a date',
+      calendar: 'Calendar',
+      today: 'Today',
+      month: 'Month',
+      none: 'None',
+      year: 'Year',
+      era: 'Era',
+      noDay: 'Month precision (no day)',
+      yearPrecisionShortcut: 'Year precision',
+      suggestedMonth:
+        'Showing the current month as a suggestion. Nothing is entered until you pick a day or choose a month.',
+      yearPrecision: 'Year precision. Choose a month to select a day.',
+      done: 'Done',
+    },
+    // Advanced search renders the picker, not the viewer's calendar marker, so only the picker's
+    // own calendar names are needed here.
+    calendarMarker: {
+      calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
+    },
+    // The picker's day-grid header reads these.
+    weekdays: {
+      monday: { short: 'M' },
+      tuesday: { short: 'T' },
+      wednesday: { short: 'W' },
+      thursday: { short: 'T' },
+      friday: { short: 'F' },
+      saturday: { short: 'S' },
+      sunday: { short: 'S' },
+    },
   },
   pages: {
     search: {

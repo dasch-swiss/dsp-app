@@ -1,103 +1,39 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
 import { KnoraDate } from '@dasch-swiss/dsp-js';
 
+import { CalendarDateService } from '../../calendar-date/calendar-date.service';
+
+/**
+ * Renders a `KnoraDate` as text.
+ *
+ * A thin adapter over {@link CalendarDateService.format}, which owns the formatting rules. It used
+ * to carry its own copy — the same padding, the same era logic, the same calendar naming — kept in
+ * step with the picker's copy by hand. Two implementations of one rule is how they drift: a fix
+ * applied to whichever file a search landed in would silently not apply to the other, which is the
+ * defect shape the calendar rewrite exists to remove.
+ */
 @Pipe({
   name: 'knoraDate',
 })
 export class KnoraDatePipe implements PipeTransform {
-  transform(date: KnoraDate, format?: string, displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'): string {
-    if (!(date instanceof KnoraDate)) {
-      // console.error('Non-KnoraDate provided. Expected a valid KnoraDate');
-      return '';
-    }
-
-    const formattedString = this.getFormattedString(date, format!);
-
-    if (displayOptions) {
-      return this.addDisplayOptions(date, formattedString, displayOptions);
-    } else {
-      return formattedString;
-    }
-  }
-
-  // ensures that day and month are always two digits
-  leftPadding(value: number): string | null {
-    if (value !== undefined) {
-      return `0${value}`.slice(-2);
-    } else {
-      return null;
-    }
-  }
-
-  // add the era, calendar, or both to the result returned by the pipe
-  addDisplayOptions(date: KnoraDate, value: string, options: string): string {
-    switch (options) {
-      case 'era':
-        // displays date with era; era only in case of BCE
-        return value + (date.era === 'noEra' ? '' : date.era === 'BCE' || date.era === 'AD' ? ` ${date.era}` : '');
-      case 'calendar':
-        // displays date without era but with calendar type
-        return `${value} ${this._titleCase(date.calendar)}`;
-      case 'calendarOnly':
-        // displays only the selected calendar type without any data
-        return this._titleCase(date.calendar);
-      case 'all':
-      default:
-        // displays date with era (only as BCE) and selected calendar type
-        return `${value + (date.era === 'noEra' ? '' : date.era === 'BCE' ? ` ${date.era}` : '')} ${this._titleCase(
-          date.calendar
-        )}`;
-    }
-  }
-
-  getFormattedString(date: KnoraDate, format: string): string {
-    switch (format) {
-      case 'dd.MM.YYYY':
-        if (date.precision === 2) {
-          return `${this.leftPadding(date.day!)}.${this.leftPadding(date.month!)}.${date.year}`;
-        } else if (date.precision === 1) {
-          return `${this.leftPadding(date.month!)}.${date.year}`;
-        } else {
-          return `${date.year}`;
-        }
-      case 'dd-MM-YYYY':
-        if (date.precision === 2) {
-          return `${this.leftPadding(date.day!)}-${this.leftPadding(date.month!)}-${date.year}`;
-        } else if (date.precision === 1) {
-          return `${this.leftPadding(date.month!)}-${date.year}`;
-        } else {
-          return `${date.year}`;
-        }
-      case 'MM/dd/YYYY':
-        if (date.precision === 2) {
-          return `${this.leftPadding(date.month!)}/${this.leftPadding(date.day!)}/${date.year}`;
-        } else if (date.precision === 1) {
-          return `${this.leftPadding(date.month!)}/${date.year}`;
-        } else {
-          return `${date.year}`;
-        }
-      default:
-        if (date.precision === 2) {
-          return `${this.leftPadding(date.day!)}.${this.leftPadding(date.month!)}.${date.year}`;
-        } else if (date.precision === 1) {
-          return `${this.leftPadding(date.month!)}.${date.year}`;
-        } else {
-          return `${date.year}`;
-        }
-    }
-  }
-
   /**
-   * returns a string in Title Case format
-   * It's needed to transform a calendar name e.g. 'GREGORIAN' into 'Gregorian'
+   * The service, injected where possible and constructed directly where not.
    *
-   * @param str
-   * @returns string
+   * This pipe is also created with `new KnoraDatePipe()` — by the date viewer and by its own spec —
+   * and `inject()` throws NG0203 outside an injection context even with `{ optional: true }`, which
+   * covers a missing provider rather than a missing context.
    */
-  private _titleCase(str: string): string {
-    return str
-      .split(' ')
-      .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
-      .join(' ');
+  private readonly _calendarDates = KnoraDatePipe._resolveService();
+
+  private static _resolveService(): CalendarDateService {
+    try {
+      return inject(CalendarDateService, { optional: true }) ?? new CalendarDateService();
+    } catch {
+      return new CalendarDateService();
+    }
+  }
+
+  transform(date: KnoraDate, format?: string, displayOptions?: 'era' | 'calendar' | 'calendarOnly' | 'all'): string {
+    return this._calendarDates.format(date, format, displayOptions);
   }
 }

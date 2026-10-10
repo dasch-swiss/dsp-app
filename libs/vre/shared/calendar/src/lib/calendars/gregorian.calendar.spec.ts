@@ -12,9 +12,11 @@ describe('GregorianCalendar', () => {
       expect(GregorianCalendar.toJDN(date)).toBe(2451545);
     });
 
-    it('should convert January 1, 1 CE to JDN 1721424', () => {
+    it('should convert January 1, 1 CE to JDN 1721426', () => {
+      // The proleptic-Gregorian value. 1721424 is the Julian one, which this asserted while the
+      // calendar still switched to the Julian rule before 1582 (DEV-7372).
       const date = createDate('GREGORIAN', 1, 1, 1);
-      expect(GregorianCalendar.toJDN(date)).toBe(1721424);
+      expect(GregorianCalendar.toJDN(date)).toBe(1721426);
     });
 
     it('should convert October 15, 1582 (first day of Gregorian calendar) correctly', () => {
@@ -22,20 +24,21 @@ describe('GregorianCalendar', () => {
       expect(GregorianCalendar.toJDN(date)).toBe(2299161);
     });
 
-    it('should convert October 4, 1582 (last day of Julian calendar) correctly', () => {
+    it('should convert October 4, 1582 correctly', () => {
+      // The proleptic-Gregorian value. The day before the reform took effect where it was enacted,
+      // but this calendar does not switch rules there, so it is an ordinary date.
       const date = createDate('GREGORIAN', 1582, 10, 4);
-      // This date uses Julian calendar calculation
-      expect(GregorianCalendar.toJDN(date)).toBe(2299160);
+      expect(GregorianCalendar.toJDN(date)).toBe(2299150);
     });
 
     it('should handle BCE dates correctly', () => {
-      const date = createDate('GREGORIAN', -44, 3, 15, 'BCE'); // Ides of March, 44 BCE
-      expect(GregorianCalendar.toJDN(date)).toBe(1705061);
+      const date = createDate('GREGORIAN', -44, 3, 15, 'BCE'); // astronomical -44
+      expect(GregorianCalendar.toJDN(date)).toBe(1705063);
     });
 
     it('should handle year 0 (1 BCE) correctly', () => {
       const date = createDate('GREGORIAN', 0, 1, 1);
-      expect(GregorianCalendar.toJDN(date)).toBe(1721058);
+      expect(GregorianCalendar.toJDN(date)).toBe(1721060);
     });
 
     it('should handle December 31 correctly', () => {
@@ -64,9 +67,10 @@ describe('GregorianCalendar', () => {
   });
 
   describe('toJDN/fromJDN round trip (DEV-7264)', () => {
-    // The two functions must agree about which calendar a JDN represents. `toJDN` encodes dates
-    // before 15 Oct 1582 with the Julian rule; `fromJDN` applied the Gregorian correction
-    // unconditionally, so the pair was not invertible and the day drifted by up to 10.
+    // The two functions must stay inverses. They drifted apart once already, when `toJDN` encoded
+    // pre-1582 dates with the Julian rule while `fromJDN` applied the Gregorian correction
+    // unconditionally, and the day moved by up to ten. Neither branches now (DEV-7372), so the
+    // failure mode is gone rather than merely balanced — but the sweep below still guards it.
     const CASES: Array<[string, number, number, number]> = [
       ['moon landing', 1969, 7, 20],
       ['first Gregorian day', 1582, 10, 15],
@@ -95,14 +99,26 @@ describe('GregorianCalendar', () => {
       expect(failures).toEqual([]);
     });
 
-    it('maps the ten days the reform skipped forward rather than round-tripping them', () => {
-      // 5-14 October 1582 never existed: 4 Oct was followed directly by 15 Oct. Dates in that gap
-      // are not expected to survive a round trip, and must not be mistaken for a regression.
-      const result = GregorianCalendar.fromJDN(GregorianCalendar.toJDN(createDate('GREGORIAN', 1582, 10, 5)));
+    it('round-trips the ten days the reform skipped, because this calendar is proleptic', () => {
+      // 5-14 October 1582 were skipped by the reform as it was actually enacted, but this calendar
+      // applies the Gregorian rule at every date and so has no gap. Those days are ordinary days
+      // here, they map to their own JDNs, and a project that records one keeps what it recorded.
+      // While the calendar switched rules before 1582 they collided with 15-24 October: two stored
+      // values shared a JDN, compared equal, and one of them changed on a round trip (DEV-7372).
+      for (let day = 5; day <= 14; day++) {
+        const result = GregorianCalendar.fromJDN(GregorianCalendar.toJDN(createDate('GREGORIAN', 1582, 10, day)));
 
-      expect(result.year).toBe(1582);
-      expect(result.month).toBe(10);
-      expect(result.day).toBe(15);
+        expect(result.day).toBe(day);
+        expect(result.month).toBe(10);
+        expect(result.year).toBe(1582);
+      }
+    });
+
+    it('gives the skipped days their own JDNs, distinct from the days that replaced them', () => {
+      const fifth = GregorianCalendar.toJDN(createDate('GREGORIAN', 1582, 10, 5));
+      const fifteenth = GregorianCalendar.toJDN(createDate('GREGORIAN', 1582, 10, 15));
+
+      expect(fifth).not.toBe(fifteenth);
     });
   });
 
@@ -116,10 +132,10 @@ describe('GregorianCalendar', () => {
       expect(result.era).toBe('CE');
     });
 
-    it('should convert JDN 1721424 to January 1, 1 CE', () => {
-      // 1721424, not 1721426: `toJDN(1 Jan 1 CE)` returns 1721424, and before DEV-7264 this
-      // assertion passed only because `fromJDN` decoded pre-1582 dates with the wrong rule.
-      const result = GregorianCalendar.fromJDN(1721424);
+    it('should convert JDN 1721426 to January 1, 1 CE', () => {
+      // 1721426 is the proleptic-Gregorian value and the inverse of `toJDN(1 Jan 1 CE)`. It read
+      // 1721424 — the Julian number — while this calendar switched rules before 1582 (DEV-7372).
+      const result = GregorianCalendar.fromJDN(1721426);
       expect(result.year).toBe(1);
       expect(result.month).toBe(1);
       expect(result.day).toBe(1);
@@ -134,7 +150,7 @@ describe('GregorianCalendar', () => {
     });
 
     it('should handle BCE dates correctly', () => {
-      const result = GregorianCalendar.fromJDN(1705061);
+      const result = GregorianCalendar.fromJDN(1705063);
       expect(result.year).toBe(-44);
       expect(result.era).toBe('BCE');
     });

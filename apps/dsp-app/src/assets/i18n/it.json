@@ -1059,12 +1059,77 @@
     },
     "datePicker": {
       "clickToSelect": "Clicca per selezionare una data",
+      "startDate": "Data di inizio",
+      "endDate": "Data di fine",
+      "done": "Fatto",
       "calendar": "Calendario",
       "today": "Oggi",
       "month": "Mese",
       "none": "Nessuno",
+      "noDay": "Precisione al mese (nessun giorno)",
+      "yearPrecisionShortcut": "Precisione all'anno",
+      "suggestedMonth": "Il mese corrente è mostrato come suggerimento. Nulla viene inserito finché non scegli un giorno o un mese.",
+      "skippedByReform": "Saltato dalla riforma gregoriana",
+      "yearPrecision": "Precisione all'anno. Scegli un mese per selezionare un giorno.",
       "year": "Anno",
-      "bceWarning": "Attenzione: Data <strong>prima dell'era comune</strong>."
+      "bceWarning": "Attenzione: Data <strong>prima dell'era comune</strong>.",
+      "storedValue": "Valore memorizzato: {{date}}",
+      "convertedStored": "{{to}} è stato convertito da {{from}} (valore memorizzato).",
+      "convertedStoredSameDay": "{{to}} è stato convertito da {{from}} (valore memorizzato), il che corrisponde allo stesso giorno.",
+      "convertedStoredSamePeriod": "{{to}} è stato convertito da {{from}} (valore memorizzato), il che corrisponde allo stesso periodo.",
+      "preHijraNote": "Il calendario islamico non è disponibile: questa data precede l'Egira. Gli anni islamici iniziano con 1 AH e non hanno anni negativi.",
+      "endBeforeStart": "La data di fine deve essere successiva alla data di inizio.",
+      "era": "Era",
+      "yearMustBePositive": "Un anno valido è maggiore di 0.",
+      "addEndDate": "Aggiungi data di fine",
+      "removeEndDate": "Elimina data di fine",
+      "dateRequired": "È richiesta una data",
+      "endDateRequired": "È richiesta una data di fine"
+    },
+    "calendarMarker": {
+      "calendars": {
+        "GREGORIAN": "Gregoriano",
+        "JULIAN": "Giuliano",
+        "ISLAMIC": "Islamico (tabulare)"
+      },
+      "beforeHijra": "Prima dell'Egira",
+      "inEachCalendar": "{{calendar}}. Questa data in ogni calendario",
+      "jdn": "GG",
+      "periodOfDays": "Periodo di {{count}} giorni",
+      "reformGapNote": "{{date}} cade nei dieci giorni saltati dalla riforma gregoriana nell'ottobre 1582. Viene memorizzata così com'è, nel calendario gregoriano prolettico — lo stesso giorno del {{julian}}.",
+      "machineReadable": "ISO 8601 · EDTF",
+      "copy": "Copia",
+      "prolepticGregorian": "Gregoriano prolettico"
+    },
+    "weekdays": {
+      "monday": {
+        "long": "lunedì",
+        "short": "L"
+      },
+      "tuesday": {
+        "long": "martedì",
+        "short": "M"
+      },
+      "wednesday": {
+        "long": "mercoledì",
+        "short": "M"
+      },
+      "thursday": {
+        "long": "giovedì",
+        "short": "G"
+      },
+      "friday": {
+        "long": "venerdì",
+        "short": "V"
+      },
+      "saturday": {
+        "long": "sabato",
+        "short": "S"
+      },
+      "sunday": {
+        "long": "domenica",
+        "short": "D"
+      }
     }
   },
   "shared": {

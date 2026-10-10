@@ -18,12 +18,15 @@ import { createDate } from '../factories/date.factory';
 import { CalendarDate, CalendarOperations } from '../types/calendar.types';
 
 /**
- * Helper function to truncate decimals (remove fractions).
- * Works correctly for both positive and negative numbers.
+ * Rounds down, towards negative infinity.
+ *
+ * Meeus' algorithms are stated in terms of floor, not truncation. The two agree for non-negative
+ * operands, which is why rounding towards zero here went unnoticed: every CE date produces only
+ * non-negative operands. They diverge below zero, corrupting deep-BCE dates.
  *
  * @internal
  */
-const truncate = (num: number): number => Math[num < 0 ? 'ceil' : 'floor'](num);
+const floorDiv = (num: number): number => Math.floor(num);
 
 /**
  * Converts a Julian calendar date to Julian Day Number (JDN).
@@ -48,14 +51,10 @@ function julianToJDN(date: CalendarDate): number {
     month += 12;
   }
 
-  // Correction for negative years (BCE)
-  let c = 0;
-  if (year < 0) {
-    c = -0.75;
-  }
-
-  // Calculate JDN using the Meeus algorithm for Julian calendar
-  const jdn = truncate(365.25 * year + c) + truncate(30.6001 * (month + 1)) + day + 1720995;
+  // No BCE correction term: this used to subtract 0.75 for negative years, by hand, to compensate
+  // for a rounding helper that truncated towards zero where Meeus requires floor. `floorDiv` now
+  // floors, so the compensation would be applied twice and every BCE date would land a day early.
+  const jdn = floorDiv(365.25 * year) + floorDiv(30.6001 * (month + 1)) + day + 1720995;
 
   return jdn;
 }
@@ -73,15 +72,15 @@ function julianToJDN(date: CalendarDate): number {
  * ```
  */
 function julianFromJDN(jdn: number): CalendarDate {
-  const z = truncate(jdn + 0.5);
+  const z = floorDiv(jdn + 0.5);
   const a = z; // For Julian calendar, no adjustment needed
 
   const b = a + 1524;
-  const c = truncate((b - 122.1) / 365.25);
-  const d = truncate(365.25 * c);
-  const e = truncate((b - d) / 30.6001);
+  const c = floorDiv((b - 122.1) / 365.25);
+  const d = floorDiv(365.25 * c);
+  const e = floorDiv((b - d) / 30.6001);
 
-  const day = b - d - truncate(30.6001 * e);
+  const day = b - d - floorDiv(30.6001 * e);
 
   let month: number;
   if (e < 14) {
@@ -97,7 +96,7 @@ function julianFromJDN(jdn: number): CalendarDate {
     year = c - 4715;
   }
 
-  const fullDay = truncate(day);
+  const fullDay = floorDiv(day);
 
   // Determine era based on year
   const era = year >= 0 ? 'CE' : 'BCE';
@@ -170,7 +169,7 @@ function julianDaysInMonth(year: number, month: number): number {
  */
 function julianDayOfWeek(date: CalendarDate): number {
   const jdn = julianToJDN(date);
-  return truncate(jdn + 1.5) % 7;
+  return floorDiv(jdn + 1.5) % 7;
 }
 
 /**
