@@ -181,7 +181,7 @@
     "webpack-dev-server": "^5.0.0",
     "webpack-merge": "^6.0.0",
     "@pixeleye/cli-install": {
-      "playwright-core": "1.59.0"
+      "playwright-core": "1.64.0"
     }
   }
 }
