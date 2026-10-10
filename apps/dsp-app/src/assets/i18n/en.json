@@ -557,7 +557,8 @@
         "errors": {
           "uri": "Value must be a URI value.",
           "integer": "Value must be an integer value.",
-          "decimal": "Value must be a decimal value."
+          "decimal": "Value must be a decimal value.",
+          "invalidRegex": "Not a valid regular expression. Use .* to match any characters, e.g. .*word.*"
         },
         "fulltextSearchPlaceholder": "Search…",
         "noDataModel": "This project has no data model yet. A data model is needed before you can search its resources."

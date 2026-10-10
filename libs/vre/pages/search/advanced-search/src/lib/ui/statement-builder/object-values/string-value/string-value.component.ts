@@ -20,8 +20,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
 import { AppDatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { TranslateModule } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { ResourceLabel } from '../../../../constants';
+import { Operator } from '../../../../operators.config';
+import { regexPatternValidator } from './regex-pattern.validator';
 
 class CustomRegex {
   public static readonly INT_REGEX = /^-?\d+$/;
@@ -62,6 +64,8 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   @Input({ required: true }) valueType!: string;
   @Input() value?: string;
   @Input() showError = false;
+  /** The statement's operator. With "is like", a label or text value is a regex and must compile. */
+  @Input() operator?: Operator;
 
   @Output() emitValueChanged = new EventEmitter<string>();
 
@@ -69,6 +73,7 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   resourceLabel = ResourceLabel;
 
   matcher = new ValueErrorStateMatcher();
+  private _lastEmitted?: string;
   inputControl = new FormControl();
 
   // separate control and FormGroup needed for the date picker
@@ -76,16 +81,30 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   dateFormGroup = new FormGroup({ date: this.dateControl });
 
   ngOnInit() {
+    // Validity is part of the distinct check: an operator change re-validates the same value (see
+    // ngOnChanges), and its new outcome must still be emitted.
     this.inputControl.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe(value => this._emitValueChanged(value));
+      .pipe(
+        debounceTime(300),
+        map(value => ({ value, valid: this.inputControl.valid })),
+        distinctUntilChanged((a, b) => a.value === b.value && a.valid === b.valid),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(({ value }) => this._emitValueChanged(value));
 
-    this.inputControl.setValidators([Validators.required, ...this._getValidators(this.valueType)]);
+    this._applyValidators();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['value'] && !changes['value'].firstChange) {
+    // An invalid value is emitted as undefined, and the statement hands that back as the new `value`.
+    // Applying our own echo would wipe what the user typed, and the error with it (DEV-7441).
+    if (changes['value'] && !changes['value'].firstChange && changes['value'].currentValue !== this._lastEmitted) {
       this._setValue();
+    }
+    // Switching to or from "is like" turns the regex rule on or off for the value already typed.
+    if (changes['operator'] && !changes['operator'].firstChange) {
+      this._applyValidators();
+      this.inputControl.updateValueAndValidity();
     }
     if (changes['showError']?.currentValue) {
       this.inputControl.markAsTouched();
@@ -129,6 +148,13 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
+  private _applyValidators(): void {
+    // Keyed on the operator alone: whichever value types `operators.config.ts` offers "is like" for, the
+    // value reaches dsp-api as a regex (DEV-7441).
+    const regex = this.operator === Operator.IsLike ? [regexPatternValidator()] : [];
+    this.inputControl.setValidators([Validators.required, ...this._getValidators(this.valueType), ...regex]);
+  }
+
   private _getValidators(objectType: string | undefined): ValidatorFn[] {
     const validators: ValidatorFn[] = [];
 
@@ -151,8 +177,9 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
 
   private _emitValueChanged(value: string) {
     // value could be 0 in the case of a number
-    if (this.inputControl.valid && value !== null && value !== undefined)
-      this.emitValueChanged.emit(value.toString().trim());
-    else this.emitValueChanged.emit(undefined);
+    const emitted =
+      this.inputControl.valid && value !== null && value !== undefined ? value.toString().trim() : undefined;
+    this._lastEmitted = emitted;
+    this.emitValueChanged.emit(emitted);
   }
 }
