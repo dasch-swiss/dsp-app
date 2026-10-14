@@ -1,8 +1,9 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { expect } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { StatementElement } from '../../model';
 import { Operator } from '../../operators.config';
 import { ListNodeLabelResolver } from '../../service/list-node-label.resolver';
@@ -28,6 +29,21 @@ const titleStatement = (): StatementElement => {
   };
   s.selectedOperator = Operator.IsLike;
   s.selectedObjectValue = 'Hamlet';
+  return s;
+};
+
+/** An "is like" filter holding a glob-style pattern, which is not a valid regex (DEV-7441). */
+const globPatternStatement = (): StatementElement => {
+  const s = new StatementElement();
+  s.selectedPredicate = {
+    iri: 'http://ex.org/hasTitle',
+    labels: toLabels('Title'),
+    comments: [],
+    objectValueType: Constants.TextValue,
+    isLinkProperty: false,
+  };
+  s.selectedOperator = Operator.IsLike;
+  s.selectedObjectValue = '*MAL*';
   return s;
 };
 
@@ -127,6 +143,27 @@ export const InvalidChipShowsWarnColor: Story = {
       const btn = canvasElement.querySelector('button.filter-chip-button');
       await expect(btn).not.toBeNull();
       await expect(btn?.classList.contains('filter-chip-button--invalid')).toBe(true);
+    });
+  },
+};
+
+export const ShowsRegexErrorInsideTheOpenPopover: Story = {
+  name: 'Shows why an "is like" filter with an invalid pattern cannot be added',
+  args: { statement: globPatternStatement(), isOpen: true },
+  decorators: [applicationConfig({ providers: baseProviders })],
+  play: async ({ canvasElement, step }) => {
+    // The popover renders in a CDK overlay, outside the story canvas.
+    const page = within(document.body);
+    await step('Open the filter for editing', async () => {
+      await userEvent.click(canvasElement.querySelector('button.filter-chip-button') as HTMLElement);
+    });
+    await step('Leave the pattern field', async () => {
+      await userEvent.click(await page.findByDisplayValue('*MAL*'));
+      await userEvent.tab();
+    });
+    await step('The regex error is visible inside the popover', async () => {
+      // The popover used to hide every form-field subscript, and with it this error.
+      await expect(await page.findByText(/Not a valid regular expression/)).toBeVisible();
     });
   },
 };

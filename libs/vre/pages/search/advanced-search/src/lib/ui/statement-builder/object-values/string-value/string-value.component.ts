@@ -20,8 +20,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { Constants, KnoraDate } from '@dasch-swiss/dsp-js';
 import { AppDatePickerComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { TranslateModule } from '@ngx-translate/core';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { asapScheduler, debounceTime, distinctUntilChanged, filter, map, merge, observeOn, Subject } from 'rxjs';
 import { ResourceLabel } from '../../../../constants';
+import { Operator } from '../../../../operators.config';
+import { regexPatternValidator } from './regex-pattern.validator';
 
 class CustomRegex {
   public static readonly INT_REGEX = /^-?\d+$/;
@@ -62,6 +64,10 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   @Input({ required: true }) valueType!: string;
   @Input() value?: string;
   @Input() showError = false;
+  /** The statement's operator. With "is like", a label or text value is a regex and must compile. */
+  @Input() operator?: Operator;
+  /** The statement's property. Picking another one starts the value afresh. */
+  @Input() predicateIri?: string;
 
   @Output() emitValueChanged = new EventEmitter<string>();
 
@@ -69,6 +75,8 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   resourceLabel = ResourceLabel;
 
   matcher = new ValueErrorStateMatcher();
+  private _lastEmitted?: string;
+  private readonly _revalidated = new Subject<void>();
   inputControl = new FormControl();
 
   // separate control and FormGroup needed for the date picker
@@ -76,16 +84,51 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
   dateFormGroup = new FormGroup({ date: this.dateControl });
 
   ngOnInit() {
-    this.inputControl.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-      .subscribe(value => this._emitValueChanged(value));
+    const typed = this.inputControl.valueChanges;
+    merge(
+      typed.pipe(debounceTime(300)),
+      // Withholding an invalid value does not wait for the debounce, so a filter cannot be confirmed with
+      // the value from before the edit (DEV-7441). Neither does a re-validation (see ngOnChanges).
+      // Both are deferred to a microtask: they can start in ngOnChanges, and the statement must not change
+      // while its template is being checked.
+      merge(typed.pipe(filter(() => this.inputControl.invalid)), this._revalidated).pipe(observeOn(asapScheduler))
+    )
+      .pipe(
+        map(() => this._valueToEmit()),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(value => {
+        this._lastEmitted = value;
+        this.emitValueChanged.emit(value);
+      });
 
-    this.inputControl.setValidators([Validators.required, ...this._getValidators(this.valueType)]);
+    this._applyValidators();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['value'] && !changes['value'].firstChange) {
+    const predicateChanged = !!changes['predicateIri'] && !changes['predicateIri'].firstChange;
+    if (predicateChanged) {
+      // Another property drops the statement's value (`StatementElement.selectedPredicate`), so the field
+      // starts empty. The `value` input does not always say so: when the old value was invalid, it was
+      // already withheld as undefined, and undefined -> undefined is no change (DEV-7441).
+      this.inputControl.reset();
+      this.dateControl.reset();
+    } else if (
+      changes['value'] &&
+      !changes['value'].firstChange &&
+      changes['value'].currentValue !== this._lastEmitted
+    ) {
+      // An invalid value is emitted as undefined, and the statement hands that back as the new `value`.
+      // Applying our own echo would wipe what the user typed, and the error with it (DEV-7441).
       this._setValue();
+    }
+    // Switching to or from "is like" turns the regex rule on or off for the value already typed; another
+    // property may bring another value type.
+    if (predicateChanged || (changes['operator'] && !changes['operator'].firstChange)) {
+      this._applyValidators();
+      this.inputControl.updateValueAndValidity();
+      this._revalidated.next();
     }
     if (changes['showError']?.currentValue) {
       this.inputControl.markAsTouched();
@@ -129,6 +172,13 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
     }
   }
 
+  private _applyValidators(): void {
+    // Keyed on the operator alone: whichever value types `operators.config.ts` offers "is like" for, the
+    // value reaches dsp-api as a regex (DEV-7441).
+    const regex = this.operator === Operator.IsLike ? [regexPatternValidator()] : [];
+    this.inputControl.setValidators([Validators.required, ...this._getValidators(this.valueType), ...regex]);
+  }
+
   private _getValidators(objectType: string | undefined): ValidatorFn[] {
     const validators: ValidatorFn[] = [];
 
@@ -149,10 +199,10 @@ export class StringValueComponent implements OnInit, OnChanges, AfterViewInit {
     return validators;
   }
 
-  private _emitValueChanged(value: string) {
+  /** The value for the statement: undefined while the field is invalid, keeping the statement incomplete. */
+  private _valueToEmit(): string | undefined {
+    const value = this.inputControl.value;
     // value could be 0 in the case of a number
-    if (this.inputControl.valid && value !== null && value !== undefined)
-      this.emitValueChanged.emit(value.toString().trim());
-    else this.emitValueChanged.emit(undefined);
+    return this.inputControl.valid && value !== null && value !== undefined ? value.toString().trim() : undefined;
   }
 }

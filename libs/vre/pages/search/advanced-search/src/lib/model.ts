@@ -15,6 +15,10 @@ import { getOperatorsForObjectType, Operator } from './operators.config';
  * matches a literal `*`), the wire must carry four backslashes. The double
  * quote `"` is not a regex metacharacter, so it only needs to survive the
  * two string layers — three backslashes + quote on the wire.
+ *
+ * The filter editor checks that the pattern compiles before it gets here (`regexPatternValidator` in
+ * `ui/statement-builder/object-values/string-value/regex-pattern.validator.ts`); a deep-linked value
+ * does not pass that check and is left to dsp-api's 400.
  */
 export function escapeForGravsearchStringLiteral(value: string): string {
   return value.replace(/\\/g, '\\\\\\\\').replace(/"/g, '\\\\\\"');
