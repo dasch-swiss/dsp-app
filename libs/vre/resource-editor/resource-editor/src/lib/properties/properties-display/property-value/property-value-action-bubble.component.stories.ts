@@ -1,7 +1,7 @@
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, userEvent } from 'storybook/test';
+import { expect, userEvent, waitFor } from 'storybook/test';
 
 import { ResourceFetcherService } from '../../../representation/resource-fetcher.service';
 import { PropertyValueActionBubbleComponent } from './property-value-action-bubble.component';
@@ -141,8 +141,9 @@ export const NoButtonsInHistoricalVersion: Story = {
   },
 };
 
-export const InfoTooltipShownOnHover: Story = {
-  name: 'Shows creation info tooltip when hovering the info button',
+/** Who created the value, and when, rides in the Edit button's tooltip rather than a button of its own. */
+export const CreationInfoInTheEditTooltip: Story = {
+  name: 'Carries the creation info in the edit tooltip, with no separate info button',
   args: { date: DATE },
   decorators: [
     applicationConfig({
@@ -153,10 +154,30 @@ export const InfoTooltipShownOnHover: Story = {
     }),
   ],
   play: async ({ canvasElement, step }) => {
-    await step('Info button is rendered', async () => {
-      const infoBtn = canvasElement.querySelector('button.edit:not(.edit-button)');
-      await expect(infoBtn).not.toBeNull();
-      await userEvent.hover(infoBtn!);
+    await step('There is no info button beside Edit', async () => {
+      await expect(canvasElement.querySelector('[data-cy="info-button"]')).toBeNull();
     });
+    await step('Hovering Edit shows who created the value', async () => {
+      await userEvent.hover(canvasElement.querySelector('[data-cy="edit-button"]') as HTMLElement);
+      await waitFor(() => expect(document.querySelector('.mat-mdc-tooltip')).toHaveTextContent(/test-user/));
+    });
+  },
+};
+
+/** Without an Edit button to carry it, the creation info gets a button of its own. */
+export const InfoButtonForReadOnlyUser: Story = {
+  name: 'Shows an info button when the user cannot edit',
+  args: { date: DATE },
+  decorators: [
+    applicationConfig({
+      providers: [
+        { provide: PropertyValueService, useValue: makePropertyValueServiceStub('V', Cardinality._0_n) },
+        { provide: ResourceFetcherService, useValue: makeResourceFetcherServiceStub() },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    await expect(canvasElement.querySelector('[data-cy="edit-button"]')).toBeNull();
+    await expect(canvasElement.querySelector('[data-cy="info-button"]')).not.toBeNull();
   },
 };

@@ -62,7 +62,7 @@ export default meta;
 type Story = StoryObj<PropertyValueEditComponent>;
 
 export const EditExistingValue: Story = {
-  name: 'Shows edit form with save and undo buttons for existing value',
+  name: 'Shows edit form with save and cancel buttons for existing value',
   args: {
     readValue: {
       id: 'http://rdfh.ch/values/1',

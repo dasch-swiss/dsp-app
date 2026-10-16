@@ -1,0 +1,49 @@
+// A segmented control: two halves of one outlined box, the active one filled (DEV-7494, design A1).
+.view-toggle {
+  display: inline-flex;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.view-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  font: 400 14px/18px var(--font-sans, inherit);
+  color: #4b5563;
+
+  & + & {
+    border-left: 1px solid #d1d5db;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover:not(.is-active) {
+    background: #f3f4f6;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  // Hover alone is not reachable from a keyboard, and the two tabs are otherwise distinguished only
+  // by colour — so focus gets its own visible ring rather than borrowing the hover treatment.
+  &:focus-visible {
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: -2px;
+  }
+
+  &.is-active {
+    font-weight: 500;
+    background: #e8eef4;
+    color: var(--primary, #336790);
+  }
+}

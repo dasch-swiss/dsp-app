@@ -103,6 +103,21 @@ describe('MultipleViewerService', () => {
     });
   });
 
+  /**
+   * The channel the Data tab's table uses to tell the viewer that a resource it is showing was
+   * edited elsewhere (DEV-7466). A plain `Subject`, not a replaying one: a late subscriber must
+   * not be told to re-read a resource for an edit that happened before it existed.
+   */
+  describe('resourceChanged$', () => {
+    it('should announce the IRI of a resource changed outside the viewer', async () => {
+      const announced = firstValueFrom(service.resourceChanged$);
+
+      service.notifyResourceChanged(mockResource1.id);
+
+      expect(await announced).toBe(mockResource1.id);
+    });
+  });
+
   describe('reset', () => {
     it('should clear single selected resource and set selectMode to false', async () => {
       service.selectOneResource(mockResource1);
@@ -120,6 +135,46 @@ describe('MultipleViewerService', () => {
       const resources = await firstValueFrom(service.selectedResources$);
       expect(resources).toEqual([]);
       expect(service.selectMode).toBe(false);
+    });
+  });
+
+  /**
+   * The bug behind DEV-7466's invisible checkboxes: these used to mutate and re-emit the array
+   * they had just read, so a `signal.set` of it was `Object.is`-equal and notified nobody.
+   */
+  describe('emission identity', () => {
+    /** The array the subject is currently holding, read synchronously. */
+    const emitted = (): ReadResource[] => {
+      let value: ReadResource[] = [];
+      service.selectedResources$.subscribe(resources => (value = resources)).unsubscribe();
+      return value;
+    };
+
+    it('EmitsANewArrayWhenAResourceIsAdded', () => {
+      const before = emitted();
+
+      service.addResources([createMockResource('resource-a')]);
+
+      expect(emitted()).not.toBe(before);
+    });
+
+    it('EmitsANewArrayWhenAResourceIsRemoved', () => {
+      const resource = createMockResource('resource-a');
+      service.addResources([resource]);
+      const before = emitted();
+
+      service.removeResources([resource]);
+
+      expect(emitted()).not.toBe(before);
+    });
+
+    it('DoesNotMutateAPreviouslyEmittedArray', () => {
+      service.addResources([createMockResource('resource-a')]);
+      const first = emitted();
+
+      service.addResources([createMockResource('resource-b')]);
+
+      expect(first).toHaveLength(1);
     });
   });
 });

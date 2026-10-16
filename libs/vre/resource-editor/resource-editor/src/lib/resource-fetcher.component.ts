@@ -101,6 +101,25 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
     private readonly _cdr: ChangeDetectorRef
   ) {}
 
+  /**
+   * Re-read this resource from dsp-api.
+   *
+   * Public because the resource can be changed from outside the subtree that owns it: the Data
+   * tab's table edits a value in a cell, under a `ResourceFetcherService` of its own scoped to
+   * that row, and the viewer showing the same resource would otherwise keep rendering the value
+   * the user has just replaced (DEV-7466). Everything the editor does to its *own* resource still
+   * goes through `ResourceFetcherService` directly; this is only for the cross-subtree case.
+   *
+   * A no-op before the first load: the service's own `reload` throws without a resource to reload,
+   * and a refresh request that arrives mid-load has nothing to do — the load in flight already
+   * fetches the current state.
+   */
+  reload() {
+    if (this.resource) {
+      this._resourceFetcherService.reload();
+    }
+  }
+
   ngOnInit() {
     if (this.resourceVersion && !ResourceUtil.versionIsValid(this.resourceVersion)) {
       this._translateService.get('resourceEditor.versionNotValid').subscribe(v => {

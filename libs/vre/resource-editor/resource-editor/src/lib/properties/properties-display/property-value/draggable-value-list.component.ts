@@ -1,4 +1,11 @@
-import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CDK_DRAG_PARENT,
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -8,23 +15,23 @@ import {
   DestroyRef,
   EventEmitter,
   inject,
+  Injector,
   Input,
   Output,
   TemplateRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatIcon } from '@angular/material/icon';
 import { ReadValue } from '@dasch-swiss/dsp-js';
 import { APIV2ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 import { ResourceFetcherService } from '../../../representation/resource-fetcher.service';
 
 @Component({
   selector: 'app-draggable-value-list',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, CdkDragHandle, NgTemplateOutlet, MatIcon, TranslatePipe],
+  imports: [CdkDropList, CdkDrag, CdkDragHandle, NgTemplateOutlet],
   template: `
     <div
       cdkDropList
@@ -36,16 +43,16 @@ import { ResourceFetcherService } from '../../../representation/resource-fetcher
       @for (value of values; track value.id; let index = $index) {
         <div
           cdkDrag
+          #drag="cdkDrag"
           cdkDragLockAxis="y"
           [cdkDragDisabled]="disabled || reorderLoading || values.length < 2"
           class="value-row">
-          @if (showHandle) {
-            <span
-              cdkDragHandle
-              class="drag-handle"
-              [attr.aria-label]="'resourceEditor.resourceProperties.actions.dragToReorder' | translate">
-              <mat-icon>drag_indicator</mat-icon>
-            </span>
+          <!-- The visible handle is the item's to place — the value's actions put it between Edit
+               and Delete (DEV-7494) — and it only exists while the value is hovered. This one is
+               never seen: it only keeps the row from becoming its own handle in between, which is
+               what CDK does to a drag with no handle, and would swallow text selection. -->
+          @if (!drag.disabled) {
+            <span cdkDragHandle hidden></span>
           }
 
           <ng-container
@@ -53,7 +60,8 @@ import { ResourceFetcherService } from '../../../representation/resource-fetcher
             [ngTemplateOutletContext]="{
               $implicit: value,
               index: index,
-            }" />
+            }"
+            [ngTemplateOutletInjector]="rowInjector(drag)" />
 
           <div cdkDragPlaceholder></div>
         </div>
@@ -65,21 +73,6 @@ import { ResourceFetcherService } from '../../../representation/resource-fetcher
       .value-row {
         display: flex;
         align-items: center;
-      }
-
-      .drag-handle {
-        cursor: grab;
-        opacity: 0.3;
-        display: flex;
-        align-items: center;
-        padding: 0 4px;
-        transition: opacity 200ms ease-in-out;
-      }
-      .value-row:hover .drag-handle {
-        opacity: 0.7;
-      }
-      .drag-handle:active {
-        cursor: grabbing;
       }
 
       .has-multiple .value-row:not(:last-child) {
@@ -109,7 +102,6 @@ export class DraggableValueListComponent {
   @Input({ required: true }) resourceIri!: string;
   @Input({ required: true }) propertyIri!: string;
   @Input() disabled = false;
-  @Input() showHandle = false;
   @Output() valuesChange = new EventEmitter<ReadValue[]>();
 
   @ContentChild(TemplateRef) itemTemplate!: TemplateRef<{ $implicit: ReadValue; index: number }>;
@@ -122,6 +114,22 @@ export class DraggableValueListComponent {
   private readonly _translateService = inject(TranslateService);
   private readonly _cd = inject(ChangeDetectorRef);
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly _injector = inject(Injector);
+  private readonly _rowInjectors = new WeakMap<CdkDrag, Injector>();
+
+  /**
+   * Gives the item the row's drag, so a `cdkDragHandle` inside it moves the row. Without it the
+   * item's view resolves from where its template was declared, outside the row, and finds none.
+   * One per row and kept: a new injector would make the outlet rebuild the item on every check.
+   */
+  rowInjector(drag: CdkDrag): Injector {
+    let injector = this._rowInjectors.get(drag);
+    if (!injector) {
+      injector = Injector.create({ providers: [{ provide: CDK_DRAG_PARENT, useValue: drag }], parent: this._injector });
+      this._rowInjectors.set(drag, injector);
+    }
+    return injector;
+  }
 
   onDrop(event: CdkDragDrop<ReadValue[]>): void {
     if (event.previousIndex === event.currentIndex) return;

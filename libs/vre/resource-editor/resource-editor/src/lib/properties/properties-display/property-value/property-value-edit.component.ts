@@ -11,7 +11,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants, KnoraDate, KnoraPeriod, ReadValue } from '@dasch-swiss/dsp-js';
@@ -44,6 +44,7 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
   imports: [
     AsyncPipe,
     NgTemplateOutlet,
+    MatButton,
     MatIconButton,
     MatIcon,
     MatTooltip,
@@ -62,44 +63,54 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
       (templateFound)="foundTemplate($event)" />
 
     @if (!loading) {
-      <div style="display: flex; padding: 16px 0">
-        <div style="flex: 1">
+      <!-- The editor, then its actions at the end of the same line — the same place and size as the
+           Edit and Delete buttons of the value being shown: Cancel, and Save as the one filled
+           button. The comment is a text link under the editor (DEV-7494). -->
+      <div class="edit-line">
+        <div class="edit-content">
           @if (template) {
             <ng-container *ngTemplateOutlet="template; context: { item: group.controls.item }"></ng-container>
           }
           @if (group.controls.comment.value !== null) {
             <app-property-value-basic-comment [control]="group.controls.comment" />
           }
-        </div>
-        <div style="display: flex; width: 144px">
           <button
-            (click)="afterUndo.emit()"
-            mat-icon-button
+            mat-button
             color="primary"
-            [matTooltip]="'resourceEditor.resourceProperties.actions.undo' | translate">
-            <mat-icon>undo</mat-icon>
+            type="button"
+            class="comment-toggle"
+            data-cy="toggle-comment-button"
+            (click)="toggleCommentValue()">
+            <mat-icon>{{ commentIsNotNull ? 'remove' : 'add' }}</mat-icon>
+            {{
+              (commentIsNotNull
+                ? 'resourceEditor.resourceProperties.actions.removeComment'
+                : 'resourceEditor.resourceProperties.actions.addComment'
+              ) | translate
+            }}
+          </button>
+        </div>
+        <div class="value-actions edit-actions">
+          <button
+            mat-icon-button
+            type="button"
+            class="value-action value-action-muted"
+            data-cy="undo-button"
+            (click)="afterUndo.emit()"
+            [attr.aria-label]="'resourceEditor.resourceProperties.actions.cancel' | translate"
+            [matTooltip]="'resourceEditor.resourceProperties.actions.cancel' | translate">
+            <mat-icon>close</mat-icon>
           </button>
           <button
             mat-icon-button
             type="button"
-            color="primary"
-            (click)="toggleCommentValue()"
-            data-cy="toggle-comment-button"
-            [matTooltip]="
-              commentIsNotNull
-                ? ('resourceEditor.resourceProperties.actions.removeComment' | translate)
-                : ('resourceEditor.resourceProperties.actions.addComment' | translate)
-            ">
-            <mat-icon>{{ commentIsNotNull ? 'speaker_notes_off' : 'add_comment' }}</mat-icon>
-          </button>
-          <button
+            class="value-action value-action-primary"
+            data-cy="save-button"
             [disabled]="(hasValidValue$ | async) !== true"
             (click)="onSave()"
-            [matTooltip]="'resourceEditor.resourceProperties.actions.save' | translate"
-            mat-icon-button
-            data-cy="save-button"
-            color="primary">
-            <mat-icon>save</mat-icon>
+            [attr.aria-label]="'resourceEditor.resourceProperties.actions.save' | translate"
+            [matTooltip]="'resourceEditor.resourceProperties.actions.save' | translate">
+            <mat-icon>check_circle</mat-icon>
           </button>
         </div>
       </div>
@@ -107,6 +118,39 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
       <app-progress-indicator [size]="'xsmall'" />
     }
   `,
+  styleUrls: ['./property-value-actions.scss'],
+  styles: [
+    `
+      .edit-line {
+        display: flex;
+        align-items: flex-start;
+        gap: 4px;
+        padding: var(--property-value-padding-block, 16px) 0;
+        border-radius: 4px;
+        /* None in the viewer; a denser host such as the Data tab's table sets one. */
+        background: var(--property-value-edit-background, none);
+      }
+      .edit-content {
+        flex: 1;
+        min-width: 0;
+      }
+      /* Level with the middle of the editor's first field, as the shown value's actions are with
+         its first line. */
+      .edit-actions {
+        padding-top: 14px;
+      }
+      .comment-toggle {
+        --mat-button-text-container-height: 26px;
+        --mat-button-text-horizontal-padding: 4px;
+        font-size: 12px;
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+    `,
+  ],
 })
 export class PropertyValueEditComponent implements OnInit, OnDestroy {
   @Input({ required: true }) readValue!: ReadValue | undefined;

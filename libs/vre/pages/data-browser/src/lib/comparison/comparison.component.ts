@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, QueryList, ViewChildren } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ResourceFetcherComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
@@ -52,6 +53,15 @@ export class ComparisonComponent implements OnChanges {
   @Input({ required: true }) resourceIds!: string[];
   @Output() afterResourceDeleted = new EventEmitter<void>();
 
+  /**
+   * Every mounted viewer, so one of them can be refreshed by IRI.
+   *
+   * The resources here are rendered through an `ngTemplateOutlet` used twice, so there is no input
+   * binding that could carry a refresh down to the right one — and re-keying the `@for` would
+   * destroy and rebuild the whole viewer, losing its scroll position and anything open inside it.
+   */
+  @ViewChildren(ResourceFetcherComponent) private _viewers!: QueryList<ResourceFetcherComponent>;
+
   topRow: string[] = [];
   bottomRow: string[] = [];
 
@@ -59,7 +69,22 @@ export class ComparisonComponent implements OnChanges {
     return this.resourceIds.length;
   }
 
-  constructor(public multipleViewerService: MultipleViewerService) {}
+  constructor(public multipleViewerService: MultipleViewerService) {
+    // A resource changed somewhere else — today, a value saved in a Data tab table cell, which
+    // runs under a fetcher scoped to that row rather than the one this viewer owns. Without this
+    // the viewer would go on showing the value the user had just replaced (DEV-7466).
+    this.multipleViewerService.resourceChanged$
+      .pipe(takeUntilDestroyed())
+      .subscribe(resourceIri => this._reloadViewerOf(resourceIri));
+  }
+
+  private _reloadViewerOf(resourceIri: string): void {
+    this._viewers?.forEach(viewer => {
+      if (viewer.resourceIri === resourceIri) {
+        viewer.reload();
+      }
+    });
+  }
 
   ngOnChanges(): void {
     const resourceIds = this.resourceIds;

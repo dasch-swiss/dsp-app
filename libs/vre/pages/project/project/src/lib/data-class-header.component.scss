@@ -1,0 +1,106 @@
+.data-class-header {
+  // Closes the header off against the split below it.
+  border-bottom: 1px solid #e5e7eb;
+  // Anchors the refresh bar to the bottom edge.
+  position: relative;
+}
+
+// Over the border, full width — the line the results hang from is the one that moves.
+.refresh-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  // A request that answers within a blink should not flash a bar: it fades in only once the wait
+  // has lasted long enough to notice.
+  opacity: 0;
+  animation: refresh-bar-in 150ms ease-out 200ms forwards;
+}
+
+@keyframes refresh-bar-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.identity-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 24px 16px;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.title-line {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+}
+
+.class-label {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
+}
+
+.resource-count {
+  flex: none;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.class-description {
+  margin: 0;
+  max-width: 720px;
+  font-size: 14px;
+  color: #4b5563;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+// A band of its own, set off from the identity above and the results below.
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 24px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+// Takes what the end group leaves, so its filter chips wrap within it before the row wraps.
+.toolbar-search {
+  flex: 1 1 360px;
+  min-width: 0;
+}
+
+.toolbar-end {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+// Separates the pager from the controls for how the results are drawn.
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: #d1d5db;
+}

@@ -1,0 +1,133 @@
+@use '@angular/material' as mat;
+
+// Was an inline `[style.margin-left.px]="8"` on the field. Moved here so density can override it —
+// an inline style wins over any stylesheet rule, which left the Data tab unable to align its input
+// with the heading and pagination above and below it.
+mat-form-field {
+  margin-left: 8px;
+}
+
+.chip-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px;
+  // Left padding matches the fulltext input's `margin-left: 8px` so the first chip lines up with the
+  // input above it. This must be an explicit padding — not a leftover flex gap from an empty leading
+  // chip host — so the alignment holds whether or not the data-model chip is rendered.
+  padding: 8px 0 8px 8px;
+}
+
+.no-data-model {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0 16px 8px;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+}
+
+// Compact density — the Data tab's treatment. The bar there sits inside a narrow split column above a
+// master-detail view, so it runs at 30px controls and 13px text rather than standard Material sizing.
+// Styling only: every behaviour is identical to the standard density.
+//
+// Expressed entirely through *inherited* CSS custom properties and host-level rules. Material renders
+// the field's internals in its own component, which this component's emulated encapsulation cannot
+// select into — and `::ng-deep` is forbidden in this codebase. Custom properties inherit through that
+// boundary, so setting Material's own density tokens on the host is what actually reaches them.
+:host(.compact) {
+  // Density, not hand-set tokens. The previous attempt set `--mat-form-field-filled-*` properties
+  // while the field renders `appearance="outline"`, so none of them applied and the control stayed
+  // at Material's default 48px. The density mixin is the supported lever and reaches the outlined
+  // field. -5 is the floor of Material's scale (36px); the design's 30px is not reachable without
+  // replacing the Material field outright, and 36px sits correctly against the 28px pager buttons.
+  @include mat.form-field-density(-5);
+
+  font-size: 13px;
+
+  // One row: the search input, then `Add filter` and `Reset` beside it. The standard density keeps
+  // them stacked because the Search tab projects the data-model and resource-class chips into the
+  // leading slot, and those do not fit alongside a search field. The Data tab projects nothing, so
+  // the second row would otherwise be a near-empty strip under a full-width input.
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+
+  .chip-bar {
+    gap: 6px;
+    // No left padding here: in a single row the chips follow the input rather than sitting beneath
+    // it, so there is nothing to line up with.
+    padding: 6px 0;
+  }
+
+  // Flush left, so the field's outline starts on the same vertical line as the class heading above
+  // and the result range below. The 8px the standard density uses would break that column.
+  mat-form-field {
+    margin-left: 0;
+  }
+
+  // A quieter box than Material's default: a hairline outline and 13px text, per the design of
+  // record. Set as Material's own tokens because the field renders its internals in a component
+  // this one cannot select into, and `::ng-deep` is forbidden here — custom properties inherit
+  // across that boundary, plain selectors do not.
+  --mdc-outlined-text-field-outline-color: rgba(0, 0, 0, 0.18);
+  --mdc-outlined-text-field-container-shape: 4px;
+  --mat-form-field-container-text-size: 13px;
+  --mat-form-field-container-text-line-height: 18px;
+
+  // The leading magnifier is an affordance, not an action: muted, and sized to the 13px text rather
+  // than Material's 24px default.
+  //
+  // `padding: 0` is the important part. Material ships the prefix icon with 12px of horizontal
+  // padding, which stacks on the prefix wrapper's own spacing and left a 20px dead gap between the
+  // glyph and the text — the icon read as detached from the field rather than part of it. With the
+  // padding gone the inset and the gap are set here explicitly: 10px from the border, 6px to the
+  // text.
+  mat-icon[matPrefix] {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    padding: 0;
+    margin: 0 6px 0 10px;
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  // The text area is shorter than the box Material lays it out in, and it is top-aligned there, so
+  // both the value and the placeholder rode ~3px above the control's centre line. Filling the box
+  // lets the browser centre the single line itself. `100%` rather than a fixed height so this
+  // follows the density rather than hard-coding the padding that density happens to produce.
+  // Material lays the input out at its line-box height and top-aligns it in a taller box, so the
+  // value and the placeholder both rode 3px above the control's centre line.
+  //
+  // `input[matInput]`, not a bare `input`: a one-element selector loses to Material's
+  // `.mat-mdc-input-element`. And an explicit height rather than `100%`, because the infix's 36px
+  // is a *used* value coming from `min-height` — a percentage has no specified height to resolve
+  // against and silently falls back to auto. 24px is that 36px less the infix's 6px padding above
+  // and below; both numbers come from the density below, so they move together.
+  input[matInput] {
+    height: 24px;
+    line-height: normal;
+    box-sizing: border-box;
+  }
+
+  // The clear button carries Material's 48px touch target, which made it the tallest item in the
+  // field's flex row — so the control stayed 48px tall and the 36px text area sat top-aligned
+  // inside it, leaving the text visibly above centre. Shrinking it lets the text area set the
+  // height. It is declared in this component's own template, so a plain selector reaches it; the
+  // field's internals are what needed the token treatment.
+  button[matSuffix] {
+    --mdc-icon-button-state-layer-size: 28px;
+
+    width: 28px;
+    height: 28px;
+    padding: 0;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      line-height: 16px;
+    }
+  }
+}

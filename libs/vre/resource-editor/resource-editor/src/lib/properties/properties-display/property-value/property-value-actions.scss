@@ -1,0 +1,75 @@
+// A value's actions, the same in both states of a value: Edit and Delete on a value being shown,
+// Cancel and Save on a value being edited. One look and one place — compact icon
+// buttons at the end of the value's line — so switching to editing does not move the controls
+// out from under the pointer or restyle them (DEV-7494).
+//
+// Shared by the components that draw them rather than repeated in each, so the two cannot drift.
+
+// Not `.action-bubble`: a global rule of that name floats the other editors' bubbles absolutely.
+.value-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  // Never squeezed by a long value: the value wraps to make room, the buttons keep their size.
+  flex: none;
+  min-width: max-content;
+  // Clear of the line's right edge: flush against it, the last button was clipped by whatever the
+  // line sits in — the viewer's panel, a table cell.
+  padding-right: 4px;
+
+  // A button may sit in a tooltip wrapper; neither may give way.
+  > * {
+    flex: none;
+  }
+}
+
+.value-action {
+  --mat-icon-button-state-layer-size: 28px;
+
+  flex: none;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--mat-sys-primary, #336790);
+
+  &:disabled {
+    color: rgba(0, 0, 0, 0.38);
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+}
+
+// The value's move grip, between Edit and Delete. Not a button: it is pressed and dragged, never
+// clicked.
+.drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: grab;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Backing out of an edit: grey, so it does not compete with Save.
+.value-action-muted {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+// The one action that commits: a filled circle glyph, at the same 18px as Edit and Delete rather
+// than a filled 28px disc that read as a bigger button.
+.value-action-primary {
+  color: var(--mat-sys-primary, #336790);
+}

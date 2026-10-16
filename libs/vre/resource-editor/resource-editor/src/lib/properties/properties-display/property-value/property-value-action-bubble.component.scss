@@ -1,16 +1,10 @@
+// In the value's own line, after the value: a flex item of the row, not a layer over it. A bubble
+// floating over the value covered the very text the user was about to edit, and on a link value
+// the open arrow beside it (DEV-7494). The buttons' look is in `property-value-actions.scss`,
+// shared with the editor's.
 :host {
   display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.action-bubble {
-  position: absolute;
-  right: 16px;
-  top: 8px;
+  flex: none;
+  // Level with the value's first line, which starts below the value's own block padding.
+  padding-top: calc(var(--property-value-padding-block, 16px) - 4px);
 }
