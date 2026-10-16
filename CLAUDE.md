@@ -52,6 +52,7 @@ Standard `nx` / `npm` invocations live in `package.json` scripts. Regenerating t
 
 - Self-closing tags for component selectors in templates
 - no usage of ::ng-deep
+- Media queries use `bp-up` / `bp-down` from `apps/dsp-app/src/styles/_responsive.scss` (`@use "responsive" as *`); never hardcode pixel breakpoints. `sm` (768px) is the minimum supported width.
 
 ### Storybook Convention
 

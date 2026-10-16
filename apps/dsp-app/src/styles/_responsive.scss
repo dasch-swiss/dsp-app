@@ -1,10 +1,36 @@
 @use 'sass:map';
 
-// responsive sizes
-$grid-breakpoints: (
-  watch: 0,
-  phone: 576px,
-  tablet: 768px,
-  notebook: 992px,
-  desktop: 1200px,
+// Shared breakpoints for DSP-APP. Always use bp-up / bp-down from this file;
+// never hardcode pixel values in @media queries.
+//
+// md–xxl are the most common desktop screen sizes in Switzerland (DEV-7521).
+// sm is the minimum supported width: below it, support is best effort. Nothing
+// changes in the layout, but pages must scroll and must not cut off content.
+$breakpoints: (
+  sm: 768px,
+  md: 1280px,
+  lg: 1536px,
+  xl: 1920px,
+  xxl: 2560px,
 );
+
+@function -bp($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error 'Unknown breakpoint `#{$name}`. Expected one of: #{map.keys($breakpoints)}.';
+  }
+  @return map.get($breakpoints, $name);
+}
+
+// Applies from the given breakpoint and up.
+@mixin bp-up($name) {
+  @media (min-width: -bp($name)) {
+    @content;
+  }
+}
+
+// Applies below the given breakpoint. 0.02px avoids overlapping with bp-up at the exact width.
+@mixin bp-down($name) {
+  @media (max-width: -bp($name) - 0.02px) {
+    @content;
+  }
+}
