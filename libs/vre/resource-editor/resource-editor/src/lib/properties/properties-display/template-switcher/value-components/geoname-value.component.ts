@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
@@ -54,6 +55,8 @@ export class GeonameValueComponent implements OnInit {
   places: SearchPlace[] = [];
 
   loading = false;
+  private readonly _destroyRef = inject(DestroyRef);
+
   constructor(
     private readonly _geonameService: GeonameService,
     private readonly _cdr: ChangeDetectorRef
@@ -61,18 +64,21 @@ export class GeonameValueComponent implements OnInit {
 
   ngOnInit() {
     if (this.control.value) {
-      this._geonameService.resolveGeonameID(this.control.value).subscribe(place => {
-        this.places = [
-          {
-            ...place,
-            id: this.control.value,
-            locationType: '',
-          },
-        ];
-        if (this.places.length > 0) {
-          this.control.setValue(this.places[0].id, { emitEvent: false });
-        }
-      });
+      this._geonameService
+        .resolveGeonameID(this.control.value)
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe(place => {
+          this.places = [
+            {
+              ...place,
+              id: this.control.value,
+              locationType: '',
+            },
+          ];
+          if (this.places.length > 0) {
+            this.control.setValue(this.places[0].id, { emitEvent: false });
+          }
+        });
     }
 
     this.control.valueChanges
@@ -81,7 +87,8 @@ export class GeonameValueComponent implements OnInit {
         tap(() => {
           this.loading = true;
         }),
-        switchMap((searchTerm: string) => this._geonameService.searchPlace(searchTerm))
+        switchMap((searchTerm: string) => this._geonameService.searchPlace(searchTerm)),
+        takeUntilDestroyed(this._destroyRef)
       )
       .subscribe(places => {
         this.loading = false;
