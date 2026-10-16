@@ -9,6 +9,9 @@ ARG build_tag=v0.0.0
 ENV NGINX_PORT 4200
 EXPOSE ${NGINX_PORT}
 
+# dsp-api base URL for resource landing pages, e.g. http://api:3333; empty serves the plain app shell
+ENV DSP_API_UPSTREAM=""
+
 # Copy nginx configuration
 COPY ./nginx/default.conf.template /etc/nginx/templates/
 COPY ./nginx/nginx.conf /etc/nginx/

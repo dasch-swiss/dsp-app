@@ -6,6 +6,48 @@ server {
 
     server_tokens off;
 
+    # dsp-api serves resource landing pages (the app shell with FAIR metadata and Signposting).
+    # Empty upstream: serve the plain shell as before.
+    set $dsp_api_upstream "${DSP_API_UPSTREAM}";
+    # Docker's embedded DNS, needed because proxy_pass uses a variable
+    resolver 127.0.0.11 valid=10s ipv6=off;
+    resolver_timeout 2s;
+
+    # Must stay the first regex location: later ones (e.g. the .json one) would catch some ids.
+    # Named captures, because the regex `if` below overwrites $1/$2.
+    location ~ "^/resource/(?<landing_shortcode>[0-9A-Fa-f]{4})/(?<landing_id>[A-Za-z0-9_=-]+)/?$" {
+      if ($request_method !~ ^(GET|HEAD)$) {
+        return 405;
+      }
+      # 418 only routes to @shell
+      if ($dsp_api_upstream = "") {
+        return 418;
+      }
+
+      proxy_pass $dsp_api_upstream/internal/landing-pages/resources/$landing_shortcode/$landing_id$is_args$args;
+      proxy_http_version 1.1;
+      proxy_connect_timeout 2s;
+      proxy_send_timeout 2s;
+      proxy_read_timeout 2s;
+      proxy_set_header Accept-Encoding "";
+      proxy_set_header Cookie "";
+      proxy_set_header Authorization "";
+      proxy_redirect off;
+
+      # Any failure, including dsp-api lacking the route (404), falls back to the plain shell.
+      proxy_intercept_errors on;
+      error_page 400 401 403 404 406 408 413 418 429 500 502 503 504 = @shell;
+
+      include /etc/nginx/security-headers.conf;
+    }
+
+    location @shell {
+      try_files /index.html =500;
+      add_header Vary Accept always;
+      add_header Cache-Control 'no-store' always;
+      include /etc/nginx/security-headers.conf;
+    }
+
     location ~ ^/internal/health$ {
       allow 127.0.0.1;
       deny all;

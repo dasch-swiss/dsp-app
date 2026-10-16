@@ -44,6 +44,10 @@ docs-lint: ## runs the markdownlint linter on the docs
 docker-build-app: app-build-prod ## build and publish DSP-APP Docker image locally
 	docker buildx build -t $(DSP_APP_IMAGE) --load .
 
+.PHONY: nginx-smoke-test
+nginx-smoke-test: ## test the nginx resource landing-page forwarding against a stub dsp-api (needs Docker, no app build)
+	./scripts/nginx-smoke-test.sh
+
 .PHONY: docker-image-tag
 docker-image-tag: ## prints the docker image tag
 	@echo $(BUILD_TAG)
