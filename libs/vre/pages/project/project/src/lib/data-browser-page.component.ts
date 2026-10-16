@@ -14,11 +14,13 @@ import { ProjectSidenavComponent } from './sidenav/project-sidenav.component';
 @Component({
   selector: 'app-data-browser-page',
   template: `<div style="display: flex; flex-direction: column; height: 100%">
-    <as-split direction="horizontal">
-      <as-split-area [size]="25">
+    <!-- A narrow sidebar by default, so the classes do not take the width the data needs; still
+         resizable from its gutter (DEV-7494, sidebar design I2). -->
+    <as-split direction="horizontal" unit="pixel">
+      <as-split-area [size]="220" [minSize]="160" [maxSize]="480">
         <app-project-sidenav />
       </as-split-area>
-      <as-split-area [size]="75">
+      <as-split-area size="*">
         <router-outlet />
       </as-split-area>
     </as-split>

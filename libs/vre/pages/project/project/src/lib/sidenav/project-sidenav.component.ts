@@ -7,10 +7,10 @@ import { ProjectSidenavOntologiesComponent } from './project-sidenav-ontologies.
   styles: [
     `
       :host {
-        flex-basis: 600px;
-        flex-shrink: 0;
         display: block;
-        border-right: 1px solid #ebebeb;
+        height: 100%;
+        box-sizing: border-box;
+        border-right: 1px solid #e5e7eb;
         overflow: auto;
       }
     `,
