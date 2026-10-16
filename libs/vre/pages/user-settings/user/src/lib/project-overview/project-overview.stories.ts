@@ -37,6 +37,8 @@ const OTHER_PROJECTS: StoredProject[] = [
 
 const ALL_PROJECTS = [...MY_PROJECTS, ...OTHER_PROJECTS];
 
+const MANY_PROJECTS: StoredProject[] = [...ALL_PROJECTS, makeProject('0808', '0808', 'beol', 'Bernoulli-Euler Online')];
+
 // ---------------------------------------------------------------------------
 // Service mocks
 // ---------------------------------------------------------------------------
@@ -132,6 +134,28 @@ export const EmptyState: Story = {
   play: async ({ canvasElement, step: s }) => {
     await s('No project cards are rendered', async () => {
       await expect(canvasElement.querySelectorAll('app-project-card').length).toBe(0);
+    });
+  },
+};
+
+// Pixeleye and test-storybook render at 1280 px, below the 1536 px breakpoint.
+export const ShowsTwoColumnsBelow1536px: Story = {
+  name: 'Shows project cards in 2 columns below 1536 px',
+  decorators: [
+    applicationConfig({
+      providers: [
+        provideRouter([]),
+        { provide: UserService, useValue: sysAdminUserServiceMock },
+        { provide: AllProjectsService, useValue: { ...allProjectsServiceMock, allProjects$: of(MANY_PROJECTS) } },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, step: s }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText('Bernoulli-Euler Online');
+    await s('The project grid has 2 columns', async () => {
+      const grid = canvasElement.querySelector('.project-grid') as HTMLElement;
+      await expect(getComputedStyle(grid).gridTemplateColumns.split(' ').length).toBe(2);
     });
   },
 };

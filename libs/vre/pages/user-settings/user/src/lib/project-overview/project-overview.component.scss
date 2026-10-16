@@ -9,6 +9,8 @@
 
 .content {
   flex: 1 0 auto;
+  // Include the padding in the 100% width, otherwise the page overflows sideways.
+  box-sizing: border-box;
 }
 
 .project-overview-subtitle {
@@ -49,7 +51,7 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  @media (min-width: 1200px) and (pointer: fine) and (hover: hover) {
+  @media (min-width: 1536px) and (pointer: fine) and (hover: hover) {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
