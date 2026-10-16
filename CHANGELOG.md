@@ -1,5 +1,40 @@
 # Changelog
 
+## [13.17.0](https://github.com/dasch-swiss/dsp-app/compare/v13.16.0...v13.17.0) (2026-10-16)
+
+
+### Enhancements
+
+* **calendar:** read, edit and convert dates across calendars (DEV-7372, DEV-7476) ([#3486](https://github.com/dasch-swiss/dsp-app/issues/3486)) ([8cdabed](https://github.com/dasch-swiss/dsp-app/commit/8cdabede1bbefc88e62e81eb17ecec2416b3ada6))
+
+
+### Bug Fixes
+
+* **storybook:** make date and PDF stories deterministic for pixeleye ([#3519](https://github.com/dasch-swiss/dsp-app/issues/3519)) ([7c86e63](https://github.com/dasch-swiss/dsp-app/commit/7c86e6348a15626afdc32c931c1a0bcd9f37992c))
+* **storybook:** preload the Material Icons font for pixeleye (DEV-7525) ([#3528](https://github.com/dasch-swiss/dsp-app/issues/3528)) ([f694a09](https://github.com/dasch-swiss/dsp-app/commit/f694a09649fba062ead36ac082e664690bd5f1dc))
+
+
+### Maintenances
+
+* **deps:** automerge patch/minor npm overrides with the dev dependency rule ([#3518](https://github.com/dasch-swiss/dsp-app/issues/3518)) ([3233e3e](https://github.com/dasch-swiss/dsp-app/commit/3233e3e668f16a49e39907a775459509ada8064e))
+* **deps:** Update actions/create-github-app-token digest to 64ab729 ([#3520](https://github.com/dasch-swiss/dsp-app/issues/3520)) ([aa65ebb](https://github.com/dasch-swiss/dsp-app/commit/aa65ebb19bffa705025d1da18bbf0806c5932dcd))
+* **deps:** Update dependency @sentry/angular from 10.76.0 to 11.6.0 ([#3483](https://github.com/dasch-swiss/dsp-app/issues/3483)) ([e01dd20](https://github.com/dasch-swiss/dsp-app/commit/e01dd208f26d781df2453de533b0a228958452f6))
+* **deps:** Update dependency playwright-core from 1.63.0 to 1.64.0 ([#3508](https://github.com/dasch-swiss/dsp-app/issues/3508)) ([4b5a09e](https://github.com/dasch-swiss/dsp-app/commit/4b5a09ead4e662fc33f1b411a279da9fea1882c4))
+* **deps:** Update dependency postcss from 8.5.29 to 8.5.30 ([#3531](https://github.com/dasch-swiss/dsp-app/issues/3531)) ([5d86679](https://github.com/dasch-swiss/dsp-app/commit/5d8667910d186a9d5ed2fb67bee9c6e3ebbde000))
+* **deps:** Update dependency prettier from 3.9.9 to 3.9.10 ([#3523](https://github.com/dasch-swiss/dsp-app/issues/3523)) ([66b8cae](https://github.com/dasch-swiss/dsp-app/commit/66b8caeda487f5b7c8e5e5ed290a379cf2cb55b5))
+* **deps:** Update dependency uuid from 14.0.2 to 14.0.3 ([#3524](https://github.com/dasch-swiss/dsp-app/issues/3524)) ([77d42c5](https://github.com/dasch-swiss/dsp-app/commit/77d42c58cea6e443c9fb7421a9e80566436656c0))
+* **deps:** Update dependency zod from 4.6.5 to 4.6.7 ([#3532](https://github.com/dasch-swiss/dsp-app/issues/3532)) ([bdfb6f5](https://github.com/dasch-swiss/dsp-app/commit/bdfb6f586c94edbb012030ad63a9249944d218ce))
+* **deps:** Update postcss-deps ([#3525](https://github.com/dasch-swiss/dsp-app/issues/3525)) ([2b18d51](https://github.com/dasch-swiss/dsp-app/commit/2b18d51f78c559a13125781db3cc3c1e3ed4778a))
+* **deps:** Update typescript-eslint monorepo from 8.71.0 to 8.71.1 ([#3526](https://github.com/dasch-swiss/dsp-app/issues/3526)) ([0ecf8fa](https://github.com/dasch-swiss/dsp-app/commit/0ecf8fa0d8c3c8a5fb97655f7c5c3794cffec47d))
+* move HTTP calls out of help-page and vector-image components ([#3468](https://github.com/dasch-swiss/dsp-app/issues/3468)) ([a08be97](https://github.com/dasch-swiss/dsp-app/commit/a08be9797f537ba1daf286e56fbd966b98fddd77))
+* skip pixeleye capture on bot pushes ([#3516](https://github.com/dasch-swiss/dsp-app/issues/3516)) ([3412026](https://github.com/dasch-swiss/dsp-app/commit/34120262c4ccaf824538aae100acfd322c5c2cb3))
+
+
+### Tests
+
+* **storybook:** full-page breakpoint stories and a pixeleye run per breakpoint (DEV-7536) ([#3534](https://github.com/dasch-swiss/dsp-app/issues/3534)) ([ddb76c9](https://github.com/dasch-swiss/dsp-app/commit/ddb76c90de10a7e6a1c2deeadec208ec92aa7d1e))
+* **storybook:** wait for the PDF to paint in the read-only PDF story ([#3535](https://github.com/dasch-swiss/dsp-app/issues/3535)) ([a1817f6](https://github.com/dasch-swiss/dsp-app/commit/a1817f6c4ddc3289800bfb6d55c4c8aece43c51f))
+
 ## [13.16.0](https://github.com/dasch-swiss/dsp-app/compare/v13.15.3...v13.16.0) (2026-10-12)
 
 
