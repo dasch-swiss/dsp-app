@@ -29,7 +29,7 @@ export const APP_CONFIG_TOKEN_STUB = {
       tracingCorsUrls: [],
     },
   },
-  featureFlags: { allowEraseProjects: false },
+  featureFlags: { allowEraseProjects: false, resourceDescription: false },
 };
 
 export const HEADER_BASE_PROVIDERS = [

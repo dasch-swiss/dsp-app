@@ -86,7 +86,10 @@ export class AppConfigService {
       )
     );
 
-    this._dspFeatureFlagsConfig = new DspFeatureFlagsConfig(c.featureFlags.allowEraseProjects);
+    this._dspFeatureFlagsConfig = new DspFeatureFlagsConfig(
+      c.featureFlags.allowEraseProjects,
+      c.featureFlags.resourceDescription
+    );
   }
 
   get dspConfig(): DspConfig {

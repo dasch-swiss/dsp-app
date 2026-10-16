@@ -48,6 +48,8 @@ export type InstrumentationType = z.infer<typeof Instrumentation>;
 
 export const FeatureFlags = z.object({
   allowEraseProjects: z.boolean(),
+  /** Resource description in the header, the resource list and the creation form. Off when absent. */
+  resourceDescription: z.boolean().default(false),
 });
 
 export type FeatureFlagsType = z.infer<typeof FeatureFlags>;

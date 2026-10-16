@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ErrorHandler, Inject, Input, OnChanges, signal } from '@angular/core';
+import { Component, ErrorHandler, Inject, inject, Input, OnChanges, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KnoraApiConnection, ReadProject, ReadResource } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/config';
+import { DspApiConnectionToken, RESOURCE_DESCRIPTION_ENABLED, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ErrorReportingService, userFacingReason } from '@dasch-swiss/vre/core/error-handler';
 import { MultipleViewerService, ResourcesListComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { OntologyService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -78,6 +78,8 @@ export class ResourcesListFetcherComponent implements OnChanges {
   );
 
   data$!: Observable<{ resources: ReadResource[]; selectFirstResource: boolean } | null>;
+
+  private readonly _resourceDescriptionEnabled = inject(RESOURCE_DESCRIPTION_ENABLED);
 
   /**
    * The count only drives the paginator and the permissions heuristic below, but it re-runs the same
@@ -202,13 +204,20 @@ export class ResourcesListFetcherComponent implements OnChanges {
     this._resourceResult.pageIndex$.pipe(
       switchMap(pageIndex =>
         this._performGravSearch(
-          this._setGravsearch(this._getClassIdFromParams(project.shortcode, ontologyLabel, classLabel)),
+          this._setGravsearch(
+            this._getClassIdFromParams(project.shortcode, ontologyLabel, classLabel),
+            this._resourceDescriptionEnabled
+          ),
           pageIndex
         ).pipe(map(response => ({ resources: response.resources, pageIndex })))
       )
     );
 
-  private _setGravsearch(iri: string): string {
+  /**
+   * `includeDescription` fetches each resource's description for the list items. Only the paged
+   * query asks for it: the count query does not need it and is already the expensive one (DEV-6809).
+   */
+  private _setGravsearch(iri: string, includeDescription = false): string {
     return `
         PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -216,6 +225,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
         CONSTRUCT {
 
         ?mainRes knora-api:isMainResource true .
+        ${includeDescription ? '?mainRes knora-api:hasDescription ?description .' : ''}
 
         } WHERE {
 
@@ -224,6 +234,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
 
 
         ?mainRes a <${iri}> .
+        ${includeDescription ? 'OPTIONAL { ?mainRes knora-api:hasDescription ?description . }' : ''}
 
         }
         ORDER BY ASC(?label)

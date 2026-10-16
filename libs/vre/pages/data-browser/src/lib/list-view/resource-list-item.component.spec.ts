@@ -1,7 +1,8 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
+import { RESOURCE_DESCRIPTION_ENABLED } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
@@ -28,6 +29,7 @@ describe('ResourceListItemComponent', () => {
 
   let mockResource: ReadResource;
   let mockResource2: ReadResource;
+  let resourceDescriptionEnabled = false;
 
   beforeEach(async () => {
     selectedResourcesSubject = new BehaviorSubject<ReadResource[]>([]);
@@ -78,6 +80,7 @@ describe('ResourceListItemComponent', () => {
       providers: [
         { provide: MultipleViewerService, useValue: mockMultipleViewerService },
         { provide: ProjectShortnameService, useValue: mockProjectShortnameService },
+        { provide: RESOURCE_DESCRIPTION_ENABLED, useFactory: () => resourceDescriptionEnabled },
       ],
     })
       .overrideComponent(ResourceListItemComponent, {
@@ -462,6 +465,41 @@ describe('ResourceListItemComponent', () => {
       selectedResourcesSubject.next([mockResource2]); // Should emit false
     });
   });
+  describe('description', () => {
+    const withDescription = (xml: string) =>
+      ({ ...mockResource, properties: { [Constants.HasDescription]: [{ strval: xml }] } }) as unknown as ReadResource;
+
+    it('is not shown while the feature flag is off', () => {
+      component.resource = withDescription('<text><p>Hidden</p></text>');
+      component.ngOnInit();
+      expect(component.description).toBeNull();
+    });
+
+    describe('with the feature flag on', () => {
+      // beforeAll runs before the outer beforeEach creates the component.
+      beforeAll(() => (resourceDescriptionEnabled = true));
+      afterAll(() => (resourceDescriptionEnabled = false));
+
+      it('is the first description as plain text', () => {
+        component.resource = withDescription(
+          '<?xml version="1.0" encoding="UTF-8"?>\n<text><p>A <em>fine</em> one</p></text>'
+        );
+        component.ngOnInit();
+        expect(component.description).toBe('A fine one');
+      });
+
+      it('is null when the resource has no description', () => {
+        component.ngOnInit();
+        expect(component.description).toBeNull();
+      });
+
+      it('is null when the description is only markup', () => {
+        component.resource = withDescription('<text><p></p></text>');
+        component.ngOnInit();
+        expect(component.description).toBeNull();
+      });
+    });
+  });
 });
 
 /**
@@ -487,6 +525,7 @@ describe('ResourceListItemComponent rendering', () => {
           },
         },
         { provide: ProjectShortnameService, useValue: { getProjectShortname: () => of('testproj') } },
+        { provide: RESOURCE_DESCRIPTION_ENABLED, useValue: false },
       ],
     }).compileComponents();
 

@@ -18,7 +18,8 @@ export class GenerateProperty {
       .filter(prop => !prop.propDef.isLinkProperty)
       .filter(prop => !prop.propDef.subPropertyOf.includes(`${ApiConstants.apiKnoraOntologyUrl}#hasFileValue`))
       .filter(
-        // temporary guard/feature flag after https://linear.app/dasch/issue/DEV-7433/resdescr-basic-implementation - removes hasDescription for all resources except AudioSegment and VideoSegment
+        // Description is not a property row: project resources show it in the resource header
+        // (behind `featureFlags.resourceDescription`). Segments keep their Description row.
         prop =>
           prop.propDef.id !== Constants.HasDescription ||
           resource.type === `${ApiConstants.apiKnoraOntologyUrl}#AudioSegment` ||

@@ -84,6 +84,10 @@ describe('AppConfigService with dev config', () => {
     expect(service.dspInstrumentationConfig.rollbar.accessToken).toBeUndefined();
     expect(service.dspFeatureFlagsConfig.allowEraseProjects).toEqual(true);
   });
+
+  it('turns resourceDescription off when the config does not set it', () => {
+    expect(service.dspFeatureFlagsConfig.resourceDescription).toEqual(false);
+  });
 });
 
 describe('AppConfigService with prod config', () => {
@@ -128,6 +132,7 @@ describe('AppConfigService with prod config', () => {
     },
     featureFlags: {
       allowEraseProjects: true,
+      resourceDescription: true,
     },
   };
 
@@ -169,5 +174,6 @@ describe('AppConfigService with prod config', () => {
     expect(service.dspInstrumentationConfig.rollbar.enabled).toEqual(true);
     expect(service.dspInstrumentationConfig.rollbar.accessToken).toEqual('rollbar_token');
     expect(service.dspFeatureFlagsConfig.allowEraseProjects).toEqual(true);
+    expect(service.dspFeatureFlagsConfig.resourceDescription).toEqual(true);
   });
 });

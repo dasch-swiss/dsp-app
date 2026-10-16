@@ -1,17 +1,20 @@
 import { AsyncPipe, NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import {
+  Constants,
   ReadResource,
   ReadValue,
   ResourcePropertyDefinitionWithAllLanguages,
   StringLiteralV2,
 } from '@dasch-swiss/dsp-js';
+import { RESOURCE_DESCRIPTION_ENABLED } from '@dasch-swiss/vre/core/config';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import { ProjectShortnameService } from '../project-shortname.service';
+import { richTextToPlainText } from './rich-text-to-plain-text';
 
 /**
  * One entry of the "Found in:" list. Exactly one field is set: `translationKey` for a hit on the
@@ -40,8 +43,11 @@ const RESOURCE_LABEL_KEY = 'pages.dataBrowser.resourceListItem.resourceLabel';
       (click)="multipleViewerService.selectOneResource(resource)">
       <div style="display: flex; align-items: center; min-height: 40px">
         <div style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-          <div style="color: black">
+          <div class="label-line">
             {{ resource.label }}
+            @if (description) {
+              <span class="description" data-cy="resource-list-item-description">{{ description }}</span>
+            }
           </div>
           @let classLabels = visibleResourceClassLabels;
           @if (classLabels || foundIn.length > 0) {
@@ -112,6 +118,17 @@ const RESOURCE_LABEL_KEY = 'pages.dataBrowser.resourceListItem.resourceLabel';
         border-bottom: 1px solid #ebebeb;
       }
 
+      .label-line {
+        color: black;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .description {
+        color: rgba(0, 0, 0, 0.54);
+        margin-left: 8px;
+      }
+
       .found-in {
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -160,6 +177,15 @@ export class ResourceListItemComponent implements OnInit {
   projectShortname$!: Observable<string>;
 
   /**
+   * The first description as one line of plain text, shown greyed after the label; `null` while the
+   * feature flag is off or the resource has none. Only lists whose query fetches descriptions (the
+   * class list) have one to show.
+   */
+  description: string | null = null;
+
+  private readonly _resourceDescriptionEnabled = inject(RESOURCE_DESCRIPTION_ENABLED);
+
+  /**
    * Prefers the multi-language labels off entityInfo so the class follows the UI language, and falls
    * back to the single-language resourceClassLabel, which dsp-js also fills in for deleted resources
    * and classes of unknown ontologies. `null` when neither source has a label, which the template
@@ -184,6 +210,7 @@ export class ResourceListItemComponent implements OnInit {
 
   ngOnInit() {
     this.resourceClassLabels = this._resolveResourceClassLabels();
+    this.description = this._resolveDescription();
 
     const searchKeyword = this.multipleViewerService.searchKeyword;
     if (searchKeyword) {
@@ -200,6 +227,14 @@ export class ResourceListItemComponent implements OnInit {
     } else {
       this.multipleViewerService.removeResources([this.resource]);
     }
+  }
+
+  private _resolveDescription(): string | null {
+    if (!this._resourceDescriptionEnabled) {
+      return null;
+    }
+    const xml = this.resource.properties?.[Constants.HasDescription]?.[0]?.strval;
+    return xml ? richTextToPlainText(xml) || null : null;
   }
 
   private _resolveResourceClassLabels(): StringLiteralV2[] | null {
