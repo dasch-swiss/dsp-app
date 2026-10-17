@@ -29,7 +29,11 @@ import {
 import { STORY_IIIF_BASE_URL, STORY_IMAGE_URL } from '../../stories.helpers';
 import { ResourceImageComponent } from './resource-image.component';
 
-const makeResource = (permission = 'CR'): DspResource => {
+/**
+ * `filePermission` is deliberately independent of `permission`: asset permissions live on the file
+ * value, not on the resource, and DEV-7392 is exactly the case where the two disagree.
+ */
+const makeResource = (permission = 'CR', filePermission = 'V'): DspResource => {
   const res = new ReadResource();
   res.id = 'http://rdfh.ch/resource/1';
   res.type = 'http://api.dasch.swiss/ontology/knora-api/v2#StillImageRepresentation';
@@ -49,7 +53,7 @@ const makeResource = (permission = 'CR'): DspResource => {
         filename: '1awyJYmiA5Z-FQ9xDcEh2Hi.jp2',
         dimX: 1333,
         dimY: 1815,
-        userHasPermission: 'RV',
+        userHasPermission: filePermission,
       } as unknown as ReadStillImageFileValue,
     ],
   };
@@ -230,6 +234,37 @@ export const ReadOnly: Story = {
   play: async ({ canvasElement, step }) => {
     await step('Restriction banner is rendered', async () => {
       await expect(canvasElement.querySelector('app-resource-restriction')).not.toBeNull();
+    });
+  },
+};
+
+export const RestrictedResourceWithFullQualityImage: Story = {
+  name: 'Does not claim the image is degraded when only the resource is restricted (RV) and the file value is not',
+  args: { resource: makeResource('RV', 'V') },
+  play: async ({ canvasElement, step }) => {
+    await step('Resource-level banner is rendered', async () => {
+      await expect(canvasElement.querySelector('app-resource-restriction')).not.toBeNull();
+    });
+    await step('Banner text talks about hidden values, not image quality', async () => {
+      const text = canvasElement.querySelector('app-resource-restriction')?.textContent?.toLowerCase() ?? '';
+      await expect(text).toContain('values');
+      await expect(text).not.toContain('quality');
+    });
+    await step('No asset-level badge, because the image is served in full quality', async () => {
+      await expect(canvasElement.querySelector('[data-cy="asset-restricted-badge"]')).toBeNull();
+    });
+  },
+};
+
+export const RestrictedImageOnFullyReadableResource: Story = {
+  name: 'Marks the asset viewer when the file value is restricted (RV) but the resource is not',
+  args: { resource: makeResource('CR', 'RV') },
+  play: async ({ canvasElement, step }) => {
+    await step('Asset-level badge is rendered on the viewer', async () => {
+      await expect(canvasElement.querySelector('[data-cy="asset-restricted-badge"]')).not.toBeNull();
+    });
+    await step('No resource-level banner, because the resource itself is not restricted', async () => {
+      await expect(canvasElement.querySelector('app-resource-restriction')).toBeNull();
     });
   },
 };

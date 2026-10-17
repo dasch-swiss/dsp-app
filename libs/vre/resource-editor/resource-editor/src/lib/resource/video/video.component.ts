@@ -15,6 +15,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, EMPTY, Subject, takeUntil } from 'rxjs';
+import { isRestrictedFileValue } from '../../representation/is-restricted-file-value';
 import { MediaSliderComponent } from '../../representation/media-slider.component';
 import { MovingImageSidecar } from '../../representation/moving-image-sidecar';
 import { RepresentationErrorMessageComponent } from '../../representation/representation-error-message.component';
@@ -72,6 +73,9 @@ export class VideoComponent implements OnChanges, OnDestroy {
   @Input() start = 0;
   @Input() overrideSegments?: Segment[];
   @Output() loaded = new EventEmitter<boolean>();
+
+  /** Asset-level restriction: read off the file value, never the resource (DEV-7392). */
+  protected readonly isRestrictedAsset = isRestrictedFileValue;
 
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
   video?: SafeUrl;

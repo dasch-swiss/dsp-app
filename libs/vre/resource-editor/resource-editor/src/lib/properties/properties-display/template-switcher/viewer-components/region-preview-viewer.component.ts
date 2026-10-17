@@ -43,9 +43,11 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
   template: `
     <div class="card">
       @if (imageFailed) {
-        <!-- The API always returns a crop; the only non-normal state is the media server denying the pixels. -->
+        <!-- The API always returns a crop; the only non-normal state is the media server denying the pixels.
+             That is an asset-level denial, so it uses the media wording — not the resource-level
+             restriction notice, which only speaks about hidden values (DEV-7392). -->
         <app-alert-info>
-          <p>{{ 'resourceEditor.restricted' | translate }}</p>
+          {{ 'resourceEditor.representations.noPermission' | translate }}
         </app-alert-info>
       } @else if (cropSrc) {
         <!-- Media row: full-page thumbnail (constant width) on the left, the region crop on the right.
