@@ -13,6 +13,8 @@ import {
 import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+import { RepresentationService } from '../../representation/representation.service';
 import { IIIFUrl } from '../../representation/third-party-iiif/third-party-iiif';
 import { CompoundArrowNavigationComponent } from '../compound/compound-arrow-navigation.component';
 import { CompoundSliderComponent } from '../compound/compound-slider.component';
@@ -75,10 +77,14 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
   isPng = false;
   errorMessage: string | null = null;
 
+  /** Increments per load, so an image whose info.json answers late doesn't replace a newer one. */
+  private _loadRequest = 0;
+
   constructor(
     private readonly _cdr: ChangeDetectorRef,
     protected osdService: OpenSeaDragonService,
     private readonly _osdDrawerService: OsdDrawerService,
+    private readonly _representationService: RepresentationService,
     private readonly _translateService: TranslateService
   ) {}
 
@@ -107,6 +113,7 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
   }
 
   private async _loadImage() {
+    const loadRequest = ++this._loadRequest;
     try {
       // Clear any previous errors
       this.errorMessage = null;
@@ -123,7 +130,7 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
 
       switch (image.type) {
         case Constants.StillImageFileValue:
-          this._openInternalImage(image as ReadStillImageFileValue);
+          await this._openInternalImage(image as ReadStillImageFileValue, loadRequest);
           break;
         case Constants.StillImageExternalFileValue:
           await this._openExternal3iFImage(image as ReadStillImageExternalFileValue);
@@ -143,14 +150,33 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
   }
 
-  private _openInternalImage(image: ReadStillImageFileValue): void {
+  private async _openInternalImage(image: ReadStillImageFileValue, loadRequest: number): Promise<void> {
+    // Only a restricted view can be capped in size; everyone else opens without the extra info.json request.
+    const asSingleImage = image.userHasPermission === 'RV' ? await this._isSizeRestricted(image) : false;
+    if (loadRequest !== this._loadRequest) {
+      return;
+    }
+
     const tiles = StillImageHelper.prepareTileSourcesFromFileValues(
       [image],
       (this.osdService.viewer as any).ajaxHeaders,
-      this.isPng
+      this.isPng,
+      asSingleImage
     );
     (this.osdService.viewer as any).loadTilesWithAjax = true;
     this.osdService.viewer.open(tiles);
+  }
+
+  /** Falls back to `false` (tiled, as for full access) when the info.json can't be fetched. */
+  private async _isSizeRestricted(image: ReadStillImageFileValue): Promise<boolean> {
+    try {
+      const imageInfo = await firstValueFrom(
+        this._representationService.getIiifImageInfo(image.iiifBaseUrl, image.filename)
+      );
+      return StillImageHelper.isSizeRestricted(image, imageInfo);
+    } catch {
+      return false;
+    }
   }
 
   private async _openExternal3iFImage(image: ReadStillImageExternalFileValue) {

@@ -156,7 +156,11 @@ const meta: Meta<ResourceImageComponent> = {
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub('0803') },
         {
           provide: RepresentationService,
-          useValue: { getFileInfo: () => of({ originalFilename: 'image.jpx' }), downloadProjectFile: () => {} },
+          useValue: {
+            getFileInfo: () => of({ originalFilename: 'image.jpx' }),
+            getIiifImageInfo: () => of({ width: 1333, height: 1815 }),
+            downloadProjectFile: () => {},
+          },
         },
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         {

@@ -61,10 +61,24 @@ export class StillImageHelper {
     return createResource;
   }
 
+  /**
+   * Whether Sipi serves this image to the current user capped to a smaller size (restricted view by size),
+   * judged by the info.json Sipi returned for that user. A watermark-only restricted view reports the real size.
+   */
+  static isSizeRestricted(image: ReadStillImageFileValue, imageInfo: { width: number; height: number }): boolean {
+    return imageInfo.width < image.dimX || imageInfo.height < image.dimY;
+  }
+
+  /**
+   * @param asSingleImage declare the whole image as one tile, so OpenSeadragon requests `full/max` once instead of
+   * tiles. Used for size-restricted images: Sipi caps every tile separately, so tiles don't fit together (DEV-7456),
+   * and higher-resolution levels add no detail. Width/height stay the real ones, so region overlays line up.
+   */
   static prepareTileSourcesFromFileValues(
     images: ReadStillImageFileValue[],
     ajaxHeaders: any,
-    pngFormat = false
+    pngFormat = false,
+    asSingleImage = false
   ): OpenSeadragon.TileSourceSpecifier[] {
     let imageXOffset = 0;
     const imageYOffset = 0;
@@ -82,12 +96,14 @@ export class StillImageHelper {
         width,
         profile: ['level2'],
         protocol: 'http://iiif.io/api/image',
-        tiles: [
-          {
-            scaleFactors: [1, 2, 4, 8, 16, 32],
-            width: 1024,
-          },
-        ],
+        tiles: asSingleImage
+          ? [{ scaleFactors: [1], width, height }]
+          : [
+              {
+                scaleFactors: [1, 2, 4, 8, 16, 32],
+                width: 1024,
+              },
+            ],
       } as any;
 
       if (pngFormat) {

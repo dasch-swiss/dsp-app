@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReadDocumentFileValue } from '@dasch-swiss/dsp-js';
 import { ProjectApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -13,17 +13,39 @@ import { ResourceUtil } from './resource.util';
   providedIn: 'root',
 })
 export class RepresentationService {
+  /** Skips the app's interceptors, so a request carries exactly the headers and credentials set here. */
+  private readonly _httpWithoutInterceptors: HttpClient;
+
   constructor(
     private readonly _appConfigService: AppConfigService,
     private readonly _http: HttpClient,
     private readonly _userService: UserService,
     private readonly _accessTokenService: AccessTokenService,
-    private readonly _projectApiService: ProjectApiService
-  ) {}
+    private readonly _projectApiService: ProjectApiService,
+    httpBackend: HttpBackend
+  ) {
+    this._httpWithoutInterceptors = new HttpClient(httpBackend);
+  }
 
   getFileInfo(url: string) {
     const pathToJson = `${url.substring(0, url.lastIndexOf('/'))}/knora.json`;
     return this._http.get<{ originalFilename?: string }>(pathToJson, { withCredentials: true });
+  }
+
+  /**
+   * Sipi's IIIF info.json for an image, sent with the same Bearer token as OpenSeadragon's tile requests.
+   * For a size-restricted view, Sipi reports the reduced width/height the requesting user will get.
+   *
+   * Sent without cookies, bypassing the IIIF interceptor's `withCredentials`: Sipi answers info.json with
+   * `Access-Control-Allow-Origin: *`, which the browser rejects for a credentialed request.
+   */
+  getIiifImageInfo(iiifBaseUrl: string, filename: string): Observable<{ width: number; height: number }> {
+    const authToken = this._accessTokenService.getAccessToken();
+    const headers = authToken ? new HttpHeaders({ Authorization: `Bearer ${authToken}` }) : undefined;
+    return this._httpWithoutInterceptors.get<{ width: number; height: number }>(
+      `${iiifBaseUrl}/${filename}/info.json`,
+      { headers }
+    );
   }
 
   // A bare <img src> can't carry the JWT, so Sipi treats it as anonymous and denies non-public
