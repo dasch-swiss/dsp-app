@@ -96,6 +96,27 @@ describe('DataTabTourComponent', () => {
     expect(localStorage.getItem(DATA_TAB_TOUR_STORAGE_KEY)).not.toBeNull();
   });
 
+  it('closes and remembers it on Escape', async () => {
+    await render();
+
+    bubble()!.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 27, key: 'Escape', bubbles: true } as any));
+    fixture.detectChanges();
+
+    expect(bubble()).toBeNull();
+    expect(localStorage.getItem(DATA_TAB_TOUR_STORAGE_KEY)).not.toBeNull();
+  });
+
+  it('stays closed when the browser blocks storage', async () => {
+    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+
+    await render();
+
+    expect(bubble()).toBeNull();
+    jest.restoreAllMocks();
+  });
+
   it('skips a step whose anchor is not on the page', async () => {
     await render(false);
 
