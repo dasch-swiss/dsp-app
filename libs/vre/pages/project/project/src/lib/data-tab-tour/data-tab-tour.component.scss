@@ -1,0 +1,112 @@
+// The ring around the anchor. Its outer shadow is what dims the rest of the page; the pane it sits
+// in lets clicks through (see `.data-tab-tour-spotlight-pane` in the global styles).
+.spotlight {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  box-shadow:
+    0 0 0 2px #336790,
+    0 0 0 9999px rgba(17, 24, 39, 0.55);
+}
+
+.bubble {
+  position: relative;
+  box-sizing: border-box;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  padding: 16px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow:
+    0 2px 4px -1px rgba(11, 11, 11, 0.2),
+    0 4px 5px 0 rgba(11, 11, 11, 0.14),
+    0 1px 10px 0 rgba(11, 11, 11, 0.12);
+}
+
+// Points up at the anchor, from whichever end the bubble lines up with.
+.arrow {
+  position: absolute;
+  top: -7px;
+  left: 28px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  transform: rotate(45deg);
+}
+
+.align-end .arrow {
+  left: auto;
+  right: 28px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  // The close button's touch target overhangs the padding rather than pushing the row down.
+  margin: -8px -12px -4px 0;
+}
+
+.badge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #eaeff3;
+  color: #336790;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.progress {
+  flex-grow: 1;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.close {
+  color: #6b7280;
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: #4b5563;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  // Lines the text button's label up with the copy above rather than its padding.
+  margin-left: -12px;
+}
+
+.dots {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d3d4d6;
+
+  &.is-current {
+    background: #336790;
+  }
+}

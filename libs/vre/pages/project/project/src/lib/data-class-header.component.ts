@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, computed, inject, Input, ViewContainerRef } from '@angular/core';
+import { Component, computed, ElementRef, inject, Input, viewChild, ViewContainerRef } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -23,6 +23,7 @@ import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
 import { DataClassViewToggleComponent } from './data-class-view-toggle.component';
+import { DataTabTourComponent, DataTabTourStep } from './data-tab-tour/data-tab-tour.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
@@ -74,6 +75,7 @@ interface CreateResourceDialogProps {
       <div class="toolbar">
         <!-- Nothing is projected into the bar: the class is fixed by the route and label is the only sort. -->
         <app-advanced-search-bar
+          #tourSearchAnchor
           class="toolbar-search"
           [projectUuid]="projectUuid"
           density="compact"
@@ -95,7 +97,7 @@ interface CreateResourceDialogProps {
               (columnVisibilityChanged)="tableState.setColumnVisible($event.key, $event.isVisible)"
               (allColumnsVisibilityChanged)="tableState.setAllColumnsVisible($event)" />
           }
-          <app-data-class-view-toggle />
+          <app-data-class-view-toggle #tourViewToggleAnchor />
         </div>
       </div>
 
@@ -106,6 +108,8 @@ interface CreateResourceDialogProps {
           data-cy="results-refreshing"
           [attr.aria-label]="'pages.dataBrowser.resultMeta.updating' | translate" />
       }
+
+      <app-data-tab-tour [steps]="tourSteps()" />
     </div>
   `,
   styleUrl: './data-class-header.component.scss',
@@ -120,6 +124,7 @@ interface CreateResourceDialogProps {
     DataClassResultMetaComponent,
     DataClassViewToggleComponent,
     TableViewOptionsComponent,
+    DataTabTourComponent,
   ],
   providers: [StringifyStringLiteralPipe],
 })
@@ -134,6 +139,25 @@ export class DataClassHeaderComponent {
   private readonly _resourceResult = inject(ResourceResultService);
 
   @Input({ required: true }) classSelected!: SelectedClass;
+
+  private readonly _tourSearchAnchor = viewChild('tourSearchAnchor', { read: ElementRef });
+  private readonly _tourViewToggleAnchor = viewChild('tourViewToggleAnchor', { read: ElementRef });
+
+  /** The Data tab tour (DEV-7545): what is new in this header, in the order it reads. */
+  readonly tourSteps = computed<DataTabTourStep[]>(() => [
+    {
+      anchor: this._tourSearchAnchor(),
+      align: 'start',
+      titleKey: 'pages.dataBrowser.tour.searchTitle',
+      bodyKey: 'pages.dataBrowser.tour.searchBody',
+    },
+    {
+      anchor: this._tourViewToggleAnchor(),
+      align: 'end',
+      titleKey: 'pages.dataBrowser.tour.tableTitle',
+      bodyKey: 'pages.dataBrowser.tour.tableBody',
+    },
+  ]);
 
   hasProjectMemberRights$ = this._projectPageService.hasProjectMemberRights$;
 
