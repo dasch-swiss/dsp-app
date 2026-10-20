@@ -1,7 +1,17 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { ESCAPE } from '@angular/cdk/keycodes';
 import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
-import { afterNextRender, Component, computed, effect, ElementRef, inject, input, signal } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -18,6 +28,9 @@ export interface DataTabTourStep {
 
 /** Room between the anchor and the ring drawn around it. */
 const SPOTLIGHT_PADDING = 4;
+
+/** How long the tour waits after the page renders before it first opens. */
+export const FIRST_APPEARANCE_DELAY_MS = 2000;
 
 /**
  * A short coachmark tour that introduces the Data tab's search, filters and table view (DEV-7545).
@@ -81,21 +94,13 @@ const SPOTLIGHT_PADDING = 4;
           <p id="data-tab-tour-body" class="body">{{ step!.bodyKey | translate }}</p>
 
           <div class="footer">
-            @if (isFirst()) {
-              <button mat-button data-cy="data-tab-tour-skip" (click)="close()">
-                {{ 'pages.dataBrowser.tour.skip' | translate }}
-              </button>
-            } @else {
+            @if (!isFirst()) {
               <button mat-button data-cy="data-tab-tour-back" (click)="back()">
                 {{ 'pages.dataBrowser.tour.back' | translate }}
               </button>
             }
 
-            <span class="dots" aria-hidden="true">
-              @for (s of steps(); track $index) {
-                <span class="dot" [class.is-current]="$index === index()"></span>
-              }
-            </span>
+            <span class="spacer"></span>
 
             <!-- One button whose label changes, not two: swapping the element would drop focus out
                  of the bubble on the last step. Focused first: it is the likely next move, and a
@@ -142,13 +147,17 @@ export class DataTabTourComponent {
   ];
 
   private readonly _tourService = inject(DataTabTourService);
+  private readonly _destroyRef = inject(DestroyRef);
 
   constructor() {
-    // After the first render, so the anchors are laid out and measurable.
+    // A moment after the first render: the anchors are laid out by then, and the page has had time
+    // to load and be looked at before the tour asks for attention.
     afterNextRender(() => {
-      if (!this._tourService.hasBeenSeen()) {
-        this._goTo(this._nextRenderedStep(0, 1));
+      if (this._tourService.hasBeenSeen()) {
+        return;
       }
+      const timer = setTimeout(() => this._goTo(this._nextRenderedStep(0, 1)), FIRST_APPEARANCE_DELAY_MS);
+      this._destroyRef.onDestroy(() => clearTimeout(timer));
     });
 
     // The anchors are fluid and still settling when the tour opens: the search bar takes its width

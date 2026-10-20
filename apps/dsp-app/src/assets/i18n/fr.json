@@ -696,7 +696,6 @@
         "new": "Nouveau",
         "progress": "{{current}} sur {{total}}",
         "close": "Fermer la visite",
-        "skip": "Passer la visite",
         "back": "Retour",
         "next": "Suivant",
         "done": "Compris",

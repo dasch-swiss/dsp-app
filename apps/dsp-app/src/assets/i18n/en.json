@@ -696,7 +696,6 @@
         "new": "New",
         "progress": "{{current}} of {{total}}",
         "close": "Close tour",
-        "skip": "Skip tour",
         "back": "Back",
         "next": "Next",
         "done": "Got it",

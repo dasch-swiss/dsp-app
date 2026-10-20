@@ -93,20 +93,7 @@
   margin-left: -12px;
 }
 
-.dots {
+// Keeps the primary button on the right whether or not Back is there.
+.spacer {
   flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #d3d4d6;
-
-  &.is-current {
-    background: #336790;
-  }
 }
