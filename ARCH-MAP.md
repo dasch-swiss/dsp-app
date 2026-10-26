@@ -637,18 +637,18 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 ### agent-context
 
 - **Nx project**: none
-- **Paths**: `CLAUDE.md`, `CONVENTIONS.md`, `CONTEXT.md`, `.claude/**`
+- **Paths**: `CLAUDE.md`, `CONVENTIONS.md`, `REVIEW.md`, `CONTEXT.md`, `.claude/**`
 - **Purpose**: The instructions, skills and architecture records that agents read.
 - **Key entities**: `update-openapi-client`, `format-project-image`
-- **Public interface**: `CLAUDE.md` is loaded automatically. `CONVENTIONS.md`, `ARCH-MAP.md` and `CONTEXT.md` are pull-on-demand and must not be `@`-imported; `CLAUDE.md` links `CONVENTIONS.md`.
-- **Local-context kit**: `CLAUDE.md`, `CONVENTIONS.md`, `ARCH-MAP.md`, `CONTEXT.md`, `.claude/skills/`
+- **Public interface**: `CLAUDE.md` is loaded automatically. `CONVENTIONS.md`, `REVIEW.md`, `ARCH-MAP.md` and `CONTEXT.md` are pull-on-demand and must not be `@`-imported; `CLAUDE.md` links `CONVENTIONS.md`, and the review job in `claude.yml` reads `REVIEW.md`.
+- **Local-context kit**: `CLAUDE.md`, `CONVENTIONS.md`, `REVIEW.md`, `ARCH-MAP.md`, `CONTEXT.md`, `.claude/skills/`
 - **Depends on**: none
 - **Used by**: none
 - **Boundary rules**:
   - Two further `CLAUDE.md` files exist outside this component and are authoritative in their directories: `apps/dsp-app/src/assets/i18n/CLAUDE.md` and `apps/dsp-app/src/assets/images/project/CLAUDE.md`. `docs-only`
   - No library has its own `CLAUDE.md`. Architectural decisions live in `docs/adr/` (ADR-0001 through ADR-0006) and are owned by the `project-docs` component, not this one. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `1fdf2a90c04a`
+- **Fingerprint**: `3ed18d0fbcae`
 
 ## Cross-cutting concerns
 
