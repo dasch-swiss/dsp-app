@@ -456,8 +456,6 @@ jobs:
       - name: Build Storybook
         run: npx nx run dsp-app:build-storybook:ci
       - name: Install Playwright browsers
-        # No --with-deps: the runner image already has Chromium's libraries, and the
-        # extra fonts it would apt-install stall for minutes on the Ubuntu mirror.
         run: npx playwright install chromium
       - name: Serve and run interaction tests
         run: |
