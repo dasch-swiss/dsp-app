@@ -691,6 +691,18 @@
         "rowHeight": "Altezza delle righe",
         "rowHeightAuto": "Automatica",
         "rowHeightManual": "Manuale"
+      },
+      "tour": {
+        "new": "Novità",
+        "progress": "{{current}} di {{total}}",
+        "close": "Chiudi il tour",
+        "back": "Indietro",
+        "next": "Avanti",
+        "done": "Ho capito",
+        "searchTitle": "Cerca e filtra qui",
+        "searchBody": "Cerca tra le risorse di questa classe e restringile con i filtri, senza lasciare la scheda Dati.",
+        "tableTitle": "Prova la vista tabella",
+        "tableBody": "Passa a Tabella per vedere le risorse come righe, con le proprietà come colonne, e confrontare i valori fianco a fianco."
       }
     }
   },

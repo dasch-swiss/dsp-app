@@ -691,6 +691,18 @@
         "rowHeight": "Row height",
         "rowHeightAuto": "Auto",
         "rowHeightManual": "Manual"
+      },
+      "tour": {
+        "new": "New",
+        "progress": "{{current}} of {{total}}",
+        "close": "Close tour",
+        "back": "Back",
+        "next": "Next",
+        "done": "Got it",
+        "searchTitle": "Search and filter right here",
+        "searchBody": "Search the resources of this class and narrow them down with filters, without leaving the Data tab.",
+        "tableTitle": "Try the table view",
+        "tableBody": "Switch to Table to see resources as rows, with their properties as columns, and compare values side by side."
       }
     }
   },

@@ -691,6 +691,18 @@
         "rowHeight": "Zeilenhöhe",
         "rowHeightAuto": "Automatisch",
         "rowHeightManual": "Manuell"
+      },
+      "tour": {
+        "new": "Neu",
+        "progress": "{{current}} von {{total}}",
+        "close": "Tour schliessen",
+        "back": "Zurück",
+        "next": "Weiter",
+        "done": "Verstanden",
+        "searchTitle": "Hier suchen und filtern",
+        "searchBody": "Durchsuchen Sie die Ressourcen dieser Klasse und grenzen Sie sie mit Filtern ein, ohne den Daten-Tab zu verlassen.",
+        "tableTitle": "Probieren Sie die Tabellenansicht",
+        "tableBody": "Wechseln Sie zu Tabelle, um Ressourcen als Zeilen und ihre Eigenschaften als Spalten zu sehen und Werte direkt zu vergleichen."
       }
     }
   },

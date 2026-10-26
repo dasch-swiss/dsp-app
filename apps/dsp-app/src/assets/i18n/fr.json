@@ -691,6 +691,18 @@
         "rowHeight": "Hauteur des lignes",
         "rowHeightAuto": "Auto",
         "rowHeightManual": "Manuelle"
+      },
+      "tour": {
+        "new": "Nouveau",
+        "progress": "{{current}} sur {{total}}",
+        "close": "Fermer la visite",
+        "back": "Retour",
+        "next": "Suivant",
+        "done": "Compris",
+        "searchTitle": "Rechercher et filtrer ici",
+        "searchBody": "Recherchez parmi les ressources de cette classe et affinez-les avec des filtres, sans quitter l'onglet Données.",
+        "tableTitle": "Essayez la vue tableau",
+        "tableBody": "Passez à Tableau pour afficher les ressources en lignes, leurs propriétés en colonnes, et comparer les valeurs côte à côte."
       }
     }
   },
