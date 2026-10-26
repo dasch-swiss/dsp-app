@@ -19,11 +19,8 @@ import { ResourceFetcherService } from '../representation/resource-fetcher.servi
 import { ResourceUtil } from '../representation/resource.util';
 
 /**
- * A resource's authorship, shown and edited exactly as the resource viewer's rights statement does
- * it, for hosts that show it on its own — the Data tab's table (DEV-7494).
- *
- * Saves the way the viewer's statement does, then reloads the resource through its own primed
- * `ResourceFetcherService` and reports the reload, as the table's other editable cells do.
+ * A resource's authorship, shown and edited as in the viewer's rights statement, for hosts that show it on its own.
+ * Reloads through its own primed `ResourceFetcherService` after saving and reports the reload.
  */
 @Component({
   selector: 'app-editable-resource-authorship',

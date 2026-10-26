@@ -34,7 +34,6 @@ const makeResourceFetcherServiceStub = (resourceVersion: string | null = null): 
   resource$: of({ res: { attachedToUser: 'http://rdfh.ch/users/test-user' } } as any),
 });
 
-/** Logged in unless a story says otherwise; the real service needs the app's config. */
 const makeUserServiceStub = (isLoggedIn: boolean): Partial<UserService> => ({ isLoggedIn$: of(isLoggedIn) });
 
 const meta: Meta<PropertyValueActionBubbleComponent> = {
@@ -149,7 +148,6 @@ export const NoButtonsInHistoricalVersion: Story = {
   },
 };
 
-/** Who created the value, and when, rides in the Edit button's tooltip rather than a button of its own. */
 export const CreationInfoInTheEditTooltip: Story = {
   name: 'Carries the creation info in the edit tooltip, with no separate info button',
   args: { date: DATE },
@@ -173,7 +171,6 @@ export const CreationInfoInTheEditTooltip: Story = {
   },
 };
 
-/** Without an Edit button to carry it, the creation info gets a button of its own. */
 export const InfoButtonForReadOnlyUser: Story = {
   name: 'Shows an info button when the user cannot edit',
   args: { date: DATE },
@@ -192,7 +189,6 @@ export const InfoButtonForReadOnlyUser: Story = {
   },
 };
 
-/** A visitor who is not logged in gets no button only to show a creation date (DEV-7494). */
 export const NoInfoButtonWhenLoggedOut: Story = {
   name: 'Shows no info button when the user is logged out',
   args: { date: DATE },

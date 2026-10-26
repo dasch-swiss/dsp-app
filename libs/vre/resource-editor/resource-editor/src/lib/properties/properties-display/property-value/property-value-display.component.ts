@@ -31,8 +31,6 @@ import { PropertyValueService } from './property-value.service';
       [value]="propertyValueService.editModeData.values[index]"
       (templateFound)="templateFound($event)" />
     @let showActions = showBubble && (propertyValueService.lastOpenedItem$ | async) !== index;
-    <!-- The value, then its actions at the end of the same line: in the line rather than over it,
-         so nothing the user is reading or about to edit is covered (DEV-7494). -->
     <div
       data-cy="property-value"
       class="pos-relative row"

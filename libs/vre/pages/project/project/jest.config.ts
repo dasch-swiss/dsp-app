@@ -4,8 +4,7 @@ module.exports = {
   preset: '../../../../../jest.preset.js',
   coverageDirectory: '../../../../../coverage/libs/vre/pages/project/project',
   transformIgnorePatterns: [
-    // uuid is ESM-only since v12 — let SWC transform it instead of ignoring it. Reached from here via
-    // the shared search-filters lib, whose statement model mints ids with it.
+    // uuid is ESM-only since v12, so SWC must transform it.
     'node_modules/(?!.*\\.mjs$|@angular|@dasch-swiss|@ngx-translate|@ckeditor|ngx-color-picker|lodash-es|uuid)',
   ],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.d.ts', '!src/test-setup.ts', '!src/index.ts'],

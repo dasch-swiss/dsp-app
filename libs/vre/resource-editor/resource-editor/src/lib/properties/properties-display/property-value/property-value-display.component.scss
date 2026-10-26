@@ -14,7 +14,6 @@
   gap: 4px;
   border-radius: 4px;
 
-  // The line being acted on, marked without covering any of it.
   &.is-hovered {
     background: rgba(51, 103, 144, 0.06);
   }
@@ -27,16 +26,12 @@
 .value-content {
   flex: 1;
   min-width: 0;
-  // A word longer than the line breaks rather than pushing the actions past the edge.
   overflow-wrap: anywhere;
 }
 
 .value {
   flex: 1;
-  // 16px is the viewer's own rhythm, where a property is a row of its own on a wide panel. A host
-  // that stacks these into something tighter — the Data tab's table at compact density — overrides
-  // the variable rather than reaching in with ::ng-deep, which is not available to us and would
-  // not survive a Material upgrade.
+  // A denser host overrides the custom property instead of reaching in with ::ng-deep.
   padding: var(--property-value-padding-block, 16px) 0;
 
   &.highlighted {

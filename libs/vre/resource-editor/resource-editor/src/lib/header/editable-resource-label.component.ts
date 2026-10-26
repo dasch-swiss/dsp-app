@@ -22,11 +22,8 @@ import { ResourceUtil } from '../representation/resource.util';
 import { EditResourceLabelDialogComponent } from './more-menu/edit-resource-label-dialog.component';
 
 /**
- * A resource's label shown among values, with the values' hover: the line is marked and an Edit
- * button sits at its end (DEV-7494). Edit opens the same dialog the resource viewer's menu does.
- *
- * Carries its own `ResourceFetcherService`, primed with the resource, because the dialog reloads
- * the resource through one after saving; the reload is what this component reports back.
+ * A resource's label with an Edit button on hover; Edit opens the resource viewer menu's dialog.
+ * Carries its own primed `ResourceFetcherService`, because the dialog reloads through one after saving.
  */
 @Component({
   selector: 'app-editable-resource-label',
@@ -62,7 +59,6 @@ import { EditResourceLabelDialogComponent } from './more-menu/edit-resource-labe
         display: block;
         min-width: 0;
       }
-      /* The same line as a shown value's: text, then the actions, marked on hover. */
       .row {
         display: flex;
         align-items: flex-start;
@@ -72,7 +68,6 @@ import { EditResourceLabelDialogComponent } from './more-menu/edit-resource-labe
       .row.is-hovered {
         background: rgba(51, 103, 144, 0.06);
       }
-      /* One line, ellipsised: the label names the row and should not make it taller. */
       .label-text {
         flex: 1;
         min-width: 0;

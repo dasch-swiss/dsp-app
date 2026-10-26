@@ -8,7 +8,6 @@ describe('ResourceResultService', () => {
   });
 
   describe('refresh state (DEV-7466)', () => {
-    /** A view's first load has nothing on screen to keep, and shows its own spinner instead. */
     it('DoesNotCountAViewsFirstLoadAsARefresh', () => {
       service.markLoading();
 
@@ -33,7 +32,6 @@ describe('ResourceResultService', () => {
       expect(service.isRefreshing()).toBe(false);
     });
 
-    /** The failure panel replaces the results, so there is nothing left to wait on. */
     it('EndsTheRefreshWhenTheLoadFails', () => {
       service.markLoaded();
       service.markLoading();
@@ -43,7 +41,6 @@ describe('ResourceResultService', () => {
       expect(service.isRefreshing()).toBe(false);
     });
 
-    /** A view switch or a retry starts from nothing again: its first load is not a refresh. */
     it('TreatsTheNextLoadAsAFirstOneAfterAReset', () => {
       service.markLoaded();
       service.markLoading();

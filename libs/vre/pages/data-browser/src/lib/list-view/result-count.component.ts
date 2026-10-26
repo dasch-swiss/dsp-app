@@ -3,24 +3,15 @@ import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-servic
 import { PagerComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 
-/**
- * The result total, and the pager once there is more than one page of them.
- *
- * The Search pages' presentation: a bordered card wrapping either the shared `PagerComponent` or a
- * plain total. The Data tab does *not* use this — it has its own `DataClassResultMetaComponent`
- * with a different design — so this is effectively `ResourcesListComponent`'s own markup, split out
- * only so the list can switch it off.
- */
+/** The result total, and the pager once there is more than one page of them. */
 @Component({
   selector: 'app-result-count',
   template: `
     @let numberOfResults = resourceResultService.numberOfResults;
-    <!-- Announced, not just rendered: filtering changes this number without moving focus, so a
-         screen reader would otherwise give no sign that the result set changed. -->
+    <!-- Filtering changes this number without moving focus, so it is a live region. -->
     <div aria-live="polite">
       @if (numberOfResults === null) {
-        <!-- The count query failed. Say so rather than asserting a total we do not have: the pager
-             cannot be sized either, so paging is unavailable until the next successful load. -->
+        <!-- The count query failed: no total to assert and no pager to size. -->
         <div class="results-count" data-cy="count-unavailable">
           {{ 'pages.dataBrowser.resourcesList.countUnavailable' | translate }}
         </div>

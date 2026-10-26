@@ -173,10 +173,6 @@ export const ShowsFallbackWhenResourceHasNoOwnAuthorship: Story = {
   },
 };
 
-/**
- * Like a property value: Edit appears with the line's blue mark when it is hovered — or focused, so
- * the button stays reachable from the keyboard — including when no authorship is recorded (DEV-7494).
- */
 export const OffersEditLikeAPropertyValue: Story = {
   name: 'Offers Edit at the end of the authorship line, like a property value',
   args: {

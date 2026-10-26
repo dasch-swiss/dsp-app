@@ -63,9 +63,6 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
       (templateFound)="foundTemplate($event)" />
 
     @if (!loading) {
-      <!-- The editor, then its actions at the end of the same line — the same place and size as the
-           Edit and Delete buttons of the value being shown: Cancel, and Save as the one filled
-           button. The comment is a text link under the editor (DEV-7494). -->
       <div class="edit-line">
         <div class="edit-content">
           @if (template) {
@@ -127,15 +124,12 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
         gap: 4px;
         padding: var(--property-value-padding-block, 16px) 0;
         border-radius: 4px;
-        /* None in the viewer; a denser host such as the Data tab's table sets one. */
         background: var(--property-value-edit-background, none);
       }
       .edit-content {
         flex: 1;
         min-width: 0;
       }
-      /* Level with the middle of the editor's first field, as the shown value's actions are with
-         its first line. */
       .edit-actions {
         padding-top: 14px;
       }

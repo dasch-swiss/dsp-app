@@ -53,13 +53,7 @@ export class ComparisonComponent implements OnChanges {
   @Input({ required: true }) resourceIds!: string[];
   @Output() afterResourceDeleted = new EventEmitter<void>();
 
-  /**
-   * Every mounted viewer, so one of them can be refreshed by IRI.
-   *
-   * The resources here are rendered through an `ngTemplateOutlet` used twice, so there is no input
-   * binding that could carry a refresh down to the right one — and re-keying the `@for` would
-   * destroy and rebuild the whole viewer, losing its scroll position and anything open inside it.
-   */
+  /** Every mounted viewer, so one can be refreshed by IRI without re-keying the `@for` (which would rebuild it). */
   @ViewChildren(ResourceFetcherComponent) private _viewers!: QueryList<ResourceFetcherComponent>;
 
   topRow: string[] = [];
@@ -70,9 +64,7 @@ export class ComparisonComponent implements OnChanges {
   }
 
   constructor(public multipleViewerService: MultipleViewerService) {
-    // A resource changed somewhere else — today, a value saved in a Data tab table cell, which
-    // runs under a fetcher scoped to that row rather than the one this viewer owns. Without this
-    // the viewer would go on showing the value the user had just replaced (DEV-7466).
+    // A Data tab table cell edits under a fetcher scoped to its row, not this viewer's.
     this.multipleViewerService.resourceChanged$
       .pipe(takeUntilDestroyed())
       .subscribe(resourceIri => this._reloadViewerOf(resourceIri));
