@@ -8,9 +8,31 @@
   position: relative;
 }
 
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  border-radius: 4px;
+
+  &.is-hovered {
+    background: rgba(51, 103, 144, 0.06);
+  }
+
+  &.is-hovered:has(> app-property-value-action-bubble.is-empty) {
+    background: none;
+  }
+}
+
+.value-content {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .value {
   flex: 1;
-  padding: 16px 0;
+  // A denser host overrides the custom property instead of reaching in with ::ng-deep.
+  padding: var(--property-value-padding-block, 16px) 0;
 
   &.highlighted {
     background: $yellow_100;

@@ -11,7 +11,9 @@ import { NullableEditorComponent } from '../nullable-editor.component';
   template: `
     <app-nullable-editor [formControl]="control" [defaultValue]="false">
       @if (control.value !== null) {
-        <mat-slide-toggle [formControl]="control" data-cy="bool-toggle" style="padding: 16px" />
+        <!-- Inline padding only: the row is as tall as the clear button beside it, the 36px of the
+             other compact editors (DEV-7611), where 16px all round made it 51px. -->
+        <mat-slide-toggle [formControl]="control" data-cy="bool-toggle" style="padding: 0 16px" />
       }
     </app-nullable-editor>
     @if (control.touched && control.errors; as errors) {

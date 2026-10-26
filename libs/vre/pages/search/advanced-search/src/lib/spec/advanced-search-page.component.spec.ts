@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
+import { IriLabelPair } from '@dasch-swiss/vre/pages/search/search-filters';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { AdvancedSearchPageComponent } from '../advanced-search-page.component';
-import { IriLabelPair } from '../model';
 import { DerivedSearchState, DerivedSearchStateService } from '../service/derived-search-state.service';
 
 describe('AdvancedSearchPageComponent', () => {

@@ -166,28 +166,39 @@ export const ShowsFallbackWhenResourceHasNoOwnAuthorship: Story = {
       // Pre-refactor regression: when perResource was falsy (attribute-form binding bug),
       // the else arm rendered `authorship.join(', ')` plainly. Assert the value cell contains
       // the italic fallback, not the raw defaults as a bare text node.
-      const valueCell = canvasElement.querySelector('.row:last-of-type .value');
+      const valueCell = canvasElement.querySelector('.row:last-of-type .value-text');
       await expect(valueCell).not.toBeNull();
       await expect(valueCell!.querySelector('em')).not.toBeNull();
     });
   },
 };
 
-export const ShowsAlwaysVisibleEditAffordanceForModifyUsers: Story = {
-  name: 'Shows an always-visible authorship edit affordance for Modify users',
+export const OffersEditLikeAPropertyValue: Story = {
+  name: 'Offers Edit at the end of the authorship line, like a property value',
   args: {
     licenseLabel: 'CC BY 4.0',
     licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
     copyrightHolder: 'University of Basel',
-    defaultResourceAuthorship: ['Lotte Reiniger'],
-    resourceAuthorship: ['Lotte Reiniger'],
+    defaultResourceAuthorship: [],
+    resourceAuthorship: [],
     canEditAuthorship: true,
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-    await step('The authorship edit affordance is present without any hover', async () => {
-      // The button is in the DOM immediately (no mouseenter); guards against reverting to a hover-only pill.
-      await expect(canvas.getByRole('button', { name: /edit/i })).toBeInTheDocument();
+    const line = canvasElement.querySelector('[data-cy="authorship-value"]') as HTMLElement;
+    const edit = canvasElement.querySelector('[data-cy="authorship-edit"]') as HTMLElement;
+    const actions = edit.closest('.value-actions') as HTMLElement;
+
+    await step('At rest the line is unmarked and Edit is out of sight', async () => {
+      await expect(getComputedStyle(actions).opacity).toBe('0');
+      await expect(getComputedStyle(line).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    });
+    await step('Focused, the line is marked and Edit shows at its end', async () => {
+      edit.focus();
+      await expect(getComputedStyle(actions).opacity).toBe('1');
+      await expect(getComputedStyle(line).backgroundColor).toBe('rgba(51, 103, 144, 0.06)');
+      await expect(edit.getBoundingClientRect().right).toBeGreaterThan(
+        (line.querySelector('.value-text') as HTMLElement).getBoundingClientRect().right
+      );
     });
   },
 };
@@ -209,6 +220,27 @@ export const EditsAuthorshipInlineWithoutADialog: Story = {
       // The editor renders inline inside the component, not in a CDK overlay/dialog.
       await expect(canvasElement.querySelector('mat-chip-grid')).not.toBeNull();
       await expect(document.querySelector('mat-dialog-container')).toBeNull();
+    });
+    // Ends with the editor open, so its visual snapshot shows the editor.
+    await step('Cancel and Save sit where Edit was', async () => {
+      await expect(canvasElement.querySelector('[data-cy="authorship-cancel"]')).not.toBeNull();
+      await expect(canvasElement.querySelector('[data-cy="authorship-save"]')).not.toBeNull();
+    });
+  },
+};
+
+export const ClosesTheAuthorshipEditorOnCancel: Story = {
+  name: 'Closes the authorship editor on Cancel, back to the read-only line',
+  args: EditsAuthorshipInlineWithoutADialog.args,
+  play: async ({ canvasElement, step }) => {
+    await step('Open the editor', async () => {
+      await userEvent.click(within(canvasElement).getByRole('button', { name: /edit/i }));
+      await expect(canvasElement.querySelector('mat-chip-grid')).not.toBeNull();
+    });
+    await step('Cancel closes it and the authorship shows again', async () => {
+      await userEvent.click(canvasElement.querySelector('[data-cy="authorship-cancel"]') as HTMLElement);
+      await expect(canvasElement.querySelector('mat-chip-grid')).toBeNull();
+      await expect(within(canvasElement).getByText('Lotte Reiniger')).toBeInTheDocument();
     });
   },
 };

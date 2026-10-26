@@ -46,12 +46,12 @@ export default meta;
 type Story = StoryObj<IncomingLinksPropertyComponent>;
 
 export const NoIncomingLinks: Story = {
-  name: 'Shows empty incoming links property row',
+  name: 'Hides incoming links row when there are none, even with all properties shown',
   args: { resource: makeResource() },
   play: async ({ canvasElement, step }) => {
-    await step('Property row is rendered', async () => {
+    await step('No property row is rendered', async () => {
       const row = canvasElement.querySelector('.property-row');
-      await expect(row).not.toBeNull();
+      await expect(row).toBeNull();
     });
   },
 };
