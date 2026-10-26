@@ -6,6 +6,7 @@
 @use "styles/elements";
 @use "styles/typography" as t;
 @use "styles/ck-editor";
+@use "styles/compact-value-editor";
 
 @include mat.elevation-classes();
 @include mat.app-background();

@@ -1,3 +1,4 @@
+import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { APIV2ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
@@ -44,43 +45,50 @@ const meta: Meta<DraggableValueListComponent> = {
       description: 'When true, drag-and-drop is disabled.',
       table: { type: { summary: 'boolean' }, category: 'State' },
     },
-    showHandle: {
-      description: 'When true, shows a drag handle icon on each item.',
-      table: { type: { summary: 'boolean' }, category: 'State' },
-    },
   },
 };
 export default meta;
 type Story = StoryObj<DraggableValueListComponent>;
 
 export const WithDragHandles: Story = {
-  name: 'Shows drag handles when reordering is enabled',
+  name: 'Lets each item carry the handle that moves its row',
   args: {
     values: makeValues(),
     resourceIri: 'http://rdfh.ch/resource/1',
     propertyIri: 'http://example.org/prop',
     disabled: false,
-    showHandle: true,
   },
   render: args => ({
     props: args,
+    moduleMetadata: { imports: [CdkDragHandle] },
     template: `
       <app-draggable-value-list
         [values]="values"
         [resourceIri]="resourceIri"
         [propertyIri]="propertyIri"
-        [disabled]="disabled"
-        [showHandle]="showHandle">
+        [disabled]="disabled">
         <ng-template let-value let-index="index">
-          <div data-cy="value-item">Value {{ index + 1 }}</div>
+          <div data-cy="value-item">
+            Value {{ index + 1 }}
+            <span cdkDragHandle data-cy="item-handle">move</span>
+          </div>
         </ng-template>
       </app-draggable-value-list>
     `,
   }),
   play: async ({ canvasElement, step }) => {
-    await step('Drag handles are rendered', async () => {
-      const handles = canvasElement.querySelectorAll('[cdkdraghandle]');
-      await expect(handles.length).toBeGreaterThan(0);
+    await step("Each item's own handle is rendered", async () => {
+      await expect(canvasElement.querySelectorAll('[data-cy="item-handle"]').length).toBe(2);
+    });
+    await step('The handle moves its row', async () => {
+      const handle = canvasElement.querySelectorAll('[data-cy="item-handle"]')[0] as HTMLElement;
+      const box = handle.getBoundingClientRect();
+      const at = (y: number) => ({ bubbles: true, clientX: box.left + 2, clientY: y, buttons: 1, detail: 1 });
+      handle.dispatchEvent(new MouseEvent('mousedown', at(box.top + 2)));
+      document.dispatchEvent(new MouseEvent('mousemove', at(box.top + 10)));
+      document.dispatchEvent(new MouseEvent('mousemove', at(box.top + 20)));
+      await expect(document.querySelector('.cdk-drag-preview')).not.toBeNull();
+      document.dispatchEvent(new MouseEvent('mouseup', at(box.top + 20)));
     });
     await step('Value items are rendered', async () => {
       const items = canvasElement.querySelectorAll('[data-cy="value-item"]');
@@ -96,7 +104,6 @@ export const Disabled: Story = {
     resourceIri: 'http://rdfh.ch/resource/1',
     propertyIri: 'http://example.org/prop',
     disabled: true,
-    showHandle: false,
   },
   render: args => ({
     props: args,
@@ -105,8 +112,7 @@ export const Disabled: Story = {
         [values]="values"
         [resourceIri]="resourceIri"
         [propertyIri]="propertyIri"
-        [disabled]="disabled"
-        [showHandle]="showHandle">
+        [disabled]="disabled">
         <ng-template let-value let-index="index">
           <div data-cy="value-item">Value {{ index + 1 }}</div>
         </ng-template>
@@ -132,7 +138,6 @@ export const SingleValueIsNotDraggable: Story = {
     resourceIri: 'http://rdfh.ch/resource/1',
     propertyIri: 'http://example.org/prop',
     disabled: false,
-    showHandle: false,
   },
   render: args => ({
     props: args,
@@ -141,8 +146,7 @@ export const SingleValueIsNotDraggable: Story = {
         [values]="values"
         [resourceIri]="resourceIri"
         [propertyIri]="propertyIri"
-        [disabled]="disabled"
-        [showHandle]="showHandle">
+        [disabled]="disabled">
         <ng-template let-value let-index="index">
           <div data-cy="value-item">Value {{ index + 1 }}</div>
         </ng-template>

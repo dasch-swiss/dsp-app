@@ -535,6 +535,7 @@
         "usePreviousSearch": "Use previous search",
         "fulltextSearch": "Full-text search",
         "reset": "Reset",
+        "clearSearch": "Clear search",
         "addFilter": "Add filter",
         "add": "Add",
         "operator": "Operator",
@@ -590,7 +591,8 @@
       "resourcesListFetcher": {
         "noResourcesFound": "No resources found for this class.",
         "noPermissions": "It seems like you don't have the necessary permissions.",
-        "checkPermissions": "Check with a project admin if you have the necessary permission or if you are logged in."
+        "checkPermissions": "Check with a project admin if you have the necessary permission or if you are logged in.",
+        "noResourcesMatchFilters": "No resources match these filters."
       },
       "multipleViewer": {
         "selectResource": "Select a resource on the left panel",
@@ -623,7 +625,72 @@
         "largeExportWarning": "This export contains {{count}} resources and may take several minutes. Please keep this tab open.",
         "progressXofN": "Exported {{x}} of {{n}} resources",
         "buildingCsv": "Building your CSV — keep this tab open. We'll start the download as soon as the file is ready.",
-        "preparing": "Preparing…"
+        "preparing": "Preparing…",
+        "scopeNote": "The export covers all resources of this class, regardless of the filters currently applied."
+      },
+      "dataClassHeader": {
+        "searchLabel": "Search",
+        "searchPlaceholder": "Search"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} of {{total}}",
+        "ofPages": "of {{total}}",
+        "pageNumber": "Page number",
+        "pageNumberHint": "Type a page number and press Enter.",
+        "updating": "Updating results"
+      },
+      "sortHeader": {
+        "sortBy": "Sort by",
+        "chooseProperty": "Choose a property to sort by",
+        "sortAscending": "Sort ascending",
+        "sortDescending": "Sort descending"
+      },
+      "viewToggle": {
+        "label": "Show resources as",
+        "list": "List",
+        "table": "Table"
+      },
+      "table": {
+        "label": "Resources of this class",
+        "notSet": "— not set",
+        "showMore": "Show {{count}} more",
+        "showLess": "Show less",
+        "resizeColumn": "Resize the {{column}} column",
+        "sortColumnAscending": "Sort by {{column}}, ascending",
+        "sortColumnDescending": "Sort by {{column}}, descending",
+        "filterByColumn": "Filter by {{column}}",
+        "readOnly": "Read-only",
+        "readOnlyInTable": "Can't be edited in the table. Open the resource to see how it is set.",
+        "readOnlyProjectWide": "Set for the whole project, in the project settings.",
+        "pinColumn": "Pin {{column}}",
+        "unpinColumn": "Unpin {{column}}",
+        "labelColumn": "Label",
+        "imageColumn": "Image",
+        "previewImage": "Preview the image of {{label}}",
+        "editColumnFilter": "Edit the filter on {{column}}",
+        "sortAscending": "Sort ascending",
+        "sortDescending": "Sort descending",
+        "filter": "Filter",
+        "editFilter": "Edit filter",
+        "pin": "Pin",
+        "unpin": "Unpin",
+        "scrollBackToStart": "Click to scroll back to the first column.",
+        "oneColumnScrolledUnder": "1 column scrolled under",
+        "columnsScrolledUnder": "{{count}} columns scrolled under",
+        "selectRow": "Add {{label}} to the comparison",
+        "openRow": "Open {{label}}",
+        "resizeRow": "Resize the row for {{label}}"
+      },
+      "viewOptions": {
+        "title": "View options",
+        "columns": "Columns",
+        "showAll": "Show all columns",
+        "hideAll": "Hide all columns",
+        "showAllShort": "Show all",
+        "hideAllShort": "Hide all",
+        "rowHeight": "Row height",
+        "rowHeightAuto": "Auto",
+        "rowHeightManual": "Manual"
       }
     }
   },
@@ -848,7 +915,8 @@
         "edit": "Edit",
         "delete": "Delete",
         "cannotDeleteRequired": "Cannot delete required property",
-        "undo": "Undo",
+        "addValue": "Add value",
+        "cancel": "Cancel",
         "addComment": "Add comment",
         "removeComment": "Remove comment",
         "save": "Save",

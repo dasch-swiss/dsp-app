@@ -5,12 +5,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { getLabel } from '@dasch-swiss/vre/pages/search/search-filters';
+import { CHIP_POPOVER_POSITIONS } from '@dasch-swiss/vre/pages/search/search-filters';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { OntologyDataService } from '../../service/ontology-data.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
-import { getLabel } from '../../util/labels';
-import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 
 @Component({
   selector: 'app-data-model-chip',

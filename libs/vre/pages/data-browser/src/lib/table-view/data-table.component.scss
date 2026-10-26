@@ -1,0 +1,527 @@
+@use '@angular/material' as mat;
+
+/**
+ * Room for the absolutely positioned row-control cluster (checkbox + open arrow).
+ *
+ * Mixed into the row-metrics block because that block's two-class descendant selector sets `padding`
+ * on every cell and outranks any single-class rule.
+ */
+@mixin label-column-gutter {
+  .is-label-cell,
+  .is-label-header {
+    padding-left: 84px;
+  }
+
+  // Without a checkbox only the open arrow is left.
+  &.no-selection .is-label-cell,
+  &.no-selection .is-label-header {
+    padding-left: 44px;
+  }
+}
+
+:host {
+  // Anchors `.frozen-shadow`.
+  display: block;
+  position: relative;
+  height: 100%;
+  min-height: 0;
+}
+
+.table-scroll {
+  overflow: auto;
+  height: 100%;
+  min-height: 0;
+}
+
+table {
+  // Under `table-layout: fixed` the header's column widths are authoritative. Spare width must go to
+  // the filler column, the only one without a width, or real columns render wider than stored.
+  width: max-content;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+  border-right: 1px solid #e5e7eb;
+
+  &:first-child {
+    border-left: 1px solid #e5e7eb;
+  }
+}
+
+.filler-cell {
+  padding: 0;
+  // Must come after the separator rule above: the filler is not a column and gets no line.
+  border-right: none;
+}
+
+// The row-height tokens set `height`; as a floor it lets multi-value rows grow up to the cap.
+.mat-mdc-row,
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  height: auto;
+  min-height: var(--mat-table-row-item-container-height);
+}
+
+.mat-mdc-header-cell {
+  // Sticky cells are transparent by default; rows would show through the header.
+  background: #f9fafb;
+  position: relative;
+
+  // `focus-within` keeps the controls reachable without a pointer.
+  &:hover,
+  &:focus-within {
+    .header-sort,
+    .header-filter,
+    .header-pin {
+      width: var(--header-control-width);
+      opacity: 1;
+    }
+
+    .header-sort,
+    .header-filter,
+    .header-pin {
+      margin-left: 4px;
+    }
+
+    .column-resize-handle {
+      opacity: 1;
+    }
+  }
+}
+
+// A hidden control takes no room, so the name gets the whole width until hover brings the controls in.
+.header-sort,
+.header-filter,
+.header-pin {
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  box-sizing: border-box;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  // Under `table-layout: fixed` a column cannot render narrower than its cells' min-content;
+  // containment drops the label's text from it so the label ellipsises at the dragged width.
+  contain: inline-size;
+}
+
+.mat-mdc-header-cell.is-movable {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: -2px;
+  }
+}
+
+// Shared shape for the header controls; hidden until hover unless `.is-active`.
+.header-sort,
+.header-filter,
+.header-pin {
+  --header-control-width: 18px;
+
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  // Padding would keep a hidden control wider than 0.
+  padding: 0;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.45);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: 1px;
+  }
+}
+
+.header-sort,
+.header-filter,
+.header-pin {
+  &.is-active {
+    width: var(--header-control-width);
+    margin-left: 4px;
+    opacity: 1;
+    color: var(--primary, #336790);
+  }
+}
+
+.header-pin {
+  mat-icon {
+    transform: rotate(45deg);
+  }
+
+  &.is-active mat-icon {
+    transform: none;
+  }
+}
+
+// A pinned column's pin sits before its name. Nested under the header cell so it outranks the hover
+// rule that gives every control a left margin.
+.mat-mdc-header-cell .header-pin.is-active {
+  order: -1;
+  margin-left: 0;
+  margin-right: 4px;
+}
+
+.header-lock {
+  flex: none;
+  margin-right: 4px;
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+  color: rgba(0, 0, 0, 0.42);
+}
+
+.mat-mdc-header-cell.is-read-only .header-label {
+  color: rgba(0, 0, 0, 0.42);
+}
+
+.mat-mdc-header-cell.is-pinned .header-label {
+  color: #234a69;
+}
+
+.header-filter.is-active {
+  background: #d6e0e8;
+}
+
+.column-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  bottom: 0;
+  width: 8px;
+  z-index: 1;
+  cursor: col-resize;
+  opacity: 0;
+
+  &:hover {
+    background: rgba(51, 103, 144, 0.25);
+  }
+
+  // Keyboard-reachable: must stay visible while focused.
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: -1px;
+  }
+}
+
+// The preview is cloned out of the table and loses `display: table-cell`; a border-box flex row
+// keeps the inline width bound on the header cell.
+.cdk-drag-preview {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.35;
+}
+
+.header-label {
+  display: block;
+  // A flex item's `min-width: auto` is its text; without this the ellipsis never applies.
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 500 12px/16px var(--font-sans, inherit);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.mat-mdc-row.is-checked {
+  background: #eef3f7;
+}
+
+// Material drops the last row's bottom border.
+.mat-mdc-row:last-child .mat-mdc-cell {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+// Lives in the sticky label cell so it stays reachable when the table is scrolled sideways.
+.row-resize-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 6px;
+  z-index: 2;
+  cursor: row-resize;
+  opacity: 0;
+
+  &:hover {
+    background: rgba(51, 103, 144, 0.25);
+  }
+
+  // Keyboard-reachable: must stay visible while focused.
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: -1px;
+  }
+}
+
+tr:hover .row-resize-handle,
+tr:focus-within .row-resize-handle {
+  opacity: 1;
+}
+
+.is-label-cell {
+  font-weight: 500;
+}
+
+.row-controls {
+  position: absolute;
+  left: 0;
+  // Aligns the 48px cluster with the label's first line.
+  top: -8px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  // Material token: shrinks the checkbox without `::ng-deep`.
+  --mdc-checkbox-state-layer-size: 28px;
+}
+
+// Opacity sits on the controls, not the cluster: the checkbox and open arrow appear under different
+// conditions.
+.row-controls [data-cy='row-check'],
+.row-controls .row-open {
+  opacity: 0;
+}
+
+// `focus-within` keeps both controls reachable from the keyboard.
+tr:hover .row-controls [data-cy='row-check'],
+tr:focus-within .row-controls [data-cy='row-check'],
+tr:hover .row-controls .row-open,
+tr:focus-within .row-controls .row-open {
+  opacity: 1;
+}
+
+// A row keeps its checkbox, and only the checkbox, while selecting or once checked. The open arrow is
+// deliberately absent.
+.selection-active .row-controls [data-cy='row-check'],
+tr.is-checked .row-controls [data-cy='row-check'] {
+  opacity: 1;
+}
+
+.row-open {
+  flex: none;
+  // Trims the host's 48px to the 36px scaled button inside.
+  margin-inline: -6px;
+
+  // Resets the shared explorer button's properties-pane offsets through its custom properties.
+  --resource-explorer-display: inline-flex;
+  --resource-explorer-height: auto;
+  --resource-explorer-scale: 0.75;
+  --resource-explorer-top: 0;
+}
+
+// Sticky columns inherit the row background so the scrolling columns do not show through them.
+.mat-mdc-table-sticky {
+  background: inherit;
+}
+
+// The frozen columns: the label and any pinned after it.
+.mat-mdc-header-cell.is-frozen {
+  background: #e6edf3;
+
+  .header-label {
+    color: #234a69;
+  }
+}
+
+.mat-mdc-cell.is-frozen {
+  background: #f2f6f9;
+}
+
+// Contains Material's raised control layers (e.g. a button label at z-index 1), which would otherwise
+// paint over the frozen cells, also at z-index 1.
+.mat-mdc-cell {
+  isolation: isolate;
+}
+
+// The edge of the frozen columns — the label and any pinned after it. MatTable marks the last
+// left-sticky cell of each row with this class, so the line follows the pins as they change.
+.mat-mdc-table-sticky-border-elem-left {
+  border-right-width: 2px;
+  border-right-color: rgba(0, 0, 0, 0.2);
+}
+
+// Transparent rather than removed, so body and header columns keep the same widths.
+.is-scrolled-x .mat-mdc-cell.mat-mdc-table-sticky-border-elem-left {
+  border-right-color: transparent;
+}
+
+.frozen-shadow {
+  position: absolute;
+  top: 0;
+  // MatTable stacks sticky cells from z-index 100 (top) up to 101 (top and left); this goes above.
+  z-index: 110;
+  width: 10px;
+  background: linear-gradient(to right, rgba(15, 23, 42, 0.18), rgba(15, 23, 42, 0));
+  pointer-events: none;
+}
+
+// Never shrinks; the label's name ellipsises first.
+.scroll-back {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  height: 24px;
+  padding: 0 8px 0 2px;
+  border: 1px solid #b7c8d6;
+  border-radius: 12px;
+  background: #fff;
+  color: #234a69;
+  font: 500 12px/1 var(--font-sans, inherit);
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: #f2f6f9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary, #336790);
+    outline-offset: 1px;
+  }
+}
+
+.cell-values {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 2px 0;
+  // Containment keeps unwrapped text from setting the column's min-content, as on the header.
+  contain: inline-size;
+}
+
+.cell-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// The project's default authorship standing in for a resource's own.
+.cell-fallback {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.cell-empty {
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.mat-mdc-cell {
+  // Anchors the viewer's absolutely positioned action bubble; otherwise it positions against the
+  // scroll container.
+  position: relative;
+  vertical-align: top;
+}
+
+// The viewer's property unit, dropped into a cell. Only its widening of the column is stopped here.
+.cell-property {
+  min-width: 0;
+
+  // The action bubble overhangs the value; clipping overflow would cut it off.
+  overflow: visible;
+}
+
+.cell-more {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  color: var(--primary, #336790);
+  font: 500 12px/18px var(--font-sans, inherit);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.table-scroll {
+  @include mat.table-overrides(
+    (
+      header-container-height: 48px,
+      row-item-container-height: 44px,
+    )
+  );
+
+  // The viewer's default property padding would make single-value cells taller than the row height.
+  --property-value-padding-block: 4px;
+  --property-value-edit-background: #f5f7f9;
+  --authorship-line-padding-inline-start: 0;
+  // A value being edited is written at the cells' size, not Material's 16px (DEV-7611). Material's
+  // own token, which inherits into the editor's fields.
+  @include mat.form-field-overrides(
+    (
+      container-text-size: 13px,
+    )
+  );
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 4px 10px;
+    font-size: 13px;
+  }
+
+  // Must come after the padding shorthand above.
+  @include label-column-gutter;
+}
+
+// A cell taller than the chosen row height (bound as `--row-cap`) scrolls. Only cells that
+// ScrollWhenTallerDirective measured as taller carry the class; the editor's hover bubble would
+// otherwise make short cells scrollable.
+.cell-property.is-capped,
+.cell-values.is-capped {
+  max-height: var(--row-cap);
+  // Both axes are set: `auto` on one axis alone makes the other compute to `auto` too.
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
