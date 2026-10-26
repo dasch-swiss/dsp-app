@@ -16,7 +16,7 @@ export default class StillImagePage {
     cy.fixture(fileName, 'binary').then(fileContent => {
       cy.request({
         method: 'POST',
-        url: 'http://0.0.0.0:3340/projects/0803/assets/ingest/screen.png',
+        url: `${Cypress.env('dspIngestUrl')}/projects/0803/assets/ingest/screen.png`,
         headers: {
           Accept: 'application/json, text/plain, */*',
           Authorization: `Bearer ${token}`,
