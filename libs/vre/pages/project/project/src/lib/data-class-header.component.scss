@@ -1,18 +1,14 @@
 .data-class-header {
-  // Closes the header off against the split below it.
   border-bottom: 1px solid #e5e7eb;
-  // Anchors the refresh bar to the bottom edge.
   position: relative;
 }
 
-// Over the border, full width — the line the results hang from is the one that moves.
 .refresh-bar {
   position: absolute;
   left: 0;
   right: 0;
   bottom: -1px;
-  // A request that answers within a blink should not flash a bar: it fades in only once the wait
-  // has lasted long enough to notice.
+  // Delayed fade-in so fast requests do not flash the bar.
   opacity: 0;
   animation: refresh-bar-in 150ms ease-out 200ms forwards;
 }
@@ -68,7 +64,6 @@
   flex-shrink: 0;
 }
 
-// A band of its own, set off from the identity above and the results below.
 .toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -79,7 +74,6 @@
   border-top: 1px solid #e5e7eb;
 }
 
-// Takes what the end group leaves, so its filter chips wrap within it before the row wraps.
 .toolbar-search {
   flex: 1 1 360px;
   min-width: 0;
@@ -92,7 +86,6 @@
   margin-left: auto;
 }
 
-// Separates the pager from the controls for how the results are drawn.
 .toolbar-divider {
   width: 1px;
   height: 24px;

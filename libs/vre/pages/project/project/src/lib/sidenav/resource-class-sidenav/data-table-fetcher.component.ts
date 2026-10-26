@@ -37,19 +37,10 @@ import { DataClassUrlStateService } from '../../data-class-url-state.service';
 import { ProjectPageService } from '../../project-page.service';
 
 /**
- * Feeds {@link DataTableComponent}.
- *
- * Deliberately a sibling of `ResourcesListFetcherComponent` rather than a shared base class: the
- * pipelines look alike but diverge at the one step that matters, and the list's is load-bearing,
- * heavily commented and covered by DEV-6866/6872 regressions. Factoring them together would mean
- * editing the list's behaviour to add the table's.
- *
- * The divergence is the second fetch. Gravsearch does the ordering, filtering, paging and counting
- * exactly as the list does, but its CONSTRUCT clause only projects properties that were filtered
- * on — so the resources it returns carry the label and little else. A table needs every column's
- * values, and each resource needs its full entityInfo to mount the resource editor, so the
- * page's IRIs are fetched again in one batch. Page size is 25, well under the URL-chained GET's
- * ~50-IRI ceiling.
+ * Feeds {@link DataTableComponent}. Parallels `ResourcesListFetcherComponent` but fetches the
+ * page's IRIs again in one batch: Gravsearch's CONSTRUCT only projects filtered properties, and the
+ * table needs every column's values and each resource's full entityInfo. Page size 25 is well under
+ * the URL-chained GET's ~50-IRI ceiling.
  */
 @Component({
   selector: 'app-data-table-fetcher',
@@ -100,9 +91,6 @@ import { ProjectPageService } from '../../project-page.service';
         </div>
       }
     } @else {
-      <!-- One indicator for both requests. The batch fetch is an implementation detail of showing
-           a row, not a second thing the user is waiting on, so showing it its own spinner would
-           make one wait look like two. -->
       <app-progress-indicator />
     }
   `,
@@ -129,14 +117,7 @@ export class DataTableFetcherComponent implements OnChanges {
   readonly failed = signal(false);
   readonly failureReason = signal<string | undefined>(undefined);
 
-  /**
-   * The column model and the shaping the user has applied to it.
-   *
-   * Held in a service rather than here because the View options menu that edits them is rendered
-   * by the class header, above the split — a sibling this component cannot reach with an output.
-   * This component is still what *builds* the model, since it is the only one holding the
-   * ontology.
-   */
+  /** Column model and layout live in a service because the View options menu is in the class header. */
   private readonly _tableState = inject(TableViewStateService);
   readonly columns = this._tableState.columns;
 
@@ -149,11 +130,7 @@ export class DataTableFetcherComponent implements OnChanges {
   /** Project members can edit its data, so only they are shown which columns they cannot. */
   readonly canEdit = toSignal(inject(ProjectPageService).hasProjectMemberRights$, { initialValue: false });
 
-  /**
-   * The project's legal info, for the rights-statement columns — the same cached lookup the
-   * viewer's statement makes. A failure leaves those columns without the project's fields rather
-   * than failing the table: the rows are what the user came for.
-   */
+  /** The project's legal info for the rights columns; a failure leaves them unfilled instead of failing the table. */
   private readonly _dataRights = inject(ProjectDataRightsService);
   private readonly _translate = inject(TranslateService);
 
@@ -167,34 +144,15 @@ export class DataTableFetcherComponent implements OnChanges {
   readonly layout = this._tableState.layout;
 
   /**
-   * The comparison selection, as the service last published it.
-   *
-   * Held raw and projected by the two computeds below rather than split at subscription time,
-   * because `MultipleViewerService` writes `selectMode` *after* it pushes the new selection
-   * (`addResources`, `removeResources`). A subscriber reading the flag as the value arrives still
-   * sees the old one, so the first box the user ticks would render itself back off. A computed is
-   * invalidated by the push and evaluated during the change-detection pass that follows it, by
-   * which time the flag has been written.
+   * The comparison selection as last published. `MultipleViewerService` writes `selectMode` *after*
+   * pushing the selection, so the flag must be read in a computed, not at subscription time.
    */
   private readonly _selectedResources = signal<ReadResource[]>([]);
 
   /**
-   * Whether the user is building a comparison set.
-   *
-   * `MultipleViewerService.selectMode` is a plain mutable field with no change notification, so
-   * the selection's emission is what these two computeds react to. Note the shape they both
-   * share: **the signal is read first, unconditionally**, and only then is the flag consulted.
-   *
-   * That is not a style preference. Written the natural way —
-   * `selectMode && this._selectedResources().length > 0` — the `&&` short-circuits while
-   * `selectMode` is false, the signal read never happens, Angular records no dependency, and the
-   * computed is cached as `false` for the lifetime of the component. Ticking a checkbox then
-   * changed nothing anyone could see: the row never gained `is-checked`, the table never gained
-   * `selection-active`, and only the checkbox's own internal state made it look selected.
-   *
-   * `selectMode` is always written alongside the selection, so reading it after the signal costs
-   * nothing — but it is written *after* the subject emits, which is why it cannot simply be
-   * captured in the subscription instead.
+   * Whether the user is building a comparison set. `selectMode` is a plain field, so this computed
+   * and `checkedResourceIds` must read the signal first, unconditionally: short-circuiting on
+   * `selectMode` registers no dependency and caches `false` forever.
    */
   readonly selectionActive = computed<boolean>(() => {
     const selected = this._selectedResources();
@@ -207,22 +165,11 @@ export class DataTableFetcherComponent implements OnChanges {
     return this._multipleViewerService.selectMode ? new Set(selected.map(resource => resource.id)) : new Set<string>();
   });
 
-  /**
-   * The sort the query is running, mirrored onto the header that announces it.
-   *
-   * `rdfs:label` is the Data tab's default and is not a property IRI, so it maps onto the synthetic
-   * label column's key. Reading it is what lets the
-   * table announce `aria-sort`.
-   */
+  /** The sort the query is running, so the table can announce `aria-sort`. */
   readonly sortedColumnKey = signal<string | undefined>(undefined);
   readonly sortDescending = signal(false);
 
-  /**
-   * Which columns carry a filter chip, so their headers can say so.
-   *
-   * Read off the shared filter state rather than tracked by the table, which is what makes removing
-   * a chip in the bar clear the header indication with no code of its own.
-   */
+  /** Which columns carry a filter chip, read off the shared filter state. */
   readonly filteredColumnKeys = signal<ReadonlySet<string>>(new Set<string>());
 
   /** Re-triggers the load after a failure. Replays on subscribe so the initial load runs too. */
@@ -249,19 +196,15 @@ export class DataTableFetcherComponent implements OnChanges {
   ) {
     this._searchState.hasActiveState$.pipe(takeUntilDestroyed()).subscribe(active => (this.filtersAreActive = active));
 
-    // Column titles are resolved once per build, so a language switch has to rebuild them.
+    // Column titles are resolved once per build.
     this._translate.onLangChange.pipe(takeUntilDestroyed()).subscribe(() => this._rebuildColumns());
 
-    // Same reload signal the list uses, so creating a resource adds its row here too. `skip(1)`
-    // drops the BehaviorSubject's replayed value, which would otherwise run the initial load twice.
+    // `skip(1)` drops the BehaviorSubject's replayed value, which would run the initial load twice.
     this._dataBrowserPageService.onNavigationReload$
       .pipe(skip(1), takeUntilDestroyed())
       .subscribe(() => this._retrySubject.next());
 
-    // The table highlights whatever the viewer has open and ticks whatever is in the comparison
-    // set, so switching between list and table keeps the user's place and their selection rather
-    // than losing either at the boundary. The service is provided by the data-browser
-    // page, above both views, so neither switch tears it down.
+    // The service is provided above both views, so the selection survives a list/table switch.
     this._multipleViewerService.selectedResources$
       .pipe(takeUntilDestroyed())
       .subscribe(resources => this._selectedResources.set(resources));
@@ -272,8 +215,7 @@ export class DataTableFetcherComponent implements OnChanges {
 
     this._urlState.sortDescending$.pipe(takeUntilDestroyed()).subscribe(desc => this.sortDescending.set(desc));
 
-    // Only top-level filters become chips; a subcriterion constrains the resource its parent links
-    // to, not a column of this table, so indicating it on a header would point at the wrong data.
+    // A subcriterion constrains a linked resource, not a column of this table.
     this._searchState.filters$
       .pipe(takeUntilDestroyed())
       .subscribe(filters =>
@@ -298,28 +240,16 @@ export class DataTableFetcherComponent implements OnChanges {
 
   onRetry() {
     this.failed.set(false);
-    // The failure panel replaced the results, so the retry is a first load, not a refresh.
     this._resourceResult.resetLoading();
     this._retrySubject.next();
   }
 
-  /**
-   * A cell was saved and the row re-read, so anything else showing that resource is now stale.
-   *
-   * The announcement carries only the IRI, and the viewer re-reads from dsp-api rather than taking
-   * the resource handed to it — what it shows is then the stored state rather than this
-   * component's copy of it.
-   */
+  /** A cell was saved: announce the IRI so the viewer re-reads the resource. */
   onResourceReloaded(resource: ReadResource) {
     this._multipleViewerService.notifyResourceChanged(resource.id);
   }
 
-  /**
-   * The row checkbox, mapped onto the same two calls `ResourceListItemComponent` makes.
-   *
-   * Nothing is capped here. Past six selected resources the viewer itself swaps the comparison for
-   * its too-many message, which is the list view's behaviour and so is the table's.
-   */
+  /** Maps the row checkbox onto the calls `ResourceListItemComponent` makes; the viewer enforces the cap. */
   onResourceCheckedChanged({ resource, checked }: { resource: ReadResource; checked: boolean }) {
     if (checked) {
       this._multipleViewerService.addResources([resource]);
@@ -328,11 +258,6 @@ export class DataTableFetcherComponent implements OnChanges {
     }
   }
 
-  /**
-   * Both shaping gestures persist and redraw, and neither re-runs the query: the page's resources
-   * already carry every property, so which columns are drawn and how wide they are is a rendering
-   * decision the client makes on its own.
-   */
   onColumnsReordered(order: string[]) {
     this._tableState.setVisibleOrder(order);
   }
@@ -349,36 +274,17 @@ export class DataTableFetcherComponent implements OnChanges {
     this._tableState.resetColumnWidth(key);
   }
 
-  /**
-   * The same writer the list view's sort header uses, so the two controls share one piece of state
-   * and a sort set in the table survives a switch back to the list.
-   *
-   * No page-index reset here. `_data$` already resets the offset when the query changes, and
-   * `data-class-sort-header.component.ts` carries the standing warning that a second writer leaves
-   * no way to tell which one won.
-   */
+  /** Shares the sort state with the list's sort header. The page reset happens in `_data$`, not here. */
   onSortToggled({ key, descending }: { key: string; descending: boolean }) {
     this._urlState.setSort(this._predicateIriOf(key), descending);
   }
 
-  /**
-   * Hand the column's property to the chip bar and let it open its own editor.
-   *
-   * The table deliberately does not host a filter popover of its own: the bar is the only component
-   * that knows which chips exist, and so the only one that can re-open the chip on this property
-   * instead of adding a second filter to it.
-   */
+  /** The chip bar owns the editor: it alone can re-open an existing chip instead of doubling it. */
   onFilterRequested(key: string) {
     this._filterEditorRequests.open(this._predicateIriOf(key));
   }
 
-  /**
-   * Translate between the two names for the resource label.
-   *
-   * The URL and the filter codec call it `rdfs:label`, the column model calls it the synthetic label
-   * column — it is not a property and so has no IRI of its own. Everything crossing that boundary
-   * goes through this pair rather than repeating the conditional at each call site.
-   */
+  /** The URL and filter codec call the label `rdfs:label`; the column model uses the synthetic label column key. */
   private _columnKeyOf(predicateIri: string): string {
     return predicateIri === RDFS_LABEL ? LABEL_COLUMN_KEY : predicateIri;
   }
@@ -387,13 +293,7 @@ export class DataTableFetcherComponent implements OnChanges {
     return columnKey === LABEL_COLUMN_KEY ? RDFS_LABEL : columnKey;
   }
 
-  /**
-   * The class's columns, and the layout the user last left them in.
-   *
-   * Built from the ontology's own property definitions rather than from `OntologyDataService`,
-   * which filters to editable non-link properties — the table shows link, file and non-editable
-   * columns too, read-only.
-   */
+  /** Built from the ontology's property definitions, not `OntologyDataService`, which drops link and non-editable properties. */
   private _rebuildColumns(): void {
     const definitions = new Map(
       this.ontology
@@ -407,8 +307,6 @@ export class DataTableFetcherComponent implements OnChanges {
       propDef => this._stringify.transform(propDef.labels),
       this._translate.instant('pages.dataBrowser.table.labelColumn')
     );
-    // The image right after the label: for a class of pages or photographs it is what identifies a
-    // row at a glance, more than any property does.
     const columns = [
       label,
       ...imageColumn(this.resClass, this._translate.instant('pages.dataBrowser.table.imageColumn')),
@@ -429,8 +327,7 @@ export class DataTableFetcherComponent implements OnChanges {
       switchMap(project =>
         this._query.query$.pipe(
           switchMap((query, queryIndex) => {
-            // The list fetcher is the sole writer of the page index on a query change; only one of
-            // the two views is mounted at a time, so whichever is showing owns the reset.
+            // Only one of the two fetchers is mounted, so whichever is showing owns the reset.
             if (queryIndex > 0) {
               this._resourceResult.updatePageIndex(0);
             }
@@ -459,9 +356,7 @@ export class DataTableFetcherComponent implements OnChanges {
 
   /** Identical heuristic to the list's: see `ResourcesListFetcherComponent._applyCount`. */
   private _applyCount(resources: ReadResource[], pageIndex: number, numberOfResults: number | null): ReadResource[] {
-    // The table's entry behaviour is to select nothing and leave the viewer collapsed —
-    // but that is still a resolution, and it has to be recorded, or switching to the list would
-    // count as a fresh class entry there and select a first row over the user's own choice.
+    // Recorded even though the table selects nothing, or the list would treat a switch as a fresh entry.
     this._dataBrowserPageService.selectionResolvedForClass = this.classLabel;
 
     this.userCanViewResources =
@@ -478,9 +373,7 @@ export class DataTableFetcherComponent implements OnChanges {
       tap(() => this._resourceResult.markLoading()),
       switchMap(pageIndex =>
         this._performGravSearch(query, pageIndex, projectIri).pipe(
-          // The second fetch. Errors are *not* absorbed here: unlike the count, a failed batch
-          // means there is nothing to draw, so it propagates to the outer catchError and the
-          // retryable failure panel.
+          // Not absorbed on error, unlike the count: a failed batch leaves nothing to draw.
           switchMap(response => this._fullResources$(response.resources)),
           map(resources => ({ resources, pageIndex }))
         )
@@ -488,12 +381,7 @@ export class DataTableFetcherComponent implements OnChanges {
     );
   }
 
-  /**
-   * Re-fetch the page's resources in full.
-   *
-   * Short-circuits on an empty page rather than issuing a request for no IRIs, which the
-   * URL-chained GET cannot express anyway.
-   */
+  /** Re-fetch the page's resources in full; an empty page short-circuits (the URL-chained GET cannot express no IRIs). */
   private _fullResources$(pageResources: ReadResource[]): Observable<ReadResource[]> {
     const iris = pageResources.map(resource => resource.id);
     if (iris.length === 0) {
@@ -502,13 +390,10 @@ export class DataTableFetcherComponent implements OnChanges {
 
     return this._dspApiConnection.v2.res.getResources(iris).pipe(
       map(response => (Array.isArray(response) ? response : response.resources)),
-      // dsp-api does not guarantee the order of a multi-resource fetch, but the Gravsearch result
-      // *is* the sort the user asked for — so the batch is reordered back onto it rather than
-      // trusted. A resource the batch did not return is dropped: it disappeared or became
-      // unreadable between the two requests, and a row with no data is worse than no row.
+      // dsp-api does not guarantee the batch order, so restore the Gravsearch (sort) order. A
+      // resource the batch did not return is dropped.
       map(full => {
-        // The tuple is annotated because the app's build infers `any[]` for the pair, which no
-        // `Map` constructor overload accepts.
+        // Tuple annotated: the app build infers `any[]` for the pair.
         const byIri = new Map(full.map((resource): [string, ReadResource] => [resource.id, resource]));
         return iris.map(iri => byIri.get(iri)).filter((resource): resource is ReadResource => resource !== undefined);
       })
@@ -529,8 +414,7 @@ export class DataTableFetcherComponent implements OnChanges {
   }
 
   private _performGravSearch(query: string, index: number, projectIri: string) {
-    // `lastIndexOf`: a fulltext term can contain the word OFFSET, and cutting at the first
-    // occurrence would truncate the query mid-clause.
+    // `lastIndexOf`: a fulltext term can contain the word OFFSET.
     const offsetAt = query.lastIndexOf('OFFSET');
     const gravsearch = `${offsetAt === -1 ? query : query.substring(0, offsetAt)}OFFSET ${index}`;
 

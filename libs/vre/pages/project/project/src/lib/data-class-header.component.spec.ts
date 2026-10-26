@@ -135,10 +135,8 @@ describe('DataClassHeaderComponent', () => {
         { provide: NotificationService, useValue: mockNotificationService },
         { provide: DataBrowserPageService, useValue: mockDataBrowserPageService },
         { provide: LocalizationService, useValue: mockLocalizationService },
-        // The header reads the view out of the URL to decide whether to offer the table's View
-        // options menu. The real service is route-scoped, which this isolated fixture has none of.
+        // Route-scoped in the app; this isolated fixture has no route.
         { provide: DataClassUrlStateService, useValue: { view$: of('list') } },
-        // Route-scoped like the URL state: the class view provides it, so the fixture does too.
         ResourceResultService,
         provideTranslateService(),
         TranslateService,

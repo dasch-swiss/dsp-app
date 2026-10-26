@@ -30,8 +30,7 @@ export interface DownloadDialogData {
         }}</span>
       </div>
     }
-    <!-- The export ignores the Data tab's filters. Said outright, because the dialog is reached from
-         a filtered list and the count above it is the class total, not the filtered one. -->
+    <!-- The export ignores the Data tab's filters. -->
     <p class="scope-note" data-cy="download-scope-note">
       {{ 'pages.dataBrowser.downloadDialog.scopeNote' | translate }}
     </p>

@@ -23,7 +23,6 @@ describe('DataClassSortHeaderComponent', () => {
   const properties: Predicate[] = [
     new Predicate(RDFS_LABEL, label('Label'), Constants.TextValue, false),
     new Predicate(CREATOR, label('Creator'), Constants.TextValue, false),
-    // Neither is meaningfully orderable, and advanced search excludes both from its own options.
     new Predicate(`${ONTO}#partOf`, label('Part of'), `${ONTO}#Book`, true),
     new Predicate(`${ONTO}#category`, label('Category'), Constants.ListValue, false),
   ];
@@ -88,7 +87,6 @@ describe('DataClassSortHeaderComponent', () => {
 
     fixture.componentInstance.selectProperty(CREATOR);
 
-    // Switching property is not a reason to silently re-sort ascending under the user.
     expect(setSort).toHaveBeenCalledWith(CREATOR, true);
   });
 

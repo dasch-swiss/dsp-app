@@ -63,20 +63,14 @@ const ONTOLOGY = {
   label: 'The incunabula ontology',
   classes: { [CLASS_IRI]: RESOURCE_CLASS },
   properties: {},
-  // What the search filters' OntologyDataService reads the loaded ontology with.
   getClassDefinitionsByType: () => [RESOURCE_CLASS],
   getPropertyDefinitionsByType: () => [],
 } as unknown as ReadOntology;
 
-/** The width the result list should have on this window, from the component's own table. */
 const expectedResultListWidth = (windowWidth: number) =>
   RESULT_LIST_WIDTHS.find(([minWidth]) => windowWidth >= minWidth)?.[1] ?? RESULT_LIST_WIDTH_BELOW_MD;
 
-/**
- * The Data tab's class view on its own (without the class sidenav): the header with the class title
- * and description, the result list, and the viewer. Long texts show how they behave; the result list's width
- * follows the breakpoint (DEV-7557); pick a width from the viewport toolbar.
- */
+/** The Data tab's class view without the class sidenav; pick a width from the viewport toolbar. */
 const meta: Meta<DataClassViewComponent> = {
   title: 'Pages / Data Browser / Class View',
   component: DataClassViewComponent,
@@ -123,7 +117,6 @@ const meta: Meta<DataClassViewComponent> = {
           } as unknown as KnoraApiConnection,
         },
         DataBrowserPageService,
-        // Nothing selected, so the viewer shows its empty state instead of fetching a resource.
         {
           provide: MultipleViewerService,
           useValue: {
@@ -140,7 +133,6 @@ const meta: Meta<DataClassViewComponent> = {
     }),
   ],
   render: () => ({
-    // The class view fills the height its page gives it; the split needs that height to lay out.
     template: '<div style="height: 100vh"><app-data-class-view /></div>',
   }),
 };

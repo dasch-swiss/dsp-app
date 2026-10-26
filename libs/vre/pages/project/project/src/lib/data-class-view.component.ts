@@ -23,10 +23,7 @@ import { provideDataClassSearch } from './data-class-query.service';
 import { DataClassUrlStateService, DataClassView } from './data-class-url-state.service';
 import { ProjectPageService } from './project-page.service';
 
-/**
- * The result list's default width from each breakpoint up, widest first.
- * The min-widths are the md–xxl tokens of `apps/dsp-app/src/styles/_responsive.scss` (DEV-7557).
- */
+/** The result list's default width from each breakpoint up, widest first; min-widths are the md–xxl tokens of `_responsive.scss`. */
 export const RESULT_LIST_WIDTHS: readonly (readonly [minWidth: number, width: number])[] = [
   [2560, 440],
   [1920, 400],
@@ -49,26 +46,16 @@ const QUERIES = RESULT_LIST_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}p
         </app-centered-box>
       } @else {
         <app-data-class-header [classSelected]="classSelected" />
-        <!-- Under the header and above the split, so it is the same banner in both views.
-             Inside the viewer it was invisible in table view, which has no viewer — and it was
-             describing the selection, not the panel it happened to sit in.
-
-             selectMode is read in the template rather than folded into a computed: it is a plain
-             field on the service with no change notification, and a computed that reads it behind
-             a short-circuited signal read registers no dependency and caches forever (DEV-7466).
-             A template binding is re-evaluated every pass, so it cannot go stale. -->
+        <!-- selectMode is a plain field with no change notification: keep it in the template. A
+             computed that reads it behind a short-circuited signal read caches forever. -->
         @if ((selectedResources$ | async)?.length && multipleViewerService.selectMode) {
           <app-resource-list-selection />
         }
-        <!-- In list view the result list's width follows the screen's breakpoint until the user drags
-             its gutter (DEV-7557); in table view it takes the whole width. -->
         <as-split direction="horizontal" unit="pixel" (dragEnd)="onResultListDragged($event)">
           <as-split-area [size]="panelSize()" cdkScrollable>
             <app-data-class-panel [classSelected]="classSelected" />
           </as-split-area>
-          <!-- Hidden rather than sized to zero: a zero-width area still draws its gutter and still
-               renders the viewer, which would keep fetching the selected resource for a panel
-               nobody can see. -->
+          <!-- Hidden, not zero-width: a zero-width area still renders the viewer and keeps fetching. -->
           <as-split-area [size]="viewerSize()" [visible]="viewerIsVisible()">
             <app-multiple-viewer (afterResourceDeleted)="onResourceDeleted()" />
           </as-split-area>
@@ -80,9 +67,7 @@ const QUERIES = RESULT_LIST_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}p
   `,
   styles: [
     `
-      /* A column, so the split gets the height left under the header rather than the whole page
-         area's. Sized to 100% it overflowed by exactly the header, and the page area scrolled that
-         much on top of the list's or the table's own scroll. */
+      /* A column, so the split gets the height left under the header; 100% would overflow by the header. */
       :host {
         display: flex;
         flex-direction: column;
@@ -126,23 +111,11 @@ const QUERIES = RESULT_LIST_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}p
     MultipleViewerComponent,
     ResourceListSelectionComponent,
   ],
-  // Scoped here rather than on the panel so the class header and the list resolve one query, and so
-  // a class switch tears the whole search state down with the view. `ResourceResultService` joins
-  // them for the same reason: the count and pager live in the header, and they have to read the same
-  // instance the list writes.
+  // Scoped here so the header and the list share one query, one `ResourceResultService`, and a class
+  // switch disposes them.
   providers: [...provideSearchFilters(), ...provideDataClassSearch(), ResourceResultService],
 })
 export class DataClassViewComponent {
-  /**
-   * How the split is divided, and whether the right half exists at all.
-   *
-   * The table has no side viewer: a row opens in the app's drawer dialog, the same one a resource
-   * opens in everywhere else. A panel beside the table would be a second rendering of the same
-   * resource to keep in step, so table view is simply full width.
-   *
-   * Hidden rather than sized to zero — a zero-width area still draws its gutter and still renders
-   * the viewer, which would keep fetching the selected resource for a panel nobody can see.
-   */
   private readonly _view = toSignal(inject(DataClassUrlStateService).view$, { initialValue: 'list' as DataClassView });
 
   /** Public: the selection banner's visibility is decided in this component's template. */
@@ -168,10 +141,7 @@ export class DataClassViewComponent {
 
   readonly viewerIsVisible = computed(() => this._view() !== 'table');
 
-  /**
-   * The split is in pixels: the list gets its width and the viewer the rest (`*`). In table view the
-   * list is the rest, and the hidden viewer gets a number so the split never sees two `*`.
-   */
+  /** Pixel split: in table view the hidden viewer gets a number so the split never sees two `*`. */
   readonly panelSize = computed(() => (this.viewerIsVisible() ? this.resultListWidth() : ('*' as const)));
   readonly viewerSize = computed(() => (this.viewerIsVisible() ? ('*' as const) : 0));
 
@@ -216,14 +186,7 @@ export class DataClassViewComponent {
     this._clearSearchStateOnClassSwitch();
   }
 
-  /**
-   * A filter belongs to the class it was built against: its predicates come from that class, and
-   * carrying `?filters=…` across a class switch would either silently match nothing or, worse, be
-   * stripped field by field with no explanation.
-   *
-   * `skip(1)` is what makes a deep link work. The first emission is arrival, not a switch, and
-   * resetting there would wipe the filters and sort out of the very URL the user was sent.
-   */
+  /** Filters belong to their class, so a class switch resets them. `skip(1)` keeps deep links intact. */
   private _clearSearchStateOnClassSwitch(): void {
     this._route.params
       .pipe(
@@ -234,8 +197,7 @@ export class DataClassViewComponent {
       )
       .subscribe(() => {
         this._urlState.reset();
-        // Not part of the URL, so the reset navigation alone would leave a half-built filter from the
-        // previous class sitting in the editor.
+        // Drafts are not in the URL, so the reset alone would not clear them.
         this._draftStore.discardDrafts();
       });
   }

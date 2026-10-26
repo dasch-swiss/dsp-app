@@ -10,14 +10,7 @@ import { DataClassQueryService, provideDataClassSearch } from '../data-class-que
 import { DataClassUrlStateService } from '../data-class-url-state.service';
 import { ProjectPageService } from '../project-page.service';
 
-/**
- * Resolves the provider graph that `DataClassViewComponent` declares.
- *
- * Every other spec in this feature injects its collaborators as doubles, so none of them would
- * notice a provider missing from the real component — the Data tab would simply throw NullInjector
- * on first paint with a green suite behind it. This mounts nothing and asserts nothing about
- * behaviour; it exists so that adding a dependency without providing it fails here.
- */
+/** Resolves the provider graph `DataClassViewComponent` declares; every other spec uses doubles and would miss a missing provider. */
 describe('DataClassViewComponent providers', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -26,7 +19,7 @@ describe('DataClassViewComponent providers', () => {
         ...provideSearchFilters(),
         ...provideDataClassSearch(),
         ResourceResultService,
-        // Provided at app root in the real application, so it has to be stood in for here.
+        // Provided at app root in the real application.
         {
           provide: DspApiConnectionToken,
           useValue: { v2: { ontologyCache: { getOntology: () => of({}) }, onto: { getOntology: () => of({}) } } },
@@ -59,9 +52,7 @@ describe('DataClassViewComponent providers', () => {
   });
 
   it('binds the SearchFilterState port to the same instance the page owns', () => {
-    // `useExisting`, not `useClass`: two instances would have the chip bar writing to one URL service
-    // while the query read another, and the symptom would be filters that change the address bar and
-    // nothing else.
+    // `useExisting`, not `useClass`: two instances would split the chip bar's writes from the query's reads.
     expect(TestBed.inject(SearchFilterState)).toBe(TestBed.inject(DataClassUrlStateService));
   });
 });

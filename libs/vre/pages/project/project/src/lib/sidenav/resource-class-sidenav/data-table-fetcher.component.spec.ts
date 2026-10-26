@@ -176,7 +176,6 @@ describe('DataTableFetcherComponent', () => {
       .compileComponents();
   });
 
-  /** Inputs, then `ngOnChanges`, which builds the columns and `data$`. */
   const create = (withImage = false) => {
     fixture = TestBed.createComponent(DataTableFetcherComponent);
     component = fixture.componentInstance;
@@ -188,7 +187,6 @@ describe('DataTableFetcherComponent', () => {
     component.ngOnChanges();
   };
 
-  /** Every `data$` emission, for as long as the subscription is held. */
   const collect = () => {
     const emitted: ({ resources: ReadResource[] } | null)[] = [];
     const sub = component.data$.subscribe(value => emitted.push(value));

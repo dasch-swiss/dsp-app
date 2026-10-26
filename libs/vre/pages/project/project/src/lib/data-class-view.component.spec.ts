@@ -9,10 +9,6 @@ import { DataClassUrlStateService, DataClassView } from './data-class-url-state.
 import { DataClassViewComponent } from './data-class-view.component';
 import { ProjectPageService } from './project-page.service';
 
-/**
- * A window whose width can change: `(min-width: Npx)` matches when its width ≥ N, and `observe`
- * emits on every change, as the real BreakpointObserver does when a query flips.
- */
 const windowOf = (initialWidth: number) => {
   let width = initialWidth;
   const changes = new BehaviorSubject<BreakpointState>({ matches: true, breakpoints: {} });
@@ -81,7 +77,6 @@ describe('DataClassViewComponent', () => {
       view.onResultListDragged({ gutterNum: 1, sizes: [812, '*'] });
       expect(view.resultListWidth()).toBe(812);
 
-      // Resizing the window no longer changes it, whichever breakpoint it lands in.
       window.resizeTo(1300);
       expect(view.resultListWidth()).toBe(812);
       window.resizeTo(2600);
