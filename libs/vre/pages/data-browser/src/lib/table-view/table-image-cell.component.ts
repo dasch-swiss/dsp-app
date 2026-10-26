@@ -5,24 +5,14 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Observable, of, Subscription } from 'rxjs';
 import { TableImage } from './table-row.model';
 
-/** Long enough that sweeping the pointer across the column does not flash a card per row. */
 const OPEN_DELAY_MS = 350;
-/** Long enough to cross the gap from the thumbnail into the preview without it closing. */
 const CLOSE_DELAY_MS = 150;
 
 /**
- * A resource's still image, as a thumbnail in a table cell, with a larger preview on hover.
- *
- * DSP's own images are fetched rather than bound to `<img src>`: a bare `src` cannot carry the
- * user's token, so Sipi would treat every request as anonymous and refuse a non-public image even
- * to the project's admins. Each fetched blob is shown through an object URL, released when the
- * image changes or the cell goes. An external image is not DSP's to authorise, so it is bound
- * directly.
- *
- * The preview is the image alone, larger. It opens after a short hover, on keyboard focus, or on
- * a click — a touch screen has no hover — and closes when the pointer leaves the thumbnail and the
- * preview, on Escape, or when the table scrolls. Its larger rendition is only fetched the first
- * time it opens.
+ * A resource's still image as a thumbnail with a larger hover preview. DSP's own images are
+ * fetched, not bound to `<img src>`, because a bare `src` cannot carry the user's token and Sipi
+ * would refuse a non-public image; the object URLs are released on change or destroy. The preview
+ * opens on hover, focus or click (touch has no hover) and fetches its larger rendition only once.
  */
 @Component({
   selector: 'app-table-image-cell',
@@ -93,8 +83,7 @@ const CLOSE_DELAY_MS = 150;
         outline: 2px solid var(--mat-sys-primary, #336790);
         outline-offset: 2px;
       }
-      /* Scales with the row: an Auto row draws it at 56px, a row set taller in View options draws
-         it to fill that height. */
+      /* Scales with the row's height. */
       .thumbnail {
         display: block;
         max-width: 100%;
@@ -130,7 +119,6 @@ const CLOSE_DELAY_MS = 150;
 })
 export class TableImageCellComponent implements OnChanges {
   readonly image = input.required<TableImage>();
-  /** The row's resource label, for the accessible names. */
   readonly label = input('');
 
   protected readonly thumbnailSrc = signal<string | undefined>(undefined);
@@ -138,14 +126,12 @@ export class TableImageCellComponent implements OnChanges {
   protected readonly failed = signal(false);
   protected readonly isOpen = signal(false);
 
-  /** Beside the thumbnail, on whichever side has room; below it as a last resort. */
   protected readonly positions: ConnectedPosition[] = [
     { originX: 'end', originY: 'center', overlayX: 'start', overlayY: 'center', offsetX: 12 },
     { originX: 'start', originY: 'center', overlayX: 'end', overlayY: 'center', offsetX: -12 },
     { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 8 },
   ];
 
-  /** A card left floating over a row that has scrolled away would describe the wrong image. */
   protected readonly closeOnScroll = inject(Overlay).scrollStrategies.close();
 
   private readonly _representation = inject(RepresentationService);
@@ -177,7 +163,7 @@ export class TableImageCellComponent implements OnChanges {
       next: src => this.thumbnailSrc.set(src),
       error: () => {
         this.failed.set(true);
-        // The same URL is tried again on the next change rather than staying broken.
+        // Retry the same URL on the next change.
         this._loadedUrl = undefined;
       },
     });
@@ -212,7 +198,7 @@ export class TableImageCellComponent implements OnChanges {
     if (!this.previewSrc()) {
       this._load(this.image().previewUrl).subscribe({
         next: src => this.previewSrc.set(src),
-        // The thumbnail stays in the card: a smaller image beats an empty frame.
+        // The thumbnail stays in the card.
         error: () => undefined,
       });
     }
@@ -229,7 +215,6 @@ export class TableImageCellComponent implements OnChanges {
     }
   }
 
-  /** An object URL for a DSP image fetched with the user's token; an external URL as it is. */
   private _load(url: string): Observable<string> {
     if (!this.image().isSipi) {
       return of(url);

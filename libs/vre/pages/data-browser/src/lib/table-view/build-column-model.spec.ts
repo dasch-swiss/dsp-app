@@ -66,10 +66,6 @@ describe('buildColumnModel', () => {
     expect(columns[0].propertyIri).toBeUndefined();
   });
 
-  /**
-   * Pinned and immovable, but still resizable: how wide a row's identity needs to be is the
-   * user's business, and labels vary in length more than anything else in the table.
-   */
   it('GivesTheLabelColumnAHigherMinimumThanTheOthers', () => {
     const [label, property] = build([propDef({})]);
 
@@ -94,12 +90,6 @@ describe('buildColumnModel', () => {
     );
   });
 
-  // The three kinds `GenerateProperty.commonProperty` drops. A cell of any of them has no
-  // `PropertyInfoValues`, so there is no editor component to mount.
-  /**
-   * dsp-api reifies every link property into a `…Value` sibling sharing its label, so keeping
-   * both produced two identically headed columns — one of which could never hold a value.
-   */
   it('DropsTheLinkPropertyAndKeepsItsReifiedValueSibling', () => {
     const link = propDef({ id: `${ONTO}linkToAuthor`, isLinkProperty: true, objectType: `${ONTO}Author` });
     const linkValue = propDef({
@@ -113,7 +103,6 @@ describe('buildColumnModel', () => {
     expect(columns.map(column => column.key)).toEqual([LABEL_COLUMN_KEY, linkValue.id]);
   });
 
-  /** Ordering by a reified link value means nothing, and the list view's sort menu never lists it. */
   it('MarksTheReifiedLinkValueColumnNotSortable', () => {
     const [, linkValue] = build([
       propDef({ id: `${ONTO}linkToAuthorValue`, isLinkValueProperty: true, objectType: Constants.LinkValue }),
@@ -145,8 +134,6 @@ describe('buildColumnModel', () => {
     expect(readOnly.isEditable).toBe(false);
   });
 
-  // Matches `DataClassSortHeaderComponent`: both surfaces write the same `orderBy`, so a property
-  // sortable in one and not the other would let the table reach a sort the list cannot undo.
   it('MarksAListValuePropertyEditableButNotSortable', () => {
     const [, list] = build([propDef({ id: `${ONTO}hasListItem`, objectType: Constants.ListValue })]);
 
@@ -170,8 +157,6 @@ describe('buildColumnModel', () => {
     expect(columns.map(column => column.key)).toEqual([LABEL_COLUMN_KEY, b.id, c.id, a.id]);
   });
 
-  // `undefined` compares low, so a naive subtraction would float unordered properties to the front
-  // and silently reorder the table away from what the resource editor shows.
   it('PutsPropertiesWithoutGuiOrderLastKeepingTheirRelativeOrder', () => {
     const a = propDef({ id: `${ONTO}a` });
     const b = propDef({ id: `${ONTO}b` });
@@ -207,16 +192,12 @@ describe('buildColumnModel', () => {
     expect(columns[1].cardinality).toBe(Cardinality._1);
   });
 
-  // The cell renders its values through the resource viewer's template switcher, which takes the
-  // definition itself — it reads `guiElement` to choose between the three text renderings and
-  // `guiAttributes` to find a list's root. A column that lost it would fall back to `strval`.
   it('CarriesThePropertyDefinitionOntoTheColumnForTheViewerTemplates', () => {
     const def = propDef({ id: `${ONTO}hasText` });
 
     const [labelColumn, textColumn] = build([def]);
 
     expect(textColumn.propertyDefinition).toBe(def);
-    // The label is not a property value, so there is nothing for a viewer template to render.
     expect(labelColumn.propertyDefinition).toBeUndefined();
   });
 
@@ -241,15 +222,12 @@ describe('rightsColumns', () => {
     ]);
   });
 
-  // Gravsearch can neither order nor filter by the rights statement, so a control for either would
-  // be a control that does nothing.
   it('MarksThemNeitherSortableNorFilterable', () => {
     for (const column of columns) {
       expect(column).toMatchObject({ isSortable: false, isFilterable: false, isSticky: false });
     }
   });
 
-  // License and holder are the project's; authorship is the resource's own and edits in place.
   it('MarksOnlyAuthorshipEditable', () => {
     expect(columns.map(column => column.isEditable)).toEqual([false, false, true]);
   });

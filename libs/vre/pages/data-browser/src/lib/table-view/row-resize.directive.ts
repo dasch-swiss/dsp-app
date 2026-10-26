@@ -1,23 +1,13 @@
 import { DestroyRef, Directive, ElementRef, inject, input, NgZone, output } from '@angular/core';
 
-/** How much one arrow-key press moves the edge. Matches the column handle's step. */
 const KEYBOARD_STEP_PX = 16;
 
 /**
- * Drags a row's bottom edge to resize it, the counterpart of {@link ColumnResizeDirective}.
+ * Drags a row's bottom edge to resize it, the counterpart of {@link ColumnResizeDirective}. Put it
+ * on a thin element inside the sticky label cell, not the `<tr>`.
  *
- * Put this on a thin element inside the sticky label cell, not on the `<tr>`: a pointer-down on a
- * cell's values has to keep meaning what it means in the viewer everywhere except on the few pixels
- * that mean "resize". The label cell is the right host because it is the one cell always on screen,
- * however far the table is scrolled sideways.
- *
- * During the drag the height is written straight onto the `<tr>`, as the same two properties the
- * component's template binds once the gesture is committed: a `height`, which grows a short row,
- * and `--row-cap`, which caps a tall one. Two because `height` on a table row is only ever a
- * minimum — a row cannot be made shorter than its content that way — so the cells that are taller
- * than the cap scroll instead. Which cells those are is `ScrollWhenTallerDirective`'s decision;
- * capping every cell of the row would make the short ones scroll containers too, and the editor's
- * hover bubble would give each of them a scrollbar with nothing to scroll.
+ * The height is written to the `<tr>` as `height` (grows a short row) and `--row-cap` (caps a tall
+ * one, since a row's `height` is only a minimum); `ScrollWhenTallerDirective` decides which cells scroll.
  */
 @Directive({
   selector: '[appRowResize]',
@@ -25,8 +15,7 @@ const KEYBOARD_STEP_PX = 16;
     class: 'row-resize-handle',
     role: 'separator',
     'aria-orientation': 'horizontal',
-    // The ARIA window-splitter pattern, and what makes the handle reachable at all: the pointer
-    // gesture has no keyboard equivalent, so without this, resizing is a mouse-only feature.
+    // A focusable separator (ARIA window-splitter) keeps resize reachable without a pointer.
     tabindex: '0',
     'aria-keyshortcuts': 'ArrowUp ArrowDown Home',
     '[attr.aria-valuenow]': 'height()',
@@ -37,26 +26,17 @@ const KEYBOARD_STEP_PX = 16;
   },
 })
 export class RowResizeDirective {
-  /** Below this a row has no room for even one line plus its padding. */
   readonly minHeight = input.required<number>();
   /** The row's set height, for the announcement only; undefined while the row hugs its content. */
   readonly height = input.required<number | undefined>();
   /**
-   * What the row falls back to once its own height is cleared: the View-options height, or
-   * undefined for Auto. Applied here because the template's binding to it has not changed, so
-   * Angular would not write it back after the reset strips the inline style.
+   * What the row falls back to once its own height is cleared (the View-options height, or
+   * undefined for Auto); applied here because Angular would not rewrite an unchanged binding.
    */
   readonly fallbackHeight = input<number | undefined>(undefined);
 
-  /**
-   * Emitted once per gesture on release, and once per key press.
-   *
-   * Not per pointer move: the intermediate heights are already on screen, written straight to the
-   * DOM, and emitting them too would run change detection over every cell of the table on every
-   * frame of the drag.
-   */
+  /** Emitted once per gesture on release and once per key press, not per pointer move. */
   readonly heightChanged = output<number>();
-  /** Double-click or Home: give the row back to its content. */
   readonly heightReset = output<void>();
 
   private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -83,12 +63,11 @@ export class RowResizeDirective {
     this._startHeight = row.getBoundingClientRect().height;
     this._currentHeight = this._startHeight;
 
-    // Otherwise the drag also selects the text of the rows it passes over.
+    // Otherwise the drag also selects text.
     event.preventDefault();
     event.stopPropagation();
 
-    // Capture, so the pointer may leave the 6px handle — which it does immediately — without the
-    // gesture ending, and so the listeners can live on the handle rather than on the document.
+    // Capture lets the pointer leave the 6px handle mid-drag and keeps the listeners on the handle.
     this._host.nativeElement.setPointerCapture(event.pointerId);
 
     this._zone.runOutsideAngular(() => {
@@ -109,7 +88,6 @@ export class RowResizeDirective {
     });
   }
 
-  /** Back to whatever the content asks for, which is cheaper to offer than an undo. */
   onDoubleClick(): void {
     this._applyHeight(this.fallbackHeight());
     this.heightReset.emit();
@@ -127,7 +105,7 @@ export class RowResizeDirective {
       return;
     }
 
-    // Otherwise the arrow also scrolls the table while the row is being sized.
+    // Otherwise the arrow also scrolls the table.
     event.preventDefault();
 
     const current = this._host.nativeElement.closest('tr')?.getBoundingClientRect().height ?? this.minHeight();
@@ -150,12 +128,12 @@ export class RowResizeDirective {
     }
     this._row = undefined;
 
-    // A click without a drag sets nothing: storing the measured height would pin the row to it.
+    // A click without a drag must not pin the row to its measured height.
     if (Math.round(this._currentHeight) === Math.round(this._startHeight)) {
       return;
     }
 
-    // Back into the zone: the emission is what the host renders the row's height from afterwards.
+    // Back into the zone: the emission drives the host's rendered row height.
     this._zone.run(() => this.heightChanged.emit(Math.round(this._currentHeight)));
   }
 
@@ -165,8 +143,7 @@ export class RowResizeDirective {
       return;
     }
 
-    // On reset the template's bindings take over again on the next pass, from the row height the
-    // rest of the table uses; clearing here just stops the dragged value lingering until then.
+    // Clearing stops the dragged value lingering until the template bindings take over again.
     if (height === undefined) {
       row.style.removeProperty('height');
       row.style.removeProperty('--row-cap');

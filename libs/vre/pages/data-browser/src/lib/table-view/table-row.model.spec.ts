@@ -50,7 +50,6 @@ describe('buildRows — rights statement', () => {
     expect(row[RIGHTS_COLUMN_KEYS.authorship].isFallback).toBeFalsy();
   });
 
-  // As the viewer does: the project's default stands in, marked as such, never as the resource's own.
   it('FallsBackToTheProjectsDefaultAuthorshipMarkedAsAFallback', () => {
     const row = cells(resource(), { rights: RIGHTS, placeholderLabel: 'Placeholder' });
 
@@ -89,7 +88,6 @@ describe('buildRows — rights statement', () => {
     expect(row[RIGHTS_COLUMN_KEYS.copyrightHolder].isEmpty).toBe(true);
   });
 
-  // Not "not set" while the project's legal info is still loading: it may well be set.
   it('LeavesTheProjectsFieldsBlankUntilItsRightsHaveLoaded', () => {
     const row = cells(resource(['Ada']), { placeholderLabel: 'Placeholder' });
 
@@ -128,7 +126,6 @@ describe('buildRows — image', () => {
     });
   });
 
-  /** A full-size request swapped for the thumbnail, and not routed through Sipi's token fetch. */
   it('ShrinksAnExternalIiifImageRequestToAThumbnail', () => {
     const file = Object.assign(new ReadStillImageExternalFileValue(), {
       externalUrl: 'https://iiif.other.org/iiif/3/abc/full/max/0/default.jpg',

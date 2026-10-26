@@ -17,19 +17,9 @@ import {
   TableColumn,
 } from './table-column.model';
 
-/** What `GenerateProperty.commonProperty` matches on to drop file-value properties. */
 const HAS_FILE_VALUE = `${ApiConstants.apiKnoraOntologyUrl}#hasFileValue`;
 
-/**
- * Whether the resource editor can edit this property.
- *
- * Deliberately mirrors `GenerateProperty.commonProperty` rather than restating a rule of its own.
- * That function is what builds the `PropertyInfoValues` the editor components consume, so a property
- * it drops has no editor to mount — and a table that offered an edit affordance there would open a
- * cell that could never render. Keeping the two predicates in step is the whole reason this is a
- * named function instead of an inline filter: when `commonProperty` grows an exclusion, this is the
- * one other place that must learn about it.
- */
+/** Mirrors `GenerateProperty.commonProperty`: a property it drops has no editor to mount, so the two predicates must stay in step. */
 function isEditableInResourceEditor(propDef: ResourcePropertyDefinitionWithAllLanguages): boolean {
   return (
     propDef.isEditable &&
@@ -39,30 +29,13 @@ function isEditableInResourceEditor(propDef: ResourcePropertyDefinitionWithAllLa
   );
 }
 
-/**
- * Whether the header offers a sort control.
- *
- * The same rule `DataClassSortHeaderComponent` applies to its own menu. Both surfaces write the same
- * `orderBy`, so offering a property in one and not the other would let the user reach a sort through
- * the table that the list view cannot display or undo.
- */
+/** Same rule as `DataClassSortHeaderComponent`; both write the same `orderBy`, so they must agree. */
 function isSortableProperty(propDef: ResourcePropertyDefinitionWithAllLanguages): boolean {
-  // `isLinkValueProperty` as well as `isLinkProperty`. The sort header's rule names only the
-  // latter because `OntologyDataService` has already dropped every reified `…Value` property
-  // before it sees the list — the table builds its columns from the ontology directly, so it has
-  // to exclude them itself or it would offer a sort the list view cannot show, on a `LinkValue`
-  // whose ordering means nothing anyway.
+  // `isLinkValueProperty` too: the sort header relies on `OntologyDataService` having already dropped reified `…Value` properties, which the table's direct ontology read does not.
   return !propDef.isLinkProperty && !propDef.isLinkValueProperty && propDef.objectType !== Constants.ListValue;
 }
 
-/**
- * The label column, prepended to every class.
- *
- * Sortable — label is the Data tab's default sort. Editable, though not through a property editor:
- * its cell opens the viewer's own label dialog (DEV-7494). Sticky, and therefore also immovable and un-hideable
- * — with no cap on visible columns, horizontal scrolling is the normal case, and a
- * table whose rows lose their identity as you scroll right is not readable.
- */
+/** The label column: sticky, so immovable and un-hideable, and editable through the viewer's label dialog. */
 function labelColumn(label: string): TableColumn {
   return {
     key: LABEL_COLUMN_KEY,
@@ -78,16 +51,8 @@ function labelColumn(label: string): TableColumn {
 }
 
 /**
- * Turn a resource class into the table's columns.
- *
- * Pure, and takes its property definitions as an argument rather than reaching for a service, so the
- * classification rules above can be unit-tested without an ontology cache or an HTTP layer.
- *
- * Two sources are needed because neither is sufficient alone. `resClass.propertiesList` carries the
- * cardinality and the `guiOrder` but only an IRI for the property itself; the definitions carry the
- * label, the value type and the flags the classification turns on, but say nothing about how this
- * particular class uses them. A property the class lists but the ontology has no definition for is
- * skipped rather than rendered as a column with no header.
+ * Turn a resource class into the table's columns. A property the class lists but the ontology has
+ * no definition for is skipped.
  *
  * @param resClass the selected class
  * @param propertyDefinitions every property definition of the class's ontology, keyed by IRI
@@ -106,14 +71,7 @@ export function buildColumnModel(
         return undefined;
       }
 
-      // dsp-api reifies every link property into a `…Value` sibling — `linkToAuthor` and
-      // `linkToAuthorValue` — and both carry the same `rdfs:label`. A class listing both would
-      // otherwise produce two columns headed "Author(s)": one holding the values, and one that
-      // can never hold anything, because `getValues(linkToAuthor)` has nothing to return.
-      //
-      // The `…Value` sibling is the one that survives, which is the same choice
-      // `GenerateProperty.commonProperty` makes when it filters `isLinkProperty` out — so the
-      // column that remains is the one the resource editor can actually render and edit.
+      // Drop the link property and keep its reified `…Value` sibling (same label), as `commonProperty` does.
       if (propDef.isLinkProperty) {
         return undefined;
       }
@@ -130,8 +88,7 @@ export function buildColumnModel(
         guiOrder: hasProperty.guiOrder,
         isEditable: isEditableInResourceEditor(propDef),
         isSortable: isSortableProperty(propDef),
-        // Every property the shared chip bar can build a statement for. It applies the same
-        // editable-and-not-a-link-value rule, so a column outside it has no filter editor to open.
+        // The shared chip bar applies the same editable-and-not-a-link-value rule.
         isFilterable: propDef.isEditable && !propDef.isLinkValueProperty,
         isSticky: false,
         defaultWidth: defaultWidthForValueType(valueType),
@@ -140,10 +97,7 @@ export function buildColumnModel(
     })
     .filter((column): column is TableColumn => column !== undefined);
 
-  // `guiOrder` is optional, and a property without one must not sort ahead of the ontology's own
-  // ordering just because `undefined` compares low. Unordered properties go last, keeping their
-  // relative order — the same shape `GenerateProperty._initProps` produces, so the table's columns
-  // run in the order the resource editor shows the properties in.
+  // Unordered properties go last, matching `GenerateProperty._initProps`.
   const ordered = [...propertyColumns].sort((a, b) => {
     if (a.guiOrder === undefined && b.guiOrder === undefined) return 0;
     if (a.guiOrder === undefined) return 1;
@@ -155,12 +109,8 @@ export function buildColumnModel(
 }
 
 /**
- * The Resource Rights Statement as three trailing columns: license, copyright holder, authorship.
- *
- * Kept out of {@link buildColumnModel}, which turns a class's properties into columns — these are
- * not properties, and every class gets them alike. License and holder are read-only, like the
- * statement's in the viewer, where they are the project's; authorship is the resource's own and
- * edits in place (DEV-7494). Neither sortable nor filterable, because Gravsearch can do neither on them.
+ * The Resource Rights Statement as three trailing columns. License and copyright holder are
+ * read-only; authorship edits in place. None is sortable or filterable (Gravsearch cannot).
  *
  * @param titles the header of each column, already localised
  */
@@ -179,15 +129,11 @@ export function rightsColumns(titles: Readonly<Record<RightsField, string>>): Ta
   }));
 }
 
-/** Wide enough for a thumbnail to be recognisable, narrow enough not to crowd out the values. */
 const IMAGE_COLUMN_WIDTH = 120;
 
 /**
- * An image column, for a class whose resources are still images; none for any other class.
- *
- * Its own column rather than the file-value property's: `hasStillImageFileValue` is defined in the
- * knora-api ontology, not the project's, so {@link buildColumnModel} never sees a definition for it
- * — and its value is a file, which reads as a filename rather than as the image it is.
+ * An image column for a class whose resources are still images; none for any other class.
+ * `hasStillImageFileValue` is in the knora-api ontology, so {@link buildColumnModel} never sees its definition.
  *
  * @param title the header, already localised
  */

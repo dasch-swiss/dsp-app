@@ -56,7 +56,6 @@ describe('TableImageCellComponent', () => {
   afterEach(() => fixture?.destroy());
 
   describe('thumbnail', () => {
-    /** A bare `src` cannot carry the token, and Sipi refuses a non-public image without it. */
     it('FetchesADspImageWithTheUsersTokenAndShowsTheBlob', () => {
       render(SIPI_IMAGE);
 
@@ -97,7 +96,6 @@ describe('TableImageCellComponent', () => {
   });
 
   describe('preview', () => {
-    /** Sweeping the pointer down the column must not flash a preview per row. */
     it('OpensOnlyOnceTheHoverHasLasted', fakeAsync(() => {
       render(SIPI_IMAGE);
 
@@ -125,7 +123,6 @@ describe('TableImageCellComponent', () => {
       expect(preview()).toBeNull();
     }));
 
-    /** A touch screen has no hover. */
     it('OpensAtOnceOnAClick', () => {
       render(SIPI_IMAGE);
 
@@ -146,7 +143,6 @@ describe('TableImageCellComponent', () => {
       expect(preview()?.querySelector('img')?.getAttribute('src')).toBe('blob:image-2');
     });
 
-    /** Until the larger rendition arrives, a smaller image beats an empty frame. */
     it('ShowsTheThumbnailWhileTheLargerRenditionLoads', () => {
       const larger = new Subject<Blob>();
       getImageBlob.mockImplementation((url: string) => (url === SIPI_IMAGE.previewUrl ? larger : of(new Blob())));
@@ -178,7 +174,6 @@ describe('TableImageCellComponent', () => {
       expect(preview()).toBeNull();
     }));
 
-    /** The gap between thumbnail and preview must be crossable without the preview closing. */
     it('StaysOpenWhileThePointerMovesIntoThePreview', fakeAsync(() => {
       render(SIPI_IMAGE);
       fire(thumbnailButton(), 'click');
