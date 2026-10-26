@@ -49,6 +49,7 @@ What blocks a merge is set by the review prompt in `.github/workflows/claude.yml
 
 - A component that gains an injected dependency: every spec and story that renders it for real provides or stubs the new dependency (`CLAUDE.md` § Storybook Convention).
 - No newly skipped spec or Cypress test without a reason in the PR.
+- No new spec or story whose assertion another one already covers.
 
 ## Style
 
@@ -57,6 +58,7 @@ What blocks a merge is set by the review prompt in `.github/workflows/claude.yml
 - An output that carries no value is `EventEmitter<void>`.
 - Reactive forms stay typed: no `UntypedForm*`, `FormControl<any>` or bare `FormGroup` (`CONVENTIONS.md` § Forms, Material and Translation).
 - Empty SCSS files and exports the diff leaves unused are removed.
+- New comments follow `CONVENTIONS.md` § Comments: no history, no Linear ids, no restatement of the code or story name.
 
 ## Skip
 
