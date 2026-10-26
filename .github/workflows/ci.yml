@@ -579,6 +579,31 @@ jobs:
         env:
           PIXELEYE_BREAKPOINTS_TOKEN: ${{ secrets.PIXELEYE_BREAKPOINTS_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
+      # A cancelled run (a newer push to the branch) SIGKILLs the CLI before its
+      # own abort-on-signal handler runs: bash holds the signal until npm exits.
+      # The build it created stays `uploading`, and pixeleye's stuck-build job
+      # fails it without releasing the builds that target it (upstream bug), so
+      # every later build of the branch sits in `queued-processing` forever.
+      # Aborting it here releases them.
+      - name: Abort unfinished pixeleye builds
+        if: cancelled()
+        run: |
+          for token in "$PIXELEYE_TOKEN" "$PIXELEYE_BREAKPOINTS_TOKEN"; do
+            [ -n "$token" ] || continue
+            curl -sf -X POST "$PIXELEYE_ENDPOINT/v1/client/builds" \
+              -H "Authorization: Bearer $token" -H 'Content-Type: application/json' \
+              -d "{\"shas\":[\"$GITHUB_SHA\"]}" \
+              | jq -r '.[] | select(.status == "uploading" or .status == "queued-uploading") | .id' \
+              | while read -r id; do
+                  echo "Aborting pixeleye build $id"
+                  curl -sf -X POST "$PIXELEYE_ENDPOINT/v1/client/builds/$id/abort" \
+                    -H "Authorization: Bearer $token" -o /dev/null || echo "::warning::could not abort pixeleye build $id"
+                done
+          done
+        env:
+          PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
+          PIXELEYE_BREAKPOINTS_TOKEN: ${{ secrets.PIXELEYE_BREAKPOINTS_TOKEN }}
+          PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
 
   pixeleye-status-fallback:
     # The pixeleye app only posts its status for a commit it received snapshots
