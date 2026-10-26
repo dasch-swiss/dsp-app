@@ -1,6 +1,7 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { ESCAPE } from '@angular/cdk/keycodes';
 import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
+import { DOCUMENT } from '@angular/common';
 import {
   afterNextRender,
   Component,
@@ -72,7 +73,7 @@ export const FIRST_APPEARANCE_DELAY_MS = 2000;
           aria-describedby="data-tab-tour-body"
           data-cy="data-tab-tour"
           cdkTrapFocus
-          [cdkTrapFocusAutoCapture]="true">
+          [cdkTrapFocusAutoCapture]="captureFocus()">
           <span class="arrow" aria-hidden="true"></span>
 
           <div class="meta">
@@ -148,6 +149,14 @@ export class DataTabTourComponent {
 
   private readonly _tourService = inject(DataTabTourService);
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly _document = inject(DOCUMENT);
+
+  /**
+   * Whether the bubble takes focus when it opens. Not when the user is already in a page control:
+   * the tour opens on a timer, and someone typing in the search field would have their next
+   * Space or Enter press Next instead.
+   */
+  readonly captureFocus = signal(false);
 
   constructor() {
     // A moment after the first render: the anchors are laid out by then, and the page has had time
@@ -156,7 +165,11 @@ export class DataTabTourComponent {
       if (this._tourService.hasBeenSeen()) {
         return;
       }
-      const timer = setTimeout(() => this._goTo(this._nextRenderedStep(0, 1)), FIRST_APPEARANCE_DELAY_MS);
+      const timer = setTimeout(() => {
+        const focused = this._document.activeElement;
+        this.captureFocus.set(!focused || focused === this._document.body);
+        this._goTo(this._nextRenderedStep(0, 1));
+      }, FIRST_APPEARANCE_DELAY_MS);
       this._destroyRef.onDestroy(() => clearTimeout(timer));
     });
 

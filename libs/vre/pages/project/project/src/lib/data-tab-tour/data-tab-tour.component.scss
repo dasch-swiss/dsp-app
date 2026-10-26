@@ -1,3 +1,5 @@
+@use 'config' as *;
+
 // The ring around the anchor. Its outer shadow is what dims the rest of the page; the pane it sits
 // in lets clicks through (see `.data-tab-tour-spotlight-pane` in the global styles).
 .spotlight {
@@ -5,8 +7,8 @@
   height: 100%;
   border-radius: 6px;
   box-shadow:
-    0 0 0 2px #336790,
-    0 0 0 9999px rgba(17, 24, 39, 0.55);
+    0 0 0 2px $primary,
+    0 0 0 9999px rgba($cool_gray_900, 0.55);
 }
 
 .bubble {
@@ -18,12 +20,12 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #fff;
+  background: $white;
   border-radius: 8px;
   box-shadow:
-    0 2px 4px -1px rgba(11, 11, 11, 0.2),
-    0 4px 5px 0 rgba(11, 11, 11, 0.14),
-    0 1px 10px 0 rgba(11, 11, 11, 0.12);
+    0 2px 4px -1px rgba($black, 0.2),
+    0 4px 5px 0 rgba($black, 0.14),
+    0 1px 10px 0 rgba($black, 0.12);
 }
 
 // Points up at the anchor, from whichever end the bubble lines up with.
@@ -33,7 +35,7 @@
   left: 28px;
   width: 14px;
   height: 14px;
-  background: #fff;
+  background: $white;
   transform: rotate(45deg);
 }
 
@@ -53,8 +55,8 @@
 .badge {
   padding: 2px 6px;
   border-radius: 4px;
-  background: #eaeff3;
-  color: #336790;
+  background: $primary_50;
+  color: $primary;
   font-size: 12px;
   font-weight: 500;
   line-height: 16px;
@@ -63,11 +65,11 @@
 .progress {
   flex-grow: 1;
   font-size: 12px;
-  color: #6b7280;
+  color: $cool_gray_500;
 }
 
 .close {
-  color: #6b7280;
+  color: $cool_gray_500;
 }
 
 .title {
@@ -81,7 +83,7 @@
   margin: 0;
   font-size: 14px;
   line-height: 20px;
-  color: #4b5563;
+  color: $cool_gray_600;
 }
 
 .footer {

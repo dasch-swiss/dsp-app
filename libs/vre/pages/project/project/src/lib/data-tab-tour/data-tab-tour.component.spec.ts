@@ -74,6 +74,25 @@ describe('DataTabTourComponent', () => {
     expect(bubble()?.textContent).toContain('one.title');
   });
 
+  // The focus trap itself only moves focus to elements it can see, which jsdom cannot lay out, so
+  // these check the decision the trap is given rather than where focus ends up.
+  it('does not take focus when the user is already in a page control', async () => {
+    await render(true, false);
+    (document.querySelector('button') as HTMLButtonElement).focus();
+
+    jest.advanceTimersByTime(FIRST_APPEARANCE_DELAY_MS);
+    fixture.detectChanges();
+
+    expect(bubble()).not.toBeNull();
+    expect(fixture.componentInstance.tour().captureFocus()).toBe(false);
+  });
+
+  it('takes focus when nothing on the page has it', async () => {
+    await render();
+
+    expect(fixture.componentInstance.tour().captureFocus()).toBe(true);
+  });
+
   it('stays closed once the tour has been seen', async () => {
     localStorage.setItem(DATA_TAB_TOUR_STORAGE_KEY, 'x');
 
