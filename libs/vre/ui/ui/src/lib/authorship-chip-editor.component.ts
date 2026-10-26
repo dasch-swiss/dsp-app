@@ -38,9 +38,10 @@ import { MatIconModule } from '@angular/material/icon';
           [placeholder]="placeholder"
           [matChipInputFor]="chipGrid"
           [matChipInputAddOnBlur]="true"
+          (focus)="hasBeenFocused = true"
           (matChipInputTokenEnd)="add($event)" />
       </mat-chip-grid>
-      @if (hint) {
+      @if (hint && (hasBeenFocused || !hintAfterFirstFocus)) {
         <mat-hint>{{ hint }}</mat-hint>
       }
     </mat-form-field>
@@ -59,11 +60,19 @@ export class AuthorshipChipEditorComponent {
   @Input() placeholder = '';
   /** Optional helper text shown under the field (e.g. "Type a name and press Enter to add each author"). */
   @Input() hint?: string;
+  /**
+   * Show the hint from the input's first focus on rather than from the start, so a compact form
+   * reserves no line under an untouched field. Once shown it stays: removing it on blur would move
+   * whatever is below the field while it is being clicked.
+   */
+  @Input() hintAfterFirstFocus = false;
   /** Optional data-cy hook for E2E tests. */
   @Input() dataCy?: string;
 
   /** Builder for the per-chip remove-button aria-label. Interpolates the author name in a plain string. */
   @Input() removeAuthorLabel: (name: string) => string = name => `Remove ${name}`;
+
+  hasBeenFocused = false;
 
   add(event: MatChipInputEvent): void {
     const trimmed = (event.value || '').trim();

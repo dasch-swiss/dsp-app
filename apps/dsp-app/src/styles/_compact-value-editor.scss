@@ -1,0 +1,24 @@
+@use '@angular/material' as mat;
+
+// The resource editor's forms at Material's smallest form field (36px): the value editors, their
+// comment, and the create-resource form. Hosts pair this class with provideCompactFormFieldOptions()
+// (outline appearance: a filled field hides its label below 52px).
+//
+// Must stay global: the density mixins emit nested selectors that a component's emulated
+// encapsulation would scope away from the editors' internals.
+.compact-value-editor {
+  @include mat.form-field-density(-5);
+  @include mat.icon-button-density(-3);
+  @include mat.chips-density(-2);
+
+  // Components outside Material's density system, sized to match.
+  --date-field-min-height: 36px;
+  --date-value-display: flex;
+  --date-fields-margin-top: 0;
+  --ck-editor-margin-bottom: 0;
+  --create-form-label-padding-block: 8px;
+
+  .ck-editor__editable_inline {
+    min-height: 96px;
+  }
+}

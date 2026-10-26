@@ -66,7 +66,9 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
       <div class="edit-line">
         <div class="edit-content">
           @if (template) {
-            <ng-container *ngTemplateOutlet="template; context: { item: group.controls.item }"></ng-container>
+            <div class="compact-value-editor" data-cy="value-editor">
+              <ng-container *ngTemplateOutlet="template; context: { item: group.controls.item }"></ng-container>
+            </div>
           }
           @if (group.controls.comment.value !== null) {
             <app-property-value-basic-comment [control]="group.controls.comment" />
@@ -122,7 +124,9 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
         display: flex;
         align-items: flex-start;
         gap: 4px;
-        padding: var(--property-value-padding-block, 16px) 0;
+        /* The top padding centres a 36px editor on the label's first line, and never exceeds a
+           denser host's own padding (the table's 4px). */
+        padding: min(var(--property-value-padding-block, 16px), 6px) 0 var(--property-value-padding-block, 16px);
         border-radius: 4px;
         background: var(--property-value-edit-background, none);
       }
@@ -131,7 +135,7 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
         min-width: 0;
       }
       .edit-actions {
-        padding-top: 14px;
+        padding-top: 4px;
       }
       .comment-toggle {
         --mat-button-text-container-height: 26px;

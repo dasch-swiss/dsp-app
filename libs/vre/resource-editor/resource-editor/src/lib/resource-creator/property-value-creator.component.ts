@@ -16,9 +16,11 @@ import { propertiesTypeMapping } from '../properties/properties-display/property
   selector: 'app-property-value-creator',
   template: `
     @if (template) {
-      <div style="display: flex; position: relative" [ngClass]="{ works: isValid$ | async }">
+      <div class="value-row" [ngClass]="{ works: isValid$ | async }">
         <div style="flex: 1">
-          <ng-container *ngTemplateOutlet="template; context: { item: formGroup.controls.item }" />
+          <div class="compact-value-editor" data-cy="value-editor">
+            <ng-container *ngTemplateOutlet="template; context: { item: formGroup.controls.item }" />
+          </div>
           @if (commentIsNotNull) {
             <app-property-value-basic-comment [control]="formGroup.controls.comment" />
           }
@@ -53,6 +55,13 @@ import { propertiesTypeMapping } from '../properties/properties-display/property
   `,
   styles: [
     `
+      .value-row {
+        display: flex;
+        position: relative;
+        /* The value editors no longer reserve an empty error line under each field (DEV-7611), so
+           consecutive values of the same property need their own space between them. */
+        margin-bottom: 8px;
+      }
       .action-buttons {
         width: 140px;
         position: absolute;

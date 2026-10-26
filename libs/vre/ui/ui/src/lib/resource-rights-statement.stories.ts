@@ -221,10 +221,26 @@ export const EditsAuthorshipInlineWithoutADialog: Story = {
       await expect(canvasElement.querySelector('mat-chip-grid')).not.toBeNull();
       await expect(document.querySelector('mat-dialog-container')).toBeNull();
     });
-    await step('Cancel and Save sit where Edit was; Cancel closes the editor', async () => {
+    // Ends with the editor open, so its visual snapshot shows the editor.
+    await step('Cancel and Save sit where Edit was', async () => {
+      await expect(canvasElement.querySelector('[data-cy="authorship-cancel"]')).not.toBeNull();
       await expect(canvasElement.querySelector('[data-cy="authorship-save"]')).not.toBeNull();
+    });
+  },
+};
+
+export const ClosesTheAuthorshipEditorOnCancel: Story = {
+  name: 'Closes the authorship editor on Cancel, back to the read-only line',
+  args: EditsAuthorshipInlineWithoutADialog.args,
+  play: async ({ canvasElement, step }) => {
+    await step('Open the editor', async () => {
+      await userEvent.click(within(canvasElement).getByRole('button', { name: /edit/i }));
+      await expect(canvasElement.querySelector('mat-chip-grid')).not.toBeNull();
+    });
+    await step('Cancel closes it and the authorship shows again', async () => {
       await userEvent.click(canvasElement.querySelector('[data-cy="authorship-cancel"]') as HTMLElement);
       await expect(canvasElement.querySelector('mat-chip-grid')).toBeNull();
+      await expect(within(canvasElement).getByText('Lotte Reiniger')).toBeInTheDocument();
     });
   },
 };

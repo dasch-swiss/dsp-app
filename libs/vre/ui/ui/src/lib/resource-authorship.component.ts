@@ -15,8 +15,14 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-resource-authorship',
   template: `
     @if (editing) {
+      <!-- Compact like the value editors: the global class sets the 36px density, and a filled field
+           hides its content at that height, hence the outline. On the field only, so Cancel and
+           Save keep their 28px. -->
       <div class="value-line edit-line">
-        <mat-form-field class="authorship-edit-field" subscriptSizing="dynamic">
+        <mat-form-field
+          class="authorship-edit-field compact-value-editor"
+          appearance="outline"
+          subscriptSizing="dynamic">
           <mat-chip-grid #chipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
             @for (author of editAuthorshipList; track $index) {
               <mat-chip-row (removed)="removeEditAuthor($index)">
@@ -166,8 +172,9 @@ import { TranslatePipe } from '@ngx-translate/core';
         flex: 1;
         min-width: 0;
       }
+      /* Centres the 28px buttons on the field's first line of chips (44px with chips). */
       .edit-actions {
-        padding-top: 14px;
+        padding-top: 8px;
       }
     `,
   ],

@@ -496,6 +496,13 @@ tr.is-checked .row-controls [data-cy='row-check'] {
   --property-value-padding-block: 4px;
   --property-value-edit-background: #f5f7f9;
   --authorship-line-padding-inline-start: 0;
+  // A value being edited is written at the cells' size, not Material's 16px (DEV-7611). Material's
+  // own token, which inherits into the editor's fields.
+  @include mat.form-field-overrides(
+    (
+      container-text-size: 13px,
+    )
+  );
 
   .mat-mdc-cell,
   .mat-mdc-header-cell {

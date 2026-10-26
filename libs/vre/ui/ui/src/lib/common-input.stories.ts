@@ -1,5 +1,6 @@
 import { FormControl, Validators } from '@angular/forms';
-import type { Meta, StoryObj } from '@storybook/angular';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { CommonInputComponent } from './common-input.component';
@@ -181,6 +182,30 @@ export const ReservesSpaceBelowPristineField: Story = {
       // the floor is loose enough to survive a theme tweak and tight enough to catch a collapse.
       const gap = second.getBoundingClientRect().top - first.getBoundingClientRect().bottom;
       await expect(gap).toBeGreaterThanOrEqual(12);
+    });
+  },
+};
+
+export const CollapsesSubscriptWhenContextAsksForDynamic: Story = {
+  name: 'Reserves no space below a pristine field where the context asks for dynamic sizing',
+  args: {
+    control: new FormControl('') as FormControl<string>,
+    label: 'Example: Lorem ipsum ...',
+    type: 'text',
+  },
+  // The resource editor's compact value editors provide `subscriptSizing: 'dynamic'` through
+  // Material's default options and space their values themselves (DEV-7611). There, the line kept
+  // for stacked forms above is the empty space the editor is rid of.
+  decorators: [
+    applicationConfig({
+      providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
+    await step('The field is no taller than its input box', async () => {
+      const field = canvasElement.querySelector('mat-form-field') as HTMLElement;
+      const box = canvasElement.querySelector('.mat-mdc-text-field-wrapper') as HTMLElement;
+      await expect(field.getBoundingClientRect().height).toBeLessThanOrEqual(box.getBoundingClientRect().height + 0.5);
     });
   },
 };
