@@ -3,10 +3,11 @@ name: CI
 on: [ push ]
 
 # Prevent wasting resources by canceling in-progress runs when a new run is triggered
-# on the same branch
+# on the same branch. main is exempt: cancelling it mid-upload leaves a pixeleye
+# build that never completes, and every later build queues behind it.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
 
