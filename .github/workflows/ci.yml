@@ -3,10 +3,11 @@ name: CI
 on: [ push ]
 
 # Prevent wasting resources by canceling in-progress runs when a new run is triggered
-# on the same branch
+# on the same branch. main is exempt: cancelling it mid-upload leaves a pixeleye
+# build that never completes, and every later build queues behind it.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
 
@@ -456,7 +457,7 @@ jobs:
       - name: Build Storybook
         run: npx nx run dsp-app:build-storybook:ci
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
       - name: Serve and run interaction tests
         run: |
           npx http-server dist/storybook --port 6006 --silent &
@@ -642,7 +643,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: 3.14
+          python-version: 3.15
           cache: 'pip'
       - name: Install dependencies
         run: pip install -r docs/requirements.txt

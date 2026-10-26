@@ -416,7 +416,8 @@ describe('Resource', () => {
 
       // create
       po.addInitialLabel();
-      cy.get('.mat-datepicker-toggle > .mdc-icon-button > .mat-mdc-button-touch-target').click();
+      // The toggle button itself, not its touch target, which compact density hides (DEV-7611).
+      cy.get('.mat-datepicker-toggle button').click();
       cy.get(':nth-child(4) > [data-mat-col="3"] > .mat-calendar-body-cell > .mat-calendar-body-cell-content').type(
         '{enter}'
       );

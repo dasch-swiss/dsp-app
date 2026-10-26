@@ -48,7 +48,7 @@ for f in ['de', 'fr', 'it']:
 PY
 ```
 
-**Storybook caveat:** some libs render stories against a static translation object instead of `en.json` (e.g. `libs/vre/pages/search/advanced-search/src/lib/stories.helpers.ts`). A new key used by a component that appears in those stories must be added there too, or the story renders the raw key. Parity checking `de`/`fr`/`it` will not catch it.
+**Storybook caveat:** some libs render stories against a static translation object instead of `en.json` (e.g. `libs/vre/pages/search/search-filters/src/lib/stories.helpers.ts`). A new key used by a component that appears in those stories must be added there too, or the story renders the raw key. Parity checking `de`/`fr`/`it` will not catch it.
 
 ## Workflow for Translation Changes
 

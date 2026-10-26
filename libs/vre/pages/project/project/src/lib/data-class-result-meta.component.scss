@@ -1,0 +1,78 @@
+.result-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+}
+
+.result-meta.is-refreshing .range,
+.result-meta.is-refreshing .page-indicator {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.range {
+  font: 400 13px/20px Roboto, sans-serif;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+}
+
+.page-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 13px/20px Roboto, sans-serif;
+  color: rgba(0, 0, 0, 0.7);
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+/* Sized to the last page number so the row does not shift between classes. */
+.page-input {
+  box-sizing: content-box;
+  width: calc(var(--page-digits, 1) * 1ch);
+  height: 20px;
+  padding: 2px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
+  font: inherit;
+  color: rgba(0, 0, 0, 0.87);
+  text-align: center;
+  background: transparent;
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--mat-sys-primary, #336790);
+  }
+}
+
+.pager-button {
+  --mdc-icon-button-state-layer-size: 28px;
+
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  /* Disabled, not hidden: the pager must not change width at its edges. */
+  &:disabled {
+    opacity: 0.35;
+  }
+}

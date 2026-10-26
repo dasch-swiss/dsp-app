@@ -136,6 +136,7 @@
         "libs/vre/pages/ontology/ontology/**/*",
         "libs/vre/pages/project/project/**/*",
         "libs/vre/pages/search/advanced-search/**/*",
+        "libs/vre/pages/search/search-filters/**/*",
         "libs/vre/pages/search/search/**/*",
         "libs/vre/pages/system/system/**/*",
         "libs/vre/pages/user-settings/user/**/*",

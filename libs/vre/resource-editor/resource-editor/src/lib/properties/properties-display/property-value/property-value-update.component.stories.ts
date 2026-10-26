@@ -59,7 +59,7 @@ export default meta;
 type Story = StoryObj<PropertyValueUpdateComponent>;
 
 export const DefaultView: Story = {
-  name: 'Shows edit form with save and undo buttons',
+  name: 'Shows edit form with save and cancel buttons',
   args: { index: 0 },
   play: async ({ canvasElement, step }) => {
     await step('Save button is rendered', async () => {

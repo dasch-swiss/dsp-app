@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipInput, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -40,6 +40,7 @@ import { finalize } from 'rxjs/operators';
         [matAutocomplete]="auto"
         [matAutocompleteDisabled]="filteredAuthorship.length === 0"
         [formControl]="autocompleteFormControl"
+        (focus)="hasBeenFocused = true"
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
         (matChipInputTokenEnd)="addItemFromMaterial($event)" />
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectItem($event)">
@@ -50,7 +51,9 @@ import { finalize } from 'rxjs/operators';
         }
       </mat-autocomplete>
 
-      <mat-hint>{{ 'resourceEditor.resourceCreator.authorship.pressEnterOrTab' | translate }}</mat-hint>
+      @if (hasBeenFocused || !hintWaitsForFocus) {
+        <mat-hint>{{ 'resourceEditor.resourceCreator.authorship.pressEnterOrTab' | translate }}</mat-hint>
+      }
 
       @if (control.invalid && control.touched && control.errors![0]; as error) {
         <mat-error>
@@ -79,6 +82,14 @@ export class AuthorshipFormFieldComponent implements OnInit, OnDestroy {
 
   readonly separatorKeysCodes: number[] = [ENTER, TAB];
   selectedItems: string[] = [];
+  hasBeenFocused = false;
+  /**
+   * In a compact host (dynamic subscript) the hint waits for the first focus instead of taking a
+   * line under every untouched field; once shown it stays, so leaving the field does not move what
+   * is below it.
+   */
+  readonly hintWaitsForFocus =
+    inject(MAT_FORM_FIELD_DEFAULT_OPTIONS, { optional: true })?.subscriptSizing === 'dynamic';
   availableAuthorship: string[] = [];
   filteredAuthorship: string[] = [];
   loading = true;

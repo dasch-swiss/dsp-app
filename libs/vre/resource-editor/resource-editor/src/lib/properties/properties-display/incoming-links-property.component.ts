@@ -16,12 +16,12 @@ import { sortByKeys } from './property-value/sortByKeys';
   selector: 'app-incoming-links-property',
   template: `
     @if (incomingLinks$ | async; as links) {
-      <app-property-row
-        [tooltip]="'resourceEditor.propertiesDisplay.incomingLinkTooltip' | translate"
-        [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
-        [borderBottom]="true"
-        [isEmptyRow]="links.length === 0">
-        @if (links.length > 0) {
+      @if (links.length > 0) {
+        <app-property-row
+          [tooltip]="'resourceEditor.propertiesDisplay.incomingLinkTooltip' | translate"
+          [label]="'resourceEditor.propertiesDisplay.incomingLinkLabel' | translate"
+          [borderBottom]="true"
+          [isEmptyRow]="false">
           <app-incoming-standoff-link-value
             [links]="links | slice: pageIndex * pageSize : (pageIndex + 1) * pageSize" />
           @if (links.length > pageSize) {
@@ -31,8 +31,8 @@ import { sortByKeys } from './property-value/sortByKeys';
               [itemsNumber]="links.length"
               (pageChanged)="pageChanged($event)" />
           }
-        }
-      </app-property-row>
+        </app-property-row>
+      }
     } @else {
       <app-property-row
         [tooltip]="'resourceEditor.propertiesDisplay.incomingLinkTooltip' | translate"

@@ -43,12 +43,12 @@ export default meta;
 type Story = StoryObj<StandoffLinksPropertyComponent>;
 
 export const NoStandoffLinks: Story = {
-  name: 'Shows empty standoff links property row',
+  name: 'Hides standoff links row when there are none, even with all properties shown',
   args: { resource: makeResource() },
   play: async ({ canvasElement, step }) => {
-    await step('Property row is rendered', async () => {
+    await step('No property row is rendered', async () => {
       const row = canvasElement.querySelector('.property-row');
-      await expect(row).not.toBeNull();
+      await expect(row).toBeNull();
     });
   },
 };
