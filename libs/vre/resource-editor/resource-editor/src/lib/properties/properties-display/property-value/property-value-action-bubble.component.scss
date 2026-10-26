@@ -1,16 +1,6 @@
+// A flex item of the value's row, not a layer over it. The buttons' look is in `property-value-actions.scss`.
 :host {
   display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.action-bubble {
-  position: absolute;
-  right: 16px;
-  top: 8px;
+  flex: none;
+  padding-top: calc(var(--property-value-padding-block, 16px) - 4px);
 }

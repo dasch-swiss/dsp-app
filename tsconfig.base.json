@@ -30,6 +30,7 @@
       "@dasch-swiss/vre/pages/ontology/ontology": ["libs/vre/pages/ontology/ontology/src/index.ts"],
       "@dasch-swiss/vre/pages/project/project": ["libs/vre/pages/project/project/src/index.ts"],
       "@dasch-swiss/vre/pages/search/advanced-search": ["libs/vre/pages/search/advanced-search/src/index.ts"],
+      "@dasch-swiss/vre/pages/search/search-filters": ["libs/vre/pages/search/search-filters/src/index.ts"],
       "@dasch-swiss/vre/pages/search/search": ["libs/vre/pages/search/search/src/index.ts"],
       "@dasch-swiss/vre/pages/system/system": ["libs/vre/pages/system/system/src/index.ts"],
       "@dasch-swiss/vre/pages/user-settings/user": ["libs/vre/pages/user-settings/user/src/index.ts"],

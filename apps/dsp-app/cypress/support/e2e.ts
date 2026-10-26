@@ -63,6 +63,12 @@ before(() => {
   });
 });
 
+// The Data tab tour (DEV-7545) opens over the toolbar on first visit and would cover what specs
+// click. Mark it seen before the app boots; a spec about the tour can remove the key again.
+Cypress.on('window:before:load', win => {
+  win.localStorage.setItem('dsp.dataBrowser.tour.v1', 'seen-in-e2e');
+});
+
 // Re-login before each test for system-admin specs.
 // testIsolation: true (Cypress default) clears localStorage between tests, wiping the ACCESS_TOKEN.
 // Keeping login in beforeEach ensures each test starts authenticated.

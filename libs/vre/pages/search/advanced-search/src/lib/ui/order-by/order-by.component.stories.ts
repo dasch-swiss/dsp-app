@@ -1,13 +1,13 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
+import { OrderByItem } from '@dasch-swiss/vre/pages/search/search-filters';
+import { toLabels } from '@dasch-swiss/vre/pages/search/search-filters';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { OrderByItem } from '../../model';
 import { DerivedSearchStateService } from '../../service/derived-search-state.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
 import { makeDerivedSearchStateServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
-import { toLabels } from '../../util/labels';
 import { OrderByComponent } from './order-by.component';
 
 const SAMPLE_ORDER_BY_ITEMS: OrderByItem[] = [

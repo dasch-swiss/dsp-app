@@ -8,28 +8,30 @@ import type { ResourceFetcherDialogComponent } from '../resource-fetcher-dialog.
 
 @Component({
   selector: 'app-resource-explorer-button',
-  template: `<button
-    mat-icon-button
-    (click)="tryDialog()"
-    style="
-    color: #646465;
-    transform: scale(0.8);
-    position: relative;
-    top: -15px;">
+  template: `<button mat-icon-button class="explorer-button" [attr.aria-label]="ariaLabel" (click)="tryDialog()">
     <mat-icon>arrow_circle_right</mat-icon>
   </button>`,
   imports: [MatButtonModule, MatIconModule],
+  // The offsets are custom properties so a host can lay the button out itself without ::ng-deep.
   styles: [
     `
       :host {
-        display: block;
-        height: 0;
+        display: var(--resource-explorer-display, block);
+        height: var(--resource-explorer-height, 0);
+      }
+
+      .explorer-button {
+        color: #646465;
+        transform: scale(var(--resource-explorer-scale, 0.8));
+        position: relative;
+        top: var(--resource-explorer-top, -15px);
       }
     `,
   ],
 })
 export class ResourceExplorerButtonComponent {
   @Input({ required: true }) resourceIri!: string;
+  @Input() ariaLabel?: string;
   constructor(private readonly _dialog: MatDialog) {}
   tryDialog() {
     from(import('../resource-fetcher-dialog.component').then(m => m.ResourceFetcherDialogComponent)).subscribe(
