@@ -19,7 +19,7 @@ What blocks a merge is set by the review prompt in `.github/workflows/claude.yml
 - Two features needing the same code: relocate it (ADR-0004 d2), or declare a port in the consumer and wire it in `apps/dsp-app` (d4). Cross-feature references are opaque ids (d5). A generated OpenAPI DTO does not become shared code because two places need a similar shape (d6).
 - Feature state is provided by the feature, not `providedIn: 'root'` (ADR-0003 d1, d3). One writer per value (d4). State that must survive navigation lives in the URL (d5).
 - A new library barrel uses curated named exports (ADR-0002 d3). A boundary-rule suppression carries a reason (d2). Removing an export from `libs/dsp-js/src/index.ts` breaks NPM consumers (d5).
-- New code goes into a library named for what it holds, never into `app-common`, `app-helper-services` or `app-common-to-move` (ADR-0005 d3, d4). A generic `ui/*` library takes no domain logic.
+- Code that two features need goes into a new library named for what it holds, not added to `app-common`, `app-helper-services` or `app-common-to-move` (ADR-0005 d3, d4); changing code already there is fine. A generic `ui/*` library takes no domain logic.
 - DSP-API calls live in a `*ApiService` under `3rd-party-services/api`, and a new API field is added to the client the consuming path reads (`CONVENTIONS.md` § Library Boundaries, `CLAUDE.md` § Working with APIs).
 - An existing component, pipe or helper that already does the job is reused, not reimplemented next to it.
 
@@ -41,6 +41,9 @@ What blocks a merge is set by the review prompt in `.github/workflows/claude.yml
 - A new or changed key exists in `en.json`, `de.json`, `fr.json` and `it.json` (key parity, `apps/dsp-app/src/assets/i18n/CLAUDE.md`). A key whose meaning changes gets a new key. No `rm.json`.
 - Media queries use `bp-up` / `bp-down`; no `::ng-deep` (`CONVENTIONS.md` § Components).
 - Elements are reached through `@ViewChild` or a service, not `document.getElementById` or a CSS selector query.
+- No static `style="…"` attribute; dynamic `[style.x]` bindings for computed values are fine.
+- No new component-method call in a binding or interpolation; use a pipe, `computed()` or a field. Signal reads are not method calls.
+- Colors come from the palettes in `apps/dsp-app/src/styles/_config.scss`; no new hex or rgb value in a component's SCSS or template.
 
 ### Tests & stories
 
@@ -52,11 +55,12 @@ What blocks a merge is set by the review prompt in `.github/workflows/claude.yml
 - Injected fields are `private readonly _name`.
 - No new `any`. No widening a type to `| null` or `| undefined` without a reason.
 - An output that carries no value is `EventEmitter<void>`.
+- Reactive forms stay typed: no `UntypedForm*`, `FormControl<any>` or bare `FormGroup` (`CONVENTIONS.md` § Forms, Material and Translation).
 - Empty SCSS files and exports the diff leaves unused are removed.
 
 ## Skip
 
-- Issues on lines the diff does not change, or behaviour it does not alter. Pre-existing problems are at most one follow-up note, never a finding.
+- Issues on lines the diff does not change, or behaviour it does not alter. Pre-existing problems go in a separate follow-up list, never into the findings.
 - "Add tests" or "coverage is missing" without naming a behaviour that could regress.
 - Requests for JSDoc or explanatory comments (`CONVENTIONS.md` § Comments deletes by default).
 - "Verify X" without a named failure: compatibility checks on dependency bumps, "this import should be verified", informational or "good practice" notes.
