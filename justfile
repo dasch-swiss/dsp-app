@@ -215,13 +215,13 @@ ci: build test lint node-version-check playwright-version-check tsconfig-paths-c
 typecheck-e2e: install openapi-generate
     pnpm exec tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json
 
-# Start the dsp-api stack Cypress runs against from DSP_API_DIR: a fresh test database, sipi, ingest, API
+# Start the dsp-api stack Cypress runs against from DSP_API_DIR: a fresh test database, sipi, API (serving ingest)
 e2e-stack-up:
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{ dsp_api_dir }}"
     just init-db-test
-    docker compose -f docker-compose.yml up -d sipi ingest api
+    docker compose -f docker-compose.yml up -d sipi api
     ./modules/webapi/scripts/wait-for-api.sh
 
 # Stop the dsp-api stack
