@@ -27,7 +27,7 @@ const Editor = (EditorNs as EditorNamespace).default ?? EditorNs;
       [formControl]="footnoteControl"
       [config]="ckEditor.config"
       [editor]="editor"
-      style="margin-bottom: 22px; display: block;"
+      style="margin-bottom: var(--ck-editor-margin-bottom, 22px); display: block;"
       (ready)="onEditorReady()" />
     @if (control.touched && control.errors?.['crossProjectLink']; as error) {
       <mat-error>

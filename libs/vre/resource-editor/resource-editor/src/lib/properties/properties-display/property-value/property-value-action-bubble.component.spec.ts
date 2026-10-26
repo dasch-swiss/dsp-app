@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Cardinality, ReadValue } from '@dasch-swiss/dsp-js';
+import { UserService } from '@dasch-swiss/vre/core/session';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { ResourceFetcherService } from '../../../representation/resource-fetcher.service';
@@ -46,6 +47,7 @@ describe('PropertyValueActionBubbleComponent', () => {
       providers: [
         { provide: PropertyValueService, useValue: mockPropertyValueService },
         { provide: ResourceFetcherService, useValue: mockResourceFetcherService },
+        { provide: UserService, useValue: { isLoggedIn$: of(true) } },
         provideTranslateService(),
         TranslateService,
       ],

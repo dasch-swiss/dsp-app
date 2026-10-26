@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { KnoraDate, KnoraPeriod } from '@dasch-swiss/dsp-js';
-import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { componentWrapperDecorator, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent } from 'storybook/test';
 
 import { DateValueComponent } from './date-value.component';
@@ -248,6 +248,30 @@ export const ConvertsAValueThatIsNotStoredYet: Story = {
       const shown = field.textContent!.trim();
       const [day, month] = shown.split('.');
       await expect(controlValue(canvasElement)).toContain(`${Number(day)}.${Number(month)}.`);
+    });
+  },
+};
+
+/**
+ * In the resource editor's compact value editors the calendar sits beside the date, so the editor is
+ * one 36px line like the others (DEV-7611). The global `.compact-value-editor` rule sets the layout.
+ */
+export const LaysCalendarBesideDateWhenCompact: Story = {
+  name: 'Lays the calendar beside the date in a compact editor',
+  args: { initial: new KnoraDate('GREGORIAN', 'CE', 2024, 6, 15) },
+  decorators: [
+    componentWrapperDecorator(story => `<div class="compact-value-editor" style="width: 800px">${story}</div>`),
+  ],
+  play: async ({ canvasElement, step }) => {
+    const selector = canvasElement.querySelector('app-calendar-selector') as HTMLElement;
+    const field = canvasElement.querySelector('.date-field') as HTMLElement;
+
+    await step('The date field is 36px tall', async () => {
+      await expect(field.getBoundingClientRect().height).toBeLessThanOrEqual(36.5);
+    });
+    await step('The calendar and the date share one line', async () => {
+      const middle = (e: HTMLElement) => e.getBoundingClientRect().top + e.getBoundingClientRect().height / 2;
+      await expect(Math.abs(middle(selector) - middle(field))).toBeLessThanOrEqual(4);
     });
   },
 };

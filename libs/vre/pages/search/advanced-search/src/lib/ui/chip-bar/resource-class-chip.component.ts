@@ -5,16 +5,16 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { ALL_RESOURCE_CLASSES } from '@dasch-swiss/vre/pages/search/search-filters';
+import { IriLabelPair } from '@dasch-swiss/vre/pages/search/search-filters';
+import { OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { StatementDraftStore } from '@dasch-swiss/vre/pages/search/search-filters';
+import { CHIP_POPOVER_POSITIONS } from '@dasch-swiss/vre/pages/search/search-filters';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { ALL_RESOURCE_CLASSES } from '../../constants';
-import { IriLabelPair } from '../../model';
 import { DerivedSearchStateService } from '../../service/derived-search-state.service';
-import { OntologyDataService } from '../../service/ontology-data.service';
 import { SearchUrlSyncService } from '../../service/search-url-sync.service';
-import { StatementDraftStore } from '../../service/statement-draft.store';
-import { CHIP_POPOVER_POSITIONS } from './chip-bar.helpers';
 
 @Component({
   selector: 'app-resource-class-chip',

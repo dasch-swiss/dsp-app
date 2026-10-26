@@ -30,29 +30,33 @@ import { PropertyValueService } from './property-value.service';
       [myPropertyDefinition]="propertyValueService.propertyDefinition"
       [value]="propertyValueService.editModeData.values[index]"
       (templateFound)="templateFound($event)" />
+    @let showActions = showBubble && (propertyValueService.lastOpenedItem$ | async) !== index;
     <div
       data-cy="property-value"
       class="pos-relative row"
+      [class.is-hovered]="showActions"
       (mouseenter)="showBubble = true"
       (mouseleave)="showBubble = false">
-      @if (showBubble && (propertyValueService.lastOpenedItem$ | async) !== index) {
+      <div class="value-content">
+        <div class="value" [ngClass]="{ highlighted: isHighlighted }">
+          @if (template) {
+            <ng-container
+              *ngTemplateOutlet="
+                template;
+                context: { item: propertyValueService.editModeData.values[index], index: index }
+              "></ng-container>
+          }
+        </div>
+
+        <app-property-value-display-comment [index]="index" />
+      </div>
+
+      @if (showActions) {
         <app-property-value-action-bubble
           [date]="propertyValueService.editModeData.values[index].valueCreationDate"
           (editAction)="propertyValueService.toggleOpenedValue(index)"
           (deleteAction)="askToDelete()" />
       }
-
-      <div class="value" [ngClass]="{ highlighted: isHighlighted }">
-        @if (template) {
-          <ng-container
-            *ngTemplateOutlet="
-              template;
-              context: { item: propertyValueService.editModeData.values[index], index: index }
-            "></ng-container>
-        }
-      </div>
-
-      <app-property-value-display-comment [index]="index" />
     </div>`,
   styleUrls: ['./property-value-display.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
