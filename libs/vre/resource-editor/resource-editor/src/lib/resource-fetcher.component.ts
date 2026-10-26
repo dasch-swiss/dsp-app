@@ -101,6 +101,13 @@ export class ResourceFetcherComponent implements OnInit, OnChanges, OnDestroy {
     private readonly _cdr: ChangeDetectorRef
   ) {}
 
+  /** Re-read this resource from dsp-api, for changes made outside the subtree that owns it. A no-op before the first load. */
+  reload() {
+    if (this.resource) {
+      this._resourceFetcherService.reload();
+    }
+  }
+
   ngOnInit() {
     if (this.resourceVersion && !ResourceUtil.versionIsValid(this.resourceVersion)) {
       this._translateService.get('resourceEditor.versionNotValid').subscribe(v => {

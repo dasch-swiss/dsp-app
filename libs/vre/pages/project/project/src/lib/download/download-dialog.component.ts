@@ -30,6 +30,10 @@ export interface DownloadDialogData {
         }}</span>
       </div>
     }
+    <!-- The export ignores the Data tab's filters. -->
+    <p class="scope-note" data-cy="download-scope-note">
+      {{ 'pages.dataBrowser.downloadDialog.scopeNote' | translate }}
+    </p>
     <div mat-dialog-content style="max-height: 90vh">
       <app-download-dialog-properties-tab
         [properties]="data.properties"
@@ -53,6 +57,13 @@ export interface DownloadDialogData {
 
       .large-export-warning mat-icon {
         flex-shrink: 0;
+      }
+
+      .scope-note {
+        margin: 0;
+        padding: 12px 24px 0;
+        font-size: 13px;
+        opacity: 0.7;
       }
     `,
   ],

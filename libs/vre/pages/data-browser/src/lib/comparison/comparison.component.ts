@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, QueryList, ViewChildren } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ResourceFetcherComponent } from '@dasch-swiss/vre/resource-editor/resource-editor';
@@ -52,6 +53,9 @@ export class ComparisonComponent implements OnChanges {
   @Input({ required: true }) resourceIds!: string[];
   @Output() afterResourceDeleted = new EventEmitter<void>();
 
+  /** Every mounted viewer, so one can be refreshed by IRI without re-keying the `@for` (which would rebuild it). */
+  @ViewChildren(ResourceFetcherComponent) private _viewers!: QueryList<ResourceFetcherComponent>;
+
   topRow: string[] = [];
   bottomRow: string[] = [];
 
@@ -59,7 +63,20 @@ export class ComparisonComponent implements OnChanges {
     return this.resourceIds.length;
   }
 
-  constructor(public multipleViewerService: MultipleViewerService) {}
+  constructor(public multipleViewerService: MultipleViewerService) {
+    // A Data tab table cell edits under a fetcher scoped to its row, not this viewer's.
+    this.multipleViewerService.resourceChanged$
+      .pipe(takeUntilDestroyed())
+      .subscribe(resourceIri => this._reloadViewerOf(resourceIri));
+  }
+
+  private _reloadViewerOf(resourceIri: string): void {
+    this._viewers?.forEach(viewer => {
+      if (viewer.resourceIri === resourceIri) {
+        viewer.reload();
+      }
+    });
+  }
 
   ngOnChanges(): void {
     const resourceIds = this.resourceIds;

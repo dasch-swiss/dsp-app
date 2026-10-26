@@ -79,8 +79,14 @@ class ShowErrorWhileTypingMatcher extends ErrorStateMatcher {
   `,
   styles: [
     `
+      /* The editor's fields reserve no error line (DEV-7611), so the space between them is set
+         here; the top padding is room for the first one's outlined label, which rises above its
+         field's border. */
       :host {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-top: 6px;
       }
 
       mat-form-field {
