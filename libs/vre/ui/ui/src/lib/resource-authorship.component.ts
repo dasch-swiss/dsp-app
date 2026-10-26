@@ -20,9 +20,15 @@ import { TranslatePipe } from '@ngx-translate/core';
   template: `
     @if (editing) {
       <!-- In place, like a property value being edited: the editor, then Cancel and Save at
-           the end of the same line, where Edit was (DEV-7494). -->
+           the end of the same line, where Edit was (DEV-7494). Compact like the resource editor's
+           value editors: the global class sets the 36px density, and a filled field would hide its
+           content at that height, hence the outline. On the field only, so Cancel and Save keep
+           their 28px (DEV-7611). -->
       <div class="value-line edit-line">
-        <mat-form-field class="authorship-edit-field" subscriptSizing="dynamic">
+        <mat-form-field
+          class="authorship-edit-field compact-value-editor"
+          appearance="outline"
+          subscriptSizing="dynamic">
           <mat-chip-grid #chipGrid [attr.aria-label]="'legal.dataSide.authorship' | translate">
             @for (author of editAuthorshipList; track $index) {
               <mat-chip-row (removed)="removeEditAuthor($index)">
@@ -179,8 +185,9 @@ import { TranslatePipe } from '@ngx-translate/core';
         flex: 1;
         min-width: 0;
       }
+      /* Centres the 28px buttons on the field's first line of chips (44px with chips). */
       .edit-actions {
-        padding-top: 14px;
+        padding-top: 8px;
       }
     `,
   ],
