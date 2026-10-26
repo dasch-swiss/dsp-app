@@ -13,11 +13,10 @@ import { combineLatest, distinctUntilChanged, map, Observable } from 'rxjs';
 import { SearchUrlSyncService } from './search-url-sync.service';
 
 /**
- * The Search tab's own derivation on top of the shared confirmed state.
+ * The Search tab's derivation on top of the shared confirmed state: sorting by a filter's predicate and
+ * assembling the query from the six URL params.
  *
- * Hydration and the ontology-switch reaction are page-agnostic and live in
- * {@link ConfirmedSearchStateService}. What remains here is specific to this page: sorting by a
- * *filter's predicate*, and assembling the query from all six URL params. It exposes:
+ * It exposes:
  *   - `searchState$`  — { resourceClass, statements, orderByItems }, gated on ontology readiness
  *   - `orderByItems$` — pure order-by list derived from (confirmed statements, orderBy param)
  *   - `gravsearchQuery$` — the query string (or null), via the pure GravsearchService
@@ -58,11 +57,7 @@ export class DerivedSearchStateService {
     distinctUntilChanged()
   );
 
-  /**
-   * Hydrated search state, emitted only once the readiness gate is open. The resource class and
-   * statements come from the shared confirmed state; this page adds the order-by list, which it derives
-   * from the confirmed statements' predicates.
-   */
+  /** Hydrated search state, emitted once the readiness gate is open; adds the order-by list derived from the confirmed statements. */
   readonly searchState$: Observable<DerivedSearchState> = combineLatest([
     this._confirmed.confirmedState$,
     this._urlSync.params$,

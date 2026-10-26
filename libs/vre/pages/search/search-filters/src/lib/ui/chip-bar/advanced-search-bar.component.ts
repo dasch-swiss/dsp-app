@@ -98,8 +98,6 @@ const FULLTEXT_ERROR_MESSAGES: Record<
         }
       </mat-form-field>
       <div class="chip-bar">
-        <!-- Chips that write params this page owns — the data model and resource class on the Search
-             tab, nothing on the Data tab, where the sidenav route already fixes both. -->
         <ng-content select="[searchFiltersLeading]" />
 
         @for (stmt of confirmedStatements(); track stmt.id) {
@@ -114,8 +112,6 @@ const FULLTEXT_ERROR_MESSAGES: Record<
         }
 
         <app-add-filter-button (filterConfirmed)="onFilterConfirmed($event)" />
-        <!-- Sorting is page-specific: the Search tab sorts by a filter's predicate, the Data tab by
-             label from its own column header. -->
         <ng-content select="[searchFiltersTrailing]" />
 
         @if (hasActiveState$ | async) {
@@ -133,10 +129,7 @@ const FULLTEXT_ERROR_MESSAGES: Record<
 export class AdvancedSearchBarComponent implements OnInit {
   @Input({ required: true }) projectUuid!: string;
 
-  /**
-   * `compact` is the Data tab's treatment: 30px controls and 13px text, so the bar fits a narrow split
-   * column without crowding out the class identity. Styling only — behaviour is identical.
-   */
+  /** `compact` is the Data tab's treatment (30px controls, 13px text); styling only. */
   @Input() density: 'standard' | 'compact' = 'standard';
 
   /** The Search tab gives the field the page width it has; the Data tab has a split column to fit. */
@@ -145,19 +138,10 @@ export class AdvancedSearchBarComponent implements OnInit {
   @Input() searchLabelKey = 'pages.search.advancedSearch.fulltextSearch';
   @Input() searchPlaceholderKey = 'pages.search.advancedSearch.fulltextSearchPlaceholder';
 
-  /**
-   * Where the magnifier sits. `trailing` is the Search tab's long-standing look, where the icon only
-   * shows while the field is empty and gives way to the clear button. `leading` is the Data tab's
-   * design of record: the icon is a persistent affordance on the left and the clear button owns the
-   * right, so both can be visible at once.
-   */
+  /** Magnifier position: `trailing` shows it only while the field is empty; `leading` keeps it beside the clear button. */
   @Input() searchIconPosition: 'leading' | 'trailing' = 'trailing';
 
-  /**
-   * Whether to float a label above the field. The Data tab's design has none — the placeholder and
-   * the magnifier carry the meaning — so it renders without one and the label key becomes the
-   * input's `aria-label` instead, keeping the field named for assistive technology either way.
-   */
+  /** Whether to float a label; when off, the label key becomes the input's `aria-label`. */
   @Input() showSearchLabel = true;
 
   @HostBinding('class.compact') get isCompact(): boolean {
@@ -172,10 +156,8 @@ export class AdvancedSearchBarComponent implements OnInit {
   readonly draftStore = inject(StatementDraftStore);
 
   /**
-   * The rendered chips and the add button, so a request arriving from outside the bar can drive the
-   * same popovers a click on them would. Queried rather than reimplemented: both components own an
-   * editing draft whose lifecycle (clone, commit, discard) is the hard part, and a second way of
-   * opening the editor would be a second place for it to leak.
+   * The rendered chips and add button, so an external request drives the same popovers a click would: both own an
+   * editing draft whose lifecycle must not be duplicated.
    */
   private readonly _chips = viewChildren(FilterChipComponent);
   private readonly _addFilterButton = viewChild(AddFilterButtonComponent);
@@ -200,8 +182,7 @@ export class AdvancedSearchBarComponent implements OnInit {
 
   readonly hasNoDataModel$ = this._ontologyDataService.ontologies$.pipe(map(ontologies => ontologies.length === 0));
 
-  // Show the reset button only when there is something to clear. What counts as "something" is the
-  // host page's call — the Search tab counts its five params, the Data tab also counts its sort.
+  // What counts as active state is the host page's call.
   readonly hasActiveState$ = this._state.hasActiveState$;
 
   ngOnInit(): void {
@@ -216,7 +197,6 @@ export class AdvancedSearchBarComponent implements OnInit {
     // Top-level, valid statements only: subcriteria are edited inside the parent popover, not as chips.
     this.draftStore.statements$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(() => this._refreshChips());
 
-    // Something outside the bar (a Data tab column header) naming a property to filter on.
     this._filterEditorRequests.requests$
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe(predicateIri => this.openEditorFor(predicateIri));
@@ -227,8 +207,7 @@ export class AdvancedSearchBarComponent implements OnInit {
       if ((this.fulltextControl.value ?? '') !== q) {
         this.fulltextControl.setValue(q, { emitEvent: false });
       }
-      // A deep link can carry a term the input would have refused. The query still runs (the URL is
-      // the source of truth, and its failure is DEV-6866's panel), but the field says what is wrong.
+      // A deep link can carry a term the input would have refused: the query still runs, but the field shows the error.
       this._refreshFulltextError();
     });
 
@@ -269,9 +248,8 @@ export class AdvancedSearchBarComponent implements OnInit {
   }
 
   /**
-   * Clear the term immediately rather than waiting out the debounce: the click IS the intent, and an
-   * empty value is valid, so routing it through `valueChanges` would both delay the re-query by 300ms
-   * and leave a stale too-short error on screen in the meantime.
+   * Clear immediately: an empty value is valid, so routing it through `valueChanges` would delay the re-query by the
+   * debounce and leave a stale too-short error on screen.
    */
   onClearFulltext(): void {
     this.fulltextControl.setValue('', { emitEvent: false });
@@ -280,17 +258,9 @@ export class AdvancedSearchBarComponent implements OnInit {
   }
 
   /**
-   * Open the filter editor on one property, wherever the request came from.
-   *
-   * An existing chip on that property is re-opened rather than joined by a second one.
-   * That is not merely tidier: two chips on the same predicate produce two `FILTER` clauses ANDed
-   * together in Gravsearch, so a user who filtered twice from the same column header would silently
-   * narrow their results to the intersection and have no single chip to undo it with.
-   *
-   * The predicate is resolved through the ontology rather than passed in, because a caller outside
-   * this lib has a property IRI and no `Predicate` — and `StatementElement` needs the whole thing
-   * (object value type, link-ness, list root) to decide which operators and which value editor to
-   * offer.
+   * Open the filter editor on one property. An existing chip on that property is re-opened rather than duplicated:
+   * two chips on one predicate produce two ANDed `FILTER` clauses in Gravsearch. The predicate is resolved through
+   * the ontology because `StatementElement` needs the full `Predicate`.
    */
   openEditorFor(predicateIri: string): void {
     const existing = this.confirmedStatements().find(stmt => stmt.selectedPredicate?.iri === predicateIri);
@@ -306,9 +276,7 @@ export class AdvancedSearchBarComponent implements OnInit {
       .pipe(first(), takeUntilDestroyed(this._destroyRef))
       .subscribe(predicates => {
         const predicate = predicates.find(p => p.iri === predicateIri);
-        // Silently ignored when the ontology does not offer the property as a filterable predicate:
-        // the request came from a column the bar cannot express, and opening a blank editor would
-        // be a worse answer than doing nothing.
+        // Ignored when the ontology does not offer the property as a filterable predicate.
         if (predicate) {
           this._addFilterButton()?.openFor(predicate);
         }
@@ -360,12 +328,8 @@ export class AdvancedSearchBarComponent implements OnInit {
   }
 
   onReset(): void {
-    // Full reset: the host clears everything it considers search state in a single navigation. The store
-    // re-seeds from the (now empty) state and `_refreshChips` drops every chip; the fulltext input
-    // re-seeds from the empty term.
     this.openChipId.set(OPEN_CHIP_NONE);
-    // Drafts are not part of the host's stored state, so a reset with nothing else set would not
-    // re-seed the store and a half-built filter would survive the click. Discard them explicitly.
+    // Drafts are not in the host's stored state, so a reset with nothing else set would not reseed the store.
     this.draftStore.discardDrafts();
     this._state.reset();
   }
@@ -374,9 +338,7 @@ export class AdvancedSearchBarComponent implements OnInit {
     this._logger.filterRemoved(stmt.id);
     // deleteStatement updates the store; `confirmedStatements` (a store projection) drops the chip.
     this.draftStore.deleteStatement(stmt);
-    // Hand the removed filter's predicate to the host: a page that sorts by a filter's predicate needs to
-    // drop a now-orphaned sort, and must do it in the same navigation as the filter change. Whether that
-    // applies is the host's business, not the bar's.
+    // Whether the removed predicate matters (e.g. to drop an orphaned sort) is the host's call.
     this._persistFilters(stmt.selectedPredicate?.iri);
   }
 

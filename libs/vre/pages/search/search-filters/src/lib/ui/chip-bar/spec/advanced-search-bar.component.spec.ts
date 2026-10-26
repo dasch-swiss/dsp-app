@@ -18,10 +18,7 @@ import { AdvancedSearchBarComponent } from '../advanced-search-bar.component';
 import { FilterChipComponent } from '../filter-chip.component';
 
 /**
- * A `SearchFilterState` whose mutators are spies. The bar is host-agnostic now, so these specs assert
- * what it *hands the host*, not what lands in a URL — the encoding and any coupled param cleanup belong
- * to the host's own implementation and are covered in its spec.
- */
+/** A `SearchFilterState` whose mutators are spies: specs assert what the bar hands the host. */
 function makeStatePort(overrides: Partial<SearchFilterState> = {}) {
   return {
     filters$: of([] as FilterParam[]),
@@ -37,11 +34,8 @@ function makeStatePort(overrides: Partial<SearchFilterState> = {}) {
 }
 
 /**
- * Regression coverage for `onRemoveStatement` (DEV-6576). The bar's half of the contract is to report the
- * removed filter's predicate alongside the surviving filters, in ONE call, so a host that sorts by that
- * predicate can clear its sort in the same navigation — two synchronous navigations get coalesced by the
- * Router (the second discards the first), which previously dropped the filter removal. The clearing
- * itself now lives in `SearchUrlSyncService.setFilters` and is covered by its spec.
+ * `onRemoveStatement` reports the removed filter's predicate with the surviving filters in ONE call, so a host can
+ * clear an orphaned sort in the same navigation.
  */
 const ONTO = 'http://api.stage.dasch.swiss/ontology/0806/webern-onto/v2';
 const TITLE_IRI = `${ONTO}#hasTitle`;
@@ -144,11 +138,9 @@ describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
 
     component.onRemoveStatement(stmt);
 
-    // One call only — the filter set and the predicate that was removed must reach the host together, or
-    // a host that folds a sort cleanup into the same navigation cannot do so (the original bug).
+    // One call only: the filter set and the removed predicate must reach the host together.
     expect(statePort.setFilters).toHaveBeenCalledTimes(1);
     const [filters, removedPredicateIri] = statePort.setFilters.mock.calls[0];
-    // The only confirmed statement was removed, so nothing survives.
     expect(filters).toEqual([]);
     expect(removedPredicateIri).toBe(TITLE_IRI);
   });
@@ -169,7 +161,7 @@ describe('AdvancedSearchBarComponent.onRemoveStatement (DEV-6576)', () => {
 });
 
 /**
- * `_persistFilters` decides which chips get a `valueLabel` persisted alongside their IRI (DEV-6857).
+ * `_persistFilters` decides which chips get a `valueLabel` persisted alongside their IRI.
  * A rendered label in the URL fossilises the language it was written in — the chip then can't retranslate
  * on language switch. We only accept that trade-off for link values, whose label ("Rita" for an author
  * IRI) is not derivable from anything the search page already fetches. For list values and resource-class
@@ -312,8 +304,7 @@ describe('AdvancedSearchBarComponent fulltext term rules (DEV-6930)', () => {
         FilterEditorRequestService,
       ],
     });
-    // Only the fulltext field is under test; the chip children need the whole ontology pipeline. The
-    // page-specific chips are projected content now, so there is nothing of theirs to remove here.
+    // Only the fulltext field is under test; the chip children need the whole ontology pipeline.
     TestBed.overrideComponent(AdvancedSearchBarComponent, {
       remove: { imports: [FilterChipComponent, AddFilterButtonComponent] },
       add: { schemas: [NO_ERRORS_SCHEMA] },

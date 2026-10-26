@@ -26,8 +26,6 @@ describe('StatementDraftStore', () => {
     TestBed.configureTestingModule({
       providers: [
         StatementDraftStore,
-        // The store seeds from confirmedState$ on construction; an inert stream leaves the default single
-        // blank root in place so these tests drive the tree directly.
         {
           provide: ConfirmedSearchStateService,
           useValue: { confirmedState$: EMPTY } as Partial<ConfirmedSearchStateService>,
@@ -54,7 +52,6 @@ describe('StatementDraftStore', () => {
   });
 
   describe('reactive seed from confirmedState$', () => {
-    // Build against a confirmedState$ that carries a selected resource class, mirroring a URL with `?class=`.
     const buildWithClass = (resourceClass: IriLabelPair | null, statements: StatementElement[] = []) => {
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({

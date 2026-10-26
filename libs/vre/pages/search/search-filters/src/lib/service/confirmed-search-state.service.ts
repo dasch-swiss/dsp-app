@@ -13,15 +13,8 @@ export interface ConfirmedSearchState {
 }
 
 /**
- * Turns the host page's stored filter state into live objects.
- *
- * The page says *what* is confirmed ({@link SearchFilterState}); this service says what those filters
- * mean once the ontology is loaded — resolving predicate IRIs to `Predicate`s and rebuilding the
- * statement tree. That hydration is identical wherever the chip bar is mounted, which is why it sits
- * here rather than in either page's own derivation.
- *
- * It also owns the ontology-switch reaction, since the ontology to load is itself part of what the page
- * fixes.
+ * Hydrates the host page's stored filter state against the loaded ontology (predicates, statement tree) and
+ * owns the ontology-switch reaction.
  */
 @Injectable()
 export class ConfirmedSearchStateService {
@@ -34,13 +27,9 @@ export class ConfirmedSearchStateService {
   }
 
   /**
-   * Keeps the loaded ontology in sync with whatever the host fixes it to:
-   *   - a non-empty value names the ontology to load;
-   *   - an empty one (no ontology chosen, e.g. after Reset) falls back to the project default, so the
-   *     Data Model chip reverts instead of staying stuck on a previously chosen ontology.
-   * `setOntology` re-hydrates `resourceClasses$`/predicates and lets `loading$` settle. De-duped on the
-   * incoming value plus an identity guard against the currently-loaded ontology, so an unchanged target
-   * never reloads. This is the only thing that switches the ontology.
+   * Keeps the loaded ontology in sync with the host's value: non-empty names the ontology to load, empty (e.g.
+   * after Reset) falls back to the project default. De-duped on the incoming value plus an identity guard
+   * against the loaded ontology, so an unchanged target never reloads.
    */
   private _reactToOntologyChange(): void {
     this._state.ontologyIri$

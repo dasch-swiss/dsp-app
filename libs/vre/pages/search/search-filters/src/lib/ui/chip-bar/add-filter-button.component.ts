@@ -63,14 +63,8 @@ export class AddFilterButtonComponent {
   /**
    * Open the editor on a blank filter whose property is already chosen.
    *
-   * Called imperatively by the bar when something outside it — a Data tab column header — names the
-   * property to filter on, so the user lands on the operator and value rather than re-stating which
-   * column they were already looking at.
-   *
-   * `markForCheck` is not optional here. `pendingStatement` is a plain field, and the only thing
-   * that normally dirties this `OnPush` component is its own click binding; invoked from a caller in
-   * another part of the tree, the overlay would stay closed until some unrelated event happened to
-   * re-render the bar.
+   * `markForCheck` is required: called from outside this `OnPush` component, nothing else would re-render it and
+   * the overlay would stay closed.
    */
   openFor(predicate: Predicate): void {
     this.onAdd();

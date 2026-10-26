@@ -53,11 +53,8 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
   });
 
   /**
-   * `setFilters` is the Search tab's half of the DEV-6576 contract. The chip bar reports the surviving
-   * filters plus the predicate of the one just removed; this page sorts by a filter's predicate, so when
-   * those coincide the sort is now orphaned and must be cleared in the SAME navigation — two synchronous
-   * `navigate` calls get coalesced by the Router (the second discards the first), which previously
-   * dropped the filter removal and left only the sort cleared.
+   * `setFilters` must clear a now-orphaned sort in the SAME navigation: two synchronous `navigate` calls are
+   * coalesced by the Router and the second discards the first.
    */
   describe('setFilters — orphaned sort cleanup (DEV-6576)', () => {
     const TITLE_IRI = 'http://x/hasTitle';
@@ -79,7 +76,6 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
 
       expect(navigateSpy).toHaveBeenCalledTimes(1);
       const params = writtenParams();
-      // Nothing survives, so `filters` is nulled — which under `merge` removes it.
       expect(params['filters']).toBeNull();
       expect(params['orderBy']).toBeNull();
       expect(params['orderDir']).toBeNull();
@@ -92,7 +88,6 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
 
       expect(navigateSpy).toHaveBeenCalledTimes(1);
       const params = writtenParams();
-      // Absent from the write, so `merge` preserves the existing param.
       expect(params).not.toHaveProperty('orderBy');
       expect(params).not.toHaveProperty('orderDir');
       expect(decodeURIComponent(params['filters'] as string)).toContain('stays');

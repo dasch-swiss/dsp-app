@@ -46,11 +46,8 @@ export class StatementDraftStore {
   }
 
   constructor() {
-    // Reactive seed: on every change to the host's stored state the confirmed tree comes from
-    // `confirmedState$` with fresh StatementElement instances (new ids). Rebuild the ephemeral store so
-    // in-progress children re-key onto the *current* confirmed parents. Unconfirmed rows do not survive
-    // such a change — that is correct: only what the page persisted is durable.
-    // No DI cycle: ConfirmedSearchStateService does not depend on StatementDraftStore.
+    // Re-seed on every change to the host's stored state: confirmed elements arrive with fresh ids, so the draft tree
+    // is rebuilt and unconfirmed rows do not survive.
     this._confirmed.confirmedState$.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(state => {
       this._resourceClass = state.resourceClass;
       this._seedFromConfirmed(state.statements);
@@ -82,12 +79,8 @@ export class StatementDraftStore {
   }
 
   /**
-   * Throw away every in-progress edit and start from a single blank row.
-   *
-   * Reset normally clears drafts for free: it changes the host's stored state, which re-seeds the store.
-   * But a draft the user never confirmed is not *in* that state, so when nothing else is set there is
-   * nothing to change and no reseed fires — leaving a half-built filter sitting in an open popover after
-   * the user asked for a clean slate. Called explicitly by the bar so the two paths agree.
+   * Discard every in-progress edit and start from one blank row. A reset alone does not reseed the store when only
+   * unconfirmed drafts exist, so the bar calls this explicitly.
    */
   discardDrafts(): void {
     this._editingIds.clear();
