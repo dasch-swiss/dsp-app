@@ -37,11 +37,6 @@ const meta: Meta<TablePropertyCellComponent> = {
 export default meta;
 type Story = StoryObj<TablePropertyCellComponent>;
 
-/**
- * The claim the whole change rests on: a cell is the resource viewer's property unit, not a
- * lookalike. `data-cy="property-value"` is emitted by `PropertyValueDisplayComponent`, which only
- * exists inside that subtree.
- */
 export const RendersTheValueThroughTheResourceViewersOwnDisplay: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -50,11 +45,7 @@ export const RendersTheValueThroughTheResourceViewersOwnDisplay: Story = {
   },
 };
 
-/**
- * The bubble only reaches the DOM once the fetcher it injects holds a resource — it dereferences
- * that first emission unguarded to build its Info tooltip. In a table nothing fetches per row, so
- * this is the story that proves priming happened, and happened before the subtree rendered.
- */
+/** The bubble dereferences the fetcher's first emission unguarded, so it only renders if the fetcher was primed before the subtree rendered. */
 export const ShowsTheActionBubbleOnHoverWithInfoEditAndDelete: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.hover(canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement);
@@ -90,7 +81,6 @@ const readOnlyStory = (loggedIn: boolean): Story => ({
   },
 });
 
-/** A signed-in user who may only read still gets the creation info, as in the viewer. */
 export const ShowsTheInfoButtonToASignedInReader: Story = {
   ...readOnlyStory(true),
   play: async ({ canvasElement }) => {
@@ -99,7 +89,6 @@ export const ShowsTheInfoButtonToASignedInReader: Story = {
   },
 };
 
-/** Logged out, a hovered cell offers nothing, so it shows nothing — no info button, no highlight. */
 export const OffersNoInfoButtonWhenLoggedOut: Story = {
   ...readOnlyStory(false),
   play: async ({ canvasElement }) => {
@@ -111,7 +100,6 @@ export const OffersNoInfoButtonWhenLoggedOut: Story = {
   },
 };
 
-/** In a cell the Edit tooltip is just "Edit"; the viewer adds who created the value and when. */
 export const ShowsAPlainEditTooltip: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.hover(canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement);
@@ -123,7 +111,6 @@ export const ShowsAPlainEditTooltip: Story = {
 
 const TWO_VALUES = generateDspResource(makeEditableReadResource({ label: 'BRAUT001a', values: ['42', '43'] }));
 
-/** The move grip is one of the value's actions, between Edit and Delete, and it moves the value. */
 export const PutsTheMoveHandleBetweenEditAndDelete: Story = {
   args: {
     dspResource: TWO_VALUES,

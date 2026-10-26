@@ -18,12 +18,7 @@ import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 
 const ONTO = 'http://0.0.0.0:3333/ontology/0001/test/v2#';
 
-/**
- * Enough of an ontology definition for the resource viewer, which is what a cell now renders and
- * edits its values through. The switcher reads `objectType` to choose the template and
- * `guiElement` to pick between the three text renderings; `GenerateProperty.commonProperty` reads
- * `isLinkProperty` and `subPropertyOf` to decide whether the property has an editor at all.
- */
+/** Enough of an ontology definition for the resource viewer's switcher and `GenerateProperty.commonProperty`. */
 function propDef(id: string, objectType: string): ResourcePropertyDefinitionWithAllLanguages {
   return {
     id,
@@ -38,11 +33,7 @@ function propDef(id: string, objectType: string): ResourcePropertyDefinitionWith
   } as unknown as ResourcePropertyDefinitionWithAllLanguages;
 }
 
-/**
- * A definition the resource editor drops, standing in for the whole read-only family — link, file
- * value and geometry. `commonProperty` filters link properties out, so no `PropertyInfoValues`
- * reaches the cell and it renders as text.
- */
+/** A definition the resource editor drops (a link property), so the cell renders as text. */
 function readOnlyPropDef(id: string, objectType: string): ResourcePropertyDefinitionWithAllLanguages {
   return { ...propDef(id, objectType), isLinkProperty: true } as ResourcePropertyDefinitionWithAllLanguages;
 }
@@ -70,7 +61,6 @@ function typedColumn(key: string, label: string, valueType: string): TableColumn
   return column(key, label, { valueType, propertyDefinition: propDef(key, valueType) });
 }
 
-/** A column whose property the resource editor has no editor for, definition included. */
 function readOnlyColumn(key: string, label: string, valueType: string = Constants.TextValue): TableColumn {
   return column(key, label, {
     valueType,
@@ -94,9 +84,7 @@ function seedValue<T extends ReadValue>(value: T, property: string, strval: stri
   value.id = `http://rdfh.ch/0001/a/values/${(valueCounter += 1)}`;
   value.property = property;
   value.strval = strval;
-  // The action bubble gates its Edit and Delete controls on the *value's* permission, not the
-  // resource's, and dates its Info tooltip from `valueCreationDate`. A value without them renders
-  // a bubble with nothing in it.
+  // The action bubble gates Edit and Delete on the value's permission and dates Info from `valueCreationDate`.
   value.userHasPermission = 'CR';
   value.valueCreationDate = '2024-06-15T10:00:00Z';
   return value;
@@ -115,13 +103,7 @@ function booleanValue(property: string, bool: boolean): ReadBooleanValue {
   return value;
 }
 
-/**
- * A single Gregorian day.
- *
- * `ReadDateValue` derives its `KnoraDate` in its constructor from dsp-js's internal parse shape,
- * which the library does not export — so the literal is built here and typed off the constructor
- * rather than restated. Equal start and end make it a date rather than a period.
- */
+/** A single Gregorian day; typed off the constructor because dsp-js does not export its parse shape. */
 function dateValue(property: string, year: number, month: number, day: number): ReadDateValue {
   const datestring = `GREGORIAN:${year}-${month}-${day}`;
   const parsed = {
@@ -139,16 +121,9 @@ function dateValue(property: string, year: number, month: number, day: number): 
 }
 
 /**
- * A resource complete enough for the resource editor to be mounted over it.
- *
- * Every property cell runs `generateDspResource`, which walks
- * `entityInfo.classes[type].getResourcePropertiesList()` — so a resource built without one falls
- * down the plain-text path and the stories stop exercising the thing they are about. The columns
- * are the source of that list, which keeps the two from drifting apart.
- *
- * `userHasPermission: 'CR'` by default: `PermissionUtil` throws on a string it does not know, and
- * `buildRows` answers that by refusing to model the resource at all, so a resource with no
- * permission would render as text everywhere. Pass `'RV'` to story a read-only user.
+ * A resource the resource editor can mount over: `generateDspResource` reads
+ * `entityInfo.classes[type].getResourcePropertiesList()`. `userHasPermission` must be a string
+ * `PermissionUtil` knows, or `buildRows` refuses to model the resource.
  */
 function resource(
   id: string,
@@ -188,7 +163,6 @@ function resource(
   } as unknown as Partial<ReadResource>);
 }
 
-/** Text values, spelled out once so each story does not have to build them. */
 function texts(property: string, ...values: string[]): Record<string, ReadValue[]> {
   return { [property]: values.map(value => textValue(property, value)) };
 }
@@ -259,11 +233,7 @@ const TYPED_COLUMNS: TableColumn[] = [
   typedColumn(BOOLEAN_PROPERTY, 'Published', Constants.BooleanValue),
 ];
 
-/**
- * The reason a cell mounts the viewer's own property unit at all: a value reads the same
- * in the grid as it does in the panel beside it. `strval` cannot express either of these —
- * dsp-api ships a date as `GREGORIAN:2024-6-15` and a boolean as the word "true".
- */
+/** `strval` cannot express these: dsp-api ships a date as `GREGORIAN:2024-6-15` and a boolean as "true". */
 export const RendersTypedValuesThroughTheViewersOwnTemplates: Story = {
   args: {
     columns: TYPED_COLUMNS,
@@ -289,7 +259,6 @@ export const RendersTypedValuesThroughTheViewersOwnTemplates: Story = {
 
     const toggle = canvas.getByRole('switch');
     await expect(toggle).toHaveAttribute('aria-checked', 'true');
-    // Read-only until the bubble's Edit control opens the editor, exactly as in the viewer.
     await expect(toggle).toBeDisabled();
     await expect(canvas.queryByText('true')).toBeNull();
   },
@@ -301,12 +270,6 @@ const READ_ONLY_COLUMNS: TableColumn[] = [
   typedColumn(BOOLEAN_PROPERTY, 'Published', Constants.BooleanValue),
 ];
 
-/**
- * Link, file-value, geometry and non-editable properties are dropped by
- * `GenerateProperty.commonProperty`, so there is no `PropertyInfoValues` to hand the viewer and
- * no editor to mount. Those cells render as text — and the rest of the row is unaffected, which
- * is the other half of the claim.
- */
 export const RendersAColumnTheEditorCannotOpenAsPlainText: Story = {
   args: {
     columns: READ_ONLY_COLUMNS,
@@ -336,11 +299,6 @@ export const RendersAColumnTheEditorCannotOpenAsPlainText: Story = {
   },
 };
 
-/**
- * An editable cell says it is empty the way the viewer says it: the unit collapses to its add
- * control and nothing sits above it. A placeholder there would be a second answer to the same
- * question, and a second line in every empty row of the page.
- */
 export const LeavesAnEmptyEditableCellToTheViewersOwnAddControl: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -362,10 +320,6 @@ const manyAuthors = () =>
     COLLAPSING_COLUMNS
   );
 
-/**
- * A read-only column has no add control, so an empty cell there would be indistinguishable from
- * one the reader has simply not scrolled to.
- */
 export const MarksAnEmptyReadOnlyCellAsNotSet: Story = {
   args: {
     columns: COLLAPSING_COLUMNS,
@@ -378,11 +332,6 @@ export const MarksAnEmptyReadOnlyCellAsNotSet: Story = {
   },
 };
 
-/**
- * Hover is not the only reason a row shows its controls. A checked or selected row keeps them
- * regardless of where the pointer is — otherwise moving to another row hides the very checkbox
- * that says what you have collected, and a selection you have to re-find is one you cannot count.
- */
 export const KeepsTheControlsOnACheckedRowWhileAnotherIsHovered: Story = {
   args: { selectionActive: true, checkedResourceIds: new Set(['http://rdfh.ch/0001/a']) },
   play: async ({ canvasElement }) => {
@@ -394,11 +343,6 @@ export const KeepsTheControlsOnACheckedRowWhileAnotherIsHovered: Story = {
   },
 };
 
-/**
- * The list view's rule, not a table-specific one: `resource-list-item` renders its checkbox on
- * `showCheckbox || selectMode`, so once a set is being built every row offers one. A set you can
- * only assemble one hover at a time is a set you can never see.
- */
 export const ShowsEveryRowsCheckboxWhileASetIsBeingBuilt: Story = {
   args: { selectionActive: true, checkedResourceIds: new Set(['http://rdfh.ch/0001/a']) },
   play: async ({ canvasElement }) => {
@@ -408,18 +352,12 @@ export const ShowsEveryRowsCheckboxWhileASetIsBeingBuilt: Story = {
     const unhovered = rows[1].querySelector('[data-cy="row-check"]') as HTMLElement;
     await expect(getComputedStyle(unhovered).opacity).toBe('1');
 
-    // The open arrow acts on one row and says nothing about the selection, so it stays with the
-    // pointer rather than joining twenty-five others in the gutter.
-    //
-    // Only its absence is asserted. `userEvent.hover` dispatches pointer events; it does not move
-    // a real cursor, so the browser never enters the CSS `:hover` state and the positive case is
-    // not reachable from a play function. It is covered by the rule itself and by manual check.
+    // Only the arrow's absence is asserted: `userEvent.hover` dispatches events but does not enter CSS `:hover`.
     const unhoveredArrow = rows[1].querySelector('.row-open') as HTMLElement;
     await expect(getComputedStyle(unhoveredArrow).opacity).toBe('0');
   },
 };
 
-/** With no set under way the controls stay out of the way until the pointer asks for them. */
 export const HidesTheControlsOnIdleRowsWhenNoSetIsBeingBuilt: Story = {
   play: async ({ canvasElement }) => {
     const rows = canvasElement.querySelectorAll('tr.mat-mdc-row');
@@ -430,10 +368,6 @@ export const HidesTheControlsOnIdleRowsWhenNoSetIsBeingBuilt: Story = {
   },
 };
 
-/**
- * Anonymous visitors cannot build a comparison set, so the rows offer no checkbox — only the open
- * arrow — and the label moves in to sit next to it.
- */
 export const HidesRowCheckboxesForAnonymousVisitors: Story = {
   args: { selectable: false },
   play: async ({ canvasElement }) => {
@@ -445,7 +379,6 @@ export const HidesRowCheckboxesForAnonymousVisitors: Story = {
   },
 };
 
-/** The table ends on a line: the last row keeps the bottom border every other row has. */
 export const ClosesTheTableWithABottomBorder: Story = {
   play: async ({ canvasElement }) => {
     const rows = canvasElement.querySelectorAll('tr.mat-mdc-row');
@@ -486,16 +419,6 @@ export const ExpandsACollapsedReadOnlyCellOnDemand: Story = {
 
 const MULTI_VALUE_COLUMNS: TableColumn[] = [column(LABEL_COLUMN_KEY, 'Label'), column(`${ONTO}hasPlace`, 'Place')];
 
-/**
- * The trade made when the cell adopted the viewer's unit, pinned here so it cannot be lost by
- * accident.
- *
- * `app-property-values` renders a property's values in full — each with its own action bubble,
- * its own delete control and its own drag handle. Hiding three of them behind "show 2 more" would
- * mean hiding controls, which is worse than a tall row; and reimplementing the list so it could
- * collapse is the reimplementation this feature exists to avoid. So an editable cell has no
- * collapse at all, and a resource with a dozen values gets a dozen rows' worth of height.
- */
 export const RendersEveryValueOfAnEditableCellWithNoCollapse: Story = {
   args: {
     columns: MULTI_VALUE_COLUMNS,
@@ -521,11 +444,7 @@ export const RendersEveryValueOfAnEditableCellWithNoCollapse: Story = {
 const onSort = fn().mockName('sortToggled');
 const onFilter = fn().mockName('filterRequested');
 
-/**
- * A host template rather than args, so the assertions run through the real output bindings the
- * fetcher uses. Only the inputs these stories vary are bound: `columnWidths` has a component
- * default, and binding an absent arg would overwrite it with `undefined`.
- */
+/** Host template so assertions run through the real output bindings; binding an absent arg would overwrite a component default with `undefined`. */
 const headerControlsStory = (args: Story['args']): Story => ({
   render: storyArgs => ({
     props: {
@@ -562,10 +481,6 @@ export const SortsAscendingWhenAnUnsortedColumnIsActivated: Story = {
   },
 };
 
-/**
- * Two-state, never three: activating the column that is already sorted flips the
- * direction instead of stepping through an "unsorted" state the query cannot express.
- */
 export const TogglesDirectionWhenTheSortedColumnIsActivatedAgain: Story = {
   ...headerControlsStory({ sortedColumnKey: `${ONTO}hasTitle`, sortDescending: false }),
   play: async ({ canvasElement }) => {
@@ -584,8 +499,6 @@ export const OffersNoSortControlWhereTheQueryCannotOrderBy: Story = {
     columns: [
       column(LABEL_COLUMN_KEY, 'Label'),
       column(`${ONTO}hasTitle`, 'Title'),
-      // A link property: the Data tab's sort rule excludes it, so the header must offer nothing
-      // rather than a control that would produce an order the list view cannot display.
       column(`${ONTO}hasPlace`, 'Place', { isSortable: false }),
     ],
   }),
@@ -598,10 +511,6 @@ export const OffersNoSortControlWhereTheQueryCannotOrderBy: Story = {
   },
 };
 
-/**
- * Icon-only controls: each one says what it does on hover. Without the column's name — the tooltip
- * already sits on the column; the accessible name keeps it for screen readers.
- */
 export const NamesEachHeaderActionInATooltip: Story = {
   ...headerControlsStory({}),
   play: async ({ canvasElement }) => {
@@ -619,10 +528,6 @@ export const NamesEachHeaderActionInATooltip: Story = {
   },
 };
 
-/**
- * Hiding the sorted column does not clear the sort — it lives in the URL, and the list view's own
- * control still shows it. The table simply has no header left to announce it on.
- */
 export const KeepsTheSortWhenItsColumnIsHidden: Story = {
   ...headerControlsStory({
     visibleColumns: [LABEL_COLUMN_KEY, `${ONTO}hasTitle`],
@@ -646,10 +551,6 @@ export const AsksTheFilterBarToOpenTheColumnsFilter: Story = {
   },
 };
 
-/**
- * A column already carrying a chip says so, and its control offers to edit that chip
- * rather than to add a second filter on the same property.
- */
 export const MarksAColumnThatAlreadyCarriesAFilterChip: Story = {
   ...headerControlsStory({ filteredColumnKeys: new Set([`${ONTO}hasPlace`]) }),
   play: async ({ canvasElement }) => {
@@ -680,14 +581,8 @@ export const OffersNoFilterControlWhereTheBarCannotExpressOne: Story = {
 
 // ── Editing in place ────────────────────────────────────────────────────────
 
-/**
- * Columns for the editing stories: one the resource editor can open, one it cannot.
- *
- * An integer property is used because it is the one value type whose editor needs nothing but a
- * number — no list fetch, no geoname lookup, no rich-text build.
- */
+/** Columns for the editing stories: one the resource editor can open, one it cannot. */
 const EDITING_COLUMNS: TableColumn[] = [
-  // The label is not a property value: no `PropertyInfoValues`, no editor, plain text.
   column(LABEL_COLUMN_KEY, 'Label', { isEditable: false }),
   typedColumn(EDITABLE_PROPERTY_IRI, 'Integer', Constants.IntValue),
   readOnlyColumn(LINK_PROPERTY, 'Author'),
@@ -696,8 +591,7 @@ const EDITING_COLUMNS: TableColumn[] = [
 function intValue(strval: string, userHasPermission = 'CR'): ReadValue {
   const value = seedValue(new ReadIntValue(), EDITABLE_PROPERTY_IRI, strval);
   value.int = Number(strval);
-  // The action bubble gates Edit and Delete on the *value's* permission, not the resource's, so a
-  // story about a read-only user has to say so twice.
+  // The action bubble gates Edit and Delete on the value's permission, not the resource's.
   value.userHasPermission = userHasPermission;
   return value;
 }
@@ -723,19 +617,12 @@ const editingStory = (args: Story['args']): Story => ({
   },
 });
 
-/**
- * There is no table-specific editing affordance. A
- * cell the editor can open *is* the editor's own unit, mounted in the cell; a cell it cannot open
- * is text.
- */
 export const MountsTheViewersOwnUnitOnlyWhereTheEditorCanOpen: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
     const [labelCell, integerCell, authorCell] = Array.from(canvasElement.querySelectorAll('td'));
 
     await expect(integerCell.querySelector('app-table-property-cell')).not.toBeNull();
-    // `data-cy="property-value"` is emitted by the resource editor's own display component, so
-    // finding it is proof the viewer's subtree mounted here rather than a lookalike.
     await expect(integerCell.querySelector('[data-cy="property-value"]')).not.toBeNull();
 
     await expect(labelCell.querySelector('app-table-property-cell')).toBeNull();
@@ -743,7 +630,6 @@ export const MountsTheViewersOwnUnitOnlyWhereTheEditorCanOpen: Story = {
   },
 };
 
-/** A scrolling cell's controls slide under the frozen columns rather than over them. */
 export const KeepsScrollingCellsUnderTheFrozenColumns: Story = {
   ...editingStory({}),
   render: storyArgs => ({
@@ -757,12 +643,9 @@ export const KeepsScrollingCellsUnderTheFrozenColumns: Story = {
     const add = canvasElement.querySelector('[data-cy="add-property-value-button"]') as HTMLElement;
     const label = canvasElement.querySelector('td.is-label-cell') as HTMLElement;
 
-    // Bring the add button under the label column.
     scroller.scrollLeft = add.getBoundingClientRect().left - label.getBoundingClientRect().left - 20;
     await waitFor(() => expect(add.getBoundingClientRect().right).toBeLessThan(label.getBoundingClientRect().right));
 
-    // The label cell is stacked above the scrolled cell there. Compared within the stack rather than
-    // by the topmost element, which may be something unrelated overlaid on the page.
     const box = add.getBoundingClientRect();
     const stack = document.elementsFromPoint(box.left + box.width / 2, box.top + box.height / 2);
     const addCell = add.closest('td') as HTMLElement;
@@ -773,7 +656,6 @@ export const KeepsScrollingCellsUnderTheFrozenColumns: Story = {
   },
 };
 
-/** The label has a value's hover and Edit button; Edit opens the viewer's own label dialog. */
 export const EditsTheLabelThroughTheViewersDialog: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
@@ -788,11 +670,6 @@ export const EditsTheLabelThroughTheViewersDialog: Story = {
   },
 };
 
-/**
- * The action bubble is the viewer's, not a table control: Info, Edit and Delete, revealed by
- * hovering the value rather than the cell. This is what the user asked for in so many words — a
- * cell must behave exactly like a property value in the list view.
- */
 export const ShowsTheViewersActionBubbleWhenAValueIsHovered: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
@@ -807,10 +684,6 @@ export const ShowsTheViewersActionBubbleWhenAValueIsHovered: Story = {
   },
 };
 
-/**
- * A column too narrow for its editor widens while one of its values is edited, and goes back to its
- * own width once the editor closes — without that width ever being stored as the user's.
- */
 export const WidensAColumnForItsEditorWhileEditing: Story = {
   ...editingStory({ columnWidths: { [EDITABLE_PROPERTY_IRI]: 120 } }),
   render: storyArgs => ({
@@ -840,7 +713,6 @@ export const WidensAColumnForItsEditorWhileEditing: Story = {
   },
 };
 
-/** The value being edited is tinted — that value only, not its row. */
 export const TintsTheValueBeingEdited: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
@@ -856,32 +728,22 @@ export const TintsTheValueBeingEdited: Story = {
   },
 };
 
-/** A cell's edit control opens the same editor the resource viewer opens. */
 export const OpensTheViewersOwnEditorFromTheBubble: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
     await userEvent.hover(canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement);
     await userEvent.click(canvasElement.querySelector('[data-cy="edit-button"]') as HTMLElement);
 
-    // `app-property-value-edit` is the resource editor's own edit host — it carries the value-type
-    // editor switcher, the comment control and the undo/save pair.
     await expect(canvasElement.querySelector('app-property-value-edit')).not.toBeNull();
     await expect(canvasElement.querySelector('[data-cy="property-value"]')).toBeNull();
   },
 };
 
-/**
- * The gate is the resource editor's own permission check, applied by the editor itself.
- * The table adds nothing — which is exactly why a resource the viewer would refuse to edit is not
- * editable from a cell either.
- */
 export const OffersNoEditOrDeleteWithoutModifyPermission: Story = {
   ...editingStory({
     resources: [editableRow('http://rdfh.ch/0001/a', 'BRAUT001a', 'RV')],
   }),
   play: async ({ canvasElement }) => {
-    // `buildRows` refuses to model a resource whose permission string it cannot parse; 'RV' is a
-    // string it can, so the unit still mounts — read-only.
     await expect(canvasElement.querySelector('app-table-property-cell')).not.toBeNull();
 
     await userEvent.hover(canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement);
@@ -892,7 +754,6 @@ export const OffersNoEditOrDeleteWithoutModifyPermission: Story = {
   },
 };
 
-/** Adding a value is the editor's own control, offered where cardinality allows one. */
 export const OffersTheViewersAddControlWhereCardinalityAllowsAnotherValue: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
@@ -905,10 +766,6 @@ export const OffersTheViewersAddControlWhereCardinalityAllowsAnotherValue: Story
 
 const onCheck = fn().mockName('resourceCheckedChanged');
 
-/**
- * Bound through a host template rather than through args so the assertions run against the real
- * output bindings the fetcher uses, the same way the header-control stories do.
- */
 const rowControlsStory = (args: Story['args']): Story => ({
   render: storyArgs => ({
     props: {
@@ -929,7 +786,6 @@ const rowControlsStory = (args: Story['args']): Story => ({
   },
 });
 
-/** The row checkbox feeds the comparison selection, exactly as the list view's does. */
 export const AddsARowToTheComparisonWhenItIsChecked: Story = {
   ...rowControlsStory({}),
   play: async ({ canvasElement }) => {
@@ -951,12 +807,6 @@ export const RemovesARowFromTheComparisonWhenItIsUnchecked: Story = {
   },
 };
 
-/**
- * The open control is the app's shared drawer-dialog button, not a table-specific one — a row
- * opens a resource in the same place a property or a link does. It is therefore asserted by its
- * presence and its accessible name; what it opens is `ResourceExplorerButtonComponent`'s own
- * business and is covered by that component's stories.
- */
 export const OffersTheSharedDrawerControlOnEveryRow: Story = {
   ...rowControlsStory({}),
   play: async ({ canvasElement }) => {
@@ -990,10 +840,7 @@ const keyboardStory = (): Story => ({
   },
 });
 
-/**
- * CDK drag-drop offers no keyboard reorder at all, so without the arrow keys on the header cell the
- * whole feature is pointer-only.
- */
+/** CDK drag-drop has no keyboard reorder, so the header cell handles the arrow keys itself. */
 export const MovesAColumnWithTheKeyboardFromItsHeader: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
@@ -1005,7 +852,6 @@ export const MovesAColumnWithTheKeyboardFromItsHeader: Story = {
   },
 };
 
-/** The sticky label column stays at index 0, for the keyboard exactly as for a drop. */
 export const RefusesToMoveAColumnInFrontOfTheStickyOne: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
@@ -1020,20 +866,14 @@ export const RefusesToMoveAColumnInFrontOfTheStickyOne: Story = {
 export const ResizesAColumnWithTheKeyboardFromItsHandle: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
-    // Found by its column, not by position: the label column is resizable too, so the first
-    // handle in the DOM is its one.
     // Array.from rather than a spread: the stories tsconfig has no `dom.iterable`.
     const titleHeader = Array.from(canvasElement.querySelectorAll('th')).find(th =>
       th.querySelector('.header-label')?.textContent?.includes('Title')
     ) as HTMLElement;
     const handle = titleHeader.querySelector('[data-cy="column-resize"]') as HTMLElement;
-    // Reachable without a pointer at all: the handle is in the tab order and announces the width
-    // it is changing.
     await expect(handle).toHaveAttribute('tabindex', '0');
     await expect(handle).toHaveAttribute('aria-valuenow', '200');
 
-    // Measured, not assumed: the keyboard step works from what is on screen, exactly as the
-    // pointer drag does.
     const before = Math.round((handle.closest('th') as HTMLElement).getBoundingClientRect().width);
 
     handle.focus();
@@ -1043,13 +883,7 @@ export const ResizesAColumnWithTheKeyboardFromItsHandle: Story = {
   },
 };
 
-/**
- * A header narrowed until its name is cut off still tells the user which column it is: hovering
- * the name shows it in full. A name that already fits shows nothing — a tooltip repeating what is
- * on screen is noise on a row the pointer crosses constantly.
- */
 export const ShowsATruncatedHeaderNameInFullOnHover: Story = {
-  // A name too long for its column even with the header's controls hidden, which they are at rest.
   args: {
     columns: [
       column(LABEL_COLUMN_KEY, 'Label'),
@@ -1082,7 +916,6 @@ const onPin = fn().mockName('columnPinToggled');
 const PLACE = `${ONTO}hasPlace`;
 const TITLE = `${ONTO}hasTitle`;
 
-/** Place pinned after the label, in a container narrow enough that the table scrolls sideways. */
 const pinnedStory = (): Story => ({
   render: storyArgs => ({
     props: { ...storyArgs, onPin, onReorder, pinned: [PLACE], order: [LABEL_COLUMN_KEY, PLACE, TITLE] },
@@ -1107,7 +940,6 @@ export const TogglesAColumnsPinFromItsHeader: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Pinned: the button says what pressing it will do, and reports its state.
     const unpin = canvas.getByRole('button', { name: 'Unpin Place' });
     await expect(unpin).toHaveAttribute('aria-pressed', 'true');
 
@@ -1116,7 +948,6 @@ export const TogglesAColumnsPinFromItsHeader: Story = {
   },
 };
 
-/** The point of pinning: the column stays in view, right after the label, as the rest scroll. */
 export const KeepsAPinnedColumnInViewWhileTheTableScrolls: Story = {
   ...pinnedStory(),
   play: async ({ canvasElement }) => {
@@ -1130,12 +961,10 @@ export const KeepsAPinnedColumnInViewWhileTheTableScrolls: Story = {
     await waitFor(() =>
       expect(Math.round(header('Place').getBoundingClientRect().left - scrollerLeft)).toBe(Math.round(labelWidth))
     );
-    // The scrolling column did move.
     await expect(header('Title').getBoundingClientRect().left - scrollerLeft).toBeLessThan(labelWidth + 200);
   },
 };
 
-/** The frozen zone's edge casts a shadow only once something has scrolled under it. */
 export const ShadesTheFrozenEdgeOnceTheTableScrolls: Story = {
   ...pinnedStory(),
   play: async ({ canvasElement }) => {
@@ -1147,7 +976,6 @@ export const ShadesTheFrozenEdgeOnceTheTableScrolls: Story = {
 
     const bodyEdge = canvasElement.querySelector('td.mat-mdc-table-sticky-border-elem-left') as HTMLElement;
 
-    // At rest: no shadow, and the body keeps its edge line — thicker than a column line.
     await expect(shadow()).toBeNull();
     await expect(getComputedStyle(edge).borderRightWidth).toBe('2px');
     await expect(getComputedStyle(bodyEdge).borderRightWidth).toBe('2px');
@@ -1158,19 +986,16 @@ export const ShadesTheFrozenEdgeOnceTheTableScrolls: Story = {
 
     await waitFor(() => expect(shadow()).not.toBeNull());
     await alongTheEdge();
-    // Down the header row as well: above every sticky header cell, from the top of the table.
     const headerZ = Math.max(
       ...Array.from(canvasElement.querySelectorAll('thead th')).map(th => Number(getComputedStyle(th).zIndex) || 0)
     );
     await expect(Number(getComputedStyle(shadow()!).zIndex)).toBeGreaterThan(headerZ);
     await expect(Math.round(shadow()!.getBoundingClientRect().top)).toBe(Math.round(edge.getBoundingClientRect().top));
-    // The shadow is now the body's edge; only the header keeps a line there.
     await expect(getComputedStyle(bodyEdge).borderRightColor).toBe('rgba(0, 0, 0, 0)');
     await expect(getComputedStyle(edge).borderRightColor).not.toBe('rgba(0, 0, 0, 0)');
   },
 };
 
-/** The frozen columns — the label and the pins — are tinted apart from the scrolling ones. */
 export const TintsTheFrozenColumns: Story = {
   ...pinnedStory(),
   play: async ({ canvasElement }) => {
@@ -1184,7 +1009,6 @@ export const TintsTheFrozenColumns: Story = {
   },
 };
 
-/** A pinned column's pin is read before its name. */
 export const ShowsThePinBeforeAPinnedColumnsName: Story = {
   ...pinnedStory(),
   play: async ({ canvasElement }) => {
@@ -1195,8 +1019,7 @@ export const ShowsThePinBeforeAPinnedColumnsName: Story = {
 
     await expect(pin.getBoundingClientRect().right).toBeLessThanOrEqual(name.getBoundingClientRect().left);
 
-    // Bringing in the other controls does not push the name along. Focus rather than hover: the
-    // same rule covers both, and a play function cannot put the browser in the CSS hover state.
+    // Focus stands in for hover, which a play function cannot produce.
     const left = name.getBoundingClientRect().left;
     place.focus();
     await waitFor(() => expect(getComputedStyle(place.querySelector('.header-sort') as HTMLElement).opacity).toBe('1'));
@@ -1205,7 +1028,6 @@ export const ShowsThePinBeforeAPinnedColumnsName: Story = {
   },
 };
 
-/** Says how many columns are hidden under the frozen ones, once whole columns are, and scrolls back. */
 export const CountsTheColumnsScrolledUnderTheFrozenOnes: Story = {
   render: storyArgs => ({
     props: {
@@ -1230,7 +1052,6 @@ export const CountsTheColumnsScrolledUnderTheFrozenOnes: Story = {
 
     await expect(hint()).toBeNull();
 
-    // Title and A (120px each) go fully under the frozen zone; B only partly.
     scroller.scrollLeft = 300;
     scroller.dispatchEvent(new Event('scroll'));
 
@@ -1243,7 +1064,6 @@ export const CountsTheColumnsScrolledUnderTheFrozenOnes: Story = {
   },
 };
 
-/** A scrolling column moved in front of a pinned one would slide under it. */
 export const RefusesToMoveAScrollingColumnInFrontOfAPin: Story = {
   ...pinnedStory(),
   play: async ({ canvasElement }) => {
@@ -1278,10 +1098,6 @@ const dragColumnEdge = (header: HTMLElement, by: number) => {
 const titleHeader = (canvasElement: HTMLElement) =>
   canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
 
-/**
- * The column follows the pointer, and the new width is reported once, on release — not per frame,
- * which would write the persisted layout on every pixel of the drag.
- */
 export const ResizesAColumnByDraggingItsEdge: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
@@ -1298,7 +1114,6 @@ export const ResizesAColumnByDraggingItsEdge: Story = {
   },
 };
 
-/** Below the minimum a header's own controls no longer fit, so the drag stops there. */
 export const StopsAColumnAtItsMinimumWidth: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
@@ -1309,7 +1124,6 @@ export const StopsAColumnAtItsMinimumWidth: Story = {
   },
 };
 
-/** Double-click fits the column to its content, as a spreadsheet does; Home puts back the default. */
 export const FitsAColumnToItsContentOnDoubleClick: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
@@ -1326,7 +1140,6 @@ export const FitsAColumnToItsContentOnDoubleClick: Story = {
 
     handle.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
 
-    // Out of the minimum it was dragged to, to where no value is cut off.
     await expect(onResize).toHaveBeenCalledTimes(1);
     await expect(width()).toBeGreaterThan(90);
     await expect(values().every(value => value.scrollWidth <= value.clientWidth)).toBe(true);
@@ -1337,7 +1150,6 @@ export const FitsAColumnToItsContentOnDoubleClick: Story = {
   },
 };
 
-/** A click on the edge without a drag stores nothing, so the column keeps following its default. */
 export const StoresNoWidthForAClickWithoutADrag: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
@@ -1354,7 +1166,6 @@ const RIGHTS_COLUMNS: TableColumn[] = [
   ...rightsColumns({ license: 'License', copyrightHolder: 'Copyright holder', authorship: 'Authorship' }),
 ];
 
-/** One resource with its own authorship, one without, so both readings show side by side. */
 const RIGHTS_ROWS = [
   Object.assign(resource('http://rdfh.ch/0001/own', 'With authorship', {}, RIGHTS_COLUMNS), {
     resourceAuthorship: ['Ada Lovelace'],
@@ -1377,8 +1188,7 @@ const rightsStory = (): Story => ({
   render: storyArgs => ({
     props: {
       ...storyArgs,
-      // Not `rows`: Storybook also sets these props on the table component, whose own `rows` it
-      // would overwrite — the next re-render (after any click) then fails.
+      // Not `rows`: Storybook also sets these props on the table component, overwriting its own `rows`.
       rightsRows: RIGHTS_ROWS,
       columns: RIGHTS_COLUMNS,
       visible: RIGHTS_COLUMNS.map(rightsColumn => rightsColumn.key),
@@ -1399,7 +1209,6 @@ const cellOf = (canvasElement: HTMLElement, rowLabel: string, columnLabel: strin
   return row?.children[index] as HTMLElement;
 };
 
-/** The license opens its Creative Commons deed, in a new tab, and says so to a screen reader. */
 export const LinksTheLicenseToItsDeed: Story = {
   ...rightsStory(),
   play: async ({ canvasElement }) => {
@@ -1420,10 +1229,6 @@ export const ShowsTheProjectsCopyrightHolderOnEveryRow: Story = {
   },
 };
 
-/**
- * Authorship reads as the viewer's rights statement reads it: a resource's own as plain text; the
- * project default standing in for a missing one labelled as such, never asserted as the resource's.
- */
 export const MarksTheProjectDefaultAuthorshipAsAFallback: Story = {
   ...rightsStory(),
   play: async ({ canvasElement }) => {
@@ -1436,7 +1241,6 @@ export const MarksTheProjectDefaultAuthorshipAsAFallback: Story = {
   },
 };
 
-/** Authorship edits in the table as it does in the viewer: Edit at the end of the line, then the chip editor. */
 export const EditsAuthorshipLikeTheViewer: Story = {
   ...rightsStory(),
   play: async ({ canvasElement }) => {
@@ -1454,10 +1258,6 @@ export const EditsAuthorshipLikeTheViewer: Story = {
   },
 };
 
-/**
- * A header's sort, filter and pin buttons take no room until the column is hovered or focused, so
- * the name gets the whole width at rest and only gives way when the controls come in.
- */
 export const GivesTheHeaderNameTheWholeWidthUntilItsControlsShow: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
@@ -1471,17 +1271,15 @@ export const GivesTheHeaderNameTheWholeWidthUntilItsControlsShow: Story = {
     await expect(controls().every(width => width === 0)).toBe(true);
     await expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth);
 
-    // Focus stands in for hover, which a synthetic event cannot produce; both reveal the controls.
+    // Focus stands in for hover, which a synthetic event cannot produce.
     header.focus();
 
     await waitFor(() => expect(controls().every(width => width > 0)).toBe(true));
-    // In beside the name, not spilling out of the cell: the name is what gives way.
     const content = header.querySelector('.header-content') as HTMLElement;
     await expect(content.scrollWidth).toBeLessThanOrEqual(content.clientWidth);
   },
 };
 
-/** The whole header cell is the drag handle: there is no grip to aim at. */
 export const MovesAColumnByDraggingItsHeader: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
@@ -1493,14 +1291,12 @@ export const MovesAColumnByDraggingItsHeader: Story = {
     const to = place.getBoundingClientRect();
     const y = from.top + from.height / 2;
     const mouse = (target: EventTarget, type: string, x: number) =>
-      // `buttons` and `detail` set: CDK takes a press with either at 0 for a screen reader's
-      // synthetic click and ignores it.
+      // `buttons` and `detail` set: CDK ignores a press with either at 0 as a screen reader's synthetic click.
       target.dispatchEvent(
         new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, buttons: 1, detail: 1 })
       );
 
     mouse(title.querySelector('.header-label') as HTMLElement, 'mousedown', from.left + 20);
-    // Past CDK's start threshold, then across to the far side of the next column.
     for (const x of [from.left + 30, from.left + 60, to.left + to.width / 2, to.right - 5]) {
       mouse(document, 'mousemove', x);
       await new Promise(resolve => requestAnimationFrame(resolve));
@@ -1513,11 +1309,6 @@ export const MovesAColumnByDraggingItsHeader: Story = {
   },
 };
 
-/**
- * In an Auto-height row, a tall cell sets the row's height and every other cell reads from the
- * top, like the lines of a spreadsheet — not centred, and not at the bottom, where a short value
- * beside a long text looked unrelated to its row (DEV-7494).
- */
 export const AlignsEveryCellToTheTopOfATallRow: Story = {
   args: {
     resources: [
@@ -1542,9 +1333,7 @@ export const AlignsEveryCellToTheTopOfATallRow: Story = {
       (cell.querySelector(selector) as HTMLElement).getBoundingClientRect().top - cell.getBoundingClientRect().top;
     const [labelCell, titleCell, placeCell] = cells;
 
-    // The long text made the row tall.
     await expect(row.getBoundingClientRect().height).toBeGreaterThan(150);
-    // Every cell's content starts at the same height, at the top of the row.
     const titleTop = top(titleCell, '.cell-property');
     await expect(titleTop).toBeLessThan(12);
     await expect(Math.abs(top(placeCell, '.cell-property') - titleTop)).toBeLessThan(2);
@@ -1552,10 +1341,6 @@ export const AlignsEveryCellToTheTopOfATallRow: Story = {
   },
 };
 
-/**
- * Column separators run the full height of the table, not just through the header — and stop at
- * the last real column, since the filler after it is spare width rather than a column.
- */
 export const DrawsColumnSeparatorsDownEveryRow: Story = {
   play: async ({ canvasElement }) => {
     const separator = (cell: Element) => getComputedStyle(cell).borderRightWidth;
@@ -1565,7 +1350,6 @@ export const DrawsColumnSeparatorsDownEveryRow: Story = {
       const filler = cells.pop() as Element;
 
       for (const cell of cells) {
-        // The frozen edge's separator is the thicker one.
         const isFrozenEdge = cell.classList.contains('mat-mdc-table-sticky-border-elem-left');
         await expect(separator(cell)).toBe(isFrozenEdge ? '2px' : '1px');
       }
@@ -1574,10 +1358,6 @@ export const DrawsColumnSeparatorsDownEveryRow: Story = {
   },
 };
 
-/**
- * A long label does not hold its column open: the column takes the width it was given, and the
- * label ellipsises within it (DEV-7494 — a class of video titles could not be narrowed at all).
- */
 export const NarrowsTheLabelColumnBelowItsLongestLabel: Story = {
   args: {
     resources: [
@@ -1598,11 +1378,6 @@ export const NarrowsTheLabelColumnBelowItsLongestLabel: Story = {
   },
 };
 
-/**
- * A class wider than the viewport scrolls sideways rather than reflowing. The columns
- * keep the widths they were given — a table that reflowed would silently stop being a grid the
- * user can scan a property down.
- */
 export const ScrollsHorizontallyAtNarrowWidthsInsteadOfReflowing: Story = {
   render: storyArgs => ({
     props: storyArgs,
@@ -1614,18 +1389,10 @@ export const ScrollsHorizontallyAtNarrowWidthsInsteadOfReflowing: Story = {
     const scroller = canvasElement.querySelector('.table-scroll') as HTMLElement;
 
     await expect(scroller.scrollWidth).toBeGreaterThan(scroller.clientWidth);
-    // The header still reports the width it was told to, so nothing was squeezed to fit.
     await expect((canvasElement.querySelectorAll('th')[1] as HTMLElement).style.width).toBe('200px');
   },
 };
 
-/**
- * Every hover-revealed row control is also revealed by focus.
- *
- * Hover-only reveal makes a control unusable without a pointer. (The value action bubble inside a
- * cell is the resource editor's own and is covered by that component's stories; it behaves here
- * exactly as it does in the panel beside the table, which is the point.)
- */
 export const RevealsEveryHoverOnlyControlOnKeyboardFocus: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
@@ -1636,8 +1403,7 @@ export const RevealsEveryHoverOnlyControlOnKeyboardFocus: Story = {
       control.focus();
 
       await expect(document.activeElement === control || canvasElement.contains(document.activeElement)).toBe(true);
-      // The reveal is on an ancestor, so the opacity that matters is the cluster's, not the
-      // button's own.
+      // The reveal is on an ancestor, so the cluster's opacity is what matters.
       const revealed = control.closest('.row-controls') ?? control;
       await expect(getComputedStyle(revealed).opacity).toBe('1');
     }
@@ -1646,11 +1412,7 @@ export const RevealsEveryHoverOnlyControlOnKeyboardFocus: Story = {
 
 // ── Row height ──────────────────────────────────────────────────────────────
 
-/**
- * Row heights are the table's own state, not an output: a row belongs to one resource and a class
- * may have tens of thousands, so unlike column widths they are not persisted and the host is never
- * told. These assert the rendered result instead.
- */
+/** Row heights are not persisted and the host is never told, so these assert the rendered result. */
 const dragVertically = (handle: HTMLElement, by: number) => {
   // `setPointerCapture` needs a real pointer id the test never produced.
   handle.setPointerCapture = () => undefined;
@@ -1696,7 +1458,6 @@ export const ReturnsARowToItsContentOnDoubleClick: Story = {
   },
 };
 
-/** One control, every row: the slider's height applies to rows nobody has dragged. */
 export const DrawsEveryRowAtTheViewOptionsHeight: Story = {
   args: { rowHeight: 160 },
   play: async ({ canvasElement }) => {
@@ -1708,7 +1469,6 @@ export const DrawsEveryRowAtTheViewOptionsHeight: Story = {
   },
 };
 
-/** Resetting a row the user never dragged leaves it at the View-options height, like its neighbours. */
 export const KeepsTheViewOptionsHeightWhenAnUndraggedRowIsReset: Story = {
   args: { rowHeight: 160 },
   play: async ({ canvasElement }) => {
@@ -1722,7 +1482,6 @@ export const KeepsTheViewOptionsHeightWhenAnUndraggedRowIsReset: Story = {
   },
 };
 
-/** A row the user dragged is a more specific request than the slider's, so it wins. */
 export const LetsADraggedRowOverrideTheViewOptionsHeight: Story = {
   args: { rowHeight: 160 },
   play: async ({ canvasElement }) => {
@@ -1736,11 +1495,6 @@ export const LetsADraggedRowOverrideTheViewOptionsHeight: Story = {
   },
 };
 
-/**
- * Moving the slider is a request for the whole table to be one size, so it clears the rows the user
- * had dragged — otherwise the table would be all one size except where it was not. The host
- * template's button stands in for the slider: it changes the same input the class header binds.
- */
 export const ResetsDraggedRowsWhenTheViewOptionsHeightChanges: Story = {
   render: storyArgs => ({
     props: { ...storyArgs, rowHeight: undefined as number | undefined },
@@ -1765,17 +1519,12 @@ export const ResetsDraggedRowsWhenTheViewOptionsHeightChanges: Story = {
   },
 };
 
-/** A resource whose Place carries far more values than fit in any reasonable row. */
 const manyPlaces = () =>
   resource('http://rdfh.ch/0001/many', 'Petrowa, Anna', {
     ...texts(`${ONTO}hasTitle`, 'Brautpaar in Tracht'),
     ...texts(`${ONTO}hasPlace`, ...Array.from({ length: 20 }, (_, i) => `Ort ${i + 1}`)),
   });
 
-/**
- * With no height chosen, nothing is capped: a row grows to whatever its content needs. There used
- * to be a 200px default cap here; it hid part of a cell nobody had asked to shorten.
- */
 export const LetsATallCellGrowItsRowWhenNoHeightIsSet: Story = {
   args: { resources: [manyPlaces()] },
   play: async ({ canvasElement }) => {
@@ -1789,7 +1538,6 @@ export const LetsATallCellGrowItsRowWhenNoHeightIsSet: Story = {
   },
 };
 
-/** Once a height is chosen, a cell taller than it scrolls rather than stretching the row. */
 export const ScrollsATallCellOnceAHeightIsSet: Story = {
   args: { resources: [manyPlaces()], rowHeight: 120 },
   play: async ({ canvasElement }) => {
@@ -1802,11 +1550,7 @@ export const ScrollsATallCellOnceAHeightIsSet: Story = {
   },
 };
 
-/**
- * The regression the cap directive exists to prevent, under a set row height. Giving a row a
- * height must not turn its short cells into scroll containers, or the editor's hover bubble — which
- * overhangs a short cell — gives each of them a scrollbar with nothing to scroll.
- */
+/** Setting a row height must not turn short cells into scroll containers: the editor's overhanging hover bubble would give each a scrollbar. */
 export const LeavesShortCellsUnscrollableInASizedRow: Story = {
   args: { rowHeight: 160 },
   play: async ({ canvasElement }) => {
@@ -1820,7 +1564,6 @@ export const LeavesShortCellsUnscrollableInASizedRow: Story = {
   },
 };
 
-/** The drag has no keyboard equivalent, so without this the whole feature is pointer-only. */
 export const ResizesARowWithTheKeyboardFromItsHandle: Story = {
   play: async ({ canvasElement }) => {
     const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;

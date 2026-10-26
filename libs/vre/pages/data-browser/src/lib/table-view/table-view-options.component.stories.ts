@@ -48,8 +48,6 @@ const meta: Meta<TableViewOptionsComponent> = {
   title: 'Data Browser / View Options / Column picker',
   component: TableViewOptionsComponent,
   decorators: [applicationConfig({ providers: STORY_PROVIDERS })],
-  // A host template rather than args, so each assertion runs through the real output bindings the
-  // class header uses instead of poking the component's outputs directly.
   render: args => ({
     props: { ...args, onVisibility, onAllVisibility, onRowHeight },
     template: `<app-table-view-options
@@ -79,7 +77,6 @@ export const ListsEveryColumnWithItsCurrentVisibility: Story = {
 
     await expect(menu.getByRole('menuitemcheckbox', { name: /Title/ })).toHaveAttribute('aria-checked', 'true');
     await expect(menu.getByRole('menuitemcheckbox', { name: /Date/ })).toHaveAttribute('aria-checked', 'false');
-    // No count: the header offers the bulk link instead.
     await expect(menu.queryByText(/of 4 shown/)).toBeNull();
   },
 };
@@ -105,7 +102,6 @@ export const StaysOpenSoSeveralColumnsCanBeToggledInOneGo: Story = {
   },
 };
 
-/** The label column cannot be hidden, so it is not offered at all. */
 export const LeavesTheLabelColumnOutOfTheList: Story = {
   play: async () => {
     await openMenu();
@@ -115,10 +111,6 @@ export const LeavesTheLabelColumnOutOfTheList: Story = {
   },
 };
 
-/**
- * The menu used to offer a density. With one left there was nothing to choose, so the choice went
- * with it — and a radio group that cannot change anything is noise in a menu built for iterating.
- */
 export const OffersNoDensityChoice: Story = {
   play: async () => {
     await openMenu();
@@ -129,7 +121,6 @@ export const OffersNoDensityChoice: Story = {
 
 // ── Showing or hiding every column at once ──────────────────────────────────
 
-/** Hide all while every column is shown — which is how a class opens. */
 export const OffersHideAllWhileEveryColumnIsShown: Story = {
   args: { entries: ENTRIES.map(e => ({ ...e, isVisible: true })) },
   play: async () => {
@@ -143,7 +134,6 @@ export const OffersHideAllWhileEveryColumnIsShown: Story = {
   },
 };
 
-/** Show all as soon as any column is hidden, to bring them back in one go. */
 export const OffersShowAllOnceAnyColumnIsHidden: Story = {
   play: async () => {
     await openMenu();
@@ -156,10 +146,6 @@ export const OffersShowAllOnceAnyColumnIsHidden: Story = {
   },
 };
 
-/**
- * The sticky column cannot be hidden, so it does not count towards "everything is shown" — with
- * every other column hidden, the link still offers to show them.
- */
 export const IgnoresTheStickyColumnWhenDecidingWhichActionToOffer: Story = {
   args: { entries: ENTRIES.map(e => ({ ...e, isVisible: e.column.isSticky })) },
   play: async () => {
@@ -171,7 +157,6 @@ export const IgnoresTheStickyColumnWhenDecidingWhichActionToOffer: Story = {
 
 // ── Row height ──────────────────────────────────────────────────────────────
 
-/** Auto by default: no slider until the user asks for a height of their own. */
 export const StartsOnAutoWithNoSlider: Story = {
   play: async () => {
     await openMenu();
@@ -193,7 +178,6 @@ export const ShowsTheCurrentRowHeightOnManual: Story = {
   },
 };
 
-/** Manual applies a height at once, so the slider starts from what the table is showing. */
 export const AppliesADefaultHeightWhenManualIsPicked: Story = {
   play: async () => {
     await openMenu();
@@ -215,10 +199,6 @@ export const EmitsAutoWhenAutoIsPicked: Story = {
   },
 };
 
-/**
- * Back to Auto and on to Manual again restores the height the user had set, not the default:
- * switching modes is not a reason to lose it. The host feeds each emission back, as the layout does.
- */
 export const RestoresTheLastManualHeightWhenManualIsPickedAgain: Story = {
   args: { rowHeight: 200 },
   render: args => ({
@@ -249,10 +229,6 @@ export const RestoresTheLastManualHeightWhenManualIsPickedAgain: Story = {
   },
 };
 
-/**
- * The table follows the thumb while it is dragged: each step it crosses is emitted on `input`,
- * without waiting for the release.
- */
 export const EmitsTheHeightWhileTheSliderIsDragged: Story = {
   args: { rowHeight: 120 },
   play: async () => {
