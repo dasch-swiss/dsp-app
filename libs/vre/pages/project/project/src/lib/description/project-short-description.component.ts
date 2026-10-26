@@ -69,6 +69,13 @@ import { ProjectDescriptionPageComponent } from './project-description-page.comp
       }
     }
   `,
+  styles: [
+    `
+      :host {
+        overflow-wrap: break-word;
+      }
+    `,
+  ],
 })
 export class ProjectShortDescriptionComponent {
   hasManualLicense?: string;
