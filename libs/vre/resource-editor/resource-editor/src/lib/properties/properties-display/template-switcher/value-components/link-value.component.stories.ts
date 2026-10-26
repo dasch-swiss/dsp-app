@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, componentWrapperDecorator, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, waitFor } from 'storybook/test';
 
@@ -49,6 +49,7 @@ const meta: Meta<LinkValueComponent> = {
   title:
     'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Link Value',
   component: LinkValueComponent,
+  // Compact, as the template editor switcher and the value editor render it in the app (DEV-7611).
   decorators: [
     applicationConfig({
       providers: [
@@ -56,8 +57,10 @@ const meta: Meta<LinkValueComponent> = {
         { provide: DspApiConnectionToken, useValue: dspApiConnectionStub },
         { provide: LinkValueDataService, useValue: linkValueDataServiceStub },
         { provide: MatDialog, useValue: { open: () => ({ afterClosed: () => of(null) }) } },
+        provideCompactFormFieldOptions(),
       ],
     }),
+    componentWrapperDecorator(story => `<div class="compact-value-editor">${story}</div>`),
   ],
   argTypes: {
     control: {
@@ -110,12 +113,6 @@ export const ShowsSearchHelpOnceFocusedUntilEnoughIsTyped: Story = {
   name: 'Shows the search help from the first focus until three letters are typed',
   // The link *value* property, as the editor is given in the app.
   args: { ...Empty.args, control: new FormControl<string | null>(null), propIri: `${ANYTHING}#hasOtherThingValue` },
-  // As the template editor switcher provides it to every value editor.
-  decorators: [
-    applicationConfig({
-      providers: [provideCompactFormFieldOptions()],
-    }),
-  ],
   play: async ({ canvasElement, step }) => {
     const input = canvasElement.querySelector('[data-cy="link-input"]') as HTMLInputElement;
     const help = () => canvasElement.querySelector('[data-cy="link-search-help"]');
