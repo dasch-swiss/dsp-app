@@ -27,11 +27,8 @@ import { ProjectPageService } from '../../project-page.service';
     } @else if (data) {
       @if (userCanViewResources) {
         @if (data.resources.length > 0) {
-          <!-- The count and pager live in the class header now, above the split. -->
           <app-resources-list [resources]="data.resources" [showResultCount]="false" />
         } @else if (filtersAreActive) {
-          <!-- Distinct from noResourcesFound: "this class is empty" and "your filter matched
-               nothing" call for different next actions, and conflating them reads as data loss. -->
           <app-centered-message
             [message]="'pages.dataBrowser.resourcesListFetcher.noResourcesMatchFilters' | translate" />
         } @else {
@@ -47,9 +44,7 @@ import { ProjectPageService } from '../../project-page.service';
       <app-progress-indicator />
     }
   `,
-  // No `ResourceResultService` here on purpose: the class view provides it so this component and the
-  // result count in the class header read one instance. Providing it locally shadowed the view's and
-  // left the header counting a different query.
+  // Do not provide `ResourceResultService` here: it would shadow the class view's instance that the header reads.
   imports: [
     AsyncPipe,
     TranslatePipe,
@@ -72,11 +67,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
   /** Re-triggers the load after a failure. Replays on subscribe so the initial load runs too. */
   private readonly _retrySubject = new BehaviorSubject<void>(undefined);
 
-  /**
-   * Latest `hasActiveState$`, mirrored into a field rather than combined into the data stream.
-   * Folding it into the `combineLatest` would make it a *trigger* — toggling a filter would fire a
-   * second request alongside the one the query change already causes.
-   */
+  /** Mirrored into a field, not combined into the data stream: as a trigger it would fire a second request. */
   filtersAreActive = false;
 
   data$!: Observable<{ resources: ReadResource[]; selectFirstResource: boolean } | null>;
@@ -96,10 +87,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
   ) {
     this._searchState.hasActiveState$.pipe(takeUntilDestroyed()).subscribe(active => (this.filtersAreActive = active));
 
-    // Creating a resource adds a row this list cannot predict, so the panel pings the page service
-    // and the list reloads. Folded into the retry subject rather than merged in as a second outer
-    // trigger: `onNavigationReload$` is a BehaviorSubject and would otherwise replay on subscribe and
-    // run the initial load twice. `skip(1)` drops exactly that replayed value.
+    // `skip(1)` drops the BehaviorSubject's replayed value, which would run the initial load twice.
     this._dataBrowserPageService.onNavigationReload$
       .pipe(skip(1), takeUntilDestroyed())
       .subscribe(() => this._retrySubject.next());
@@ -118,12 +106,8 @@ export class ResourcesListFetcherComponent implements OnChanges {
     // chain. That matters: `catchError` completes the inner stream, so retrying from anywhere inside
     // it could never emit again.
     //
-    // Nothing is reset here beyond the failure flags. Filters, term and sort live in the URL and the
-    // page index in the shared result service, so rebuilding the chain re-reads all four as they
-    // were — a retry repeats the request that failed rather than silently returning to page 1 of an
-    // unfiltered list.
+    // Nothing else is reset: a retry must repeat the failed request, not return to page 1.
     this.failed.set(false);
-    // The failure panel replaced the results, so the retry is a first load, not a refresh.
     this._resourceResult.resetLoading();
     this._retrySubject.next();
   }
@@ -137,18 +121,11 @@ export class ResourcesListFetcherComponent implements OnChanges {
     const resources$ = this.projectPageService.currentProject$.pipe(
       first(),
       switchMap(project =>
-        // `switchMap` over the query, not `combineLatest` with it: a filter change invalidates the
-        // request in flight, and letting the superseded response land would paint results for a
-        // filter the URL no longer carries.
+        // `switchMap` over the query so a superseded response never lands.
         this._query.query$.pipe(
           switchMap((query, queryIndex) => {
-            // A new query is a new result set, so the old offset points into results that no longer
-            // exist. Reset here rather than in a `tap` upstream: by the time this projection runs,
-            // `switchMap` has already torn down the previous inner subscription, so the reset cannot
-            // fire one wasted request for the superseded query.
-            //
-            // Skipped for the first query — the subject already starts at 0, and resetting would
-            // push a redundant emission ahead of the first request.
+            // Reset inside the projection, not in an upstream `tap`: the previous inner subscription is
+            // already torn down, so no wasted request fires for the superseded query.
             if (queryIndex > 0) {
               this._resourceResult.updatePageIndex(0);
             }
@@ -159,8 +136,6 @@ export class ResourcesListFetcherComponent implements OnChanges {
         )
       ),
       map(([{ resources, pageIndex }, numberOfResults]) => this._applyCount(resources, pageIndex, numberOfResults)),
-      // The class header's refresh bar: on for a page, filter or sort change while the list stays
-      // on screen, off once the new results are in.
       tap(() => this._resourceResult.markLoaded())
     );
 
@@ -205,15 +180,8 @@ export class ResourcesListFetcherComponent implements OnChanges {
   }
 
   /**
-   * Auto-select the first result, but only on entry to the class.
-   *
-   * Re-running it on a filter change, a sort change or a retry would yank the viewer away from
-   * whatever the user was reading, so every re-query within one class leaves the selection alone.
-   *
-   * The memory of "entry already happened" lives on `DataBrowserPageService`, not on this
-   * component: a List ⇄ Table switch destroys and recreates this fetcher, and an instance with no
-   * memory would treat the switch as a fresh entry and select its own first row over the resource
-   * the user had open in the table.
+   * Auto-select the first result only on entry to the class, so a re-query never yanks the viewer.
+   * The memory lives on `DataBrowserPageService` because a List/Table switch recreates this fetcher.
    */
   private _applySelection(resources: ReadResource[]): { resources: ReadResource[]; selectFirstResource: boolean } {
     const isClassEntry = this.classLabel !== this._dataBrowserPageService.selectionResolvedForClass;
@@ -223,9 +191,7 @@ export class ResourcesListFetcherComponent implements OnChanges {
       if (resources.length >= 1) {
         this._multipleViewerService.selectOneResource(resources[0]);
       } else {
-        // Only on entry. A filter that narrows to nothing must leave the viewer and the comparison
-        // set alone — the user can widen the filter again and expects their open resource still
-        // there.
+        // Only on entry: a filter that narrows to nothing must leave the viewer alone.
         this._multipleViewerService.reset();
       }
     }
@@ -267,14 +233,11 @@ export class ResourcesListFetcherComponent implements OnChanges {
   }
 
   private _performGravSearch(query: string, index: number, projectIri: string) {
-    // `lastIndexOf`, not `search`: the offset clause is the last thing in the query, but a fulltext
-    // term can contain the word OFFSET, and cutting at the first occurrence would truncate the query
-    // mid-clause and send a syntactically broken request.
+    // `lastIndexOf`: a fulltext term can contain the word OFFSET.
     const offsetAt = query.lastIndexOf('OFFSET');
     const gravsearch = `${offsetAt === -1 ? query : query.substring(0, offsetAt)}OFFSET ${index}`;
 
-    // Scoped to the project on both this and the count query: without it the Data tab searches every
-    // project the user can read, which inflates the count and can leak labels across projects.
+    // Project-scoped, here and on the count: otherwise the search spans every readable project.
     return this._dspApiConnection.v2.search.doExtendedSearch(gravsearch, projectIri);
   }
 }

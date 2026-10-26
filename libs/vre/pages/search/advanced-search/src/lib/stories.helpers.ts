@@ -17,10 +17,7 @@ export {
   SAMPLE_RESOURCE_CLASSES,
 } from '@dasch-swiss/vre/pages/search/search-filters';
 
-/**
- * The Search tab stores its state in the URL, so its stories need the URL service stubbed on top of the
- * shared port stub. The same quiet state object backs both, so they cannot drift apart in a story.
- */
+/** Stubs the Search tab's URL service on top of the shared port stub, both backed by one quiet state object. */
 const searchUrlSyncServiceStub = {
   provide: SearchUrlSyncService,
   useValue: EMPTY_SEARCH_STATE as Partial<SearchUrlSyncService>,

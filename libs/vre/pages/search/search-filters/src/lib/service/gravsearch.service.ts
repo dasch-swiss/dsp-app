@@ -53,8 +53,6 @@ export class GravsearchService {
     // it only names the selected data model. Omit it (and skip `ontoShortCode`, which throws on an empty
     // IRI) when no data model is selected, so a project-wide fulltext-only search still generates.
     const ontoPrefix = this.ontoIri ? `PREFIX ${this.ontoShortCode}: <${this.ontoIri}#>\n` : '';
-    // Bind any sort predicate the statements do not already bind. Empty for advanced search, whose
-    // order-by options are drawn from its own statements.
     const sortBindings = this._sortBindings(statements, orderBy);
 
     return (
@@ -102,21 +100,10 @@ export class GravsearchService {
   }
 
   /**
-   * Variables for sort predicates that no statement binds, plus the triples that bind them.
+   * Variables for sort predicates no statement binds, plus the triples that bind them.
    *
-   * Sorting used to be possible only on `rdfs:label` or on a property you had already filtered by,
-   * because those are the only variables the WHERE clause binds — anything else resolved to
-   * `?res-1` from a failed `findIndex`. The Data tab lets you sort by any property of the class, so
-   * the query has to bind it on demand.
-   *
-   * The binding is `OPTIONAL`, so a property sort *reorders* the class rather than filtering it: a
-   * resource with no value for the sort property stays in the results and the count is unchanged.
-   * Without it, sorting incunabula:Book by hasCreator silently dropped 19 results to 15. Unbound
-   * values sort first ascending, so those resources cluster at one end.
-   *
-   * Returns an empty map when every sort predicate is already bound, so a query that does not use
-   * this — advanced search, which only ever offers predicates drawn from its own statements —
-   * generates byte-for-byte as before.
+   * The binding is `OPTIONAL` so a property sort reorders the class instead of filtering it: resources without a
+   * value stay in the results and the count is unchanged.
    */
   private _sortBindings(statements: StatementElement[], orderBy: OrderByItem[]) {
     const variableByIri = new Map<string, string>();
@@ -131,8 +118,7 @@ export class GravsearchService {
         }
         const variable = `${SORT_PLACEHOLDER}${variableByIri.size}`;
         variableByIri.set(o.id, variable);
-        // Mirrors a statement's own object projection, so the variable is the value object — the
-        // same shape `_getOrderByString` already sorts on for filtered properties.
+        // Same value-object projection `_getOrderByString` sorts on for filtered properties.
         triples.push(`OPTIONAL { ${MAIN_RESOURCE_PLACEHOLDER} <${sanitizeSparqlIri(o.id)}> ${variable} . }`);
       });
 
@@ -149,8 +135,8 @@ export class GravsearchService {
       .map(o => {
         // A ResourceLabel statement filters on the assembly's shared `?label` variable and no longer
         // binds a `?resN` object variable, so sort on `?label` for it; other statements sort on the
-        // `?resN` bound by their object projection, indexed by statement position. A property that is
-        // sorted by but not filtered on has neither, so it uses the variable bound for it above.
+        // `?resN` bound by their object projection, by statement position. A property sorted by but not filtered on
+        // uses the variable bound for it above.
         const statementIndex = statements.findIndex(stm => stm.selectedPredicate?.iri === o.id);
         const variable =
           o.id === RDFS_LABEL

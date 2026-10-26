@@ -44,10 +44,6 @@ describe('TableViewStateService', () => {
       expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1', 'p2']);
     });
 
-    /**
-     * The label column is what keeps a row identifiable once the table scrolls sideways, so
-     * "hide all" has to leave a table of labels rather than a table of nothing.
-     */
     it('LeavesTheStickyLabelColumnShowingWhenHidingEverything', () => {
       service.setAllColumnsVisible(false);
 
@@ -55,7 +51,6 @@ describe('TableViewStateService', () => {
       expect(service.layout().hidden).toEqual(['p0', 'p1', 'p2']);
     });
 
-    /** A user who has dragged their columns into an order keeps it when the rest come back. */
     it('AppendsReturningColumnsRatherThanRebuildingTheOrder', () => {
       service.setColumnVisible('p0', false);
       service.setVisibleOrder([LABEL_COLUMN_KEY, 'p2', 'p1']);
@@ -126,7 +121,6 @@ describe('TableViewStateService', () => {
       expect(layoutStore.load(CLASS_IRI, COLUMNS).rowHeight).toBe(160);
     });
 
-    /** Auto is the absence of a height, not a sentinel every reader would have to know about. */
     it('RemovesTheFieldWhenReturnedToAuto', () => {
       service.setRowHeight(160);
       service.setRowHeight(undefined);
@@ -151,7 +145,6 @@ describe('TableViewStateService', () => {
       expect(service.layout().pinned).toEqual(['p2', 'p0']);
     });
 
-    /** Pinning is not a move: unpinning puts the column back where it was (DEV-7494). */
     it('PutsAnUnpinnedColumnBackWhereItWas', () => {
       service.togglePinned('p2');
 
@@ -179,7 +172,6 @@ describe('TableViewStateService', () => {
       expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1', 'p2']);
     });
 
-    /** The column it followed is gone from the scrolling ones: fall back to the model order. */
     it('FallsBackToTheModelOrderWhenTheColumnItFollowedIsHidden', () => {
       service.togglePinned('p2');
       service.setColumnVisible('p1', false);
@@ -220,7 +212,6 @@ describe('TableViewStateService', () => {
       expect(service.layout().visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p2', 'p1']);
     });
 
-    /** No order may put a scrolling column in front of a pinned one, which would slide under it. */
     it('KeepsThePinnedColumnsFirstWhateverOrderIsAskedFor', () => {
       service.togglePinned('p2');
 
@@ -253,8 +244,6 @@ describe('TableViewStateService', () => {
       service.setColumnVisible('p1', false);
       service.setColumnWidth('p0', 140);
 
-      // A fresh `init` is what a class switch or a browser restart produces: the service keeps
-      // nothing of its own, so a restored layout can only come from the layout store.
       service.init(CLASS_IRI, COLUMNS);
 
       expect(service.layout()).toEqual(layoutStore.load(CLASS_IRI, COLUMNS));

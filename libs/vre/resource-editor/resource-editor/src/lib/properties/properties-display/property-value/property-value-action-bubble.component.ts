@@ -14,11 +14,8 @@ import { PropertyValueService } from './property-value.service';
 import { VALUE_ACTIONS_OPTIONS, ValueActionsOptions } from './value-actions-options.token';
 
 /**
- * A value's actions, at the end of the value's own line.
- *
- * In the line rather than floating over it: a bubble over the value covered the text the user was
- * about to act on (DEV-7494). Who created the value, and when, rides in the Edit button's tooltip
- * rather than a button of its own — it only gets one where there is no Edit button to carry it.
+ * A value's actions, at the end of the value's own line. Who created the value, and when, rides in the
+ * Edit button's tooltip; it only gets a button of its own where there is no Edit button.
  */
 @Component({
   selector: 'app-property-value-action-bubble',

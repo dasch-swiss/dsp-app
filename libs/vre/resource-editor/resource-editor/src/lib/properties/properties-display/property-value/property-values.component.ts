@@ -37,7 +37,6 @@ import { PropertyValueService } from './property-value.service';
     </app-draggable-value-list>
 
     @if (userCanAdd && !currentlyAdding && (editModeData.values.length === 0 || matchesCardinality)) {
-      <!-- Says what it adds: a bare icon under a list of values read as decoration (DEV-7494). -->
       <button
         mat-button
         type="button"
@@ -55,7 +54,6 @@ import { PropertyValueService } from './property-value.service';
   `,
   styles: [
     `
-      /* A quiet text button under the values: as tall as a line, not a toolbar. */
       .add-value {
         --mat-button-text-container-height: 30px;
         --mat-button-text-horizontal-padding: 6px;
@@ -84,10 +82,7 @@ export class PropertyValuesComponent implements OnChanges {
     this._adding$.next(adding);
   }
 
-  /**
-   * Whether a value of this property is open in an editor, being edited or added. For hosts that
-   * make room for the editor, such as the Data tab's table, which widens the column (DEV-7494).
-   */
+  /** Whether a value of this property is open in an editor, being edited or added. */
   readonly editingChange = outputFromObservable(
     combineLatest([this.propertyValueService.lastOpenedItem$, this._adding$]).pipe(
       map(([openedIndex, adding]) => openedIndex !== null || adding),

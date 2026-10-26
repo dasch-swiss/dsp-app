@@ -1,20 +1,17 @@
 import { DestroyRef, Directive, ElementRef, inject, input, NgZone, output } from '@angular/core';
 
-/** How much one arrow-key press moves the edge. Coarse enough to be useful, fine enough to aim. */
 const KEYBOARD_STEP_PX = 16;
 
-/** How wide a column is laid out while its content is measured: wide enough that nothing wraps. */
+/** Width a column is laid out at while its content is measured, so nothing wraps. */
 const FIT_PROBE_WIDTH_PX = 2000;
-/** A fitted column grows no wider than this: one long value should not take the whole screen. */
+/** Upper bound of a fitted column. */
 const FIT_MAX_WIDTH_PX = 480;
-/** The header's sort, filter and pin buttons, which come in beside the name on hover. */
+/** The header's sort, filter and pin buttons, which appear beside the name on hover. */
 const FIT_HEADER_CONTROLS_PX = 70;
-/** A value's hover actions — Edit, Move, Delete — and the gaps around them. */
+/** A value's hover actions (Edit, Move, Delete) and the gaps around them. */
 const FIT_VALUE_ACTIONS_PX = 96;
-/** Cells whose values carry those actions. */
 const ACTIONABLE_CELL = 'app-table-property-cell, app-editable-resource-authorship, app-editable-resource-label';
 
-/** How far right the visible content of `element` reaches, in viewport coordinates; 0 if none. */
 function contentRight(element: Element): number {
   let right = 0;
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
@@ -35,7 +32,6 @@ function contentRight(element: Element): number {
   return right;
 }
 
-/** The width `cell` needs to show its content without wrapping or truncating it. */
 function neededWidth(cell: HTMLTableCellElement, extra: number): number {
   const right = contentRight(cell);
   if (right === 0) {
@@ -46,22 +42,13 @@ function neededWidth(cell: HTMLTableCellElement, extra: number): number {
 }
 
 /**
- * Drags a column's right edge to resize it.
+ * Drags a column's right edge to resize it. Hand-rolled because Material ships no column-resize
+ * primitive.
  *
- * Hand-rolled because Angular Material 21.2.9 ships no column-resize primitive. One exists in
- * `@angular/cdk-experimental`, which is neither a dependency of this repo nor covered by the CDK's
- * compatibility guarantee — adopting it would tie the Data tab to a package that may change shape
- * between patch releases.
- *
- * Put this on a thin element inside the `<th>`, not on the `<th>` itself: the whole header cell is
- * a `cdkDrag` for column reorder, and a pointer-down on the cell has to mean "move this column"
- * everywhere except on the few pixels that mean "resize it".
- *
- * The live width is written straight onto the `<th>`'s inline style rather than onto a CSS custom
- * property consumed by the generated `.mat-column-<key>` rule: MatTable derives that class name
- * from the column key, our keys are property IRIs, and a stylesheet cannot be authored ahead of
- * time for class names that only exist once an ontology is loaded. Under `table-layout: fixed` the
- * header cell's width is authoritative for the whole column anyway, so one inline write resizes it.
+ * Put it on a thin element inside the `<th>`, not on the `<th>`, which is the `cdkDrag` for column
+ * reorder. The live width is written to the `<th>`'s inline style because MatTable derives
+ * `.mat-column-<key>` class names from property IRIs, which no stylesheet can be authored for;
+ * under `table-layout: fixed` the header width is authoritative for the column.
  */
 @Directive({
   selector: '[appColumnResize]',
@@ -69,9 +56,7 @@ function neededWidth(cell: HTMLTableCellElement, extra: number): number {
     class: 'column-resize-handle',
     role: 'separator',
     'aria-orientation': 'vertical',
-    // A focusable separator is the ARIA window-splitter pattern, and it is what makes the handle
-    // reachable at all: the pointer gesture below has no keyboard equivalent, and resize would
-    // otherwise be a mouse-only feature.
+    // A focusable separator (ARIA window-splitter) keeps resize reachable without a pointer.
     tabindex: '0',
     'aria-keyshortcuts': 'ArrowLeft ArrowRight Home',
     '[attr.aria-valuenow]': 'width()',
@@ -84,23 +69,11 @@ function neededWidth(cell: HTMLTableCellElement, extra: number): number {
 export class ColumnResizeDirective {
   /** The column stops shrinking here, below which its header controls no longer fit. */
   readonly minWidth = input.required<number>();
-  /** Where Home puts the column back to. */
   readonly defaultWidth = input.required<number>();
-  /**
-   * The width the host currently renders this column at.
-   *
-   * Only announced, never applied — the pointer gesture reads the live width off the DOM, because
-   * during a drag the inline style is ahead of anything the host has been told about.
-   */
+  /** The width the host renders the column at; only announced, since a drag reads the live width off the DOM. */
   readonly width = input.required<number>();
 
-  /**
-   * Emitted once per gesture, on release — not per pointer move.
-   *
-   * The intermediate widths are already on screen, written directly to the DOM; emitting them as
-   * well would run change detection over every cell of the table on every frame of the drag, and
-   * would write a `localStorage` entry per frame once the host persists the layout.
-   */
+  /** Emitted once per gesture, on release, so a drag does not run change detection or write storage per frame. */
   readonly widthChanged = output<number>();
 
   /** Home: the column goes back to its default, which the host stores as no width at all. */
@@ -130,15 +103,11 @@ export class ColumnResizeDirective {
     this._startWidth = cell.getBoundingClientRect().width;
     this._currentWidth = this._startWidth;
 
-    // Without this the same pointer-down also starts the column's `cdkDrag`, and the user would be
-    // dragging the column away while trying to widen it. `preventDefault` additionally suppresses
-    // the text selection that a horizontal drag over a header otherwise produces.
+    // Stops the same pointer-down starting the column's `cdkDrag`; `preventDefault` suppresses text selection.
     event.preventDefault();
     event.stopPropagation();
 
-    // Capture, so the pointer may leave the 8px handle — which it does immediately — without the
-    // gesture ending. It also means the move and up listeners can live on the handle rather than on
-    // the document, so nothing survives a destroy mid-drag.
+    // Capture lets the pointer leave the 8px handle mid-drag and keeps the listeners on the handle, so none outlive a destroy.
     this._host.nativeElement.setPointerCapture(event.pointerId);
 
     this._zone.runOutsideAngular(() => {
@@ -160,11 +129,8 @@ export class ColumnResizeDirective {
   }
 
   /**
-   * Fit the column to its content, as a spreadsheet does: as wide as its widest header or value on
-   * this page needs, within the column's minimum and {@link FIT_MAX_WIDTH_PX} (DEV-7494).
-   *
-   * Measured with the column briefly laid out wide, so nothing in it wraps or ellipsises, and put
-   * back before the browser paints.
+   * Fit the column to its widest header or value on this page, within the column's minimum and
+   * {@link FIT_MAX_WIDTH_PX}. Measured with the column briefly laid out wide, and restored before paint.
    */
   onDoubleClick(): void {
     const header = this._host.nativeElement.closest('th');
@@ -190,19 +156,12 @@ export class ColumnResizeDirective {
     this.widthChanged.emit(next);
   }
 
-  /** A column the user has fiddled with and wants back; cheaper to offer than an undo. */
   resetToDefault(): void {
     this._applyWidth(this.defaultWidth());
     this.widthReset.emit();
   }
 
-  /**
-   * The keyboard equivalent of the drag: arrows nudge the edge, Home puts back the default width.
-   *
-   * Each press commits, unlike the drag which commits once on release. A press is already a
-   * discrete gesture, and holding the key down repeats it slowly enough that a persisted layout
-   * write per repeat costs nothing.
-   */
+  /** Arrows nudge the edge and Home restores the default; each press commits, unlike a drag. */
   onKeydown(event: KeyboardEvent): void {
     if (event.key === 'Home') {
       event.preventDefault();
@@ -215,12 +174,10 @@ export class ColumnResizeDirective {
       return;
     }
 
-    // Otherwise the arrow also scrolls the table sideways while the column is being sized.
+    // Otherwise the arrow also scrolls the table sideways.
     event.preventDefault();
 
-    // Measured rather than taken from `width()`: a column the user has never resized renders at
-    // its default, and the input is the only thing that knows that — but a column mid-session
-    // carries an inline width the host may not have round-tripped yet.
+    // Measured, not `width()`: the inline width may be ahead of what the host has round-tripped.
     const current = this._host.nativeElement.closest('th')?.getBoundingClientRect().width ?? this.width();
     const next = Math.max(this.minWidth(), Math.round(current + delta));
 
@@ -241,14 +198,12 @@ export class ColumnResizeDirective {
     }
     this._cell = undefined;
 
-    // A click without a drag sets nothing: storing the measured width would pin the column to it,
-    // including a width an open editor has only temporarily widened it to.
+    // A click without a drag must not store the measured width, which may be an open editor's temporary one.
     if (Math.round(this._currentWidth) === Math.round(this._startWidth)) {
       return;
     }
 
-    // Back into the zone: the emission updates the persisted layout, which has to be seen by the
-    // bindings that render the column's width from now on.
+    // Back into the zone so the bindings that render the width see the persisted layout.
     this._zone.run(() => this.widthChanged.emit(Math.round(this._currentWidth)));
   }
 

@@ -373,11 +373,7 @@ OFFSET 0`;
   });
 });
 
-/**
- * Sorting by a property the query does not otherwise mention (DEV-7453). Before this, the only
- * sortable things were `rdfs:label` and properties you had already filtered on, because they were
- * the only variables the WHERE clause bound — anything else fell through `findIndex` to `?res-1`.
- */
+/** Sorting by a property the query does not otherwise mention. */
 describe('Gravsearch Service and Writer - sorting by an unfiltered property', () => {
   const PROP = 'http://0.0.0.0:3333/ontology/0001/test/v2#hasCreator';
   const ONTO = 'http://0.0.0.0:3333/ontology/0001/test/v2';
@@ -412,7 +408,6 @@ describe('Gravsearch Service and Writer - sorting by an unfiltered property', ()
 
     expect(query).toContain(`OPTIONAL { ?mainRes <${PROP}> ?orderBy0 . }`);
     expect(query).toContain('ORDER BY ASC(?orderBy0)');
-    // The bug this replaces: a failed findIndex produced an unbound `?res-1`.
     expect(query).not.toContain('?res-1');
   });
 
@@ -434,9 +429,7 @@ describe('Gravsearch Service and Writer - sorting by an unfiltered property', ()
   });
 
   it('reorders without filtering — the binding is OPTIONAL', () => {
-    // A non-optional binding drops every resource lacking the property, and the count with it:
-    // measured against the dev API, sorting incunabula:Book by hasCreator took 19 results to 15.
-    // OPTIONAL keeps all 19 and sorts the four without a creator to one end.
+    // A non-optional binding would drop every resource lacking the property; OPTIONAL keeps them and sorts them to one end.
     expect(queryWithSortBy(PROP)).toContain('OPTIONAL {');
   });
 });

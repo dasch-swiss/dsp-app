@@ -27,12 +27,6 @@ export class ResourcesListComponent {
   @Input() showResourceClass = false;
   @Input() loading = false;
 
-  /**
-   * Whether to render the count and pager above the list.
-   *
-   * The two Search pages keep them here. The Data tab turns them off: its class header renders
-   * `app-data-class-result-meta` instead — a different design (inline range plus a compact pager,
-   * no bordered card, no page input) sitting above the split rather than inside the list column.
-   */
+  /** Whether to render the count and pager above the list; the Data tab's class header renders its own. */
   @Input() showResultCount = true;
 }

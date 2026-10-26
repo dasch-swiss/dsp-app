@@ -2,13 +2,9 @@ import { decodeFilters, encodeFilters, FilterParam } from './filter-params.codec
 import { Operator } from './operators.config';
 
 /**
- * The codec is the one piece of filter handling shared verbatim across every page that hosts the chip
- * bar, so a link written by one page must decode identically on another. These lock that contract.
- *
- * Note on the percent cases: `decodeFilters` calls `decodeURIComponent` on a value the Router has
- * already decoded once, which looks like a double-decode bug. It is not — `encodeFilters` applies the
- * matching `encodeURIComponent`, and the Router's own encode/decode is a separate, also symmetric
- * layer. Investigated during DEV-7453; these cases exist so a future reader does not "fix" it.
+ * Locks the filter wire format shared across pages: a link written by one page must decode identically on
+ * another. `decodeFilters` calling `decodeURIComponent` on a Router-decoded value is intentional (it mirrors
+ * `encodeFilters`' `encodeURIComponent`) — do not "fix" it.
  */
 describe('filter params codec', () => {
   const filter = (value: string): Parameters<typeof encodeFilters>[0][number] => ({

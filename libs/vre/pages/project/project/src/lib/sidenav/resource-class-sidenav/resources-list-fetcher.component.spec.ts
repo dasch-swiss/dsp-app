@@ -20,10 +20,9 @@ describe('ResourcesListFetcherComponent', () => {
   let mockMultipleViewerService: any;
   let routeParamsSubject: BehaviorSubject<any>;
   let currentProjectSubject: BehaviorSubject<ReadProject>;
-  /** The query the component is told to run. A filter, sort or class change is a new value here. */
   let querySubject: BehaviorSubject<string>;
   let hasActiveStateSubject: BehaviorSubject<boolean>;
-  /** Real instance: the reload trigger is a BehaviorSubject whose replay behaviour is under test. */
+  /** Real instance: the replay behaviour of the BehaviorSubject is under test. */
   let dataBrowserPageService: DataBrowserPageService;
   let handleError: jest.Mock;
   let report: jest.Mock;
@@ -39,8 +38,7 @@ describe('ResourcesListFetcherComponent', () => {
     { provide: ActivatedRoute, useValue: { params: routeParamsSubject.asObservable() } },
     { provide: Router, useValue: { navigate: jest.fn() } },
     { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
-    // The real service, not a double: the component no longer provides its own, and the paging cases
-    // below drive it through `updatePageIndex` and need a live `pageIndex$` to react to.
+    // Real service: the paging cases need a live `pageIndex$`.
     ResourceResultService,
     { provide: ProjectPageService, useValue: { currentProject$: currentProjectSubject.asObservable() } },
     { provide: MultipleViewerService, useValue: mockMultipleViewerService },
@@ -123,11 +121,7 @@ describe('ResourcesListFetcherComponent', () => {
     expect(mockMultipleViewerService.reset).toHaveBeenCalled();
   });
 
-  /**
-   * A List ⇄ Table switch destroys and recreates this fetcher, so "entry already
-   * happened" cannot live on the instance: a fresh one would select its own first row over the
-   * resource the user had opened in the table view they just left.
-   */
+  /** A List/Table switch recreates the fetcher, so "entry already happened" cannot live on the instance. */
   it('should not auto-select when another view already resolved the selection for this class', async () => {
     dataBrowserPageService.selectionResolvedForClass = 'TestClass';
     mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1, mockResource2] }));
@@ -295,15 +289,9 @@ describe('ResourcesListFetcherComponent', () => {
     });
   });
 
-  /**
-   * The Data tab's query now arrives from the URL rather than being assembled here, which makes the
-   * query a *trigger*. These cover what that changes: paging relative to the query, what a retry is
-   * allowed to forget, and the offset splice that a fulltext term can now reach.
-   */
   describe('query-driven re-querying (DEV-7453)', () => {
     const lastQuery = () => mockDspApiConnection.v2.search.doExtendedSearch.mock.calls.at(-1)[0] as string;
 
-    /** `data$` is built in `ngOnChanges`, so every case has to go through it before subscribing. */
     const start = () => {
       component.ngOnChanges();
       return component.data$.subscribe();
@@ -316,8 +304,7 @@ describe('ResourcesListFetcherComponent', () => {
 
       querySubject.next(`${QUERY} FILTER(?x)`);
 
-      // Page 4 of the previous result set is meaningless against a narrower one, and leaving the
-      // offset would land the user on an empty page of a filter that does have matches.
+      // The old offset would land on an empty page of the narrower result set.
       expect(lastQuery()).toContain('OFFSET 0');
       sub.unsubscribe();
     });
@@ -330,16 +317,13 @@ describe('ResourcesListFetcherComponent', () => {
 
       component.onRetry();
 
-      // A retry repeats the request that failed. Silently returning to page 1 would lose the user's
-      // place in a list they were already deep into.
+      // A retry repeats the failed request, not page 1.
       expect(lastQuery()).toContain('OFFSET 2');
       sub.unsubscribe();
     });
 
     it('splices the offset at the last OFFSET, not the first', () => {
-      // A fulltext term is interpolated into the query, so the word can appear inside a FILTER long
-      // before the real offset clause. Cutting at the first occurrence truncated the query mid-clause
-      // and sent the server something syntactically broken.
+      // A fulltext term can contain the word OFFSET before the real offset clause.
       querySubject.next('CONSTRUCT { ?x ?y ?z } WHERE { FILTER regex(?label, "OFFSET") }\nOFFSET 0');
       const sub = start();
 
@@ -370,8 +354,7 @@ describe('ResourcesListFetcherComponent', () => {
       mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [] }));
       querySubject.next(`${QUERY} FILTER(?narrow)`);
 
-      // Entry behaviour only. Widening the filter again should find the user's resource still open,
-      // so a filter-driven empty result must not clear the viewer.
+      // Entry behaviour only: a filter-driven empty result must not clear the viewer.
       expect(mockMultipleViewerService.reset).not.toHaveBeenCalled();
       sub.unsubscribe();
     });
@@ -382,8 +365,7 @@ describe('ResourcesListFetcherComponent', () => {
 
       dataBrowserPageService.reloadNavigation();
 
-      // Creating a resource adds a row this list cannot predict. Losing this trigger is silent — the
-      // list simply does not show the resource the user just created, and every other test passes.
+      // Losing this trigger is silent: the new resource would just not appear.
       expect(mockDspApiConnection.v2.search.doExtendedSearch.mock.calls.length).toBeGreaterThan(callsBefore);
       sub.unsubscribe();
     });
@@ -391,8 +373,7 @@ describe('ResourcesListFetcherComponent', () => {
     it('does not run the initial load twice for the replayed reload value', () => {
       const sub = start();
 
-      // `onNavigationReload$` is a BehaviorSubject, so it replays on subscribe. Without skip(1) that
-      // replay fires a second full load on every mount.
+      // The BehaviorSubject replays on subscribe; without skip(1) that fires a second full load.
       expect(mockDspApiConnection.v2.search.doExtendedSearch).toHaveBeenCalledTimes(1);
       sub.unsubscribe();
     });
@@ -404,8 +385,7 @@ describe('ResourcesListFetcherComponent', () => {
 
       const sub = start();
 
-      // Zero results is the expected outcome of narrowing, not evidence of hidden resources — the
-      // "class has resources but none came back" inference does not hold once a filter is on.
+      // Zero results is the expected outcome of narrowing, not a permissions signal.
       expect(component.userCanViewResources).toBe(true);
       sub.unsubscribe();
     });
@@ -416,13 +396,8 @@ describe('ResourcesListFetcherComponent', () => {
    * binding would pass every one of them. This component has no stories, so the real template is
    * mounted here instead to cover the click path end to end.
    */
-  /**
-   * The class header's progress bar reads `isRefreshing`: on while a page, filter or sort change
-   * loads with the list still on screen, never for the first load, which has its own spinner.
-   */
   describe('refresh state (DEV-7466)', () => {
     let resourceResult: ResourceResultService;
-    /** The next page's response, held back so the in-between state can be observed. */
     let pending: Subject<{ resources: ReadResource[] }>;
 
     beforeEach(() => {
@@ -431,7 +406,6 @@ describe('ResourcesListFetcherComponent', () => {
       mockDspApiConnection.v2.search.doExtendedSearchCountQuery.mockReturnValue(of({ numberOfResults: 100 }));
     });
 
-    /** Load the first page, then hold back whatever is requested next. */
     const loadThenHoldNext = () => {
       component.ngOnChanges();
       const sub = component.data$.subscribe();
@@ -481,7 +455,6 @@ describe('ResourcesListFetcherComponent', () => {
       sub.unsubscribe();
     });
 
-    /** The failure panel replaced the list, so the retry starts from nothing, like a first load. */
     it('does not mark a retry as a refresh', () => {
       const sub = loadThenHoldNext();
       resourceResult.updatePageIndex(1);

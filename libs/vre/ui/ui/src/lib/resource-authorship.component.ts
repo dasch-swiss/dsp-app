@@ -8,22 +8,16 @@ import { joinPlaceholderLegalValues } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
- * A resource's authorship as the Resource Rights Statement shows it — its own, else the project's
- * default with a labelled fallback — and, for users with edit rights, edited in place like a
- * property value: Edit at the end of the line on hover or focus, then a chip editor with Cancel and
- * Save where Edit was (DEV-7494).
- *
- * Its own component so the rights statement and the Data tab's table show and edit it the same way.
+ * A resource's authorship — its own, else the project's default with a labelled fallback — edited in
+ * place for users with edit rights. Shared by the rights statement and the Data tab's table.
  */
 @Component({
   selector: 'app-resource-authorship',
   template: `
     @if (editing) {
-      <!-- In place, like a property value being edited: the editor, then Cancel and Save at
-           the end of the same line, where Edit was (DEV-7494). Compact like the resource editor's
-           value editors: the global class sets the 36px density, and a filled field would hide its
-           content at that height, hence the outline. On the field only, so Cancel and Save keep
-           their 28px (DEV-7611). -->
+      <!-- Compact like the value editors: the global class sets the 36px density, and a filled field
+           hides its content at that height, hence the outline. On the field only, so Cancel and
+           Save keep their 28px. -->
       <div class="value-line edit-line">
         <mat-form-field
           class="authorship-edit-field compact-value-editor"
@@ -74,8 +68,6 @@ import { TranslatePipe } from '@ngx-translate/core';
         </div>
       </div>
     } @else {
-      <!-- Like a property value: marked on hover, with Edit at the end of its line. Shown on
-           keyboard focus too, so the button stays reachable without a pointer (DEV-7494). -->
       <div class="value-line" [class.editable]="canEditAuthorship" data-cy="authorship-value">
         <span class="value-text">
           @if (resourceAuthorship && !resourceAuthorship.length) {
@@ -118,9 +110,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   `,
   styles: [
     `
-      /* The authorship line, styled as a property value's (property-value-display and
-         property-value-actions in the resource editor, which this library cannot import):
-         marked on hover, with its actions at the end of the line (DEV-7494). */
+      /* Mirrors the resource editor's property-value styles, which this library cannot import. */
       :host {
         display: block;
         min-width: 0;
@@ -130,8 +120,6 @@ import { TranslatePipe } from '@ngx-translate/core';
         align-items: flex-start;
         gap: 4px;
         border-radius: 4px;
-        /* 8px in the rights statement, where the value column is padded; a host that lines values
-           up flush, such as the Data tab's table, sets 0. */
         padding: 0 0 0 var(--authorship-line-padding-inline-start, 8px);
       }
       .value-line.editable:hover,
@@ -151,8 +139,7 @@ import { TranslatePipe } from '@ngx-translate/core';
         flex: none;
         padding-right: 4px;
       }
-      /* Hidden, not removed, until the line is hovered or focused: a removed button could not be
-         reached from the keyboard, nor take focus back after the editor closes (WCAG 2.4.3). */
+      /* Hidden, not removed: a removed button could not be reached from the keyboard nor regain focus (WCAG 2.4.3). */
       .value-line:not(.edit-line) .value-actions {
         opacity: 0;
       }
@@ -216,7 +203,7 @@ export class ResourceAuthorshipComponent {
   /**
    * Joins authorship entries, substituting `placeholderLabel` for any placeholder sentinel. The label
    * arrives already translated from the `| translate` pipe in the template, so this component needs no
-   * `TranslateService`. See DEV-6994.
+   * `TranslateService`.
    */
   authorshipWith(values: string[], placeholderLabel: string): string {
     return joinPlaceholderLegalValues(values, placeholderLabel);

@@ -14,118 +14,62 @@ import {
 import { ProjectDataRights } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LABEL_COLUMN_KEY, RightsField, TableColumn } from './table-column.model';
 
-/**
- * How many values a read-only cell shows before it collapses the rest behind a "show more"
- * control.
- *
- * Read-only cells only. A cell the resource editor can open renders every value, because it
- * renders them through `app-property-values` — the viewer's own unit, which knows nothing of a
- * table and shows a property's values in full. Collapsing three of them would mean either
- * reimplementing the viewer's list (the thing this feature exists not to do) or hiding values
- * that carry their own edit and delete controls, which is worse than a tall row.
- */
+/** How many values a read-only cell shows before collapsing the rest. Editable cells render every value. */
 export const COLLAPSED_VALUE_COUNT = 3;
 
 /**
- * One cell, resolved to what it will render.
- *
- * Two shapes, discriminated by which field is set. `propertyInfo` means the cell mounts the
- * resource viewer's own property unit and renders — and edits — its values exactly as the panel
- * beside the table does. `values` means the plain-text path, which is what a read-only column
- * gets: `GenerateProperty.commonProperty` drops link, file-value and geometry properties, so
- * there is no `PropertyInfoValues` for them and nothing of the viewer to mount.
+ * One cell, resolved to what it will render. `propertyInfo` set means the cell mounts the viewer's
+ * property unit; otherwise `values` holds the plain-text path (read-only columns).
  */
 export interface TableCell {
   readonly columnKey: string;
-  /**
-   * The text of a column that is not a property: the label, or a rights-statement field.
-   *
-   * Undefined on every property column. Neither the resource label nor the rights statement is a
-   * value: there is no `ReadValue` behind them and no property definition, so they stay plain text.
-   */
+  /** The text of a non-property column (label or rights field); undefined on property columns. */
   readonly text?: string;
-  /** The image column's image. See {@link TableImage}. */
   readonly image?: TableImage;
-  /** Where the text links to. Only the license, to its Creative Commons deed. */
+  /** Where the text links to; only the license, to its Creative Commons deed. */
   readonly href?: string;
-  /**
-   * True when the text is not the resource's own but the project's default standing in for it —
-   * authorship, when the resource records none. Shown as such, never asserted as the resource's.
-   */
+  /** True when the text is the project's default standing in for the resource's own (authorship). */
   readonly isFallback?: boolean;
-  /**
-   * What `app-property-values` needs on its `myProperty` input, or undefined when this column has
-   * no editor to mount.
-   */
+  /** What `app-property-values` needs on its `myProperty` input; undefined when there is no editor to mount. */
   readonly propertyInfo?: PropertyInfoValues;
-  /** The plain-text path's values, in the order dsp-api returned them. Empty on a viewer cell. */
   readonly values: readonly ReadValue[];
-  /** The first `COLLAPSED_VALUE_COUNT` of them, so the collapsed branch needs no slicing. */
   readonly collapsedValues: readonly ReadValue[];
-  /** How many values the collapsed branch hides. Zero when the cell is not collapsible. */
   readonly hiddenCount: number;
   readonly isCollapsible: boolean;
-  /** True when there is nothing to render: no value for this property, or an empty label. */
   readonly isEmpty: boolean;
 }
 
-/** A resource's still image, as the image column shows it. */
 export interface TableImage {
   /** IIIF request for the small rendition drawn in the cell. */
   readonly url: string;
-  /** IIIF request for the larger rendition the hover preview shows, fetched only when it opens. */
+  /** IIIF request for the larger rendition of the hover preview. */
   readonly previewUrl: string;
-  /** Served by DSP's own Sipi, which needs the user's token to serve a non-public image. */
+  /** Served by DSP's Sipi, which needs the user's token for a non-public image. */
   readonly isSipi: boolean;
 }
 
 /**
- * One row, with every cell pre-resolved.
- *
- * Built once per data emission rather than read per cell in the template. At 25 rows by 40 columns
- * a `getValues()` call in a binding is a thousand calls per change-detection pass, and under
- * `OnPush` with sticky columns that pass runs more often than the data changes.
- *
- * `cells` is a plain record rather than a `Map` for the same reason: the template reaches a cell by
- * property access instead of a method call.
+ * One row, with every cell pre-resolved once per data emission so the template does no per-cell
+ * method calls. `cells` is a plain record for the same reason.
  */
 export interface TableRow {
   readonly resource: ReadResource;
-  /**
-   * The same resource as the resource editor models it, built once per row.
-   *
-   * Every cell of the row needs it — to seed its `ResourceFetcherService` and to find its own
-   * `PropertyInfoValues` — and `generateDspResource` walks the whole class each time it is
-   * called. Once per row is 25 walks per page; once per cell would be a thousand.
-   *
-   * Undefined when the resource cannot be modelled at all, which sends every cell of the row down
-   * the plain-text path. See {@link _generate}.
-   */
+  /** Built once per row because `generateDspResource` walks the whole class; undefined sends every cell down the plain-text path. */
   readonly dspResource?: DspResource;
-  /** The resource IRI. Used as the `trackBy` key. */
   readonly id: string;
   readonly label: string;
   readonly cells: Readonly<Record<string, TableCell>>;
 }
 
-/** The permission strings dsp-api issues. Anything else is not a permission we can reason about. */
+/** The permission strings dsp-api issues. */
 const KNOWN_PERMISSIONS: ReadonlySet<string> = new Set(['RV', 'V', 'M', 'D', 'CR']);
 
 /**
  * Model the resource the way the resource editor does, or give up on it.
  *
- * Two things in that subtree throw rather than answering "no", and both are reachable from
- * ordinary data:
- *
- * - `GenerateProperty.commonProperty` indexes `entityInfo.classes[resource.type]`, which is absent
- *   if the batch fetch returned a resource of a class the page's ontology does not describe.
- * - `app-property-values` asks `ResourceUtil.userCanEdit` on every change-detection pass, and that
- *   delegates to `PermissionUtil.allUserPermissions`, which *throws* on a permission string it
- *   does not recognise. One such resource would take down the render of the whole page, every
- *   pass, not just its own row — so the string is checked before anything is mounted over it.
- *
- * Giving up costs the row its editors and leaves it readable. That is the right trade: the
- * alternative is twenty-five blank rows.
+ * `commonProperty` throws for a class missing from the ontology, and `PermissionUtil.allUserPermissions`
+ * (run by `app-property-values` on every change-detection pass) throws on an unknown permission string,
+ * which would break the whole page; so the permission is checked up front.
  */
 function _generate(resource: ReadResource): DspResource | undefined {
   if (!KNOWN_PERMISSIONS.has(resource.userHasPermission)) {
@@ -154,13 +98,7 @@ function _textCell(column: TableColumn, text: string, extra: Partial<TableCell> 
   };
 }
 
-/**
- * One field of the Resource Rights Statement, read the way the viewer's statement reads it.
- *
- * `rights` is undefined until the project's legal info has loaded. The project-level fields are
- * then blank rather than "not set", which they may well not be — and authorship already shows the
- * resource's own, which needs nothing from the project.
- */
+/** One field of the Resource Rights Statement. `rights` is undefined until the project's legal info has loaded. */
 function _rightsCell(
   resource: ReadResource,
   column: TableColumn,
@@ -189,21 +127,13 @@ function _rightsCell(
   }
 }
 
-/**
- * The IIIF size a thumbnail is requested at: the image scaled to fit inside this box. Twice the
- * largest it is drawn at in an Auto-height row, so it stays sharp on a high-density screen; a taller
- * row from View options draws it larger, and it softens rather than costing every row a bigger file.
- */
+/** IIIF size a thumbnail is requested at: twice the largest Auto-height draw size, for high-density screens. */
 const THUMBNAIL_BOX = '!256,256';
 
-/** The hover preview's rendition: twice the box it is drawn in, for the same reason. */
+/** The hover preview's rendition. */
 const PREVIEW_BOX = '!640,640';
 
-/**
- * An external image is a full IIIF image request, often for the whole image at full size. Its
- * size segment is swapped for the thumbnail box when the URL has the IIIF shape; anything else is
- * used as given, since there is no telling what a server makes of a rewritten path.
- */
+/** Swaps the IIIF size segment of an external URL; a URL without the IIIF shape is used as given. */
 function _withSize(url: string, box: string): string {
   return url.replace(/\/([^/]+)\/([^/]+)\/(!?\d+(?:\.\d+)?)\/(\w+)\.(jpg|png|webp|gif|tif)$/, `/$1/${box}/$3/$4.$5`);
 }
@@ -237,11 +167,10 @@ function _imageCell(resource: ReadResource, column: TableColumn): TableCell {
   };
 }
 
-/** What a row needs beyond its resource to render the rights-statement columns. */
 export interface RowRights {
-  /** The project's legal info; undefined while it loads, or if it could not be loaded. */
+  /** The project's legal info; undefined while it loads or if it could not be loaded. */
   readonly rights?: ProjectDataRights;
-  /** The readable marker shown in place of a placeholder legal value, already translated. */
+  /** Shown in place of a placeholder legal value, already translated. */
   readonly placeholderLabel: string;
 }
 
@@ -261,10 +190,6 @@ function cellFor(
     return _rightsCell(resource, column, column.rightsField, rowRights.rights, rowRights.placeholderLabel);
   }
 
-  // The resource editor's own answer to "is there an editor for this property", not a second
-  // opinion: a property `commonProperty` dropped has no `PropertyInfoValues` here either, which is
-  // exactly the read-only family. The column model's `isEditable` agrees, but this is
-  // the authority — it is the object the editor would actually be handed.
   const propertyInfo = dspResource?.resProps.find(prop => prop.propDef.id === column.propertyIri);
   if (propertyInfo) {
     return {
@@ -278,9 +203,6 @@ function cellFor(
     };
   }
 
-  // Every value, including one whose `strval` dsp-api could not produce: an empty string in a cell
-  // that holds a value still says "something is here", which is more honest than the "— not set"
-  // an omitted value would read as.
   const values = resource.getValues(column.propertyIri ?? '');
   const isCollapsible = values.length > COLLAPSED_VALUE_COUNT;
 
@@ -294,7 +216,6 @@ function cellFor(
   };
 }
 
-/** Resolve one resource against the column model. */
 export function buildRow(resource: ReadResource, columns: TableColumn[], rowRights: RowRights): TableRow {
   const dspResource = _generate(resource);
 
@@ -310,7 +231,7 @@ export function buildRow(resource: ReadResource, columns: TableColumn[], rowRigh
   };
 }
 
-/** The row with only its rights-statement cells rebuilt; its `dspResource` and other cells are kept by identity. */
+/** The row with only its rights-statement cells rebuilt; other cells and `dspResource` are kept by identity. */
 export function withRights(row: TableRow, columns: TableColumn[], rowRights: RowRights): TableRow {
   const cells = { ...row.cells };
   for (const column of columns) {
@@ -321,7 +242,6 @@ export function withRights(row: TableRow, columns: TableColumn[], rowRights: Row
   return { ...row, cells };
 }
 
-/** Resolve a page of resources against the column model. */
 export function buildRows(
   resources: ReadResource[],
   columns: TableColumn[],

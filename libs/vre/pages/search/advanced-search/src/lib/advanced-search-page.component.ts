@@ -26,9 +26,6 @@ import { OrderByComponent } from './ui/order-by/order-by.component';
   template: `
     <div class="search-bar">
       <div class="search-bar__inner">
-        <!-- The data-model, resource-class and order-by chips write query params this page owns, so they
-             are projected in from here rather than built into the shared bar. The Data tab projects
-             nothing: its route fixes the model and class, and it sorts by label from a column header. -->
         <app-advanced-search-bar [projectUuid]="uuid">
           <ng-container searchFiltersLeading>
             <app-data-model-chip />

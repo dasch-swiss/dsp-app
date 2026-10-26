@@ -19,10 +19,8 @@ import { ResourceAuthorshipComponent } from './resource-authorship.component';
  *   authorship. Project-level displays pass `showAuthorship=false`, since authorship is per-resource.
  * - In a per-resource context, when the resource has no own authorship, shows a labeled fallback
  *   ("No authorship recorded for this resource. Project default: …") rather than asserting the default.
- * - For users with edit rights (`canEditAuthorship`), the authorship row behaves like a property
- *   value: marked on hover with an Edit button at the end of its line, and edited in place (a chip
- *   editor with Cancel and Save where Edit was) — no dialog — emitting the new list via
- *   `saveAuthorship`.
+ * - For users with edit rights (`canEditAuthorship`), the authorship row edits in place — no dialog —
+ *   and emits the new list via `saveAuthorship`.
  */
 @Component({
   selector: 'app-resource-rights-statement',

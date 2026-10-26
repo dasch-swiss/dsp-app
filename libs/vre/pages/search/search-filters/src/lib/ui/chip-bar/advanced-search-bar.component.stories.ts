@@ -94,7 +94,6 @@ export const LoadingState: Story = {
 export const HidesResetWhenNoActiveState: Story = {
   name: 'Reset button is hidden when nothing is set',
   args: { projectUuid: '0001' },
-  // The default url-sync stub emits empty params (`of({})`), so hasActiveState$ is false.
   decorators: [applicationConfig({ providers: baseProviders })],
   play: async ({ canvasElement, step }) => {
     await step('No Reset button is rendered', async () => {
@@ -104,7 +103,6 @@ export const HidesResetWhenNoActiveState: Story = {
   },
 };
 
-// Emits an active search state (a fulltext term) so the Reset button shows, and spies on reset.
 const reset = fn().mockName('reset');
 const activeSearchState = {
   params$: of({ q: 'foo' }),
@@ -158,7 +156,6 @@ export const ShowsResetWhenActiveAndClearsOnClick: Story = {
   },
 };
 
-// A state carrying a term, with a spy on the clear path.
 const setFulltextTerm = fn().mockName('setFulltextTerm');
 const termStateStub = {
   provide: SearchFilterState,
@@ -223,13 +220,10 @@ export const LeadingIconWithoutALabel: Story = {
       await expect(canvasElement.querySelector('mat-label')).toBeNull();
     });
     await step('Dropping the label does not leave the field unnamed', async () => {
-      // The label key becomes the aria-label, so a screen reader still announces the field.
       const input = canvasElement.querySelector('input') as HTMLInputElement;
       await expect(input.getAttribute('aria-label')).toBeTruthy();
     });
     await step('The magnifier sits beside the text, not adrift from it', async () => {
-      // Material ships the prefix icon with 12px of its own horizontal padding, which stacked with
-      // the wrapper's spacing and left a 20px dead gap that read as a detached icon.
       const icon = canvasElement.querySelector('mat-icon[matPrefix]') as HTMLElement;
       const input = canvasElement.querySelector('input') as HTMLInputElement;
       const gap = input.getBoundingClientRect().left - icon.getBoundingClientRect().right;
@@ -247,11 +241,7 @@ const TITLE_PREDICATE = makePredicate(
 
 const headerFilterRequests = new FilterEditorRequestService();
 
-/**
- * The Data tab's column headers do not host a filter editor of their own; they name a property and
- * the bar opens its own (DEV-7466). Driven here through the real service rather than by
- * calling the method, because the routing *is* what is under test.
- */
+/** Column headers name a property and the bar opens its own editor; driven through the real service because the routing is what is under test. */
 export const OpensTheEditorOnAPropertyNamedFromOutsideTheBar: Story = {
   name: 'A column header can ask the bar to open a filter on one property',
   args: { projectUuid: '0001' },
@@ -267,8 +257,6 @@ export const OpensTheEditorOnAPropertyNamedFromOutsideTheBar: Story = {
           provide: OntologyDataService,
           useValue: makeOntologyDataServiceStub({ getProperties$: () => of([TITLE_PREDICATE]) }),
         },
-        // Held by the story rather than resolved out of the injector, so the request can be raised
-        // from outside the component tree exactly as a column header raises it.
         { provide: FilterEditorRequestService, useValue: headerFilterRequests },
       ],
     }),
@@ -297,9 +285,6 @@ export const CompactDensityForTheDataTab: Story = {
       await expect(field.style.width).toBe('260px');
     });
     await step('The field and the filter controls share one row', async () => {
-      // Compact is the Data tab's treatment, and there the design of record puts the input,
-      // `Add filter` and `Reset` on a single line. Standard density keeps them stacked, because the
-      // Search tab projects its data-model and resource-class chips into the leading slot.
       const field = canvasElement.querySelector('mat-form-field') as HTMLElement;
       const chipBar = canvasElement.querySelector('.chip-bar') as HTMLElement;
       const delta = Math.abs(field.getBoundingClientRect().y - chipBar.getBoundingClientRect().y);

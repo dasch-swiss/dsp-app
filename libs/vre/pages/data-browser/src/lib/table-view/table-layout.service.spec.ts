@@ -18,7 +18,6 @@ function column(key: string): TableColumn {
   };
 }
 
-/** Label plus ten properties. */
 function columns(count = 10): TableColumn[] {
   return [column(LABEL_COLUMN_KEY), ...Array.from({ length: count }, (_, i) => column(`p${i}`))];
 }
@@ -71,14 +70,12 @@ describe('TableLayoutService', () => {
     });
   });
 
-  // Ontologies get edited while people have the app open; all three of these are real.
   describe('reconciliation', () => {
     it('DropsAStoredColumnTheClassNoLongerDefines', () => {
       store({ visible: [LABEL_COLUMN_KEY, 'p0', 'gone'], hidden: ['alsoGone'], widths: {} });
 
       const layout = service.load(CLASS_IRI, columns(2));
 
-      // p1 was never stored at all, so it joins as a new column would.
       expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1']);
       expect(layout.hidden).toEqual([]);
     });
@@ -92,7 +89,6 @@ describe('TableLayoutService', () => {
       expect(layout.hidden).toEqual(['p1']);
     });
 
-    /** Where the model has it, not at the far end: a new image column belongs next to the label. */
     it('PutsANewColumnAfterTheOneBeforeItInTheModel', () => {
       store({ visible: [LABEL_COLUMN_KEY, 'p2', 'p1'], hidden: [], widths: {} });
 
@@ -141,17 +137,13 @@ describe('TableLayoutService', () => {
       expect(service.load(CLASS_IRI, columns(2)).visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1']);
     });
 
-    // `JSON.parse('3')` succeeds, so parseability alone is not enough of a check.
     it('FallsBackToTheDefaultWhenThePayloadIsNotAnObject', () => {
       store('3');
 
       expect(service.load(CLASS_IRI, columns(2)).visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1']);
     });
 
-    /**
-     * Earlier builds stored a `density`. It is no longer read, so a layout carrying one must still
-     * restore the rest of itself rather than be discarded — and must not resurrect the field.
-     */
+    // A `density` field stored by an earlier build must not discard the rest of the layout.
     it('RestoresAnOlderLayoutThatStillCarriesADensity', () => {
       store({ visible: [LABEL_COLUMN_KEY, 'p0'], hidden: [], widths: { p0: 250 } });
 
@@ -167,10 +159,6 @@ describe('TableLayoutService', () => {
       expect(service.load(CLASS_IRI, columns(1)).rowHeight).toBe(120);
     });
 
-    /**
-     * Out of range or not a number falls back to Auto rather than pinning every row of the class
-     * to a size the slider can no longer show.
-     */
     it.each([[12], [9999], ['tall'], [Number.NaN]])('FallsBackToAutoForAStoredRowHeightOf %p', rowHeight => {
       store({ visible: [LABEL_COLUMN_KEY], hidden: [], widths: {}, rowHeight });
 
@@ -188,8 +176,6 @@ describe('TableLayoutService', () => {
 
       const layout = service.load(CLASS_IRI, columns(2));
 
-      // Nothing survived the type check, so every column is unknown to the layout and lands visible,
-      // as in a fresh layout.
       expect(layout.visible).toEqual([LABEL_COLUMN_KEY, 'p0', 'p1']);
       expect(layout.hidden).toEqual([]);
     });

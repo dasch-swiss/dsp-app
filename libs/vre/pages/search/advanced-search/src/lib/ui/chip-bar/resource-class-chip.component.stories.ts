@@ -52,9 +52,6 @@ export const ShowsAllResourceClasses: Story = {
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
         derivationWithClass(null),
-        // StatementDraftStore gained a ConfirmedSearchStateService dependency when the shared lib was
-        // extracted, and that service reads the SearchFilterState port. Both have to be here or the
-        // store cannot be constructed.
         { provide: SearchFilterState, useValue: EMPTY_SEARCH_STATE as unknown as SearchFilterState },
         ConfirmedSearchStateService,
         StatementDraftStore,
@@ -78,9 +75,6 @@ export const ShowsSelectedClass: Story = {
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
         derivationWithClass(SAMPLE_RESOURCE_CLASSES[0]),
-        // StatementDraftStore gained a ConfirmedSearchStateService dependency when the shared lib was
-        // extracted, and that service reads the SearchFilterState port. Both have to be here or the
-        // store cannot be constructed.
         { provide: SearchFilterState, useValue: EMPTY_SEARCH_STATE as unknown as SearchFilterState },
         ConfirmedSearchStateService,
         StatementDraftStore,

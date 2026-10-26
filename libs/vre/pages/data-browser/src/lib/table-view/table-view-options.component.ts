@@ -8,16 +8,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ROW_HEIGHT_MANUAL_DEFAULT, ROW_HEIGHT_MAX, ROW_HEIGHT_MIN, ROW_HEIGHT_STEP } from './table-column.model';
 import { ColumnPickerEntry } from './table-view-state.service';
 
-/**
- * The table's shaping controls: how tall its rows are, and which of its columns are drawn.
- *
- * A menu rather than an inline control because the header row it sits in is already carrying the
- * result count, the pager and the view toggle.
- *
- * Presentational. It takes the picker's rows as input and emits the user's intent, so the story
- * suite can drive it without the layout store, and so the component has no opinion on where the
- * state it edits is kept.
- */
+/** The table's shaping controls: row height and column visibility. Presentational: takes the picker's rows and emits intent. */
 @Component({
   selector: 'app-table-view-options',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,20 +24,14 @@ import { ColumnPickerEntry } from './table-view-state.service';
     </button>
 
     <mat-menu #menu="matMenu" xPosition="before">
-      <!-- The panel element belongs to MatMenu's own view and carries none of this component's
-           style attributes, so its width and scroll behaviour are set on a wrapper inside the
-           projected content instead. -->
+      <!-- MatMenu's panel carries none of this component's style attributes, so sizing and scroll are set on a wrapper in the projected content. -->
       <div class="view-options-panel">
         <h4 class="section-header" id="row-height-heading">
           {{ 'pages.dataBrowser.viewOptions.rowHeight' | translate }}
           <span class="section-meta" data-cy="row-height-value">{{ rowHeightLabel() }}</span>
         </h4>
 
-        <!-- Not menu items, so the panel's own click handler would close the menu on the first
-             touch; the wrapper swallows it, and every key but Escape, which must still reach the
-             menu to close it. Auto lets each row hug its content; Manual sets them all to one
-             height, from a slider rather than presets because the right height depends on what is
-             in the cells. -->
+        <!-- Not menu items, so the wrapper swallows clicks that would close the menu, and every key but Escape. -->
         <div class="row-height-control" (click)="$event.stopPropagation()" (keydown)="onControlKeydown($event)">
           <mat-button-toggle-group
             class="row-height-mode"
@@ -64,9 +49,7 @@ import { ColumnPickerEntry } from './table-view-state.service';
           </mat-button-toggle-group>
 
           @if (isManual()) {
-            <!-- Not discrete: its value bubble floats above the thumb and, at either end of the
-                 track, past the panel's edge, where the panel — which must not scroll sideways —
-                 clips it. The section header above shows the same value. -->
+            <!-- Not discrete: the value bubble would be clipped at the track ends by the non-scrolling panel. -->
             <mat-slider data-cy="row-height-slider" [min]="sliderMin" [max]="sliderMax" [step]="sliderStep">
               <input
                 matSliderThumb
@@ -78,12 +61,7 @@ import { ColumnPickerEntry } from './table-view-state.service';
           }
         </div>
 
-        <!-- Every click inside a mat-menu bubbles to the panel, which closes on it. Shaping a table
-           is iterative, so each row stops the event: a user ticking four columns should not have
-           to reopen the menu four times. -->
-        <!-- One link rather than a Show all beside a Hide all: it offers the other move from where
-             the columns stand, the way a select-all checkbox does. A class opens with every column
-             shown, so it reads Hide all until one is hidden (DEV-7494). -->
+        <!-- Each row stops the click so the menu stays open while ticking columns. -->
         <h4 class="section-header">
           {{ 'pages.dataBrowser.viewOptions.columns' | translate }}
           <button
@@ -103,8 +81,6 @@ import { ColumnPickerEntry } from './table-view-state.service';
           </button>
         </h4>
 
-        <!-- Without the label column: it cannot be hidden, so it has no place in a list of columns
-             to show or hide (DEV-7494). -->
         @for (entry of hideableEntries(); track entry.column.key) {
           <button
             mat-menu-item
@@ -152,14 +128,7 @@ export class TableViewOptionsComponent {
   /** True to show every column, false to hide every column but the sticky one. */
   readonly allColumnsVisibilityChanged = output<boolean>();
 
-  /**
-   * Whether every column the user can actually hide is currently shown — as it is by default — in
-   * which case the bulk link offers Hide all; otherwise Show all.
-   *
-   * The sticky column is left out: it is always shown and cannot be hidden, so it says nothing
-   * about whether the user has hidden anything.
-   */
-  /** The columns the user can show or hide: every one but the sticky label column. */
+  /** Whether every hideable column is shown; the sticky column is excluded since it cannot be hidden. */
   protected readonly hideableEntries = computed(() => this.entries().filter(entry => !entry.column.isSticky));
 
   protected readonly allShown = computed(() => this.entries().every(entry => entry.column.isSticky || entry.isVisible));
@@ -168,18 +137,9 @@ export class TableViewOptionsComponent {
   protected readonly sliderMax = ROW_HEIGHT_MAX;
   protected readonly sliderStep = ROW_HEIGHT_STEP;
 
-  /** Manual whenever rows have a height; Auto when they hug their content. */
   protected readonly isManual = computed(() => this.rowHeight() !== undefined);
 
-  /**
-   * The height Manual returns to: the last one set, so switching to Auto and back does not lose
-   * it, or a default the first time. Kept here rather than in the layout, which stores only the
-   * height in force — Auto stores nothing.
-   *
-   * Recorded by an effect, not derived with `linkedSignal`. A linked signal only computes when it
-   * is read, and nothing reads this while a height is in force — so its first read came after the
-   * switch to Auto, when the height was already gone, and Manual came back at the default.
-   */
+  /** The height Manual returns to. Recorded by an effect, not `linkedSignal`, which is lazy and would first read after the height is gone. */
   protected readonly lastManualHeight = signal(ROW_HEIGHT_MANUAL_DEFAULT);
 
   constructor() {
@@ -191,7 +151,6 @@ export class TableViewOptionsComponent {
     });
   }
 
-  /** The section's value, and the thumb's `aria-valuetext`. Live during a drag. */
   protected readonly rowHeightLabel = computed(() => {
     const height = this.rowHeight();
     return height === undefined
@@ -205,20 +164,11 @@ export class TableViewOptionsComponent {
     }
   }
 
-  /**
-   * Auto emits `undefined` rather than a number, so the layout stores nothing at all instead of a
-   * sentinel every reader would have to know about. Manual applies a height at once — the slider
-   * then starts from what the table is showing, rather than from a position nothing reflects.
-   */
   protected onModeChange(mode: 'auto' | 'manual'): void {
     this.rowHeightChanged.emit(mode === 'auto' ? undefined : this.lastManualHeight());
   }
 
-  /**
-   * `input` rather than MatSlider's `valueChange`: the table follows the thumb while it is dragged
-   * instead of jumping once on release. The range input only fires when the value crosses a step,
-   * so a gesture writes the layout once per 8px, not once per pixel.
-   */
+  /** `input` rather than `valueChange`, so the table follows the thumb during a drag. */
   protected onSliderInput(event: Event): void {
     const height = Number((event.target as HTMLInputElement).value);
     if (height !== this.rowHeight()) {

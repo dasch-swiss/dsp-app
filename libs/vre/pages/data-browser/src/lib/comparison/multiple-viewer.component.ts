@@ -18,9 +18,6 @@ import { MultipleViewerService } from './multiple-viewer.service';
             [message]="'pages.dataBrowser.multipleViewer.chooseResources' | translate" />
         </app-centered-box>
       } @else {
-        <!-- The selection banner used to sit here. It now lives under the class header, above the
-             split, because it describes the selection and not the panel — and the table view has
-             no panel at all, so a banner inside one was invisible to half the Data tab. -->
         @if (selectedResourceIds.length <= MAX_RESOURCES) {
           <app-comparison [resourceIds]="selectedResourceIds" (afterResourceDeleted)="afterResourceDeleted.emit()" />
         } @else {

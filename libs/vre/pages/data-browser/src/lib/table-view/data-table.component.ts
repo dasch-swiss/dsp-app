@@ -37,61 +37,42 @@ import { TablePropertyCellComponent } from './table-property-cell.component';
 import { buildRow, RowRights, TableRow, withRights } from './table-row.model';
 import { TruncatedTooltipDirective } from './truncated-tooltip.directive';
 
-/**
- * A column with everything its header needs already resolved.
- *
- * Computed once per change to the inputs rather than looked up per binding: a class may carry forty
- * columns, and a header that asked a method for its icon, its label and its `aria-sort` would run
- * those three calls on every change-detection pass, forever.
- */
+/** A column with everything its header needs already resolved, computed once per change to the inputs rather than per binding. */
 interface RenderColumn extends TableColumn {
   readonly width: number;
-  /** `null` on every column but the sorted one — exactly one header may announce the sort. */
+  /** `null` on every column but the sorted one: exactly one header may announce the sort. */
   readonly ariaSort: 'ascending' | 'descending' | null;
   readonly isSorted: boolean;
   readonly sortIcon: string;
   /** What the sort button would do next, which is also what its accessible name must say. */
   readonly nextSortDescending: boolean;
   readonly sortLabelKey: string;
-  /** The same as the label, without the column's name: the tooltip sits on the column already. */
+  /** The same as the label, without the column name: the tooltip sits on the column already. */
   readonly sortTooltipKey: string;
   readonly isFiltered: boolean;
   readonly filterLabelKey: string;
   readonly filterTooltipKey: string;
-  /** Pinned after the label by the user, and so sticky like it. Never true on the label itself. */
+  /** Pinned after the label by the user. Never true on the label itself. */
   readonly isPinned: boolean;
-  /**
-   * Why the column cannot be edited here, as a translation key — or `null` when it can, or when the
-   * user could not edit anything anyway and a lock on some columns would single out nothing.
-   */
+  /** Why the column cannot be edited here, as a translation key; `null` when it can, or when the user could not edit anything anyway. */
   readonly readOnlyReasonKey: string | null;
 }
 
-/**
- * The trailing column that absorbs the table's spare width.
- *
- * `__` like the label column's key, so it can never collide with a property IRI.
- */
+/** The trailing column that absorbs the table's spare width. `__` like the label key, so it cannot collide with a property IRI. */
 const FILLER_COLUMN_KEY = '__filler';
 
 /**
  * The Data tab's table view.
  *
- * Presentational on purpose: it takes the page's resources and a column model as inputs and knows
- * nothing about Gravsearch, paging or the URL. That is what lets the Advanced Search results page
- * adopt it later without a rewrite — the column model is an `@Input`, not a service dependency.
+ * Presentational: it takes the page's resources and a column model as inputs and knows nothing about Gravsearch, paging or the URL.
  *
- * Built on the **native** `<table mat-table>` rather than the flex `<mat-table>`. Flex tables
- * distribute width with `flex: 1` and cannot hold a reliable pixel width, which column resize
- * needs; `[fixedLayout]` additionally caches cell widths, which keeps sticky offsets cheap once a
- * class has forty columns.
+ * Uses the native `<table mat-table>` because column resize needs reliable pixel widths, which the flex `<mat-table>` cannot hold.
  */
 @Component({
   selector: 'app-data-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <!-- cdkScrollable: overlays opened from a cell (the image preview) close when the table scrolls,
-         which the overlay's scroll strategy only sees from a registered scroll container. -->
+    <!-- cdkScrollable: overlays opened from a cell close on scroll only if the scroll container is registered. -->
     <div
       #scroller
       cdkScrollable
@@ -100,13 +81,9 @@ const FILLER_COLUMN_KEY = '__filler';
       [class.no-selection]="!selectable()"
       [class.is-scrolled-x]="scrolledUnder().shadowed"
       (scroll)="measureScroll()">
-      <!-- The drop list is the table rather than the header row, and that is not a style choice:
-           cdkDrag resolves its drop list through the injector of the view it was declared in, and
-           the header cells are declared inside the column definitions below, which are children of
-           the table and not of the row. On the row, every grip would come up with no drop list.
-           The element container points back at the header row so the drop placeholder is inserted
-           between the cells rather than appended to the table, where a stray th would be hoisted
-           out of the table by the browser mid-drag. -->
+      <!-- The drop list is the table, not the header row: cdkDrag resolves its drop list through the view it
+           was declared in, and the header cells live in the column defs. The element container keeps the drop
+           placeholder inside the header row. -->
       <table
         mat-table
         [dataSource]="rows()"
@@ -119,22 +96,13 @@ const FILLER_COLUMN_KEY = '__filler';
         cdkDropListElementContainer="thead tr"
         [cdkDropListSortPredicate]="canDropAt"
         (cdkDropListDropped)="onColumnDropped($event)">
-        <!-- Every column keeps its definition mounted; only the displayed-columns array changes.
-             Dropping a def when its column is hidden makes MatTable re-register the remaining
-             ones, and a displayed key with no surviving def throws. -->
+        <!-- Every column def stays mounted: dropping one when its column is hidden makes MatTable re-register
+             the rest, and a displayed key with no def throws. -->
         @for (column of renderColumns(); track column.key) {
           <ng-container [matColumnDef]="column.key" [sticky]="column.isSticky || column.isPinned">
-            <!-- Width on the header only: under table-layout fixed the first row fixes the column
-                 widths, so binding it on every cell would be 25x the bindings for the same result.
-                 MatTable emits role=columnheader but no scope, and no aria-sort unless matSort is
-                 used — the Data tab's sort lives in the URL, so both are set here. The name is
-                 given explicitly too: the buttons and the resize handle sit inside the cell and
-                 carry labels of their own, which would otherwise be read out as part of the
-                 column's name.
-
-                 The whole cell is the drag handle. A click on one of its buttons is not a drag:
-                 CDK only starts one once the pointer has moved a few pixels. And it is focusable,
-                 so the arrow keys move it too — CDK drag-drop has no keyboard reorder of its own. -->
+            <!-- Width on the header only: under table-layout fixed the first row fixes the widths. MatTable emits
+                 no scope and no aria-sort without matSort, so both are set here; the explicit aria-label keeps the
+                 inner buttons' labels out of the column name. -->
             <th
               mat-header-cell
               *matHeaderCellDef
@@ -158,9 +126,6 @@ const FILLER_COLUMN_KEY = '__filler';
               [attr.aria-keyshortcuts]="column.isSticky ? null : 'ArrowLeft ArrowRight'"
               (keydown)="onHeaderKeydown(column.key, $event)">
               <div class="header-content">
-                <!-- A pinned column's pin moves before its name (see the stylesheet). -->
-                <!-- A read-only column says so before its name, and why on hover, so an editor
-                     learns it before reaching for a cell that offers no Edit (DEV-7494). -->
                 @if (column.readOnlyReasonKey; as reasonKey) {
                   <mat-icon class="header-lock" data-cy="column-read-only" [matTooltip]="reasonKey | translate"
                     >lock</mat-icon
@@ -168,9 +133,6 @@ const FILLER_COLUMN_KEY = '__filler';
                 }
                 <span class="header-label" [appTruncatedTooltip]="column.label">{{ column.label }}</span>
 
-                <!-- Only where the Data tab's own sort rule allows it. A control the
-                     query cannot honour is worse than none: the user would click it and watch the
-                     order not change. -->
                 @if (column.isSortable) {
                   <button
                     type="button"
@@ -197,9 +159,6 @@ const FILLER_COLUMN_KEY = '__filler';
                   </button>
                 }
 
-                <!-- How many columns are hidden under the frozen ones, and the way back to them. In
-                     the label's header, the one cell that never scrolls, so it covers no data and
-                     no column name (DEV-7494, option A of the scrolled-under hint design). -->
                 @if (column.isSticky && scrolledUnder().count > 0) {
                   @let hiddenColumns =
                     (scrolledUnder().count === 1
@@ -218,8 +177,6 @@ const FILLER_COLUMN_KEY = '__filler';
                   </button>
                 }
 
-                <!-- Freezes the column after the label, so it stays in view while the rest scroll
-                     past. The label is frozen already and has nothing to toggle. -->
                 @if (!column.isSticky) {
                   <button
                     type="button"
@@ -240,11 +197,6 @@ const FILLER_COLUMN_KEY = '__filler';
                 }
               </div>
 
-              <!-- The label column resizes too. It is pinned and immovable because the row's
-                   identity has to stay put while the rest scrolls past, but how wide that
-                   identity needs to be is the user's business — and labels vary more in length
-                   than anything else in the table. Its own minimum is larger than the others'
-                   because the control gutter lives inside it. -->
               <span
                 appColumnResize
                 data-cy="column-resize"
@@ -261,16 +213,9 @@ const FILLER_COLUMN_KEY = '__filler';
               *matCellDef="let row"
               [class.is-label-cell]="column.isSticky"
               [class.is-frozen]="column.isSticky || column.isPinned">
-              <!-- The row's own controls ride in the sticky label cell rather than in two columns
-                   of their own, as the design draws them. Two extra columns would be two more
-                   sticky offsets to recompute on every resize and two more keys to reconcile in
-                   the persisted layout — for columns the user can neither hide, move nor resize.
-                   They are positioned absolutely, so the cell keeps its table-cell display and the
-                   generic cell rendering below is untouched; the header's label is indented by the
-                   same amount so the two line up. -->
+              <!-- Row controls ride in the sticky label cell, absolutely positioned, rather than in extra sticky columns;
+                   the header label is indented by the same gutter. -->
               @if (column.isSticky) {
-                <!-- The row's own resize handle, in the one cell that is always on screen however
-                     far the table is scrolled sideways. -->
                 <span
                   appRowResize
                   data-cy="row-resize"
@@ -288,10 +233,6 @@ const FILLER_COLUMN_KEY = '__filler';
                       [attr.aria-label]="'pages.dataBrowser.table.selectRow' | translate: { label: row.label }"
                       (change)="onRowCheckChanged(row.resource, $event)" />
                   }
-                  <!-- The app's own drawer-dialog control, not a bespoke one. Opening a resource
-                       from a table row should land the user in the same place as opening it from
-                       a property or a link elsewhere; a second presentation of the same resource
-                       would be a second thing to keep in step. -->
                   <app-resource-explorer-button
                     class="row-open"
                     data-cy="row-open"
@@ -302,25 +243,17 @@ const FILLER_COLUMN_KEY = '__filler';
 
               @let cell = row.cells[column.key];
               @if (cell.isEmpty && !cell.propertyInfo) {
-                <!-- Read-only cells only. A cell that mounts the viewer unit already says it is
-                     empty the way the viewer says it — an add control and nothing above it — and
-                     stacking a label on top of that is both a second answer to the same question
-                     and a second line in every empty row. -->
+                <!-- Read-only cells only: a viewer cell already shows its own empty state. -->
                 <span class="cell-empty">{{ 'pages.dataBrowser.table.notSet' | translate }}</span>
               }
 
               @if (column.key === labelColumnKey && row.dspResource; as dspResource) {
-                <!-- The label, with a value's hover and Edit button; Edit opens the viewer's own
-                     label dialog (DEV-7494). A resource the editor cannot model keeps the plain
-                     text below. -->
                 <div class="cell-values" [appScrollWhenTaller]="rowCap(row.id)">
                   <app-editable-resource-label
                     [dspResource]="dspResource"
                     (resourceUpdated)="onResourceReloaded($event)" />
                 </div>
               } @else if (column.rightsField === 'authorship' && row.dspResource; as dspResource) {
-                <!-- Authorship as the viewer's rights statement shows and edits it: the same text,
-                     the same fallback, the same hover, Edit and inline editor (DEV-7494). -->
                 <div class="cell-values" [appScrollWhenTaller]="rowCap(row.id)">
                   <app-editable-resource-authorship
                     [dspResource]="dspResource"
@@ -328,9 +261,7 @@ const FILLER_COLUMN_KEY = '__filler';
                     (resourceUpdated)="onResourceReloaded($event)" />
                 </div>
               } @else if (cell.text !== undefined) {
-                <!-- The rights-statement columns, and the label of a resource the editor cannot
-                     model. Kept inside the same wrapper as a
-                     property cell so they line up: cell-value only truncates as a flex item. -->
+                <!-- Same wrapper as a property cell: cell-value only truncates as a flex item. -->
                 <div class="cell-values" [appScrollWhenTaller]="rowCap(row.id)">
                   @if (cell.href) {
                     <a
@@ -342,8 +273,6 @@ const FILLER_COLUMN_KEY = '__filler';
                       >{{ cell.text }}</a
                     >
                   } @else if (cell.isFallback) {
-                    <!-- The project's default, not the resource's own authorship: italic, as the
-                         viewer's statement marks it, and named for what it is on hover. -->
                     <em
                       class="cell-value cell-fallback"
                       [title]="'legal.dataSide.noAuthorshipFallback' | translate: { default: cell.text }"
@@ -364,10 +293,7 @@ const FILLER_COLUMN_KEY = '__filler';
                     (editingChange)="onCellEditingChange(row.id, column.key, $event)" />
                 </div>
               } @else if (!cell.isEmpty) {
-                <!-- The read-only family: link, file-value, geometry and anything the ontology
-                     does not mark editable. GenerateProperty.commonProperty drops them, so there
-                     is no PropertyInfoValues to hand the viewer and no editor to mount — they
-                     render as text, and keep the collapse a viewer cell cannot have. -->
+                <!-- GenerateProperty.commonProperty drops these, so there is no PropertyInfoValues for the viewer. -->
                 @let expanded = isExpanded(row.id, column.key);
                 <div class="cell-values" [appScrollWhenTaller]="rowCap(row.id)">
                   @for (value of expanded ? cell.values : cell.collapsedValues; track value.id) {
@@ -393,9 +319,7 @@ const FILLER_COLUMN_KEY = '__filler';
           </ng-container>
         }
 
-        <!-- Takes up whatever width the columns leave, so the table spans the container without
-             the browser stretching the real columns past their stored widths. Not a cdkDrag, so
-             column reorder never sees it. -->
+        <!-- Not a cdkDrag, so column reorder never sees it. -->
         <ng-container [matColumnDef]="fillerColumnKey">
           <th mat-header-cell *matHeaderCellDef class="filler-cell" aria-hidden="true"></th>
           <td mat-cell *matCellDef class="filler-cell" aria-hidden="true"></td>
@@ -410,8 +334,7 @@ const FILLER_COLUMN_KEY = '__filler';
           [class.is-checked]="checkedResourceIds().has(row.id)"></tr>
       </table>
     </div>
-    <!-- The frozen columns' shadow, once something has scrolled under them. Drawn over the table rather than on the edge cells: a collapsed-border table does not paint
-         its cells' box-shadow. -->
+    <!-- Drawn over the table: a collapsed-border table does not paint its cells' box-shadow. -->
     @if (scrolledUnder().shadowed) {
       <span
         class="frozen-shadow"
@@ -442,14 +365,8 @@ const FILLER_COLUMN_KEY = '__filler';
     TruncatedTooltipDirective,
   ],
   providers: [
-    // Two services the viewer's subtree injects but does not provide, and which are genuinely
-    // table-wide rather than per cell.
-    //
-    // `PropertiesDisplayService` is a pair of user preferences read out of `localStorage` in its
-    // constructor; one per cell would be a thousand `localStorage` reads per page, for a setting
-    // that cannot differ between two cells of the same table. `FootnoteService` collects the
-    // footnotes a rich-text value declares — the table renders no footnote list, so a shared sink
-    // is enough and spares each cell an instance.
+    // Provided table-wide, not per cell: `PropertiesDisplayService` reads `localStorage` in its constructor,
+    // and the table renders no footnote list so `FootnoteService` needs only a shared sink.
     PropertiesDisplayService,
     FootnoteService,
   ],
@@ -459,10 +376,7 @@ export class DataTableComponent {
   readonly resources = input.required<ReadResource[]>();
   /** Every column of the class, visible or not. Drives the mounted column definitions. */
   readonly columns = input.required<TableColumn[]>();
-  /**
-   * The project's legal info, for the rights-statement columns. Undefined while it loads; those
-   * columns then show the resource's own authorship and leave the project's fields blank.
-   */
+  /** The project's legal info, for the rights-statement columns. Undefined while it loads. */
   readonly projectRights = input<ProjectDataRights | undefined>(undefined);
   /** Keys of the columns to show, in display order. A subset of `columns`, label first. */
   readonly visibleColumns = input.required<string[]>();
@@ -471,50 +385,27 @@ export class DataTableComponent {
   /** The sort the query is running, so the matching header can announce `aria-sort`. */
   readonly sortedColumnKey = input<string | undefined>(undefined);
   readonly sortDescending = input(false);
-  /**
-   * Keys of the columns a filter chip currently exists on.
-   *
-   * Derived from the shared filter state, not from anything the table did — so a chip removed in
-   * the bar stops being indicated here with no further wiring.
-   */
+  /** Keys of the columns a filter chip currently exists on, derived from the shared filter state. */
   readonly filteredColumnKeys = input<ReadonlySet<string>>(new Set<string>());
   /** Keys of the columns pinned after the label, in display order. Always visible ones. */
   readonly pinnedColumns = input<readonly string[]>([]);
   /**
-   * IRIs of the resources in the comparison selection, so their row checkboxes read as checked.
+   * IRIs of the resources in the comparison selection.
    *
-   * A set rather than the resources themselves: the table compares by IRI, never by identity. Every
-   * re-query builds fresh `ReadResource` instances, so after a filter change the resource the user
-   * had checked is a different object with the same IRI — the reason `MultipleViewerService` is
-   * written to compare by `id` too.
+   * A set of IRIs, never resource identity: every re-query builds fresh `ReadResource` instances.
    */
   readonly checkedResourceIds = input<ReadonlySet<string>>(new Set<string>());
-  /**
-   * Whether the user is building a comparison set.
-   *
-   * While they are, every row shows its checkbox rather than only the one under the pointer —
-   * which is what the list view does (`resource-list-item` renders its checkbox on
-   * `showCheckbox || selectMode`). Hover-only would mean the set you are assembling is visible one
-   * row at a time, and the next row you want is always the one you cannot see.
-   */
+  /** Whether the user is building a comparison set; while they are, every row shows its checkbox. */
   readonly selectionActive = input(false);
-  /**
-   * Whether rows can be selected for comparison at all. Off for anonymous visitors: the table then
-   * draws no checkboxes and narrows the label gutter to the open arrow alone.
-   */
+  /** Whether rows can be selected for comparison at all. Off for anonymous visitors. */
   readonly selectable = input(true);
-  /**
-   * Whether the user may edit this project's data. Only then are read-only columns marked: to a
-   * visitor every column is read-only, and a lock on some of them would say something untrue.
-   */
+  /** Whether the user may edit this project's data. Only then are read-only columns marked. */
   readonly canEdit = input(false);
 
   /**
-   * A row's checkbox, as a change rather than as "add" and "remove" outputs.
+   * A row's checkbox, as a change rather than "add" and "remove" outputs.
    *
-   * The host maps it onto `MultipleViewerService.addResources` / `removeResources`, which is how
-   * the list view's row behaves — including past six, where the viewer itself takes over and shows
-   * the too-many-resources message.
+   * The host maps it onto `MultipleViewerService.addResources` / `removeResources`.
    */
   readonly resourceCheckedChanged = output<{ resource: ReadResource; checked: boolean }>();
   /** The whole new display order, not a delta — the host persists the array as it stands. */
@@ -525,11 +416,7 @@ export class DataTableComponent {
   /**
    * The sort the user just asked for, already resolved to a direction.
    *
-   * The direction is decided here rather than by the host because the table is the only thing that
-   * knows which header was clicked relative to the one currently sorted. Two-state by design: a
-   * third "unsorted" step would have to mean *something* to Gravsearch, which always orders by
-   * label when nothing else is asked for — so it would really be "sort by label", a state the
-   * label column's own control already offers.
+   * Two-state by design: Gravsearch has no "unsorted", it orders by label.
    */
   readonly sortToggled = output<{ key: string; descending: boolean }>();
   /** The column whose filter the user wants to edit. The host decides where the editor opens. */
@@ -537,11 +424,8 @@ export class DataTableComponent {
   /** Emits the column whose pin the user toggled. */
   readonly columnPinToggled = output<string>();
   /**
-   * A row's resource as dsp-api holds it after a cell was saved.
-   *
-   * The table has already re-rendered the row from it; this is for whoever else is showing the
-   * same resource — the viewer beside the table owns a `ResourceFetcherService` of its own and
-   * would otherwise keep displaying the value the user has just replaced.
+   * A row's resource as dsp-api holds it after a cell was saved. The table has already re-rendered the row;
+   * this is for whoever else shows the same resource.
    */
   readonly resourceReloaded = output<ReadResource>();
 
@@ -549,9 +433,8 @@ export class DataTableComponent {
   private readonly _scroller = viewChild.required<ElementRef<HTMLElement>>('scroller');
 
   /**
-   * How far the table is scrolled sideways, as the frozen zone sees it: whether there is a frozen
-   * edge to shade, how many scrolling columns are entirely hidden under it, and where its edge and
-   * the header's bottom are, to place the shadow.
+   * How far the table is scrolled sideways, as the frozen zone sees it: whether there is a frozen edge to shade,
+   * how many scrolling columns are hidden under it, and where its edge and the header's bottom are.
    */
   protected readonly scrolledUnder = signal(
     { shadowed: false, count: 0, edge: 0, top: 0, height: 0 },
@@ -573,8 +456,7 @@ export class DataTableComponent {
         this.measureScroll();
       },
     });
-    // A column widened or narrowed for its editor moves the sticky offsets after it, which MatTable
-    // does not recompute by itself — see `onColumnResized`.
+    // MatTable does not recompute the sticky offsets after a column is widened for its editor.
     afterRenderEffect({
       write: () => {
         this._editingColumns();
@@ -586,22 +468,14 @@ export class DataTableComponent {
   /**
    * What the table is currently showing, as one value.
    *
-   * Changing either half means the rows on screen are no longer the rows that were there — a new
-   * page, a new sort, a new filter, a new class. Everything the user did *to* those rows is keyed
-   * off this so that it is discarded exactly then, rather than by
-   * each of those five gestures remembering to clear it. The open editors go with them: a cell's
-   * editor lives inside the row's view, so replacing the rows destroys it.
+   * State tied to the rows on screen is keyed off this so it is discarded when they are replaced.
    */
   private readonly _dataIdentity = computed(() => ({ resources: this.resources(), columns: this.columns() }));
 
   /**
    * Resources re-fetched after a save, overlaid on the page the query returned.
    *
-   * An overlay rather than a new query: re-running the search would re-sort and re-filter, and a
-   * row whose new value no longer matches would jump or vanish under the user who had just typed
-   * it. The query's order is left alone and only the row's contents are replaced. Reset by a new
-   * page only, not by new columns: a language switch rebuilds the columns, and dropping the overlay
-   * then would show the values from before the save.
+   * Re-running the query would re-sort and re-filter under the user. Reset by a new page only, not new columns: a language switch rebuilds the columns.
    */
   private readonly _reloaded = linkedSignal<unknown, ReadonlyMap<string, ReadResource>>({
     source: this.resources,
@@ -623,8 +497,7 @@ export class DataTableComponent {
 
   /**
    * Built rows by `ReadResource` identity, with the rights they were built against. Valid only for
-   * `_cacheColumns`: a new column set discards it, so an unchanged resource keeps its row (and its
-   * open editors) across saves elsewhere.
+   * `_cacheColumns`: a new column set discards it.
    */
   private _rowCache = new WeakMap<ReadResource, { row: TableRow; rowRights: RowRights }>();
   private _cacheColumns: TableColumn[] | undefined;
@@ -658,10 +531,7 @@ export class DataTableComponent {
   /** The visible columns plus the trailing filler. Only the template sees the filler. */
   protected readonly displayedColumns = computed(() => [...this.visibleColumns(), FILLER_COLUMN_KEY]);
 
-  /**
-   * The cells with a value open in an editor, as `rowId columnKey`. Cleared with the rows: replacing
-   * them destroys the editors in them.
-   */
+  /** The cells with a value open in an editor, as `rowId columnKey`. Cleared with the rows. */
   private readonly _editingCells = linkedSignal<unknown, ReadonlySet<string>>({
     source: this._dataIdentity,
     computation: () => new Set(),
@@ -683,8 +553,7 @@ export class DataTableComponent {
 
     return this.columns().map((column): RenderColumn => {
       const isSorted = column.key === sortedKey;
-      // Clicking the column that is already sorted flips it; clicking any other starts ascending,
-      // which is what "sort by this" means before the user has expressed a direction.
+      // Clicking the sorted column flips it; any other starts ascending.
       const nextSortDescending = isSorted && !descending;
       const isFiltered = filtered.has(column.key);
 
@@ -696,12 +565,10 @@ export class DataTableComponent {
           : (widths[column.key] ?? column.defaultWidth),
         ariaSort: isSorted ? (descending ? 'descending' : 'ascending') : null,
         isSorted,
-        // `swap_vert` reads as "this can be sorted"; the arrows as "this is sorted, this way".
+        // `swap_vert` reads as sortable; the arrows as sorted in that direction.
         sortIcon: isSorted ? (descending ? 'arrow_downward' : 'arrow_upward') : 'swap_vert',
         nextSortDescending,
-        // The name states the outcome of the click, not the current state — a screen-reader user
-        // gets the current state from `aria-sort` on the header and needs the button to say what
-        // pressing it will do.
+        // The name states what the click will do; `aria-sort` on the header carries the current state.
         sortLabelKey: nextSortDescending
           ? 'pages.dataBrowser.table.sortColumnDescending'
           : 'pages.dataBrowser.table.sortColumnAscending',
@@ -727,9 +594,7 @@ export class DataTableComponent {
   /**
    * Which `(rowId, columnKey)` read-only cells the user has expanded.
    *
-   * Keyed by both, not stored on the row: rows are rebuilt on every data emission, and expansion
-   * is a reading state the user set, not a property of the data. A space separator is safe — a
-   * resource IRI cannot contain one.
+   * Keyed by both because rows are rebuilt on every data emission. The space separator is safe: an IRI cannot contain one.
    */
   private readonly _expanded = signal<ReadonlySet<string>>(new Set());
 
@@ -749,13 +614,9 @@ export class DataTableComponent {
   }
 
   /**
-   * Keep a moved column within its own group: a pinned column among the pins, any other among the
-   * scrolling columns.
+   * Keep a moved column within its own group: a pinned column among the pins, any other among the scrolling columns.
    *
-   * The label column is drag-disabled, which stops it being *picked up* but says nothing about
-   * another column being dropped in front of it. Without this the sticky column could end up at
-   * index 1, pinned to the left edge with a scrolling column underneath it — and the same
-   * goes for a scrolling column dropped among the pins.
+   * The label column is drag-disabled, which stops it being picked up but not another column being dropped in front of it.
    */
   protected readonly canDropAt = (index: number, drag: CdkDrag<string>): boolean => {
     const [first, last] = this._slotsFor(drag.data);
@@ -775,12 +636,7 @@ export class DataTableComponent {
   /**
    * Move a column with the keyboard, from its focused header cell.
    *
-   * CDK drag-drop has no keyboard equivalent at all — a pointer is the only way to reorder a
-   * `cdkDropList` — so without this the whole reorder feature is unavailable to anyone not using a
-   * mouse.
-   *
-   * Only for a key pressed on the cell itself. The resize handle inside it takes the same arrow
-   * keys to change the width, and its keydown bubbles up here.
+   * Only for a key pressed on the cell itself: the resize handle inside it takes the same arrow keys and its keydown bubbles up here.
    */
   protected onHeaderKeydown(key: string, event: KeyboardEvent): void {
     if (event.target !== event.currentTarget) {
@@ -794,15 +650,13 @@ export class DataTableComponent {
     const order = [...this.visibleColumns()];
     const from = order.indexOf(key);
     const to = from + delta;
-    // The same groups `canDropAt` keeps for the pointer: never in front of the label,
-    // and never across the line between the pinned and the scrolling columns.
+    // The same groups `canDropAt` keeps for the pointer.
     const [first, last] = this._slotsFor(key);
     if (from < 0 || to < first || to > last) {
       return;
     }
 
-    // Otherwise the arrow also scrolls the table horizontally, so the column the user just moved
-    // slides out from under them.
+    // Otherwise the arrow also scrolls the table horizontally.
     event.preventDefault();
     moveItemInArray(order, from, to);
     this.columnsReordered.emit(order);
@@ -813,8 +667,7 @@ export class DataTableComponent {
       return;
     }
 
-    // CDK reports indices in visual order, which for a header row is the displayed order — so this
-    // is the array to move within, not the full column model.
+    // CDK reports indices in visual order, which for a header row is the displayed order.
     const order = [...this.visibleColumns()];
     moveItemInArray(order, event.previousIndex, event.currentIndex);
     this.columnsReordered.emit(order);
@@ -837,7 +690,7 @@ export class DataTableComponent {
     const edge = frozenEdge.getBoundingClientRect().right;
     const count = headers.filter(
       th =>
-        // Every header cell is sticky (to the top); the frozen ones are those stuck to the left too.
+        // Every header cell is sticky (to the top); the frozen ones are also stuck to the left.
         !th.style.left && !th.classList.contains('filler-cell') && th.getBoundingClientRect().right <= edge + 1
     ).length;
     this.scrolledUnder.set({
@@ -865,10 +718,7 @@ export class DataTableComponent {
   protected onColumnResized(key: string, width: number): void {
     this.columnResized.emit({ key, width });
 
-    // Sticky offsets are derived from cached cell widths under `fixedLayout`, and MatTable only
-    // invalidates that cache when the set of columns changes. A resize changes a width without
-    // changing the set, so the label column would keep the offset of the old layout and the
-    // columns next to it would slide under it.
+    // Under `fixedLayout` MatTable only invalidates its cached sticky offsets when the set of columns changes.
     this._table()?.updateStickyColumnStyles();
   }
 
@@ -880,41 +730,25 @@ export class DataTableComponent {
   /**
    * Replace one row's resource with what dsp-api returned after a save, a delete or a reorder.
    *
-   * Only the overlay moves; `resources` is left as the query returned it, so the row keeps its
-   * position and `trackBy` keeps its view. Only that row is rebuilt, so its open editors return to
-   * display mode; other rows and their open editors are untouched.
+   * Only the overlay moves, so the row keeps its position and `trackBy` keeps its view; only that row is rebuilt.
    */
   protected onResourceReloaded(resource: ReadResource): void {
     this._reloaded.update(current => new Map(current).set(resource.id, resource));
     this.resourceReloaded.emit(resource);
   }
 
-  /**
-   * The height every row is set to from View options, or undefined for Auto — rows hug their
-   * content, however tall that is.
-   */
+  /** The height every row is set to from View options, or undefined for Auto. */
   readonly rowHeight = input<number | undefined>(undefined);
 
-  /**
-   * The height a row is drawn at: its own dragged height, else the View-options height, else
-   * none, which leaves it to its content.
-   *
-   * A method rather than a computed map because it is called once per row, not per cell, and a
-   * map rebuilt on every height change would cost more than the twenty-five lookups it replaces.
-   */
+  /** The height a row is drawn at: its own dragged height, else the View-options height, else none. */
   protected rowHeightFor(id: string): number | undefined {
     return this.rowHeights()[id] ?? this.rowHeight();
   }
 
   /**
-   * The height past which a cell in this row scrolls rather than stretching it, or undefined when
-   * the row has no height set and so no cell in it ever scrolls.
+   * The height past which a cell in this row scrolls rather than stretching it, or undefined when the row has no height set.
    *
-   * There is no cap of its own: a row the user has not sized grows to whatever its content needs.
-   * A height only becomes a cap once the user asks for one, because only then is there a reason to
-   * hide part of a cell. Read both by the row, as `--row-cap`, and by each cell's
-   * `ScrollWhenTallerDirective`, which decides whether that particular cell is tall enough to need
-   * it.
+   * Read by the row as `--row-cap` and by each cell's `ScrollWhenTallerDirective`.
    */
   protected rowCap(id: string): number | undefined {
     return this.rowHeightFor(id);
@@ -926,19 +760,7 @@ export class DataTableComponent {
   /**
    * Heights the user has dragged rows to, by resource IRI.
    *
-   * Held here rather than in the persisted layout, and so lost on re-query, page change or
-   * reload. A column belongs to the class and there are tens of them; a row belongs to one
-   * resource and there may be forty thousand, so persisting would grow the stored layout without
-   * any bound — and a height dragged to read one long value is rarely wanted again a week later.
-   * Keyed by IRI rather than by index so a row keeps its height while the page re-renders around
-   * it, which `trackBy` already does for the row itself.
-   *
-   * Linked to the View-options row height, so moving the slider clears every one of them. The
-   * slider is a request for the whole table to be one size; leaving the rows the user had dragged
-   * at their own heights would answer it with a table that is all one size except where it is not.
-   * A `linkedSignal` rather than an effect because "writable, but reset whenever this other value
-   * changes" is exactly what it is — and it resets only on a real change, so re-rendering with the
-   * same height leaves the user's drags alone.
+   * Not persisted: rows are unbounded in number. Reset whenever the View-options row height changes.
    */
   protected readonly rowHeights = linkedSignal<number | undefined, Record<string, number>>({
     source: this.rowHeight,

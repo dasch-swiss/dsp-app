@@ -6,24 +6,14 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
 
-/**
- * Row 3 of the class header: the result range, then a compact pager.
- *
- * Deliberately *not* the shared `PagerComponent`. That one is a bordered, rounded card, and it is
- * what the two Search pages render — this design is an inline meta line with no box. Adding a
- * variant flag to the shared pager would put two visual languages in one component; the Search
- * pages keep theirs untouched. Both let the user type a page number: in a class of thousands of
- * resources, stepping through 161 pages one click at a time is not paging.
- */
+/** The result range and a compact inline pager; deliberately separate from the shared boxed `PagerComponent`. */
 @Component({
   selector: 'app-data-class-result-meta',
   template: `
     @let meta = vm();
-    <!-- Announced, not just rendered: filtering changes these numbers without moving focus. -->
+    <!-- aria-live: filtering changes these numbers without moving focus. -->
     <div class="result-meta" aria-live="polite" [class.is-refreshing]="meta.refreshing">
       @if (meta.countUnavailable) {
-        <!-- The count query failed. The pager cannot be sized either, so paging is unavailable
-             until the next successful load. -->
         <span class="range" data-cy="count-unavailable">
           {{ 'pages.dataBrowser.resourcesList.countUnavailable' | translate }}
         </span>
@@ -58,9 +48,7 @@ import { TranslatePipe } from '@ngx-translate/core';
               <mat-icon>chevron_left</mat-icon>
             </button>
 
-            <!-- Applied on Enter, like the Search pager's, not on every keystroke: typing "12"
-                 would otherwise load page 1 on the way. Leaving the field without Enter puts the
-                 current page back, so it never shows a page the table is not on. -->
+            <!-- Applied on Enter, not per keystroke; blur restores the current page. -->
             <span class="page-indicator">
               <input
                 #pageInput
@@ -112,11 +100,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class DataClassResultMetaComponent {
   private readonly _resourceResult = inject(ResourceResultService);
 
-  /**
-   * The page index is an observable and the total a signal, so the two are joined here rather than
-   * in the template — the range needs both, and reading `numberOfResults` inside `computed` picks
-   * up its signal dependency through the service's plain-property accessor.
-   */
   private readonly _pageIndex = toSignal(this._resourceResult.pageIndex$, { initialValue: 0 });
 
   readonly vm = computed(() => {
@@ -134,15 +117,12 @@ export class DataClassResultMetaComponent {
       total,
       pageIndex,
       lastPageIndex,
-      // `total` rather than the rendered row count: on the last page the range end is the total, and
-      // on an empty result set the range reads `0 – 0 of 0` rather than `1 – 0 of 0`.
+      // Empty result set reads `0 – 0 of 0`, not `1 – 0 of 0`.
       rangeStart: total ? pageIndex * pageSize + 1 : 0,
       rangeEnd: Math.min((pageIndex + 1) * pageSize, total),
       hasPages: total > pageSize,
       atFirst: pageIndex === 0,
       atLast: pageIndex === lastPageIndex,
-      // The count and pager describe the results being replaced, so they wait with the table:
-      // greyed, and not clickable into a page of a result set that is about to change.
       refreshing: this._resourceResult.isRefreshing(),
     };
   });
@@ -151,10 +131,7 @@ export class DataClassResultMetaComponent {
     this._resourceResult.updatePageIndex(pageIndex);
   }
 
-  /**
-   * Go to the typed page, clamped into range so "999" lands on the last page rather than on
-   * nothing. Something that is not a number puts the current page back.
-   */
+  /** Go to the typed page, clamped into range; a non-number restores the current page. */
   onPageEntered(input: HTMLInputElement, pageIndex: number, lastPageIndex: number): void {
     const typed = parseInt(input.value, 10);
     if (Number.isNaN(typed)) {

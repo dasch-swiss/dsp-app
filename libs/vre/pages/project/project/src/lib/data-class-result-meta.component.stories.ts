@@ -4,10 +4,6 @@ import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, userEvent, within } from 'storybook/test';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 
-/**
- * The count and page position are page state rather than inputs, so each story seeds a real
- * `ResourceResultService` instead of setting args.
- */
 const seeded = (total: number | null, pageIndex = 0) => {
   const service = new ResourceResultService();
   service.numberOfResults = total;
@@ -37,8 +33,6 @@ export const ShowsRangeAndPagerOnTheFirstPage: Story = {
 export const DisablesTheStartControlsOnTheFirstPage: Story = {
   decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 0) }] })],
   play: async ({ canvasElement }) => {
-    // Rendered, not hidden: a pager that changes width at its edges moves the next target under
-    // the cursor just as you reach for it.
     const buttons = [...canvasElement.querySelectorAll('[data-cy=result-pager] button')];
     await expect(buttons).toHaveLength(4);
     await expect(buttons[0]).toBeDisabled();
@@ -89,7 +83,6 @@ export const GoesToATypedPageOnEnter: Story = {
   },
 };
 
-/** "999" means "as far as it goes", not an empty page. */
 export const ClampsATypedPageBeyondTheLastToTheLast: Story = {
   decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 0) }] })],
   play: async ({ canvasElement }) => {
@@ -104,7 +97,6 @@ export const ClampsATypedPageBeyondTheLastToTheLast: Story = {
   },
 };
 
-/** Typing without Enter changes nothing, and leaving the field shows the page the table is on. */
 export const RestoresTheCurrentPageWhenLeftWithoutEnter: Story = {
   decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(4024, 0) }] })],
   play: async ({ canvasElement }) => {
@@ -120,7 +112,6 @@ export const RestoresTheCurrentPageWhenLeftWithoutEnter: Story = {
   },
 };
 
-/** Results already on screen and the next ones on their way, as after a filter or page change. */
 const refreshing = () => {
   const service = seeded(4024, 0);
   service.markLoaded();
@@ -128,10 +119,6 @@ const refreshing = () => {
   return service;
 };
 
-/**
- * The count and pager describe the results being replaced, so they wait with them: greyed, and
- * not clickable into a page of a result set that is about to change.
- */
 export const GreysAndLocksThePagerWhileResultsReload: Story = {
   decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: refreshing() }] })],
   play: async ({ canvasElement }) => {
@@ -148,7 +135,6 @@ export const GreysAndLocksThePagerWhileResultsReload: Story = {
 export const StatesTheCountIsUnavailableWhenTheCountQueryFailed: Story = {
   decorators: [applicationConfig({ providers: [{ provide: ResourceResultService, useValue: seeded(null, 0) }] })],
   play: async ({ canvasElement }) => {
-    // The pager cannot be sized against an unknown total, so paging goes away rather than guessing.
     await expect(canvasElement.querySelector('[data-cy=count-unavailable]')).not.toBeNull();
     await expect(canvasElement.querySelector('[data-cy=result-pager]')).toBeNull();
   },

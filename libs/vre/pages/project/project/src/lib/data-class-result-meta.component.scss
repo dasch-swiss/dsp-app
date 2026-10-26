@@ -30,8 +30,7 @@
   white-space: nowrap;
 }
 
-/* As wide as the last page number needs and no wider, so the row does not shift between classes
-   with 4 pages and with 400. */
+/* Sized to the last page number so the row does not shift between classes. */
 .page-input {
   box-sizing: content-box;
   width: calc(var(--page-digits, 1) * 1ch);
@@ -43,7 +42,6 @@
   color: rgba(0, 0, 0, 0.87);
   text-align: center;
   background: transparent;
-  // The spinner arrows would double the field's width to step by one — what the chevrons already do.
   appearance: textfield;
   -moz-appearance: textfield;
 
@@ -59,8 +57,6 @@
   }
 }
 
-/* Compact icon buttons: Material's default 40px touch target is far too tall for a 36px meta row
-   sitting between the filter bar and the list header. */
 .pager-button {
   --mdc-icon-button-state-layer-size: 28px;
 
@@ -75,8 +71,7 @@
     line-height: 18px;
   }
 
-  /* Ends stay in place when they go dead rather than disappearing — a pager that changes width as
-     you reach its edges makes the next target move under the cursor. */
+  /* Disabled, not hidden: the pager must not change width at its edges. */
   &:disabled {
     opacity: 0.35;
   }

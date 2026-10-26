@@ -13,15 +13,10 @@
 }
 
 .view-options-panel {
-  // A class with forty properties produces forty picker rows. Capped and scrolled rather than
-  // allowed to grow, so the menu never runs past the bottom of the viewport and strands the
-  // columns at the end of the list.
+  // Capped so a long column list scrolls instead of running past the viewport.
   width: 260px;
   max-height: 520px;
-  // Both axes, not just `overflow-y`: naming one axis `auto` while the other is `visible` is not a
-  // state CSS has, so the other computes to `auto` too and the panel scrolled sideways the moment
-  // anything inside it was a pixel too wide. Nothing here is meant to be reached by scrolling
-  // sideways — labels ellipsise — so `hidden` is the honest value.
+  // Both axes: setting only overflow-y makes overflow-x compute to auto, which scrolls sideways.
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -43,11 +38,9 @@
   flex-direction: column;
   gap: 8px;
 
-  // In line with the section headers. The slider's own 8px margin insets its track from there.
   padding: 0 16px 8px;
 
-  // A compact segmented control. Through Material's own tokens rather than overriding its internals:
-  // left alone it is 48px tall, so in a 32px box the labels sat on the bottom edge.
+  // Set through Material's tokens; its default 48px height misplaces labels in a 32px box.
   .row-height-mode {
     @include mat.button-toggle-overrides(
       (
@@ -72,15 +65,12 @@
   }
 
   mat-slider {
-    // `block` with `auto` rather than `width: 100%`. MatSlider carries `margin: 0 8px` of its own,
-    // and `100%` fills the content box before that margin is added — so the slider was 16px wider
-    // than its row and pushed the whole panel into a horizontal scroll.
+    // MatSlider has its own 8px side margin, so `width: 100%` would overflow the row.
     display: block;
     width: auto;
   }
 }
 
-// The bulk Show all / Hide all link, at the end of the Columns header where the count used to be.
 .section-action {
   --mat-button-text-container-height: 24px;
   --mat-button-text-horizontal-padding: 6px;
@@ -99,8 +89,6 @@
 }
 
 .option-row {
-  // Material's own menu-item height leaves a 40-column list taller than the cap above; 36px keeps
-  // roughly a dozen rows in view without the list reading as cramped.
   height: 36px;
   font: 400 14px/20px var(--font-sans, inherit);
 

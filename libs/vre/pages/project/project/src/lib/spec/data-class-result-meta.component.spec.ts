@@ -35,7 +35,6 @@ describe('DataClassResultMetaComponent', () => {
 
   it('clamps the range end to the total on a partial last page', () => {
     render(4024, 160);
-    // 4024 = 160 full pages + 24. Reporting 4025 here would claim a result that does not exist.
     expect(vm()).toMatchObject({ rangeStart: 4001, rangeEnd: 4024 });
   });
 
@@ -52,7 +51,6 @@ describe('DataClassResultMetaComponent', () => {
 
   it('renders the end controls disabled rather than hiding them', () => {
     render(4024, 0);
-    // A pager that changes width as you reach its edges moves the next target under the cursor.
     expect(buttons().map(b => b.disabled)).toEqual([true, true, false, false]);
 
     render(4024, 160);
@@ -61,8 +59,7 @@ describe('DataClassResultMetaComponent', () => {
 
   it('states the count is unavailable and drops the pager when the count query failed', () => {
     render(null, 0);
-    // null is "genuinely unknown", not zero: the pager cannot be sized, so paging goes away until
-    // a later load returns a count.
+    // null is "genuinely unknown", not zero.
     expect(vm()).toMatchObject({ countUnavailable: true });
     expect(fixture.nativeElement.querySelector('[data-cy=count-unavailable]')).not.toBeNull();
     expect(pagerRendered()).toBe(false);

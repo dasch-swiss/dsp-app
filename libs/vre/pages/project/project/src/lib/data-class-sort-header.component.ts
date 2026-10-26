@@ -16,14 +16,9 @@ interface SortOption {
 }
 
 /**
- * The sort control above the list: which property to order by, and in which direction.
- *
- * Sorting by a property reorders the class without filtering it: the query binds the sort property
- * with `OPTIONAL`, so resources that do not carry it stay in the results and the count is unchanged.
- * They cluster at one end, since an unbound value sorts first ascending.
- *
- * Returning to page 0 is not done here. Changing the sort changes the query, and the fetcher already
- * resets the offset whenever the query changes; a second writer would leave no way to tell which won.
+ * The sort control above the list: which property to order by, and in which direction. Sorting
+ * never filters (the sort property is bound with `OPTIONAL`). It does not reset the page: the
+ * fetcher already does that whenever the query changes.
  */
 @Component({
   selector: 'app-data-class-sort-header',
@@ -83,21 +78,14 @@ export class DataClassSortHeaderComponent {
     { initialValue: [] as Predicate[] }
   );
 
-  /**
-   * Link properties and list values are excluded, the same rule advanced search applies to its own
-   * order-by options: ordering by a URI or by a reference to another resource is not meaningful.
-   * `getProperties$` prepends the synthetic `rdfs:label` predicate, so the default is always offered.
-   */
+  /** Link and list properties are excluded, as in advanced search's order-by. `getProperties$` prepends `rdfs:label`. */
   readonly sortOptions = computed<SortOption[]>(() =>
     this._properties()
       .filter(p => !p.isLinkProperty && p.objectValueType !== Constants.ListValue)
       .map(p => ({ iri: p.iri, label: this._stringify.transform(p.labels) }))
   );
 
-  /**
-   * Falls back to a label-shaped entry while the ontology is still loading, so the control renders
-   * something stable instead of flashing an empty trigger on first paint.
-   */
+  /** Placeholder entry while the ontology is still loading. */
   readonly currentOption = computed<SortOption>(() => {
     const iri = this._sortIri();
     return this.sortOptions().find(o => o.iri === iri) ?? { iri, label: '…' };
@@ -107,7 +95,6 @@ export class DataClassSortHeaderComponent {
     this._urlState.setSort(this._sortIri(), !this.isDescending());
   }
 
-  /** Direction is carried over: switching the property is not a reason to silently re-sort ascending. */
   selectProperty(predicateIri: string): void {
     this._urlState.setSort(predicateIri, this.isDescending());
   }

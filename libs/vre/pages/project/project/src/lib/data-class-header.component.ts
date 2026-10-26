@@ -40,19 +40,13 @@ interface CreateResourceDialogProps {
 }
 
 /**
- * The class view's two-row header, above the split (DEV-7494, design A1).
- *
- * Row 1 identifies the class and carries its actions; row 2 is a toolbar band with the search and
- * filters, the pager, View options and the view toggle. Both sit above the split rather than inside
- * the list column, so the bar spans the full width and the count describes the whole result set
- * rather than looking like a property of the list.
+ * The class view's two-row header, above the split: class identity and actions, then a toolbar with
+ * search and filters, pager, View options and the view toggle.
  */
 @Component({
   selector: 'app-data-class-header',
   template: `
     <div class="data-class-header">
-      <!-- Row 1 — what this is: the class, what it is about, and what can be done with it
-           (DEV-7494, design A1). -->
       <div class="identity-row">
         <div class="identity">
           <div class="title-line">
@@ -60,7 +54,6 @@ interface CreateResourceDialogProps {
           </div>
           @if (classSelected.resClass.comments.length) {
             @let description = classSelected.resClass.comments | appStringifyStringLiteral;
-            <!-- One line; the whole of it on hover. -->
             <p class="class-description" [title]="description">{{ description }}</p>
           }
         </div>
@@ -78,12 +71,8 @@ interface CreateResourceDialogProps {
         </div>
       </div>
 
-      <!-- Row 2 — how the results are narrowed and drawn: search and filters on the left; the pager,
-           View options and the view toggle on the right. Wraps rather than squeezing on a narrow
-           screen. -->
       <div class="toolbar">
-        <!-- Nothing projected into either slot: the Data Model, Resource Class and Order By chips are
-             advanced search's, and here the class is fixed by the route and label is the only sort. -->
+        <!-- Nothing is projected into the bar: the class is fixed by the route and label is the only sort. -->
         <app-advanced-search-bar
           class="toolbar-search"
           [projectUuid]="projectUuid"
@@ -97,8 +86,7 @@ interface CreateResourceDialogProps {
         <div class="toolbar-end">
           <app-data-class-result-meta />
           <span class="toolbar-divider"></span>
-          <!-- Only in table view, and only once the table has told us what its columns are. The list
-               view has nothing to shape, and an empty menu is worse than no menu. -->
+          <!-- Table view only, and only once the table has reported its columns. -->
           @if ((view$ | async) === 'table' && tableState.columns().length > 0) {
             <app-table-view-options
               [entries]="tableState.pickerEntries()"
@@ -111,8 +99,6 @@ interface CreateResourceDialogProps {
         </div>
       </div>
 
-      <!-- On the header's bottom edge while new results load, for the list and the table alike: the
-           results stay on screen, and this says they are about to change. -->
       @if (isRefreshing()) {
         <mat-progress-bar
           class="refresh-bar"
@@ -138,7 +124,7 @@ interface CreateResourceDialogProps {
   providers: [StringifyStringLiteralPipe],
 })
 export class DataClassHeaderComponent {
-  /** Shared with the table below the split, which is what populates it. */
+  /** Populated by the table below the split. */
   readonly tableState = inject(TableViewStateService);
 
   readonly view$ = inject(DataClassUrlStateService).view$;

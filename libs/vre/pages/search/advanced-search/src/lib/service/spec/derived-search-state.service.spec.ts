@@ -45,11 +45,7 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
 
   const urlSyncStub: Partial<SearchUrlSyncService> = { decodeFilters };
 
-  /**
-   * The `SearchFilterState` port, projected off the same stubbed `params$` the URL-service stub uses, so
-   * driving `params$` still drives the whole derivation. Hydration now lives behind the port in
-   * `ConfirmedSearchStateService`, which these specs provide for real — the assertions are unchanged.
-   */
+  /** The `SearchFilterState` port, projected off the stubbed `params$` so driving `params$` drives the whole derivation. */
   const portFor = (p$: BehaviorSubject<SearchUrlParams>): SearchFilterState =>
     ({
       filters$: p$.pipe(map(p => (p.filters ? decodeFilters(p.filters) : []))),
@@ -568,8 +564,6 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
           DerivedSearchStateService,
           GravsearchService,
           SearchUrlSyncService,
-          // The real service IS the port here — that is the point of the round-trip: encode, through the
-          // URL, back out via the port, into hydration, and on to the query.
           { provide: SearchFilterState, useExisting: SearchUrlSyncService },
           ConfirmedSearchStateService,
           {

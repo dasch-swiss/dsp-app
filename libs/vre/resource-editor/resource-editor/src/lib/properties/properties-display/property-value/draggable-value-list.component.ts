@@ -47,10 +47,7 @@ import { ResourceFetcherService } from '../../../representation/resource-fetcher
           cdkDragLockAxis="y"
           [cdkDragDisabled]="disabled || reorderLoading || values.length < 2"
           class="value-row">
-          <!-- The visible handle is the item's to place — the value's actions put it between Edit
-               and Delete (DEV-7494) — and it only exists while the value is hovered. This one is
-               never seen: it only keeps the row from becoming its own handle in between, which is
-               what CDK does to a drag with no handle, and would swallow text selection. -->
+          <!-- Never seen: without any handle CDK makes the whole row the handle, which swallows text selection. -->
           @if (!drag.disabled) {
             <span cdkDragHandle hidden></span>
           }
@@ -118,8 +115,7 @@ export class DraggableValueListComponent {
   private readonly _rowInjectors = new WeakMap<CdkDrag, Injector>();
 
   /**
-   * Gives the item the row's drag, so a `cdkDragHandle` inside it moves the row. Without it the
-   * item's view resolves from where its template was declared, outside the row, and finds none.
+   * Gives the item the row's drag, so a `cdkDragHandle` inside it moves the row.
    * One per row and kept: a new injector would make the outlet rebuild the item on every check.
    */
   rowInjector(drag: CdkDrag): Injector {

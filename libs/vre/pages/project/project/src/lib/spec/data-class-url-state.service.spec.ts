@@ -7,11 +7,6 @@ import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { DataClassUrlStateService } from '../data-class-url-state.service';
 import { ProjectPageService } from '../project-page.service';
 
-/**
- * The Data tab's half of the `SearchFilterState` contract. These specs cover the three places it
- * deliberately diverges from advanced search's URL service — a bare `orderDir`, the ontology and class
- * coming from the route path rather than query params, and replace-vs-push history granularity.
- */
 const SHORTCODE = '0801';
 const ONTO_IRI = `http://rdfh.ch/ontology/${SHORTCODE}/myonto/v2`;
 
@@ -101,8 +96,7 @@ describe('DataClassUrlStateService', () => {
     it('writes the predicate and the direction in one navigation', () => {
       service.setSort(CREATOR, true);
 
-      // Two synchronous navigations get coalesced and the second discards the first, so a property
-      // change that also resets direction has to arrive as one write or half of it is lost.
+      // Two synchronous navigations get coalesced; property and direction must arrive as one write.
       expect(lastNav().queryParams).toEqual({ orderBy: CREATOR, orderDir: 'desc' });
       expect(navigate).toHaveBeenCalledTimes(1);
     });
@@ -147,8 +141,7 @@ describe('DataClassUrlStateService', () => {
       ]);
     });
 
-    // `_getOrderByString` drops every item with `orderBy: false`, so an item that is not flagged
-    // would silently fall through to the service default and a `desc` URL would sort ascending.
+    // `_getOrderByString` drops items with `orderBy: false`; unflagged, a `desc` URL would sort ascending.
     it('always flags the item as active so the sort survives the orderBy filter', async () => {
       queryParams$.next({ orderDir: 'desc' });
       const [item] = await firstValueFrom(service.orderByItems$);

@@ -8,11 +8,7 @@ import { OntologyDataService } from './service/ontology-data.service';
 import { SearchFlowLogger } from './service/search-flow-logger.service';
 import { StatementDraftStore } from './service/statement-draft.store';
 
-/**
- * Everything the chip bar needs, minus the one thing it cannot supply itself: a `SearchFilterState`.
- * The hosting page provides that, which is what lets the Search tab and the Data tab share this whole
- * stack while disagreeing about where search state is stored.
- */
+/** Everything the chip bar needs except a `SearchFilterState`, which the hosting page provides. */
 export function provideSearchFilters(): Provider[] {
   return [
     StatementDraftStore,

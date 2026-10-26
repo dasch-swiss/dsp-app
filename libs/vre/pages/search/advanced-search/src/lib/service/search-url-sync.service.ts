@@ -21,8 +21,6 @@ export interface SearchUrlParams {
   orderDir?: OrderDirection;
 }
 
-// The filter wire format is shared across every page that hosts the chip bar, so it lives in the codec
-// rather than here. Re-exported because this service is still the import site for most callers.
 export type { FilterParam } from '@dasch-swiss/vre/pages/search/search-filters';
 
 /**
@@ -92,9 +90,6 @@ export class SearchUrlSyncService implements SearchFilterState {
    * Emits on every navigation (initial, user action, back/forward), deduped on the decoded shape so
    * identical params do not re-trigger downstream work. Fires immediately with the current params on
    * subscribe (Router's `queryParams` replays the latest value).
-   *
-   * Declared before the port members below: they are field initialisers that read it, and class fields
-   * initialise in source order.
    */
   readonly params$: Observable<SearchUrlParams> = this._route.queryParams.pipe(
     map(p => this._mapParams(p)),
@@ -110,8 +105,6 @@ export class SearchUrlSyncService implements SearchFilterState {
   );
 
   // ── SearchFilterState port ────────────────────────────────────────────────
-  // The Search tab's answer to "where does search state live": all six params in the URL. The chip bar
-  // reads only through these; everything below them is this page's own business.
 
   readonly filters$: Observable<FilterParam[]> = this.params$.pipe(
     map(p => (p.filters ? decodeFilters(p.filters) : [])),
@@ -133,11 +126,7 @@ export class SearchUrlSyncService implements SearchFilterState {
     distinctUntilChanged()
   );
 
-  /**
-   * Any of the persisted search params counts as active state — reset wipes them all. `orderDir` is
-   * deliberately absent: on this page a direction without an `orderBy` is meaningless and is dropped on
-   * read, so it can never be the only thing set.
-   */
+  /** `orderDir` is deliberately absent: without an `orderBy` it is dropped on read, so it can never be the only thing set. */
   readonly hasActiveState$: Observable<boolean> = this.params$.pipe(
     map(p => !!(p.q || p.ontology || p.class || p.filters || p.orderBy)),
     distinctUntilChanged()
@@ -149,15 +138,11 @@ export class SearchUrlSyncService implements SearchFilterState {
   }
 
   /**
-   * Persist the confirmed filters, folding a now-orphaned sort into the same navigation.
-   *
-   * This page sorts by a *filter's predicate*, so removing the filter that is currently sorted on leaves
-   * `orderBy` dangling. Clearing it has to ride along in this one `writeState`: two synchronous router
-   * navigations are coalesced and the second discards the first, which would lose the filter change.
+   * Persist the confirmed filters. A now-orphaned `orderBy` is cleared in this same `writeState`: two
+   * synchronous router navigations are coalesced and the second discards the first.
    */
   setFilters(filters: FilterParam[], removedPredicateIri?: string): void {
-    // `parentIndex` is `null` in the decoded shape but omitted in the encoded one, so a top-level filter
-    // keeps serialising to the same string it always has — shared links stay byte-identical.
+    // `parentIndex` is omitted when null so a top-level filter's encoded string stays byte-identical in shared links.
     const encoded = filters.length
       ? encodeFilters(filters.map(f => ({ ...f, parentIndex: f.parentIndex ?? undefined })))
       : undefined;
@@ -207,8 +192,6 @@ export class SearchUrlSyncService implements SearchFilterState {
     });
   }
 
-  // Thin delegations to the shared codec. Kept as instance methods so the many existing call sites that
-  // reach them through this service keep compiling; the encoding itself is page-agnostic.
   encodeFilters(statements: FilterParamInput[]): string {
     return encodeFilters(statements);
   }

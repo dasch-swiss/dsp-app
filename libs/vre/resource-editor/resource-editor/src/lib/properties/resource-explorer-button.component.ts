@@ -12,10 +12,7 @@ import type { ResourceFetcherDialogComponent } from '../resource-fetcher-dialog.
     <mat-icon>arrow_circle_right</mat-icon>
   </button>`,
   imports: [MatButtonModule, MatIconModule],
-  // The offsets were inline styles, which no host could override without ::ng-deep. They are now
-  // custom properties defaulting to exactly what the properties pane relied on, so the three
-  // existing call sites are unchanged and a host that lays the button out itself — the data
-  // table's row gutter — can opt out by setting them.
+  // The offsets are custom properties so a host can lay the button out itself without ::ng-deep.
   styles: [
     `
       :host {
@@ -34,7 +31,6 @@ import type { ResourceFetcherDialogComponent } from '../resource-fetcher-dialog.
 })
 export class ResourceExplorerButtonComponent {
   @Input({ required: true }) resourceIri!: string;
-  /** Defaulted rather than required, so the existing call sites keep the icon-only button. */
   @Input() ariaLabel?: string;
   constructor(private readonly _dialog: MatDialog) {}
   tryDialog() {

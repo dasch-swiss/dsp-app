@@ -15,9 +15,8 @@ import { StatementDraftStore } from './service/statement-draft.store';
 import { toLabels } from './util/labels';
 
 /**
- * A quiet search state: no filters, no term, nothing active. Covers the `SearchFilterState` port the
- * chip bar reads, and carries the extra URL-service members the Search tab's own stories layer on top.
- * Every stream must emit at least once — the bar and the derivation subscribe on construction.
+ * A quiet search state (no filters, no term, nothing active) covering the `SearchFilterState` port. Every stream
+ * must emit at least once: the bar and the derivation subscribe on construction.
  */
 export const EMPTY_SEARCH_STATE = {
   params$: of({}),
@@ -36,7 +35,6 @@ export const EMPTY_SEARCH_STATE = {
   reset: () => {},
 };
 
-// The bar depends on the port, not on any page's URL service, so stories provide the port directly.
 const searchFilterStateStub = {
   provide: SearchFilterState,
   useValue: EMPTY_SEARCH_STATE as unknown as SearchFilterState,
@@ -57,9 +55,7 @@ const searchFlowLoggerStub = {
   } as Partial<SearchFlowLogger>,
 };
 
-// Static English translations for Storybook, mirroring the app's en.json `pages.search.advancedSearch`
-// namespace so the `translate` pipe renders the real UI text (not the raw key) in stories and their
-// play() assertions. Keep in sync with apps/dsp-app/src/assets/i18n/en.json.
+// Static English translations mirroring en.json `pages.search.advancedSearch`; keep in sync with it.
 const STORY_TRANSLATIONS = {
   ui: {
     common: {
@@ -73,8 +69,6 @@ const STORY_TRANSLATIONS = {
       previousPage: 'Previous page',
       lastPage: 'Last page',
     },
-    // The date operand renders app-date-picker, so its keys have to be here too or a story
-    // showing a date term displays raw key ids instead of calendar names.
     datePicker: {
       clickToSelect: 'Click to select a date',
       calendar: 'Calendar',
@@ -90,12 +84,9 @@ const STORY_TRANSLATIONS = {
       yearPrecision: 'Year precision. Choose a month to select a day.',
       done: 'Done',
     },
-    // Advanced search renders the picker, not the viewer's calendar marker, so only the picker's
-    // own calendar names are needed here.
     calendarMarker: {
       calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
     },
-    // The picker's day-grid header reads these.
     weekdays: {
       monday: { short: 'M' },
       tuesday: { short: 'T' },
@@ -247,11 +238,7 @@ export const makeOntologyDataServiceStub = (
   ...partial,
 });
 
-/**
- * Build a `ListNodeLabelResolver` stub whose `getLabels` returns the given static map. Stories that
- * exercise list-value chips (DEV-6857) can pass a pre-populated `nodeIri → labels[]` map so the pipe
- * resolves the multi-language labels synchronously, without needing a real list fetch.
- */
+/** Build a `ListNodeLabelResolver` stub whose `getLabels` returns the given static `nodeIri → labels[]` map. */
 export const makeListNodeLabelResolverStub = (
   labelsByNodeIri: Record<string, StringLiteralV2[]> = {}
 ): Partial<ListNodeLabelResolver> => ({
@@ -259,11 +246,7 @@ export const makeListNodeLabelResolverStub = (
   changes$: of(undefined),
 });
 
-/**
- * The draft store plus a quiet confirmed state to seed it — enough for chip stories that edit filters.
- * `StatementDraftStore` seeds itself from `confirmedState$` on construction, so it must emit at least
- * once or the store never produces its initial blank row.
- */
+/** The draft store plus a quiet confirmed state; the store must see one emission to produce its initial blank row. */
 export const PROPERTY_FORM_MANAGER_STORY_PROVIDERS = [
   {
     provide: ConfirmedSearchStateService,
@@ -274,12 +257,7 @@ export const PROPERTY_FORM_MANAGER_STORY_PROVIDERS = [
   StatementDraftStore,
 ];
 
-/**
- * Default chip-label story providers: the manager pair above plus an ontology stub and an empty list
- * resolver, so the DEV-6857-aware ChipLabelPipe can be constructed by any chip story out of the box.
- * Individual stories can override either service by placing a more specific provider *after* this
- * spread in their story's `applicationConfig`.
- */
+/** Default chip-label story providers; a story can override a service by providing it after this spread. */
 export const CHIP_LABEL_STORY_PROVIDERS = [
   ...PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },

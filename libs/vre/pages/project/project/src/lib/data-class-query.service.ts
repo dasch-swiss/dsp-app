@@ -8,16 +8,9 @@ import { combineLatest, distinctUntilChanged, filter, map, Observable, shareRepl
 import { DataClassUrlStateService } from './data-class-url-state.service';
 
 /**
- * The Data tab's Gravsearch query, derived from the URL.
- *
- * This is the page's answer to advanced search's `DerivedSearchStateService.gravsearchQuery$`, and
- * it differs from it in one structural way: **the query is never null.** On the Search tab an empty
- * form means "nothing to search" and the results pane stays blank; here the route already fixes a
- * resource class, so an unfiltered class view is a legitimate query that must list everything in
- * the class. Filters and a fulltext term only narrow it.
- *
- * Component scoped — provided by the class view so the header and the list read one instance and a
- * class switch disposes it.
+ * The Data tab's Gravsearch query, derived from the URL. Unlike advanced search's
+ * `gravsearchQuery$` it is never null: the route fixes the class, so an unfiltered view must list
+ * everything in it. Component scoped, provided by the class view.
  */
 @Injectable()
 export class DataClassQueryService {
@@ -26,21 +19,12 @@ export class DataClassQueryService {
   private readonly _gravsearch = inject(GravsearchService);
 
   /**
-   * Emits once the route's class has resolved against the loaded ontology, and on every subsequent
-   * change to filters, term or sort.
+   * Emits once the route's class has resolved against the loaded ontology, then on every change to
+   * filters, term or sort. Gated on the resolved class, not the route IRI: querying earlier would
+   * send an empty class anchor that matches every resource in the project.
    *
-   * Gating on a resolved `resourceClass` rather than on the raw route IRI is deliberate: the IRI is
-   * known immediately but the ontology that gives it meaning is not, and querying in between would
-   * send a request with an empty class anchor that matches every resource in the project.
-   *
-   * `shareReplay` because both the result request and the count request subscribe, and the two must
-   * see the same query string — recomputing per subscriber would be harmless today but would make a
-   * future impure input (a timestamp, a nonce) diverge the pair silently.
-   *
-   * `refCount: false` so the last query survives a gap in subscribers. Retry tears the request chain
-   * down and rebuilds it; under `refCount: true` that would drop the replay buffer and leave retry
-   * waiting on the upstream to re-emit. The subscription it holds open is bounded by this service's
-   * own lifetime, which is the class view's.
+   * `shareReplay` keeps the result and count requests on the same query string. `refCount: false`
+   * because retry tears the request chain down and must still find the last query.
    */
   readonly query$: Observable<string> = combineLatest([
     this._confirmed.confirmedState$,
@@ -50,8 +34,7 @@ export class DataClassQueryService {
     filter(([state]) => !!state.resourceClass?.iri),
     map(([state, fulltextTerm, orderByItems]) =>
       this._gravsearch.generateGravSearchQuery(
-        // An incomplete row is a filter the user is still editing. The bar only confirms complete
-        // ones, but a hand-edited URL can carry a half-filter, and it must not narrow the results.
+        // A hand-edited URL can carry an incomplete filter; it must not narrow the results.
         state.statements.filter(s => s.isValidAndComplete),
         fulltextTerm,
         state.resourceClass?.iri ?? '',
@@ -64,10 +47,8 @@ export class DataClassQueryService {
 }
 
 /**
- * The page provides its URL state under both its own type and the shared port: the chip bar and
- * `ConfirmedSearchStateService` resolve `SearchFilterState`, while this service and the sort header
- * need the Data-tab-only members (`sortDescending$`, `setSortDescending`, `orderByItems$`) that the
- * port does not declare. `useExisting` keeps both names pointing at one instance.
+ * Provides the URL state under both its own type and the shared `SearchFilterState` port, as one
+ * instance: this service and the sort header need Data-tab-only members the port does not declare.
  */
 export function provideDataClassSearch() {
   return [

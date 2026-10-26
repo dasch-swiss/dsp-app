@@ -1,10 +1,6 @@
 import { Injectable, isDevMode } from '@angular/core';
 
-/**
- * The URL params a page carries, as far as the logger is concerned: an opaque bag it only prints.
- * Deliberately not the Search tab's `SearchUrlParams` — each page that hosts the chip bar owns its own
- * param set, and an interface without an index signature would not satisfy a `Record<string, …>` here.
- */
+/** The URL params a page carries, as an opaque bag the logger only prints; not the Search tab's `SearchUrlParams`, which has no index signature. */
 export type LoggedUrlParams = object;
 
 const TAG = '[SearchFlow]';
