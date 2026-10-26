@@ -15,7 +15,7 @@ Romansh (`rm`) has no file of its own. It is bound to English at runtime by the 
 ## Core Translation Rules
 
 ### 1. Key Parity Requirement
-**CRITICAL**: All translation files MUST maintain exact key parity with the English reference file (`en.json`). 
+All translation files keep exact key parity with the English reference file (`en.json`).
 Every key that exists in English must exist in all other language files.
 
 ### 2. English as Reference
@@ -25,14 +25,8 @@ Every key that exists in English must exist in all other language files.
 - If no translation is provided by PM for a new key, the English value should be used as a placeholder in the other language files
 
 ### 3. Romansh Policy
-**IMPORTANT**: Romansh (`rm`) has no translation file. It is bound to English at runtime via the fallback loader, so it always reflects `en.json` automatically — there is nothing to maintain.
-- **DO NOT** create `rm.json` or add Romansh translations unless real, PM-provided Romansh translations exist; doing so would reintroduce the duplicate file this setup removed (DEV-6629).
+- Don't create `rm.json` or add Romansh translations unless real, PM-provided Romansh translations exist; doing so would reintroduce the duplicate file this setup removed (DEV-6629).
 - When real translations do arrive, add `rm.json` and remove the `{ rm: 'en' }` entry from the fallback loader.
-
-### 4. Translation Consistency
-- Maintain consistent terminology across all languages
-- When updating translations, ensure the meaning and tone remain consistent
-- Consider context and user experience when shortening or modifying text
 
 ## Key Parity Verification
 
@@ -61,7 +55,7 @@ PY
 ### When Adding New Keys:
 1. Add the key to `en.json` with the English text
 2. Add proper translations to `de.json`, `fr.json`, and `it.json`
-3. **Update the relevant code** to replace hardcoded text with the translation key (e.g., `"Add user"` → `{{ 'pages.project.add' | translate }}`)
+3. **Update the relevant code** to replace hardcoded text with the translation key (e.g., `"Cancel"` → `{{ 'ui.common.actions.cancel' | translate }}`)
 4. Run the parity check (see **Key Parity Verification**)
 5. Run the tests of each project whose templates you changed (`npx nx test <project>`), and `npm run test-storybook` if a changed component appears in stories (see the Storybook caveat above)
 
@@ -76,10 +70,6 @@ PY
 3. Verify no references remain in the codebase
 4. Run the parity check (see **Key Parity Verification**)
 
-## Common Issues to Avoid
-
-1. **Partial Updates**: Never update only some language files - always maintain parity
-
 ## Testing Translations
 
 After making translation changes, run the parity check (see **Key Parity Verification**); it is the gate. When a browser tool is available and the app is already running (`npm run start-local`), also switch languages in the UI and check that no key shows raw (e.g. `"pages.project.legalSettings.tab"`).
@@ -93,19 +83,17 @@ The translation files follow a hierarchical structure with two main top-level se
 1. **`pages.*`** - Feature-specific translations organized by page/module
 2. **`ui.*`** - Reusable UI component translations
 
-### New `ui.common` Structure (Refactored)
+### `ui.common` Structure
 
-A centralized `ui.common` structure has been introduced to eliminate duplication and improve maintainability:
+`ui.common` holds the shared labels, so they are not duplicated per feature:
 
 ```
 ui.common/
 ├── actions/          # Common action button labels (cancel, save, update, delete, etc.)
 ├── fields/           # Common form field labels (username, email, password, etc.)
-├── status/           # Status indicators (active, inactive, loading, etc.)
-├── states/           # UI states (loading, empty, noResults, etc.)
-├── entities/         # Common entity names (user/users, project/projects, etc.)
-├── confirmations/    # Reusable confirmation message templates with interpolation
-└── sort/             # Sort option labels (byName, byDate, ascending, descending)
+├── errors/           # Common error messages
+├── status/           # Status indicators (loading)
+└── entities/         # Common entity names (user/users, project/projects, etc.)
 ```
 
 ### Decision Tree: `ui.common` vs `pages.*`
@@ -114,7 +102,6 @@ ui.common/
 - The text is used in 3+ different feature areas
 - It's a standard action/field/status label
 - The text is generic and context-independent
-- It's a reusable confirmation message template
 
 **Use `pages.*` when:**
 - The text has business domain-specific context
@@ -133,7 +120,7 @@ ui.common/
 ❌ **Bad:**
 ```typescript
 'pages.search.cancel'                   // Don't duplicate common actions!
-'pages.system.loading'                  // Don't duplicate common states!
+'pages.system.loading'                  // Don't duplicate common status labels!
 ```
 
 ### Key Referencing in Code
@@ -148,7 +135,7 @@ Keys use dot notation in the application code:
 
 **TypeScript usage:**
 ```typescript
-const message = this._translateService.instant('ui.common.confirmations.deleteItem', { item: 'user' });
+const label = this._translateService.instant('ui.common.actions.cancel');
 ```
 
 ### File Structure Notes
