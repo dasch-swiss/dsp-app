@@ -10,7 +10,7 @@ date: 2026-10-23
 
 DSP-APP is the Angular browser client for the DaSCH Service Platform, built as an Nx monorepo: one application (`apps/dsp-app`) composed from 28 libraries, one of which (`libs/dsp-js`) is also published to NPM. That is 29 Nx projects in total. The application shell holds only bootstrap, routing and configuration; every page lives in a `libs/vre/pages/*` library, and the resource viewer/editor is its own large library. The client talks to DSP-API through two separate clients, `libs/dsp-js` (hand-written, JSON-LD, the v2 surface) and `libs/vre/3rd-party-services/open-api` (generated from a vendored spec, the admin surface); knowing which one carries a given field is the single most load-bearing fact about this codebase. Vocabulary is defined in [CONTEXT.md](CONTEXT.md), which also records where UI wording deliberately differs from code wording. Component names below are the TypeScript path aliases from `tsconfig.base.json`, because that is what import statements and the boundary lint match on; each entry also gives its Nx project name, which differs and is often surprising.
 
-**Depends on** and **Used by** list workspace-alias imports in runtime code. `*.spec.ts`, `*.stories.ts` and `stories.helpers.ts` are excluded, which is the basis the ADRs use, so a story-only edge appears in the Nx project graph but not here. Six exist today: `ui/string-literal`, `pages/ontology/ontology`, `pages/search/advanced-search` and `pages/search/search` reach `core/session` from a story or a `stories.helpers.ts`, and `ui/nested-menu` reaches `core/config` and `shared/app-helper-services` the same way. ADR-0001 decision 5 lists them as the reason stories are exempt from the boundary rule.
+**Depends on** and **Used by** list workspace-alias imports in runtime code. `*.spec.ts`, `*.stories.ts` and `stories.helpers.ts` are excluded, which is the basis the ADRs use, so a story-only edge appears in the Nx project graph but not here. Six exist today: `ui/string-literal`, `pages/ontology/ontology`, `pages/search/search-filters` and `pages/search/search` reach `core/session` from a story or a `stories.helpers.ts`, and `ui/nested-menu` reaches `core/config` and `shared/app-helper-services` the same way. ADR-0001 decision 5 lists them as the reason stories are exempt from the boundary rule.
 
 Load this file on demand for blast-radius and boundary questions. It is not meant to be read end to end.
 
@@ -446,21 +446,18 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Nx project**: `vre-pages-search-advanced-search`
 - **Paths**: `libs/vre/pages/search/advanced-search/**`
-- **Purpose**: The chip-bar query builder that lets a user assemble criteria over a project's data model, compiles them into a Gravsearch query and runs it. Its durable state is the URL. Much of its filter UI and query generation moved to `vre/pages/search/search-filters`; this entry predates the move and is left without a fingerprint until the next full `update`.
-- **Key entities**: `StatementElement`, `Predicate`, `Operator`, `PropertyObjectType`, `OrderByItem`, `GravsearchWriter`, `GravsearchService`, `generateGravSearchQuery`, `DerivedSearchStateService`, `StatementDraftStore`, `SearchUrlSyncService`, `OntologyDataService`, `buildStatementsFromFilterParams`
-- **Public interface**: Five exports, including `provideAdvancedSearch()`. All services are internal.
-- **Local-context kit**: `src/lib/service/search-url-sync.service.ts`, `src/lib/service/derived-search-state.service.ts`, `src/lib/service/gravsearch.service.ts`, `src/lib/service/gravsearch-writer.ts`, `src/lib/model.ts`, `src/lib/service/statement-draft.store.ts`, `README.md`
+- **Purpose**: The Search tab page. It hosts the chip bar from `vre/pages/search/search-filters`, keeps the search state in the URL and runs the compiled Gravsearch query. The filter UI, statement builder and query generation live in `search-filters`; this library adds the page, the data-model and resource-class chips, ordering and the URL binding.
+- **Key entities**: `AdvancedSearchPageComponent`, `AdvancedSearchResultsComponent`, `SearchUrlSyncService`, `DerivedSearchStateService`, `DataModelChipComponent`, `ResourceClassChipComponent`, `OrderByComponent`
+- **Public interface**: `src/index.ts`: the page and results components and `provideAdvancedSearch()`. All services are internal.
+- **Local-context kit**: `src/lib/providers.ts`, `src/lib/service/search-url-sync.service.ts`, `src/lib/service/derived-search-state.service.ts`, `src/lib/advanced-search-page.component.ts`, `README.md`
 - **Depends on**: `dsp-js`, `vre/core/config`, `vre/core/error-handler`, `vre/pages/data-browser`, `vre/pages/project/project`, `vre/pages/search/search-filters`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/progress-indicator`, `vre/ui/ui`
 - **Used by**: `dsp-app`
 - **Boundary rules**:
-  - Gravsearch is assembled by string concatenation of template-literal fragments in `gravsearch-writer.ts` and `gravsearch.service.ts`. The injection defences live in `model.ts`, not in the writer: `escapeForGravsearchStringLiteral`, `escapeSparqlStringLiteral` and `sanitizeSparqlIri`. Values reach them from the untrusted `filters` URL parameter, so any new value path must route through an escaper. `review`
-  - All eight services are page-scoped through `provideAdvancedSearch()`; none is root-provided. `structure`
+  - `provideAdvancedSearch()` page-scopes `SearchUrlSyncService` and `DerivedSearchStateService` on top of `provideSearchFilters()`, and binds the `SearchFilterState` port to `SearchUrlSyncService` with `useExisting`. None is root-provided. `structure`
   - Several inline comments record DSP-API behaviour verified empirically (DEV-6889 negation over multivalued properties, the `?mainRes` type-anchor rule). Those are backend constraints, not style. `docs-only`
-  - The README names two classes that no longer exist: `SearchDerivationService` is now `DerivedSearchStateService`, `PropertyFormManager` is now `StatementDraftStore`. `docs-only`
+  - The README names two classes that no longer exist (`SearchDerivationService` is now `DerivedSearchStateService`, `PropertyFormManager` is now `StatementDraftStore`) and still describes the layout from before the `search-filters` split. `docs-only`
 - **Durable state**:
-  - The URL query parameters `q`, `ontology`, `class`, `filters`, `orderBy`, `orderDir`. `SearchUrlSyncService.writeState` is the single write API but has four component writers.
-  - `StatementDraftStore._statements`, ephemeral, with eleven public mutators called from six UI components. Bounded by the store's own API rather than by scattered subjects.
-  - `OntologyDataService._selectedOntology`, written from three places including one component that bypasses the derivation, contradicting the README's claim that `writeState` is the only mutation point.
+  - The URL query parameters `q`, `ontology`, `class`, `filters`, `orderBy`, `orderDir`. `SearchUrlSyncService.writeState` is the single write API. The data-model chip, the resource-class chip and the order-by component call it directly; the chip bar reaches it through the `SearchFilterState` port.
 - **Fingerprint**: `none`
 
 ### vre/pages/search/search-filters
@@ -473,8 +470,13 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Local-context kit**: not yet explored. This entry was added without exploration and carries no fingerprint, so `/dune:dune-map check` reports it stale until a full `update`.
 - **Depends on**: `dsp-js`, `vre/core/config`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/shared/calendar`, `vre/ui/date-picker`, `vre/ui/nested-menu`, `vre/ui/string-literal`, `vre/ui/ui`
 - **Used by**: `vre/pages/project/project`, `vre/pages/search/advanced-search`
-- **Boundary rules**: not yet explored.
-- **Durable state**: not yet explored.
+- **Boundary rules**:
+  - Gravsearch is assembled by string concatenation of template-literal fragments in `src/lib/service/gravsearch-writer.ts` and `src/lib/service/gravsearch.service.ts`. The injection defences live in `src/lib/model.ts`, not in the writer: `escapeForGravsearchStringLiteral`, `escapeSparqlStringLiteral` and `sanitizeSparqlIri`. Values reach them from the untrusted `filters` URL parameter, so any new value path must route through an escaper. `review`
+  - `provideSearchFilters()` returns the library's services for the host page to scope; none is root-provided. The host must also provide `SearchFilterState`. `structure`
+- **Durable state**:
+  - None of its own in the URL: confirmed filters are read and written through the `SearchFilterState` port.
+  - `StatementDraftStore`, ephemeral: the unconfirmed filter drafts.
+  - `OntologyDataService._selectedOntology`, ephemeral: the ontology the editor offers properties from.
 - **Fingerprint**: `none`
 
 ### vre/pages/search/search
@@ -720,6 +722,6 @@ Recorded from the observed runtime graph, not from folder names.
 | Reading or writing `localStorage['ACCESS_TOKEN']` directly | Two places already do, which is how an expired token can stay in the in-memory config after being removed from storage | Use `AccessTokenService` | `docs-only` |
 | A new HTTP call inline in a component | Splits the API surface across the tree and hides which client is in use | Add an `*ApiService` to `vre/3rd-party-services/api` extending `BaseApi` | `docs-only` |
 | Editing `dsp-api_spec.yaml` or `src/generated/**` | The spec edit desynchronises the client from the server and is overwritten by the next auto-bump; generated edits cannot be committed | Use the `update-openapi-client` skill | `review` for the spec, `structure` for generated |
-| Building a Gravsearch fragment without an escaper | Values originate in the untrusted `filters` URL parameter | Route through `escapeForGravsearchStringLiteral`, `escapeSparqlStringLiteral` or `sanitizeSparqlIri` in `advanced-search/src/lib/model.ts` | `review` |
+| Building a Gravsearch fragment without an escaper | Values originate in the untrusted `filters` URL parameter | Route through `escapeForGravsearchStringLiteral`, `escapeSparqlStringLiteral` or `sanitizeSparqlIri` in `search-filters/src/lib/model.ts` | `review` |
 | Adding to `vre/shared/app-common-to-move` | It is the app shell mis-filed as shared, with fan-out already exceeding fan-in | Put shell code in the app or a shell library; put feature code in its feature library | `docs-only` |
 | A `@JsonProperty` in dsp-js without the optional flag | `DISALLOW_NULL` with `CASE_STRICT` throws whenever the key is absent from any fixture or response | Pass `true` as the third argument unless the server always sends the field | `docs-only` |

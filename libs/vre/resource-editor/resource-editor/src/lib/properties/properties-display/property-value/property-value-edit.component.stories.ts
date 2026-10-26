@@ -1,7 +1,7 @@
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { BehaviorSubject } from 'rxjs';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 
 import { PropertyValueEditComponent } from './property-value-edit.component';
 import { PropertyValueService } from './property-value.service';
@@ -92,6 +92,33 @@ export const AddNewValue: Story = {
     await step('Save button is rendered for new value form', async () => {
       const saveButton = canvasElement.querySelector('[data-cy="save-button"]');
       await expect(saveButton).not.toBeNull();
+    });
+  },
+};
+
+/**
+ * The value editors are drawn at Material's smallest form field (36px), and a valid field reserves no
+ * empty error line under itself, so editing a value barely grows its row (DEV-7611).
+ */
+export const RendersCompactEditorField: Story = {
+  name: 'Renders the value editor as a compact 36px field without reserved error space',
+  args: {
+    readValue: {
+      id: 'http://rdfh.ch/values/1',
+      type: 'http://api.knora.org/ontology/knora-api/v2#IntValue',
+      intValueAsInt: 42,
+      valueHasComment: null,
+    } as any,
+  },
+  play: async ({ canvasElement, step }) => {
+    const field = await waitFor(() => {
+      const element = canvasElement.querySelector<HTMLElement>('[data-cy="value-editor"] mat-form-field');
+      expect(element).not.toBeNull();
+      return element!;
+    });
+
+    await step('The field is 36px tall, error line included', async () => {
+      await expect(field.getBoundingClientRect().height).toBeLessThanOrEqual(36.5);
     });
   },
 };

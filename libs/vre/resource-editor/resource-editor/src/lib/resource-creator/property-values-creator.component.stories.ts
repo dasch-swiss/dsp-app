@@ -1,7 +1,7 @@
 import { FormArray, FormBuilder } from '@angular/forms';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { type Meta, type StoryObj } from '@storybook/angular';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 
 import { PropertyValuesCreatorComponent } from './property-values-creator.component';
 
@@ -25,6 +25,13 @@ const makeMyProperty = () =>
     } as any,
     values: [],
   }) as any;
+
+// A simple text property: its editor is `app-common-input`, which sizes its own subscript.
+const makeTextProperty = () => {
+  const property = makeMyProperty();
+  property.propDef = { ...property.propDef, label: 'Text Value', objectType: Constants.TextValue };
+  return property;
+};
 
 const makeFormArray = () =>
   new FormArray([
@@ -73,6 +80,50 @@ export const DefaultView: Story = {
     await step('Template editor switcher is rendered', async () => {
       const switcher = canvasElement.querySelector('app-template-editor-switcher');
       await expect(switcher).not.toBeNull();
+    });
+  },
+};
+
+/**
+ * Creating a resource uses the same compact value editors as editing one (DEV-7611): a 36px field
+ * with no empty error line reserved under it.
+ */
+export const RendersCompactEditorField: Story = {
+  name: 'Renders the value editor as a compact 36px field without reserved error space',
+  args: {
+    myProperty: makeMyProperty(),
+    formArray: makeFormArray(),
+    resourceClassIri: 'http://example.org/onto#Thing',
+    projectIri: 'http://rdfh.ch/projects/test',
+    projectShortcode: 'test',
+  },
+  play: async ({ canvasElement, step }) => {
+    const field = await waitFor(() => {
+      const element = canvasElement.querySelector<HTMLElement>('[data-cy="value-editor"] mat-form-field');
+      expect(element).not.toBeNull();
+      return element!;
+    });
+
+    await step('The field is 36px tall, error line included', async () => {
+      await expect(field.getBoundingClientRect().height).toBeLessThanOrEqual(36.5);
+    });
+  },
+};
+
+export const RendersCompactTextEditorField: Story = {
+  name: 'Renders the text value editor as a compact 36px field without reserved error space',
+  args: { ...RendersCompactEditorField.args, myProperty: makeTextProperty(), formArray: makeFormArray() },
+  play: async ({ canvasElement, step }) => {
+    const field = await waitFor(() => {
+      const element = canvasElement.querySelector<HTMLElement>(
+        '[data-cy="value-editor"] app-common-input mat-form-field'
+      );
+      expect(element).not.toBeNull();
+      return element!;
+    });
+
+    await step('The field is 36px tall, error line included', async () => {
+      await expect(field.getBoundingClientRect().height).toBeLessThanOrEqual(36.5);
     });
   },
 };
