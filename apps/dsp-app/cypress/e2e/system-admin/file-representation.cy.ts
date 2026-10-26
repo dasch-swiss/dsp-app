@@ -37,7 +37,7 @@ describe('File representation', () => {
 
         po.addInitialLabel();
 
-        cy.intercept('POST', '**/assets/ingest/**').as('ingestUpload');
+        cy.intercept('POST', '**/ingest/projects/*/assets/ingest/**').as('ingestUpload');
         cy.get('[data-cy=upload-file]').selectFile('cypress/fixtures/test.svg', { force: true });
         cy.wait('@ingestUpload').its('response.statusCode').should('eq', 200);
       });
