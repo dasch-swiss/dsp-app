@@ -6,7 +6,7 @@ export interface PlacedNode {
   y: number;
   width: number;
   height: number;
-  column: number;
+  row: number;
 }
 
 export interface RoutedEdge {
@@ -22,26 +22,33 @@ export interface DataModelLayout {
   height: number;
 }
 
-/** Side margins; the left one carries the lanes of links into the first column. */
+/** Side margins; links that skip rows may run down them. */
 const MARGIN = 10;
-/** Space between columns, where the lanes of links into the next column run. */
+/** Space between two cards of a row. */
 const GAP = 16;
 const PADDING_Y = 8;
 const CARD = {
-  full: { height: 48, pitch: 60 },
-  condensed: { height: 22, pitch: 26 },
+  full: { height: 48, rowGap: 18, lane: 5 },
+  condensed: { height: 22, rowGap: 12, lane: 3 },
 };
+/** Room under a row before the first lane, for links that leave the row to skip rows. */
+const STUB = 4;
+/** Room above a card after the last lane, so links visibly drop into it. */
+const DROP = 6;
 
-/** How many columns of cards fit `width`. */
+/** How many cards fit in a row of `width`. */
 export const columnsFor = (width: number) => (width >= 260 ? 3 : 2);
 
 const byLabel = (a: DataModelNode, b: DataModelNode) => a.label.localeCompare(b.label) || a.id.localeCompare(b.id);
 
 /**
- * Lays a data model out in columns, links running left to right: classes that only link out on the left, the classes
- * they point at further right. Every link enters its target from the left through a vertical lane in the gap before
- * the target's column, shared by all links into that target through the same property, so they bundle into one trunk.
- * Classes without any link fill a grid below. Deterministic: the same graph and width always give the same layout.
+ * Lays a data model out in rows, links running top to bottom: classes that only link out at the top, the classes
+ * they point at further down. A step that has more classes than fit wraps onto further rows. Two steps share a row
+ * when they fit side by side and only one pair of classes links them, drawn as a short line between the two cards.
+ * Every other link enters its target from above through a horizontal lane in the gap over the target's row, shared
+ * by all links into that target through the same property, so they bundle into one trunk; a link that skips rows
+ * or runs upwards goes down a free channel between the cards first. Classes without any link fill a grid below.
+ * Deterministic: the same graph and width always give the same layout.
  */
 export function layoutDataModel(
   graph: DataModelGraph,
@@ -53,60 +60,107 @@ export function layoutDataModel(
   const linked = graph.nodes.filter(node => linkedIds.has(node.id)).sort(byLabel);
   const unlinked = graph.nodes.filter(node => !linkedIds.has(node.id)).sort(byLabel);
 
-  const maxColumns = columnsFor(width);
-  const columnOf = balanceColumns(linked, edges, rankNodes(linked, edges), maxColumns);
-  const columnCount = Math.max(0, ...columnOf.values()) + 1;
-  const columns: DataModelNode[][] = Array.from({ length: columnCount }, () => []);
+  const perRow = columnsFor(width);
+  const rank = rankNodes(linked, edges);
+  const levels: DataModelNode[][] = [];
   for (const node of linked) {
-    columns[columnOf.get(node.id)!].push(node);
+    (levels[rank.get(node.id)!] ??= []).push(node);
   }
-  orderColumns(columns, edges);
+  orderLevels(levels, edges);
+  const rows = packRows(levels, edges, perRow);
+
+  const cardWidth = (width - 2 * MARGIN - (perRow - 1) * GAP) / perRow;
+  const rowOf = new Map<string, number>();
+  rows.forEach((row, index) => row.forEach(node => rowOf.set(node.id, index)));
+  const sameRow = (edge: DataModelEdge) => rowOf.get(edge.source) === rowOf.get(edge.target);
+
+  // The lanes in the gap over each row, one per trunk, ordered left to right by where they drop.
+  const trunkKey = (edge: DataModelEdge) => `${edge.target} ${edge.property}`;
+  const trunksByRow = rows.map(() => [] as string[]);
+  const trunksByTarget = new Map<string, string[]>();
+  for (const edge of edges.filter(e => !sameRow(e))) {
+    const key = trunkKey(edge);
+    const trunks = trunksByRow[rowOf.get(edge.target)!];
+    if (!trunks.includes(key)) trunks.push(key);
+    const own = trunksByTarget.get(edge.target) ?? [];
+    if (!own.includes(key)) trunksByTarget.set(edge.target, [...own, key]);
+  }
+  const gapOver = (row: number) => {
+    const lanes = trunksByRow[row].length;
+    if (lanes === 0) return row === 0 ? 0 : card.rowGap;
+    return Math.max(card.rowGap, STUB + lanes * card.lane + DROP);
+  };
 
   const placed = new Map<string, PlacedNode>();
-  const cardWidth = (columnsOf: number) => (width - 2 * MARGIN - (columnsOf - 1) * GAP) / columnsOf;
-  const columnX = (column: number, columnsOf: number) => MARGIN + column * (cardWidth(columnsOf) + GAP);
-  const tallest = Math.max(0, ...columns.map(column => column.length));
-  columns.forEach((column, index) => {
-    const offset = ((tallest - column.length) * card.pitch) / 2;
-    column.forEach((node, row) => {
+  const rowTop: number[] = [];
+  let y = PADDING_Y;
+  rows.forEach((row, index) => {
+    y += gapOver(index);
+    rowTop.push(y);
+    const rowWidth = row.length * cardWidth + (row.length - 1) * GAP;
+    const left = (width - rowWidth) / 2;
+    row.forEach((node, i) =>
       placed.set(node.id, {
         node,
-        x: columnX(index, columnCount),
-        y: PADDING_Y + offset + row * card.pitch,
-        width: cardWidth(columnCount),
+        x: left + i * (cardWidth + GAP),
+        y,
+        width: cardWidth,
         height: card.height,
-        column: index,
-      });
-    });
+        row: index,
+      })
+    );
+    y += card.height;
   });
 
-  const gridTop =
-    PADDING_Y + tallest * card.pitch + (tallest > 0 && unlinked.length > 0 ? card.pitch - card.height : 0);
+  const gridTop = y + (rows.length > 0 && unlinked.length > 0 ? card.rowGap : 0);
   unlinked.forEach((node, index) => {
-    const column = index % maxColumns;
     placed.set(node.id, {
       node,
-      x: columnX(column, maxColumns),
-      y: gridTop + Math.floor(index / maxColumns) * card.pitch,
-      width: cardWidth(maxColumns),
+      x: MARGIN + (index % perRow) * (cardWidth + GAP),
+      y: gridTop + Math.floor(index / perRow) * (card.height + card.rowGap),
+      width: cardWidth,
       height: card.height,
-      column,
+      row: rows.length + Math.floor(index / perRow),
     });
   });
 
-  const rowGap = card.pitch - card.height;
-  let routed = routeEdges(edges, placed, rowGap);
-  // A link running above the first row needs the room for it.
-  if (routed.top < PADDING_Y) {
-    const shift = PADDING_Y - routed.top;
-    placed.forEach(p => (p.y += shift));
-    routed = routeEdges(edges, placed, rowGap);
-  }
+  const laneY = (target: PlacedNode, key: string) => {
+    const trunks = trunksByRow[target.row];
+    return target.y - DROP - (trunks.length - 1 - trunks.indexOf(key)) * card.lane - card.lane / 2;
+  };
+  const dropX = (target: PlacedNode, key: string) => {
+    const own = trunksByTarget.get(target.node.id)!;
+    return target.x + (target.width * (own.indexOf(key) + 1)) / (own.length + 1);
+  };
+  const cards = [...placed.values()];
+
+  const routed = edges.map(edge => {
+    const source = placed.get(edge.source)!;
+    const target = placed.get(edge.target)!;
+    if (sameRow(edge)) {
+      const middle = round(source.y + source.height / 2);
+      return { edge, path: `M ${round(source.x + source.width)} ${middle} H ${round(target.x)}` };
+    }
+    const key = trunkKey(edge);
+    const startX = round(source.x + source.width / 2);
+    const bottom = round(source.y + source.height);
+    const lane = round(laneY(target, key));
+    const end = `H ${round(dropX(target, key))} V ${round(target.y)}`;
+    if (target.row === source.row + 1) {
+      return { edge, path: `M ${startX} ${bottom} V ${lane} ${end}` };
+    }
+    // Skipping rows or running upwards: down a channel between the cards of the rows it passes.
+    const passed = cards.filter(p =>
+      target.row > source.row ? p.row > source.row && p.row < target.row : p.row >= target.row && p.row <= source.row
+    );
+    const channel = round(freeChannel(source.x + source.width / 2, passed, width));
+    const stub = round(source.y + source.height + STUB / 2);
+    return { edge, path: `M ${startX} ${bottom} V ${stub} H ${channel} V ${lane} ${end}` };
+  });
 
   const nodes = [...placed.values()];
-  const bottom = Math.max(routed.bottom, ...nodes.map(p => p.y + p.height));
-  const height = nodes.length === 0 ? 0 : bottom + PADDING_Y;
-  return { nodes, edges: routed.edges, width, height };
+  const height = nodes.length === 0 ? 0 : Math.max(...nodes.map(p => p.y + p.height)) + PADDING_Y;
+  return { nodes, edges: routed, width, height };
 }
 
 /** Longest path from a class nothing links to; links that close a cycle are left out of the ranking. */
@@ -145,126 +199,87 @@ function rankNodes(nodes: DataModelNode[], edges: DataModelEdge[]): Map<string, 
   return rank;
 }
 
-/**
- * Columns from ranks, ranks past the last column folded into it; then a column taller than its share moves classes
- * one column right, as long as everything they link to stays further right, so links still run left to right.
- */
-function balanceColumns(
-  nodes: DataModelNode[],
-  edges: DataModelEdge[],
-  rank: Map<string, number>,
-  maxColumns: number
-): Map<string, number> {
-  const columnOf = new Map(nodes.map(node => [node.id, Math.min(rank.get(node.id)!, maxColumns - 1)]));
-  const share = Math.ceil(nodes.length / maxColumns);
-  const canMoveRight = (id: string, to: number) =>
-    edges.every(edge => edge.source !== id || edge.target === id || columnOf.get(edge.target)! > to);
-
-  for (let c = maxColumns - 2; c >= 0; c--) {
-    const column = nodes.filter(node => columnOf.get(node.id) === c);
-    for (const node of [...column].reverse()) {
-      if (column.length <= share) break;
-      if (canMoveRight(node.id, c + 1)) {
-        columnOf.set(node.id, c + 1);
-        column.splice(column.indexOf(node), 1);
-      }
-    }
-  }
-  return columnOf;
-}
-
-/** Barycenter ordering: each class moves towards the rows of the classes it is linked with. */
-function orderColumns(columns: DataModelNode[][], edges: DataModelEdge[]) {
+/** Barycenter ordering: each class moves towards the positions of the classes it is linked with. */
+function orderLevels(levels: DataModelNode[][], edges: DataModelEdge[]) {
   const neighbours = new Map<string, string[]>();
   for (const { source, target } of edges) {
     neighbours.set(source, [...(neighbours.get(source) ?? []), target]);
     neighbours.set(target, [...(neighbours.get(target) ?? []), source]);
   }
-  const rowOf = new Map<string, number>();
-  const columnOf = new Map<string, number>();
+  const positionOf = new Map<string, number>();
+  const levelOf = new Map<string, number>();
   const remember = () =>
-    columns.forEach((column, c) =>
-      column.forEach((node, row) => {
-        rowOf.set(node.id, row - column.length / 2);
-        columnOf.set(node.id, c);
+    levels.forEach((level, l) =>
+      level.forEach((node, i) => {
+        positionOf.set(node.id, i - level.length / 2);
+        levelOf.set(node.id, l);
       })
     );
   remember();
 
-  const sweep = (c: number, fromLeft: boolean) => {
+  const sweep = (l: number, fromAbove: boolean) => {
     const weight = (node: DataModelNode) => {
-      const rows = (neighbours.get(node.id) ?? [])
-        .filter(id => (fromLeft ? columnOf.get(id)! < c : columnOf.get(id)! > c))
-        .map(id => rowOf.get(id)!);
-      return rows.length > 0 ? rows.reduce((sum, row) => sum + row, 0) / rows.length : rowOf.get(node.id)!;
+      const positions = (neighbours.get(node.id) ?? [])
+        .filter(id => (fromAbove ? levelOf.get(id)! < l : levelOf.get(id)! > l))
+        .map(id => positionOf.get(id)!);
+      return positions.length > 0
+        ? positions.reduce((sum, p) => sum + p, 0) / positions.length
+        : positionOf.get(node.id)!;
     };
-    const weights = new Map(columns[c].map(node => [node.id, weight(node)]));
-    columns[c].sort((a, b) => weights.get(a.id)! - weights.get(b.id)! || byLabel(a, b));
+    const weights = new Map(levels[l].map(node => [node.id, weight(node)]));
+    levels[l].sort((a, b) => weights.get(a.id)! - weights.get(b.id)! || byLabel(a, b));
     remember();
   };
   for (let round = 0; round < 2; round++) {
-    for (let c = 1; c < columns.length; c++) sweep(c, true);
-    for (let c = columns.length - 2; c >= 0; c--) sweep(c, false);
+    for (let l = 1; l < levels.length; l++) sweep(l, true);
+    for (let l = levels.length - 2; l >= 0; l--) sweep(l, false);
   }
 }
 
-/** Routes every link; `top` and `bottom` are the highest and lowest heights a link runs at between the rows. */
-function routeEdges(
-  edges: DataModelEdge[],
-  placed: Map<string, PlacedNode>,
-  rowGap: number
-): { edges: RoutedEdge[]; top: number; bottom: number } {
-  const middle = (p: PlacedNode) => p.y + p.height / 2;
-  const trunkKey = (edge: DataModelEdge) => `${edge.target} ${edge.property}`;
-
-  // The lanes in the gap left of each column, one per trunk, ordered by the height of their target.
-  const trunksByColumn = new Map<number, string[]>();
-  for (const edge of [...edges].sort((a, b) => middle(placed.get(a.target)!) - middle(placed.get(b.target)!))) {
-    const column = placed.get(edge.target)!.column;
-    const trunks = trunksByColumn.get(column) ?? [];
-    if (!trunks.includes(trunkKey(edge))) trunks.push(trunkKey(edge));
-    trunksByColumn.set(column, trunks);
-  }
-  const laneX = (target: PlacedNode, key: string) => {
-    const trunks = trunksByColumn.get(target.column)!;
-    const gapStart = target.column === 0 ? 0 : target.x - GAP;
-    const gapWidth = target.column === 0 ? MARGIN : GAP;
-    return gapStart + (gapWidth * (trunks.indexOf(key) + 1)) / (trunks.length + 1);
-  };
-
-  const cards = [...placed.values()];
-  let top = Infinity;
-  let bottom = -Infinity;
-  const routed = edges.map(edge => {
-    const source = placed.get(edge.source)!;
-    const target = placed.get(edge.target)!;
-    const startX = source.column < target.column ? source.x + source.width : source.x;
-    const lane = round(laneX(target, trunkKey(edge)));
-    const end = `V ${round(middle(target))} H ${round(target.x)}`;
-    const between = cards.filter(p => p.column > source.column && p.column < target.column);
-    const channel = freeChannel(middle(source), between, rowGap);
-    if (channel === middle(source)) {
-      return { edge, path: `M ${round(startX)} ${round(channel)} H ${lane} ${end}` };
+/**
+ * Rows from the levels: a level and the next share a row when they fit side by side and all links between them join
+ * one pair of classes, placed next to each other; a level with more classes than fit a row wraps onto further rows.
+ */
+function packRows(levels: DataModelNode[][], edges: DataModelEdge[], perRow: number): DataModelNode[][] {
+  const rows: DataModelNode[][] = [];
+  for (let l = 0; l < levels.length; l++) {
+    const level = levels[l];
+    const next = levels[l + 1];
+    if (next && level.length + next.length <= perRow) {
+      const inLevel = new Set(level.map(node => node.id));
+      const inNext = new Set(next.map(node => node.id));
+      const between = edges.filter(
+        e => (inLevel.has(e.source) && inNext.has(e.target)) || (inNext.has(e.source) && inLevel.has(e.target))
+      );
+      const pairs = new Set(between.map(e => `${e.source} ${e.target}`));
+      if (pairs.size === 1 && inLevel.has(between[0].source)) {
+        const { source, target } = between[0];
+        rows.push([
+          ...level.filter(node => node.id !== source),
+          level.find(node => node.id === source)!,
+          next.find(node => node.id === target)!,
+          ...next.filter(node => node.id !== target),
+        ]);
+        l++;
+        continue;
+      }
     }
-    // A link skipping a column would run behind its cards: it drops into the gap after its source, then runs
-    // between the rows of the skipped columns.
-    const exit = round(startX + GAP / 4);
-    top = Math.min(top, channel);
-    bottom = Math.max(bottom, channel);
-    return {
-      edge,
-      path: `M ${round(startX)} ${round(middle(source))} H ${exit} V ${round(channel)} H ${lane} ${end}`,
-    };
-  });
-  return { edges: routed, top, bottom };
+    for (let i = 0; i < level.length; i += perRow) {
+      rows.push(level.slice(i, i + perRow));
+    }
+  }
+  return rows;
 }
 
-/** The height closest to `y` at which a horizontal line crosses none of `cards`: `y` itself, or a gap between rows. */
-function freeChannel(y: number, cards: PlacedNode[], rowGap: number): number {
-  const clear = (at: number) => cards.every(p => at < p.y - 1 || at > p.y + p.height + 1);
-  if (clear(y)) return y;
-  const candidates = cards.flatMap(p => [p.y - rowGap / 2, p.y + p.height + rowGap / 2]).filter(clear);
-  return candidates.sort((a, b) => Math.abs(a - y) - Math.abs(b - y) || a - b)[0] ?? y;
+/** The x closest to `x` at which a vertical line crosses none of `cards`: a gap between cards, or a side margin. */
+function freeChannel(x: number, cards: PlacedNode[], width: number): number {
+  const clear = (at: number) => cards.every(p => at < p.x - 1 || at > p.x + p.width + 1);
+  const candidates = [
+    MARGIN / 2,
+    width - MARGIN / 2,
+    ...cards.flatMap(p => [p.x - GAP / 2, p.x + p.width + GAP / 2]),
+  ].filter(at => at > 0 && at < width && clear(at));
+  return candidates.sort((a, b) => Math.abs(a - x) - Math.abs(b - x) || a - b)[0] ?? MARGIN / 2;
 }
 
 const round = (value: number) => Math.round(value * 10) / 10;
