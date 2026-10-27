@@ -736,7 +736,8 @@
         "mainClass": "classe principale del modello di dati",
         "mainClassLinks": "è collegata a {{links}} delle altre {{others}} classi",
         "fewerLinks": "Meno collegamenti",
-        "moreLinks": "Più collegamenti"
+        "moreLinks": "Più collegamenti",
+        "close": "Chiudi la mappa completa"
       }
     }
   },

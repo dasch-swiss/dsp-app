@@ -736,7 +736,8 @@
         "mainClass": "Hauptklasse des Datenmodells",
         "mainClassLinks": "ist mit {{links}} der {{others}} anderen Klassen verknüpft",
         "fewerLinks": "Weniger Verknüpfungen",
-        "moreLinks": "Mehr Verknüpfungen"
+        "moreLinks": "Mehr Verknüpfungen",
+        "close": "Ganze Karte schliessen"
       }
     }
   },

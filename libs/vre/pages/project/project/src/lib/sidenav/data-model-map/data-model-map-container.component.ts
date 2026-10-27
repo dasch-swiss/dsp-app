@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { OntologyAndResourceClasses } from '@dasch-swiss/vre/3rd-party-services/open-api';
@@ -9,11 +10,12 @@ import {
   OntologyService,
   pickPreferredLanguageString,
 } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { catchError, combineLatest, map, of } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import { navigateToResourceClass, selectedResourceClassIri$ } from '../resource-class-sidenav/resource-class-route';
-import { buildDataModelGraph } from './data-model-graph';
+import { DataModelFullMapDialogComponent, DataModelFullMapDialogData } from './data-model-full-map-dialog.component';
+import { buildDataModelGraph, DataModelGraph } from './data-model-graph';
 import { DataModelMapComponent } from './data-model-map.component';
 
 /** The map of one data model in the sidebar, fed from the project's ontologies and the class in the URL. */
@@ -27,7 +29,8 @@ import { DataModelMapComponent } from './data-model-map.component';
         [graph]="graph"
         [selectedIri]="selectedIri()"
         [anyResourceLabel]="'pages.dataBrowser.dataModelMap.anyResource' | translate"
-        (classSelected)="open($event)" />
+        (classSelected)="open($event)"
+        (openFullMap)="openFullMap(graph)" />
     }
   `,
 })
@@ -41,6 +44,8 @@ export class DataModelMapContainerComponent {
   private readonly _route = inject(ActivatedRoute);
   private readonly _projectPageService = inject(ProjectPageService);
   private readonly _dspApiConnection = inject(DspApiConnectionToken);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _translate = inject(TranslateService);
 
   /** knora-api declares the built-in links, such as `isPartOf`; it never changes, so the cached copy is fine. */
   private readonly _knoraApi$ = this._dspApiConnection.v2.ontologyCache
@@ -74,5 +79,23 @@ export class DataModelMapContainerComponent {
 
   open(iri: string): void {
     navigateToResourceClass(this._router, this._route, iri);
+  }
+
+  openFullMap(graph: DataModelGraph): void {
+    this._dialog
+      .open<DataModelFullMapDialogComponent, DataModelFullMapDialogData, string>(DataModelFullMapDialogComponent, {
+        data: {
+          title: this.ontology().ontology.label,
+          graph,
+          selectedIri: this.selectedIri(),
+          anyResourceLabel: this._translate.instant('pages.dataBrowser.dataModelMap.anyResource'),
+        },
+        width: '95vw',
+        maxWidth: '1400px',
+        height: '90vh',
+        autoFocus: 'dialog',
+      })
+      .afterClosed()
+      .subscribe(iri => iri && this.open(iri));
   }
 }

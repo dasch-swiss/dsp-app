@@ -736,7 +736,8 @@
         "mainClass": "main class of the data model",
         "mainClassLinks": "is linked with {{links}} of the {{others}} other classes",
         "fewerLinks": "Fewer links",
-        "moreLinks": "More links"
+        "moreLinks": "More links",
+        "close": "Close the full map"
       }
     }
   },

@@ -27,6 +27,8 @@ export const CONDENSED_ABOVE = 20;
 /** Above this many cards, or below this width, only the header shows. */
 export const HIDDEN_ABOVE = 60;
 export const MIN_WIDTH = 240;
+/** In the full map, cards are at least this wide; a row holds as many as fit, between 3 and 8. */
+const FULL_CARD_WIDTH = 180;
 
 const COLLAPSED_KEY = 'dsp-data-model-map-collapsed';
 const VIEW_KEY = 'dsp-data-model-map-view';
@@ -44,6 +46,7 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
 @Component({
   selector: 'app-data-model-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.full]': 'full()' },
   imports: [
     DataModelNeighbourhoodComponent,
     DecimalPipe,
@@ -57,28 +60,35 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
   ],
   template: `
     @let t = 'pages.dataBrowser.dataModelMap';
-    <div class="header">
-      <span class="class-count">
-        {{ t + (classCount() === 1 ? '.classCountOne' : '.classCount') | translate: { count: classCount() } }}
-      </span>
-      @if (fits() || selectedInModel()) {
+    @if (!full()) {
+      <div class="header">
+        <span class="class-count">
+          {{ t + (classCount() === 1 ? '.classCountOne' : '.classCount') | translate: { count: classCount() } }}
+        </span>
+        @if (fits() || selectedInModel()) {
+          <button
+            mat-icon-button
+            class="toggle"
+            data-cy="data-model-map-toggle"
+            [attr.aria-expanded]="!collapsed()"
+            [attr.aria-label]="t + (collapsed() ? '.expand' : '.collapse') | translate"
+            [matTooltip]="t + (collapsed() ? '.expand' : '.collapse') | translate"
+            (click)="toggleCollapsed()">
+            <mat-icon>{{ collapsed() ? 'expand_more' : 'expand_less' }}</mat-icon>
+          </button>
+        }
         <button
-          mat-icon-button
-          class="toggle"
-          data-cy="data-model-map-toggle"
-          [attr.aria-expanded]="!collapsed()"
-          [attr.aria-label]="t + (collapsed() ? '.expand' : '.collapse') | translate"
-          [matTooltip]="t + (collapsed() ? '.expand' : '.collapse') | translate"
-          (click)="toggleCollapsed()">
-          <mat-icon>{{ collapsed() ? 'expand_more' : 'expand_less' }}</mat-icon>
+          mat-button
+          class="full-map"
+          type="button"
+          data-cy="data-model-map-full-map"
+          (click)="openFullMap.emit()">
+          <mat-icon>open_in_full</mat-icon>{{ t + '.fullMap' | translate }}
         </button>
-      }
-      <button mat-button class="full-map" type="button" data-cy="data-model-map-full-map" (click)="openFullMap.emit()">
-        <mat-icon>open_in_full</mat-icon>{{ t + '.fullMap' | translate }}
-      </button>
-    </div>
+      </div>
+    }
 
-    @if (!collapsed()) {
+    @if (!full() && !collapsed()) {
       <mat-button-toggle-group
         class="views"
         hideSingleSelectionIndicator
@@ -205,6 +215,19 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
       :host {
         display: block;
         padding: 0 8px 8px 16px;
+      }
+
+      :host(.full) {
+        padding: 0;
+
+        .card {
+          font-size: 13px;
+          line-height: 16px;
+        }
+
+        .meta {
+          font-size: 11px;
+        }
       }
 
       .header {
@@ -390,17 +413,13 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
           box-shadow: 0 0 0 3px $primary_100;
         }
 
+        // The fill stays the link tint; only the border says "you are here".
         &.selected {
-          border-color: $primary;
-          background: $primary;
-          color: white;
-
-          .meta {
-            color: $primary_100;
-          }
+          border: 3px solid $primary;
+          padding: 3px 5px;
 
           .bar {
-            background: $primary_200;
+            background: $primary;
           }
         }
 
@@ -458,6 +477,8 @@ export class DataModelMapComponent {
   readonly selectedIri = input<string | undefined>(undefined);
   /** Label for knora-api's "any resource" card, in the current language. */
   readonly anyResourceLabel = input('Any resource');
+  /** Drawn large in the full-map dialog: no header or views, every model drawn, full cards, wider rows. */
+  readonly full = input(false);
 
   /** A class card was activated; emits the class IRI. */
   readonly classSelected = output<string>();
@@ -467,25 +488,33 @@ export class DataModelMapComponent {
   private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly _width = signal(0);
 
-  readonly collapsed = signal(readStored(COLLAPSED_KEY) === 'true');
+  private readonly _collapsed = signal(readStored(COLLAPSED_KEY) === 'true');
+  readonly collapsed = computed(() => !this.full() && this._collapsed());
   readonly focusedId = signal<string | undefined>(undefined);
 
   readonly classCount = computed(() => this.graph().nodes.filter(node => node.kind === 'class').length);
-  readonly condensed = computed(() => this.graph().nodes.length > CONDENSED_ABOVE);
+  readonly condensed = computed(() => !this.full() && this.graph().nodes.length > CONDENSED_ABOVE);
   /** The host's content width less the map's border. */
   private readonly _mapWidth = computed(() => this._width() - 2);
-  readonly fits = computed(() => this.graph().nodes.length <= HIDDEN_ABOVE && this._mapWidth() >= MIN_WIDTH);
-
-  readonly layout = computed<DataModelLayout | undefined>(() =>
-    this.fits() ? layoutDataModel(this.graph(), { width: this._mapWidth(), condensed: this.condensed() }) : undefined
+  readonly fits = computed(() =>
+    this.full() ? this._mapWidth() > 0 : this.graph().nodes.length <= HIDDEN_ABOVE && this._mapWidth() >= MIN_WIDTH
   );
+
+  readonly layout = computed<DataModelLayout | undefined>(() => {
+    if (!this.fits()) return undefined;
+    const width = this._mapWidth();
+    const perRow = this.full()
+      ? Math.min(8, Math.max(3, Math.floor((width + 16) / (FULL_CARD_WIDTH + 16))))
+      : undefined;
+    return layoutDataModel(this.graph(), { width, condensed: this.condensed(), perRow });
+  });
   /** Whether the class being browsed is in this data model, so "This class" can show it. */
   readonly selectedInModel = computed(() =>
     this.graph().nodes.some(node => node.kind === 'class' && node.id === this.selectedIri())
   );
   private readonly _view = signal<MapView>(readStored(VIEW_KEY) === 'class' ? 'class' : 'model');
   /** The view the user picked, falling back to the whole model while no class of this data model is browsed. */
-  readonly activeView = computed<MapView>(() => (this.selectedInModel() ? this._view() : 'model'));
+  readonly activeView = computed<MapView>(() => (!this.full() && this.selectedInModel() ? this._view() : 'model'));
 
   readonly visibleLayout = computed(() =>
     this.collapsed() || this.activeView() !== 'model' ? undefined : this.layout()
@@ -581,8 +610,8 @@ export class DataModelMapComponent {
   }
 
   toggleCollapsed(): void {
-    this.collapsed.update(collapsed => !collapsed);
-    store(COLLAPSED_KEY, String(this.collapsed()));
+    this._collapsed.update(collapsed => !collapsed);
+    store(COLLAPSED_KEY, String(this._collapsed()));
   }
 
   setView(view: MapView): void {

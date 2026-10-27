@@ -52,7 +52,7 @@ const byLabel = (a: DataModelNode, b: DataModelNode) => a.label.localeCompare(b.
  */
 export function layoutDataModel(
   graph: DataModelGraph,
-  { width, condensed }: { width: number; condensed: boolean }
+  { width, condensed, perRow = columnsFor(width) }: { width: number; condensed: boolean; perRow?: number }
 ): DataModelLayout {
   const card = condensed ? CARD.condensed : CARD.full;
   const edges = graph.edges.filter(edge => edge.source !== edge.target);
@@ -60,7 +60,6 @@ export function layoutDataModel(
   const linked = graph.nodes.filter(node => linkedIds.has(node.id)).sort(byLabel);
   const unlinked = graph.nodes.filter(node => !linkedIds.has(node.id)).sort(byLabel);
 
-  const perRow = columnsFor(width);
   const rank = rankNodes(linked, edges);
   const levels: DataModelNode[][] = [];
   for (const node of linked) {
