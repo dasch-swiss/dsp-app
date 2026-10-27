@@ -64,6 +64,16 @@
   flex-shrink: 0;
 }
 
+.count-badge {
+  margin-left: 6px;
+  padding: 0 7px;
+  border-radius: 10px;
+  background: #e8eef4;
+  color: #336790;
+  font-size: 12px;
+  line-height: 18px;
+}
+
 .toolbar {
   display: flex;
   flex-wrap: wrap;

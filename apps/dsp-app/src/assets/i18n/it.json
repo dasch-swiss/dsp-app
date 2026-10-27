@@ -608,8 +608,9 @@
         "resourceLabel": "Etichetta"
       },
       "downloadDialog": {
-        "title": "Scarica",
-        "resourcesAvailable": "{{count}} risorse disponibili",
+        "downloadAll": "Scarica tutto",
+        "titleAll": "Scarica tutte le {{count}} risorse",
+        "titleOne": "Scarica 1 risorsa",
         "noResources": "Non ci sono risorse da scaricare.",
         "properties": "Proprietà",
         "selectAll": "Seleziona tutto",
@@ -619,14 +620,16 @@
         "includeIrisExplanation": "Quando attivata, le proprietà di riferimento esportano sia valori leggibili (ad es. 'Alice') che IRI delle risorse per un corretto riferimento ai dati.",
         "includeArkUrlsLabel": "Includi identificatori ARK",
         "includeArkUrlsExplanation": "Aggiunge una colonna ARK URL come prima colonna nel CSV per ogni risorsa.",
-        "downloadCsv": "Scarica CSV",
+        "downloadResources": "Scarica {{count}} risorse",
+        "downloadOneResource": "Scarica 1 risorsa",
         "downloadSuccess": "CSV scaricato con successo.",
         "downloadError": "Impossibile scaricare il CSV. Riprova.",
         "largeExportWarning": "Questo export contiene {{count}} risorse e potrebbe richiedere diversi minuti. Tieni aperta questa scheda.",
         "progressXofN": "Esportate {{x}} su {{n}} risorse",
         "buildingCsv": "Creazione del file CSV in corso — tieni aperta questa scheda. Il download inizierà non appena il file sarà pronto.",
         "preparing": "Preparazione…",
-        "scopeNote": "L'esportazione include tutte le risorse di questa classe, indipendentemente dai filtri applicati."
+        "scopeAll": "Il file contiene tutte le risorse di questa classe. La ricerca e i filtri attuali non vengono applicati.",
+        "scopeAllWithSelection": "Il file contiene tutte le risorse di questa classe. Le {{count}} risorse selezionate, la ricerca e i filtri attuali non vengono considerati."
       },
       "dataClassHeader": {
         "searchLabel": "Cerca",

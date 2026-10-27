@@ -608,8 +608,9 @@
         "resourceLabel": "Libellé"
       },
       "downloadDialog": {
-        "title": "Télécharger",
-        "resourcesAvailable": "{{count}} ressources disponibles",
+        "downloadAll": "Tout télécharger",
+        "titleAll": "Télécharger les {{count}} ressources",
+        "titleOne": "Télécharger 1 ressource",
         "noResources": "Il n'y a pas de ressources à télécharger.",
         "properties": "Propriétés",
         "selectAll": "Tout sélectionner",
@@ -619,14 +620,16 @@
         "includeIrisExplanation": "Lorsque cette option est activée, les propriétés de référence exportent à la fois des valeurs lisibles par l'homme (p. ex. 'Alice') et des IRI de ressources pour un référencement correct des données.",
         "includeArkUrlsLabel": "Inclure les identifiants ARK",
         "includeArkUrlsExplanation": "Ajoute une colonne ARK URL en première position dans le CSV pour chaque ressource.",
-        "downloadCsv": "Télécharger CSV",
+        "downloadResources": "Télécharger {{count}} ressources",
+        "downloadOneResource": "Télécharger 1 ressource",
         "downloadSuccess": "CSV téléchargé avec succès.",
         "downloadError": "Échec du téléchargement du CSV. Veuillez réessayer.",
         "largeExportWarning": "Cet export contient {{count}} ressources et peut prendre plusieurs minutes. Veuillez garder cet onglet ouvert.",
         "progressXofN": "{{x}} sur {{n}} ressources exportées",
         "buildingCsv": "Création de votre fichier CSV — veuillez garder cet onglet ouvert. Le téléchargement démarrera dès que le fichier sera prêt.",
         "preparing": "Préparation…",
-        "scopeNote": "L'export porte sur toutes les ressources de cette classe, indépendamment des filtres appliqués."
+        "scopeAll": "Le fichier contient toutes les ressources de cette classe. La recherche et les filtres actuels ne sont pas appliqués.",
+        "scopeAllWithSelection": "Le fichier contient toutes les ressources de cette classe. Vos {{count}} ressources sélectionnées, la recherche et les filtres actuels ne sont pas pris en compte."
       },
       "dataClassHeader": {
         "searchLabel": "Rechercher",
