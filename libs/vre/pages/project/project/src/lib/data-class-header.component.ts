@@ -266,6 +266,7 @@ export class DataClassHeaderComponent {
 
       const properties = generateDspResource(resources[0]).resProps.filter(prop => prop.propDef.isEditable);
 
+      // Full-height side panel: the property list scrolls inside it and the actions stay visible.
       this._dialog.open(DownloadDialogComponent, {
         ...DspDialogConfig.dialogDrawerConfig(
           {
@@ -278,9 +279,10 @@ export class DataClassHeaderComponent {
           },
           true
         ),
-        width: '100vw',
-        maxWidth: '500px',
+        width: '600px',
+        maxWidth: '100vw',
         minWidth: 0,
+        autoFocus: false,
       });
     });
   }

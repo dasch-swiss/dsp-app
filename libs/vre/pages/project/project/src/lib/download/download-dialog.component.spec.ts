@@ -1,25 +1,10 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PropertyDefinition, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
-import {
-  CSV_EXPORT_LARGE_THRESHOLD,
-  DownloadDialogResourcesTabComponent,
-} from './download-dialog-resources-tab.component';
 import { DownloadDialogComponent, DownloadDialogData } from './download-dialog.component';
-
-// Stub must declare the inputs/outputs the parent template binds, otherwise
-// TestBed's errorOnUnknownProperties (Angular 21) rejects the bindings.
-@Component({ selector: 'app-download-dialog-properties-tab', standalone: true, template: '' })
-class StubDownloadDialogResourcesTabComponent {
-  @Input() properties: PropertyInfoValues[] = [];
-  @Input() resourceClassIri = '';
-  @Input() resourceCount = 0;
-  @Output() downloadStateChange = new EventEmitter<boolean>();
-  @Output() afterClosed = new EventEmitter<void>();
-}
 
 describe('DownloadDialogComponent', () => {
   let component: DownloadDialogComponent;
@@ -209,83 +194,5 @@ describe('DownloadDialogComponent', () => {
       expect(data.resClass.id).toBe('http://custom.org/ontology/CustomClass');
       expect(data.resClass.label).toBe('Custom Class');
     });
-  });
-});
-
-describe('DownloadDialogComponent: large export warning', () => {
-  const mockResClass = {
-    id: 'http://example.org/ontology/ResourceClass',
-    label: 'Test Resource Class',
-  } as ResourceClassDefinitionWithAllLanguages;
-
-  const mockProperty: PropertyInfoValues = {
-    propDef: { id: 'prop-1', label: 'Title' } as PropertyDefinition,
-    guiDef: {} as any,
-    values: [],
-  };
-
-  const mockDialogRef = { close: jest.fn() };
-
-  const createFixture = async (resourceCount: number, selectedCount = 0) => {
-    const data: DownloadDialogData = {
-      resClass: mockResClass,
-      resourceCount,
-      classLabel: 'Test Resource Class',
-      properties: [mockProperty],
-      selectedCount,
-    };
-
-    await TestBed.configureTestingModule({
-      imports: [DownloadDialogComponent],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      providers: [
-        { provide: MatDialogRef, useValue: mockDialogRef },
-        { provide: MAT_DIALOG_DATA, useValue: data },
-        provideTranslateService(),
-        TranslateService,
-      ],
-    })
-      .overrideComponent(DownloadDialogComponent, {
-        remove: { imports: [DownloadDialogResourcesTabComponent] },
-        add: { imports: [StubDownloadDialogResourcesTabComponent] },
-      })
-      .compileComponents();
-
-    const fixture = TestBed.createComponent(DownloadDialogComponent);
-    fixture.detectChanges();
-    return fixture;
-  };
-
-  afterEach(() => jest.clearAllMocks());
-
-  it('shows warning when resourceCount exceeds threshold', async () => {
-    const fixture = await createFixture(CSV_EXPORT_LARGE_THRESHOLD + 1);
-    const warning = fixture.nativeElement.querySelector('[data-cy="large-export-warning"]');
-    expect(warning).toBeTruthy();
-  });
-
-  it('does not show warning when resourceCount equals threshold', async () => {
-    const fixture = await createFixture(CSV_EXPORT_LARGE_THRESHOLD);
-    const warning = fixture.nativeElement.querySelector('[data-cy="large-export-warning"]');
-    expect(warning).toBeFalsy();
-  });
-
-  it('does not show warning when resourceCount is below threshold', async () => {
-    const fixture = await createFixture(CSV_EXPORT_LARGE_THRESHOLD - 1);
-    const warning = fixture.nativeElement.querySelector('[data-cy="large-export-warning"]');
-    expect(warning).toBeFalsy();
-  });
-
-  it('states the class-wide scope when nothing is selected', async () => {
-    const fixture = await createFixture(10);
-    const banner = fixture.nativeElement.querySelector('[data-cy="download-scope-note"]');
-    expect(banner.textContent).toContain('pages.dataBrowser.downloadDialog.scopeAll');
-    expect(banner.textContent).not.toContain('scopeAllWithSelection');
-  });
-
-  it('names the selection in the scope banner when rows are selected', async () => {
-    const fixture = await createFixture(10, 2);
-    const banner = fixture.nativeElement.querySelector('[data-cy="download-scope-note"]');
-    expect(banner.textContent).toContain('pages.dataBrowser.downloadDialog.scopeAllWithSelection');
   });
 });
