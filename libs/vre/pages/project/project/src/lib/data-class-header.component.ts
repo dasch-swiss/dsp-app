@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { Component, computed, ElementRef, inject, Input, viewChild, ViewContainerRef } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,7 +18,17 @@ import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-servic
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { combineLatest, first, from, switchMap } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  distinctUntilChanged,
+  first,
+  from,
+  of,
+  ReplaySubject,
+  startWith,
+  switchMap,
+} from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
@@ -59,9 +69,13 @@ interface CreateResourceDialogProps {
           }
         </div>
         <div class="actions">
+          <!-- "All" and the class total: the export ignores the row selection, search and filters. -->
           <button mat-stroked-button (click)="openDownloadDialog()" data-cy="download-btn">
             <mat-icon>download</mat-icon>
-            {{ 'pages.dataBrowser.downloadDialog.title' | translate }}
+            {{ 'pages.dataBrowser.downloadDialog.downloadAll' | translate }}
+            @if (classCount$ | async; as classCount) {
+              <span class="count-badge" data-cy="download-count">{{ classCount | number }}</span>
+            }
           </button>
           @if (hasProjectMemberRights$ | async) {
             <button mat-flat-button color="primary" (click)="goToAddClassInstance()" data-cy="create-resource-btn">
@@ -115,6 +129,7 @@ interface CreateResourceDialogProps {
   styleUrl: './data-class-header.component.scss',
   imports: [
     AsyncPipe,
+    DecimalPipe,
     MatButton,
     MatIcon,
     MatProgressBar,
@@ -138,7 +153,26 @@ export class DataClassHeaderComponent {
   readonly isRefreshing = computed(() => this._resourceResult.isRefreshing());
   private readonly _resourceResult = inject(ResourceResultService);
 
-  @Input({ required: true }) classSelected!: SelectedClass;
+  @Input({ required: true }) set classSelected(value: SelectedClass) {
+    this._classSelected = value;
+    this._resClassId$.next(value.resClass.id);
+  }
+  get classSelected(): SelectedClass {
+    return this._classSelected;
+  }
+  private _classSelected!: SelectedClass;
+  private readonly _resClassId$ = new ReplaySubject<string>(1);
+
+  /** The class total, not the filtered result count: the export always covers the whole class. */
+  readonly classCount$ = this._resClassId$.pipe(
+    distinctUntilChanged(),
+    switchMap(id =>
+      this._resClassCountApi.getResourceClassCount(id).pipe(
+        startWith(null),
+        catchError(() => of(null))
+      )
+    )
+  );
 
   private readonly _tourSearchAnchor = viewChild('tourSearchAnchor', { read: ElementRef });
   private readonly _tourViewToggleAnchor = viewChild('tourViewToggleAnchor', { read: ElementRef });
@@ -234,7 +268,14 @@ export class DataClassHeaderComponent {
 
       this._dialog.open(DownloadDialogComponent, {
         ...DspDialogConfig.dialogDrawerConfig(
-          { resourceCount: resClassCount, resClass: this.classSelected.resClass, properties },
+          {
+            resourceCount: resClassCount,
+            resClass: this.classSelected.resClass,
+            classLabel: this._stringifyStringLiteralPipe.transform(this.classSelected.resClass.labels),
+            properties,
+            // In list view one resource is always "selected" by clicking it; only checkbox selection counts.
+            selectedCount: this._multipleViewerService.selectMode ? resources.length : 0,
+          },
           true
         ),
         width: '100vw',
