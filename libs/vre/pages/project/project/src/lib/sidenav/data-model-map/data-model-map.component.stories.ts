@@ -147,7 +147,7 @@ export const CondensesALargeModel: Story = {
 
 /** Too narrow a sidebar keeps only the header, with the class count and "Full map". */
 export const ShowsOnlyTheHeaderWhenTooNarrow: Story = {
-  args: { width: 200 },
+  args: { width: 170 },
   play: async ({ canvasElement }) => {
     await waitFor(() => expect(canvasElement.querySelector('.class-count')).toBeTruthy());
     await expect(canvasElement.querySelector('.map')).toBeNull();

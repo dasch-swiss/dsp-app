@@ -24,7 +24,7 @@ import { DataModelLayout, layoutDataModel, PlacedNode } from './data-model-layou
 export const CONDENSED_ABOVE = 20;
 /** Above this many cards, or below this width, only the header shows. */
 export const HIDDEN_ABOVE = 60;
-export const MIN_WIDTH = 240;
+export const MIN_WIDTH = 160;
 /** In the full map, cards are at least this wide; a row holds as many as fit, between 3 and 8. */
 const FULL_CARD_WIDTH = 180;
 
