@@ -706,6 +706,22 @@
         "searchBody": "Cerca tra le risorse di questa classe e restringile con i filtri, senza lasciare la scheda Dati.",
         "tableTitle": "Prova la vista tabella",
         "tableBody": "Passa a Tabella per vedere le risorse come righe, con le proprietà come colonne, e confrontare i valori fianco a fianco."
+      },
+      "dataModelMap": {
+        "label": "Mappa del modello di dati",
+        "classCount": "{{count}} classi",
+        "classCountOne": "1 classe",
+        "fullMap": "Mappa completa",
+        "collapse": "Nascondi mappa",
+        "expand": "Mostra mappa",
+        "youAreHere": "sei qui",
+        "notLinked": "non collegato",
+        "external": "altro modello di dati",
+        "anyResource": "Qualsiasi risorsa",
+        "summary": "{{classes}} classi, {{links}} collegamenti",
+        "card": "{{label}}, {{count}} risorse",
+        "linksTo": "collegato a {{names}}",
+        "linkedFrom": "collegato da {{names}}"
       }
     }
   },

@@ -1,15 +1,14 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LanguageStringDto, RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { combineLatest, filter, first, map, of, startWith, switchMap } from 'rxjs';
-import { DATA_CLASS_PARAM } from '../../data-class-url-state.service';
+import { map } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import { TooltipIfTruncatedDirective } from '../tooltip-if-truncated.directive';
+import { navigateToResourceClass, selectedResourceClassIri$ } from './resource-class-route';
 
 @Component({
   selector: 'app-resource-class-sidenav-item',
@@ -121,26 +120,12 @@ export class ResourceClassSidenavItemComponent {
     }
   }
 
-  isSelected$ = this._router.events.pipe(
-    filter(event => event instanceof NavigationEnd),
-    startWith(null),
-    switchMap(() => {
-      const firstChild = this._route.firstChild;
-      if (!firstChild) {
-        return of(false);
-      }
-      return combineLatest([firstChild.params, this._projectPageService.currentProject$.pipe(first())]).pipe(
-        map(([params, project]) => {
-          const selectedResClassId = this._ontologyService.getClassIdFromParams(
-            project.shortcode,
-            params[RouteConstants.ontologyParameter],
-            params[RouteConstants.classParameter]
-          );
-          return this.iri === selectedResClassId;
-        })
-      );
-    })
-  );
+  isSelected$ = selectedResourceClassIri$(
+    this._router,
+    this._route,
+    this._ontologyService,
+    this._projectPageService
+  ).pipe(map(selectedIri => this.iri === selectedIri));
 
   constructor(
     private readonly _ontologyService: OntologyService,
@@ -150,17 +135,6 @@ export class ResourceClassSidenavItemComponent {
   ) {}
 
   selectResourceClass() {
-    const [ontologyIri, className] = this.iri.split('#');
-    const ontologyName = OntologyService.getOntologyNameFromIri(ontologyIri);
-
-    // Only `view` carries across a class switch; naming the params replaces the rest (filters, term
-    // and sort belong to the class being left). Read off the router's URL: the sidenav sits outside
-    // the class view that owns the state service.
-    const view = this._router.routerState.snapshot.root.queryParamMap.get(DATA_CLASS_PARAM.view);
-
-    this._router.navigate([ontologyName, className], {
-      relativeTo: this._route,
-      queryParams: { [DATA_CLASS_PARAM.view]: view },
-    });
+    navigateToResourceClass(this._router, this._route, this.iri);
   }
 }

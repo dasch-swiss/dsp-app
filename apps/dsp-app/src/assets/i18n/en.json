@@ -706,6 +706,22 @@
         "searchBody": "Search the resources of this class and narrow them down with filters, without leaving the Data tab.",
         "tableTitle": "Try the table view",
         "tableBody": "Switch to Table to see resources as rows, with their properties as columns, and compare values side by side."
+      },
+      "dataModelMap": {
+        "label": "Data model map",
+        "classCount": "{{count}} classes",
+        "classCountOne": "1 class",
+        "fullMap": "Full map",
+        "collapse": "Hide map",
+        "expand": "Show map",
+        "youAreHere": "you are here",
+        "notLinked": "not linked",
+        "external": "other data model",
+        "anyResource": "Any resource",
+        "summary": "{{classes}} classes, {{links}} links",
+        "card": "{{label}}, {{count}} resources",
+        "linksTo": "links to {{names}}",
+        "linkedFrom": "linked from {{names}}"
       }
     }
   },

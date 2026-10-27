@@ -107,7 +107,10 @@ const meta: Meta = {
           },
         },
         { provide: UserService, useValue: { isLoggedIn$: of(false), user$: of(null), isSysAdmin$: of(false) } },
-        { provide: DspApiConnectionToken, useValue: {} as KnoraApiConnection },
+        {
+          provide: DspApiConnectionToken,
+          useValue: { v2: { ontologyCache: { getOntology: () => of(new Map()) } } } as unknown as KnoraApiConnection,
+        },
         {
           provide: AppConfigService,
           useValue: {
