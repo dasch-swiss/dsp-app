@@ -2,7 +2,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, ViewContainerRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ReadResource, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { MultipleViewerService, ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -246,8 +245,11 @@ describe('DataClassHeaderComponent', () => {
       setTimeout(() => {
         expect(mockDialog.open).toHaveBeenCalledWith(
           DownloadDialogComponent,
+          // A full-height right-side panel keeps the actions visible while only the property list scrolls.
           expect.objectContaining({
-            maxWidth: '500px',
+            width: '600px',
+            height: 'calc(100vh)',
+            position: { right: '0px' },
           })
         );
         done();
@@ -279,27 +281,6 @@ describe('DataClassHeaderComponent', () => {
         const callArgs = mockDialog.open.mock.calls[0];
         const config = callArgs[1] as any;
         expect(config.data.resClass).toBe(mockResClass);
-        done();
-      }, 0);
-    });
-
-    it('should use DspDialogConfig for dialog configuration', done => {
-      selectedResourcesSubject.next([mockResource1]);
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
-
-      // Spy on DspDialogConfig
-      const dialogDrawerConfigSpy = jest.spyOn(DspDialogConfig, 'dialogDrawerConfig');
-
-      component.openDownloadDialog();
-
-      setTimeout(() => {
-        expect(dialogDrawerConfigSpy).toHaveBeenCalledWith(
-          expect.objectContaining({
-            resourceCount: 10,
-            resClass: mockResClass,
-          }),
-          true
-        );
         done();
       }, 0);
     });
