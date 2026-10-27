@@ -155,7 +155,12 @@ const UTF8_BOM = '\uFEFF';
             {{ 'pages.dataBrowser.downloadDialog.preparing' | translate }}
           </span>
         } @else {
-          {{ 'pages.dataBrowser.downloadDialog.downloadCsv' | translate }}
+          {{
+            (resourceCount === 1
+              ? 'pages.dataBrowser.downloadDialog.downloadOneResource'
+              : 'pages.dataBrowser.downloadDialog.downloadResources'
+            ) | translate: { count: resourceCount }
+          }}
         }
       </button>
     </div>

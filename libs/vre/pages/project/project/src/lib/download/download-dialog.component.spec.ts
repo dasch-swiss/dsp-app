@@ -55,6 +55,8 @@ describe('DownloadDialogComponent', () => {
     mockDialogData = {
       resClass: mockResClass,
       resourceCount: 42,
+      classLabel: 'Test Resource Class',
+      selectedCount: 0,
       properties: [mockProperty1, mockProperty2],
     };
 
@@ -123,6 +125,8 @@ describe('DownloadDialogComponent', () => {
         const data: DownloadDialogData = {
           resClass: mockResClass,
           resourceCount: count,
+          classLabel: 'Test Resource Class',
+          selectedCount: 0,
           properties: [mockProperty1],
         };
 
@@ -134,6 +138,8 @@ describe('DownloadDialogComponent', () => {
       const data: DownloadDialogData = {
         resClass: mockResClass,
         resourceCount: 5,
+        classLabel: 'Test Resource Class',
+        selectedCount: 0,
         properties: [],
       };
 
@@ -146,6 +152,8 @@ describe('DownloadDialogComponent', () => {
       const data: DownloadDialogData = {
         resClass: mockResClass,
         resourceCount: 100,
+        classLabel: 'Test Resource Class',
+        selectedCount: 0,
         properties: manyProperties,
       };
 
@@ -173,6 +181,8 @@ describe('DownloadDialogComponent', () => {
       const validData: DownloadDialogData = {
         resClass: mockResClass,
         resourceCount: 10,
+        classLabel: 'Test Resource Class',
+        selectedCount: 0,
         properties: [mockProperty1],
       };
 
@@ -191,6 +201,8 @@ describe('DownloadDialogComponent', () => {
       const data: DownloadDialogData = {
         resClass: customResClass,
         resourceCount: 5,
+        classLabel: 'Test Resource Class',
+        selectedCount: 0,
         properties: [],
       };
 
@@ -214,8 +226,14 @@ describe('DownloadDialogComponent: large export warning', () => {
 
   const mockDialogRef = { close: jest.fn() };
 
-  const createFixture = async (resourceCount: number) => {
-    const data: DownloadDialogData = { resClass: mockResClass, resourceCount, properties: [mockProperty] };
+  const createFixture = async (resourceCount: number, selectedCount = 0) => {
+    const data: DownloadDialogData = {
+      resClass: mockResClass,
+      resourceCount,
+      classLabel: 'Test Resource Class',
+      properties: [mockProperty],
+      selectedCount,
+    };
 
     await TestBed.configureTestingModule({
       imports: [DownloadDialogComponent],
@@ -256,5 +274,18 @@ describe('DownloadDialogComponent: large export warning', () => {
     const fixture = await createFixture(CSV_EXPORT_LARGE_THRESHOLD - 1);
     const warning = fixture.nativeElement.querySelector('[data-cy="large-export-warning"]');
     expect(warning).toBeFalsy();
+  });
+
+  it('states the class-wide scope when nothing is selected', async () => {
+    const fixture = await createFixture(10);
+    const banner = fixture.nativeElement.querySelector('[data-cy="download-scope-note"]');
+    expect(banner.textContent).toContain('pages.dataBrowser.downloadDialog.scopeAll');
+    expect(banner.textContent).not.toContain('scopeAllWithSelection');
+  });
+
+  it('names the selection in the scope banner when rows are selected', async () => {
+    const fixture = await createFixture(10, 2);
+    const banner = fixture.nativeElement.querySelector('[data-cy="download-scope-note"]');
+    expect(banner.textContent).toContain('pages.dataBrowser.downloadDialog.scopeAllWithSelection');
   });
 });

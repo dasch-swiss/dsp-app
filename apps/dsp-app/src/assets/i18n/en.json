@@ -608,8 +608,9 @@
         "resourceLabel": "Label"
       },
       "downloadDialog": {
-        "title": "Download",
-        "resourcesAvailable": "{{count}} resources available",
+        "downloadAll": "Download all",
+        "titleAll": "Download all {{count}} resources",
+        "titleOne": "Download 1 resource",
         "noResources": "There are no resources to download.",
         "properties": "Properties",
         "selectAll": "Select All",
@@ -619,14 +620,16 @@
         "includeIrisExplanation": "When enabled, reference properties export both human-readable values (e.g., 'Alice') and Resource IRIs for proper data referencing.",
         "includeArkUrlsLabel": "Include ARK identifiers",
         "includeArkUrlsExplanation": "Adds an ARK URL column as the first column in the CSV for each resource.",
-        "downloadCsv": "Download CSV",
+        "downloadResources": "Download {{count}} resources",
+        "downloadOneResource": "Download 1 resource",
         "downloadSuccess": "CSV downloaded successfully.",
         "downloadError": "Failed to download CSV. Please try again.",
         "largeExportWarning": "This export contains {{count}} resources and may take several minutes. Please keep this tab open.",
         "progressXofN": "Exported {{x}} of {{n}} resources",
         "buildingCsv": "Building your CSV — keep this tab open. We'll start the download as soon as the file is ready.",
         "preparing": "Preparing…",
-        "scopeNote": "The export covers all resources of this class, regardless of the filters currently applied."
+        "scopeAll": "This file contains every resource of this class. The current search and filters are not applied.",
+        "scopeAllWithSelection": "This file contains every resource of this class. Your {{count}} selected resources and the current search and filters are not applied."
       },
       "dataClassHeader": {
         "searchLabel": "Search",

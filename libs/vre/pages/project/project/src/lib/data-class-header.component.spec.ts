@@ -338,6 +338,49 @@ describe('DataClassHeaderComponent', () => {
     });
   });
 
+  describe('download scope', () => {
+    it('passes the checkbox selection count to the dialog', done => {
+      selectedResourcesSubject.next([createMockResource('resource-1'), createMockResource('resource-2')]);
+      mockMultipleViewerService.selectMode = true;
+      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
+
+      component.openDownloadDialog();
+
+      setTimeout(() => {
+        const config = mockDialog.open.mock.calls[0][1] as any;
+        expect(config.data.selectedCount).toBe(2);
+        done();
+      }, 0);
+    });
+
+    it('does not count a list-view click selection as a selection', done => {
+      selectedResourcesSubject.next([createMockResource('resource-1')]);
+      mockMultipleViewerService.selectMode = false;
+      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
+
+      component.openDownloadDialog();
+
+      setTimeout(() => {
+        const config = mockDialog.open.mock.calls[0][1] as any;
+        expect(config.data.selectedCount).toBe(0);
+        done();
+      }, 0);
+    });
+
+    it('exposes the class total for the Download all badge', done => {
+      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(66));
+      const emitted: (number | null)[] = [];
+
+      component.classCount$.subscribe(count => emitted.push(count));
+
+      setTimeout(() => {
+        expect(mockResClassCountApi.getResourceClassCount).toHaveBeenCalledWith(mockResClass.id);
+        expect(emitted).toEqual([null, 66]);
+        done();
+      }, 0);
+    });
+  });
+
   describe('goToAddClassInstance', () => {
     it('should open create resource dialog', done => {
       component.goToAddClassInstance();
