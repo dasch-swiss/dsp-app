@@ -1,14 +1,13 @@
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
-import { representationIcon } from '../resource-class-sidenav/representation-icon';
 import { DataModelGraph, DataModelNode } from './data-model-graph';
 
-/** At most this many linked classes per side; the rest are counted. */
-export const SHOWN_PER_SIDE = 4;
+/** At most this many linked classes per side until "more" is clicked. */
+export const SHOWN_PER_SIDE = 3;
 
 interface Connection {
   node: DataModelNode;
@@ -17,8 +16,8 @@ interface Connection {
 }
 
 /**
- * The classes linked with one class, as a strip: the classes linking to it on the left, the class in the middle,
- * the classes it links to on the right.
+ * The classes linked with one class, as one line: the classes linking to it, an arrow, the class, an arrow, the
+ * classes it links to.
  */
 @Component({
   selector: 'app-data-class-connections',
@@ -27,192 +26,96 @@ interface Connection {
   template: `
     @let t = 'pages.dataBrowser.dataModelMap';
     @if (centre(); as centre) {
-      <section class="strip" data-cy="data-class-connections" [attr.aria-label]="t + '.connections' | translate">
-        <span class="heading incoming-heading">
-          {{ t + '.linkedFromHeading' | translate }}
-          @if (moreIncoming() > 0) {
-            · {{ t + '.moreClasses' | translate: { count: moreIncoming() } }}
+      <nav class="flow" data-cy="data-class-connections" [attr.aria-label]="t + '.connections' | translate">
+        @if (allIncoming().length === 0 && allOutgoing().length === 0) {
+          <span class="none">{{ t + '.noLinks' | translate }}</span>
+        } @else {
+          @if (allIncoming().length > 0) {
+            <span class="side incoming" [attr.aria-label]="t + '.linkedFromHeading' | translate">
+              <ng-container
+                *ngTemplateOutlet="side; context: { $implicit: incoming(), more: moreIncoming(), side: 'incoming' }" />
+            </span>
+            <mat-icon class="arrow" aria-hidden="true">arrow_forward</mat-icon>
           }
-        </span>
-        <span class="heading outgoing-heading">
-          {{ t + '.linksToHeading' | translate }}
-          @if (moreOutgoing() > 0) {
-            · {{ t + '.moreClasses' | translate: { count: moreOutgoing() } }}
+          <span class="chip current" data-cy="data-class-connections-centre">{{ centre.label }}</span>
+          @if (allOutgoing().length > 0) {
+            <mat-icon class="arrow" aria-hidden="true">arrow_forward</mat-icon>
+            <span class="side outgoing" [attr.aria-label]="t + '.linksToHeading' | translate">
+              <ng-container
+                *ngTemplateOutlet="side; context: { $implicit: outgoing(), more: moreOutgoing(), side: 'outgoing' }" />
+            </span>
           }
-        </span>
-        <div class="side incoming">
-          @if (incoming().length > 0) {
-            <ng-container *ngTemplateOutlet="side; context: { $implicit: incoming() }" />
-          } @else {
-            <span class="none">{{ t + '.noIncoming' | translate }}</span>
-          }
-        </div>
-        <div class="joint in-joint" [class.drawn]="incoming().length > 0"></div>
-        <div class="centre">
-          <span class="card current" data-cy="data-class-connections-centre">
-            <mat-icon>{{ icon(centre) }}</mat-icon>
-            <span class="label">{{ centre.label }}</span>
-            <span class="count">{{ centre.count ?? 0 | number }}</span>
-          </span>
-        </div>
-        <div class="joint out-joint" [class.drawn]="outgoing().length > 0"></div>
-        <div class="side outgoing">
-          @if (outgoing().length > 0) {
-            <ng-container *ngTemplateOutlet="side; context: { $implicit: outgoing() }" />
-          } @else {
-            <span class="none">{{ t + '.noOutgoing' | translate }}</span>
-          }
-        </div>
-      </section>
+        }
+      </nav>
     }
 
-    <ng-template #side let-connections>
-      <div class="cards">
-        @for (connection of connections; track connection.node.id) {
-          @let node = connection.node;
-          <button
-            type="button"
-            class="card"
-            data-cy="data-class-connections-card"
-            [class.external]="node.kind !== 'class'"
-            [attr.aria-disabled]="node.navigable ? null : true"
-            [matTooltip]="connection.links.join(', ')"
-            (click)="select(node)">
-            <mat-icon>{{ icon(node) }}</mat-icon>
-            <span class="label">{{ labelOf(node) }}</span>
-            @if (node.kind === 'class') {
-              <span class="count">{{ node.count ?? 0 | number }}</span>
-            }
-          </button>
-        }
-      </div>
+    <ng-template #side let-connections let-more="more" let-sideName="side">
+      @for (connection of connections; track connection.node.id) {
+        @let node = connection.node;
+        <button
+          type="button"
+          class="chip"
+          data-cy="data-class-connections-chip"
+          [class.external]="node.kind !== 'class'"
+          [attr.aria-disabled]="node.navigable ? null : true"
+          [matTooltip]="connection.links.join(', ')"
+          (click)="select(node)">
+          <span class="label">{{ labelOf(node) }}</span>
+          @if (node.kind === 'class') {
+            <span class="count">{{ node.count ?? 0 | number }}</span>
+          }
+        </button>
+      }
+      @if (more > 0) {
+        <button type="button" class="more" (click)="expand(sideName)">
+          {{ 'pages.dataBrowser.dataModelMap.moreClasses' | translate: { count: more } }}
+        </button>
+      }
     </ng-template>
   `,
   styles: [
     `
       @use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
-      $card-height: 28px;
-      $line: 1.5px solid $primary_400;
-
       :host {
         display: block;
       }
 
-      .strip {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 24px auto 24px minmax(0, 1fr);
-        grid-template-areas:
-          'in-heading . . . out-heading'
-          'incoming in-joint centre out-joint outgoing';
-        row-gap: 4px;
-        align-items: center;
-        padding: 8px 12px 10px;
-        background: $cool_gray_50;
-        border: 1px solid $cool_gray_200;
-        border-radius: 8px;
-      }
-
-      .incoming-heading {
-        grid-area: in-heading;
-      }
-
-      .outgoing-heading {
-        grid-area: out-heading;
-      }
-
-      .incoming {
-        grid-area: incoming;
-      }
-
-      .outgoing {
-        grid-area: outgoing;
-      }
-
-      .centre {
-        grid-area: centre;
-        display: flex;
-      }
-
+      .flow,
       .side {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
         min-width: 0;
       }
 
-      .heading,
-      .none {
-        font-size: 11px;
-        line-height: 14px;
+      .flow {
+        font: 400 12px/16px var(--font-sans, Roboto, sans-serif);
         color: $cool_gray_500;
       }
 
-      .cards {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
+      .arrow {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: $primary_400;
       }
 
-      // The bracket joining the cards of a side, in the gap towards the class in the middle.
-      .incoming .cards::after,
-      .outgoing .cards::after {
-        content: '';
-        position: absolute;
-        top: calc($card-height / 2);
-        bottom: calc($card-height / 2);
-        border-left: $line;
-      }
-
-      .incoming .cards::after {
-        right: -12px;
-      }
-
-      .outgoing .cards::after {
-        left: -12px;
-      }
-
-      .joint {
-        align-self: center;
-        height: 0;
-
-        &.drawn {
-          border-top: $line;
-        }
-      }
-
-      .in-joint {
-        grid-area: in-joint;
-        margin-left: 12px;
-      }
-
-      .out-joint {
-        grid-area: out-joint;
-        margin-right: 12px;
-      }
-
-      .card {
-        position: relative;
-        display: flex;
+      .chip {
+        display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         box-sizing: border-box;
-        height: $card-height;
-        min-width: 0;
-        padding: 0 8px;
-        border: 1px solid $primary_400;
-        border-radius: 6px;
+        height: 22px;
+        max-width: 220px;
+        padding: 0 7px;
+        border: 1px solid $primary_300;
+        border-radius: 4px;
         background: white;
-        font: 400 12px/16px var(--font-sans, Roboto, sans-serif);
-        color: $cool_gray_800;
-        text-align: left;
+        font: inherit;
+        color: $cool_gray_700;
         cursor: pointer;
-
-        mat-icon {
-          flex: none;
-          font-size: 14px;
-          width: 14px;
-          height: 14px;
-          color: $primary;
-        }
 
         &:hover {
           border-color: $primary;
@@ -226,13 +129,8 @@ interface Connection {
         &.external {
           border-style: dashed;
           border-color: $cool_gray_300;
-          background: transparent;
           font-style: italic;
           color: $cool_gray_500;
-
-          mat-icon {
-            color: $cool_gray_400;
-          }
         }
 
         &[aria-disabled='true'] {
@@ -240,40 +138,16 @@ interface Connection {
         }
       }
 
-      // Each card's tick towards the bracket.
-      .incoming .card::after,
-      .outgoing .card::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        width: 11px;
-        border-top: $line;
-      }
-
-      .incoming .card::after {
-        right: -12px;
-      }
-
-      .outgoing .card::before {
-        left: -12px;
-      }
-
-      .card.current {
-        max-width: 200px;
-        border: 2px solid $primary;
+      .chip.current {
+        padding: 0 8px;
+        border-color: $primary;
         background: $primary;
         color: white;
         font-weight: 500;
         cursor: default;
-
-        mat-icon,
-        .count {
-          color: $primary_100;
-        }
       }
 
       .label {
-        flex: 1;
         min-width: 0;
         white-space: nowrap;
         overflow: hidden;
@@ -282,9 +156,21 @@ interface Connection {
 
       .count {
         flex: none;
-        font-size: 11px;
         color: $cool_gray_500;
         font-variant-numeric: tabular-nums;
+      }
+
+      .more {
+        padding: 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        color: $primary;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
     `,
   ],
@@ -292,9 +178,9 @@ interface Connection {
 export class DataClassConnectionsComponent {
   /** The data model the class belongs to. */
   readonly graph = input.required<DataModelGraph>();
-  /** IRI of the class in the middle. */
+  /** IRI of the class in the middle of the line. */
   readonly classIri = input.required<string>();
-  /** Label of the card for links that point at any resource, in the current language. */
+  /** Label of the chip for links that point at any resource, in the current language. */
   readonly anyResourceLabel = input('Any resource');
   /** Label of a line between a class and its superclass or subclass. */
   readonly subclassLabel = input('subclass of');
@@ -304,16 +190,15 @@ export class DataClassConnectionsComponent {
 
   readonly centre = computed(() => this.graph().nodes.find(node => node.id === this.classIri()));
 
-  private readonly _incoming = computed(() => this._connections('incoming'));
-  private readonly _outgoing = computed(() => this._connections('outgoing'));
-  readonly incoming = computed(() => this._incoming().slice(0, SHOWN_PER_SIDE));
-  readonly outgoing = computed(() => this._outgoing().slice(0, SHOWN_PER_SIDE));
-  readonly moreIncoming = computed(() => this._incoming().length - this.incoming().length);
-  readonly moreOutgoing = computed(() => this._outgoing().length - this.outgoing().length);
+  /** The sides whose hidden classes the user asked to see, for the class they asked it on. */
+  private readonly _expanded = signal<{ iri: string; sides: ReadonlySet<string> }>({ iri: '', sides: new Set() });
 
-  icon(node: DataModelNode): string {
-    return node.kind === 'class' ? representationIcon(node.representationClass) : 'link';
-  }
+  readonly allIncoming = computed(() => this._connections('incoming'));
+  readonly allOutgoing = computed(() => this._connections('outgoing'));
+  readonly incoming = computed(() => this._shown('incoming', this.allIncoming()));
+  readonly outgoing = computed(() => this._shown('outgoing', this.allOutgoing()));
+  readonly moreIncoming = computed(() => this.allIncoming().length - this.incoming().length);
+  readonly moreOutgoing = computed(() => this.allOutgoing().length - this.outgoing().length);
 
   labelOf(node: DataModelNode): string {
     return node.kind === 'generic' && node.id === Constants.Resource ? this.anyResourceLabel() : node.label;
@@ -325,21 +210,26 @@ export class DataClassConnectionsComponent {
     }
   }
 
+  expand(side: 'incoming' | 'outgoing'): void {
+    const { iri, sides } = this._expanded();
+    const kept = iri === this.classIri() ? sides : new Set<string>();
+    this._expanded.set({ iri: this.classIri(), sides: new Set([...kept, side]) });
+  }
+
+  private _shown(side: 'incoming' | 'outgoing', all: Connection[]): Connection[] {
+    const { iri, sides } = this._expanded();
+    return iri === this.classIri() && sides.has(side) ? all : all.slice(0, SHOWN_PER_SIDE);
+  }
+
   /** The classes on one side, the ones with the most links first, each named once with all its link labels. */
   private _connections(direction: 'incoming' | 'outgoing'): Connection[] {
     const iri = this.classIri();
     const byId = new Map<string, string[]>();
     for (const edge of this.graph().edges) {
       if (edge.source === edge.target) continue;
-      const other =
-        direction === 'incoming'
-          ? edge.target === iri
-            ? edge.source
-            : undefined
-          : edge.source === iri
-            ? edge.target
-            : undefined;
-      if (!other) continue;
+      const near = direction === 'incoming' ? edge.target : edge.source;
+      const other = direction === 'incoming' ? edge.source : edge.target;
+      if (near !== iri) continue;
       const label = edge.kind === 'subclass' ? this.subclassLabel() : edge.label;
       const links = byId.get(other) ?? [];
       if (!links.includes(label)) links.push(label);

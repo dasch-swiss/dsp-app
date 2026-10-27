@@ -45,15 +45,15 @@ const meta: Meta<DataClassConnectionsComponent> = {
   component: DataClassConnectionsComponent,
   render: args => ({
     props: args,
-    template: `<div style="width: 480px"><app-data-class-connections [graph]="graph" [classIri]="classIri" (classSelected)="classSelected($event)" /></div>`,
+    template: `<div style="width: 720px"><app-data-class-connections [graph]="graph" [classIri]="classIri" (classSelected)="classSelected($event)" /></div>`,
   }),
   args: { graph: GRAPH, classIri: ONTO + 'Film', classSelected: fn() },
   argTypes: {
     graph: { description: 'The data model the class belongs to.' },
-    classIri: { description: 'IRI of the class in the middle of the strip.' },
-    anyResourceLabel: { description: 'Label of the card for links that point at any resource.' },
+    classIri: { description: 'IRI of the class in the middle of the line.' },
+    anyResourceLabel: { description: 'Label of the chip for links that point at any resource.' },
     subclassLabel: { description: 'Label of a line between a class and its superclass or subclass.' },
-    classSelected: { description: 'Emits the IRI of a linked class card that was clicked.' },
+    classSelected: { description: 'Emits the IRI of a linked class chip that was clicked.' },
   },
 };
 
@@ -61,34 +61,41 @@ export default meta;
 type Story = StoryObj<DataClassConnectionsComponent>;
 
 const names = (canvasElement: HTMLElement, side: 'incoming' | 'outgoing') =>
-  Array.from(canvasElement.querySelectorAll(`.${side} .card .label`)).map(n => n.textContent?.trim());
+  Array.from(canvasElement.querySelectorAll(`.${side} .chip .label`)).map(n => n.textContent?.trim());
 
-/** The classes linking to the class sit left of it, the classes it links to right of it; past four, the rest are counted. */
-export const ShowsLinkingClassesLeftAndLinkedClassesRight: Story = {
+/** One line: the classes linking to the class, an arrow, the class, an arrow, the classes it links to. */
+export const ShowsLinkingClassesBeforeAndLinkedClassesAfter: Story = {
   play: async ({ canvasElement }) => {
-    await expect(names(canvasElement, 'incoming')).toHaveLength(4);
-    await expect(canvasElement.querySelector('.incoming-heading')).toHaveTextContent('+2');
+    await expect(names(canvasElement, 'incoming')).toHaveLength(3);
+    await expect(canvasElement.querySelector('.incoming .more')).toHaveTextContent('+3');
     await expect(names(canvasElement, 'outgoing')).toEqual(['Person']);
     await expect(canvasElement.querySelector('[data-cy="data-class-connections-centre"]')).toHaveTextContent('Film');
+  },
+};
+
+/** "+N more" shows the rest of that side. */
+export const ShowsTheRestWhenMoreIsClicked: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.click(canvasElement.querySelector('.incoming .more') as HTMLElement);
+
+    await expect(names(canvasElement, 'incoming')).toHaveLength(6);
+    await expect(canvasElement.querySelector('.incoming .more')).toBeNull();
   },
 };
 
 /** Clicking a linked class opens it. */
 export const OpensALinkedClassWhenClicked: Story = {
   play: async ({ args, canvasElement }) => {
-    const person = Array.from(canvasElement.querySelectorAll<HTMLElement>('.outgoing .card'))[0];
-
-    await userEvent.click(person);
+    await userEvent.click(canvasElement.querySelector('.outgoing .chip') as HTMLElement);
     await expect(args.classSelected).toHaveBeenCalledWith(ONTO + 'Person');
   },
 };
 
-/** A side without links says so. */
-export const SaysWhenNothingLinksToTheClass: Story = {
+/** A class nothing links to starts the line. */
+export const StartsWithTheClassWhenNothingLinksToIt: Story = {
   args: { classIri: ONTO + 'Page' },
   play: async ({ canvasElement }) => {
-    await expect(canvasElement.querySelectorAll('.incoming .card')).toHaveLength(0);
-    await expect(canvasElement.querySelector('.incoming .none')).not.toBeNull();
+    await expect(canvasElement.querySelector('.incoming')).toBeNull();
     await expect(names(canvasElement, 'outgoing')).toEqual(['Film']);
   },
 };

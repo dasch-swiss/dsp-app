@@ -51,6 +51,33 @@ describe('DataClassConnectionsComponent', () => {
     ]);
   });
 
+  it('shows three classes per side until the rest are asked for', () => {
+    fixture.componentRef.setInput('graph', {
+      nodes: [
+        ...graph.nodes,
+        ...['P1', 'P2', 'P3'].map(id => ({ id, label: id, kind: 'class' as const, navigable: true })),
+      ],
+      edges: [
+        ...graph.edges,
+        ...['P1', 'P2', 'P3'].map(id => ({
+          source: id,
+          target: 'Slide',
+          property: 'p',
+          label: 'p',
+          kind: 'link' as const,
+        })),
+      ],
+    });
+
+    expect(component.incoming()).toHaveLength(3);
+    expect(component.moreIncoming()).toBe(2);
+
+    component.expand('incoming');
+
+    expect(component.incoming()).toHaveLength(5);
+    expect(component.moreIncoming()).toBe(0);
+  });
+
   it('opens a linked class of this project, but not one it cannot open', () => {
     const opened: string[] = [];
     component.classSelected.subscribe(iri => opened.push(iri));

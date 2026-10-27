@@ -68,25 +68,23 @@ interface CreateResourceDialogProps {
             @let description = classSelected.resClass.comments | appStringifyStringLiteral;
             <p class="class-description" [title]="description">{{ description }}</p>
           }
-        </div>
-        <div class="aside">
-          <div class="actions">
-            <!-- "All" and the class total: the export ignores the row selection, search and filters. -->
-            <button mat-stroked-button (click)="openDownloadDialog()" data-cy="download-btn">
-              <mat-icon>download</mat-icon>
-              {{ 'pages.dataBrowser.downloadDialog.downloadAll' | translate }}
-              @if (classCount$ | async; as classCount) {
-                <span class="count-badge" data-cy="download-count">{{ classCount | number }}</span>
-              }
-            </button>
-            @if (hasProjectMemberRights$ | async) {
-              <button mat-flat-button color="primary" (click)="goToAddClassInstance()" data-cy="create-resource-btn">
-                <mat-icon>add</mat-icon>
-                {{ 'pages.dataBrowser.dataClassPanel.createResource' | translate }}
-              </button>
-            }
-          </div>
           <app-data-class-connections-container class="connections" [classIri]="classSelected.resClass.id" />
+        </div>
+        <div class="actions">
+          <!-- "All" and the class total: the export ignores the row selection, search and filters. -->
+          <button mat-stroked-button (click)="openDownloadDialog()" data-cy="download-btn">
+            <mat-icon>download</mat-icon>
+            {{ 'pages.dataBrowser.downloadDialog.downloadAll' | translate }}
+            @if (classCount$ | async; as classCount) {
+              <span class="count-badge" data-cy="download-count">{{ classCount | number }}</span>
+            }
+          </button>
+          @if (hasProjectMemberRights$ | async) {
+            <button mat-flat-button color="primary" (click)="goToAddClassInstance()" data-cy="create-resource-btn">
+              <mat-icon>add</mat-icon>
+              {{ 'pages.dataBrowser.dataClassPanel.createResource' | translate }}
+            </button>
+          }
         </div>
       </div>
 

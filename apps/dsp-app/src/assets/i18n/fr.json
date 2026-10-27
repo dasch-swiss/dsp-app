@@ -731,9 +731,8 @@
         "connections": "Classes liées à cette classe",
         "linkedFromHeading": "Liée depuis",
         "linksToHeading": "Liée à",
-        "noIncoming": "Aucune classe ne pointe ici",
-        "noOutgoing": "Liée à aucune classe",
-        "moreClasses": "+{{count}} autres"
+        "moreClasses": "+{{count}} autres",
+        "noLinks": "Liée à aucune autre classe"
       }
     }
   },

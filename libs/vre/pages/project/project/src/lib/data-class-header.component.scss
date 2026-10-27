@@ -58,14 +58,6 @@
   text-overflow: ellipsis;
 }
 
-.aside {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
 .actions {
   display: flex;
   gap: 8px;
@@ -73,8 +65,7 @@
 }
 
 .connections {
-  width: 480px;
-  max-width: 100%;
+  margin-top: 6px;
 }
 
 .count-badge {
@@ -113,4 +104,8 @@
   width: 1px;
   height: 24px;
   background: #d1d5db;
+}
+
+.connections:empty {
+  display: none;
 }
