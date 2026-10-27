@@ -732,7 +732,11 @@
         "linksToClasses": "lié à {{count}} classes",
         "linkedFromClasses": "lié depuis {{count}} classes",
         "linksToClassesOne": "lié à 1 classe",
-        "linkedFromClassesOne": "lié depuis 1 classe"
+        "linkedFromClassesOne": "lié depuis 1 classe",
+        "mainClass": "classe principale du modèle de données",
+        "mainClassLinks": "est liée à {{links}} des {{others}} autres classes",
+        "fewerLinks": "Moins de liens",
+        "moreLinks": "Plus de liens"
       }
     }
   },

@@ -732,7 +732,11 @@
         "linksToClasses": "verknüpft mit {{count}} Klassen",
         "linkedFromClasses": "verknüpft von {{count}} Klassen",
         "linksToClassesOne": "verknüpft mit 1 Klasse",
-        "linkedFromClassesOne": "verknüpft von 1 Klasse"
+        "linkedFromClassesOne": "verknüpft von 1 Klasse",
+        "mainClass": "Hauptklasse des Datenmodells",
+        "mainClassLinks": "ist mit {{links}} der {{others}} anderen Klassen verknüpft",
+        "fewerLinks": "Weniger Verknüpfungen",
+        "moreLinks": "Mehr Verknüpfungen"
       }
     }
   },

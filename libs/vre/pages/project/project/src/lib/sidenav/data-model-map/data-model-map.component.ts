@@ -18,6 +18,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DataModelGraph, DataModelNode } from './data-model-graph';
+import { linkCounts, linkTints, mainClass } from './data-model-importance';
 import { DataModelLayout, layoutDataModel, PlacedNode } from './data-model-layout';
 import { DataModelNeighbourhoodComponent } from './data-model-neighbourhood.component';
 
@@ -102,6 +103,17 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
         (classSelected)="classSelected.emit($event)" />
     }
 
+    @if (visibleLayout() && main(); as main) {
+      @let mainNode = nodeById(main.id);
+      <button type="button" class="main-class" data-cy="data-model-map-main-class" (click)="select(mainNode)">
+        <mat-icon>hub</mat-icon>
+        <span>
+          <strong>{{ labelOf(mainNode) }}</strong>
+          {{ t + '.mainClassLinks' | translate: { links: main.links, others: main.others } }}
+        </span>
+      </button>
+    }
+
     @if (visibleLayout(); as layout) {
       <nav
         class="map"
@@ -135,6 +147,8 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
             [class.neighbour]="neighbours().has(node.id)"
             [class.unlinked]="unlinked().has(node.id)"
             [class.external]="node.kind !== 'class'"
+            [class.main]="node.id === main()?.id"
+            [attr.data-tint]="tints().get(node.id) ?? 0"
             [style.left.px]="placed.x"
             [style.top.px]="placed.y"
             [style.width.px]="placed.width"
@@ -145,7 +159,8 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
             [attr.aria-label]="
               (t + '.card' | translate: { label: labelOf(node), count: node.count ?? 0 }) +
               (linksTo ? '; ' + (t + '.linksTo' | translate: { names: linksTo }) : '') +
-              (linkedFrom ? '; ' + (t + '.linkedFrom' | translate: { names: linkedFrom }) : '')
+              (linkedFrom ? '; ' + (t + '.linkedFrom' | translate: { names: linkedFrom }) : '') +
+              (node.id === main()?.id ? '; ' + (t + '.mainClass' | translate) : '')
             "
             (focus)="focusedId.set(node.id)"
             (click)="select(node)">
@@ -170,6 +185,17 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
           </button>
         }
       </nav>
+      @if (hasTint()) {
+        <div class="legend" aria-hidden="true">
+          <span>{{ t + '.fewerLinks' | translate }}</span>
+          <span class="swatches">
+            @for (tint of [0, 1, 2, 3]; track tint) {
+              <span class="swatch" [attr.data-tint]="tint"></span>
+            }
+          </span>
+          <span>{{ t + '.moreLinks' | translate }}</span>
+        </div>
+      }
     }
   `,
   styles: [
@@ -221,6 +247,83 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
           width: 16px;
           height: 16px;
         }
+      }
+
+      .main-class {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        margin-bottom: 8px;
+        padding: 0;
+        border: 0;
+        background: none;
+        cursor: pointer;
+        text-align: left;
+        font: 400 12px/16px var(--font-sans, Roboto, sans-serif);
+        color: $primary_800;
+
+        mat-icon {
+          flex: none;
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          color: $primary;
+        }
+
+        strong {
+          font-weight: 600;
+        }
+
+        &:hover span {
+          text-decoration: underline;
+        }
+
+        &:focus-visible {
+          outline: 2px solid $primary;
+          outline-offset: 2px;
+        }
+      }
+
+      .legend {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+        font-size: 11px;
+        color: $cool_gray_500;
+      }
+
+      .swatches {
+        display: flex;
+        gap: 2px;
+      }
+
+      .swatch {
+        width: 14px;
+        height: 10px;
+        border-radius: 2px;
+        box-sizing: border-box;
+      }
+
+      .swatch[data-tint='0'] {
+        background: white;
+        border: 1px solid $cool_gray_300;
+      }
+
+      .card[data-tint='1'],
+      .swatch[data-tint='1'] {
+        background: $primary_50;
+      }
+
+      .card[data-tint='2'],
+      .swatch[data-tint='2'] {
+        background: $primary_100;
+      }
+
+      .card[data-tint='3'],
+      .swatch[data-tint='3'] {
+        background: $primary_300;
       }
 
       .map {
@@ -280,6 +383,11 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
           .bar {
             background: $primary_400;
           }
+        }
+
+        &.main {
+          border: 2px solid $primary;
+          box-shadow: 0 0 0 3px $primary_100;
         }
 
         &.selected {
@@ -420,6 +528,13 @@ export class DataModelMapComponent {
     return has(focused) ? focused : has(selected) ? selected : nodes[0]?.node.id;
   });
 
+  private readonly _linkCounts = computed(() => linkCounts(this.graph()));
+  /** How strongly each class card is tinted by the number of classes it is linked with. */
+  readonly tints = computed(() => linkTints(this._linkCounts()));
+  readonly hasTint = computed(() => [...this.tints().values()].some(tint => tint > 0));
+  /** The class the data model is built around, when one clearly is. */
+  readonly main = computed(() => mainClass(this._linkCounts()));
+
   private readonly _maxCount = computed(() => Math.max(1, ...this.graph().nodes.map(node => node.count ?? 0)));
 
   constructor() {
@@ -439,6 +554,10 @@ export class DataModelMapComponent {
 
   labelOf(node: DataModelNode): string {
     return node.kind === 'generic' && node.id === Constants.Resource ? this.anyResourceLabel() : node.label;
+  }
+
+  nodeById(id: string): DataModelNode {
+    return this.graph().nodes.find(node => node.id === id)!;
   }
 
   share(node: DataModelNode): number {
