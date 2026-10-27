@@ -1,12 +1,12 @@
+import { DecimalPipe } from '@angular/common';
 import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType } from '@angular/common/http';
 import { ChangeDetectorRef, Component, DestroyRef, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatDialogActions } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { BASE_PATH, ExportRequest } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { PropertyInfoValues, triggerBlobDownload } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -16,52 +16,120 @@ import { finalize } from 'rxjs';
 import { RowScannerState, advanceRowScanner, initRowScanner } from './csv-row-scanner';
 import { DownloadPropertyListComponent } from './download-property-list.component';
 
-// Threshold above which an export counts as "large": the dialog shows a warning and this tab
-// shows a real X-of-N progress bar. Defined here (the leaf the dialog already imports) rather
-// than in download-dialog.component.ts so the dialog can reuse it without a circular import.
+// Threshold above which an export counts as "large": this tab shows a warning before the export
+// and a real X-of-N progress bar while it runs.
 export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
 
 // U+FEFF, encoded by Blob as the three-byte UTF-8 BOM (ef bb bf).
-const UTF8_BOM = '\uFEFF';
+const UTF8_BOM = '﻿';
 
 @Component({
   selector: 'app-download-dialog-properties-tab',
   standalone: true,
   imports: [
+    DecimalPipe,
     DownloadPropertyListComponent,
-    MatCheckbox,
     FormsModule,
     TranslatePipe,
-    MatDialogActions,
     MatButton,
     MatIcon,
     MatProgressBarModule,
+    MatSlideToggle,
   ],
   styles: [
     `
-      .csv-export-info {
+      /* Single column: only the property list scrolls; the footer stays pinned at the bottom. */
+      :host {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+      }
+
+      app-download-property-list {
+        flex: 1;
+        padding-top: 8px;
+      }
+
+      .footer {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 16px 16px;
+        border-top: 1px solid #e5e7eb;
+        background: #f9fafb;
+      }
+
+      .summary {
+        margin: 0;
+        font-size: 12px;
+        line-height: 18px;
+        color: #666;
+      }
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      /* Label left, switch right, so the hint lines up with the label it explains. */
+      .option-toggle {
+        display: block;
+      }
+
+      .option-toggle ::ng-deep .mdc-form-field {
+        width: 100%;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .option-toggle ::ng-deep label {
+        flex: 1;
+        padding: 0;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .option-hint {
+        margin: 2px 48px 0 0;
+        font-size: 12px;
+        line-height: 16px;
+        color: #666;
+      }
+
+      .callout {
         display: flex;
         align-items: flex-start;
         gap: 8px;
-        margin-bottom: 16px;
-        padding: 12px;
-        background: #e3f2fd;
-        color: #0d47a1;
+        padding: 8px 12px;
         border-radius: 4px;
-        font-size: 13px;
-        line-height: 20px;
+        font-size: 12px;
+        line-height: 18px;
       }
 
-      .csv-export-info mat-icon {
+      .callout mat-icon {
         flex-shrink: 0;
-        color: #1565c0;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      .callout.info {
+        background: #e3f2fd;
+        color: #0d47a1;
+      }
+
+      .callout.warning {
+        background: #fff3e0;
+        color: #e65100;
       }
 
       .csv-export-progress {
         display: flex;
         flex-direction: column;
         gap: 6px;
-        margin-top: 16px;
       }
 
       .csv-export-progress-meta {
@@ -75,6 +143,19 @@ const UTF8_BOM = '\uFEFF';
       .csv-export-progress-meta strong {
         color: rgba(0, 0, 0, 0.87);
         font-weight: 500;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .csv-summary {
+        flex: 1;
+        font-size: 13px;
+        color: #666;
         font-variant-numeric: tabular-nums;
       }
 
@@ -102,77 +183,100 @@ const UTF8_BOM = '\uFEFF';
     `,
   ],
   template: `
-    @if (isDownloading) {
-      <div class="csv-export-info" role="status" aria-live="polite">
-        <mat-icon>file_download</mat-icon>
-        <span>{{ 'pages.dataBrowser.downloadDialog.buildingCsv' | translate }}</span>
-      </div>
-    }
-
     <app-download-property-list [propertyDefinitions]="properties" (propertiesChange)="selectedPropertyIds = $event" />
 
-    <div style="margin-top: 16px; padding: 16px; background: #f5f5f5; border-radius: 4px">
-      <mat-checkbox [(ngModel)]="includeArkUrls">
-        <span style="font-weight: 500">{{ 'pages.dataBrowser.downloadDialog.includeArkUrlsLabel' | translate }}</span>
-      </mat-checkbox>
-      <p style="margin: 8px 0 0 32px; color: #666; font-size: 13px">
-        {{ 'pages.dataBrowser.downloadDialog.includeArkUrlsExplanation' | translate }}
+    <footer class="footer">
+      <!-- The export ignores the row selection and the Data tab's search and filters; say so before the click. -->
+      <p class="summary" data-cy="download-scope-note">
+        {{
+          (selectedCount
+            ? 'pages.dataBrowser.downloadDialog.scopeAllWithSelection'
+            : 'pages.dataBrowser.downloadDialog.scopeAll'
+          ) | translate: { count: selectedCount }
+        }}
       </p>
-    </div>
 
-    <div style="margin-top: 16px; padding: 16px; background: #f5f5f5; border-radius: 4px">
-      <mat-checkbox [(ngModel)]="includeResourceIris">
-        <span style="font-weight: 500">{{ 'pages.dataBrowser.downloadDialog.includeIrisLabel' | translate }}</span>
-      </mat-checkbox>
-      <p style="margin: 8px 0 0 32px; color: #666; font-size: 13px">
-        {{ 'pages.dataBrowser.downloadDialog.includeIrisExplanation' | translate }}
-      </p>
-    </div>
-
-    @if (isDownloading && resourceCount > largeThreshold) {
-      <div class="csv-export-progress">
-        <div class="csv-export-progress-meta">
-          <span id="csvExportProgressLabel">{{
-            'pages.dataBrowser.downloadDialog.progressXofN' | translate: { x: rowsReceived, n: resourceCount }
-          }}</span>
-          <strong>{{ progressPercent }}%</strong>
+      <div class="options">
+        <div>
+          <mat-slide-toggle class="option-toggle" labelPosition="before" [(ngModel)]="includeArkUrls">
+            {{ 'pages.dataBrowser.downloadDialog.includeArkUrlsLabel' | translate }}
+          </mat-slide-toggle>
+          <p class="option-hint">{{ 'pages.dataBrowser.downloadDialog.includeArkUrlsExplanation' | translate }}</p>
         </div>
-        <mat-progress-bar
-          mode="determinate"
-          [value]="progressPercent"
-          aria-labelledby="csvExportProgressLabel"></mat-progress-bar>
+        <div>
+          <mat-slide-toggle class="option-toggle" labelPosition="before" [(ngModel)]="includeResourceIris">
+            {{ 'pages.dataBrowser.downloadDialog.includeIrisLabel' | translate }}
+          </mat-slide-toggle>
+          <p class="option-hint">{{ 'pages.dataBrowser.downloadDialog.includeIrisExplanation' | translate }}</p>
+        </div>
       </div>
-    }
 
-    <div mat-dialog-actions align="end">
-      <button mat-button (click)="afterClosed.emit()" style="margin-right: 16px" [disabled]="isDownloading">
-        {{ 'ui.common.actions.cancel' | translate }}
-      </button>
-      <button mat-raised-button color="primary" (click)="downloadCsv()" [disabled]="isDownloading">
-        @if (isDownloading) {
-          <span class="csv-export-preparing">
-            <mat-icon class="csv-export-spin">autorenew</mat-icon>
-            {{ 'pages.dataBrowser.downloadDialog.preparing' | translate }}
-          </span>
-        } @else {
-          {{
-            (resourceCount === 1
-              ? 'pages.dataBrowser.downloadDialog.downloadOneResource'
-              : 'pages.dataBrowser.downloadDialog.downloadResources'
-            ) | translate: { count: resourceCount }
-          }}
-        }
-      </button>
-    </div>
+      @if (isDownloading) {
+        <div class="callout info" role="status" aria-live="polite">
+          <mat-icon>file_download</mat-icon>
+          <span>{{ 'pages.dataBrowser.downloadDialog.buildingCsv' | translate }}</span>
+        </div>
+      } @else if (resourceCount > largeThreshold) {
+        <div class="callout warning" data-cy="large-export-warning" role="alert">
+          <mat-icon>warning</mat-icon>
+          <span>{{ 'pages.dataBrowser.downloadDialog.largeExportWarning' | translate: { count: resourceCount } }}</span>
+        </div>
+      }
+
+      @if (isDownloading && resourceCount > largeThreshold) {
+        <div class="csv-export-progress">
+          <div class="csv-export-progress-meta">
+            <span id="csvExportProgressLabel">{{
+              'pages.dataBrowser.downloadDialog.progressXofN' | translate: { x: rowsReceived, n: resourceCount }
+            }}</span>
+            <strong>{{ progressPercent }}%</strong>
+          </div>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="progressPercent"
+            aria-labelledby="csvExportProgressLabel"></mat-progress-bar>
+        </div>
+      }
+
+      <div class="actions">
+        <span class="csv-summary" data-cy="download-csv-summary">{{
+          'pages.dataBrowser.downloadDialog.csvSummary'
+            | translate: { rows: resourceCount | number, columns: columnCount }
+        }}</span>
+        <button mat-button (click)="afterClosed.emit()" [disabled]="isDownloading">
+          {{ 'ui.common.actions.cancel' | translate }}
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          data-cy="download-csv-button"
+          (click)="downloadCsv()"
+          [disabled]="isDownloading || selectedPropertyIds.length === 0">
+          @if (isDownloading) {
+            <span class="csv-export-preparing">
+              <mat-icon class="csv-export-spin">autorenew</mat-icon>
+              {{ 'pages.dataBrowser.downloadDialog.preparing' | translate }}
+            </span>
+          } @else {
+            {{
+              (resourceCount === 1
+                ? 'pages.dataBrowser.downloadDialog.downloadOneResource'
+                : 'pages.dataBrowser.downloadDialog.downloadResources'
+              ) | translate: { count: resourceCount | number }
+            }}
+          }
+        </button>
+      </div>
+    </footer>
   `,
 })
 export class DownloadDialogResourcesTabComponent {
   @Input({ required: true }) properties!: PropertyInfoValues[];
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) resourceCount!: number;
+  // Checkbox-selected rows in the Data tab; the scope note says they are not what gets exported.
+  @Input() selectedCount = 0;
   @Output() afterClosed = new EventEmitter<void>();
-  // Lets the parent dialog swap its idle "large export" warning for the in-progress info callout.
-  @Output() downloadStateChange = new EventEmitter<boolean>();
   readonly largeThreshold = CSV_EXPORT_LARGE_THRESHOLD;
   includeArkUrls = false;
   includeResourceIris = false;
@@ -193,6 +297,11 @@ export class DownloadDialogResourcesTabComponent {
     private readonly _destroyRef: DestroyRef
   ) {}
 
+  // Selected properties, plus the ARK column when it is included.
+  get columnCount(): number {
+    return this.selectedPropertyIds.length + (this.includeArkUrls ? 1 : 0);
+  }
+
   get progressPercent(): number {
     if (!this.resourceCount) return 0;
     return Math.min(100, Math.round((this.rowsReceived / this.resourceCount) * 100));
@@ -200,7 +309,6 @@ export class DownloadDialogResourcesTabComponent {
 
   downloadCsv(): void {
     this.isDownloading = true;
-    this.downloadStateChange.emit(true);
     this.rowsReceived = 0;
     this._scannerState = initRowScanner();
 
@@ -228,7 +336,6 @@ export class DownloadDialogResourcesTabComponent {
         takeUntilDestroyed(this._destroyRef),
         finalize(() => {
           this.isDownloading = false;
-          this.downloadStateChange.emit(false);
           this.rowsReceived = 0;
           this._cdr.markForCheck();
         })

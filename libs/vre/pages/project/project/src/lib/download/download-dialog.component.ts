@@ -1,104 +1,89 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
+import { MatIconButton } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
-import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
-import {
-  CSV_EXPORT_LARGE_THRESHOLD,
-  DownloadDialogResourcesTabComponent,
-} from './download-dialog-resources-tab.component';
+import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
 
 export interface DownloadDialogData {
   resClass: ResourceClassDefinitionWithAllLanguages;
   resourceCount: number;
-  /** Shown as the dialog subtitle. */
+  /** Shown in the dialog title. */
   classLabel: string;
   properties: PropertyInfoValues[];
-  /** Checkbox-selected rows; named in the scope banner so nobody expects a selection export. */
+  /** Checkbox-selected rows; named in the scope note so nobody expects a selection export. */
   selectedCount: number;
 }
 
 @Component({
   selector: 'app-download-dialog',
   template: `
-    <app-dialog-header
-      [title]="
-        (data.resourceCount === 1
-          ? 'pages.dataBrowser.downloadDialog.titleOne'
-          : 'pages.dataBrowser.downloadDialog.titleAll'
-        ) | translate: { count: data.resourceCount }
-      "
-      [subtitle]="data.classLabel" />
-    @if (data.resourceCount > largeThreshold && !isDownloading) {
-      <div class="large-export-warning" data-cy="large-export-warning" role="alert">
-        <mat-icon>warning</mat-icon>
-        <span>{{
-          'pages.dataBrowser.downloadDialog.largeExportWarning' | translate: { count: data.resourceCount }
-        }}</span>
+    <header class="header">
+      <div class="heading">
+        <h2 class="mat-headline-6 title" data-cy="download-dialog-title">
+          {{ 'pages.dataBrowser.downloadDialog.heading' | translate: { className: data.classLabel } }}
+        </h2>
+        <p class="subtitle">
+          {{ 'pages.dataBrowser.downloadDialog.resourceCount' | translate: { count: data.resourceCount | number } }}
+        </p>
       </div>
-    }
-    <!-- The export ignores the row selection and the Data tab's search and filters; say so before the click. -->
-    <div class="scope-banner" data-cy="download-scope-note">
-      <mat-icon>info</mat-icon>
-      <span>{{
-        (data.selectedCount
-          ? 'pages.dataBrowser.downloadDialog.scopeAllWithSelection'
-          : 'pages.dataBrowser.downloadDialog.scopeAll'
-        ) | translate: { count: data.selectedCount }
-      }}</span>
-    </div>
-    <div mat-dialog-content style="max-height: 90vh">
-      <app-download-dialog-properties-tab
-        [properties]="data.properties"
-        [resourceClassIri]="data.resClass.id"
-        [resourceCount]="data.resourceCount"
-        (downloadStateChange)="isDownloading = $event"
-        (afterClosed)="dialogRef.close()"
-        style="display: block; height: 100%" />
-    </div>
+      <button mat-icon-button [attr.aria-label]="'ui.common.actions.close' | translate" (click)="dialogRef.close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+    <app-download-dialog-properties-tab
+      class="body"
+      [properties]="data.properties"
+      [resourceClassIri]="data.resClass.id"
+      [resourceCount]="data.resourceCount"
+      [selectedCount]="data.selectedCount"
+      (afterClosed)="dialogRef.close()" />
   `,
   styles: [
     `
-      .large-export-warning {
+      :host {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .header {
         display: flex;
         align-items: flex-start;
         gap: 8px;
-        padding: 12px 24px;
-        background: #fff3e0;
-        color: #e65100;
+        padding: 16px 8px 12px 16px;
+        border-bottom: 1px solid #e5e7eb;
       }
 
-      .large-export-warning mat-icon {
-        flex-shrink: 0;
+      .heading {
+        flex: 1;
+        min-width: 0;
       }
 
-      .scope-banner {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        margin: 12px 24px 0;
-        padding: 10px 12px;
-        border-radius: 4px;
-        background: #e8f0f7;
-        color: #20425e;
+      .title {
+        margin: 0;
+      }
+
+      .subtitle {
+        margin: 2px 0 0;
         font-size: 13px;
+        color: #666;
       }
 
-      .scope-banner mat-icon {
-        flex-shrink: 0;
-        color: #336790;
+      /* Only the property list scrolls; the header and the footer stay put. */
+      .body {
+        flex: 1;
+        min-height: 0;
       }
     `,
   ],
   standalone: true,
-  imports: [DialogHeaderComponent, MatIcon, TranslatePipe, MatDialogContent, DownloadDialogResourcesTabComponent],
+  imports: [DecimalPipe, MatIcon, MatIconButton, TranslatePipe, DownloadDialogResourcesTabComponent],
 })
 export class DownloadDialogComponent {
-  readonly largeThreshold = CSV_EXPORT_LARGE_THRESHOLD;
-  isDownloading = false;
-
   constructor(
     public dialogRef: MatDialogRef<DownloadDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DownloadDialogData
