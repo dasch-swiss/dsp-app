@@ -40,14 +40,17 @@ const GRAPH: DataModelGraph = {
   ],
 };
 
+/** Spy for the class a chip opened; outputs bound in a host template, as args do not reach signal outputs. */
+const classSelected = fn().mockName('classSelected');
+
 const meta: Meta<DataClassConnectionsComponent> = {
   title: 'Data Browser / Class Header / Connections',
   component: DataClassConnectionsComponent,
   render: args => ({
-    props: args,
-    template: `<div style="width: 720px"><app-data-class-connections [graph]="graph" [classIri]="classIri" (classSelected)="classSelected($event)" /></div>`,
+    props: { ...args, onClassSelected: classSelected },
+    template: `<div style="width: 720px"><app-data-class-connections [graph]="graph" [classIri]="classIri" (classSelected)="onClassSelected($event)" /></div>`,
   }),
-  args: { graph: GRAPH, classIri: ONTO + 'Film', classSelected: fn() },
+  args: { graph: GRAPH, classIri: ONTO + 'Film' },
   argTypes: {
     graph: { description: 'The data model the class belongs to.' },
     classIri: { description: 'IRI of the class in the middle of the line.' },
@@ -85,9 +88,9 @@ export const ShowsTheRestWhenMoreIsClicked: Story = {
 
 /** Clicking a linked class opens it. */
 export const OpensALinkedClassWhenClicked: Story = {
-  play: async ({ args, canvasElement }) => {
+  play: async ({ canvasElement }) => {
     await userEvent.click(canvasElement.querySelector('.outgoing .chip') as HTMLElement);
-    await expect(args.classSelected).toHaveBeenCalledWith(ONTO + 'Person');
+    await expect(classSelected).toHaveBeenCalledWith(ONTO + 'Person');
   },
 };
 

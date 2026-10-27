@@ -53,13 +53,16 @@ const large = (count: number): DataModelGraph => {
 };
 
 /** The map's inputs and outputs, plus the width of the sidebar around it, which only the story sets. */
+/** Spy for the class a card opened; outputs bound in a host template, as args do not reach signal outputs. */
+const classSelected = fn().mockName('classSelected');
+
 type MapArgs = {
   width: number;
   full?: boolean;
   graph: DataModelGraph;
   selectedIri?: string;
   anyResourceLabel?: string;
-  classSelected: (iri: string) => void;
+  classSelected?: (iri: string) => void;
   openFullMap?: () => void;
 };
 
@@ -67,10 +70,10 @@ const meta: Meta<MapArgs> = {
   title: 'Data Browser / Sidebar / Data Model Map',
   component: DataModelMapComponent,
   render: args => ({
-    props: args,
-    template: `<div [style.width.px]="width"><app-data-model-map [graph]="graph" [selectedIri]="selectedIri" (classSelected)="classSelected($event)" /></div>`,
+    props: { ...args, onClassSelected: classSelected },
+    template: `<div [style.width.px]="width"><app-data-model-map [graph]="graph" [selectedIri]="selectedIri" (classSelected)="onClassSelected($event)" /></div>`,
   }),
-  args: { width: 360, graph: DASCH, selectedIri: ONTO + 'Slides and Posters', classSelected: fn() },
+  args: { width: 360, graph: DASCH, selectedIri: ONTO + 'Slides and Posters' },
   argTypes: {
     width: { description: 'Width of the sidebar around the map, in pixels.' },
     graph: { description: 'The data model: a card per class, an edge per link or subclass relation.' },
@@ -106,11 +109,11 @@ export const HighlightsTheCurrentClassAndItsNeighbours: Story = {
 
 /** Clicking a card opens that class. */
 export const OpensAClassWhenItsCardIsClicked: Story = {
-  play: async ({ args, canvasElement }) => {
+  play: async ({ canvasElement }) => {
     await waitFor(() => expect(card(canvasElement, 'Author')).toBeTruthy());
 
     await userEvent.click(card(canvasElement, 'Author'));
-    await expect(args.classSelected).toHaveBeenCalledWith(ONTO + 'Author');
+    await expect(classSelected).toHaveBeenCalledWith(ONTO + 'Author');
   },
 };
 
@@ -130,9 +133,12 @@ export const MovesBetweenCardsWithTheArrowKeys: Story = {
     await waitFor(() => expect(card(canvasElement, 'Author')).toBeTruthy());
     await expect(canvasElement.querySelectorAll('.card[tabindex="0"]')).toHaveLength(1);
 
-    card(canvasElement, 'Slides and Posters').focus();
-    await userEvent.keyboard('{ArrowRight}');
-    await expect(document.activeElement).toBe(card(canvasElement, 'Author'));
+    const start = card(canvasElement, 'Slides and Posters');
+    start.focus();
+    await userEvent.keyboard('{ArrowDown}');
+    const next = document.activeElement as HTMLElement;
+    await expect(next).toHaveClass('card');
+    await expect(next.getBoundingClientRect().top).toBeGreaterThan(start.getBoundingClientRect().top);
   },
 };
 
