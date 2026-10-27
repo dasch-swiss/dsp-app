@@ -89,7 +89,7 @@ describe('layoutDataModel', () => {
       graph(['A', 'B', 'Author'], [link('A', 'Author', 'author'), link('B', 'Author', 'author')]),
       { width: 336, condensed: false }
     );
-    const lane = (path: string) => path.match(/H (\S+) V/)![1];
+    const lane = (path: string) => [...path.matchAll(/H (\S+) V/g)].pop()![1];
 
     expect(lane(layout.edges[0].path)).toBe(lane(layout.edges[1].path));
   });
@@ -99,9 +99,28 @@ describe('layoutDataModel', () => {
       graph(['A', 'B', 'Author'], [link('A', 'Author', 'author'), link('B', 'Author', 'editor')]),
       { width: 336, condensed: false }
     );
-    const lane = (path: string) => path.match(/H (\S+) V/)![1];
+    const lane = (path: string) => [...path.matchAll(/H (\S+) V/g)].pop()![1];
 
     expect(lane(layout.edges[0].path)).not.toBe(lane(layout.edges[1].path));
+  });
+
+  it('runs a link that skips a column between the rows, not behind the cards it skips', () => {
+    const layout = layoutDataModel(
+      graph(
+        ['Interview', 'Interview guide', 'File'],
+        [link('Interview', 'Interview guide'), link('Interview', 'File'), link('Interview guide', 'File')]
+      ),
+      { width: 336, condensed: false }
+    );
+    const card = (label: string) => layout.nodes.find(p => p.node.label === label)!;
+    const skipping = layout.edges.find(e => card(e.edge.source).column === 0 && card(e.edge.target).column === 2)!;
+    const skipped = layout.nodes.filter(p => p.column === 1);
+
+    expect(skipped.length).toBeGreaterThan(0);
+    const [, channel] = skipping.path.match(/V (\S+) H/)!;
+    for (const p of skipped) {
+      expect(Number(channel) < p.y || Number(channel) > p.y + p.height).toBe(true);
+    }
   });
 
   it('is deterministic', () => {

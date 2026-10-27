@@ -94,9 +94,19 @@ export function layoutDataModel(
     });
   });
 
+  const rowGap = card.pitch - card.height;
+  let routed = routeEdges(edges, placed, rowGap);
+  // A link running above the first row needs the room for it.
+  if (routed.top < PADDING_Y) {
+    const shift = PADDING_Y - routed.top;
+    placed.forEach(p => (p.y += shift));
+    routed = routeEdges(edges, placed, rowGap);
+  }
+
   const nodes = [...placed.values()];
-  const height = nodes.length === 0 ? 0 : Math.max(...nodes.map(p => p.y + p.height)) + PADDING_Y;
-  return { nodes, edges: routeEdges(edges, placed), width, height };
+  const bottom = Math.max(routed.bottom, ...nodes.map(p => p.y + p.height));
+  const height = nodes.length === 0 ? 0 : bottom + PADDING_Y;
+  return { nodes, edges: routed.edges, width, height };
 }
 
 /** Longest path from a class nothing links to; links that close a cycle are left out of the ranking. */
@@ -198,7 +208,12 @@ function orderColumns(columns: DataModelNode[][], edges: DataModelEdge[]) {
   }
 }
 
-function routeEdges(edges: DataModelEdge[], placed: Map<string, PlacedNode>): RoutedEdge[] {
+/** Routes every link; `top` and `bottom` are the highest and lowest heights a link runs at between the rows. */
+function routeEdges(
+  edges: DataModelEdge[],
+  placed: Map<string, PlacedNode>,
+  rowGap: number
+): { edges: RoutedEdge[]; top: number; bottom: number } {
   const middle = (p: PlacedNode) => p.y + p.height / 2;
   const trunkKey = (edge: DataModelEdge) => `${edge.target} ${edge.property}`;
 
@@ -217,16 +232,39 @@ function routeEdges(edges: DataModelEdge[], placed: Map<string, PlacedNode>): Ro
     return gapStart + (gapWidth * (trunks.indexOf(key) + 1)) / (trunks.length + 1);
   };
 
-  return edges.map(edge => {
+  const cards = [...placed.values()];
+  let top = Infinity;
+  let bottom = -Infinity;
+  const routed = edges.map(edge => {
     const source = placed.get(edge.source)!;
     const target = placed.get(edge.target)!;
     const startX = source.column < target.column ? source.x + source.width : source.x;
     const lane = round(laneX(target, trunkKey(edge)));
+    const end = `V ${round(middle(target))} H ${round(target.x)}`;
+    const between = cards.filter(p => p.column > source.column && p.column < target.column);
+    const channel = freeChannel(middle(source), between, rowGap);
+    if (channel === middle(source)) {
+      return { edge, path: `M ${round(startX)} ${round(channel)} H ${lane} ${end}` };
+    }
+    // A link skipping a column would run behind its cards: it drops into the gap after its source, then runs
+    // between the rows of the skipped columns.
+    const exit = round(startX + GAP / 4);
+    top = Math.min(top, channel);
+    bottom = Math.max(bottom, channel);
     return {
       edge,
-      path: `M ${round(startX)} ${round(middle(source))} H ${lane} V ${round(middle(target))} H ${round(target.x)}`,
+      path: `M ${round(startX)} ${round(middle(source))} H ${exit} V ${round(channel)} H ${lane} ${end}`,
     };
   });
+  return { edges: routed, top, bottom };
+}
+
+/** The height closest to `y` at which a horizontal line crosses none of `cards`: `y` itself, or a gap between rows. */
+function freeChannel(y: number, cards: PlacedNode[], rowGap: number): number {
+  const clear = (at: number) => cards.every(p => at < p.y - 1 || at > p.y + p.height + 1);
+  if (clear(y)) return y;
+  const candidates = cards.flatMap(p => [p.y - rowGap / 2, p.y + p.height + rowGap / 2]).filter(clear);
+  return candidates.sort((a, b) => Math.abs(a - y) - Math.abs(b - y) || a - b)[0] ?? y;
 }
 
 const round = (value: number) => Math.round(value * 10) / 10;
