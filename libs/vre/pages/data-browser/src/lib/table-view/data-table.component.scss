@@ -378,6 +378,11 @@ tr.is-checked .row-controls [data-cy='row-check'] {
   border-right-color: transparent;
 }
 
+// The shadow marks the frozen edge while scrolled; the header line would double it.
+.is-scrolled-x .mat-mdc-header-cell.mat-mdc-table-sticky-border-elem-left {
+  border-right-width: 0;
+}
+
 .frozen-shadow {
   position: absolute;
   top: 0;
