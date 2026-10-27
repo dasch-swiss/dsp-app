@@ -10,6 +10,7 @@ import { expect, within } from 'storybook/test';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassViewComponent, RESULT_LIST_WIDTH_BELOW_MD, RESULT_LIST_WIDTHS } from './data-class-view.component';
 import { ProjectPageService } from './project-page.service';
+import { DataModelGraphService } from './sidenav/data-model-map/data-model-graph.service';
 import { makeProjectPageServiceStub, makeReadProject } from './stories.helpers';
 
 const ONTOLOGY_IRI = 'http://0.0.0.0:3333/ontology/0803/incunabula/v2';
@@ -117,6 +118,7 @@ const meta: Meta<DataClassViewComponent> = {
           } as unknown as KnoraApiConnection,
         },
         DataBrowserPageService,
+        { provide: DataModelGraphService, useValue: { graphOfClass$: () => of(undefined) } },
         {
           provide: MultipleViewerService,
           useValue: {

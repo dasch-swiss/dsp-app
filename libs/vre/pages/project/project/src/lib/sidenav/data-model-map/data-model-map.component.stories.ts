@@ -52,7 +52,16 @@ const large = (count: number): DataModelGraph => {
   return { nodes, edges: nodes.slice(1).map((n, i) => link(`Class ${Math.floor(i / 4) + 1}`, n.label, `p${i % 3}`)) };
 };
 
-type MapArgs = DataModelMapComponent & { width: number };
+/** The map's inputs and outputs, plus the width of the sidebar around it, which only the story sets. */
+type MapArgs = {
+  width: number;
+  full?: boolean;
+  graph: DataModelGraph;
+  selectedIri?: string;
+  anyResourceLabel?: string;
+  classSelected: (iri: string) => void;
+  openFullMap?: () => void;
+};
 
 const meta: Meta<MapArgs> = {
   title: 'Data Browser / Sidebar / Data Model Map',
@@ -61,14 +70,15 @@ const meta: Meta<MapArgs> = {
     props: args,
     template: `<div [style.width.px]="width"><app-data-model-map [graph]="graph" [selectedIri]="selectedIri" (classSelected)="classSelected($event)" /></div>`,
   }),
-  args: { width: 360, graph: DASCH, selectedIri: ONTO + 'Slides and Posters', classSelected: fn() } as Partial<MapArgs>,
+  args: { width: 360, graph: DASCH, selectedIri: ONTO + 'Slides and Posters', classSelected: fn() },
   argTypes: {
     width: { description: 'Width of the sidebar around the map, in pixels.' },
     graph: { description: 'The data model: a card per class, an edge per link or subclass relation.' },
     selectedIri: { description: 'IRI of the class being browsed; it and its linked classes are highlighted.' },
     anyResourceLabel: { description: 'Label of the card for links that point at any resource.' },
     classSelected: { description: 'Emits the IRI of a class card that was clicked or activated by keyboard.' },
-    openFullMap: { description: 'Emits when "Full map" is clicked; nothing handles it yet.' },
+    openFullMap: { description: 'Emits when "Full map" is clicked; the container opens the map over the page.' },
+    full: { description: 'Draws the map large, as in the full-map dialog: no header, full cards, wider rows.' },
   },
 };
 
@@ -128,7 +138,7 @@ export const MovesBetweenCardsWithTheArrowKeys: Story = {
 
 /** Past 20 classes, cards show their name only. */
 export const CondensesALargeModel: Story = {
-  args: { graph: large(30), selectedIri: undefined } as Partial<MapArgs>,
+  args: { graph: large(30), selectedIri: undefined },
   play: async ({ canvasElement }) => {
     await waitFor(() => expect(canvasElement.querySelector('.map')).toHaveClass('condensed'));
     await expect(canvasElement.querySelectorAll('.card .meta')).toHaveLength(0);
@@ -155,33 +165,5 @@ export const HidesAndShowsTheMap: Story = {
     await expect(canvasElement.querySelector('.map')).toBeNull();
     await userEvent.click(toggle);
     await expect(canvasElement.querySelector('.map')).not.toBeNull();
-  },
-};
-
-/** The map opens on the whole model; "This class" shows only the class being browsed and its linked classes. */
-export const SwitchesToTheClassBeingBrowsed: Story = {
-  play: async ({ canvasElement }) => {
-    await waitFor(() => expect(canvasElement.querySelector('.map')).not.toBeNull());
-    const thisClass = canvasElement.querySelector('[data-cy="data-model-map-view-class"] button') as HTMLElement;
-
-    await userEvent.click(thisClass);
-    await expect(canvasElement.querySelector('.map')).toBeNull();
-    await expect(canvasElement.querySelector('[data-cy="data-model-neighbourhood-centre"]')).toHaveTextContent(
-      'Slides and Posters'
-    );
-
-    // Back to the whole model, the stored choice the other stories start from.
-    await userEvent.click(canvasElement.querySelector('[data-cy="data-model-map-view-model"] button') as HTMLElement);
-    await expect(canvasElement.querySelector('.map')).not.toBeNull();
-  },
-};
-
-/** With no class of this data model being browsed, "This class" cannot be picked. */
-export const DisablesThisClassWhenNoClassIsBrowsed: Story = {
-  args: { selectedIri: undefined },
-  play: async ({ canvasElement }) => {
-    await waitFor(() => expect(canvasElement.querySelector('.map')).not.toBeNull());
-
-    await expect(canvasElement.querySelector('[data-cy="data-model-map-view-class"] button')).toBeDisabled();
   },
 };

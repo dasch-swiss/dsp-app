@@ -2,23 +2,18 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Constants } from '@dasch-swiss/dsp-js';
 import { OntologyAndResourceClasses } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import {
-  LocalizationService,
-  OntologyService,
-  pickPreferredLanguageString,
-} from '@dasch-swiss/vre/shared/app-helper-services';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, combineLatest, map, of } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import { navigateToResourceClass, selectedResourceClassIri$ } from '../resource-class-sidenav/resource-class-route';
 import { DataModelFullMapDialogComponent, DataModelFullMapDialogData } from './data-model-full-map-dialog.component';
-import { buildDataModelGraph, DataModelGraph } from './data-model-graph';
+import { DataModelGraph } from './data-model-graph';
+import { DataModelGraphService } from './data-model-graph.service';
 import { DataModelMapComponent } from './data-model-map.component';
 
-/** The map of one data model in the sidebar, fed from the project's ontologies and the class in the URL. */
+/** The map of one data model in the sidebar, fed from the project's data models and the class in the URL. */
 @Component({
   selector: 'app-data-model-map-container',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,46 +30,22 @@ import { DataModelMapComponent } from './data-model-map.component';
   `,
 })
 export class DataModelMapContainerComponent {
-  /** The data model to map, with its classes and resource counts. */
+  /** The data model to map. */
   readonly ontology = input.required<OntologyAndResourceClasses>();
-  /** Every data model of the project, to name classes of other data models that links reach. */
-  readonly projectOntologies = input.required<readonly OntologyAndResourceClasses[]>();
 
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
-  private readonly _projectPageService = inject(ProjectPageService);
-  private readonly _dspApiConnection = inject(DspApiConnectionToken);
   private readonly _dialog = inject(MatDialog);
   private readonly _translate = inject(TranslateService);
 
-  /** knora-api declares the built-in links, such as `isPartOf`; it never changes, so the cached copy is fine. */
-  private readonly _knoraApi$ = this._dspApiConnection.v2.ontologyCache
-    .getOntology(Constants.KnoraApiV2)
-    .pipe(map(ontologies => [...ontologies.values()]));
-
   readonly graph = toSignal(
-    combineLatest([
-      toObservable(this.ontology),
-      toObservable(this.projectOntologies),
-      this._projectPageService.ontologies$,
-      this._knoraApi$,
-      inject(LocalizationService).currentLanguage$,
-    ]).pipe(
-      map(([ontology, projectOntologies, definitions, knoraApi, language]) =>
-        buildDataModelGraph(ontology, projectOntologies, [...definitions, ...knoraApi], labels =>
-          pickPreferredLanguageString(labels, language)
-        )
-      ),
-      catchError(error => {
-        // The class list below still works; the map is an aid and stays away.
-        console.error('Error loading the data model map:', error);
-        return of(undefined);
-      })
+    combineLatest([toObservable(this.ontology), inject(DataModelGraphService).graphs$]).pipe(
+      map(([ontology, graphs]) => graphs.get(ontology.ontology.iri))
     )
   );
 
   readonly selectedIri = toSignal(
-    selectedResourceClassIri$(this._router, this._route, inject(OntologyService), this._projectPageService)
+    selectedResourceClassIri$(this._router, this._route, inject(OntologyService), inject(ProjectPageService))
   );
 
   open(iri: string): void {
