@@ -8,6 +8,7 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { map } from 'rxjs';
 import { ProjectPageService } from '../../project-page.service';
 import { TooltipIfTruncatedDirective } from '../tooltip-if-truncated.directive';
+import { representationIcon } from './representation-icon';
 import { navigateToResourceClass, selectedResourceClassIri$ } from './resource-class-route';
 
 @Component({
@@ -101,23 +102,7 @@ export class ResourceClassSidenavItemComponent {
   @Input({ required: true }) representationClass!: RepresentationClass;
 
   get icon(): string {
-    switch (this.representationClass) {
-      case 'ArchiveRepresentation':
-        return 'folder_zip';
-      case 'AudioRepresentation':
-        return 'audio_file';
-      case 'DocumentRepresentation':
-        return 'description';
-      case 'MovingImageRepresentation':
-        return 'video_file';
-      case 'StillImageRepresentation':
-        return 'image';
-      case 'TextRepresentation':
-        return 'text_snippet';
-      case 'WithoutRepresentation':
-      default: // resource does not have a file representation
-        return 'insert_drive_file';
-    }
+    return representationIcon(this.representationClass);
   }
 
   isSelected$ = selectedResourceClassIri$(

@@ -6,6 +6,7 @@ const link = (source: string, target: string, property = 'p'): DataModelEdge => 
   source,
   target,
   property,
+  label: property,
   kind: 'link',
 });
 const graph = (ids: string[], edges: DataModelEdge[]): DataModelGraph => ({ nodes: ids.map(node), edges });

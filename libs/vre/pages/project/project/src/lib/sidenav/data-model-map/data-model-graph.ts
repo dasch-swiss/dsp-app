@@ -1,5 +1,15 @@
-import { Constants, PropertyDefinition, ReadOntology, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
-import { LanguageStringDto, OntologyAndResourceClasses } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import {
+  Constants,
+  PropertyDefinition,
+  ReadOntology,
+  ResourcePropertyDefinition,
+  StringLiteralV2,
+} from '@dasch-swiss/dsp-js';
+import {
+  LanguageStringDto,
+  OntologyAndResourceClasses,
+  RepresentationClass,
+} from '@dasch-swiss/vre/3rd-party-services/open-api';
 
 /**
  * `class`: a class of the mapped data model. `external`: a class of another data model.
@@ -16,6 +26,12 @@ export interface DataModelNode {
   count?: number;
   /** Whether the class is one of this project's, so the data browser can open it. */
   navigable: boolean;
+  /** The kind of file the class carries; only set for classes of the mapped data model. */
+  representationClass?: RepresentationClass;
+  /** The class's description in the ontology; only set for classes of the mapped data model. */
+  description?: string;
+  /** Labels of the class's own properties, in their form order; only set for classes of the mapped data model. */
+  properties?: string[];
 }
 
 export interface DataModelEdge {
@@ -23,6 +39,8 @@ export interface DataModelEdge {
   target: string;
   /** The link property IRI; for a subclass edge, `rdfs:subClassOf`. */
   property: string;
+  /** The link property's label; empty for a subclass edge. */
+  label: string;
   kind: 'link' | 'subclass';
 }
 
@@ -38,19 +56,32 @@ const HAS_STANDOFF_LINK_TO = `${Constants.KnoraApiV2}${Constants.HashDelimiter}h
 
 const localName = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
+type Labels = ReadonlyArray<StringLiteralV2 | LanguageStringDto> | undefined;
+
+/** An entity's label or comment from its texts in every language, else its single-language text. */
+const textOf = (
+  entity: object,
+  all: 'labels' | 'comments',
+  one: 'label' | 'comment',
+  labelOf: (t: Labels) => string
+) => {
+  const texts = (entity as Partial<Record<typeof all, StringLiteralV2[]>>)[all];
+  return texts?.length ? labelOf(texts) : ((entity as Partial<Record<typeof one, string>>)[one] ?? '');
+};
+
 /**
  * The classes of one data model and every link or subclass relation that starts or ends in it.
  *
  * @param ontology the data model to map, with its classes and resource counts
  * @param projectOntologies every data model of the project, to name and open classes outside `ontology`
  * @param definitions the project's ontologies and knora-api, which declare the link properties
- * @param labelOf picks the label to show from a class's labels in every language
+ * @param labelOf picks the text to show from a text in every language
  */
 export function buildDataModelGraph(
   ontology: OntologyAndResourceClasses,
   projectOntologies: readonly OntologyAndResourceClasses[],
   definitions: readonly ReadOntology[],
-  labelOf: (labels: LanguageStringDto[] | undefined) => string
+  labelOf: (labels: Labels) => string
 ): DataModelGraph {
   const projectClasses = new Map<string, string>();
   for (const onto of projectOntologies) {
@@ -60,17 +91,23 @@ export function buildDataModelGraph(
   }
 
   const nodes = new Map<string, DataModelNode>();
+  const properties: Record<string, PropertyDefinition> = Object.assign({}, ...definitions.map(d => d.properties));
+  const classDefs = Object.assign({}, ...definitions.map(d => d.classes)) as ReadOntology['classes'];
+
   for (const { resourceClass, itemCount } of ontology.classesAndCount ?? []) {
+    const classDef = classDefs[resourceClass.iri];
     nodes.set(resourceClass.iri, {
       id: resourceClass.iri,
       label: labelOf(resourceClass.label),
       kind: 'class',
       count: itemCount,
       navigable: true,
+      representationClass: resourceClass.representationClass,
+      description: classDef ? textOf(classDef, 'comments', 'comment', labelOf) : '',
+      properties: classDef ? ownPropertyLabels(classDef, properties, labelOf) : [],
     });
   }
 
-  const properties: Record<string, PropertyDefinition> = Object.assign({}, ...definitions.map(d => d.properties));
   const edges = new Map<string, DataModelEdge>();
   const addEdge = (edge: DataModelEdge) => {
     if (nodes.has(edge.source) || nodes.has(edge.target)) {
@@ -89,11 +126,17 @@ export function buildDataModelGraph(
         // An inherited project property is drawn once, from the class that declares it.
         if (!property?.isLinkProperty || property.isLinkValueProperty || !property.objectType) continue;
         if (property.id === HAS_STANDOFF_LINK_TO || (hasProperty.isInherited && !builtIn)) continue;
-        addEdge({ source: classDef.id, target: property.objectType, property: property.id, kind: 'link' });
+        addEdge({
+          source: classDef.id,
+          target: property.objectType,
+          property: property.id,
+          label: textOf(property, 'labels', 'label', labelOf) || localName(property.id),
+          kind: 'link',
+        });
       }
       for (const superClass of classDef.subClassOf ?? []) {
         if (projectClasses.has(superClass)) {
-          addEdge({ source: classDef.id, target: superClass, property: SUBCLASS_OF, kind: 'subclass' });
+          addEdge({ source: classDef.id, target: superClass, property: SUBCLASS_OF, label: '', kind: 'subclass' });
         }
       }
     }
@@ -113,4 +156,19 @@ export function buildDataModelGraph(
   }
 
   return { nodes: [...nodes.values()], edges: [...edges.values()] };
+}
+
+/** The labels of the properties a project declares on a class, not knora-api's, without link values. */
+function ownPropertyLabels(
+  classDef: ReadOntology['classes'][string],
+  properties: Record<string, PropertyDefinition>,
+  labelOf: (labels: Labels) => string
+): string[] {
+  const labels = [...classDef.propertiesList]
+    .filter(has => !has.propertyIndex.startsWith(Constants.KnoraApiV2))
+    .sort((a, b) => (a.guiOrder ?? Infinity) - (b.guiOrder ?? Infinity))
+    .map(has => properties[has.propertyIndex] as ResourcePropertyDefinition | undefined)
+    .filter(property => property !== undefined && !property.isLinkValueProperty)
+    .map(property => textOf(property!, 'labels', 'label', labelOf) || localName(property!.id));
+  return [...new Set(labels)];
 }

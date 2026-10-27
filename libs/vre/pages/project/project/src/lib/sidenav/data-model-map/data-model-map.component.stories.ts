@@ -16,6 +16,7 @@ const link = (source: string, target: string, property: string): DataModelEdge =
   source: ONTO + source,
   target: ONTO + target,
   property: ONTO + property,
+  label: property,
   kind: 'link',
 });
 
@@ -41,7 +42,7 @@ const DASCH: DataModelGraph = {
     ),
     link('Publications', 'Reports', 'report'),
     link('Archive', 'Manuals', 'manual'),
-    { source: ONTO + 'Archive', target: Constants.Resource, property: 'isPartOf', kind: 'link' },
+    { source: ONTO + 'Archive', target: Constants.Resource, property: 'isPartOf', label: 'is part of', kind: 'link' },
   ],
 };
 DASCH.nodes.push({ id: Constants.Resource, label: 'Resource', kind: 'generic', navigable: false });
@@ -154,5 +155,33 @@ export const HidesAndShowsTheMap: Story = {
     await expect(canvasElement.querySelector('.map')).toBeNull();
     await userEvent.click(toggle);
     await expect(canvasElement.querySelector('.map')).not.toBeNull();
+  },
+};
+
+/** The map opens on the whole model; "This class" shows only the class being browsed and its linked classes. */
+export const SwitchesToTheClassBeingBrowsed: Story = {
+  play: async ({ canvasElement }) => {
+    await waitFor(() => expect(canvasElement.querySelector('.map')).not.toBeNull());
+    const thisClass = canvasElement.querySelector('[data-cy="data-model-map-view-class"] button') as HTMLElement;
+
+    await userEvent.click(thisClass);
+    await expect(canvasElement.querySelector('.map')).toBeNull();
+    await expect(canvasElement.querySelector('[data-cy="data-model-neighbourhood-centre"]')).toHaveTextContent(
+      'Slides and Posters'
+    );
+
+    // Back to the whole model, the stored choice the other stories start from.
+    await userEvent.click(canvasElement.querySelector('[data-cy="data-model-map-view-model"] button') as HTMLElement);
+    await expect(canvasElement.querySelector('.map')).not.toBeNull();
+  },
+};
+
+/** With no class of this data model being browsed, "This class" cannot be picked. */
+export const DisablesThisClassWhenNoClassIsBrowsed: Story = {
+  args: { selectedIri: undefined },
+  play: async ({ canvasElement }) => {
+    await waitFor(() => expect(canvasElement.querySelector('.map')).not.toBeNull());
+
+    await expect(canvasElement.querySelector('[data-cy="data-model-map-view-class"] button')).toBeDisabled();
   },
 };

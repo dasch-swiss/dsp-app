@@ -721,7 +721,18 @@
         "summary": "{{classes}} classes, {{links}} liens",
         "card": "{{label}}, {{count}} ressources",
         "linksTo": "lié à {{names}}",
-        "linkedFrom": "lié depuis {{names}}"
+        "linkedFrom": "lié depuis {{names}}",
+        "views": "Vue de la carte",
+        "wholeModel": "Modèle entier",
+        "thisClass": "Cette classe",
+        "subclassOf": "sous-classe de",
+        "linkingHere": "Classes liées à cette classe",
+        "linkedFromHere": "Classes auxquelles cette classe est liée",
+        "noLinks": "Cette classe n'a aucun lien vers d'autres classes.",
+        "linksToClasses": "lié à {{count}} classes",
+        "linkedFromClasses": "lié depuis {{count}} classes",
+        "linksToClassesOne": "lié à 1 classe",
+        "linkedFromClassesOne": "lié depuis 1 classe"
       }
     }
   },

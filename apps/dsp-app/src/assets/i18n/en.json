@@ -721,7 +721,18 @@
         "summary": "{{classes}} classes, {{links}} links",
         "card": "{{label}}, {{count}} resources",
         "linksTo": "links to {{names}}",
-        "linkedFrom": "linked from {{names}}"
+        "linkedFrom": "linked from {{names}}",
+        "views": "Map view",
+        "wholeModel": "Whole model",
+        "thisClass": "This class",
+        "subclassOf": "subclass of",
+        "linkingHere": "Classes that link to this class",
+        "linkedFromHere": "Classes this class links to",
+        "noLinks": "This class has no links to other classes.",
+        "linksToClasses": "links to {{count}} classes",
+        "linkedFromClasses": "linked from {{count}} classes",
+        "linksToClassesOne": "links to 1 class",
+        "linkedFromClassesOne": "linked from 1 class"
       }
     }
   },

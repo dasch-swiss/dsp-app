@@ -11,8 +11,8 @@ const graph: DataModelGraph = {
     { id: 'X', label: 'Place', kind: 'external', navigable: false },
   ],
   edges: [
-    { source: 'A', target: 'B', property: 'author', kind: 'link' },
-    { source: 'A', target: 'X', property: 'place', kind: 'link' },
+    { source: 'A', target: 'B', property: 'author', label: 'author', kind: 'link' },
+    { source: 'A', target: 'X', property: 'place', label: 'place', kind: 'link' },
   ],
 };
 

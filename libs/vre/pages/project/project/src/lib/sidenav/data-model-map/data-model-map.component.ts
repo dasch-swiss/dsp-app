@@ -12,12 +12,14 @@ import {
   signal,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DataModelGraph, DataModelNode } from './data-model-graph';
 import { DataModelLayout, layoutDataModel, PlacedNode } from './data-model-layout';
+import { DataModelNeighbourhoodComponent } from './data-model-neighbourhood.component';
 
 /** Above this many cards, cards show their name only. */
 export const CONDENSED_ABOVE = 20;
@@ -26,24 +28,39 @@ export const HIDDEN_ABOVE = 60;
 export const MIN_WIDTH = 240;
 
 const COLLAPSED_KEY = 'dsp-data-model-map-collapsed';
+const VIEW_KEY = 'dsp-data-model-map-view';
+
+/** `model`: the whole data model. `class`: the class being browsed and the classes linked with it. */
+type MapView = 'model' | 'class';
 
 type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
 
 /**
- * A small map of one data model: a card per class with its resource count, lines for the links between classes.
- * The class being browsed and the classes it is linked with are highlighted.
+ * A small map of one data model, in two views: the whole model, a card per class with its resource count and lines
+ * for the links between classes, the class being browsed highlighted; or only that class and the classes linked
+ * with it.
  */
 @Component({
   selector: 'app-data-model-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
+  imports: [
+    DataModelNeighbourhoodComponent,
+    DecimalPipe,
+    MatButton,
+    MatButtonToggle,
+    MatButtonToggleGroup,
+    MatIcon,
+    MatIconButton,
+    MatTooltip,
+    TranslatePipe,
+  ],
   template: `
     @let t = 'pages.dataBrowser.dataModelMap';
     <div class="header">
       <span class="class-count">
         {{ t + (classCount() === 1 ? '.classCountOne' : '.classCount') | translate: { count: classCount() } }}
       </span>
-      @if (fits()) {
+      @if (fits() || selectedInModel()) {
         <button
           mat-icon-button
           class="toggle"
@@ -59,6 +76,31 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
         <mat-icon>open_in_full</mat-icon>{{ t + '.fullMap' | translate }}
       </button>
     </div>
+
+    @if (!collapsed()) {
+      <mat-button-toggle-group
+        class="views"
+        hideSingleSelectionIndicator
+        [attr.aria-label]="t + '.views' | translate"
+        [value]="activeView()"
+        (change)="setView($event.value)">
+        <mat-button-toggle value="model" data-cy="data-model-map-view-model">
+          {{ t + '.wholeModel' | translate }}
+        </mat-button-toggle>
+        <mat-button-toggle value="class" data-cy="data-model-map-view-class" [disabled]="!selectedInModel()">
+          {{ t + '.thisClass' | translate }}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    }
+
+    @if (!collapsed() && activeView() === 'class') {
+      <app-data-model-neighbourhood
+        [graph]="graph()"
+        [classIri]="selectedIri()!"
+        [anyResourceLabel]="anyResourceLabel()"
+        [subclassLabel]="t + '.subclassOf' | translate"
+        (classSelected)="classSelected.emit($event)" />
+    }
 
     @if (visibleLayout(); as layout) {
       <nav
@@ -146,6 +188,17 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
         height: 32px;
         font-size: 12px;
         color: $cool_gray_500;
+      }
+
+      .views {
+        display: flex;
+        margin-bottom: 8px;
+        --mat-button-toggle-height: 28px;
+        --mat-button-toggle-label-text-size: 12px;
+
+        mat-button-toggle {
+          flex: 1;
+        }
       }
 
       .class-count {
@@ -306,7 +359,7 @@ export class DataModelMapComponent {
   private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly _width = signal(0);
 
-  readonly collapsed = signal(readCollapsed());
+  readonly collapsed = signal(readStored(COLLAPSED_KEY) === 'true');
   readonly focusedId = signal<string | undefined>(undefined);
 
   readonly classCount = computed(() => this.graph().nodes.filter(node => node.kind === 'class').length);
@@ -318,7 +371,17 @@ export class DataModelMapComponent {
   readonly layout = computed<DataModelLayout | undefined>(() =>
     this.fits() ? layoutDataModel(this.graph(), { width: this._mapWidth(), condensed: this.condensed() }) : undefined
   );
-  readonly visibleLayout = computed(() => (this.collapsed() ? undefined : this.layout()));
+  /** Whether the class being browsed is in this data model, so "This class" can show it. */
+  readonly selectedInModel = computed(() =>
+    this.graph().nodes.some(node => node.kind === 'class' && node.id === this.selectedIri())
+  );
+  private readonly _view = signal<MapView>(readStored(VIEW_KEY) === 'class' ? 'class' : 'model');
+  /** The view the user picked, falling back to the whole model while no class of this data model is browsed. */
+  readonly activeView = computed<MapView>(() => (this.selectedInModel() ? this._view() : 'model'));
+
+  readonly visibleLayout = computed(() =>
+    this.collapsed() || this.activeView() !== 'model' ? undefined : this.layout()
+  );
 
   readonly neighbours = computed(() => {
     const selected = this.selectedIri();
@@ -400,11 +463,12 @@ export class DataModelMapComponent {
 
   toggleCollapsed(): void {
     this.collapsed.update(collapsed => !collapsed);
-    try {
-      localStorage.setItem(COLLAPSED_KEY, String(this.collapsed()));
-    } catch {
-      // Storage unavailable: the choice lasts until the page reloads.
-    }
+    store(COLLAPSED_KEY, String(this.collapsed()));
+  }
+
+  setView(view: MapView): void {
+    this._view.set(view);
+    store(VIEW_KEY, view);
   }
 
   /** Arrow keys move focus to the nearest card in that direction. */
@@ -423,11 +487,19 @@ export class DataModelMapComponent {
   }
 }
 
-function readCollapsed(): boolean {
+function readStored(key: string): string | null {
   try {
-    return localStorage.getItem(COLLAPSED_KEY) === 'true';
+    return localStorage.getItem(key);
   } catch {
-    return false;
+    return null;
+  }
+}
+
+function store(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage unavailable: the choice lasts until the page reloads.
   }
 }
 

@@ -1,5 +1,5 @@
 import { Constants, ReadOntology } from '@dasch-swiss/dsp-js';
-import { LanguageStringDto, OntologyAndResourceClasses } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { OntologyAndResourceClasses } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { buildDataModelGraph } from './data-model-graph';
 
 const ONTO = 'http://0.0.0.0:3333/ontology/0001/a/v2';
@@ -15,15 +15,24 @@ const v3 = (iri: string, classes: [string, number][]): OntologyAndResourceClasse
     })),
   }) as unknown as OntologyAndResourceClasses;
 
-type Prop = { id: string; objectType?: string; isLinkProperty?: boolean; isLinkValueProperty?: boolean };
-type Has = { propertyIndex: string; isInherited?: boolean };
+type Prop = {
+  id: string;
+  objectType?: string;
+  isLinkProperty?: boolean;
+  isLinkValueProperty?: boolean;
+  labels?: { language: string; value: string }[];
+};
+type Has = { propertyIndex: string; isInherited?: boolean; guiOrder?: number };
 
-const definition = (classes: Record<string, { props?: Has[]; subClassOf?: string[] }>, properties: Prop[]) =>
+const definition = (
+  classes: Record<string, { props?: Has[]; subClassOf?: string[]; comment?: string }>,
+  properties: Prop[]
+) =>
   ({
     classes: Object.fromEntries(
       Object.entries(classes).map(([id, c]) => [
         id,
-        { id, propertiesList: c.props ?? [], subClassOf: c.subClassOf ?? [] },
+        { id, propertiesList: c.props ?? [], subClassOf: c.subClassOf ?? [], comment: c.comment },
       ])
     ),
     properties: Object.fromEntries(
@@ -31,7 +40,7 @@ const definition = (classes: Record<string, { props?: Has[]; subClassOf?: string
     ),
   }) as unknown as ReadOntology;
 
-const labelOf = (labels: LanguageStringDto[] | undefined) => labels?.[0]?.value ?? '';
+const labelOf = (labels: ReadonlyArray<{ value: string }> | undefined) => labels?.[0]?.value ?? '';
 
 describe('buildDataModelGraph', () => {
   const ontology = v3(ONTO, [
@@ -68,7 +77,7 @@ describe('buildDataModelGraph', () => {
     ]);
 
     expect(graph.edges).toEqual([
-      { source: `${ONTO}#Slide`, target: `${ONTO}#Author`, property: `${ONTO}#author`, kind: 'link' },
+      { source: `${ONTO}#Slide`, target: `${ONTO}#Author`, property: `${ONTO}#author`, label: 'author', kind: 'link' },
     ]);
   });
 
@@ -128,6 +137,7 @@ describe('buildDataModelGraph', () => {
         source: `${ONTO}#Visual`,
         target: `${ONTO}#Slide`,
         property: expect.stringContaining('subClassOf'),
+        label: '',
         kind: 'subclass',
       },
     ]);
@@ -142,5 +152,36 @@ describe('buildDataModelGraph', () => {
 
     expect(graph.edges).toEqual([]);
     expect(graph.nodes).toHaveLength(3);
+  });
+
+  it('gives a class of the data model its description and its own properties in form order, links named', () => {
+    const graph = build([
+      definition(
+        {
+          [`${ONTO}#Slide`]: {
+            comment: 'A slide or a poster.',
+            props: [
+              { propertyIndex: `${ONTO}#topic`, guiOrder: 2 },
+              { propertyIndex: `${ONTO}#author`, guiOrder: 1 },
+              { propertyIndex: `${ONTO}#authorValue`, guiOrder: 1 },
+              { propertyIndex: `${KNORA}hasStandoffLinkTo`, isInherited: true },
+            ],
+          },
+        },
+        [
+          { id: `${ONTO}#topic`, labels: [{ language: 'en', value: 'Topic' }] },
+          {
+            id: `${ONTO}#author`,
+            objectType: `${ONTO}#Author`,
+            isLinkProperty: true,
+            labels: [{ language: 'en', value: 'author(s)' }],
+          },
+          { id: `${ONTO}#authorValue`, isLinkValueProperty: true },
+        ]
+      ),
+    ]);
+
+    expect(graph.nodes[0]).toMatchObject({ description: 'A slide or a poster.', properties: ['author(s)', 'Topic'] });
+    expect(graph.edges[0].label).toBe('author(s)');
   });
 });
