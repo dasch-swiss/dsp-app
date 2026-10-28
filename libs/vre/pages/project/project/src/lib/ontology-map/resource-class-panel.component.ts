@@ -143,6 +143,10 @@ interface Connection {
           <button mat-flat-button color="primary" data-cy="class-panel-browse" (click)="browse.emit(classIri())">
             {{ t + '.browse' | translate }}
           </button>
+          <button mat-stroked-button data-cy="class-panel-filter" (click)="filter.emit(classIri())">
+            <mat-icon>filter_alt</mat-icon>
+            {{ t + '.filter' | translate }}
+          </button>
           @if (canEdit()) {
             <button mat-stroked-button data-cy="class-panel-edit" (click)="edit.emit(classIri())">
               {{ t + '.edit' | translate }}
@@ -377,6 +381,8 @@ export class ResourceClassPanelComponent {
   readonly classSelected = output<string>();
   /** "Browse resources" was clicked; emits the class IRI. */
   readonly browse = output<string>();
+  /** "Filter on this class" was clicked; emits the class IRI, to show it with the classes linking to it. */
+  readonly filter = output<string>();
   /** "Edit class" was clicked; emits the class IRI. */
   readonly edit = output<string>();
 

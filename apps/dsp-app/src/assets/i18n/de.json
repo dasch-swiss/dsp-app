@@ -757,7 +757,8 @@
         "via": "über {{property}}",
         "none": "Keine",
         "browse": "Ressourcen anzeigen",
-        "edit": "Klasse bearbeiten"
+        "edit": "Klasse bearbeiten",
+        "filter": "Nach dieser Klasse filtern"
       },
       "dataModel": "Datenmodell",
       "counts": "{{classes}} Klassen · {{links}} Verknüpfungen",

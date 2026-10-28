@@ -237,6 +237,8 @@ export class OntologyGraphComponent {
 
   /** A class of this project was clicked; emits its IRI. */
   readonly classSelected = output<string>();
+  /** A class of this data model was double-clicked; emits its IRI, to show it with the classes linking to it. */
+  readonly classFiltered = output<string>();
 
   private readonly _canvas = viewChild.required<ElementRef<HTMLElement>>('canvas');
   private readonly _cy = signal<Core | undefined>(undefined);
@@ -276,6 +278,10 @@ export class OntologyGraphComponent {
         cy.on('tap', 'node', event => {
           const id = event.target.id();
           if (this._navigable().has(id)) this.classSelected.emit(id);
+        });
+        cy.on('dbltap', 'node', event => {
+          const id = event.target.id();
+          if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
         cy.on('mouseover', 'node', event => event.target.connectedEdges().addClass('highlighted'));
         cy.on('mouseout', 'node', event => event.target.connectedEdges().removeClass('highlighted'));

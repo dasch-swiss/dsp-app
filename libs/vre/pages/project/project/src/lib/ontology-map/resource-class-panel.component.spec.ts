@@ -86,4 +86,13 @@ describe('ResourceClassPanelComponent', () => {
     expect(shown).toEqual(['Person']);
     expect(browsed).toEqual(['Film']);
   });
+
+  it('asks to filter the graph on the class', () => {
+    const filtered: string[] = [];
+    component.filter.subscribe(iri => filtered.push(iri));
+
+    fixture.nativeElement.querySelector('[data-cy="class-panel-filter"]').click();
+
+    expect(filtered).toEqual(['Film']);
+  });
 });

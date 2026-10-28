@@ -757,7 +757,8 @@
         "via": "tramite {{property}}",
         "none": "Nessuna",
         "browse": "Sfoglia le risorse",
-        "edit": "Modifica la classe"
+        "edit": "Modifica la classe",
+        "filter": "Filtra su questa classe"
       },
       "dataModel": "Modello di dati",
       "counts": "{{classes}} classi · {{links}} collegamenti",

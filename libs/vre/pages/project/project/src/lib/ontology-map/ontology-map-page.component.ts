@@ -96,12 +96,12 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
               [attr.aria-label]="m + '.view' | translate"
               [value]="view()"
               (change)="setView($event.value)">
-              <mat-button-toggle value="map"
-                ><mat-icon>dashboard</mat-icon>{{ m + '.viewMap' | translate }}</mat-button-toggle
-              >
-              <mat-button-toggle value="graph"
-                ><mat-icon>hub</mat-icon>{{ m + '.viewGraph' | translate }}</mat-button-toggle
-              >
+              <mat-button-toggle value="graph">
+                <mat-icon>hub</mat-icon>{{ m + '.viewGraph' | translate }}
+              </mat-button-toggle>
+              <mat-button-toggle value="map">
+                <mat-icon>dashboard</mat-icon>{{ m + '.viewMap' | translate }}
+              </mat-button-toggle>
             </mat-button-toggle-group>
             @if (view() === 'graph') {
               <button
@@ -169,7 +169,8 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [selectedIri]="classIri()"
                   [layout]="layout()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
-                  (classSelected)="panelIri.set($event)" />
+                  (classSelected)="panelIri.set($event)"
+                  (classFiltered)="filterOn($event)" />
               } @else {
                 <app-data-model-map
                   class="view"
@@ -192,6 +193,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   (classSelected)="panelIri.set($event)"
                   (closed)="panelIri.set(undefined)"
                   (browse)="open($event)"
+                  (filter)="filterOn($event)"
                   (edit)="edit($event)" />
               }
             </div>
@@ -356,8 +358,8 @@ export class OntologyMapPageComponent {
   });
 
   readonly layouts = LAYOUTS;
-  /** Our map or the Cytoscape graph; remembered in this browser. */
-  readonly view = signal<OntologyMapView>(readStored(VIEW_KEY) === 'graph' ? 'graph' : 'map');
+  /** The Cytoscape graph by default, or our map; remembered in this browser. */
+  readonly view = signal<OntologyMapView>(readStored(VIEW_KEY) === 'map' ? 'map' : 'graph');
   /** How the graph view arranges the classes; remembered in this browser. */
   readonly layout = signal<GraphLayout>(
     LAYOUTS.find(option => option.value === readStored(LAYOUT_KEY))?.value ?? 'tree'
@@ -404,6 +406,12 @@ export class OntologyMapPageComponent {
   setView(view: OntologyMapView): void {
     this.view.set(view);
     store(VIEW_KEY, view);
+  }
+
+  /** Shows the class with only the classes linking to it, in the Graph view. */
+  filterOn(classIri: string): void {
+    this.setView('graph');
+    this.filterIri.set(classIri);
   }
 
   setLayout(layout: GraphLayout): void {
