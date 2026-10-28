@@ -13,7 +13,7 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { DataModelMapComponent, MapDetail } from '../sidenav/data-model-map/data-model-map.component';
-import { classColors, GraphLayout, linkedWith } from './ontology-graph-elements';
+import { classColors, GraphLayout, GraphSize, linkedWith } from './ontology-graph-elements';
 import { OntologyGraphComponent } from './ontology-graph.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
@@ -28,6 +28,9 @@ const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 const DETAIL_KEY = 'dsp-ontology-map-detail';
 const VIEW_KEY = 'dsp-ontology-map-view';
 const LAYOUT_KEY = 'dsp-ontology-map-layout';
+const SIZE_KEY = 'dsp-ontology-map-size';
+
+const SIZES: GraphSize[] = ['small', 'normal', 'large'];
 
 /** `map`: our own map, with summary or property cards. `graph`: the Cytoscape graph, to compare the two. */
 type OntologyMapView = 'map' | 'graph';
@@ -144,6 +147,17 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   </mat-button-toggle>
                 }
               </mat-button-toggle-group>
+              <mat-button-toggle-group
+                class="toggle"
+                hideSingleSelectionIndicator
+                data-cy="ontology-map-size"
+                [attr.aria-label]="m + '.size' | translate"
+                [value]="size()"
+                (change)="setSize($event.value)">
+                @for (option of sizes; track option) {
+                  <mat-button-toggle [value]="option">{{ m + '.sizes.' + option | translate }}</mat-button-toggle>
+                }
+              </mat-button-toggle-group>
               <button
                 mat-icon-button
                 class="fit"
@@ -179,6 +193,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [graph]="graphShown() ?? graph"
                   [selectedIri]="classIri()"
                   [layout]="layout()"
+                  [size]="size()"
                   [colors]="colors()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   (classSelected)="openPanel($event)"
@@ -376,6 +391,9 @@ export class OntologyMapPageComponent {
   readonly layout = signal<GraphLayout>(
     LAYOUTS.find(option => option.value === readStored(LAYOUT_KEY))?.value ?? 'circle'
   );
+  readonly sizes = SIZES;
+  /** How big the graph draws boxes, text and lines; remembered in this browser. */
+  readonly size = signal<GraphSize>(SIZES.find(size => size === readStored(SIZE_KEY)) ?? 'normal');
   readonly graphView = viewChild(OntologyGraphComponent);
 
   /** Whether cards show their summary or their properties; remembered in this browser. */
@@ -459,6 +477,11 @@ export class OntologyMapPageComponent {
     const name = this._params()?.get(param);
     if (!name) return undefined;
     return this.graph()?.nodes.find(node => node.kind === 'class' && classNameOf(node.id) === name)?.id;
+  }
+
+  setSize(size: GraphSize): void {
+    this.size.set(size);
+    store(SIZE_KEY, size);
   }
 
   setLayout(layout: GraphLayout): void {

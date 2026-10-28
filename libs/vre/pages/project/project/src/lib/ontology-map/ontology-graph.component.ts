@@ -17,7 +17,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
-import { GraphLayout, layoutOptions, toGraphElements } from './ontology-graph-elements';
+import { GRAPH_SIZE_FACTOR, GraphLayout, GraphSize, layoutOptions, toGraphElements } from './ontology-graph-elements';
 
 /** The DSP-APP palette, as the canvas needs literal colours. */
 const COLOR = {
@@ -31,7 +31,8 @@ const COLOR = {
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
 const FIT_PADDING = 56;
 
-const STYLE: StylesheetJson = [
+/** The graph's stylesheet, boxes, text and lines scaled by `f`. */
+const styleFor = (f: number): StylesheetJson => [
   {
     selector: 'node',
     style: {
@@ -40,14 +41,14 @@ const STYLE: StylesheetJson = [
       'text-valign': 'center',
       'text-halign': 'center',
       'font-family': 'Roboto, sans-serif',
-      'font-size': 15,
+      'font-size': 15 * f,
       'font-weight': 500,
       color: COLOR.text,
       width: 'label',
       height: 'label',
-      padding: '16px',
+      padding: `${16 * f}px`,
       'background-color': 'data(color)',
-      'border-width': 1,
+      'border-width': f,
       'border-color': COLOR.muted,
     },
   },
@@ -62,21 +63,21 @@ const STYLE: StylesheetJson = [
     },
   },
   { selector: 'node.unlinked', style: { 'border-style': 'dashed', 'border-color': COLOR.border } },
-  { selector: 'node.main', style: { 'border-width': 2, 'border-color': COLOR.text } },
-  { selector: 'node.selected', style: { 'border-width': 3, 'border-color': COLOR.primary } },
+  { selector: 'node.main', style: { 'border-width': 2 * f, 'border-color': COLOR.text } },
+  { selector: 'node.selected', style: { 'border-width': 3 * f, 'border-color': COLOR.primary } },
   { selector: 'node:active', style: { 'overlay-opacity': 0.08, 'overlay-color': COLOR.primary } },
   {
     selector: 'edge',
     style: {
-      width: 1.2,
+      width: 1.2 * f,
       'curve-style': 'bezier',
       'line-color': COLOR.line,
       'target-arrow-shape': 'triangle',
       'target-arrow-color': COLOR.line,
-      'arrow-scale': 0.8,
+      'arrow-scale': 0.8 * f,
       label: 'data(label)',
       'font-family': 'Roboto, sans-serif',
-      'font-size': 10,
+      'font-size': 10 * f,
       color: COLOR.muted,
       'text-rotation': 'autorotate',
       'text-background-color': '#F9FAFB',
@@ -92,7 +93,7 @@ const STYLE: StylesheetJson = [
   },
   {
     selector: 'edge.highlighted',
-    style: { width: 2, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
+    style: { width: 2 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
   },
 ];
 
@@ -196,6 +197,8 @@ export class OntologyGraphComponent {
   readonly layout = input<GraphLayout>('circle');
   /** Colour per class, from the whole data model so a filter keeps them; see `classColors`. */
   readonly colors = input.required<Map<string, string>>();
+  /** How big boxes, text and lines are drawn. */
+  readonly size = input<GraphSize>('normal');
   /** Label for knora-api's "any resource" node, in the current language. */
   readonly anyResourceLabel = input('Any resource');
 
@@ -236,7 +239,7 @@ export class OntologyGraphComponent {
         const { default: cytoscape } = await import('cytoscape');
         const cy = cytoscape({
           container: this._canvas().nativeElement,
-          style: STYLE,
+          style: styleFor(GRAPH_SIZE_FACTOR[untracked(() => this.size())]),
           minZoom: 0.2,
           maxZoom: 3,
           wheelSensitivity: 0.3,
@@ -298,6 +301,14 @@ export class OntologyGraphComponent {
       cy.add(untracked(() => this._elements()));
       this._arrange(cy, layout);
     });
+    // A new size restyles in place: classes stay where they are, only boxes, text and lines grow or shrink.
+    effect(() => {
+      const cy = this._cy();
+      const size = this.size();
+      if (!cy) return;
+      cy.style(styleFor(GRAPH_SIZE_FACTOR[size]));
+      cy.fit(undefined, FIT_PADDING);
+    });
     effect(() => {
       const cy = this._cy();
       const selected = this.selectedIri();
@@ -310,7 +321,11 @@ export class OntologyGraphComponent {
   /** Lays the classes out over the whole box and fits them in it; dragged places are forgotten. */
   private _arrange(cy: Core, layout = untracked(() => this.layout())): void {
     if (cy.elements().empty()) return;
+    // Lay out at normal size, so the chosen size changes how big things are drawn, not how far apart they are.
+    const size = GRAPH_SIZE_FACTOR[untracked(() => this.size())];
+    if (size !== 1) cy.style(styleFor(1));
     cy.layout(layoutOptions(layout) as never).run();
+    if (size !== 1) cy.style(styleFor(size));
     cy.fit(undefined, FIT_PADDING);
     this._dragged = false;
   }

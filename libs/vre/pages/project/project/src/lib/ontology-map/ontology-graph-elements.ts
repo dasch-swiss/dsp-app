@@ -5,6 +5,11 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 /** The layouts the graph view offers: a tree following the links, a circle, a force-directed spread, a grid. */
 export type GraphLayout = 'tree' | 'circle' | 'force' | 'grid';
 
+/** How big the graph draws boxes, text and lines, against the space between classes. */
+export type GraphSize = 'small' | 'normal' | 'large';
+
+export const GRAPH_SIZE_FACTOR: Record<GraphSize, number> = { small: 1.25, normal: 1.75, large: 2.5 };
+
 /**
  * Light colours that tell classes apart, all dark-text legible (ColorBrewer Set3, then Pastel1); a data model with
  * more classes repeats them.

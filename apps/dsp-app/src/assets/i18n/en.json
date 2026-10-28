@@ -780,7 +780,13 @@
       "legendDashed": "other data model or no links",
       "classFilter": "Class",
       "allClasses": "All classes",
-      "resetFilter": "Reset"
+      "resetFilter": "Reset",
+      "size": "Size",
+      "sizes": {
+        "small": "Small",
+        "normal": "Normal",
+        "large": "Large"
+      }
     }
   },
   "resourceEditor": {

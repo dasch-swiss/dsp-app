@@ -780,7 +780,13 @@
       "legendDashed": "altro modello di dati o nessun collegamento",
       "classFilter": "Classe",
       "allClasses": "Tutte le classi",
-      "resetFilter": "Reimposta"
+      "resetFilter": "Reimposta",
+      "size": "Dimensione",
+      "sizes": {
+        "small": "Piccolo",
+        "normal": "Normale",
+        "large": "Grande"
+      }
     }
   },
   "resourceEditor": {
