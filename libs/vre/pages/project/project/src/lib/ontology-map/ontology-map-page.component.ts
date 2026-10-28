@@ -222,6 +222,12 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   (browse)="open($event)"
                   (filter)="filterOn($event)"
                   (edit)="edit($event)" />
+              } @else if (view() === 'graph') {
+                <!-- The panel's column stays in the Graph view, so opening a class does not move the graph. -->
+                <div class="panel panel-hint" data-cy="ontology-map-panel-hint">
+                  <mat-icon>touch_app</mat-icon>
+                  <span>{{ m + '.panelHint' | translate }}</span>
+                </div>
               }
             </div>
           }
@@ -336,6 +342,24 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
         flex: none;
         width: 440px;
         max-width: 50%;
+      }
+
+      .panel-hint {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 24px;
+        border-left: 1px dashed $cool_gray_200;
+        text-align: center;
+        font-size: 13px;
+        color: $cool_gray_500;
+
+        mat-icon {
+          color: $cool_gray_400;
+        }
       }
 
       .empty {

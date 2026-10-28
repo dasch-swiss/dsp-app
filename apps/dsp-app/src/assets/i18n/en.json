@@ -786,7 +786,8 @@
         "small": "Small",
         "normal": "Normal",
         "large": "Large"
-      }
+      },
+      "panelHint": "Click a class to see its details"
     }
   },
   "resourceEditor": {
