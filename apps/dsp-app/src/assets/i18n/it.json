@@ -763,7 +763,20 @@
       "counts": "{{classes}} classi · {{links}} collegamenti",
       "detail": "Livello di dettaglio",
       "summary": "Riepilogo",
-      "properties": "Proprietà"
+      "properties": "Proprietà",
+      "view": "Vista",
+      "viewMap": "Mappa",
+      "viewGraph": "Grafo",
+      "layout": "Disposizione",
+      "layouts": {
+        "tree": "Albero",
+        "circle": "Cerchio",
+        "force": "Forze",
+        "grid": "Griglia"
+      },
+      "fit": "Adatta allo schermo",
+      "graphFailed": "Non è stato possibile caricare il grafo.",
+      "legendDashed": "altro modello di dati o nessun collegamento"
     }
   },
   "resourceEditor": {

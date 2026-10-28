@@ -763,7 +763,20 @@
       "counts": "{{classes}} classes · {{links}} links",
       "detail": "Detail level",
       "summary": "Summary",
-      "properties": "Properties"
+      "properties": "Properties",
+      "view": "View",
+      "viewMap": "Map",
+      "viewGraph": "Graph",
+      "layout": "Layout",
+      "layouts": {
+        "tree": "Tree",
+        "circle": "Circle",
+        "force": "Force",
+        "grid": "Grid"
+      },
+      "fit": "Fit to screen",
+      "graphFailed": "The graph could not be loaded.",
+      "legendDashed": "other data model or no links"
     }
   },
   "resourceEditor": {

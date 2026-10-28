@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -12,12 +13,26 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { DataModelMapComponent, MapDetail } from '../sidenav/data-model-map/data-model-map.component';
+import { GraphLayout } from './ontology-graph-elements';
+import { OntologyGraphComponent } from './ontology-graph.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
 /** Query parameters of the Ontology map tab: the data model to show and the class to outline, if any. */
 export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as const;
 
 const DETAIL_KEY = 'dsp-ontology-map-detail';
+const VIEW_KEY = 'dsp-ontology-map-view';
+const LAYOUT_KEY = 'dsp-ontology-map-layout';
+
+/** `map`: our own map, with summary or property cards. `graph`: the Cytoscape graph, to compare the two. */
+type OntologyMapView = 'map' | 'graph';
+
+const LAYOUTS: { value: GraphLayout; icon: string }[] = [
+  { value: 'tree', icon: 'account_tree' },
+  { value: 'circle', icon: 'radio_button_unchecked' },
+  { value: 'force', icon: 'bubble_chart' },
+  { value: 'grid', icon: 'grid_view' },
+];
 
 /**
  * The Ontology map tab: the map of one data model of the project, drawn large across the page, with a toolbar to
@@ -33,9 +48,12 @@ const DETAIL_KEY = 'dsp-ontology-map-detail';
     MatButtonToggle,
     MatButtonToggleGroup,
     MatIcon,
+    MatIconButton,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
+    MatTooltip,
+    OntologyGraphComponent,
     ResourceClassPanelComponent,
     TranslatePipe,
   ],
@@ -72,30 +90,81 @@ const DETAIL_KEY = 'dsp-ontology-map-detail';
             }
             <span class="spacer"></span>
             <mat-button-toggle-group
-              class="detail"
+              class="toggle"
               hideSingleSelectionIndicator
-              data-cy="ontology-map-detail"
-              [attr.aria-label]="m + '.detail' | translate"
-              [value]="detail()"
-              (change)="setDetail($event.value)">
-              <mat-button-toggle value="summary">
-                <mat-icon>view_agenda</mat-icon>{{ m + '.summary' | translate }}
-              </mat-button-toggle>
-              <mat-button-toggle value="properties">
-                <mat-icon>list_alt</mat-icon>{{ m + '.properties' | translate }}
-              </mat-button-toggle>
+              data-cy="ontology-map-view"
+              [attr.aria-label]="m + '.view' | translate"
+              [value]="view()"
+              (change)="setView($event.value)">
+              <mat-button-toggle value="map"
+                ><mat-icon>dashboard</mat-icon>{{ m + '.viewMap' | translate }}</mat-button-toggle
+              >
+              <mat-button-toggle value="graph"
+                ><mat-icon>hub</mat-icon>{{ m + '.viewGraph' | translate }}</mat-button-toggle
+              >
             </mat-button-toggle-group>
+            @if (view() === 'graph') {
+              <mat-button-toggle-group
+                class="toggle"
+                hideSingleSelectionIndicator
+                data-cy="ontology-map-layout"
+                [attr.aria-label]="m + '.layout' | translate"
+                [value]="layout()"
+                (change)="setLayout($event.value)">
+                @for (option of layouts; track option.value) {
+                  <mat-button-toggle [value]="option.value">
+                    <mat-icon>{{ option.icon }}</mat-icon
+                    >{{ m + '.layouts.' + option.value | translate }}
+                  </mat-button-toggle>
+                }
+              </mat-button-toggle-group>
+              <button
+                mat-icon-button
+                class="fit"
+                data-cy="ontology-map-fit"
+                [attr.aria-label]="m + '.fit' | translate"
+                [matTooltip]="m + '.fit' | translate"
+                (click)="graphView()?.fit()">
+                <mat-icon>fit_screen</mat-icon>
+              </button>
+            } @else {
+              <mat-button-toggle-group
+                class="toggle"
+                hideSingleSelectionIndicator
+                data-cy="ontology-map-detail"
+                [attr.aria-label]="m + '.detail' | translate"
+                [value]="detail()"
+                (change)="setDetail($event.value)">
+                <mat-button-toggle value="summary">
+                  <mat-icon>view_agenda</mat-icon>{{ m + '.summary' | translate }}
+                </mat-button-toggle>
+                <mat-button-toggle value="properties">
+                  <mat-icon>list_alt</mat-icon>{{ m + '.properties' | translate }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            }
           </div>
 
           @if (graph(); as graph) {
             <div class="body">
-              <app-data-model-map
-                [graph]="graph"
-                [selectedIri]="classIri()"
-                [anyResourceLabel]="t + '.anyResource' | translate"
-                [full]="true"
-                [detail]="detail()"
-                (classSelected)="panelIri.set($event)" />
+              @if (view() === 'graph') {
+                <app-ontology-graph
+                  class="view"
+                  [graph]="graph"
+                  [selectedIri]="classIri()"
+                  [layout]="layout()"
+                  [anyResourceLabel]="t + '.anyResource' | translate"
+                  (classSelected)="panelIri.set($event)" />
+              } @else {
+                <app-data-model-map
+                  class="view"
+                  [graph]="graph"
+                  [selectedIri]="classIri()"
+                  [anyResourceLabel]="t + '.anyResource' | translate"
+                  [full]="true"
+                  [detail]="detail()"
+                  (classSelected)="panelIri.set($event)" />
+              }
               @if (panelIri(); as openIri) {
                 <app-resource-class-panel
                   class="panel"
@@ -189,7 +258,12 @@ const DETAIL_KEY = 'dsp-ontology-map-detail';
         flex: 1;
       }
 
-      .detail {
+      .fit {
+        --mat-icon-button-state-layer-size: 34px;
+        padding: 5px;
+      }
+
+      .toggle {
         --mat-button-toggle-height: 34px;
         --mat-button-toggle-label-text-size: 13px;
         background: white;
@@ -209,7 +283,7 @@ const DETAIL_KEY = 'dsp-ontology-map-detail';
         display: flex;
       }
 
-      app-data-model-map {
+      .view {
         flex: 1;
         min-width: 0;
       }
@@ -266,6 +340,15 @@ export class OntologyMapPageComponent {
     };
   });
 
+  readonly layouts = LAYOUTS;
+  /** Our map or the Cytoscape graph; remembered in this browser. */
+  readonly view = signal<OntologyMapView>(readStored(VIEW_KEY) === 'graph' ? 'graph' : 'map');
+  /** How the graph view arranges the classes; remembered in this browser. */
+  readonly layout = signal<GraphLayout>(
+    LAYOUTS.find(option => option.value === readStored(LAYOUT_KEY))?.value ?? 'tree'
+  );
+  readonly graphView = viewChild(OntologyGraphComponent);
+
   /** Whether cards show their summary or their properties; remembered in this browser. */
   readonly detail = signal<MapDetail>(readStored(DETAIL_KEY) === 'properties' ? 'properties' : 'summary');
 
@@ -284,11 +367,17 @@ export class OntologyMapPageComponent {
 
   setDetail(detail: MapDetail): void {
     this.detail.set(detail);
-    try {
-      localStorage.setItem(DETAIL_KEY, detail);
-    } catch {
-      // Storage unavailable: the choice lasts until the page reloads.
-    }
+    store(DETAIL_KEY, detail);
+  }
+
+  setView(view: OntologyMapView): void {
+    this.view.set(view);
+    store(VIEW_KEY, view);
+  }
+
+  setLayout(layout: GraphLayout): void {
+    this.layout.set(layout);
+    store(LAYOUT_KEY, layout);
   }
 
   /** Opens the class in the Data tab. */
@@ -312,6 +401,14 @@ export class OntologyMapPageComponent {
       ],
       { relativeTo: this._route }
     );
+  }
+}
+
+function store(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage unavailable: the choice lasts until the page reloads.
   }
 }
 

@@ -763,7 +763,20 @@
       "counts": "{{classes}} classes · {{links}} liens",
       "detail": "Niveau de détail",
       "summary": "Résumé",
-      "properties": "Propriétés"
+      "properties": "Propriétés",
+      "view": "Vue",
+      "viewMap": "Carte",
+      "viewGraph": "Graphe",
+      "layout": "Disposition",
+      "layouts": {
+        "tree": "Arbre",
+        "circle": "Cercle",
+        "force": "Forces",
+        "grid": "Grille"
+      },
+      "fit": "Ajuster à l'écran",
+      "graphFailed": "Le graphe n'a pas pu être chargé.",
+      "legendDashed": "autre modèle de données ou aucun lien"
     }
   },
   "resourceEditor": {

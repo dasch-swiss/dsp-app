@@ -763,7 +763,20 @@
       "counts": "{{classes}} Klassen · {{links}} Verknüpfungen",
       "detail": "Detailstufe",
       "summary": "Übersicht",
-      "properties": "Eigenschaften"
+      "properties": "Eigenschaften",
+      "view": "Ansicht",
+      "viewMap": "Karte",
+      "viewGraph": "Graph",
+      "layout": "Anordnung",
+      "layouts": {
+        "tree": "Baum",
+        "circle": "Kreis",
+        "force": "Kräfte",
+        "grid": "Raster"
+      },
+      "fit": "An Bildschirm anpassen",
+      "graphFailed": "Der Graph konnte nicht geladen werden.",
+      "legendDashed": "anderes Datenmodell oder keine Verknüpfungen"
     }
   },
   "resourceEditor": {
