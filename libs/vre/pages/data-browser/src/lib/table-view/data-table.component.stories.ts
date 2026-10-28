@@ -190,7 +190,8 @@ const meta: Meta<DataTableComponent> = {
     columnWidths: { description: 'Pixel widths the user has set; a column absent here uses its default.' },
     rowHeight: { description: 'Height every row is drawn at from View options; undefined for Auto.' },
     showComments: {
-      description: 'Whether value comments show under their values, from View options; undefined keeps the stored setting.',
+      description:
+        'Whether value comments show under their values, from View options; undefined keeps the stored setting.',
     },
     selectionActive: { description: 'Whether a comparison set is being built; every row then shows its checkbox.' },
     selectable: { description: 'Whether rows can be selected for comparison; off for anonymous visitors.' },
@@ -730,6 +731,23 @@ export const ShowsTheViewersActionBubbleWhenAValueIsHovered: Story = {
     await expect(bubble).not.toBeNull();
     await expect(bubble?.querySelector('[data-cy="edit-button"]')).not.toBeNull();
     await expect(bubble?.querySelector('[data-cy="delete-button"]')).not.toBeNull();
+  },
+};
+
+/** A bubble that took room re-wrapped a narrow value, moving it from under the pointer and back, over and over (DEV-7670). */
+export const KeepsAValueInPlaceWhileItsActionsShow: Story = {
+  ...editingStory({}),
+  play: async ({ canvasElement }) => {
+    const value = canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement;
+    const content = value.querySelector('.value-content') as HTMLElement;
+    const before = content.getBoundingClientRect();
+
+    await userEvent.hover(value);
+    await waitFor(() => expect(canvasElement.querySelector('[data-cy="action-bubble"]')).not.toBeNull());
+
+    const after = content.getBoundingClientRect();
+    await expect(after.width).toBe(before.width);
+    await expect(after.height).toBe(before.height);
   },
 };
 
@@ -1355,6 +1373,45 @@ export const MovesAColumnByDraggingItsHeader: Story = {
     await waitFor(() =>
       expect(onReorder).toHaveBeenCalledWith([LABEL_COLUMN_KEY, `${ONTO}hasPlace`, `${ONTO}hasTitle`])
     );
+  },
+};
+
+/** CDK clears the dragged header's inline `top` on release; with no reorder to re-render the row, it stopped sticking (DEV-7665). */
+export const KeepsAHeaderStuckWhenItIsDroppedBackInPlace: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const title = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    const from = title.getBoundingClientRect();
+    const y = from.top + from.height / 2;
+    const mouse = (target: EventTarget, type: string, x: number) =>
+      target.dispatchEvent(
+        new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, buttons: 1, detail: 1 })
+      );
+
+    mouse(title.querySelector('.header-label') as HTMLElement, 'mousedown', from.left + 20);
+    for (const x of [from.left + 30, from.left + 60, from.left + 25]) {
+      mouse(document, 'mousemove', x);
+      await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+    // The preview is attached to the body, not the canvas.
+    await waitFor(() => expect(document.querySelector('.cdk-drag-preview')).not.toBeNull());
+    mouse(document, 'mouseup', from.left + 25);
+
+    await waitFor(() => expect(document.querySelector('.cdk-drag-preview')).toBeNull());
+    await waitFor(() => expect(title.style.top).toBe('0px'));
+    await expect(onReorder).not.toHaveBeenCalled();
+  },
+};
+
+/** Half of a handle that straddled the edge was clipped by its cell, so a grab there started the next column's drag (DEV-7666). */
+export const KeepsTheWholeResizeHandleInsideItsHeader: Story = {
+  play: async ({ canvasElement }) => {
+    const title = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    const handle = title.querySelector('[data-cy="column-resize"]') as HTMLElement;
+    const box = handle.getBoundingClientRect();
+
+    await expect(box.right).toBeLessThanOrEqual(title.getBoundingClientRect().right);
+    await expect(document.elementFromPoint(box.right - 1, box.top + box.height / 2)).toBe(handle);
   },
 };
 

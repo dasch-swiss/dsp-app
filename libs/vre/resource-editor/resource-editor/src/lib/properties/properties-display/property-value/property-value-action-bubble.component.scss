@@ -3,4 +3,11 @@
   display: block;
   flex: none;
   padding-top: calc(var(--property-value-padding-block, 16px) - 4px);
+  // A narrow host (a table cell) lays it over the value's end instead: taking room there re-wraps the
+  // value, which can move it out from under the pointer, hide the bubble and bring it back, over and over.
+  position: var(--property-value-actions-position, static);
+  top: 0;
+  right: 0;
+  border-radius: 4px;
+  background: var(--property-value-actions-background, none);
 }
