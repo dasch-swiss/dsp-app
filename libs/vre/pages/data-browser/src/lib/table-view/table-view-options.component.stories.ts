@@ -248,26 +248,39 @@ export const EmitsTheHeightWhileTheSliderIsDragged: Story = {
   },
 };
 
-export const AsksToShowCommentsWhenTheOptionIsTicked: Story = {
+export const ListsCommentsFirstAsASwitchRatherThanAColumn: Story = {
+  play: async () => {
+    await openMenu();
+    const headers = Array.from(document.querySelectorAll('.view-options-panel .section-header')).map(header =>
+      header.textContent?.trim()
+    );
+
+    await expect(headers[0]).toBe('Comments');
+    await expect(overlay().queryByRole('menuitemcheckbox', { name: /Show comments/ })).toBeNull();
+    await expect(overlay().getByRole('switch', { name: /Show comments/ })).toBeInTheDocument();
+  },
+};
+
+export const AsksToShowCommentsWhenTheSwitchIsTurnedOn: Story = {
   args: { showComments: false },
   play: async () => {
     await openMenu();
-    const option = overlay().getByRole('menuitemcheckbox', { name: /Show comments/ });
+    const option = overlay().getByRole('switch', { name: /Show comments/ });
 
     await expect(option).toHaveAttribute('aria-checked', 'false');
     await userEvent.click(option);
 
     await expect(onShowComments).toHaveBeenCalledWith(true);
-    // The menu stays open, like the column rows.
-    await expect(overlay().getByRole('menuitemcheckbox', { name: /Show comments/ })).toBeInTheDocument();
+    // The menu stays open, like the row-height control.
+    await expect(overlay().getByRole('switch', { name: /Show comments/ })).toBeInTheDocument();
   },
 };
 
-export const AsksToHideCommentsWhenTheOptionIsUnticked: Story = {
+export const AsksToHideCommentsWhenTheSwitchIsTurnedOff: Story = {
   args: { showComments: true },
   play: async () => {
     await openMenu();
-    await userEvent.click(overlay().getByRole('menuitemcheckbox', { name: /Show comments/ }));
+    await userEvent.click(overlay().getByRole('switch', { name: /Show comments/ }));
 
     await expect(onShowComments).toHaveBeenCalledWith(false);
   },

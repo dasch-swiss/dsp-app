@@ -3,12 +3,13 @@ import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ROW_HEIGHT_MANUAL_DEFAULT, ROW_HEIGHT_MAX, ROW_HEIGHT_MIN, ROW_HEIGHT_STEP } from './table-column.model';
 import { ColumnPickerEntry } from './table-view-state.service';
 
-/** The table's shaping controls: row height and column visibility. Presentational: takes the picker's rows and emits intent. */
+/** The table's shaping controls: comments, row height and column visibility. Presentational: takes the picker's rows and emits intent. */
 @Component({
   selector: 'app-table-view-options',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +27,23 @@ import { ColumnPickerEntry } from './table-view-state.service';
     <mat-menu #menu="matMenu" xPosition="before">
       <!-- MatMenu's panel carries none of this component's style attributes, so sizing and scroll are set on a wrapper in the projected content. -->
       <div class="view-options-panel">
+        <h4 class="section-header">{{ 'pages.dataBrowser.viewOptions.comments' | translate }}</h4>
+        <!-- A switch, not a checkbox row: a ticked row reads as one more column. -->
+        <div class="comments-control" (click)="$event.stopPropagation()" (keydown)="onControlKeydown($event)">
+          <!-- A label of its own, so the switch can sit at the panel's right edge; MatSlideToggle ids its
+               button after its own id, plus "-button". -->
+          <label class="comments-label" id="show-comments-label" for="show-comments-button">
+            {{ 'pages.dataBrowser.viewOptions.showComments' | translate }}
+          </label>
+          <mat-slide-toggle
+            id="show-comments"
+            aria-labelledby="show-comments-label"
+            data-cy="show-comments"
+            hideIcon
+            [checked]="showComments()"
+            (change)="showCommentsChanged.emit($event.checked)" />
+        </div>
+
         <h4 class="section-header" id="row-height-heading">
           {{ 'pages.dataBrowser.viewOptions.rowHeight' | translate }}
           <span class="section-meta" data-cy="row-height-value">{{ rowHeightLabel() }}</span>
@@ -60,19 +78,6 @@ import { ColumnPickerEntry } from './table-view-state.service';
             </mat-slider>
           }
         </div>
-
-        <h4 class="section-header">{{ 'pages.dataBrowser.viewOptions.comments' | translate }}</h4>
-        <button
-          mat-menu-item
-          type="button"
-          role="menuitemcheckbox"
-          class="option-row"
-          data-cy="show-comments"
-          [attr.aria-checked]="showComments()"
-          (click)="$event.stopPropagation(); showCommentsChanged.emit(!showComments())">
-          <mat-icon class="option-mark">{{ showComments() ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
-          <span class="option-label">{{ 'pages.dataBrowser.viewOptions.showComments' | translate }}</span>
-        </button>
 
         <!-- Each row stops the click so the menu stays open while ticking columns. -->
         <h4 class="section-header">
@@ -121,6 +126,7 @@ import { ColumnPickerEntry } from './table-view-state.service';
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
+    MatSlideToggle,
     MatSlider,
     MatSliderThumb,
     TranslatePipe,
