@@ -779,7 +779,8 @@
       "graphFailed": "Non è stato possibile caricare il grafo.",
       "legendDashed": "altro modello di dati o nessun collegamento",
       "classFilter": "Classe",
-      "allClasses": "Tutte le classi"
+      "allClasses": "Tutte le classi",
+      "resetFilter": "Reimposta"
     }
   },
   "resourceEditor": {

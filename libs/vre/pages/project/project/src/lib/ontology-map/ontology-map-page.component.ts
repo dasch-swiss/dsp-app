@@ -13,7 +13,7 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { DataModelMapComponent, MapDetail } from '../sidenav/data-model-map/data-model-map.component';
-import { GraphLayout, pointingTo } from './ontology-graph-elements';
+import { classColors, GraphLayout, pointingTo } from './ontology-graph-elements';
 import { OntologyGraphComponent } from './ontology-graph.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
@@ -119,6 +119,12 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   <button mat-menu-item (click)="filterIri.set(option.id)">{{ option.label }}</button>
                 }
               </mat-menu>
+              @if (filterIri()) {
+                <button mat-button data-cy="ontology-map-class-reset" (click)="filterIri.set(undefined)">
+                  <mat-icon>close</mat-icon>
+                  {{ m + '.resetFilter' | translate }}
+                </button>
+              }
               <mat-button-toggle-group
                 class="toggle"
                 hideSingleSelectionIndicator
@@ -168,6 +174,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [graph]="graphShown() ?? graph"
                   [selectedIri]="classIri()"
                   [layout]="layout()"
+                  [colors]="colors()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   (classSelected)="panelIri.set($event)"
                   (classFiltered)="filterOn($event)" />
@@ -368,6 +375,12 @@ export class OntologyMapPageComponent {
 
   /** Whether cards show their summary or their properties; remembered in this browser. */
   readonly detail = signal<MapDetail>(readStored(DETAIL_KEY) === 'properties' ? 'properties' : 'summary');
+
+  /** A colour per class of the data model, the same whatever the graph is filtered on. */
+  readonly colors = computed(() => {
+    const graph = this.graph();
+    return graph ? classColors(graph) : new Map<string, string>();
+  });
 
   /** In the Graph view, the class to show with only the classes that link to it; all classes when unset. */
   readonly filterIri = signal<string | undefined>(undefined);

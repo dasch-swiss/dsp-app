@@ -779,7 +779,8 @@
       "graphFailed": "Der Graph konnte nicht geladen werden.",
       "legendDashed": "anderes Datenmodell oder keine Verknüpfungen",
       "classFilter": "Klasse",
-      "allClasses": "Alle Klassen"
+      "allClasses": "Alle Klassen",
+      "resetFilter": "Zurücksetzen"
     }
   },
   "resourceEditor": {

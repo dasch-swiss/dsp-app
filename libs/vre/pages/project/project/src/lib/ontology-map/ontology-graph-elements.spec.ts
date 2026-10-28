@@ -1,6 +1,6 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { layoutOptions, pointingTo, toGraphElements } from './ontology-graph-elements';
+import { CLASS_COLORS, classColors, layoutOptions, pointingTo, toGraphElements } from './ontology-graph-elements';
 
 const graph: DataModelGraph = {
   nodes: [
@@ -19,17 +19,18 @@ const graph: DataModelGraph = {
 
 describe('toGraphElements', () => {
   const elements = toGraphElements(graph, {
-    tints: new Map([['Film', 3]]),
+    colors: classColors(graph),
     mainIri: 'Film',
     selectedIri: 'Person',
     anyResourceLabel: 'Any resource',
   });
   const node = (id: string) => elements.find(e => e.group === 'nodes' && e.data.id === id)!;
 
-  it('draws a node per class, styled by its tint, main and selected state', () => {
-    expect(node('Film').classes).toBe('tint-3 main');
-    expect(node('Person').classes).toBe('tint-0 selected');
-    expect(node('Lonely').classes).toBe('tint-0 unlinked');
+  it('draws a node per class in its own colour, styled by its main and selected state', () => {
+    expect(['Film', 'Lonely', 'Person'].map(id => node(id).data['color'])).toEqual(CLASS_COLORS.slice(0, 3));
+    expect(node('Film').classes).toBe('main');
+    expect(node('Person').classes).toBe('selected');
+    expect(node('Lonely').classes).toBe('unlinked');
   });
 
   it("names knora-api's resource in the current language, drawn as outside the data model", () => {

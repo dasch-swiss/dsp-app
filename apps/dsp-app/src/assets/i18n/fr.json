@@ -779,7 +779,8 @@
       "graphFailed": "Le graphe n'a pas pu être chargé.",
       "legendDashed": "autre modèle de données ou aucun lien",
       "classFilter": "Classe",
-      "allClasses": "Toutes les classes"
+      "allClasses": "Toutes les classes",
+      "resetFilter": "Réinitialiser"
     }
   },
   "resourceEditor": {

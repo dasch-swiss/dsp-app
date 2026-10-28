@@ -779,7 +779,8 @@
       "graphFailed": "The graph could not be loaded.",
       "legendDashed": "other data model or no links",
       "classFilter": "Class",
-      "allClasses": "All classes"
+      "allClasses": "All classes",
+      "resetFilter": "Reset"
     }
   },
   "resourceEditor": {

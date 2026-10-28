@@ -16,15 +16,12 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { linkCounts, linkTints, mainClass } from '../sidenav/data-model-map/data-model-importance';
+import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
 import { GraphLayout, layoutOptions, toGraphElements } from './ontology-graph-elements';
 
 /** The DSP-APP palette, as the canvas needs literal colours. */
 const COLOR = {
   primary: '#336790',
-  primary100: '#D6E0E8',
-  primary50: '#EAEFF3',
-  primary300: '#ADC2D2',
   line: '#A7AAAD',
   border: '#BDBFC1',
   text: '#1F2937',
@@ -43,26 +40,29 @@ const STYLE: StylesheetJson = [
       'text-valign': 'center',
       'text-halign': 'center',
       'font-family': 'Roboto, sans-serif',
-      'font-size': 12,
+      'font-size': 15,
       'font-weight': 500,
       color: COLOR.text,
       width: 'label',
       height: 'label',
-      padding: '10px',
-      'background-color': '#FFFFFF',
+      padding: '16px',
+      'background-color': 'data(color)',
       'border-width': 1,
-      'border-color': COLOR.primary300,
+      'border-color': COLOR.muted,
     },
   },
-  { selector: 'node.tint-1', style: { 'background-color': COLOR.primary50 } },
-  { selector: 'node.tint-2', style: { 'background-color': COLOR.primary100 } },
-  { selector: 'node.tint-3', style: { 'background-color': COLOR.primary300 } },
   {
     selector: 'node.external',
-    style: { 'border-style': 'dashed', 'border-color': COLOR.border, color: COLOR.muted, 'font-style': 'italic' },
+    style: {
+      'background-color': '#FFFFFF',
+      'border-style': 'dashed',
+      'border-color': COLOR.border,
+      color: COLOR.muted,
+      'font-style': 'italic',
+    },
   },
   { selector: 'node.unlinked', style: { 'border-style': 'dashed', 'border-color': COLOR.border } },
-  { selector: 'node.main', style: { 'border-width': 2, 'border-color': COLOR.primary } },
+  { selector: 'node.main', style: { 'border-width': 2, 'border-color': COLOR.text } },
   { selector: 'node.selected', style: { 'border-width': 3, 'border-color': COLOR.primary } },
   { selector: 'node:active', style: { 'overlay-opacity': 0.08, 'overlay-color': COLOR.primary } },
   {
@@ -76,7 +76,7 @@ const STYLE: StylesheetJson = [
       'arrow-scale': 0.8,
       label: 'data(label)',
       'font-family': 'Roboto, sans-serif',
-      'font-size': 9,
+      'font-size': 10,
       color: COLOR.muted,
       'text-rotation': 'autorotate',
       'text-background-color': '#F9FAFB',
@@ -121,15 +121,6 @@ const STYLE: StylesheetJson = [
       <span class="legend-item"
         ><span class="legend-dashed"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
       >
-      <span class="legend-item">
-        {{ t + '.fewerLinks' | translate }}
-        <span class="swatches">
-          @for (tint of [0, 1, 2, 3]; track tint) {
-            <span class="swatch" [attr.data-tint]="tint"></span>
-          }
-        </span>
-        {{ t + '.moreLinks' | translate }}
-      </span>
     </div>
   `,
   styles: [
@@ -193,35 +184,6 @@ const STYLE: StylesheetJson = [
         border: 1px dashed #bdbfc1;
         border-radius: 3px;
       }
-
-      .swatches {
-        display: flex;
-        gap: 2px;
-      }
-
-      .swatch {
-        width: 14px;
-        height: 10px;
-        border-radius: 2px;
-        box-sizing: border-box;
-      }
-
-      .swatch[data-tint='0'] {
-        background: white;
-        border: 1px solid $cool_gray_300;
-      }
-
-      .swatch[data-tint='1'] {
-        background: $primary_50;
-      }
-
-      .swatch[data-tint='2'] {
-        background: $primary_100;
-      }
-
-      .swatch[data-tint='3'] {
-        background: $primary_300;
-      }
     `,
   ],
 })
@@ -232,6 +194,8 @@ export class OntologyGraphComponent {
   readonly selectedIri = input<string | undefined>(undefined);
   /** How the classes are arranged. */
   readonly layout = input<GraphLayout>('tree');
+  /** Colour per class, from the whole data model so a filter keeps them; see `classColors`. */
+  readonly colors = input.required<Map<string, string>>();
   /** Label for knora-api's "any resource" node, in the current language. */
   readonly anyResourceLabel = input('Any resource');
 
@@ -249,7 +213,7 @@ export class OntologyGraphComponent {
   private readonly _counts = computed(() => linkCounts(this.graph()));
   private readonly _elements = computed(() =>
     toGraphElements(this.graph(), {
-      tints: linkTints(this._counts()),
+      colors: this.colors(),
       mainIri: mainClass(this._counts())?.id,
       selectedIri: this.selectedIri(),
       anyResourceLabel: this.anyResourceLabel(),
@@ -286,8 +250,16 @@ export class OntologyGraphComponent {
           if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
         cy.on('dragfree', 'node', () => (this._dragged = true));
-        cy.on('mouseover', 'node', event => event.target.connectedEdges().addClass('highlighted'));
-        cy.on('mouseout', 'node', event => event.target.connectedEdges().removeClass('highlighted'));
+        // Hovering a class highlights its links; a class that opens on click shows a link's pointer.
+        const container = this._canvas().nativeElement;
+        cy.on('mouseover', 'node', event => {
+          event.target.connectedEdges().addClass('highlighted');
+          if (this._navigable().has(event.target.id())) container.style.cursor = 'pointer';
+        });
+        cy.on('mouseout', 'node', event => {
+          event.target.connectedEdges().removeClass('highlighted');
+          container.style.cursor = '';
+        });
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
         // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
         // user has dragged some, whose places are then kept and only fitted.

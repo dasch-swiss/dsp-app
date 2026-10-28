@@ -1,13 +1,46 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 import type { ElementDefinition } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { LinkTint } from '../sidenav/data-model-map/data-model-importance';
 
 /** The layouts the graph view offers: a tree following the links, a circle, a force-directed spread, a grid. */
 export type GraphLayout = 'tree' | 'circle' | 'force' | 'grid';
 
+/**
+ * Light colours that tell classes apart, all dark-text legible (ColorBrewer Set3, then Pastel1); a data model with
+ * more classes repeats them.
+ */
+export const CLASS_COLORS = [
+  '#8DD3C7',
+  '#FFFFB3',
+  '#BEBADA',
+  '#FB8072',
+  '#80B1D3',
+  '#FDB462',
+  '#B3DE69',
+  '#FCCDE5',
+  '#BC80BD',
+  '#CCEBC5',
+  '#FFED6F',
+  '#D9D9D9',
+  '#FBB4AE',
+  '#B3CDE3',
+  '#DECBE4',
+  '#FED9A6',
+  '#E5D8BD',
+  '#FDDAEC',
+];
+
+/** A colour per class of the data model, in label order, so a class keeps its colour whatever is filtered. */
+export function classColors(graph: DataModelGraph): Map<string, string> {
+  const classes = graph.nodes
+    .filter(node => node.kind === 'class')
+    .sort((a, b) => a.label.localeCompare(b.label) || a.id.localeCompare(b.id));
+  return new Map(classes.map((node, index) => [node.id, CLASS_COLORS[index % CLASS_COLORS.length]]));
+}
+
 export interface GraphElementOptions {
-  tints: Map<string, LinkTint>;
+  /** Colour per class; see `classColors`. */
+  colors: Map<string, string>;
   mainIri?: string;
   selectedIri?: string;
   anyResourceLabel: string;
@@ -15,8 +48,8 @@ export interface GraphElementOptions {
 
 /**
  * The data model as Cytoscape elements: a node per class, an edge per link labelled with its property, a dashed
- * edge per subclass relation. Node classes carry what the stylesheet draws: `tint-0`…`tint-3`, `external`,
- * `unlinked`, `main`, `selected`.
+ * edge per subclass relation. Each class node carries its colour; node classes carry what else the stylesheet
+ * draws: `external`, `unlinked`, `main`, `selected`.
  */
 export function toGraphElements(graph: DataModelGraph, options: GraphElementOptions): ElementDefinition[] {
   const linked = new Set(graph.edges.flatMap(edge => [edge.source, edge.target]));
@@ -25,9 +58,10 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
     data: {
       id: node.id,
       label: node.kind === 'generic' && node.id === Constants.Resource ? options.anyResourceLabel : node.label,
+      color: options.colors.get(node.id) ?? '#FFFFFF',
     },
     classes: [
-      node.kind === 'class' ? `tint-${options.tints.get(node.id) ?? 0}` : 'external',
+      node.kind === 'class' ? '' : 'external',
       linked.has(node.id) ? '' : 'unlinked',
       node.id === options.mainIri ? 'main' : '',
       node.id === options.selectedIri ? 'selected' : '',
