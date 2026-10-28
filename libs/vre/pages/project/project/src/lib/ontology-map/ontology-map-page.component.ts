@@ -13,7 +13,7 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { DataModelMapComponent, MapDetail } from '../sidenav/data-model-map/data-model-map.component';
-import { GraphLayout } from './ontology-graph-elements';
+import { GraphLayout, pointingTo } from './ontology-graph-elements';
 import { OntologyGraphComponent } from './ontology-graph.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
@@ -104,6 +104,21 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
               >
             </mat-button-toggle-group>
             @if (view() === 'graph') {
+              <button
+                mat-stroked-button
+                class="data-model"
+                data-cy="ontology-map-class-filter"
+                [matMenuTriggerFor]="classFilter">
+                <span class="data-model-label">{{ m + '.classFilter' | translate }}</span>
+                <b>{{ filterLabel() ?? (m + '.allClasses' | translate) }}</b>
+                <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+              </button>
+              <mat-menu #classFilter="matMenu">
+                <button mat-menu-item (click)="filterIri.set(undefined)">{{ m + '.allClasses' | translate }}</button>
+                @for (option of classOptions(); track option.id) {
+                  <button mat-menu-item (click)="filterIri.set(option.id)">{{ option.label }}</button>
+                }
+              </mat-menu>
               <mat-button-toggle-group
                 class="toggle"
                 hideSingleSelectionIndicator
@@ -150,7 +165,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
               @if (view() === 'graph') {
                 <app-ontology-graph
                   class="view"
-                  [graph]="graph"
+                  [graph]="graphShown() ?? graph"
                   [selectedIri]="classIri()"
                   [layout]="layout()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
@@ -352,6 +367,21 @@ export class OntologyMapPageComponent {
   /** Whether cards show their summary or their properties; remembered in this browser. */
   readonly detail = signal<MapDetail>(readStored(DETAIL_KEY) === 'properties' ? 'properties' : 'summary');
 
+  /** In the Graph view, the class to show with only the classes that link to it; all classes when unset. */
+  readonly filterIri = signal<string | undefined>(undefined);
+  readonly classOptions = computed(() =>
+    (this.graph()?.nodes ?? [])
+      .filter(node => node.kind === 'class')
+      .map(node => ({ id: node.id, label: node.label }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+  );
+  readonly filterLabel = computed(() => this.classOptions().find(option => option.id === this.filterIri())?.label);
+  /** What the Graph view draws: the data model, narrowed to the filtered class and the classes linking to it. */
+  readonly graphShown = computed(() => {
+    const graph = this.graph();
+    return graph ? pointingTo(graph, this.filterIri()) : undefined;
+  });
+
   /** The class whose panel is open. */
   readonly panelIri = signal<string | undefined>(undefined);
   /** The class the map outlines: the one whose panel is open, else the one named in the URL. */
@@ -359,6 +389,7 @@ export class OntologyMapPageComponent {
 
   show(ontologyIri: string): void {
     this.panelIri.set(undefined);
+    this.filterIri.set(undefined);
     this._router.navigate([], {
       relativeTo: this._route,
       queryParams: { [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri) },

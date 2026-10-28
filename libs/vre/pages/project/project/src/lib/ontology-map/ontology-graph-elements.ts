@@ -70,3 +70,11 @@ export function layoutOptions(layout: GraphLayout): { name: string } & Record<st
       return { name: 'grid', padding: 32, avoidOverlap: true, animate: false };
   }
 }
+
+/** The class and the classes that link to it, with only those links; the whole model when no class is given. */
+export function pointingTo(graph: DataModelGraph, classIri: string | undefined): DataModelGraph {
+  if (!classIri || !graph.nodes.some(node => node.id === classIri)) return graph;
+  const edges = graph.edges.filter(edge => edge.target === classIri && edge.source !== classIri);
+  const kept = new Set([classIri, ...edges.map(edge => edge.source)]);
+  return { nodes: graph.nodes.filter(node => kept.has(node.id)), edges };
+}

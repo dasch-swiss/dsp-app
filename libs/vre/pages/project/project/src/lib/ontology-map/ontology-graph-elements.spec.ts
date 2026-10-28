@@ -1,6 +1,6 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { layoutOptions, toGraphElements } from './ontology-graph-elements';
+import { layoutOptions, pointingTo, toGraphElements } from './ontology-graph-elements';
 
 const graph: DataModelGraph = {
   nodes: [
@@ -45,6 +45,20 @@ describe('toGraphElements', () => {
       ['Film', 'Person', 'Writer'],
       ['Person', Constants.Resource, 'Mentions'],
     ]);
+  });
+});
+
+describe('pointingTo', () => {
+  it('keeps the class and the classes that link to it, with only those links', () => {
+    const focused = pointingTo(graph, 'Person');
+
+    expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person']);
+    expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer']);
+  });
+
+  it('keeps the whole model when no class, or an unknown one, is given', () => {
+    expect(pointingTo(graph, undefined)).toBe(graph);
+    expect(pointingTo(graph, 'Unknown')).toBe(graph);
   });
 });
 
