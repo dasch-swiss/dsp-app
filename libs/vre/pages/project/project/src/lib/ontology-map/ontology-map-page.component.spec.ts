@@ -3,6 +3,7 @@ import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { provideTranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
+import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { OntologyMapPageComponent } from './ontology-map-page.component';
@@ -30,6 +31,7 @@ describe('OntologyMapPageComponent', () => {
         { provide: Router, useValue: { navigate } },
         { provide: ActivatedRoute, useValue: { queryParamMap: params } },
         { provide: LocalizationService, useValue: { currentLanguage$: of('en') } },
+        { provide: ProjectPageService, useValue: { hasProjectAdminRights$: of(false) } },
         {
           provide: DataModelGraphService,
           useValue: {

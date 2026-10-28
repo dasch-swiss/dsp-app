@@ -1,31 +1,27 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
-import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
+import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { DataModelMapComponent } from '../sidenav/data-model-map/data-model-map.component';
-import {
-  ResourceClassDetailsDialogComponent,
-  ResourceClassDetailsDialogData,
-} from './resource-class-details-dialog.component';
+import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
 /** Query parameters of the Ontology map tab: the data model to show and the class to outline, if any. */
 export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as const;
 
 /**
  * The Ontology map tab: the map of one data model of the project, drawn large across the page. A class clicked on
- * it opens its details in a side panel, from which it can be opened in the Data tab.
+ * it opens its details in a panel docked at the right, from which it can be browsed in the Data tab or edited.
  */
 @Component({
   selector: 'app-ontology-map-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DataModelMapComponent, MatButtonToggle, MatButtonToggleGroup, TranslatePipe],
+  imports: [DataModelMapComponent, MatButtonToggle, MatButtonToggleGroup, ResourceClassPanelComponent, TranslatePipe],
   template: `
     @let t = 'pages.dataBrowser.dataModelMap';
     <div class="page">
@@ -43,14 +39,30 @@ export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as co
         </mat-button-toggle-group>
       }
 
-      @if (selected()) {
+      @if (selected(); as selected) {
         @if (graph(); as graph) {
-          <app-data-model-map
-            [graph]="graph"
-            [selectedIri]="classIri()"
-            [anyResourceLabel]="t + '.anyResource' | translate"
-            [full]="true"
-            (classSelected)="showDetails(graph, $event)" />
+          <div class="body">
+            <app-data-model-map
+              [graph]="graph"
+              [selectedIri]="classIri()"
+              [anyResourceLabel]="t + '.anyResource' | translate"
+              [full]="true"
+              (classSelected)="panelIri.set($event)" />
+            @if (panelIri(); as openIri) {
+              <app-resource-class-panel
+                class="panel"
+                [graph]="graph"
+                [classIri]="openIri"
+                [dataModelLabel]="selected.label"
+                [anyResourceLabel]="t + '.anyResource' | translate"
+                [subclassLabel]="t + '.subclassOf' | translate"
+                [canEdit]="canEdit() ?? false"
+                (classSelected)="panelIri.set($event)"
+                (closed)="panelIri.set(undefined)"
+                (browse)="open($event)"
+                (edit)="edit($event)" />
+            }
+          </div>
         }
       } @else if (ontologiesLoaded()) {
         <p class="empty">{{ 'pages.ontologyMap.noDataModels' | translate }}</p>
@@ -74,9 +86,23 @@ export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as co
         padding: 8px;
       }
 
-      app-data-model-map {
+      // The map and, when a class is open, its panel beside it; the map narrows to make room.
+      .body {
         flex: 1;
         min-height: 0;
+        display: flex;
+        gap: 8px;
+      }
+
+      app-data-model-map {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .panel {
+        flex: none;
+        width: 440px;
+        max-width: 50%;
       }
 
       .ontologies {
@@ -95,8 +121,6 @@ export class OntologyMapPageComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _graphs = inject(DataModelGraphService);
-  private readonly _dialog = inject(MatDialog);
-  private readonly _translate = inject(TranslateService);
 
   private readonly _projectOntologies = toSignal(
     combineLatest([this._graphs.projectOntologies$, inject(LocalizationService).currentLanguage$]).pipe(
@@ -109,6 +133,7 @@ export class OntologyMapPageComponent {
   );
   readonly ontologies = computed(() => this._projectOntologies() ?? []);
   readonly ontologiesLoaded = computed(() => this._projectOntologies() !== undefined);
+  readonly canEdit = toSignal(inject(ProjectPageService).hasProjectAdminRights$);
 
   private readonly _graphsByIri = toSignal(this._graphs.graphs$);
   private readonly _params = toSignal(this._route.queryParamMap);
@@ -123,42 +148,18 @@ export class OntologyMapPageComponent {
     const iri = this.selected()?.iri;
     return iri ? this._graphsByIri()?.get(iri) : undefined;
   });
-  /** The class whose details are open, else the one named in the URL: the map outlines it. */
-  private readonly _detailsIri = signal<string | undefined>(undefined);
-  readonly classIri = computed(() => this._detailsIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
+
+  /** The class whose panel is open. */
+  readonly panelIri = signal<string | undefined>(undefined);
+  /** The class the map outlines: the one whose panel is open, else the one named in the URL. */
+  readonly classIri = computed(() => this.panelIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
 
   show(ontologyIri: string): void {
+    this.panelIri.set(undefined);
     this._router.navigate([], {
       relativeTo: this._route,
       queryParams: { [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri) },
     });
-  }
-
-  showDetails(graph: DataModelGraph, classIri: string): void {
-    this._detailsIri.set(classIri);
-    this._dialog
-      .open<ResourceClassDetailsDialogComponent, ResourceClassDetailsDialogData, string>(
-        ResourceClassDetailsDialogComponent,
-        {
-          ...DspDialogConfig.dialogDrawerConfig(
-            {
-              graph,
-              classIri,
-              anyResourceLabel: this._translate.instant('pages.dataBrowser.dataModelMap.anyResource'),
-              subclassLabel: this._translate.instant('pages.dataBrowser.dataModelMap.subclassOf'),
-            },
-            true
-          ),
-          width: '520px',
-          minWidth: 0,
-          maxWidth: '100vw',
-        }
-      )
-      .afterClosed()
-      .subscribe(iri => {
-        this._detailsIri.set(undefined);
-        if (iri) this.open(iri);
-      });
   }
 
   /** Opens the class in the Data tab. */
@@ -167,5 +168,20 @@ export class OntologyMapPageComponent {
     this._router.navigate(['..', RouteConstants.data, OntologyService.getOntologyNameFromIri(ontologyIri), className], {
       relativeTo: this._route,
     });
+  }
+
+  /** Opens the class's data model in the data model editor. */
+  edit(iri: string): void {
+    const [ontologyIri] = iri.split('#');
+    this._router.navigate(
+      [
+        '..',
+        RouteConstants.ontology,
+        OntologyService.getOntologyNameFromIri(ontologyIri),
+        RouteConstants.editor,
+        RouteConstants.classes,
+      ],
+      { relativeTo: this._route }
+    );
   }
 }

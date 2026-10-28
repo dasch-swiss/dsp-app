@@ -737,18 +737,21 @@
     "ontologyMap": {
       "dataModels": "Data models",
       "noDataModels": "This project does not have any data model yet.",
-      "classDetails": {
-        "resourceCount": "{{count}} resources",
-        "resourceCountOne": "1 resource",
+      "classPanel": {
+        "subtitle": "Resource class · {{model}}",
         "close": "Close the class details",
-        "connections": "Linked classes",
-        "properties": "Properties ({{count}})",
+        "properties": "Properties · {{count}}",
         "noProperties": "This class has no properties of its own.",
-        "openInData": "Open in Data tab",
-        "exactlyOne": "exactly one",
-        "atMostOne": "at most one",
-        "anyNumber": "any number",
-        "atLeastOne": "at least one"
+        "required": "required",
+        "optional": "optional",
+        "many": "many",
+        "oneOrMore": "one or more",
+        "linksTo": "Links to",
+        "linkedFrom": "Linked from",
+        "via": "via {{property}}",
+        "none": "None",
+        "browse": "Browse resources",
+        "edit": "Edit class"
       }
     }
   },

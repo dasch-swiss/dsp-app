@@ -737,18 +737,21 @@
     "ontologyMap": {
       "dataModels": "Datenmodelle",
       "noDataModels": "Dieses Projekt hat noch kein Datenmodell.",
-      "classDetails": {
-        "resourceCount": "{{count}} Ressourcen",
-        "resourceCountOne": "1 Ressource",
+      "classPanel": {
+        "subtitle": "Ressourcenklasse · {{model}}",
         "close": "Klassendetails schliessen",
-        "connections": "Verknüpfte Klassen",
-        "properties": "Eigenschaften ({{count}})",
+        "properties": "Eigenschaften · {{count}}",
         "noProperties": "Diese Klasse hat keine eigenen Eigenschaften.",
-        "openInData": "Im Daten-Tab öffnen",
-        "exactlyOne": "genau eine",
-        "atMostOne": "höchstens eine",
-        "anyNumber": "beliebig viele",
-        "atLeastOne": "mindestens eine"
+        "required": "erforderlich",
+        "optional": "optional",
+        "many": "mehrere",
+        "oneOrMore": "eine oder mehrere",
+        "linksTo": "Verknüpft mit",
+        "linkedFrom": "Verknüpft von",
+        "via": "über {{property}}",
+        "none": "Keine",
+        "browse": "Ressourcen anzeigen",
+        "edit": "Klasse bearbeiten"
       }
     }
   },
