@@ -13,7 +13,7 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { DataModelMapComponent, MapDetail } from '../sidenav/data-model-map/data-model-map.component';
-import { classColors, GraphLayout, pointingTo } from './ontology-graph-elements';
+import { classColors, GraphLayout, linkedWith } from './ontology-graph-elements';
 import { OntologyGraphComponent } from './ontology-graph.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
@@ -382,7 +382,7 @@ export class OntologyMapPageComponent {
     return graph ? classColors(graph) : new Map<string, string>();
   });
 
-  /** In the Graph view, the class to show with only the classes that link to it; all classes when unset. */
+  /** In the Graph view, the class to show with only the classes it is linked with; all classes when unset. */
   readonly filterIri = signal<string | undefined>(undefined);
   readonly classOptions = computed(() =>
     (this.graph()?.nodes ?? [])
@@ -391,10 +391,10 @@ export class OntologyMapPageComponent {
       .sort((a, b) => a.label.localeCompare(b.label))
   );
   readonly filterLabel = computed(() => this.classOptions().find(option => option.id === this.filterIri())?.label);
-  /** What the Graph view draws: the data model, narrowed to the filtered class and the classes linking to it. */
+  /** What the Graph view draws: the data model, narrowed to the filtered class and the classes it is linked with. */
   readonly graphShown = computed(() => {
     const graph = this.graph();
-    return graph ? pointingTo(graph, this.filterIri()) : undefined;
+    return graph ? linkedWith(graph, this.filterIri()) : undefined;
   });
 
   /** The class whose panel is open. */
@@ -421,7 +421,7 @@ export class OntologyMapPageComponent {
     store(VIEW_KEY, view);
   }
 
-  /** Shows the class with only the classes linking to it, in the Graph view. */
+  /** Shows the class with only the classes it is linked with, in the Graph view. */
   filterOn(classIri: string): void {
     this.setView('graph');
     this.filterIri.set(classIri);

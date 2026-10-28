@@ -201,7 +201,7 @@ export class OntologyGraphComponent {
 
   /** A class of this project was clicked; emits its IRI. */
   readonly classSelected = output<string>();
-  /** A class of this data model was double-clicked; emits its IRI, to show it with the classes linking to it. */
+  /** A class of this data model was double-clicked; emits its IRI, to show it with the classes it is linked with. */
   readonly classFiltered = output<string>();
 
   private readonly _canvas = viewChild.required<ElementRef<HTMLElement>>('canvas');

@@ -1,6 +1,6 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { CLASS_COLORS, classColors, layoutOptions, pointingTo, toGraphElements } from './ontology-graph-elements';
+import { CLASS_COLORS, classColors, layoutOptions, linkedWith, toGraphElements } from './ontology-graph-elements';
 
 const graph: DataModelGraph = {
   nodes: [
@@ -49,17 +49,24 @@ describe('toGraphElements', () => {
   });
 });
 
-describe('pointingTo', () => {
-  it('keeps the class and the classes that link to it, with only those links', () => {
-    const focused = pointingTo(graph, 'Person');
+describe('linkedWith', () => {
+  it('keeps the class with the classes linking to it and those it links to, with only those links', () => {
+    const focused = linkedWith(graph, 'Person');
+
+    expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person', Constants.Resource]);
+    expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer', 'mentions']);
+  });
+
+  it('keeps the classes a class links to even when nothing links to it, without its links to itself', () => {
+    const focused = linkedWith(graph, 'Film');
 
     expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person']);
     expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer']);
   });
 
   it('keeps the whole model when no class, or an unknown one, is given', () => {
-    expect(pointingTo(graph, undefined)).toBe(graph);
-    expect(pointingTo(graph, 'Unknown')).toBe(graph);
+    expect(linkedWith(graph, undefined)).toBe(graph);
+    expect(linkedWith(graph, 'Unknown')).toBe(graph);
   });
 });
 

@@ -381,7 +381,7 @@ export class ResourceClassPanelComponent {
   readonly classSelected = output<string>();
   /** "Browse resources" was clicked; emits the class IRI. */
   readonly browse = output<string>();
-  /** "Filter on this class" was clicked; emits the class IRI, to show it with the classes linking to it. */
+  /** "Filter on this class" was clicked; emits the class IRI, to show it with the classes it is linked with. */
   readonly filter = output<string>();
   /** "Edit class" was clicked; emits the class IRI. */
   readonly edit = output<string>();
