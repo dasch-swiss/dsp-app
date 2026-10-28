@@ -52,9 +52,21 @@ const byLabel = (a: DataModelNode, b: DataModelNode) => a.label.localeCompare(b.
  */
 export function layoutDataModel(
   graph: DataModelGraph,
-  { width, condensed, perRow = columnsFor(width) }: { width: number; condensed: boolean; perRow?: number }
+  {
+    width,
+    condensed,
+    perRow = columnsFor(width),
+    heightOf,
+  }: {
+    width: number;
+    condensed: boolean;
+    perRow?: number;
+    /** A card's height, when cards are not all as tall; a row is as tall as its tallest card. */
+    heightOf?: (node: DataModelNode) => number;
+  }
 ): DataModelLayout {
   const card = condensed ? CARD.condensed : CARD.full;
+  const cardHeight = (node: DataModelNode) => heightOf?.(node) ?? card.height;
   const edges = graph.edges.filter(edge => edge.source !== edge.target);
   const linkedIds = new Set(edges.flatMap(edge => [edge.source, edge.target]));
   const linked = graph.nodes.filter(node => linkedIds.has(node.id)).sort(byLabel);
@@ -104,24 +116,28 @@ export function layoutDataModel(
         x: left + i * (cardWidth + GAP),
         y,
         width: cardWidth,
-        height: card.height,
+        height: cardHeight(node),
         row: index,
       })
     );
-    y += card.height;
+    y += Math.max(...row.map(cardHeight));
   });
 
-  const gridTop = y + (rows.length > 0 && unlinked.length > 0 ? card.rowGap : 0);
-  unlinked.forEach((node, index) => {
-    placed.set(node.id, {
-      node,
-      x: MARGIN + (index % perRow) * (cardWidth + GAP),
-      y: gridTop + Math.floor(index / perRow) * (card.height + card.rowGap),
-      width: cardWidth,
-      height: card.height,
-      row: rows.length + Math.floor(index / perRow),
+  let gridY = y + (rows.length > 0 && unlinked.length > 0 ? card.rowGap : 0);
+  for (let start = 0; start < unlinked.length; start += perRow) {
+    const gridRow = unlinked.slice(start, start + perRow);
+    gridRow.forEach((node, column) => {
+      placed.set(node.id, {
+        node,
+        x: MARGIN + column * (cardWidth + GAP),
+        y: gridY,
+        width: cardWidth,
+        height: cardHeight(node),
+        row: rows.length + start / perRow,
+      });
     });
-  });
+    gridY += Math.max(...gridRow.map(cardHeight)) + card.rowGap;
+  }
 
   const laneY = (target: PlacedNode, key: string) => {
     const trunks = trunksByRow[target.row];

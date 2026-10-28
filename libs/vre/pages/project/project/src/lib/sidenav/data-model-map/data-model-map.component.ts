@@ -14,8 +14,9 @@ import {
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Constants } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
+import { representationIcon } from '../resource-class-sidenav/representation-icon';
 import { DataModelGraph, DataModelNode } from './data-model-graph';
 import { linkCounts, linkTints, mainClass } from './data-model-importance';
 import { DataModelLayout, layoutDataModel, PlacedNode } from './data-model-layout';
@@ -26,7 +27,29 @@ export const CONDENSED_ABOVE = 20;
 export const HIDDEN_ABOVE = 60;
 export const MIN_WIDTH = 160;
 /** In the full map, cards are at least this wide; a row holds as many as fit, between 3 and 8. */
-const FULL_CARD_WIDTH = 180;
+const FULL_CARD_WIDTH = { summary: 200, properties: 240 };
+
+/** In the full map, what a card shows: its summary, or every property it declares. */
+export type MapDetail = 'summary' | 'properties';
+
+/** Full-map card sizes, in px: padding, the name line, the description line, one property line. */
+const FULL_CARD = { padding: 20, head: 26, line: 20, summaryHeight: 76 };
+
+/** Short cardinalities for the Properties view, as in the data model editor. */
+const CARDINALITY_SHORT: Record<Cardinality, string> = {
+  [Cardinality._1]: '1',
+  [Cardinality._0_1]: '0–1',
+  [Cardinality._0_n]: '0–n',
+  [Cardinality._1_n]: '1–n',
+};
+
+/** Value type names that read poorly as their local name. */
+const TYPE_NAME: Record<string, string> = { Uri: 'URI', Int: 'Integer', Geom: 'Geometry' };
+
+let nextMapId = 0;
+
+/** The full map scrolls; it keeps this much room for its scrollbar so cards never run under it. */
+const SCROLLBAR_GUTTER = 16;
 
 const COLLAPSED_KEY = 'dsp-data-model-map-collapsed';
 
@@ -95,9 +118,24 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
             {{ t + '.summary' | translate: { classes: classCount(), links: graph().edges.length } }}
           </span>
           <svg class="edges" aria-hidden="true" [attr.width]="layout.width" [attr.height]="layout.height">
+            @if (full()) {
+              <defs>
+                <marker
+                  [attr.id]="arrowId"
+                  orient="auto"
+                  markerWidth="6"
+                  markerHeight="6"
+                  refX="5"
+                  refY="3"
+                  markerUnits="userSpaceOnUse">
+                  <path class="arrowhead" d="M0 0 L6 3 L0 6 Z" />
+                </marker>
+              </defs>
+            }
             @for (routed of orderedEdges(); track $index) {
               <path
                 [attr.d]="routed.path"
+                [attr.marker-end]="full() && routed.edge.kind === 'link' ? 'url(#' + arrowId + ')' : null"
                 [class.highlighted]="routed.highlighted"
                 [class.subclass]="routed.edge.kind === 'subclass'" />
             }
@@ -133,36 +171,82 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
               "
               (focus)="focusedId.set(node.id)"
               (click)="select(node)">
-              <span class="label">{{ labelOf(node) }}</span>
-              @if (!condensed()) {
-                <span class="meta">
-                  @if (node.kind === 'class') {
-                    {{ node.count | number }}
-                    @if (selected) {
-                      · {{ t + '.youAreHere' | translate }}
-                    } @else if (unlinked().has(node.id)) {
-                      · {{ t + '.notLinked' | translate }}
-                    }
-                  } @else if (node.kind === 'external') {
-                    {{ t + '.external' | translate }}
-                  }
+              @if (full()) {
+                <span class="card-head">
+                  <mat-icon>{{ iconOf(node) }}</mat-icon>
+                  <span class="label">{{ labelOf(node) }}</span>
                 </span>
                 @if (node.kind === 'class') {
-                  <span class="bar" [style.width.%]="share(node)"></span>
+                  <span class="description">{{ node.description }}</span>
+                  @if (detail() === 'properties') {
+                    @for (property of node.propertyDetails ?? []; track property.id) {
+                      <span class="property-row">
+                        <span class="property-name">{{ property.label }}</span>
+                        <span class="property-type">{{ typeName(property.type) }}</span>
+                        <span class="property-cardinality">{{ cardinalityShort(property.cardinality) }}</span>
+                      </span>
+                    }
+                  } @else {
+                    @let links = outgoingLinks().get(node.id) ?? 0;
+                    @let properties = node.propertyDetails?.length ?? 0;
+                    <span class="summary-line">
+                      {{ t + (properties === 1 ? '.propertiesOne' : '.properties') | translate: { count: properties } }}
+                      @if (links > 0) {
+                        · {{ t + (links === 1 ? '.linksOne' : '.links') | translate: { count: links } }}
+                      } @else if (unlinked().has(node.id)) {
+                        · {{ t + '.noLinksShort' | translate }}
+                      }
+                    </span>
+                  }
+                } @else {
+                  <span class="description">{{ t + '.external' | translate }}</span>
+                }
+              } @else {
+                <span class="label">{{ labelOf(node) }}</span>
+                @if (!condensed()) {
+                  <span class="meta">
+                    @if (node.kind === 'class') {
+                      {{ node.count | number }}
+                      @if (selected) {
+                        · {{ t + '.youAreHere' | translate }}
+                      } @else if (unlinked().has(node.id)) {
+                        · {{ t + '.notLinked' | translate }}
+                      }
+                    } @else if (node.kind === 'external') {
+                      {{ t + '.external' | translate }}
+                    }
+                  </span>
+                  @if (node.kind === 'class') {
+                    <span class="bar" [style.width.%]="share(node)"></span>
+                  }
                 }
               }
             </button>
           }
         </nav>
-        @if (hasTint()) {
+        @if (hasTint() || full()) {
           <div class="legend" aria-hidden="true">
-            <span>{{ t + '.fewerLinks' | translate }}</span>
-            <span class="swatches">
-              @for (tint of [0, 1, 2, 3]; track tint) {
-                <span class="swatch" [attr.data-tint]="tint"></span>
-              }
-            </span>
-            <span>{{ t + '.moreLinks' | translate }}</span>
+            @if (full()) {
+              <span class="legend-item">
+                <svg width="28" height="8" viewBox="0 0 28 8">
+                  <path class="legend-line" d="M 0 4 L 22 4" />
+                  <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
+                </svg>
+                {{ t + '.legendLink' | translate }}
+              </span>
+              <span class="legend-item"><span class="legend-dashed"></span>{{ t + '.noLinksShort' | translate }}</span>
+            }
+            @if (hasTint()) {
+              <span class="legend-item">
+                <span>{{ t + '.fewerLinks' | translate }}</span>
+                <span class="swatches">
+                  @for (tint of [0, 1, 2, 3]; track tint) {
+                    <span class="swatch" [attr.data-tint]="tint"></span>
+                  }
+                </span>
+                <span>{{ t + '.moreLinks' | translate }}</span>
+              </span>
+            }
           </div>
         }
       </div>
@@ -183,14 +267,110 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
         height: 100%;
         padding: 0;
 
+        // The page draws the box around the full map; the legend floats over its bottom-left corner.
         .frame {
+          position: relative;
           flex: 1;
           min-height: 0;
-          overflow: auto;
+          overflow-x: hidden;
+          overflow-y: auto;
+          scrollbar-gutter: stable;
+          background: transparent;
+          border: 0;
+          border-radius: 0;
         }
 
         .legend {
-          margin-top: auto;
+          position: sticky;
+          left: 16px;
+          bottom: 16px;
+          align-self: flex-start;
+          gap: 16px;
+          margin: auto 16px 16px;
+          padding: 6px 10px;
+          border: 1px solid #ebebeb;
+          border-radius: 4px;
+          background: white;
+          color: $cool_gray_600;
+        }
+
+        .card {
+          justify-content: flex-start;
+          gap: 2px;
+          padding: 10px 12px;
+          border-radius: 8px;
+          border-color: $cold_grey_100;
+          font-size: 12px;
+          line-height: 16px;
+          font-weight: 400;
+        }
+
+        .card-head {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 24px;
+
+          mat-icon {
+            flex: none;
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: $primary;
+          }
+
+          .label {
+            font-size: 14px;
+            font-weight: 500;
+          }
+        }
+
+        .description {
+          min-height: 18px;
+          color: $cool_gray_500;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .summary-line {
+          color: $cool_gray_600;
+        }
+
+        .property-row {
+          display: flex;
+          align-items: center;
+          height: 18px;
+          gap: 4px;
+        }
+
+        .property-name {
+          flex: 1;
+          min-width: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .property-type {
+          flex: none;
+          width: 72px;
+          color: $cool_gray_500;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .property-cardinality {
+          flex: none;
+          width: 28px;
+          text-align: right;
+          color: $cool_gray_500;
+        }
+
+        .card.selected .description,
+        .card.selected .summary-line {
+          color: $cool_gray_600;
         }
 
         .card {
@@ -277,6 +457,30 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
         padding: 6px 8px 8px;
         font-size: 11px;
         color: $cool_gray_500;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .legend-line {
+        fill: none;
+        stroke: $cold_grey_300;
+        stroke-width: 1.5;
+      }
+
+      .arrowhead {
+        fill: $cold_grey_300;
+      }
+
+      .legend-dashed {
+        width: 18px;
+        height: 12px;
+        box-sizing: border-box;
+        border: 1px dashed $cold_grey_300;
+        border-radius: 3px;
       }
 
       .swatches {
@@ -448,6 +652,8 @@ export class DataModelMapComponent {
   readonly anyResourceLabel = input('Any resource');
   /** Drawn large in the Ontology map tab: no header, every model drawn, full cards, wider rows. */
   readonly full = input(false);
+  /** In the full map, whether cards show their summary or their properties. */
+  readonly detail = input<MapDetail>('summary');
 
   /** A class card was activated; emits the class IRI. */
   readonly classSelected = output<string>();
@@ -463,8 +669,8 @@ export class DataModelMapComponent {
 
   readonly classCount = computed(() => this.graph().nodes.filter(node => node.kind === 'class').length);
   readonly condensed = computed(() => !this.full() && this.graph().nodes.length > CONDENSED_ABOVE);
-  /** The host's content width less the map's border. */
-  private readonly _mapWidth = computed(() => this._width() - 2);
+  /** The host's content width less the map's border, and in the full map the room its scrollbar keeps. */
+  private readonly _mapWidth = computed(() => this._width() - 2 - (this.full() ? SCROLLBAR_GUTTER : 0));
   readonly fits = computed(() =>
     this.full() ? this._mapWidth() > 0 : this.graph().nodes.length <= HIDDEN_ABOVE && this._mapWidth() >= MIN_WIDTH
   );
@@ -472,10 +678,10 @@ export class DataModelMapComponent {
   readonly layout = computed<DataModelLayout | undefined>(() => {
     if (!this.fits()) return undefined;
     const width = this._mapWidth();
-    const perRow = this.full()
-      ? Math.min(8, Math.max(3, Math.floor((width + 16) / (FULL_CARD_WIDTH + 16))))
-      : undefined;
-    return layoutDataModel(this.graph(), { width, condensed: this.condensed(), perRow });
+    const cardWidth = FULL_CARD_WIDTH[this.detail()];
+    const perRow = this.full() ? Math.min(8, Math.max(2, Math.floor((width + 16) / (cardWidth + 16)))) : undefined;
+    const heightOf = this.full() ? (node: DataModelNode) => this._fullCardHeight(node) : undefined;
+    return layoutDataModel(this.graph(), { width, condensed: this.condensed(), perRow, heightOf });
   });
   readonly visibleLayout = computed(() => (this.collapsed() ? undefined : this.layout()));
 
@@ -538,6 +744,38 @@ export class DataModelMapComponent {
       observer.observe(host);
       inject(DestroyRef).onDestroy(() => observer.disconnect());
     }
+  }
+
+  /** Unique per map, so the arrowhead of one map is not picked up by another on the page. */
+  readonly arrowId = `data-model-map-arrow-${nextMapId++}`;
+
+  /** For each class, how many links it declares to other classes. */
+  readonly outgoingLinks = computed(() => {
+    const counts = new Map<string, number>();
+    for (const { source, target, kind } of this.graph().edges) {
+      if (kind === 'link' && source !== target) counts.set(source, (counts.get(source) ?? 0) + 1);
+    }
+    return counts;
+  });
+
+  iconOf(node: DataModelNode): string {
+    return node.kind === 'class' ? representationIcon(node.representationClass) : 'link';
+  }
+
+  typeName(type: string): string {
+    return TYPE_NAME[type] ?? type;
+  }
+
+  cardinalityShort(cardinality: Cardinality): string {
+    return CARDINALITY_SHORT[cardinality];
+  }
+
+  /** A full-map card's height: fixed for the summary, one line per property in the Properties view. */
+  private _fullCardHeight(node: DataModelNode): number {
+    if (node.kind !== 'class') return FULL_CARD.padding + FULL_CARD.head + FULL_CARD.line;
+    if (this.detail() === 'summary') return FULL_CARD.summaryHeight;
+    const lines = 1 + (node.propertyDetails?.length ?? 0);
+    return FULL_CARD.padding + FULL_CARD.head + lines * FULL_CARD.line;
   }
 
   labelOf(node: DataModelNode): string {

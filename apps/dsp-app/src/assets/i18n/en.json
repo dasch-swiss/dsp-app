@@ -731,7 +731,13 @@
         "linkedFromHeading": "Linked from",
         "linksToHeading": "Links to",
         "moreClasses": "+{{count}} more",
-        "noLinks": "Not linked with other classes"
+        "noLinks": "Not linked with other classes",
+        "properties": "{{count}} properties",
+        "propertiesOne": "1 property",
+        "links": "{{count}} links",
+        "linksOne": "1 link",
+        "noLinksShort": "no links",
+        "legendLink": "link property, points to the linked class"
       }
     },
     "ontologyMap": {
@@ -752,7 +758,12 @@
         "none": "None",
         "browse": "Browse resources",
         "edit": "Edit class"
-      }
+      },
+      "dataModel": "Data model",
+      "counts": "{{classes}} classes · {{links}} links",
+      "detail": "Detail level",
+      "summary": "Summary",
+      "properties": "Properties"
     }
   },
   "resourceEditor": {

@@ -182,23 +182,26 @@ function ownProperties(
   labelOf: (labels: Labels) => string
 ): DataModelProperty[] {
   const seen = new Set<string>();
-  return [...classDef.propertiesList]
-    .filter(has => !has.propertyIndex.startsWith(Constants.KnoraApiV2))
-    .sort((a, b) => (a.guiOrder ?? Infinity) - (b.guiOrder ?? Infinity))
-    .flatMap(has => {
-      const property = properties[has.propertyIndex] as ResourcePropertyDefinition | undefined;
-      if (!property || property.isLinkValueProperty || seen.has(property.id)) return [];
-      seen.add(property.id);
-      const objectType = property.objectType ?? '';
-      return [
-        {
-          id: property.id,
-          label: textOf(property, 'labels', 'label', labelOf) || localName(property.id),
-          description: textOf(property, 'comments', 'comment', labelOf),
-          type: property.isLinkProperty ? 'Link' : localName(objectType).replace(/Value$/, ''),
-          ...(property.isLinkProperty ? { linkTarget: objectType } : {}),
-          cardinality: has.cardinality,
-        },
-      ];
-    });
+  return (
+    [...classDef.propertiesList]
+      // rdfs:label is every class's resource label, not a property the project declares.
+      .filter(has => !has.propertyIndex.startsWith(Constants.KnoraApiV2) && has.propertyIndex !== Constants.Label)
+      .sort((a, b) => (a.guiOrder ?? Infinity) - (b.guiOrder ?? Infinity))
+      .flatMap(has => {
+        const property = properties[has.propertyIndex] as ResourcePropertyDefinition | undefined;
+        if (!property || property.isLinkValueProperty || seen.has(property.id)) return [];
+        seen.add(property.id);
+        const objectType = property.objectType ?? '';
+        return [
+          {
+            id: property.id,
+            label: textOf(property, 'labels', 'label', labelOf) || localName(property.id),
+            description: textOf(property, 'comments', 'comment', labelOf),
+            type: property.isLinkProperty ? 'Link' : localName(objectType).replace(/Value$/, ''),
+            ...(property.isLinkProperty ? { linkTarget: objectType } : {}),
+            cardinality: has.cardinality,
+          },
+        ];
+      })
+  );
 }

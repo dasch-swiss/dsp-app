@@ -731,7 +731,13 @@
         "linkedFromHeading": "Verknüpft von",
         "linksToHeading": "Verknüpft mit",
         "moreClasses": "+{{count}} weitere",
-        "noLinks": "Mit keiner anderen Klasse verknüpft"
+        "noLinks": "Mit keiner anderen Klasse verknüpft",
+        "properties": "{{count}} Eigenschaften",
+        "propertiesOne": "1 Eigenschaft",
+        "links": "{{count}} Verknüpfungen",
+        "linksOne": "1 Verknüpfung",
+        "noLinksShort": "keine Verknüpfungen",
+        "legendLink": "Verknüpfungseigenschaft, zeigt auf die verknüpfte Klasse"
       }
     },
     "ontologyMap": {
@@ -752,7 +758,12 @@
         "none": "Keine",
         "browse": "Ressourcen anzeigen",
         "edit": "Klasse bearbeiten"
-      }
+      },
+      "dataModel": "Datenmodell",
+      "counts": "{{classes}} Klassen · {{links}} Verknüpfungen",
+      "detail": "Detailstufe",
+      "summary": "Übersicht",
+      "properties": "Eigenschaften"
     }
   },
   "resourceEditor": {
