@@ -83,87 +83,89 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
     }
 
     @if (visibleLayout(); as layout) {
-      <nav
-        class="map"
-        data-cy="data-model-map"
-        [class.condensed]="condensed()"
-        [attr.aria-label]="t + '.label' | translate"
-        [style.height.px]="layout.height"
-        (keydown)="onKeydown($event)">
-        <span class="cdk-visually-hidden">
-          {{ t + '.summary' | translate: { classes: classCount(), links: graph().edges.length } }}
-        </span>
-        <svg class="edges" aria-hidden="true" [attr.width]="layout.width" [attr.height]="layout.height">
-          @for (routed of orderedEdges(); track $index) {
-            <path
-              [attr.d]="routed.path"
-              [class.highlighted]="routed.highlighted"
-              [class.subclass]="routed.edge.kind === 'subclass'" />
-          }
-        </svg>
-        @for (placed of layout.nodes; track placed.node.id) {
-          @let node = placed.node;
-          @let selected = node.id === selectedIri();
-          @let linksTo = linkedNames(node, 'to');
-          @let linkedFrom = linkedNames(node, 'from');
-          <button
-            type="button"
-            class="card"
-            data-cy="data-model-map-card"
-            [attr.data-id]="node.id"
-            [class.selected]="selected"
-            [class.neighbour]="neighbours().has(node.id)"
-            [class.unlinked]="unlinked().has(node.id)"
-            [class.external]="node.kind !== 'class'"
-            [class.main]="node.id === main()?.id"
-            [attr.data-tint]="tints().get(node.id) ?? 0"
-            [style.left.px]="placed.x"
-            [style.top.px]="placed.y"
-            [style.width.px]="placed.width"
-            [style.height.px]="placed.height"
-            [attr.tabindex]="node.id === tabStop() ? 0 : -1"
-            [attr.aria-current]="selected ? 'page' : null"
-            [attr.aria-disabled]="node.navigable ? null : true"
-            [attr.aria-label]="
-              (t + '.card' | translate: { label: labelOf(node), count: node.count ?? 0 }) +
-              (linksTo ? '; ' + (t + '.linksTo' | translate: { names: linksTo }) : '') +
-              (linkedFrom ? '; ' + (t + '.linkedFrom' | translate: { names: linkedFrom }) : '') +
-              (node.id === main()?.id ? '; ' + (t + '.mainClass' | translate) : '')
-            "
-            (focus)="focusedId.set(node.id)"
-            (click)="select(node)">
-            <span class="label">{{ labelOf(node) }}</span>
-            @if (!condensed()) {
-              <span class="meta">
-                @if (node.kind === 'class') {
-                  {{ node.count | number }}
-                  @if (selected) {
-                    · {{ t + '.youAreHere' | translate }}
-                  } @else if (unlinked().has(node.id)) {
-                    · {{ t + '.notLinked' | translate }}
-                  }
-                } @else if (node.kind === 'external') {
-                  {{ t + '.external' | translate }}
-                }
-              </span>
-              @if (node.kind === 'class') {
-                <span class="bar" [style.width.%]="share(node)"></span>
-              }
-            }
-          </button>
-        }
-      </nav>
-      @if (hasTint()) {
-        <div class="legend" aria-hidden="true">
-          <span>{{ t + '.fewerLinks' | translate }}</span>
-          <span class="swatches">
-            @for (tint of [0, 1, 2, 3]; track tint) {
-              <span class="swatch" [attr.data-tint]="tint"></span>
-            }
+      <div class="frame">
+        <nav
+          class="map"
+          data-cy="data-model-map"
+          [class.condensed]="condensed()"
+          [attr.aria-label]="t + '.label' | translate"
+          [style.height.px]="layout.height"
+          (keydown)="onKeydown($event)">
+          <span class="cdk-visually-hidden">
+            {{ t + '.summary' | translate: { classes: classCount(), links: graph().edges.length } }}
           </span>
-          <span>{{ t + '.moreLinks' | translate }}</span>
-        </div>
-      }
+          <svg class="edges" aria-hidden="true" [attr.width]="layout.width" [attr.height]="layout.height">
+            @for (routed of orderedEdges(); track $index) {
+              <path
+                [attr.d]="routed.path"
+                [class.highlighted]="routed.highlighted"
+                [class.subclass]="routed.edge.kind === 'subclass'" />
+            }
+          </svg>
+          @for (placed of layout.nodes; track placed.node.id) {
+            @let node = placed.node;
+            @let selected = node.id === selectedIri();
+            @let linksTo = linkedNames(node, 'to');
+            @let linkedFrom = linkedNames(node, 'from');
+            <button
+              type="button"
+              class="card"
+              data-cy="data-model-map-card"
+              [attr.data-id]="node.id"
+              [class.selected]="selected"
+              [class.neighbour]="neighbours().has(node.id)"
+              [class.unlinked]="unlinked().has(node.id)"
+              [class.external]="node.kind !== 'class'"
+              [class.main]="node.id === main()?.id"
+              [attr.data-tint]="tints().get(node.id) ?? 0"
+              [style.left.px]="placed.x"
+              [style.top.px]="placed.y"
+              [style.width.px]="placed.width"
+              [style.height.px]="placed.height"
+              [attr.tabindex]="node.id === tabStop() ? 0 : -1"
+              [attr.aria-current]="selected ? 'page' : null"
+              [attr.aria-disabled]="node.navigable ? null : true"
+              [attr.aria-label]="
+                (t + '.card' | translate: { label: labelOf(node), count: node.count ?? 0 }) +
+                (linksTo ? '; ' + (t + '.linksTo' | translate: { names: linksTo }) : '') +
+                (linkedFrom ? '; ' + (t + '.linkedFrom' | translate: { names: linkedFrom }) : '') +
+                (node.id === main()?.id ? '; ' + (t + '.mainClass' | translate) : '')
+              "
+              (focus)="focusedId.set(node.id)"
+              (click)="select(node)">
+              <span class="label">{{ labelOf(node) }}</span>
+              @if (!condensed()) {
+                <span class="meta">
+                  @if (node.kind === 'class') {
+                    {{ node.count | number }}
+                    @if (selected) {
+                      · {{ t + '.youAreHere' | translate }}
+                    } @else if (unlinked().has(node.id)) {
+                      · {{ t + '.notLinked' | translate }}
+                    }
+                  } @else if (node.kind === 'external') {
+                    {{ t + '.external' | translate }}
+                  }
+                </span>
+                @if (node.kind === 'class') {
+                  <span class="bar" [style.width.%]="share(node)"></span>
+                }
+              }
+            </button>
+          }
+        </nav>
+        @if (hasTint()) {
+          <div class="legend" aria-hidden="true">
+            <span>{{ t + '.fewerLinks' | translate }}</span>
+            <span class="swatches">
+              @for (tint of [0, 1, 2, 3]; track tint) {
+                <span class="swatch" [attr.data-tint]="tint"></span>
+              }
+            </span>
+            <span>{{ t + '.moreLinks' | translate }}</span>
+          </div>
+        }
+      </div>
     }
   `,
   styles: [
@@ -176,7 +178,20 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
       }
 
       :host(.full) {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
         padding: 0;
+
+        .frame {
+          flex: 1;
+          min-height: 0;
+          overflow: auto;
+        }
+
+        .legend {
+          margin-top: auto;
+        }
 
         .card {
           font-size: 13px;
@@ -259,7 +274,7 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
         display: flex;
         align-items: center;
         gap: 6px;
-        margin-top: 6px;
+        padding: 6px 8px 8px;
         font-size: 11px;
         color: $cool_gray_500;
       }
@@ -296,11 +311,18 @@ type Direction = 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight';
         background: $primary_300;
       }
 
-      .map {
-        position: relative;
+      // The map and its legend share one box.
+      .frame {
+        display: flex;
+        flex-direction: column;
         background: $cool_gray_50;
         border: 1px solid $cool_gray_200;
         border-radius: 8px;
+      }
+
+      .map {
+        position: relative;
+        flex: none;
       }
 
       .edges {

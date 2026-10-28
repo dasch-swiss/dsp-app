@@ -43,16 +43,7 @@ export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as co
         </mat-button-toggle-group>
       }
 
-      @if (selected(); as selected) {
-        <h1 class="title">
-          {{ selected.label }}
-          @if (graph(); as graph) {
-            @let classCount = classCountOf(graph);
-            <span class="class-count">
-              {{ t + (classCount === 1 ? '.classCountOne' : '.classCount') | translate: { count: classCount } }}
-            </span>
-          }
-        </h1>
+      @if (selected()) {
         @if (graph(); as graph) {
           <app-data-model-map
             [graph]="graph"
@@ -68,29 +59,30 @@ export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as co
   `,
   styles: [
     `
+      :host {
+        display: block;
+        height: 100%;
+      }
+
+      // The tab's whole height, the map box stretched to fill it.
       .page {
         box-sizing: border-box;
-        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        // As the data model editor: 8px around the content.
+        padding: 8px;
+      }
+
+      app-data-model-map {
+        flex: 1;
+        min-height: 0;
       }
 
       .ontologies {
         margin-bottom: 16px;
         --mat-button-toggle-height: 32px;
         --mat-button-toggle-label-text-size: 13px;
-      }
-
-      .title {
-        margin: 0 0 12px;
-        font-size: 22px;
-        font-weight: 500;
-        line-height: 28px;
-      }
-
-      .class-count {
-        margin-left: 8px;
-        font-size: 14px;
-        font-weight: 400;
-        color: #6b7280;
       }
 
       .empty {
@@ -134,10 +126,6 @@ export class OntologyMapPageComponent {
   /** The class whose details are open, else the one named in the URL: the map outlines it. */
   private readonly _detailsIri = signal<string | undefined>(undefined);
   readonly classIri = computed(() => this._detailsIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
-
-  classCountOf(graph: { nodes: { kind: string }[] }): number {
-    return graph.nodes.filter(node => node.kind === 'class').length;
-  }
 
   show(ontologyIri: string): void {
     this._router.navigate([], {
