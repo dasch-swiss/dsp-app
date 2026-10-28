@@ -61,6 +61,19 @@ import { ColumnPickerEntry } from './table-view-state.service';
           }
         </div>
 
+        <h4 class="section-header">{{ 'pages.dataBrowser.viewOptions.comments' | translate }}</h4>
+        <button
+          mat-menu-item
+          type="button"
+          role="menuitemcheckbox"
+          class="option-row"
+          data-cy="show-comments"
+          [attr.aria-checked]="showComments()"
+          (click)="$event.stopPropagation(); showCommentsChanged.emit(!showComments())">
+          <mat-icon class="option-mark">{{ showComments() ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+          <span class="option-label">{{ 'pages.dataBrowser.viewOptions.showComments' | translate }}</span>
+        </button>
+
         <!-- Each row stops the click so the menu stays open while ticking columns. -->
         <h4 class="section-header">
           {{ 'pages.dataBrowser.viewOptions.columns' | translate }}
@@ -121,8 +134,12 @@ export class TableViewOptionsComponent {
   /** The height every row is drawn at, or undefined for Auto. */
   readonly rowHeight = input<number | undefined>(undefined);
 
+  /** Whether value comments are shown under their values. */
+  readonly showComments = input(false);
+
   /** A height in pixels, or undefined when the user picks Auto. */
   readonly rowHeightChanged = output<number | undefined>();
+  readonly showCommentsChanged = output<boolean>();
 
   readonly columnVisibilityChanged = output<{ key: string; isVisible: boolean }>();
   /** True to show every column, false to hide every column but the sticky one. */

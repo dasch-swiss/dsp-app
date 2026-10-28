@@ -107,7 +107,9 @@ interface CreateResourceDialogProps {
             <app-table-view-options
               [entries]="tableState.pickerEntries()"
               [rowHeight]="tableState.layout().rowHeight"
+              [showComments]="tableState.showComments()"
               (rowHeightChanged)="tableState.setRowHeight($event)"
+              (showCommentsChanged)="tableState.setShowComments($event)"
               (columnVisibilityChanged)="tableState.setColumnVisible($event.key, $event.isVisible)"
               (allColumnsVisibilityChanged)="tableState.setAllColumnsVisible($event)" />
           }

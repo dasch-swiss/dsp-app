@@ -33,6 +33,7 @@ const ENTRIES: ColumnPickerEntry[] = [
 const onVisibility = fn().mockName('columnVisibilityChanged');
 const onAllVisibility = fn().mockName('allColumnsVisibilityChanged');
 const onRowHeight = fn().mockName('rowHeightChanged');
+const onShowComments = fn().mockName('showCommentsChanged');
 
 /** The menu renders into a CDK overlay, which is attached to the body rather than to the canvas. */
 const overlay = () => within(document.body);
@@ -41,6 +42,7 @@ const openMenu = async () => {
   onVisibility.mockClear();
   onAllVisibility.mockClear();
   onRowHeight.mockClear();
+  onShowComments.mockClear();
   await userEvent.click(overlay().getByRole('button', { name: /View options/i }));
 };
 
@@ -49,11 +51,13 @@ const meta: Meta<TableViewOptionsComponent> = {
   component: TableViewOptionsComponent,
   decorators: [applicationConfig({ providers: STORY_PROVIDERS })],
   render: args => ({
-    props: { ...args, onVisibility, onAllVisibility, onRowHeight },
+    props: { ...args, onVisibility, onAllVisibility, onRowHeight, onShowComments },
     template: `<app-table-view-options
       [entries]="entries"
       [rowHeight]="rowHeight"
+      [showComments]="showComments"
       (rowHeightChanged)="onRowHeight($event)"
+      (showCommentsChanged)="onShowComments($event)"
       (columnVisibilityChanged)="onVisibility($event)"
       (allColumnsVisibilityChanged)="onAllVisibility($event)" />`,
   }),
@@ -64,6 +68,8 @@ const meta: Meta<TableViewOptionsComponent> = {
     rowHeight: { description: 'Height every row is drawn at, or undefined for Auto.' },
     rowHeightChanged: { description: 'Emits the height as the thumb moves, or undefined when Auto is picked.' },
     allColumnsVisibilityChanged: { description: 'Emits true to show every column, false to hide all but the label.' },
+    showComments: { description: 'Whether value comments are shown under their values.' },
+    showCommentsChanged: { description: 'Emits whether comments should be shown once the user ticks the option.' },
   },
 };
 
@@ -239,5 +245,30 @@ export const EmitsTheHeightWhileTheSliderIsDragged: Story = {
     thumb.dispatchEvent(new Event('input', { bubbles: true }));
 
     await expect(onRowHeight).toHaveBeenCalledWith(200);
+  },
+};
+
+export const AsksToShowCommentsWhenTheOptionIsTicked: Story = {
+  args: { showComments: false },
+  play: async () => {
+    await openMenu();
+    const option = overlay().getByRole('menuitemcheckbox', { name: /Show comments/ });
+
+    await expect(option).toHaveAttribute('aria-checked', 'false');
+    await userEvent.click(option);
+
+    await expect(onShowComments).toHaveBeenCalledWith(true);
+    // The menu stays open, like the column rows.
+    await expect(overlay().getByRole('menuitemcheckbox', { name: /Show comments/ })).toBeInTheDocument();
+  },
+};
+
+export const AsksToHideCommentsWhenTheOptionIsUnticked: Story = {
+  args: { showComments: true },
+  play: async () => {
+    await openMenu();
+    await userEvent.click(overlay().getByRole('menuitemcheckbox', { name: /Show comments/ }));
+
+    await expect(onShowComments).toHaveBeenCalledWith(false);
   },
 };

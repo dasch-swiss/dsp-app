@@ -1,4 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { PropertiesDisplayService } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { LABEL_COLUMN_KEY, TableColumn } from './table-column.model';
 import { arrangePinned, TableLayout, TableLayoutService } from './table-layout.service';
 
@@ -30,6 +32,10 @@ export class TableViewStateService {
     return this.columns().map(column => ({ column, isVisible: visible.has(column.key) }));
   });
 
+  /** Backed by the resource view's own setting, so comments shown in one view are shown in the other. */
+  private readonly _commentsDisplay = new PropertiesDisplayService();
+  readonly showComments = toSignal(this._commentsDisplay.showComments$, { requireSync: true });
+
   init(classIri: string, columns: TableColumn[]): void {
     this._classIri = classIri;
     this.columns.set(columns);
@@ -42,6 +48,10 @@ export class TableViewStateService {
       const { rowHeight: _previous, ...rest } = layout;
       return rowHeight === undefined ? rest : { ...rest, rowHeight };
     });
+  }
+
+  setShowComments(show: boolean): void {
+    this._commentsDisplay.setShowComments(show);
   }
 
   /**

@@ -189,6 +189,9 @@ const meta: Meta<DataTableComponent> = {
     visibleColumns: { description: 'Keys of the columns to show, in display order. Label first.' },
     columnWidths: { description: 'Pixel widths the user has set; a column absent here uses its default.' },
     rowHeight: { description: 'Height every row is drawn at from View options; undefined for Auto.' },
+    showComments: {
+      description: 'Whether value comments show under their values, from View options; undefined keeps the stored setting.',
+    },
     selectionActive: { description: 'Whether a comparison set is being built; every row then shows its checkbox.' },
     selectable: { description: 'Whether rows can be selected for comparison; off for anonymous visitors.' },
     sortedColumnKey: { description: 'Column the query is sorted by, so its header announces aria-sort.' },
@@ -307,6 +310,52 @@ export const LeavesAnEmptyEditableCellToTheViewersOwnAddControl: Story = {
     await expect(emptyCell.querySelector('app-table-property-cell')).not.toBeNull();
     await expect(emptyCell.querySelector('.cell-empty')).toBeNull();
     await expect(canvas.queryByText('— not set')).toBeNull();
+  },
+};
+
+// ── Value comments ──────────────────────────────────────────────────────────
+
+const COMMENT = 'Title taken from the back of the print';
+
+const commentedRows = () => {
+  const title = textValue(`${ONTO}hasTitle`, 'Brautpaar in Tracht');
+  title.valueHasComment = COMMENT;
+  return [resource('http://rdfh.ch/0001/c', 'BRAUT001c', { [`${ONTO}hasTitle`]: [title] })];
+};
+
+export const ShowsValueCommentsWhenViewOptionsTurnThemOn: Story = {
+  args: { resources: commentedRows(), showComments: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() => expect(canvas.getByText(COMMENT)).toBeInTheDocument());
+  },
+};
+
+export const HidesValueCommentsWhenViewOptionsTurnThemOff: Story = {
+  args: { resources: commentedRows(), showComments: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Brautpaar in Tracht')).toBeInTheDocument();
+    await expect(canvas.queryByText(COMMENT)).toBeNull();
+  },
+};
+
+/** The table's denser value padding left the comment's pointer drawn over the value above it (DEV-7671). */
+export const KeepsTheCommentPointerClearOfTheValue: Story = {
+  args: { resources: commentedRows(), showComments: true },
+  play: async ({ canvasElement }) => {
+    const comment = await waitFor(() => {
+      const element = canvasElement.querySelector<HTMLElement>('[data-cy="property-value-comment"]');
+      expect(element).not.toBeNull();
+      return element!;
+    });
+    const value = within(canvasElement).getByText('Brautpaar in Tracht').getBoundingClientRect();
+    const pointerTop =
+      comment.getBoundingClientRect().top +
+      parseFloat(getComputedStyle(comment).borderTopWidth) +
+      parseFloat(getComputedStyle(comment, '::before').top);
+
+    await expect(pointerTop).toBeGreaterThanOrEqual(value.bottom);
   },
 };
 

@@ -27,8 +27,14 @@ export class PropertiesDisplayService {
   }
 
   toggleShowComments() {
-    const newValue = !this._showComments.value;
-    localStorage.setItem(this._SHOW_ALL_COMMENTS_KEY, JSON.stringify(newValue));
-    this._showComments.next(newValue);
+    this.setShowComments(!this._showComments.value);
+  }
+
+  setShowComments(show: boolean) {
+    if (show === this._showComments.value) {
+      return;
+    }
+    localStorage.setItem(this._SHOW_ALL_COMMENTS_KEY, JSON.stringify(show));
+    this._showComments.next(show);
   }
 }

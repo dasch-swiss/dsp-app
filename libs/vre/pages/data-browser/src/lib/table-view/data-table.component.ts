@@ -5,6 +5,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   ElementRef,
   inject,
   input,
@@ -401,6 +402,8 @@ export class DataTableComponent {
   readonly selectable = input(true);
   /** Whether the user may edit this project's data. Only then are read-only columns marked. */
   readonly canEdit = input(false);
+  /** Whether value comments are shown under their values. Undefined leaves the stored setting alone. */
+  readonly showComments = input<boolean | undefined>(undefined);
 
   /**
    * A row's checkbox, as a change rather than "add" and "remove" outputs.
@@ -449,6 +452,14 @@ export class DataTableComponent {
   );
 
   constructor() {
+    // The cells' comment components read the table-wide service, not an input.
+    const propertiesDisplay = inject(PropertiesDisplayService);
+    effect(() => {
+      const show = this.showComments();
+      if (show !== undefined) {
+        propertiesDisplay.setShowComments(show);
+      }
+    });
     // Pinning, hiding or resizing a column moves the frozen edge without a scroll event.
     afterRenderEffect({
       read: () => {
