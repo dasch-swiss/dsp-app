@@ -65,6 +65,36 @@ describe('OntologyMapPageComponent', () => {
     expect(component.classIri()).toBe(`${BIBLIO}#Letter`);
   });
 
+  it('reads the open panel and the graph filter from the URL', () => {
+    params.next(convertToParamMap({ ontology: 'beol', panel: 'Letter', filter: 'Letter' }));
+
+    expect(component.panelIri()).toBe(`${BEOL}#Letter`);
+    expect(component.filterIri()).toBe(`${BEOL}#Letter`);
+    expect(component.classIri()).toBe(`${BEOL}#Letter`);
+  });
+
+  it('ignores a class the shown data model does not have', () => {
+    params.next(convertToParamMap({ ontology: 'beol', panel: 'Nothing' }));
+
+    expect(component.panelIri()).toBeUndefined();
+  });
+
+  it('opens a panel and filters by navigating, so the browser history keeps each step', () => {
+    component.openPanel(`${BEOL}#Letter`);
+    component.setFilter(undefined);
+
+    expect(navigate).toHaveBeenNthCalledWith(1, [], {
+      relativeTo: expect.anything(),
+      queryParamsHandling: 'merge',
+      queryParams: { ontology: 'beol', panel: 'Letter' },
+    });
+    expect(navigate).toHaveBeenNthCalledWith(2, [], {
+      relativeTo: expect.anything(),
+      queryParamsHandling: 'merge',
+      queryParams: { ontology: 'beol', filter: null },
+    });
+  });
+
   it('opens a clicked class in the Data tab', () => {
     component.open(`${BEOL}#Letter`);
 

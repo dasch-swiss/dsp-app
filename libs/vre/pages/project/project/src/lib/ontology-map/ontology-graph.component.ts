@@ -193,7 +193,7 @@ export class OntologyGraphComponent {
   /** IRI of the class to outline, if any. */
   readonly selectedIri = input<string | undefined>(undefined);
   /** How the classes are arranged. */
-  readonly layout = input<GraphLayout>('tree');
+  readonly layout = input<GraphLayout>('circle');
   /** Colour per class, from the whole data model so a filter keeps them; see `classColors`. */
   readonly colors = input.required<Map<string, string>>();
   /** Label for knora-api's "any resource" node, in the current language. */

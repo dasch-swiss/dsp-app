@@ -17,8 +17,13 @@ import { classColors, GraphLayout, linkedWith } from './ontology-graph-elements'
 import { OntologyGraphComponent } from './ontology-graph.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
-/** Query parameters of the Ontology map tab: the data model to show and the class to outline, if any. */
-export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as const;
+/**
+ * Query parameters of the Ontology map tab: the data model to show, the class to outline, the class whose panel is
+ * open and the class the graph is filtered on. Classes are named by the end of their IRI, within the data model.
+ */
+export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class', panel: 'panel', filter: 'filter' } as const;
+
+const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
 const DETAIL_KEY = 'dsp-ontology-map-detail';
 const VIEW_KEY = 'dsp-ontology-map-view';
@@ -28,8 +33,8 @@ const LAYOUT_KEY = 'dsp-ontology-map-layout';
 type OntologyMapView = 'map' | 'graph';
 
 const LAYOUTS: { value: GraphLayout; icon: string }[] = [
-  { value: 'tree', icon: 'account_tree' },
   { value: 'circle', icon: 'radio_button_unchecked' },
+  { value: 'tree', icon: 'account_tree' },
   { value: 'force', icon: 'bubble_chart' },
   { value: 'grid', icon: 'grid_view' },
 ];
@@ -114,13 +119,13 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                 <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
               </button>
               <mat-menu #classFilter="matMenu">
-                <button mat-menu-item (click)="filterIri.set(undefined)">{{ m + '.allClasses' | translate }}</button>
+                <button mat-menu-item (click)="setFilter(undefined)">{{ m + '.allClasses' | translate }}</button>
                 @for (option of classOptions(); track option.id) {
-                  <button mat-menu-item (click)="filterIri.set(option.id)">{{ option.label }}</button>
+                  <button mat-menu-item (click)="setFilter(option.id)">{{ option.label }}</button>
                 }
               </mat-menu>
               @if (filterIri()) {
-                <button mat-button data-cy="ontology-map-class-reset" (click)="filterIri.set(undefined)">
+                <button mat-button data-cy="ontology-map-class-reset" (click)="setFilter(undefined)">
                   <mat-icon>close</mat-icon>
                   {{ m + '.resetFilter' | translate }}
                 </button>
@@ -176,7 +181,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [layout]="layout()"
                   [colors]="colors()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
-                  (classSelected)="panelIri.set($event)"
+                  (classSelected)="openPanel($event)"
                   (classFiltered)="filterOn($event)" />
               } @else {
                 <app-data-model-map
@@ -186,7 +191,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   [full]="true"
                   [detail]="detail()"
-                  (classSelected)="panelIri.set($event)" />
+                  (classSelected)="openPanel($event)" />
               }
               @if (panelIri(); as openIri) {
                 <app-resource-class-panel
@@ -197,8 +202,8 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   [subclassLabel]="t + '.subclassOf' | translate"
                   [canEdit]="canEdit() ?? false"
-                  (classSelected)="panelIri.set($event)"
-                  (closed)="panelIri.set(undefined)"
+                  (classSelected)="openPanel($event)"
+                  (closed)="openPanel(undefined)"
                   (browse)="open($event)"
                   (filter)="filterOn($event)"
                   (edit)="edit($event)" />
@@ -369,7 +374,7 @@ export class OntologyMapPageComponent {
   readonly view = signal<OntologyMapView>(readStored(VIEW_KEY) === 'map' ? 'map' : 'graph');
   /** How the graph view arranges the classes; remembered in this browser. */
   readonly layout = signal<GraphLayout>(
-    LAYOUTS.find(option => option.value === readStored(LAYOUT_KEY))?.value ?? 'tree'
+    LAYOUTS.find(option => option.value === readStored(LAYOUT_KEY))?.value ?? 'circle'
   );
   readonly graphView = viewChild(OntologyGraphComponent);
 
@@ -383,7 +388,7 @@ export class OntologyMapPageComponent {
   });
 
   /** In the Graph view, the class to show with only the classes it is linked with; all classes when unset. */
-  readonly filterIri = signal<string | undefined>(undefined);
+  readonly filterIri = computed(() => this._classFromUrl(ONTOLOGY_MAP_PARAM.filter));
   readonly classOptions = computed(() =>
     (this.graph()?.nodes ?? [])
       .filter(node => node.kind === 'class')
@@ -398,13 +403,12 @@ export class OntologyMapPageComponent {
   });
 
   /** The class whose panel is open. */
-  readonly panelIri = signal<string | undefined>(undefined);
+  readonly panelIri = computed(() => this._classFromUrl(ONTOLOGY_MAP_PARAM.panel));
   /** The class the map outlines: the one whose panel is open, else the one named in the URL. */
   readonly classIri = computed(() => this.panelIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
 
+  /** Shows another data model, with no panel open and no filter. */
   show(ontologyIri: string): void {
-    this.panelIri.set(undefined);
-    this.filterIri.set(undefined);
     this._router.navigate([], {
       relativeTo: this._route,
       queryParams: { [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri) },
@@ -421,10 +425,40 @@ export class OntologyMapPageComponent {
     store(VIEW_KEY, view);
   }
 
+  /** Opens the class's panel, or closes it; a step in the browser history. */
+  openPanel(classIri: string | undefined): void {
+    this._navigate({ [ONTOLOGY_MAP_PARAM.panel]: classIri ? classNameOf(classIri) : null });
+  }
+
+  /** Filters the graph on the class, or shows every class again; a step in the browser history. */
+  setFilter(classIri: string | undefined): void {
+    this._navigate({ [ONTOLOGY_MAP_PARAM.filter]: classIri ? classNameOf(classIri) : null });
+  }
+
   /** Shows the class with only the classes it is linked with, in the Graph view. */
   filterOn(classIri: string): void {
     this.setView('graph');
-    this.filterIri.set(classIri);
+    this.setFilter(classIri);
+  }
+
+  /** Changes some query parameters, keeping the others; the data model is named so the class names resolve. */
+  private _navigate(params: Record<string, string | null>): void {
+    const ontologyIri = this.selected()?.iri;
+    this._router.navigate([], {
+      relativeTo: this._route,
+      queryParamsHandling: 'merge',
+      queryParams: {
+        ...(ontologyIri ? { [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri) } : {}),
+        ...params,
+      },
+    });
+  }
+
+  /** The class of the shown data model that a query parameter names, if it names one. */
+  private _classFromUrl(param: string): string | undefined {
+    const name = this._params()?.get(param);
+    if (!name) return undefined;
+    return this.graph()?.nodes.find(node => node.kind === 'class' && classNameOf(node.id) === name)?.id;
   }
 
   setLayout(layout: GraphLayout): void {
