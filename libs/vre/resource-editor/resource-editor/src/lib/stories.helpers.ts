@@ -106,6 +106,23 @@ export const STORY_IMAGE_URL = '/storybook-media/Fingerprint_Logo.jpg';
 export const STORY_IIIF_BASE_URL = '/storybook-media/iiif';
 
 /**
+ * `RepresentationService.getIiifImageInfo` stub for the still-image stories.
+ *
+ * The viewer draws internal images from Sipi's info.json. This one points its
+ * `id` at {@link STORY_IIIF_BASE_URL}, so the tiles OpenSeadragon then asks for
+ * 404 at once, as described there.
+ */
+export const storyGetIiifImageInfo = (iiifBaseUrl: string, filename: string) =>
+  of({
+    '@context': 'http://iiif.io/api/image/3/context.json',
+    id: `${iiifBaseUrl}/${filename}`,
+    protocol: 'http://iiif.io/api/image',
+    profile: 'level2',
+    width: 1333,
+    height: 1815,
+  });
+
+/**
  * URL for the external-IIIF story.
  *
  * Absolute — the component parses it with `IIIFUrl.createUrl`, which needs a real
