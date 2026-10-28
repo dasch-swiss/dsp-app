@@ -727,13 +727,16 @@
         "mainClassLinks": "ist mit {{links}} der {{others}} anderen Klassen verknüpft",
         "fewerLinks": "Weniger Verknüpfungen",
         "moreLinks": "Mehr Verknüpfungen",
-        "close": "Ganze Karte schliessen",
         "connections": "Mit dieser Klasse verknüpfte Klassen",
         "linkedFromHeading": "Verknüpft von",
         "linksToHeading": "Verknüpft mit",
         "moreClasses": "+{{count}} weitere",
         "noLinks": "Mit keiner anderen Klasse verknüpft"
       }
+    },
+    "ontologyMap": {
+      "dataModels": "Datenmodelle",
+      "noDataModels": "Dieses Projekt hat noch kein Datenmodell."
     }
   },
   "resourceEditor": {
@@ -1257,7 +1260,8 @@
       "projectTabs": {
         "data": "Daten",
         "dataModels": "Datenmodelle",
-        "settings": "Einstellungen"
+        "settings": "Einstellungen",
+        "ontologyMap": "Ontologie-Karte"
       }
     },
     "grid": {

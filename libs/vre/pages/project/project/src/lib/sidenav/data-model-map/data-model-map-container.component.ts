@@ -1,15 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OntologyAndResourceClasses } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
+import { ONTOLOGY_MAP_PARAM } from '../../ontology-map/ontology-map-page.component';
 import { ProjectPageService } from '../../project-page.service';
 import { navigateToResourceClass, selectedResourceClassIri$ } from '../resource-class-sidenav/resource-class-route';
-import { DataModelFullMapDialogComponent, DataModelFullMapDialogData } from './data-model-full-map-dialog.component';
-import { DataModelGraph } from './data-model-graph';
 import { DataModelGraphService } from './data-model-graph.service';
 import { DataModelMapComponent } from './data-model-map.component';
 
@@ -25,7 +24,7 @@ import { DataModelMapComponent } from './data-model-map.component';
         [selectedIri]="selectedIri()"
         [anyResourceLabel]="'pages.dataBrowser.dataModelMap.anyResource' | translate"
         (classSelected)="open($event)"
-        (openFullMap)="openFullMap(graph)" />
+        (openFullMap)="openFullMap()" />
     }
   `,
 })
@@ -35,8 +34,6 @@ export class DataModelMapContainerComponent {
 
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
-  private readonly _dialog = inject(MatDialog);
-  private readonly _translate = inject(TranslateService);
 
   readonly graph = toSignal(
     combineLatest([toObservable(this.ontology), inject(DataModelGraphService).graphs$]).pipe(
@@ -52,21 +49,14 @@ export class DataModelMapContainerComponent {
     navigateToResourceClass(this._router, this._route, iri);
   }
 
-  openFullMap(graph: DataModelGraph): void {
-    this._dialog
-      .open<DataModelFullMapDialogComponent, DataModelFullMapDialogData, string>(DataModelFullMapDialogComponent, {
-        data: {
-          title: this.ontology().ontology.label,
-          graph,
-          selectedIri: this.selectedIri(),
-          anyResourceLabel: this._translate.instant('pages.dataBrowser.dataModelMap.anyResource'),
-        },
-        width: '95vw',
-        maxWidth: '1400px',
-        height: '90vh',
-        autoFocus: 'dialog',
-      })
-      .afterClosed()
-      .subscribe(iri => iri && this.open(iri));
+  /** Opens the Ontology map tab on this data model, the class being browsed outlined. */
+  openFullMap(): void {
+    this._router.navigate(['..', RouteConstants.ontologyMap], {
+      relativeTo: this._route,
+      queryParams: {
+        [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(this.ontology().ontology.iri),
+        [ONTOLOGY_MAP_PARAM.class]: this.selectedIri(),
+      },
+    });
   }
 }

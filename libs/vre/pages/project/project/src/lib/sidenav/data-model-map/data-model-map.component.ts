@@ -424,7 +424,7 @@ export class DataModelMapComponent {
   readonly selectedIri = input<string | undefined>(undefined);
   /** Label for knora-api's "any resource" card, in the current language. */
   readonly anyResourceLabel = input('Any resource');
-  /** Drawn large in the full-map dialog: no header or views, every model drawn, full cards, wider rows. */
+  /** Drawn large in the Ontology map tab: no header, every model drawn, full cards, wider rows. */
   readonly full = input(false);
 
   /** A class card was activated; emits the class IRI. */

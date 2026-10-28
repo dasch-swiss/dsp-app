@@ -727,13 +727,16 @@
         "mainClassLinks": "is linked with {{links}} of the {{others}} other classes",
         "fewerLinks": "Fewer links",
         "moreLinks": "More links",
-        "close": "Close the full map",
         "connections": "Classes linked with this class",
         "linkedFromHeading": "Linked from",
         "linksToHeading": "Links to",
         "moreClasses": "+{{count}} more",
         "noLinks": "Not linked with other classes"
       }
+    },
+    "ontologyMap": {
+      "dataModels": "Data models",
+      "noDataModels": "This project does not have any data model yet."
     }
   },
   "resourceEditor": {
@@ -1257,7 +1260,8 @@
       "projectTabs": {
         "data": "Data",
         "dataModels": "Data models",
-        "settings": "Settings"
+        "settings": "Settings",
+        "ontologyMap": "Ontology map"
       }
     },
     "grid": {

@@ -80,8 +80,10 @@ const meta: Meta<MapArgs> = {
     selectedIri: { description: 'IRI of the class being browsed; it and its linked classes are highlighted.' },
     anyResourceLabel: { description: 'Label of the card for links that point at any resource.' },
     classSelected: { description: 'Emits the IRI of a class card that was clicked or activated by keyboard.' },
-    openFullMap: { description: 'Emits when "Full map" is clicked; the container opens the map over the page.' },
-    full: { description: 'Draws the map large, as in the full-map dialog: no header, full cards, wider rows.' },
+    openFullMap: {
+      description: 'Emits when "Full map" is clicked; the container opens the Ontology map tab on this data model.',
+    },
+    full: { description: 'Draws the map large, as in the Ontology map tab: no header, full cards, wider rows.' },
   },
 };
 

@@ -16,6 +16,7 @@ import {
   EditProjectFormPageComponent,
   ImageSettingsComponent,
   LegalSettingsComponent,
+  OntologyMapPageComponent,
   ProjectAdminGuard,
   ProjectPageComponent,
   ProjectPageGuard,
@@ -63,6 +64,10 @@ export const routes: Routes = [
       {
         path: RouteConstants.dataModels,
         component: DataModelsPageComponent,
+      },
+      {
+        path: RouteConstants.ontologyMap,
+        component: OntologyMapPageComponent,
       },
       {
         path: RouteConstants.ontologyEditorRelative,
