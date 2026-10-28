@@ -15,6 +15,9 @@ import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-authorship-form-field',
+  // A flex container, so the inline-flex field sits at the top of its row. On a line box it aligned
+  // by the empty chip grid's baseline, 9px below the label beside it.
+  host: { style: 'display: flex; flex-direction: column' },
   template: `
     <mat-form-field style="width: 100%">
       <mat-label>{{ 'resourceEditor.resourceCreator.authorship.label' | translate }}</mat-label>
