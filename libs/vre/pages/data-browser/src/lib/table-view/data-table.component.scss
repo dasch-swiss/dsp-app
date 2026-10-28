@@ -299,8 +299,8 @@ tr:focus-within .row-resize-handle {
 .row-controls {
   position: absolute;
   left: 0;
-  // Aligns the 48px cluster with the label's first line.
-  top: -8px;
+  // Centres the 48px cluster on the label's first line, which sits about 20px below the cell's top.
+  top: -4px;
   display: flex;
   align-items: center;
   gap: 0;
