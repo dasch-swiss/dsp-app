@@ -1,18 +1,27 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { DspDialogConfig, RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
+import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { DataModelMapComponent } from '../sidenav/data-model-map/data-model-map.component';
+import {
+  ResourceClassDetailsDialogComponent,
+  ResourceClassDetailsDialogData,
+} from './resource-class-details-dialog.component';
 
 /** Query parameters of the Ontology map tab: the data model to show and the class to outline, if any. */
 export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as const;
 
-/** The Ontology map tab: the map of one data model of the project, drawn large. */
+/**
+ * The Ontology map tab: the map of one data model of the project, drawn large across the page. A class clicked on
+ * it opens its details in a side panel, from which it can be opened in the Data tab.
+ */
 @Component({
   selector: 'app-ontology-map-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +59,7 @@ export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as co
             [selectedIri]="classIri()"
             [anyResourceLabel]="t + '.anyResource' | translate"
             [full]="true"
-            (classSelected)="open($event)" />
+            (classSelected)="showDetails(graph, $event)" />
         }
       } @else if (ontologiesLoaded()) {
         <p class="empty">{{ 'pages.ontologyMap.noDataModels' | translate }}</p>
@@ -61,8 +70,6 @@ export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class' } as co
     `
       .page {
         box-sizing: border-box;
-        max-width: 1440px;
-        margin: 0 auto;
         padding: 24px;
       }
 
@@ -96,6 +103,8 @@ export class OntologyMapPageComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _graphs = inject(DataModelGraphService);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _translate = inject(TranslateService);
 
   private readonly _projectOntologies = toSignal(
     combineLatest([this._graphs.projectOntologies$, inject(LocalizationService).currentLanguage$]).pipe(
@@ -122,7 +131,9 @@ export class OntologyMapPageComponent {
     const iri = this.selected()?.iri;
     return iri ? this._graphsByIri()?.get(iri) : undefined;
   });
-  readonly classIri = computed(() => this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
+  /** The class whose details are open, else the one named in the URL: the map outlines it. */
+  private readonly _detailsIri = signal<string | undefined>(undefined);
+  readonly classIri = computed(() => this._detailsIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
 
   classCountOf(graph: { nodes: { kind: string }[] }): number {
     return graph.nodes.filter(node => node.kind === 'class').length;
@@ -133,6 +144,33 @@ export class OntologyMapPageComponent {
       relativeTo: this._route,
       queryParams: { [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri) },
     });
+  }
+
+  showDetails(graph: DataModelGraph, classIri: string): void {
+    this._detailsIri.set(classIri);
+    this._dialog
+      .open<ResourceClassDetailsDialogComponent, ResourceClassDetailsDialogData, string>(
+        ResourceClassDetailsDialogComponent,
+        {
+          ...DspDialogConfig.dialogDrawerConfig(
+            {
+              graph,
+              classIri,
+              anyResourceLabel: this._translate.instant('pages.dataBrowser.dataModelMap.anyResource'),
+              subclassLabel: this._translate.instant('pages.dataBrowser.dataModelMap.subclassOf'),
+            },
+            true
+          ),
+          width: '520px',
+          minWidth: 0,
+          maxWidth: '100vw',
+        }
+      )
+      .afterClosed()
+      .subscribe(iri => {
+        this._detailsIri.set(undefined);
+        if (iri) this.open(iri);
+      });
   }
 
   /** Opens the class in the Data tab. */

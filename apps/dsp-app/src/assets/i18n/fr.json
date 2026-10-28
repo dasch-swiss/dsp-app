@@ -736,7 +736,20 @@
     },
     "ontologyMap": {
       "dataModels": "Modèles de données",
-      "noDataModels": "Ce projet n'a pas encore de modèle de données."
+      "noDataModels": "Ce projet n'a pas encore de modèle de données.",
+      "classDetails": {
+        "resourceCount": "{{count}} ressources",
+        "resourceCountOne": "1 ressource",
+        "close": "Fermer les détails de la classe",
+        "connections": "Classes liées",
+        "properties": "Propriétés ({{count}})",
+        "noProperties": "Cette classe n'a pas de propriétés propres.",
+        "openInData": "Ouvrir dans l'onglet Données",
+        "exactlyOne": "exactement une",
+        "atMostOne": "au plus une",
+        "anyNumber": "nombre quelconque",
+        "atLeastOne": "au moins une"
+      }
     }
   },
   "resourceEditor": {

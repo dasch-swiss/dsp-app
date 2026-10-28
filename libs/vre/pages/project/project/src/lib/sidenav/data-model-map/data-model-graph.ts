@@ -1,4 +1,5 @@
 import {
+  Cardinality,
   Constants,
   PropertyDefinition,
   ReadOntology,
@@ -17,6 +18,18 @@ import {
  */
 export type DataModelNodeKind = 'class' | 'external' | 'generic';
 
+/** One property a class declares, for the class details. */
+export interface DataModelProperty {
+  id: string;
+  label: string;
+  description: string;
+  /** The value type's local name without "Value" (`Text`, `Date`, `List`…), or `Link` for a link. */
+  type: string;
+  /** The class a link points at; only set for links. */
+  linkTarget?: string;
+  cardinality: Cardinality;
+}
+
 export interface DataModelNode {
   /** The class IRI. */
   id: string;
@@ -32,6 +45,8 @@ export interface DataModelNode {
   description?: string;
   /** Labels of the class's own properties, in their form order; only set for classes of the mapped data model. */
   properties?: string[];
+  /** The class's own properties, in their form order; only set for classes of the mapped data model. */
+  propertyDetails?: DataModelProperty[];
 }
 
 export interface DataModelEdge {
@@ -96,6 +111,7 @@ export function buildDataModelGraph(
 
   for (const { resourceClass, itemCount } of ontology.classesAndCount ?? []) {
     const classDef = classDefs[resourceClass.iri];
+    const own = classDef ? ownProperties(classDef, properties, labelOf) : [];
     nodes.set(resourceClass.iri, {
       id: resourceClass.iri,
       label: labelOf(resourceClass.label),
@@ -104,7 +120,8 @@ export function buildDataModelGraph(
       navigable: true,
       representationClass: resourceClass.representationClass,
       description: classDef ? textOf(classDef, 'comments', 'comment', labelOf) : '',
-      properties: classDef ? ownPropertyLabels(classDef, properties, labelOf) : [],
+      properties: [...new Set(own.map(property => property.label))],
+      propertyDetails: own,
     });
   }
 
@@ -158,17 +175,30 @@ export function buildDataModelGraph(
   return { nodes: [...nodes.values()], edges: [...edges.values()] };
 }
 
-/** The labels of the properties a project declares on a class, not knora-api's, without link values. */
-function ownPropertyLabels(
+/** The properties a project declares on a class, not knora-api's, without link values, in their form order. */
+function ownProperties(
   classDef: ReadOntology['classes'][string],
   properties: Record<string, PropertyDefinition>,
   labelOf: (labels: Labels) => string
-): string[] {
-  const labels = [...classDef.propertiesList]
+): DataModelProperty[] {
+  const seen = new Set<string>();
+  return [...classDef.propertiesList]
     .filter(has => !has.propertyIndex.startsWith(Constants.KnoraApiV2))
     .sort((a, b) => (a.guiOrder ?? Infinity) - (b.guiOrder ?? Infinity))
-    .map(has => properties[has.propertyIndex] as ResourcePropertyDefinition | undefined)
-    .filter(property => property !== undefined && !property.isLinkValueProperty)
-    .map(property => textOf(property!, 'labels', 'label', labelOf) || localName(property!.id));
-  return [...new Set(labels)];
+    .flatMap(has => {
+      const property = properties[has.propertyIndex] as ResourcePropertyDefinition | undefined;
+      if (!property || property.isLinkValueProperty || seen.has(property.id)) return [];
+      seen.add(property.id);
+      const objectType = property.objectType ?? '';
+      return [
+        {
+          id: property.id,
+          label: textOf(property, 'labels', 'label', labelOf) || localName(property.id),
+          description: textOf(property, 'comments', 'comment', labelOf),
+          type: property.isLinkProperty ? 'Link' : localName(objectType).replace(/Value$/, ''),
+          ...(property.isLinkProperty ? { linkTarget: objectType } : {}),
+          cardinality: has.cardinality,
+        },
+      ];
+    });
 }
