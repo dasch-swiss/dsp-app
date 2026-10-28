@@ -243,6 +243,8 @@ export class OntologyGraphComponent {
   private readonly _canvas = viewChild.required<ElementRef<HTMLElement>>('canvas');
   private readonly _cy = signal<Core | undefined>(undefined);
   readonly failed = signal(false);
+  /** Whether the user moved classes since the last layout; their places then survive a resize. */
+  private _dragged = false;
 
   private readonly _counts = computed(() => linkCounts(this.graph()));
   private readonly _elements = computed(() =>
@@ -283,15 +285,27 @@ export class OntologyGraphComponent {
           const id = event.target.id();
           if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
+        cy.on('dragfree', 'node', () => (this._dragged = true));
         cy.on('mouseover', 'node', event => event.target.connectedEdges().addClass('highlighted'));
         cy.on('mouseout', 'node', event => event.target.connectedEdges().removeClass('highlighted'));
-        // The canvas follows its box, which narrows when the class panel opens beside it.
+        // The canvas follows its box, which settles after the page first renders and narrows when the class panel
+        // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
+        // user has dragged some, whose places are then kept and only fitted.
+        let frame = 0;
         const observer = new ResizeObserver(() => {
-          cy.resize();
-          cy.fit(undefined, FIT_PADDING);
+          cancelAnimationFrame(frame);
+          frame = requestAnimationFrame(() => {
+            cy.resize();
+            if (this._dragged) {
+              cy.fit(undefined, FIT_PADDING);
+            } else {
+              this._arrange(cy);
+            }
+          });
         });
         observer.observe(this._canvas().nativeElement);
         destroyRef.onDestroy(() => {
+          cancelAnimationFrame(frame);
           observer.disconnect();
           cy.destroy();
         });
@@ -310,8 +324,7 @@ export class OntologyGraphComponent {
       if (!cy) return;
       cy.elements().remove();
       cy.add(untracked(() => this._elements()));
-      cy.layout(layoutOptions(layout) as never).run();
-      cy.fit(undefined, FIT_PADDING);
+      this._arrange(cy, layout);
     });
     effect(() => {
       const cy = this._cy();
@@ -320,6 +333,14 @@ export class OntologyGraphComponent {
       cy.nodes().removeClass('selected');
       if (selected) cy.getElementById(selected).addClass('selected');
     });
+  }
+
+  /** Lays the classes out over the whole box and fits them in it; dragged places are forgotten. */
+  private _arrange(cy: Core, layout = untracked(() => this.layout())): void {
+    if (cy.elements().empty()) return;
+    cy.layout(layoutOptions(layout) as never).run();
+    cy.fit(undefined, FIT_PADDING);
+    this._dragged = false;
   }
 
   /** Zooms so the whole model fits. */
