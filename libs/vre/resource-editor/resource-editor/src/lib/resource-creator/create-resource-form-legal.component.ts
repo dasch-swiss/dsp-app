@@ -62,6 +62,12 @@ import { CreateResourceFormRowComponent } from './create-resource-form-row.compo
       mat-form-field {
         width: 100%;
       }
+      /* The compact fields reserve no error line, so the rows need their own gap; the same as the IIIF
+         URL field above them, which also leaves room for the authorship field's floating label. */
+      app-create-resource-form-row {
+        display: block;
+        margin-bottom: 16px;
+      }
     `,
   ],
   imports: [
