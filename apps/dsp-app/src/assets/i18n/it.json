@@ -786,8 +786,7 @@
         "small": "Piccolo",
         "normal": "Normale",
         "large": "Grande"
-      },
-      "panelHint": "Fai clic su una classe per vederne i dettagli"
+      }
     }
   },
   "resourceEditor": {
