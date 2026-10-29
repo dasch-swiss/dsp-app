@@ -1,14 +1,29 @@
-import type { ElementDefinition } from 'cytoscape';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
+import type { ElementDefinition } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 
 /** The layouts the graph view offers: a tree following the links, a circle, a force-directed spread, a grid. */
 export type GraphLayout = 'tree' | 'circle' | 'force' | 'grid';
 
-/** How big the graph draws boxes, text and lines, against the space between classes. */
+/** How big class names read on screen, whatever the number of classes. */
 export type GraphSize = 'small' | 'normal' | 'large';
 
-export const GRAPH_SIZE_FACTOR: Record<GraphSize, number> = { small: 1.25, normal: 1.75, large: 2.5 };
+/** On-screen size of class names, in px, per size setting. */
+export const GRAPH_TEXT_SIZE: Record<GraphSize, number> = { small: 11, normal: 14, large: 18 };
+
+/** Class names' font size at scale 1; boxes, text and lines are drawn at a multiple of it. */
+export const BASE_FONT_SIZE = 15;
+
+/** How far boxes, text and lines grow, at most, against the space the layout leaves between classes. */
+const MAX_SCALE = 4;
+
+/**
+ * How much bigger than at scale 1 the graph draws boxes, text and lines, for class names to read at `textSize` px when
+ * the graph is shown at `zoom`. A big data model, fitted at a low zoom, gets bigger boxes; a small one never shrinks.
+ */
+export function graphScale(textSize: number, zoom: number): number {
+  return Math.min(MAX_SCALE, Math.max(1, textSize / (BASE_FONT_SIZE * zoom)));
+}
 
 /**
  * Light colours that tell classes apart, all dark-text legible (ColorBrewer Set3, then Pastel1); a data model with

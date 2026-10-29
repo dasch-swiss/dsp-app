@@ -802,7 +802,11 @@
         "inheritedFrom": "héritée de {{class}}",
         "filter": "Afficher seulement ces liens",
         "edit": "Modifier la propriété"
-      }
+      },
+      "display": "Affichage",
+      "zoom": "Zoom",
+      "zoomIn": "Zoom avant",
+      "zoomOut": "Zoom arrière"
     }
   },
   "resourceEditor": {

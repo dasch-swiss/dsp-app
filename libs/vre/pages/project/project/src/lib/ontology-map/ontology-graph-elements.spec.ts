@@ -3,6 +3,7 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
   CLASS_COLORS,
   classColors,
+  graphScale,
   layoutOptions,
   linkedWith,
   propertyUsage,
@@ -173,6 +174,17 @@ describe('propertyUsage', () => {
 
   it('knows no property that no class has', () => {
     expect(propertyUsage(family, 'nothing')).toBeUndefined();
+  });
+});
+
+describe('graphScale', () => {
+  it('grows a big data model, fitted at a low zoom, so its class names reach the chosen size', () => {
+    expect(graphScale(15, 0.5)).toBe(2);
+  });
+
+  it('never shrinks a small data model, nor grows one past four times', () => {
+    expect(graphScale(14, 3)).toBe(1);
+    expect(graphScale(18, 0.1)).toBe(4);
   });
 });
 

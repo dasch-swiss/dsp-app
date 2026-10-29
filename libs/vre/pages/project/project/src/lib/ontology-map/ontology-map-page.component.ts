@@ -9,8 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatButton } from '@angular/material/button';
 import { MatPseudoCheckbox } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -79,10 +78,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
   imports: [
     DataModelMapComponent,
     MatButton,
-    MatButtonToggle,
-    MatButtonToggleGroup,
     MatIcon,
-    MatIconButton,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
@@ -99,188 +95,6 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
     <div class="page">
       @if (selected(); as selected) {
         <div class="canvas">
-          <div class="toolbar">
-            @if (ontologies().length > 1) {
-              <button
-                mat-stroked-button
-                class="data-model"
-                data-cy="ontology-map-data-model"
-                [matMenuTriggerFor]="dataModels">
-                <span class="data-model-label">{{ m + '.dataModel' | translate }}</span>
-                <b>{{ selected.label }}</b>
-                <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
-              </button>
-            } @else {
-              <span class="data-model static" data-cy="ontology-map-data-model">
-                <span class="data-model-label">{{ m + '.dataModel' | translate }}</span>
-                <b>{{ selected.label }}</b>
-              </span>
-            }
-            <mat-menu #dataModels="matMenu">
-              @for (ontology of ontologies(); track ontology.iri) {
-                <button mat-menu-item (click)="show(ontology.iri)">{{ ontology.label }}</button>
-              }
-            </mat-menu>
-            @if (counts(); as counts) {
-              <span class="counts">{{ m + '.counts' | translate: counts }}</span>
-            }
-            <span class="spacer"></span>
-            <mat-button-toggle-group
-              class="toggle"
-              hideSingleSelectionIndicator
-              data-cy="ontology-map-view"
-              [attr.aria-label]="m + '.view' | translate"
-              [value]="view()"
-              (change)="setView($event.value)">
-              <mat-button-toggle value="graph">
-                <mat-icon>hub</mat-icon>{{ m + '.viewGraph' | translate }}
-              </mat-button-toggle>
-              <mat-button-toggle value="map">
-                <mat-icon>dashboard</mat-icon>{{ m + '.viewMap' | translate }}
-              </mat-button-toggle>
-            </mat-button-toggle-group>
-            @if (view() === 'graph') {
-              <button
-                mat-stroked-button
-                class="data-model"
-                data-cy="ontology-map-class-filter"
-                [matMenuTriggerFor]="classFilter">
-                <span class="data-model-label">{{ m + '.classFilter' | translate }}</span>
-                <b>
-                  @switch (filterIris().length) {
-                    @case (0) {
-                      {{ m + '.allClasses' | translate }}
-                    }
-                    @case (1) {
-                      {{ filterLabel() }}
-                    }
-                    @default {
-                      {{ m + '.classesChosen' | translate: { count: filterIris().length } }}
-                    }
-                  }
-                </b>
-                <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
-              </button>
-              <mat-menu #classFilter="matMenu">
-                <button mat-menu-item (click)="setFilter([])">{{ m + '.allClasses' | translate }}</button>
-                @for (option of classOptions(); track option.id) {
-                  @let checked = filterIris().includes(option.id);
-                  <!-- Ticking keeps the menu open, to choose several classes. -->
-                  <button
-                    mat-menu-item
-                    role="menuitemcheckbox"
-                    [attr.aria-checked]="checked"
-                    (click)="$event.stopPropagation(); toggleFilter(option.id)">
-                    <mat-pseudo-checkbox class="filter-check" [state]="checked ? 'checked' : 'unchecked'" />
-                    {{ option.label }}
-                  </button>
-                }
-              </mat-menu>
-              <button
-                mat-stroked-button
-                class="data-model"
-                data-cy="ontology-map-property-filter"
-                [matMenuTriggerFor]="propertyFilter">
-                <span class="data-model-label">{{ m + '.propertyFilter' | translate }}</span>
-                <b>
-                  @switch (propertyIris().length) {
-                    @case (0) {
-                      {{ m + '.allProperties' | translate }}
-                    }
-                    @case (1) {
-                      {{ propertyLabel() }}
-                    }
-                    @default {
-                      {{ m + '.propertiesChosen' | translate: { count: propertyIris().length } }}
-                    }
-                  }
-                </b>
-                <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
-              </button>
-              <mat-menu #propertyFilter="matMenu">
-                <button mat-menu-item (click)="setPropertyFilter([])">{{ m + '.allProperties' | translate }}</button>
-                @for (option of propertyOptions(); track option.id) {
-                  @let checked = propertyIris().includes(option.id);
-                  <button
-                    mat-menu-item
-                    role="menuitemcheckbox"
-                    [attr.aria-checked]="checked"
-                    (click)="$event.stopPropagation(); toggleProperty(option.id)">
-                    <mat-pseudo-checkbox class="filter-check" [state]="checked ? 'checked' : 'unchecked'" />
-                    {{ option.label }}
-                    <span class="link-count">{{ option.links }}</span>
-                  </button>
-                }
-              </mat-menu>
-              @if (filterIris().length > 0 || propertyIris().length > 0) {
-                <button mat-button data-cy="ontology-map-class-reset" (click)="clearFilters()">
-                  <mat-icon>close</mat-icon>
-                  {{ m + '.resetFilter' | translate }}
-                </button>
-              }
-              <mat-button-toggle-group
-                class="toggle"
-                hideSingleSelectionIndicator
-                data-cy="ontology-map-layout"
-                [attr.aria-label]="m + '.layout' | translate"
-                [value]="layout()"
-                (change)="setLayout($event.value)">
-                @for (option of layouts; track option.value) {
-                  <mat-button-toggle [value]="option.value">
-                    <mat-icon>{{ option.icon }}</mat-icon
-                    >{{ m + '.layouts.' + option.value | translate }}
-                  </mat-button-toggle>
-                }
-              </mat-button-toggle-group>
-              <mat-button-toggle-group
-                class="toggle"
-                hideSingleSelectionIndicator
-                data-cy="ontology-map-size"
-                [attr.aria-label]="m + '.size' | translate"
-                [value]="size()"
-                (change)="setSize($event.value)">
-                @for (option of sizes; track option) {
-                  <mat-button-toggle [value]="option">{{ m + '.sizes.' + option | translate }}</mat-button-toggle>
-                }
-              </mat-button-toggle-group>
-              <button
-                mat-icon-button
-                class="fit"
-                data-cy="ontology-map-level-labels"
-                [class.on]="levelLabels()"
-                [attr.aria-pressed]="levelLabels()"
-                [attr.aria-label]="m + '.levelLabels' | translate"
-                [matTooltip]="m + '.levelLabels' | translate"
-                (click)="setLevelLabels(!levelLabels())">
-                <mat-icon>text_rotation_none</mat-icon>
-              </button>
-              <button
-                mat-icon-button
-                class="fit"
-                data-cy="ontology-map-fit"
-                [attr.aria-label]="m + '.fit' | translate"
-                [matTooltip]="m + '.fit' | translate"
-                (click)="graphView()?.fit()">
-                <mat-icon>fit_screen</mat-icon>
-              </button>
-            } @else {
-              <mat-button-toggle-group
-                class="toggle"
-                hideSingleSelectionIndicator
-                data-cy="ontology-map-detail"
-                [attr.aria-label]="m + '.detail' | translate"
-                [value]="detail()"
-                (change)="setDetail($event.value)">
-                <mat-button-toggle value="summary">
-                  <mat-icon>view_agenda</mat-icon>{{ m + '.summary' | translate }}
-                </mat-button-toggle>
-                <mat-button-toggle value="properties">
-                  <mat-icon>list_alt</mat-icon>{{ m + '.properties' | translate }}
-                </mat-button-toggle>
-              </mat-button-toggle-group>
-            }
-          </div>
-
           @if (graph(); as graph) {
             <div class="body" [class.overlay]="view() === 'graph'">
               @if (view() === 'graph') {
@@ -307,6 +121,218 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [full]="true"
                   [detail]="detail()"
                   (classSelected)="openPanel($event)" />
+              }
+              @if (view() === 'graph') {
+                <!-- What to show: the data model and its filters, top left. -->
+                <div class="float filters">
+                  @if (ontologies().length > 1) {
+                    <button
+                      mat-button
+                      class="data-model"
+                      data-cy="ontology-map-data-model"
+                      [attr.aria-label]="m + '.dataModel' | translate"
+                      [matMenuTriggerFor]="dataModels">
+                      {{ selected.label }}
+                      <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+                    </button>
+                  } @else {
+                    <span class="data-model static" data-cy="ontology-map-data-model">{{ selected.label }}</span>
+                  }
+                  <mat-menu #dataModels="matMenu">
+                    @for (ontology of ontologies(); track ontology.iri) {
+                      <button mat-menu-item (click)="show(ontology.iri)">{{ ontology.label }}</button>
+                    }
+                  </mat-menu>
+                  @if (counts(); as counts) {
+                    <span class="counts">{{ m + '.counts' | translate: counts }}</span>
+                  }
+                  <span class="divider"></span>
+                  <span class="chip" [class.active]="filterIris().length > 0">
+                    <button
+                      type="button"
+                      class="chip-trigger"
+                      data-cy="ontology-map-class-filter"
+                      [matMenuTriggerFor]="classFilter">
+                      <mat-icon>filter_list</mat-icon>
+                      {{ m + '.classFilter' | translate }}
+                      @switch (filterIris().length) {
+                        @case (0) {}
+                        @case (1) {
+                          <b>{{ filterLabel() }}</b>
+                        }
+                        @default {
+                          <b>{{ m + '.classesChosen' | translate: { count: filterIris().length } }}</b>
+                        }
+                      }
+                      @if (filterIris().length === 0) {
+                        <mat-icon class="drop">arrow_drop_down</mat-icon>
+                      }
+                    </button>
+                    @if (filterIris().length > 0) {
+                      <button
+                        type="button"
+                        class="chip-clear"
+                        data-cy="ontology-map-class-reset"
+                        [attr.aria-label]="m + '.resetFilter' | translate"
+                        [matTooltip]="m + '.resetFilter' | translate"
+                        (click)="clearFilters()">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    }
+                  </span>
+                  <mat-menu #classFilter="matMenu">
+                    <button mat-menu-item (click)="setFilter([])">{{ m + '.allClasses' | translate }}</button>
+                    @for (option of classOptions(); track option.id) {
+                      @let checked = filterIris().includes(option.id);
+                      <!-- Ticking keeps the menu open, to choose several classes. -->
+                      <button
+                        mat-menu-item
+                        role="menuitemcheckbox"
+                        [attr.aria-checked]="checked"
+                        (click)="$event.stopPropagation(); toggleFilter(option.id)">
+                        <mat-pseudo-checkbox class="filter-check" [state]="checked ? 'checked' : 'unchecked'" />
+                        {{ option.label }}
+                      </button>
+                    }
+                  </mat-menu>
+                  <span class="chip" [class.active]="propertyIris().length > 0">
+                    <button
+                      type="button"
+                      class="chip-trigger"
+                      data-cy="ontology-map-property-filter"
+                      [matMenuTriggerFor]="propertyFilter">
+                      <mat-icon>filter_list</mat-icon>
+                      {{ m + '.propertyFilter' | translate }}
+                      @switch (propertyIris().length) {
+                        @case (0) {}
+                        @case (1) {
+                          <b>{{ propertyLabel() }}</b>
+                        }
+                        @default {
+                          <b>{{ m + '.propertiesChosen' | translate: { count: propertyIris().length } }}</b>
+                        }
+                      }
+                      @if (propertyIris().length === 0) {
+                        <mat-icon class="drop">arrow_drop_down</mat-icon>
+                      }
+                    </button>
+                    @if (propertyIris().length > 0) {
+                      <button
+                        type="button"
+                        class="chip-clear"
+                        data-cy="ontology-map-property-reset"
+                        [attr.aria-label]="m + '.resetFilter' | translate"
+                        [matTooltip]="m + '.resetFilter' | translate"
+                        (click)="clearFilters()">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    }
+                  </span>
+                  <mat-menu #propertyFilter="matMenu">
+                    <button mat-menu-item (click)="setPropertyFilter([])">
+                      {{ m + '.allProperties' | translate }}
+                    </button>
+                    @for (option of propertyOptions(); track option.id) {
+                      @let checked = propertyIris().includes(option.id);
+                      <button
+                        mat-menu-item
+                        role="menuitemcheckbox"
+                        [attr.aria-checked]="checked"
+                        (click)="$event.stopPropagation(); toggleProperty(option.id)">
+                        <mat-pseudo-checkbox class="filter-check" [state]="checked ? 'checked' : 'unchecked'" />
+                        {{ option.label }}
+                        <span class="link-count">{{ option.links }}</span>
+                      </button>
+                    }
+                  </mat-menu>
+                </div>
+
+                <!-- How to show it: layout, text size and labels, top right; left of an open panel. -->
+                <div
+                  class="float display"
+                  role="toolbar"
+                  [attr.aria-label]="m + '.display' | translate"
+                  [class.beside-panel]="panelOpen()">
+                  @for (option of layouts; track option.value) {
+                    <button
+                      type="button"
+                      class="tool"
+                      [class.on]="layout() === option.value"
+                      [attr.aria-pressed]="layout() === option.value"
+                      [attr.data-cy]="'ontology-map-layout-' + option.value"
+                      [attr.aria-label]="m + '.layouts.' + option.value | translate"
+                      [matTooltip]="m + '.layouts.' + option.value | translate"
+                      (click)="setLayout(option.value)">
+                      <mat-icon>{{ option.icon }}</mat-icon>
+                    </button>
+                  }
+                  <span class="divider"></span>
+                  @for (option of sizes; track option) {
+                    <button
+                      type="button"
+                      class="tool size"
+                      [attr.data-size]="option"
+                      [class.on]="size() === option"
+                      [attr.aria-pressed]="size() === option"
+                      [attr.data-cy]="'ontology-map-size-' + option"
+                      [attr.aria-label]="m + '.sizes.' + option | translate"
+                      [matTooltip]="m + '.sizes.' + option | translate"
+                      (click)="setSize(option)">
+                      A
+                    </button>
+                  }
+                  <span class="divider"></span>
+                  <button
+                    type="button"
+                    class="tool"
+                    data-cy="ontology-map-level-labels"
+                    [class.on]="levelLabels()"
+                    [attr.aria-pressed]="levelLabels()"
+                    [attr.aria-label]="m + '.levelLabels' | translate"
+                    [matTooltip]="m + '.levelLabels' | translate"
+                    (click)="setLevelLabels(!levelLabels())">
+                    <mat-icon>text_rotation_none</mat-icon>
+                  </button>
+                </div>
+
+                <!-- Zoom, bottom right. -->
+                <div
+                  class="float zoom"
+                  role="group"
+                  [attr.aria-label]="m + '.zoom' | translate"
+                  [class.beside-panel]="panelOpen()">
+                  <button
+                    type="button"
+                    class="tool"
+                    data-cy="ontology-map-zoom-in"
+                    [attr.aria-label]="m + '.zoomIn' | translate"
+                    [matTooltip]="m + '.zoomIn' | translate"
+                    matTooltipPosition="left"
+                    (click)="graphView()?.zoomBy(1.25)">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <button
+                    type="button"
+                    class="tool"
+                    data-cy="ontology-map-zoom-out"
+                    [attr.aria-label]="m + '.zoomOut' | translate"
+                    [matTooltip]="m + '.zoomOut' | translate"
+                    matTooltipPosition="left"
+                    (click)="graphView()?.zoomBy(0.8)">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <span class="divider"></span>
+                  <button
+                    type="button"
+                    class="tool"
+                    data-cy="ontology-map-fit"
+                    [attr.aria-label]="m + '.fit' | translate"
+                    [matTooltip]="m + '.fit' | translate"
+                    matTooltipPosition="left"
+                    (click)="graphView()?.fit()">
+                    <mat-icon>fit_screen</mat-icon>
+                  </button>
+                </div>
               }
               @if (panelIri(); as openIri) {
                 <app-resource-class-panel
@@ -358,94 +384,207 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
       .page {
         box-sizing: border-box;
         height: 100%;
-        // As the data model editor: 8px around the content.
-        padding: 8px;
       }
 
-      // The map's box: the toolbar on top, then the map and, when a class is open, its panel beside it.
+      // The map's box, edge to edge: the toolbar on top, then the map and, when a class is open, its panel beside it.
       .canvas {
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
         height: 100%;
         background: $cool_gray_50;
-        border: 1px solid $cool_gray_200;
-        border-radius: 8px;
         overflow: hidden;
       }
 
-      // A narrow window wraps the toolbar onto a second line rather than squeezing its buttons.
-      .toolbar {
+      // Controls float over the graph, in its corners, as in a map app; the graph keeps the whole box.
+      .float {
+        position: absolute;
+        z-index: 2;
         display: flex;
-        flex-wrap: wrap;
         align-items: center;
-        gap: 8px 12px;
-        padding: 12px 16px;
+        gap: 2px;
+        padding: 4px;
+        background: white;
+        border: 1px solid $cool_gray_200;
+        border-radius: 24px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      .filters {
+        top: 16px;
+        left: 16px;
+        max-width: calc(100% - 32px);
+        flex-wrap: wrap;
+        gap: 4px 6px;
+      }
+
+      .display {
+        top: 16px;
+        right: 16px;
+      }
+
+      .zoom {
+        right: 16px;
+        bottom: 16px;
+        flex-direction: column;
+        border-radius: 12px;
+
+        .divider {
+          width: 22px;
+          height: 1px;
+          margin: 2px 0;
+        }
+      }
+
+      // An open panel covers the right of the graph; the controls there move to its left.
+      .beside-panel {
+        right: calc(min(440px, 50%) + 16px);
+      }
+
+      .divider {
+        flex: none;
+        width: 1px;
+        height: 22px;
+        margin: 0 4px;
+        background: $cool_gray_200;
       }
 
       .data-model {
-        --mat-button-outlined-container-height: 34px;
-        flex: none;
+        --mat-button-text-container-height: 32px;
+        --mat-button-text-container-shape: 16px;
+        font-weight: 500;
         white-space: nowrap;
-        background: white;
-
-        .data-model-label {
-          margin-right: 6px;
-          font-size: 12px;
-          color: $cool_gray_500;
-        }
-
-        b {
-          font-weight: 500;
-        }
 
         &.static {
-          display: inline-flex;
-          align-items: center;
-          height: 34px;
           padding: 0 12px;
-          box-sizing: border-box;
-          border: 1px solid #ccc;
-          border-radius: 4px;
           font-size: 14px;
         }
       }
 
       .counts {
+        padding-right: 6px;
         white-space: nowrap;
         font-size: 12px;
-        color: $cool_gray_600;
+        color: $cool_gray_500;
       }
 
-      .spacer {
-        flex: 1;
-      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        height: 32px;
+        border: 1px solid $cool_gray_300;
+        border-radius: 16px;
+        white-space: nowrap;
 
-      .fit {
-        --mat-icon-button-state-layer-size: 34px;
-        padding: 5px;
-
-        &.on {
-          background: $primary_100;
-          color: $primary_700;
+        &.active {
+          border-color: $primary;
+          background: $primary_50;
+          color: $primary;
         }
-      }
-
-      .toggle {
-        --mat-button-toggle-height: 34px;
-        --mat-button-toggle-label-text-size: 13px;
-        background: white;
 
         mat-icon {
-          margin-right: 6px;
           font-size: 18px;
           width: 18px;
           height: 18px;
-          vertical-align: middle;
+        }
+
+        // "Class: Person", the chosen value after the filter's name.
+        b {
+          // Against the trigger's gap, so the colon follows the name.
+          margin-left: -4px;
+          font-weight: 500;
+
+          &::before {
+            content: ': ';
+            font-weight: 400;
+          }
+        }
+      }
+
+      .chip-trigger,
+      .chip-clear,
+      .tool {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        background: none;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+
+      .chip-trigger {
+        gap: 4px;
+        height: 100%;
+        padding: 0 4px 0 10px;
+        font-size: 13px;
+
+        .drop {
+          margin-left: -2px;
+          color: $cool_gray_500;
+        }
+      }
+
+      .chip.active .chip-trigger {
+        padding-right: 2px;
+      }
+
+      .chip-clear {
+        width: 20px;
+        height: 20px;
+        margin-right: 6px;
+        border-radius: 50%;
+        background: rgba(51, 103, 144, 0.12);
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+        }
+      }
+
+      .tool {
+        width: 32px;
+        height: 32px;
+        border-radius: 16px;
+        color: $cool_gray_600;
+
+        &:hover {
+          background: $cool_gray_100;
+        }
+
+        &.on {
+          background: $primary_50;
+          color: $primary;
+        }
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      // Text sizes read as one letter, drawn at three sizes.
+      .size {
+        font-weight: 500;
+
+        &[data-size='small'] {
+          font-size: 12px;
+        }
+
+        &[data-size='normal'] {
+          font-size: 16px;
+        }
+
+        &[data-size='large'] {
+          font-size: 20px;
         }
       }
 
       .body {
+        position: relative;
         flex: 1;
         min-height: 0;
         display: flex;
@@ -537,8 +676,8 @@ export class OntologyMapPageComponent {
   });
 
   readonly layouts = LAYOUTS;
-  /** The Cytoscape graph by default, or our map; remembered in this browser. */
-  readonly view = signal<OntologyMapView>(readStored(VIEW_KEY) === 'map' ? 'map' : 'graph');
+  /** The Cytoscape graph; the Map view is no longer offered and is to be removed. */
+  readonly view = signal<OntologyMapView>('graph');
   /** How the graph view arranges the classes; remembered in this browser. */
   readonly layout = signal<GraphLayout>(
     LAYOUTS.find(option => option.value === readStored(LAYOUT_KEY))?.value ?? 'circle'
@@ -614,13 +753,17 @@ export class OntologyMapPageComponent {
     });
   }
 
+  /** Whether a class or property panel covers the right of the graph. */
+  readonly panelOpen = computed(() => !!(this.panelIri() || this.propertyPanelIri()));
+
   /** The class whose panel is open. */
   readonly panelIri = computed(() => this._classFromUrl(ONTOLOGY_MAP_PARAM.panel));
   /** The link property whose panel is open, in the Graph view; none while a class panel is open. */
   readonly propertyPanelIri = computed(() => {
     const name = this._params()?.get(ONTOLOGY_MAP_PARAM.propertyPanel);
     if (!name || this.panelIri() || this.view() !== 'graph') return undefined;
-    return this._graphLinks()?.edges.find(edge => edge.kind === 'link' && classNameOf(edge.property) === name)?.property;
+    return this._graphLinks()?.edges.find(edge => edge.kind === 'link' && classNameOf(edge.property) === name)
+      ?.property;
   });
   /** The class the map outlines: the one whose panel is open, else the one named in the URL. */
   readonly classIri = computed(() => this.panelIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);

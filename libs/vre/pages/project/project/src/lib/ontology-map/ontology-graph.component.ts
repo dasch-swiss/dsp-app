@@ -17,7 +17,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
-import { GRAPH_SIZE_FACTOR, GraphLayout, GraphSize, layoutOptions, toGraphElements } from './ontology-graph-elements';
+import {
+  BASE_FONT_SIZE,
+  GRAPH_TEXT_SIZE,
+  GraphLayout,
+  graphScale,
+  GraphSize,
+  layoutOptions,
+  toGraphElements,
+} from './ontology-graph-elements';
 
 /** The DSP-APP palette, as the canvas needs literal colours. */
 const COLOR = {
@@ -31,6 +39,9 @@ const COLOR = {
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
 const FIT_PADDING = 56;
 
+/** The share of the chosen name size a model is first shown at, at least, though it then does not fit. */
+const READABLE_SHARE = 0.8;
+
 /** The graph's stylesheet, boxes, text and lines scaled by `f`; link labels level or along their line. */
 const styleFor = (f: number, levelLabels = false): StylesheetJson => [
   {
@@ -41,7 +52,7 @@ const styleFor = (f: number, levelLabels = false): StylesheetJson => [
       'text-valign': 'center',
       'text-halign': 'center',
       'font-family': 'Roboto, sans-serif',
-      'font-size': 15 * f,
+      'font-size': BASE_FONT_SIZE * f,
       'font-weight': 500,
       color: COLOR.text,
       width: 'label',
@@ -217,6 +228,8 @@ export class OntologyGraphComponent {
   private readonly _hoveredProperty = signal<string | undefined>(undefined);
   /** Whether the user moved classes since the last layout; their places then survive a resize. */
   private _dragged = false;
+  /** How much bigger than at scale 1 boxes, text and lines are drawn; see `graphScale`. */
+  private _scale = 1;
 
   private readonly _counts = computed(() => linkCounts(this.graph()));
   private readonly _elements = computed(() =>
@@ -244,8 +257,8 @@ export class OntologyGraphComponent {
         const { default: cytoscape } = await import('cytoscape');
         const cy = cytoscape({
           container: this._canvas().nativeElement,
-          style: untracked(() => this._style(GRAPH_SIZE_FACTOR[this.size()])),
-          minZoom: 0.2,
+          style: this._style(1),
+          minZoom: 0.05,
           maxZoom: 3,
           wheelSensitivity: 0.3,
         });
@@ -290,7 +303,7 @@ export class OntologyGraphComponent {
           frame = requestAnimationFrame(() => {
             cy.resize();
             if (this._dragged) {
-              cy.fit(undefined, FIT_PADDING);
+              this._fit(cy);
             } else {
               this._arrange(cy);
             }
@@ -329,18 +342,16 @@ export class OntologyGraphComponent {
           .filter(edge => edge.data('property') === property)
           .addClass('same-property');
     });
-    // A new size restyles in place: classes stay where they are, only boxes, text and lines grow or shrink.
+    // A new size rescales in place: classes stay where they are, only boxes, text and lines grow or shrink.
     effect(() => {
       const cy = this._cy();
-      const size = this.size();
-      if (!cy) return;
-      cy.style(this._style(GRAPH_SIZE_FACTOR[size]));
-      cy.fit(undefined, FIT_PADDING);
+      this.size();
+      if (cy) this._rescale(cy);
     });
     effect(() => {
       const cy = this._cy();
       const level = this.levelLabels();
-      if (cy) cy.style(styleFor(GRAPH_SIZE_FACTOR[untracked(() => this.size())], level));
+      if (cy) cy.style(styleFor(this._scale, level));
     });
     effect(() => {
       const cy = this._cy();
@@ -354,21 +365,64 @@ export class OntologyGraphComponent {
   /** Lays the classes out over the whole box and fits them in it; dragged places are forgotten. */
   private _arrange(cy: Core, layout = untracked(() => this.layout())): void {
     if (cy.elements().empty()) return;
-    // Lay out at normal size, so the chosen size changes how big things are drawn, not how far apart they are.
-    const size = GRAPH_SIZE_FACTOR[untracked(() => this.size())];
-    if (size !== 1) cy.style(this._style(1));
+    // Lay out at scale 1, so the scale changes how big things are drawn, not how far apart they are.
+    cy.style(this._style(1));
     cy.layout(layoutOptions(layout) as never).run();
-    if (size !== 1) cy.style(this._style(size));
-    cy.fit(undefined, FIT_PADDING);
     this._dragged = false;
+    this._rescale(cy);
+  }
+
+  /**
+   * Scales boxes, text and lines so class names read at the chosen size once the model is fitted: a model of many
+   * classes, fitted at a low zoom, is drawn bigger. Bigger boxes widen the model, so the scale is measured twice.
+   * A model too big to fit and stay readable is shown zoomed in on its middle, its names still readable; Fit shows it
+   * all.
+   */
+  private _rescale(cy: Core): void {
+    if (cy.elements().empty()) return;
+    const textSize = GRAPH_TEXT_SIZE[untracked(() => this.size())];
+    this._scale = 1;
+    for (let pass = 0; pass < 2; pass++) {
+      cy.style(this._style(this._scale));
+      cy.fit(undefined, FIT_PADDING);
+      this._scale = graphScale(textSize, cy.zoom());
+    }
+    cy.style(this._style(this._scale));
+    this._fit(cy);
+    const readable = (textSize * READABLE_SHARE) / (BASE_FONT_SIZE * this._scale);
+    if (cy.zoom() < readable) {
+      cy.zoom(readable);
+      cy.center();
+    }
+  }
+
+  /** Fits the whole model in the box, zooming in no further than the chosen size of class names. */
+  private _fit(cy: Core): void {
+    cy.fit(undefined, FIT_PADDING);
+    const zoom = GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale);
+    if (cy.zoom() > zoom) {
+      cy.zoom(zoom);
+      cy.center();
+    }
   }
 
   private _style(f: number): StylesheetJson {
-    return styleFor(f, untracked(() => this.levelLabels()));
+    return styleFor(
+      f,
+      untracked(() => this.levelLabels())
+    );
+  }
+
+  /** Zooms in (`factor` above 1) or out, about the middle of the box. */
+  zoomBy(factor: number): void {
+    const cy = this._cy();
+    if (!cy) return;
+    cy.zoom({ level: cy.zoom() * factor, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
   }
 
   /** Zooms so the whole model fits. */
   fit(): void {
-    this._cy()?.fit(undefined, FIT_PADDING);
+    const cy = this._cy();
+    if (cy) this._fit(cy);
   }
 }
