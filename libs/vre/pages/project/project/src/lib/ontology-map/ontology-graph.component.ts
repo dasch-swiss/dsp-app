@@ -78,7 +78,7 @@ const styleFor = (f: number): StylesheetJson => [
       label: 'data(label)',
       'font-family': 'Roboto, sans-serif',
       'font-size': 10 * f,
-      color: COLOR.muted,
+      color: COLOR.text,
       'text-rotation': 'autorotate',
       'text-background-color': '#F9FAFB',
       'text-background-opacity': 0.9,
@@ -92,7 +92,7 @@ const styleFor = (f: number): StylesheetJson => [
     style: { 'line-style': 'dashed', 'target-arrow-shape': 'triangle-backcurve', label: '' },
   },
   {
-    selector: 'edge.highlighted',
+    selector: 'edge.highlighted, edge.same-property',
     style: { width: 2 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
   },
 ];
@@ -199,6 +199,8 @@ export class OntologyGraphComponent {
   readonly colors = input.required<Map<string, string>>();
   /** How big boxes, text and lines are drawn. */
   readonly size = input<GraphSize>('normal');
+  /** A property to highlight every link of, such as one hovered in the class panel. */
+  readonly highlightedProperty = input<string | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
   readonly anyResourceLabel = input('Any resource');
 
@@ -206,10 +208,13 @@ export class OntologyGraphComponent {
   readonly classSelected = output<string>();
   /** A class of this data model was double-clicked; emits its IRI, to show it with the classes it is linked with. */
   readonly classFiltered = output<string>();
+  /** The background, not a class or a link, was clicked. */
+  readonly backgroundClicked = output<void>();
 
   private readonly _canvas = viewChild.required<ElementRef<HTMLElement>>('canvas');
   private readonly _cy = signal<Core | undefined>(undefined);
   readonly failed = signal(false);
+  private readonly _hoveredProperty = signal<string | undefined>(undefined);
   /** Whether the user moved classes since the last layout; their places then survive a resize. */
   private _dragged = false;
 
@@ -244,6 +249,9 @@ export class OntologyGraphComponent {
           maxZoom: 3,
           wheelSensitivity: 0.3,
         });
+        cy.on('tap', event => {
+          if (event.target === cy) this.backgroundClicked.emit();
+        });
         cy.on('tap', 'node', event => {
           const id = event.target.id();
           if (this._navigable().has(id)) this.classSelected.emit(id);
@@ -263,6 +271,9 @@ export class OntologyGraphComponent {
           event.target.connectedEdges().removeClass('highlighted');
           container.style.cursor = '';
         });
+        // Hovering a link highlights every link through the same property, wherever it is used.
+        cy.on('mouseover', 'edge', event => this._hoveredProperty.set(event.target.data('property')));
+        cy.on('mouseout', 'edge', () => this._hoveredProperty.set(undefined));
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
         // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
         // user has dragged some, whose places are then kept and only fitted.
@@ -300,6 +311,16 @@ export class OntologyGraphComponent {
       cy.elements().remove();
       cy.add(untracked(() => this._elements()));
       this._arrange(cy, layout);
+    });
+    effect(() => {
+      const cy = this._cy();
+      const property = this._hoveredProperty() ?? this.highlightedProperty();
+      if (!cy) return;
+      cy.edges().removeClass('same-property');
+      if (property)
+        cy.edges()
+          .filter(edge => edge.data('property') === property)
+          .addClass('same-property');
     });
     // A new size restyles in place: classes stay where they are, only boxes, text and lines grow or shrink.
     effect(() => {

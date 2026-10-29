@@ -82,7 +82,12 @@ interface Connection {
           }
           @for (property of properties(); track property.id) {
             @let open = openProperty() === property.id;
-            <div class="property" [class.open]="open" data-cy="class-panel-property">
+            <div
+              class="property"
+              [class.open]="open"
+              data-cy="class-panel-property"
+              (mouseenter)="propertyHovered.emit(property.id)"
+              (mouseleave)="propertyHovered.emit(undefined)">
               <div class="property-line">
                 <button
                   type="button"
@@ -381,6 +386,8 @@ export class ResourceClassPanelComponent {
   readonly classSelected = output<string>();
   /** "Browse resources" was clicked; emits the class IRI. */
   readonly browse = output<string>();
+  /** A property row is hovered; emits its IRI, or `undefined` when the pointer leaves it. */
+  readonly propertyHovered = output<string | undefined>();
   /** "Filter on this class" was clicked; emits the class IRI, to show it with the classes it is linked with. */
   readonly filter = output<string>();
   /** "Edit class" was clicked; emits the class IRI. */

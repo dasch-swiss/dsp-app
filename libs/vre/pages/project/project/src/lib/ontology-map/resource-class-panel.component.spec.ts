@@ -87,6 +87,17 @@ describe('ResourceClassPanelComponent', () => {
     expect(browsed).toEqual(['Film']);
   });
 
+  it('tells which property row is hovered, and when the pointer leaves it', () => {
+    const hovered: (string | undefined)[] = [];
+    component.propertyHovered.subscribe(iri => hovered.push(iri));
+    const row = fixture.nativeElement.querySelectorAll('[data-cy="class-panel-property"]')[1] as HTMLElement;
+
+    row.dispatchEvent(new MouseEvent('mouseenter'));
+    row.dispatchEvent(new MouseEvent('mouseleave'));
+
+    expect(hovered).toEqual(['director', undefined]);
+  });
+
   it('asks to filter the graph on the class', () => {
     const filtered: string[] = [];
     component.filter.subscribe(iri => filtered.push(iri));

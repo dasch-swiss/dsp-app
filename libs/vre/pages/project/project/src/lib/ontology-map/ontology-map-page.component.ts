@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
@@ -194,10 +203,12 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [selectedIri]="classIri()"
                   [layout]="layout()"
                   [size]="size()"
+                  [highlightedProperty]="hoveredProperty()"
                   [colors]="colors()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   (classSelected)="openPanel($event)"
-                  (classFiltered)="filterOn($event)" />
+                  (classFiltered)="filterOn($event)"
+                  (backgroundClicked)="panelIri() && openPanel(undefined)" />
               } @else {
                 <app-data-model-map
                   class="view"
@@ -221,6 +232,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   (closed)="openPanel(undefined)"
                   (browse)="open($event)"
                   (filter)="filterOn($event)"
+                  (propertyHovered)="hoveredProperty.set($event)"
                   (edit)="edit($event)" />
               }
             </div>
@@ -432,6 +444,17 @@ export class OntologyMapPageComponent {
     const graph = this.graph();
     return graph ? linkedWith(graph, this.filterIri()) : undefined;
   });
+
+  /** A property hovered in the class panel; the graph highlights its links. */
+  readonly hoveredProperty = signal<string | undefined>(undefined);
+
+  constructor() {
+    // A panel that changes class, or closes, under the pointer never reports the pointer leaving its rows.
+    effect(() => {
+      this.panelIri();
+      untracked(() => this.hoveredProperty.set(undefined));
+    });
+  }
 
   /** The class whose panel is open. */
   readonly panelIri = computed(() => this._classFromUrl(ONTOLOGY_MAP_PARAM.panel));

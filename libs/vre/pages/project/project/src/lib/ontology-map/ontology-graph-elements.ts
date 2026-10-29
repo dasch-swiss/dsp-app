@@ -83,6 +83,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
         source: edge.source,
         target: edge.target,
         label: edge.label,
+        property: edge.property,
       },
       classes: edge.kind,
     }));
