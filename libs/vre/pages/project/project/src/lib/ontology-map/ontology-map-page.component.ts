@@ -315,6 +315,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                         <hr class="menu-divider" />
                       }
                       <button
+                        class="export-entry"
                         mat-menu-item
                         [attr.data-cy]="'ontology-map-export-' + item.key"
                         (click)="export(item.key)">
@@ -496,10 +497,25 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
         border-top: 1px solid $cool_gray_100;
       }
 
+      // As in the filter menus: 13px items, 12px hints, 20px icons.
+      .export-entry {
+        --mat-menu-item-label-text-size: 13px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          margin-right: 12px;
+        }
+      }
+
       .export-item {
         display: flex;
         flex-direction: column;
-        line-height: 18px;
+        font-size: 13px;
+        line-height: 17px;
       }
 
       .export-hint {
