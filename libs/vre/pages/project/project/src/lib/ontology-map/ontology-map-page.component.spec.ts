@@ -86,7 +86,7 @@ describe('OntologyMapPageComponent', () => {
     expect(navigate).toHaveBeenNthCalledWith(1, [], {
       relativeTo: expect.anything(),
       queryParamsHandling: 'merge',
-      queryParams: { ontology: 'beol', panel: 'Letter' },
+      queryParams: { ontology: 'beol', panel: 'Letter', propertyPanel: null },
     });
     expect(navigate).toHaveBeenNthCalledWith(2, [], {
       relativeTo: expect.anything(),
@@ -112,6 +112,15 @@ describe('OntologyMapPageComponent', () => {
     expect(navigate).toHaveBeenCalledWith(
       [],
       expect.objectContaining({ queryParams: { ontology: 'beol', property: 'author', filter: null } })
+    );
+  });
+
+  it('opens a property panel in place of the class panel', () => {
+    component.openPropertyPanel(`${BEOL}#hasAuthor`);
+
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: { ontology: 'beol', propertyPanel: 'hasAuthor', panel: null } })
     );
   });
 

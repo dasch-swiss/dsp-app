@@ -791,7 +791,18 @@
       "propertyFilter": "Propriété",
       "allProperties": "Toutes les propriétés",
       "propertiesChosen": "{{count}} propriétés",
-      "levelLabels": "Libellés des liens à l’horizontale"
+      "levelLabels": "Libellés des liens à l’horizontale",
+      "propertyPanel": {
+        "subtitle": "Propriété de lien · {{model}}",
+        "close": "Fermer les détails de la propriété",
+        "pointsTo": "Pointe vers",
+        "inModel": "Dans ce modèle",
+        "links": "{{count}} liens",
+        "usedBy": "Utilisée par · {{count}} classes",
+        "inheritedFrom": "héritée de {{class}}",
+        "filter": "Afficher seulement ces liens",
+        "edit": "Modifier la propriété"
+      }
     }
   },
   "resourceEditor": {

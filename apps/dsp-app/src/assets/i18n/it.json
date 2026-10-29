@@ -791,7 +791,18 @@
       "propertyFilter": "Proprietà",
       "allProperties": "Tutte le proprietà",
       "propertiesChosen": "{{count}} proprietà",
-      "levelLabels": "Etichette dei collegamenti orizzontali"
+      "levelLabels": "Etichette dei collegamenti orizzontali",
+      "propertyPanel": {
+        "subtitle": "Proprietà di collegamento · {{model}}",
+        "close": "Chiudi i dettagli della proprietà",
+        "pointsTo": "Punta a",
+        "inModel": "In questo modello",
+        "links": "{{count}} collegamenti",
+        "usedBy": "Usata da · {{count}} classi",
+        "inheritedFrom": "ereditata da {{class}}",
+        "filter": "Mostra solo questi collegamenti",
+        "edit": "Modifica la proprietà"
+      }
     }
   },
   "resourceEditor": {

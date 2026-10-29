@@ -1,10 +1,11 @@
-import { Constants } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
   CLASS_COLORS,
   classColors,
   layoutOptions,
   linkedWith,
+  propertyUsage,
   throughProperties,
   toGraphElements,
   withInheritedLinks,
@@ -126,6 +127,52 @@ describe('withInheritedLinks', () => {
   it('leaves out a class outside the data model that only a subclass arrow brought in', () => {
     expect(result.nodes.map(n => n.id)).not.toContain('Other');
     expect(result.nodes.map(n => n.id)).toContain('Lonely');
+  });
+});
+
+describe('propertyUsage', () => {
+  const family: DataModelGraph = {
+    nodes: [
+      {
+        id: 'Film',
+        label: 'Film',
+        kind: 'class',
+        navigable: true,
+        propertyDetails: [
+          {
+            id: 'director',
+            label: 'Director',
+            description: 'Who directed it',
+            type: 'Link',
+            linkTarget: 'Person',
+            cardinality: Cardinality._1_n,
+          },
+        ],
+      },
+      { id: 'Short', label: 'Short', kind: 'class', navigable: true },
+      { id: 'Person', label: 'Person', kind: 'class', navigable: true },
+    ],
+    edges: [
+      { source: 'Film', target: 'Person', property: 'director', label: 'Director', kind: 'link' },
+      { source: 'Short', target: 'Film', property: 'subClassOf', label: '', kind: 'subclass' },
+    ],
+  };
+
+  it('names the classes that have the property, inherited ones with the superclass declaring it', () => {
+    expect(propertyUsage(family, 'director')).toEqual({
+      label: 'Director',
+      description: 'Who directed it',
+      targets: ['Person'],
+      links: 2,
+      users: [
+        { classIri: 'Film', cardinality: Cardinality._1_n, inheritedFrom: undefined },
+        { classIri: 'Short', cardinality: undefined, inheritedFrom: 'Film' },
+      ],
+    });
+  });
+
+  it('knows no property that no class has', () => {
+    expect(propertyUsage(family, 'nothing')).toBeUndefined();
   });
 });
 

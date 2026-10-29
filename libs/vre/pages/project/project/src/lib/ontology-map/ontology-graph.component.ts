@@ -206,6 +206,8 @@ export class OntologyGraphComponent {
   readonly classSelected = output<string>();
   /** A class of this data model was double-clicked; emits its IRI, to show it with the classes it is linked with. */
   readonly classFiltered = output<string>();
+  /** A link was clicked; emits its property IRI. */
+  readonly propertySelected = output<string>();
   /** The background, not a class or a link, was clicked. */
   readonly backgroundClicked = output<void>();
 
@@ -258,6 +260,7 @@ export class OntologyGraphComponent {
           const id = event.target.id();
           if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
+        cy.on('tap', 'edge.link', event => this.propertySelected.emit(event.target.data('property')));
         cy.on('dragfree', 'node', () => (this._dragged = true));
         // Hovering a class highlights its links; a class that opens on click shows a link's pointer.
         const container = this._canvas().nativeElement;
@@ -269,9 +272,15 @@ export class OntologyGraphComponent {
           event.target.connectedEdges().removeClass('highlighted');
           container.style.cursor = '';
         });
-        // Hovering a link highlights every link through the same property, wherever it is used.
-        cy.on('mouseover', 'edge', event => this._hoveredProperty.set(event.target.data('property')));
-        cy.on('mouseout', 'edge', () => this._hoveredProperty.set(undefined));
+        // Hovering a link highlights every link through the same property, wherever it is used; a click opens it.
+        cy.on('mouseover', 'edge', event => {
+          this._hoveredProperty.set(event.target.data('property'));
+          container.style.cursor = 'pointer';
+        });
+        cy.on('mouseout', 'edge', () => {
+          this._hoveredProperty.set(undefined);
+          container.style.cursor = '';
+        });
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
         // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
         // user has dragged some, whose places are then kept and only fitted.

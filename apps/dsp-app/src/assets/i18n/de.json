@@ -791,7 +791,18 @@
       "propertyFilter": "Eigenschaft",
       "allProperties": "Alle Eigenschaften",
       "propertiesChosen": "{{count}} Eigenschaften",
-      "levelLabels": "Verknüpfungsbeschriftungen waagrecht"
+      "levelLabels": "Verknüpfungsbeschriftungen waagrecht",
+      "propertyPanel": {
+        "subtitle": "Verknüpfungseigenschaft · {{model}}",
+        "close": "Details der Eigenschaft schliessen",
+        "pointsTo": "Verweist auf",
+        "inModel": "In diesem Modell",
+        "links": "{{count}} Verknüpfungen",
+        "usedBy": "Verwendet von · {{count}} Klassen",
+        "inheritedFrom": "geerbt von {{class}}",
+        "filter": "Nur diese Verknüpfungen zeigen",
+        "edit": "Eigenschaft bearbeiten"
+      }
     }
   },
   "resourceEditor": {

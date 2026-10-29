@@ -32,11 +32,12 @@ import {
   withInheritedLinks,
 } from './ontology-graph-elements';
 import { OntologyGraphComponent } from './ontology-graph.component';
+import { PropertyPanelComponent } from './property-panel.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
 /**
  * Query parameters of the Ontology map tab: the data model to show, the class to outline, the class whose panel is
- * open and the class the graph is filtered on. Classes are named by the end of their IRI, within the data model.
+ * open, the link property whose panel is open, and the classes or properties the graph is filtered on. Classes are named by the end of their IRI, within the data model.
  */
 export const ONTOLOGY_MAP_PARAM = {
   ontology: 'ontology',
@@ -44,6 +45,7 @@ export const ONTOLOGY_MAP_PARAM = {
   panel: 'panel',
   filter: 'filter',
   property: 'property',
+  propertyPanel: 'propertyPanel',
 } as const;
 
 const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
@@ -87,6 +89,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
     MatPseudoCheckbox,
     MatTooltip,
     OntologyGraphComponent,
+    PropertyPanelComponent,
     ResourceClassPanelComponent,
     TranslatePipe,
   ],
@@ -288,12 +291,13 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [layout]="layout()"
                   [size]="size()"
                   [levelLabels]="levelLabels()"
-                  [highlightedProperty]="hoveredProperty()"
+                  [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                   [colors]="colors()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   (classSelected)="openPanel($event)"
                   (classFiltered)="filterOn($event)"
-                  (backgroundClicked)="panelIri() && openPanel(undefined)" />
+                  (propertySelected)="openPropertyPanel($event)"
+                  (backgroundClicked)="(panelIri() || propertyPanelIri()) && openPanel(undefined)" />
               } @else {
                 <app-data-model-map
                   class="view"
@@ -319,6 +323,19 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   (filter)="filterOn($event)"
                   (propertyHovered)="hoveredProperty.set($event)"
                   (edit)="edit($event)" />
+              } @else if (propertyPanelIri(); as propertyIri) {
+                <app-property-panel
+                  class="panel"
+                  [graph]="graph"
+                  [propertyIri]="propertyIri"
+                  [colors]="colors()"
+                  [dataModelLabel]="selected.label"
+                  [anyResourceLabel]="t + '.anyResource' | translate"
+                  [canEdit]="canEdit() ?? false"
+                  (classSelected)="openPanel($event)"
+                  (closed)="openPanel(undefined)"
+                  (filter)="setPropertyFilter([$event])"
+                  (edit)="editProperty($event)" />
               }
             </div>
           }
@@ -592,12 +609,19 @@ export class OntologyMapPageComponent {
     // A panel that changes class, or closes, under the pointer never reports the pointer leaving its rows.
     effect(() => {
       this.panelIri();
+      this.propertyPanelIri();
       untracked(() => this.hoveredProperty.set(undefined));
     });
   }
 
   /** The class whose panel is open. */
   readonly panelIri = computed(() => this._classFromUrl(ONTOLOGY_MAP_PARAM.panel));
+  /** The link property whose panel is open, in the Graph view; none while a class panel is open. */
+  readonly propertyPanelIri = computed(() => {
+    const name = this._params()?.get(ONTOLOGY_MAP_PARAM.propertyPanel);
+    if (!name || this.panelIri() || this.view() !== 'graph') return undefined;
+    return this._graphLinks()?.edges.find(edge => edge.kind === 'link' && classNameOf(edge.property) === name)?.property;
+  });
   /** The class the map outlines: the one whose panel is open, else the one named in the URL. */
   readonly classIri = computed(() => this.panelIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
 
@@ -619,9 +643,17 @@ export class OntologyMapPageComponent {
     store(VIEW_KEY, view);
   }
 
-  /** Opens the class's panel, or closes it; a step in the browser history. */
+  /** Opens the class's panel, or closes whichever panel is open; a step in the browser history. */
   openPanel(classIri: string | undefined): void {
-    this._navigate({ [ONTOLOGY_MAP_PARAM.panel]: classIri ? classNameOf(classIri) : null });
+    this._navigate({
+      [ONTOLOGY_MAP_PARAM.panel]: classIri ? classNameOf(classIri) : null,
+      [ONTOLOGY_MAP_PARAM.propertyPanel]: null,
+    });
+  }
+
+  /** Opens the link property's panel instead of a class's; a step in the browser history. */
+  openPropertyPanel(propertyIri: string): void {
+    this._navigate({ [ONTOLOGY_MAP_PARAM.propertyPanel]: classNameOf(propertyIri), [ONTOLOGY_MAP_PARAM.panel]: null });
   }
 
   /** Filters the graph on these classes, or shows every class when none; a step in the browser history. */
@@ -714,15 +746,18 @@ export class OntologyMapPageComponent {
 
   /** Opens the class's data model in the data model editor. */
   edit(iri: string): void {
+    this._openEditor(iri, RouteConstants.classes);
+  }
+
+  /** Opens the property's data model in the data model editor, on its properties. */
+  editProperty(iri: string): void {
+    this._openEditor(iri, RouteConstants.properties);
+  }
+
+  private _openEditor(iri: string, page: string): void {
     const [ontologyIri] = iri.split('#');
     this._router.navigate(
-      [
-        '..',
-        RouteConstants.ontology,
-        OntologyService.getOntologyNameFromIri(ontologyIri),
-        RouteConstants.editor,
-        RouteConstants.classes,
-      ],
+      ['..', RouteConstants.ontology, OntologyService.getOntologyNameFromIri(ontologyIri), RouteConstants.editor, page],
       { relativeTo: this._route }
     );
   }

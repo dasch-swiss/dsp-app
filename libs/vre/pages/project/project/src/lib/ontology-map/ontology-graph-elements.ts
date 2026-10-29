@@ -1,5 +1,5 @@
-import { Constants } from '@dasch-swiss/dsp-js';
 import type { ElementDefinition } from 'cytoscape';
+import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 
 /** The layouts the graph view offers: a tree following the links, a circle, a force-directed spread, a grid. */
@@ -141,21 +141,10 @@ export function throughProperties(graph: DataModelGraph, propertyIris: readonly 
  * Classes outside the data model that only a subclass arrow brought in are left out.
  */
 export function withInheritedLinks(graph: DataModelGraph): DataModelGraph {
-  const parents = new Map<string, string[]>();
-  for (const edge of graph.edges) {
-    if (edge.kind === 'subclass') parents.set(edge.source, [...(parents.get(edge.source) ?? []), edge.target]);
-  }
+  const { children, ancestors } = superclasses(graph);
   const links = graph.edges.filter(edge => edge.kind === 'link');
-  const ancestors = (iri: string, seen = new Set<string>()): Set<string> => {
-    for (const parent of parents.get(iri) ?? []) {
-      if (seen.has(parent)) continue;
-      seen.add(parent);
-      ancestors(parent, seen);
-    }
-    return seen;
-  };
   const edges = new Map(links.map(edge => [`${edge.source} ${edge.property} ${edge.target}`, edge]));
-  for (const child of parents.keys()) {
+  for (const child of children) {
     const inherited = ancestors(child);
     for (const edge of links) {
       if (!inherited.has(edge.source) || edge.target === child) continue;
@@ -167,5 +156,69 @@ export function withInheritedLinks(graph: DataModelGraph): DataModelGraph {
   return {
     nodes: graph.nodes.filter(node => node.kind === 'class' || linked.has(node.id)),
     edges: [...edges.values()],
+  };
+}
+
+/** The classes that have a superclass, and every superclass of a class, at any depth. */
+function superclasses(graph: DataModelGraph): { children: string[]; ancestors: (iri: string) => Set<string> } {
+  const parents = new Map<string, string[]>();
+  for (const edge of graph.edges) {
+    if (edge.kind === 'subclass') parents.set(edge.source, [...(parents.get(edge.source) ?? []), edge.target]);
+  }
+  const ancestors = (iri: string, seen = new Set<string>()): Set<string> => {
+    for (const parent of parents.get(iri) ?? []) {
+      if (seen.has(parent)) continue;
+      seen.add(parent);
+      ancestors(parent, seen);
+    }
+    return seen;
+  };
+  return { children: [...parents.keys()], ancestors };
+}
+
+/** A class with a link property, for the property panel. */
+export interface PropertyUser {
+  classIri: string;
+  /** How many values the class takes; unknown for a class outside the data model. */
+  cardinality?: Cardinality;
+  /** The superclass the class inherits the property from, if it does not declare it itself. */
+  inheritedFrom?: string;
+}
+
+/** What the property panel shows of a link property. */
+export interface PropertyUsage {
+  label: string;
+  description: string;
+  /** The classes its links point at. */
+  targets: string[];
+  /** Its links between two different classes, as the graph draws them. */
+  links: number;
+  users: PropertyUser[];
+}
+
+/**
+ * How a link property is used in the data model: the classes that have it, inherited ones included, and the classes it
+ * points at; `undefined` when no class has it.
+ */
+export function propertyUsage(graph: DataModelGraph, propertyIri: string): PropertyUsage | undefined {
+  const edges = withInheritedLinks(graph).edges.filter(edge => edge.property === propertyIri);
+  if (edges.length === 0) return undefined;
+  const declaring = new Set(
+    graph.edges.filter(edge => edge.kind === 'link' && edge.property === propertyIri).map(edge => edge.source)
+  );
+  const { ancestors } = superclasses(graph);
+  const details = (iri: string) =>
+    graph.nodes.find(node => node.id === iri)?.propertyDetails?.find(property => property.id === propertyIri);
+  const users = [...new Set(edges.map(edge => edge.source))].map(classIri => ({
+    classIri,
+    cardinality: details(classIri)?.cardinality,
+    inheritedFrom: declaring.has(classIri) ? undefined : [...ancestors(classIri)].find(iri => declaring.has(iri)),
+  }));
+  return {
+    label: edges[0].label,
+    description: users.map(user => details(user.classIri)?.description).find(Boolean) ?? '',
+    targets: [...new Set(edges.map(edge => edge.target))],
+    links: edges.filter(edge => edge.source !== edge.target).length,
+    users,
   };
 }

@@ -791,7 +791,18 @@
       "propertyFilter": "Property",
       "allProperties": "All properties",
       "propertiesChosen": "{{count}} properties",
-      "levelLabels": "Horizontal link labels"
+      "levelLabels": "Horizontal link labels",
+      "propertyPanel": {
+        "subtitle": "Link property · {{model}}",
+        "close": "Close the property details",
+        "pointsTo": "Points to",
+        "inModel": "In this model",
+        "links": "{{count}} links",
+        "usedBy": "Used by · {{count}} classes",
+        "inheritedFrom": "inherited from {{class}}",
+        "filter": "Show only these links",
+        "edit": "Edit property"
+      }
     }
   },
   "resourceEditor": {
