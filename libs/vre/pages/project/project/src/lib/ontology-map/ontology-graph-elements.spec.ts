@@ -51,22 +51,29 @@ describe('toGraphElements', () => {
 
 describe('linkedWith', () => {
   it('keeps the class with the classes linking to it and those it links to, with only those links', () => {
-    const focused = linkedWith(graph, 'Person');
+    const focused = linkedWith(graph, ['Person']);
 
     expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person', Constants.Resource]);
     expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer', 'mentions']);
   });
 
   it('keeps the classes a class links to even when nothing links to it, without its links to itself', () => {
-    const focused = linkedWith(graph, 'Film');
+    const focused = linkedWith(graph, ['Film']);
 
     expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person']);
     expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer']);
   });
 
   it('keeps the whole model when no class, or an unknown one, is given', () => {
-    expect(linkedWith(graph, undefined)).toBe(graph);
-    expect(linkedWith(graph, 'Unknown')).toBe(graph);
+    expect(linkedWith(graph, [])).toBe(graph);
+    expect(linkedWith(graph, ['Unknown'])).toBe(graph);
+  });
+
+  it('keeps every chosen class with the classes each is linked with', () => {
+    const focused = linkedWith(graph, ['Film', 'Lonely']);
+
+    expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person', 'Lonely']);
+    expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer']);
   });
 });
 

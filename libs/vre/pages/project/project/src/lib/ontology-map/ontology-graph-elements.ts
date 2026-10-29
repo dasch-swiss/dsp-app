@@ -112,14 +112,15 @@ export function layoutOptions(layout: GraphLayout): { name: string } & Record<st
 }
 
 /**
- * The class and every class it links to or is linked from, with only those links; the whole model when no class is
- * given. The arrows tell the two directions apart.
+ * The classes and every class they link to or are linked from, with only those links; the whole model when no class
+ * of it is given. The arrows tell the two directions apart.
  */
-export function linkedWith(graph: DataModelGraph, classIri: string | undefined): DataModelGraph {
-  if (!classIri || !graph.nodes.some(node => node.id === classIri)) return graph;
+export function linkedWith(graph: DataModelGraph, classIris: readonly string[]): DataModelGraph {
+  const chosen = new Set(classIris.filter(iri => graph.nodes.some(node => node.id === iri)));
+  if (chosen.size === 0) return graph;
   const edges = graph.edges.filter(
-    edge => edge.source !== edge.target && (edge.target === classIri || edge.source === classIri)
+    edge => edge.source !== edge.target && (chosen.has(edge.target) || chosen.has(edge.source))
   );
-  const kept = new Set([classIri, ...edges.flatMap(edge => [edge.source, edge.target])]);
+  const kept = new Set([...chosen, ...edges.flatMap(edge => [edge.source, edge.target])]);
   return { nodes: graph.nodes.filter(node => kept.has(node.id)), edges };
 }

@@ -11,6 +11,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatPseudoCheckbox } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -69,6 +70,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
+    MatPseudoCheckbox,
     MatTooltip,
     OntologyGraphComponent,
     ResourceClassPanelComponent,
@@ -127,17 +129,38 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                 data-cy="ontology-map-class-filter"
                 [matMenuTriggerFor]="classFilter">
                 <span class="data-model-label">{{ m + '.classFilter' | translate }}</span>
-                <b>{{ filterLabel() ?? (m + '.allClasses' | translate) }}</b>
+                <b>
+                  @switch (filterIris().length) {
+                    @case (0) {
+                      {{ m + '.allClasses' | translate }}
+                    }
+                    @case (1) {
+                      {{ filterLabel() }}
+                    }
+                    @default {
+                      {{ m + '.classesChosen' | translate: { count: filterIris().length } }}
+                    }
+                  }
+                </b>
                 <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
               </button>
               <mat-menu #classFilter="matMenu">
-                <button mat-menu-item (click)="setFilter(undefined)">{{ m + '.allClasses' | translate }}</button>
+                <button mat-menu-item (click)="setFilter([])">{{ m + '.allClasses' | translate }}</button>
                 @for (option of classOptions(); track option.id) {
-                  <button mat-menu-item (click)="setFilter(option.id)">{{ option.label }}</button>
+                  @let checked = filterIris().includes(option.id);
+                  <!-- Ticking keeps the menu open, to choose several classes. -->
+                  <button
+                    mat-menu-item
+                    role="menuitemcheckbox"
+                    [attr.aria-checked]="checked"
+                    (click)="$event.stopPropagation(); toggleFilter(option.id)">
+                    <mat-pseudo-checkbox class="filter-check" [state]="checked ? 'checked' : 'unchecked'" />
+                    {{ option.label }}
+                  </button>
                 }
               </mat-menu>
-              @if (filterIri()) {
-                <button mat-button data-cy="ontology-map-class-reset" (click)="setFilter(undefined)">
+              @if (filterIris().length > 0) {
+                <button mat-button data-cy="ontology-map-class-reset" (click)="setFilter([])">
                   <mat-icon>close</mat-icon>
                   {{ m + '.resetFilter' | translate }}
                 </button>
@@ -272,15 +295,19 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
         overflow: hidden;
       }
 
+      // A narrow window wraps the toolbar onto a second line rather than squeezing its buttons.
       .toolbar {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
-        gap: 12px;
+        gap: 8px 12px;
         padding: 12px 16px;
       }
 
       .data-model {
         --mat-button-outlined-container-height: 34px;
+        flex: none;
+        white-space: nowrap;
         background: white;
 
         .data-model-label {
@@ -306,6 +333,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
       }
 
       .counts {
+        white-space: nowrap;
         font-size: 12px;
         color: $cool_gray_600;
       }
@@ -361,6 +389,10 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
           bottom: 0;
           z-index: 1;
         }
+      }
+
+      .filter-check {
+        margin-right: 8px;
       }
 
       .empty {
@@ -430,19 +462,23 @@ export class OntologyMapPageComponent {
     return graph ? classColors(graph) : new Map<string, string>();
   });
 
-  /** In the Graph view, the class to show with only the classes it is linked with; all classes when unset. */
-  readonly filterIri = computed(() => this._classFromUrl(ONTOLOGY_MAP_PARAM.filter));
+  /** In the Graph view, the classes to show with only the classes they are linked with; all classes when none. */
+  readonly filterIris = computed(() => {
+    const names = this._params()?.get(ONTOLOGY_MAP_PARAM.filter)?.split(',') ?? [];
+    return names.map(name => this._classNamed(name)).filter((iri): iri is string => iri !== undefined);
+  });
   readonly classOptions = computed(() =>
     (this.graph()?.nodes ?? [])
       .filter(node => node.kind === 'class')
       .map(node => ({ id: node.id, label: node.label }))
       .sort((a, b) => a.label.localeCompare(b.label))
   );
-  readonly filterLabel = computed(() => this.classOptions().find(option => option.id === this.filterIri())?.label);
-  /** What the Graph view draws: the data model, narrowed to the filtered class and the classes it is linked with. */
+  /** The name of the one class filtered on. */
+  readonly filterLabel = computed(() => this.classOptions().find(option => option.id === this.filterIris()[0])?.label);
+  /** What the Graph view draws: the data model, narrowed to the filtered classes and the classes they are linked with. */
   readonly graphShown = computed(() => {
     const graph = this.graph();
-    return graph ? linkedWith(graph, this.filterIri()) : undefined;
+    return graph ? linkedWith(graph, this.filterIris()) : undefined;
   });
 
   /** A property hovered in the class panel; the graph highlights its links. */
@@ -484,15 +520,21 @@ export class OntologyMapPageComponent {
     this._navigate({ [ONTOLOGY_MAP_PARAM.panel]: classIri ? classNameOf(classIri) : null });
   }
 
-  /** Filters the graph on the class, or shows every class again; a step in the browser history. */
-  setFilter(classIri: string | undefined): void {
-    this._navigate({ [ONTOLOGY_MAP_PARAM.filter]: classIri ? classNameOf(classIri) : null });
+  /** Filters the graph on these classes, or shows every class when none; a step in the browser history. */
+  setFilter(classIris: readonly string[]): void {
+    this._navigate({ [ONTOLOGY_MAP_PARAM.filter]: classIris.length ? classIris.map(classNameOf).join(',') : null });
   }
 
-  /** Shows the class with only the classes it is linked with, in the Graph view. */
+  /** Adds the class to the filter, or takes it out. */
+  toggleFilter(classIri: string): void {
+    const chosen = this.filterIris();
+    this.setFilter(chosen.includes(classIri) ? chosen.filter(iri => iri !== classIri) : [...chosen, classIri]);
+  }
+
+  /** Shows the class alone with the classes it is linked with, in the Graph view. */
   filterOn(classIri: string): void {
     this.setView('graph');
-    this.setFilter(classIri);
+    this.setFilter([classIri]);
   }
 
   /** Changes some query parameters, keeping the others; the data model is named so the class names resolve. */
@@ -511,7 +553,10 @@ export class OntologyMapPageComponent {
   /** The class of the shown data model that a query parameter names, if it names one. */
   private _classFromUrl(param: string): string | undefined {
     const name = this._params()?.get(param);
-    if (!name) return undefined;
+    return name ? this._classNamed(name) : undefined;
+  }
+
+  private _classNamed(name: string): string | undefined {
     return this.graph()?.nodes.find(node => node.kind === 'class' && classNameOf(node.id) === name)?.id;
   }
 

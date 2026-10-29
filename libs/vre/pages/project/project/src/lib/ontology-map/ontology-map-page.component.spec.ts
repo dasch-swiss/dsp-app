@@ -69,7 +69,7 @@ describe('OntologyMapPageComponent', () => {
     params.next(convertToParamMap({ ontology: 'beol', panel: 'Letter', filter: 'Letter' }));
 
     expect(component.panelIri()).toBe(`${BEOL}#Letter`);
-    expect(component.filterIri()).toBe(`${BEOL}#Letter`);
+    expect(component.filterIris()).toEqual([`${BEOL}#Letter`]);
     expect(component.classIri()).toBe(`${BEOL}#Letter`);
   });
 
@@ -81,7 +81,7 @@ describe('OntologyMapPageComponent', () => {
 
   it('opens a panel and filters by navigating, so the browser history keeps each step', () => {
     component.openPanel(`${BEOL}#Letter`);
-    component.setFilter(undefined);
+    component.setFilter([]);
 
     expect(navigate).toHaveBeenNthCalledWith(1, [], {
       relativeTo: expect.anything(),
@@ -93,6 +93,17 @@ describe('OntologyMapPageComponent', () => {
       queryParamsHandling: 'merge',
       queryParams: { ontology: 'beol', filter: null },
     });
+  });
+
+  it('adds a class to the filter, or takes it out', () => {
+    params.next(convertToParamMap({ ontology: 'beol', filter: 'Letter' }));
+
+    component.toggleFilter(`${BEOL}#Letter`);
+
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: { ontology: 'beol', filter: null } })
+    );
   });
 
   it('opens a clicked class in the Data tab', () => {

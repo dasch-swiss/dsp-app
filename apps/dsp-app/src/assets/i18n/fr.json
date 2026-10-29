@@ -786,7 +786,8 @@
         "small": "Petit",
         "normal": "Normal",
         "large": "Grand"
-      }
+      },
+      "classesChosen": "{{count}} classes"
     }
   },
   "resourceEditor": {
