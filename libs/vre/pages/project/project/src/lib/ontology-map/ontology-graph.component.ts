@@ -31,8 +31,8 @@ const COLOR = {
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
 const FIT_PADDING = 56;
 
-/** The graph's stylesheet, boxes, text and lines scaled by `f`. */
-const styleFor = (f: number): StylesheetJson => [
+/** The graph's stylesheet, boxes, text and lines scaled by `f`; link labels level or along their line. */
+const styleFor = (f: number, levelLabels = false): StylesheetJson => [
   {
     selector: 'node',
     style: {
@@ -79,17 +79,13 @@ const styleFor = (f: number): StylesheetJson => [
       'font-family': 'Roboto, sans-serif',
       'font-size': 10 * f,
       color: COLOR.text,
-      'text-rotation': 'autorotate',
+      'text-rotation': levelLabels ? 'none' : 'autorotate',
       'text-background-color': '#F9FAFB',
       'text-background-opacity': 0.9,
       'text-background-padding': '1px',
       // Labels give way when zoomed out, so a big model stays readable.
       'min-zoomed-font-size': 7,
     },
-  },
-  {
-    selector: 'edge.subclass',
-    style: { 'line-style': 'dashed', 'target-arrow-shape': 'triangle-backcurve', label: '' },
   },
   {
     selector: 'edge.highlighted, edge.same-property',
@@ -199,6 +195,8 @@ export class OntologyGraphComponent {
   readonly colors = input.required<Map<string, string>>();
   /** How big boxes, text and lines are drawn. */
   readonly size = input<GraphSize>('normal');
+  /** Whether link labels are drawn level, rather than along their line. */
+  readonly levelLabels = input(false);
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
@@ -244,7 +242,7 @@ export class OntologyGraphComponent {
         const { default: cytoscape } = await import('cytoscape');
         const cy = cytoscape({
           container: this._canvas().nativeElement,
-          style: styleFor(GRAPH_SIZE_FACTOR[untracked(() => this.size())]),
+          style: untracked(() => this._style(GRAPH_SIZE_FACTOR[this.size()])),
           minZoom: 0.2,
           maxZoom: 3,
           wheelSensitivity: 0.3,
@@ -327,8 +325,13 @@ export class OntologyGraphComponent {
       const cy = this._cy();
       const size = this.size();
       if (!cy) return;
-      cy.style(styleFor(GRAPH_SIZE_FACTOR[size]));
+      cy.style(this._style(GRAPH_SIZE_FACTOR[size]));
       cy.fit(undefined, FIT_PADDING);
+    });
+    effect(() => {
+      const cy = this._cy();
+      const level = this.levelLabels();
+      if (cy) cy.style(styleFor(GRAPH_SIZE_FACTOR[untracked(() => this.size())], level));
     });
     effect(() => {
       const cy = this._cy();
@@ -344,11 +347,15 @@ export class OntologyGraphComponent {
     if (cy.elements().empty()) return;
     // Lay out at normal size, so the chosen size changes how big things are drawn, not how far apart they are.
     const size = GRAPH_SIZE_FACTOR[untracked(() => this.size())];
-    if (size !== 1) cy.style(styleFor(1));
+    if (size !== 1) cy.style(this._style(1));
     cy.layout(layoutOptions(layout) as never).run();
-    if (size !== 1) cy.style(styleFor(size));
+    if (size !== 1) cy.style(this._style(size));
     cy.fit(undefined, FIT_PADDING);
     this._dragged = false;
+  }
+
+  private _style(f: number): StylesheetJson {
+    return styleFor(f, untracked(() => this.levelLabels()));
   }
 
   /** Zooms so the whole model fits. */

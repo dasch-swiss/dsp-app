@@ -53,7 +53,7 @@ export interface GraphElementOptions {
 
 /**
  * The data model as Cytoscape elements: a node per class, an edge per link labelled with its property, a dashed
- * edge per subclass relation. Each class node carries its colour; node classes carry what else the stylesheet
+ * edge per subclass relation if the graph still has any. Each class node carries its colour; node classes carry what else the stylesheet
  * draws: `external`, `unlinked`, `main`, `selected`.
  */
 export function toGraphElements(graph: DataModelGraph, options: GraphElementOptions): ElementDefinition[] {
@@ -134,4 +134,38 @@ export function throughProperties(graph: DataModelGraph, propertyIris: readonly 
   );
   const kept = new Set(edges.flatMap(edge => [edge.source, edge.target]));
   return { nodes: graph.nodes.filter(node => kept.has(node.id)), edges };
+}
+
+/**
+ * The data model with no subclass arrows; a subclass gets its superclasses' links instead, as it inherits them.
+ * Classes outside the data model that only a subclass arrow brought in are left out.
+ */
+export function withInheritedLinks(graph: DataModelGraph): DataModelGraph {
+  const parents = new Map<string, string[]>();
+  for (const edge of graph.edges) {
+    if (edge.kind === 'subclass') parents.set(edge.source, [...(parents.get(edge.source) ?? []), edge.target]);
+  }
+  const links = graph.edges.filter(edge => edge.kind === 'link');
+  const ancestors = (iri: string, seen = new Set<string>()): Set<string> => {
+    for (const parent of parents.get(iri) ?? []) {
+      if (seen.has(parent)) continue;
+      seen.add(parent);
+      ancestors(parent, seen);
+    }
+    return seen;
+  };
+  const edges = new Map(links.map(edge => [`${edge.source} ${edge.property} ${edge.target}`, edge]));
+  for (const child of parents.keys()) {
+    const inherited = ancestors(child);
+    for (const edge of links) {
+      if (!inherited.has(edge.source) || edge.target === child) continue;
+      const key = `${child} ${edge.property} ${edge.target}`;
+      if (!edges.has(key)) edges.set(key, { ...edge, source: child });
+    }
+  }
+  const linked = new Set([...edges.values()].flatMap(edge => [edge.source, edge.target]));
+  return {
+    nodes: graph.nodes.filter(node => node.kind === 'class' || linked.has(node.id)),
+    edges: [...edges.values()],
+  };
 }

@@ -790,7 +790,8 @@
       "classesChosen": "{{count}} classes",
       "propertyFilter": "Property",
       "allProperties": "All properties",
-      "propertiesChosen": "{{count}} properties"
+      "propertiesChosen": "{{count}} properties",
+      "levelLabels": "Horizontal link labels"
     }
   },
   "resourceEditor": {

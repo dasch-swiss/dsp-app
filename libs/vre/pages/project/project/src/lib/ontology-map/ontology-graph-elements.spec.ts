@@ -7,6 +7,7 @@ import {
   linkedWith,
   throughProperties,
   toGraphElements,
+  withInheritedLinks,
 } from './ontology-graph-elements';
 
 const graph: DataModelGraph = {
@@ -94,6 +95,37 @@ describe('throughProperties', () => {
 
   it('keeps the whole model when no property is given', () => {
     expect(throughProperties(graph, [])).toBe(graph);
+  });
+});
+
+describe('withInheritedLinks', () => {
+  const family: DataModelGraph = {
+    nodes: [
+      ...graph.nodes,
+      { id: 'Short', label: 'Short', kind: 'class', count: 1, navigable: true },
+      { id: 'Clip', label: 'Clip', kind: 'class', count: 1, navigable: true },
+      { id: 'Other', label: 'Other', kind: 'external', navigable: true },
+    ],
+    edges: [
+      ...graph.edges,
+      { source: 'Short', target: 'Film', property: 'subClassOf', label: '', kind: 'subclass' },
+      { source: 'Clip', target: 'Short', property: 'subClassOf', label: '', kind: 'subclass' },
+      { source: 'Lonely', target: 'Other', property: 'subClassOf', label: '', kind: 'subclass' },
+    ],
+  };
+  const result = withInheritedLinks(family);
+
+  it('gives subclasses, at any depth, the links of their superclasses instead of subclass arrows', () => {
+    const from = (id: string) => result.edges.filter(e => e.source === id).map(e => `${e.property} ${e.target}`);
+
+    expect(result.edges.some(e => e.kind === 'subclass')).toBe(false);
+    expect(from('Short')).toEqual(['director Person', 'writer Person', 'sequel Film']);
+    expect(from('Clip')).toEqual(from('Short'));
+  });
+
+  it('leaves out a class outside the data model that only a subclass arrow brought in', () => {
+    expect(result.nodes.map(n => n.id)).not.toContain('Other');
+    expect(result.nodes.map(n => n.id)).toContain('Lonely');
   });
 });
 

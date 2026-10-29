@@ -23,7 +23,14 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { DataModelMapComponent, MapDetail } from '../sidenav/data-model-map/data-model-map.component';
-import { classColors, GraphLayout, GraphSize, linkedWith, throughProperties } from './ontology-graph-elements';
+import {
+  classColors,
+  GraphLayout,
+  GraphSize,
+  linkedWith,
+  throughProperties,
+  withInheritedLinks,
+} from './ontology-graph-elements';
 import { OntologyGraphComponent } from './ontology-graph.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
@@ -45,6 +52,7 @@ const DETAIL_KEY = 'dsp-ontology-map-detail';
 const VIEW_KEY = 'dsp-ontology-map-view';
 const LAYOUT_KEY = 'dsp-ontology-map-layout';
 const SIZE_KEY = 'dsp-ontology-map-size';
+const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
 
 const SIZES: GraphSize[] = ['small', 'normal', 'large'];
 
@@ -235,6 +243,17 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
               <button
                 mat-icon-button
                 class="fit"
+                data-cy="ontology-map-level-labels"
+                [class.on]="levelLabels()"
+                [attr.aria-pressed]="levelLabels()"
+                [attr.aria-label]="m + '.levelLabels' | translate"
+                [matTooltip]="m + '.levelLabels' | translate"
+                (click)="setLevelLabels(!levelLabels())">
+                <mat-icon>text_rotation_none</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                class="fit"
                 data-cy="ontology-map-fit"
                 [attr.aria-label]="m + '.fit' | translate"
                 [matTooltip]="m + '.fit' | translate"
@@ -268,6 +287,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   [selectedIri]="classIri()"
                   [layout]="layout()"
                   [size]="size()"
+                  [levelLabels]="levelLabels()"
                   [highlightedProperty]="hoveredProperty()"
                   [colors]="colors()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
@@ -387,6 +407,11 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
       .fit {
         --mat-icon-button-state-layer-size: 34px;
         padding: 5px;
+
+        &.on {
+          background: $primary_100;
+          color: $primary_700;
+        }
       }
 
       .toggle {
@@ -480,6 +505,11 @@ export class OntologyMapPageComponent {
     const iri = this.selected()?.iri;
     return iri ? this._graphsByIri()?.get(iri) : undefined;
   });
+  /** The graph view's data model: subclasses carry the links they inherit, with no subclass arrows. */
+  private readonly _graphLinks = computed(() => {
+    const graph = this.graph();
+    return graph ? withInheritedLinks(graph) : undefined;
+  });
   readonly counts = computed(() => {
     const graph = this.graph();
     if (!graph) return undefined;
@@ -499,6 +529,8 @@ export class OntologyMapPageComponent {
   readonly sizes = SIZES;
   /** How big the graph draws boxes, text and lines; remembered in this browser. */
   readonly size = signal<GraphSize>(SIZES.find(size => size === readStored(SIZE_KEY)) ?? 'normal');
+  /** Whether the graph draws link labels level, rather than along their line; remembered in this browser. */
+  readonly levelLabels = signal(readStored(LEVEL_LABELS_KEY) === 'true');
   readonly graphView = viewChild(OntologyGraphComponent);
 
   /** Whether cards show their summary or their properties; remembered in this browser. */
@@ -524,7 +556,7 @@ export class OntologyMapPageComponent {
   /** The link properties of the data model, each once, with how many links use it. */
   readonly propertyOptions = computed(() => {
     const options = new Map<string, { id: string; label: string; links: number }>();
-    for (const edge of this.graph()?.edges ?? []) {
+    for (const edge of this._graphLinks()?.edges ?? []) {
       if (edge.kind !== 'link' || edge.source === edge.target) continue;
       const option = options.get(edge.property) ?? { id: edge.property, label: edge.label, links: 0 };
       option.links++;
@@ -547,7 +579,7 @@ export class OntologyMapPageComponent {
   readonly filterLabel = computed(() => this.classOptions().find(option => option.id === this.filterIris()[0])?.label);
   /** What the Graph view draws: the data model, narrowed to the filtered classes and the classes they are linked with. */
   readonly graphShown = computed(() => {
-    const graph = this.graph();
+    const graph = this._graphLinks();
     if (!graph) return undefined;
     const properties = this.propertyIris();
     return properties.length > 0 ? throughProperties(graph, properties) : linkedWith(graph, this.filterIris());
@@ -660,6 +692,11 @@ export class OntologyMapPageComponent {
   setSize(size: GraphSize): void {
     this.size.set(size);
     store(SIZE_KEY, size);
+  }
+
+  setLevelLabels(level: boolean): void {
+    this.levelLabels.set(level);
+    store(LEVEL_LABELS_KEY, String(level));
   }
 
   setLayout(layout: GraphLayout): void {

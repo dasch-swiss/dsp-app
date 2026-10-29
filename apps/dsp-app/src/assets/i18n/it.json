@@ -790,7 +790,8 @@
       "classesChosen": "{{count}} classi",
       "propertyFilter": "Proprietà",
       "allProperties": "Tutte le proprietà",
-      "propertiesChosen": "{{count}} proprietà"
+      "propertiesChosen": "{{count}} proprietà",
+      "levelLabels": "Etichette dei collegamenti orizzontali"
     }
   },
   "resourceEditor": {

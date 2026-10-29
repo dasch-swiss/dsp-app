@@ -790,7 +790,8 @@
       "classesChosen": "{{count}} Klassen",
       "propertyFilter": "Eigenschaft",
       "allProperties": "Alle Eigenschaften",
-      "propertiesChosen": "{{count}} Eigenschaften"
+      "propertiesChosen": "{{count}} Eigenschaften",
+      "levelLabels": "Verknüpfungsbeschriftungen waagrecht"
     }
   },
   "resourceEditor": {
