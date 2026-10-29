@@ -10,6 +10,8 @@ import {
   throughProperties,
   toGraphElements,
   withInheritedLinks,
+  withoutClasses,
+  withoutProperties,
 } from './ontology-graph-elements';
 
 const graph: DataModelGraph = {
@@ -185,6 +187,24 @@ describe('graphScale', () => {
   it('never shrinks a small data model, nor grows one past four times', () => {
     expect(graphScale(14, 3)).toBe(1);
     expect(graphScale(18, 0.1)).toBe(4);
+  });
+});
+
+describe('withoutClasses', () => {
+  it('leaves out the classes and every link to or from them', () => {
+    const rest = withoutClasses(graph, ['Person']);
+
+    expect(rest.nodes.map(n => n.id)).toEqual(['Film', 'Lonely', Constants.Resource]);
+    expect(rest.edges.map(e => e.property)).toEqual(['sequel']);
+  });
+});
+
+describe('withoutProperties', () => {
+  it('leaves out the links through the properties, keeping every class', () => {
+    const rest = withoutProperties(graph, ['director', 'writer']);
+
+    expect(rest.nodes).toBe(graph.nodes);
+    expect(rest.edges.map(e => e.property)).toEqual(['sequel', 'mentions']);
   });
 });
 

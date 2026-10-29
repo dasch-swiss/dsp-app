@@ -237,3 +237,18 @@ export function propertyUsage(graph: DataModelGraph, propertyIri: string): Prope
     users,
   };
 }
+
+/** The data model without these classes and their links. */
+export function withoutClasses(graph: DataModelGraph, classIris: readonly string[]): DataModelGraph {
+  const hidden = new Set(classIris);
+  return {
+    nodes: graph.nodes.filter(node => !hidden.has(node.id)),
+    edges: graph.edges.filter(edge => !hidden.has(edge.source) && !hidden.has(edge.target)),
+  };
+}
+
+/** The data model without the links through these properties; every class stays. */
+export function withoutProperties(graph: DataModelGraph, propertyIris: readonly string[]): DataModelGraph {
+  const hidden = new Set(propertyIris);
+  return { nodes: graph.nodes, edges: graph.edges.filter(edge => !hidden.has(edge.property)) };
+}

@@ -806,7 +806,23 @@
       "display": "Visualizzazione",
       "zoom": "Zoom",
       "zoomIn": "Ingrandisci",
-      "zoomOut": "Riduci"
+      "zoomOut": "Riduci",
+      "filterNone": "nessuna",
+      "allButOne": "tutte tranne {{name}}",
+      "allBut": "tutte tranne {{count}}",
+      "filterMenu": {
+        "search": "Cerca per nome",
+        "clearSearch": "Cancella la ricerca",
+        "allMatches": "Tutti i {{count}} risultati",
+        "onlyThese": "Solo queste",
+        "only": "Solo",
+        "ticked": "{{count}} di {{total}}",
+        "noMatch": "Nessun risultato",
+        "matching": "{{count}} di {{total}} trovate",
+        "allShown": "Tutte le {{total}} visibili",
+        "hidden": "Nascoste:",
+        "showAll": "Mostra tutto"
+      }
     }
   },
   "resourceEditor": {

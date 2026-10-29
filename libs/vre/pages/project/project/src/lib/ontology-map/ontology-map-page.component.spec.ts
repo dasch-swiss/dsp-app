@@ -14,16 +14,30 @@ const graph = (iri: string): DataModelGraph => ({
   nodes: [{ id: `${iri}#Letter`, label: 'Letter', kind: 'class', count: 1, navigable: true }],
   edges: [],
 });
+const letterAndPerson: DataModelGraph = {
+  nodes: [
+    { id: `${BEOL}#Letter`, label: 'Letter', kind: 'class', count: 1, navigable: true },
+    { id: `${BEOL}#Person`, label: 'Person', kind: 'class', count: 1, navigable: true },
+  ],
+  edges: [],
+};
 
 describe('OntologyMapPageComponent', () => {
   let fixture: ComponentFixture<OntologyMapPageComponent>;
   let component: OntologyMapPageComponent;
   let params: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
   let navigate: jest.Mock;
+  let graphs: BehaviorSubject<Map<string, DataModelGraph>>;
 
   beforeEach(() => {
     params = new BehaviorSubject(convertToParamMap({}));
     navigate = jest.fn();
+    graphs = new BehaviorSubject(
+      new Map([
+        [BEOL, graph(BEOL)],
+        [BIBLIO, graph(BIBLIO)],
+      ])
+    );
     TestBed.configureTestingModule({
       imports: [OntologyMapPageComponent],
       providers: [
@@ -39,12 +53,7 @@ describe('OntologyMapPageComponent', () => {
               { ontology: { iri: BIBLIO, label: 'The Biblio ontology' } },
               { ontology: { iri: BEOL, label: 'The BEOL ontology' } },
             ]),
-            graphs$: of(
-              new Map([
-                [BEOL, graph(BEOL)],
-                [BIBLIO, graph(BIBLIO)],
-              ])
-            ),
+            graphs$: graphs,
           },
         },
       ],
@@ -91,18 +100,45 @@ describe('OntologyMapPageComponent', () => {
     expect(navigate).toHaveBeenNthCalledWith(2, [], {
       relativeTo: expect.anything(),
       queryParamsHandling: 'merge',
-      queryParams: { ontology: 'beol', filter: null, property: null },
+      queryParams: { ontology: 'beol', filter: null, hide: null, property: null, hideProperty: null },
     });
   });
 
-  it('adds a class to the filter, or takes it out', () => {
-    params.next(convertToParamMap({ ontology: 'beol', filter: 'Letter' }));
+  it('hides the classes unticked from every class', () => {
+    graphs.next(new Map([[BEOL, letterAndPerson]]));
 
-    component.toggleFilter(`${BEOL}#Letter`);
+    component.onClassesTicked([`${BEOL}#Letter`]);
 
     expect(navigate).toHaveBeenCalledWith(
       [],
-      expect.objectContaining({ queryParams: { ontology: 'beol', filter: null, property: null } })
+      expect.objectContaining({
+        queryParams: { ontology: 'beol', filter: null, hide: 'Person', property: null, hideProperty: null },
+      })
+    );
+  });
+
+  it('reads hidden classes from the URL, ticking the others', () => {
+    graphs.next(new Map([[BEOL, letterAndPerson]]));
+    params.next(convertToParamMap({ ontology: 'beol', hide: 'Person' }));
+
+    expect(component.classTicked()).toEqual([`${BEOL}#Letter`]);
+    expect(component.classChip()).toEqual({ key: 'allButOne', params: { name: 'Person' } });
+    expect(component.graphShown()?.nodes.map(node => node.id)).toEqual([`${BEOL}#Letter`]);
+  });
+
+  it('shows nothing when every class is unticked, then the ones ticked', () => {
+    graphs.next(new Map([[BEOL, letterAndPerson]]));
+    params.next(convertToParamMap({ ontology: 'beol', filter: '' }));
+
+    expect(component.graphShown()?.nodes).toEqual([]);
+
+    component.onClassesTicked([`${BEOL}#Person`]);
+
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({
+        queryParams: { ontology: 'beol', filter: 'Person', hide: null, property: null, hideProperty: null },
+      })
     );
   });
 
@@ -111,7 +147,9 @@ describe('OntologyMapPageComponent', () => {
 
     expect(navigate).toHaveBeenCalledWith(
       [],
-      expect.objectContaining({ queryParams: { ontology: 'beol', property: 'author', filter: null } })
+      expect.objectContaining({
+        queryParams: { ontology: 'beol', filter: null, hide: null, property: 'author', hideProperty: null },
+      })
     );
   });
 
