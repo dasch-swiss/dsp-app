@@ -98,7 +98,8 @@ const styleFor = (f: number, levelLabels = false): StylesheetJson => [
       'arrow-scale': 0.8 * f,
       label: 'data(label)',
       'font-family': 'Roboto, sans-serif',
-      'font-size': 10 * f,
+      // Link labels close to class names in size, so a property reads as easily as the classes it joins.
+      'font-size': 13 * f,
       color: COLOR.text,
       'text-rotation': levelLabels ? 'none' : 'autorotate',
       'text-background-color': '#F9FAFB',
