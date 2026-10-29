@@ -1,6 +1,13 @@
 import { Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { CLASS_COLORS, classColors, layoutOptions, linkedWith, toGraphElements } from './ontology-graph-elements';
+import {
+  CLASS_COLORS,
+  classColors,
+  layoutOptions,
+  linkedWith,
+  throughProperties,
+  toGraphElements,
+} from './ontology-graph-elements';
 
 const graph: DataModelGraph = {
   nodes: [
@@ -74,6 +81,19 @@ describe('linkedWith', () => {
 
     expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person', 'Lonely']);
     expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer']);
+  });
+});
+
+describe('throughProperties', () => {
+  it('keeps only the links through the properties, with the classes at both ends', () => {
+    const focused = throughProperties(graph, ['director', 'mentions']);
+
+    expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person', Constants.Resource]);
+    expect(focused.edges.map(e => e.property)).toEqual(['director', 'mentions']);
+  });
+
+  it('keeps the whole model when no property is given', () => {
+    expect(throughProperties(graph, [])).toBe(graph);
   });
 });
 

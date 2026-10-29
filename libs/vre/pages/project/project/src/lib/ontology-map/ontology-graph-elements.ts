@@ -124,3 +124,14 @@ export function linkedWith(graph: DataModelGraph, classIris: readonly string[]):
   const kept = new Set([...chosen, ...edges.flatMap(edge => [edge.source, edge.target])]);
   return { nodes: graph.nodes.filter(node => kept.has(node.id)), edges };
 }
+
+/** Only the links through these properties, with the classes at both ends; the whole model when none is given. */
+export function throughProperties(graph: DataModelGraph, propertyIris: readonly string[]): DataModelGraph {
+  if (propertyIris.length === 0) return graph;
+  const chosen = new Set(propertyIris);
+  const edges = graph.edges.filter(
+    edge => edge.kind === 'link' && edge.source !== edge.target && chosen.has(edge.property)
+  );
+  const kept = new Set(edges.flatMap(edge => [edge.source, edge.target]));
+  return { nodes: graph.nodes.filter(node => kept.has(node.id)), edges };
+}

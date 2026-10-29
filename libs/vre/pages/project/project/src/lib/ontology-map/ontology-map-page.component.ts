@@ -23,7 +23,7 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { DataModelMapComponent, MapDetail } from '../sidenav/data-model-map/data-model-map.component';
-import { classColors, GraphLayout, GraphSize, linkedWith } from './ontology-graph-elements';
+import { classColors, GraphLayout, GraphSize, linkedWith, throughProperties } from './ontology-graph-elements';
 import { OntologyGraphComponent } from './ontology-graph.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
@@ -31,7 +31,13 @@ import { ResourceClassPanelComponent } from './resource-class-panel.component';
  * Query parameters of the Ontology map tab: the data model to show, the class to outline, the class whose panel is
  * open and the class the graph is filtered on. Classes are named by the end of their IRI, within the data model.
  */
-export const ONTOLOGY_MAP_PARAM = { ontology: 'ontology', class: 'class', panel: 'panel', filter: 'filter' } as const;
+export const ONTOLOGY_MAP_PARAM = {
+  ontology: 'ontology',
+  class: 'class',
+  panel: 'panel',
+  filter: 'filter',
+  property: 'property',
+} as const;
 
 const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
@@ -159,8 +165,44 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   </button>
                 }
               </mat-menu>
-              @if (filterIris().length > 0) {
-                <button mat-button data-cy="ontology-map-class-reset" (click)="setFilter([])">
+              <button
+                mat-stroked-button
+                class="data-model"
+                data-cy="ontology-map-property-filter"
+                [matMenuTriggerFor]="propertyFilter">
+                <span class="data-model-label">{{ m + '.propertyFilter' | translate }}</span>
+                <b>
+                  @switch (propertyIris().length) {
+                    @case (0) {
+                      {{ m + '.allProperties' | translate }}
+                    }
+                    @case (1) {
+                      {{ propertyLabel() }}
+                    }
+                    @default {
+                      {{ m + '.propertiesChosen' | translate: { count: propertyIris().length } }}
+                    }
+                  }
+                </b>
+                <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+              </button>
+              <mat-menu #propertyFilter="matMenu">
+                <button mat-menu-item (click)="setPropertyFilter([])">{{ m + '.allProperties' | translate }}</button>
+                @for (option of propertyOptions(); track option.id) {
+                  @let checked = propertyIris().includes(option.id);
+                  <button
+                    mat-menu-item
+                    role="menuitemcheckbox"
+                    [attr.aria-checked]="checked"
+                    (click)="$event.stopPropagation(); toggleProperty(option.id)">
+                    <mat-pseudo-checkbox class="filter-check" [state]="checked ? 'checked' : 'unchecked'" />
+                    {{ option.label }}
+                    <span class="link-count">{{ option.links }}</span>
+                  </button>
+                }
+              </mat-menu>
+              @if (filterIris().length > 0 || propertyIris().length > 0) {
+                <button mat-button data-cy="ontology-map-class-reset" (click)="clearFilters()">
                   <mat-icon>close</mat-icon>
                   {{ m + '.resetFilter' | translate }}
                 </button>
@@ -395,6 +437,12 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
         margin-right: 8px;
       }
 
+      .link-count {
+        margin-left: 8px;
+        font-size: 12px;
+        color: $cool_gray_500;
+      }
+
       .empty {
         color: $cool_gray_500;
       }
@@ -473,12 +521,36 @@ export class OntologyMapPageComponent {
       .map(node => ({ id: node.id, label: node.label }))
       .sort((a, b) => a.label.localeCompare(b.label))
   );
+  /** The link properties of the data model, each once, with how many links use it. */
+  readonly propertyOptions = computed(() => {
+    const options = new Map<string, { id: string; label: string; links: number }>();
+    for (const edge of this.graph()?.edges ?? []) {
+      if (edge.kind !== 'link' || edge.source === edge.target) continue;
+      const option = options.get(edge.property) ?? { id: edge.property, label: edge.label, links: 0 };
+      option.links++;
+      options.set(edge.property, option);
+    }
+    return [...options.values()].sort((a, b) => a.label.localeCompare(b.label));
+  });
+  /** In the Graph view, the properties to show only the links of; used instead of the class filter. */
+  readonly propertyIris = computed(() => {
+    const names = this._params()?.get(ONTOLOGY_MAP_PARAM.property)?.split(',') ?? [];
+    return this.propertyOptions()
+      .filter(option => names.includes(classNameOf(option.id)))
+      .map(option => option.id);
+  });
+  readonly propertyLabel = computed(
+    () => this.propertyOptions().find(option => option.id === this.propertyIris()[0])?.label
+  );
+
   /** The name of the one class filtered on. */
   readonly filterLabel = computed(() => this.classOptions().find(option => option.id === this.filterIris()[0])?.label);
   /** What the Graph view draws: the data model, narrowed to the filtered classes and the classes they are linked with. */
   readonly graphShown = computed(() => {
     const graph = this.graph();
-    return graph ? linkedWith(graph, this.filterIris()) : undefined;
+    if (!graph) return undefined;
+    const properties = this.propertyIris();
+    return properties.length > 0 ? throughProperties(graph, properties) : linkedWith(graph, this.filterIris());
   });
 
   /** A property hovered in the class panel; the graph highlights its links. */
@@ -522,7 +594,32 @@ export class OntologyMapPageComponent {
 
   /** Filters the graph on these classes, or shows every class when none; a step in the browser history. */
   setFilter(classIris: readonly string[]): void {
-    this._navigate({ [ONTOLOGY_MAP_PARAM.filter]: classIris.length ? classIris.map(classNameOf).join(',') : null });
+    this._navigate({
+      [ONTOLOGY_MAP_PARAM.filter]: classIris.length ? classIris.map(classNameOf).join(',') : null,
+      // Filtering by class or by property, never both.
+      [ONTOLOGY_MAP_PARAM.property]: null,
+    });
+  }
+
+  /** Shows only the links through these properties, or every class when none; a step in the browser history. */
+  setPropertyFilter(propertyIris: readonly string[]): void {
+    this._navigate({
+      [ONTOLOGY_MAP_PARAM.property]: propertyIris.length ? propertyIris.map(classNameOf).join(',') : null,
+      [ONTOLOGY_MAP_PARAM.filter]: null,
+    });
+  }
+
+  /** Adds the property to the filter, or takes it out. */
+  toggleProperty(propertyIri: string): void {
+    const chosen = this.propertyIris();
+    this.setPropertyFilter(
+      chosen.includes(propertyIri) ? chosen.filter(iri => iri !== propertyIri) : [...chosen, propertyIri]
+    );
+  }
+
+  /** Shows every class again, whichever filter was on. */
+  clearFilters(): void {
+    this._navigate({ [ONTOLOGY_MAP_PARAM.filter]: null, [ONTOLOGY_MAP_PARAM.property]: null });
   }
 
   /** Adds the class to the filter, or takes it out. */

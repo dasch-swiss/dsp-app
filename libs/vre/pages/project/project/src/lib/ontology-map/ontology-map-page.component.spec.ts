@@ -91,7 +91,7 @@ describe('OntologyMapPageComponent', () => {
     expect(navigate).toHaveBeenNthCalledWith(2, [], {
       relativeTo: expect.anything(),
       queryParamsHandling: 'merge',
-      queryParams: { ontology: 'beol', filter: null },
+      queryParams: { ontology: 'beol', filter: null, property: null },
     });
   });
 
@@ -102,7 +102,16 @@ describe('OntologyMapPageComponent', () => {
 
     expect(navigate).toHaveBeenCalledWith(
       [],
-      expect.objectContaining({ queryParams: { ontology: 'beol', filter: null } })
+      expect.objectContaining({ queryParams: { ontology: 'beol', filter: null, property: null } })
+    );
+  });
+
+  it('filters by class or by property, never both', () => {
+    component.setPropertyFilter(['author']);
+
+    expect(navigate).toHaveBeenCalledWith(
+      [],
+      expect.objectContaining({ queryParams: { ontology: 'beol', property: 'author', filter: null } })
     );
   });
 

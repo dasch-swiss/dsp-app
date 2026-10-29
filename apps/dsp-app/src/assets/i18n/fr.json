@@ -787,7 +787,10 @@
         "normal": "Normal",
         "large": "Grand"
       },
-      "classesChosen": "{{count}} classes"
+      "classesChosen": "{{count}} classes",
+      "propertyFilter": "Propriété",
+      "allProperties": "Toutes les propriétés",
+      "propertiesChosen": "{{count}} propriétés"
     }
   },
   "resourceEditor": {
