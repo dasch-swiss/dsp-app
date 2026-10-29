@@ -39,6 +39,16 @@ const COLOR = {
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
 const FIT_PADDING = 56;
 
+/** What a PNG of the graph covers: the part in view, or every class shown. */
+export type GraphExportArea = 'view' | 'whole';
+
+/** PNGs are drawn at twice the screen's resolution, sharp on slides and in print. */
+const EXPORT_SCALE = 2;
+/** The graph's background, as on screen; a transparent PNG would lose the link labels' backing. */
+const EXPORT_BACKGROUND = '#F9FAFB';
+/** The whole model of a big data model is drawn no bigger than this, in px each way. */
+const EXPORT_MAX_SIZE = 8000;
+
 /** The share of the chosen name size a model is first shown at, at least, though it then does not fit. */
 const READABLE_SHARE = 0.8;
 
@@ -411,6 +421,22 @@ export class OntologyGraphComponent {
       f,
       untracked(() => this.levelLabels())
     );
+  }
+
+  /**
+   * The graph as a PNG at twice the screen's resolution, on the graph's background: the part in view, or every class
+   * shown; `undefined` before the graph has loaded.
+   */
+  png(area: GraphExportArea): Promise<Blob> | undefined {
+    return this._cy()?.png({
+      output: 'blob-promise',
+      full: area === 'whole',
+      // Cytoscape already draws at the screen's pixel ratio; the scale is against CSS pixels.
+      scale: EXPORT_SCALE / (window.devicePixelRatio || 1),
+      bg: EXPORT_BACKGROUND,
+      maxWidth: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
+      maxHeight: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
+    });
   }
 
   /** Zooms in (`factor` above 1) or out, about the middle of the box. */

@@ -822,6 +822,20 @@
         "allShown": "Alle {{total}} angezeigt",
         "hidden": "Ausgeblendet:",
         "showAll": "Alle zeigen"
+      },
+      "export": "Exportieren",
+      "exportMenu": {
+        "viewPng": "Ansicht als PNG herunterladen",
+        "viewPngHint": "Was Sie sehen, in 2×",
+        "wholePng": "Ganzes Modell als PNG herunterladen",
+        "wholePngHint": "Alle angezeigten Klassen, eingepasst",
+        "copyImage": "Bild kopieren",
+        "copyImageHint": "In eine Folie oder ein Dokument einfügen",
+        "copyLink": "Link zu dieser Ansicht kopieren",
+        "copyLinkHint": "Datenmodell, Filter und offenes Panel",
+        "imageCopied": "Bild kopiert",
+        "linkCopied": "Link kopiert",
+        "exportFailed": "Das Bild konnte nicht erstellt werden."
       }
     }
   },

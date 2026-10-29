@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,7 +17,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe } from '@ngx-translate/core';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
@@ -33,7 +35,7 @@ import {
   withoutClasses,
   withoutProperties,
 } from './ontology-graph-elements';
-import { OntologyGraphComponent } from './ontology-graph.component';
+import { GraphExportArea, OntologyGraphComponent } from './ontology-graph.component';
 import { PropertyPanelComponent } from './property-panel.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
@@ -82,6 +84,15 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
 
 /** `map`: our own map, with summary or property cards. `graph`: the Cytoscape graph, to compare the two. */
 type OntologyMapView = 'map' | 'graph';
+
+type ExportKey = 'viewPng' | 'wholePng' | 'copyImage' | 'copyLink';
+
+const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
+  { key: 'viewPng', icon: 'image' },
+  { key: 'wholePng', icon: 'zoom_out_map' },
+  { key: 'copyImage', icon: 'content_copy' },
+  { key: 'copyLink', icon: 'link' },
+];
 
 const LAYOUTS: { value: GraphLayout; icon: string }[] = [
   { value: 'circle', icon: 'radio_button_unchecked' },
@@ -245,52 +256,76 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                   </mat-menu>
                 </div>
 
-                <!-- How to show it: layout, text size and labels, top right; left of an open panel. -->
-                <div
-                  class="float display"
-                  role="toolbar"
-                  [attr.aria-label]="m + '.display' | translate"
-                  [class.beside-panel]="panelOpen()">
-                  @for (option of layouts; track option.value) {
+                <!-- How to show it, and the Export menu: top right, left of an open panel. -->
+                <div class="top-right" [class.beside-panel]="panelOpen()">
+                  <div class="float display" role="toolbar" [attr.aria-label]="m + '.display' | translate">
+                    @for (option of layouts; track option.value) {
+                      <button
+                        type="button"
+                        class="tool"
+                        [class.on]="layout() === option.value"
+                        [attr.aria-pressed]="layout() === option.value"
+                        [attr.data-cy]="'ontology-map-layout-' + option.value"
+                        [attr.aria-label]="m + '.layouts.' + option.value | translate"
+                        [matTooltip]="m + '.layouts.' + option.value | translate"
+                        (click)="setLayout(option.value)">
+                        <mat-icon>{{ option.icon }}</mat-icon>
+                      </button>
+                    }
+                    <span class="divider"></span>
+                    @for (option of sizes; track option) {
+                      <button
+                        type="button"
+                        class="tool size"
+                        [attr.data-size]="option"
+                        [class.on]="size() === option"
+                        [attr.aria-pressed]="size() === option"
+                        [attr.data-cy]="'ontology-map-size-' + option"
+                        [attr.aria-label]="m + '.sizes.' + option | translate"
+                        [matTooltip]="m + '.sizes.' + option | translate"
+                        (click)="setSize(option)">
+                        A
+                      </button>
+                    }
+                    <span class="divider"></span>
                     <button
                       type="button"
                       class="tool"
-                      [class.on]="layout() === option.value"
-                      [attr.aria-pressed]="layout() === option.value"
-                      [attr.data-cy]="'ontology-map-layout-' + option.value"
-                      [attr.aria-label]="m + '.layouts.' + option.value | translate"
-                      [matTooltip]="m + '.layouts.' + option.value | translate"
-                      (click)="setLayout(option.value)">
-                      <mat-icon>{{ option.icon }}</mat-icon>
+                      data-cy="ontology-map-level-labels"
+                      [class.on]="levelLabels()"
+                      [attr.aria-pressed]="levelLabels()"
+                      [attr.aria-label]="m + '.levelLabels' | translate"
+                      [matTooltip]="m + '.levelLabels' | translate"
+                      (click)="setLevelLabels(!levelLabels())">
+                      <mat-icon>text_rotation_none</mat-icon>
                     </button>
-                  }
-                  <span class="divider"></span>
-                  @for (option of sizes; track option) {
-                    <button
-                      type="button"
-                      class="tool size"
-                      [attr.data-size]="option"
-                      [class.on]="size() === option"
-                      [attr.aria-pressed]="size() === option"
-                      [attr.data-cy]="'ontology-map-size-' + option"
-                      [attr.aria-label]="m + '.sizes.' + option | translate"
-                      [matTooltip]="m + '.sizes.' + option | translate"
-                      (click)="setSize(option)">
-                      A
-                    </button>
-                  }
-                  <span class="divider"></span>
+                  </div>
                   <button
                     type="button"
-                    class="tool"
-                    data-cy="ontology-map-level-labels"
-                    [class.on]="levelLabels()"
-                    [attr.aria-pressed]="levelLabels()"
-                    [attr.aria-label]="m + '.levelLabels' | translate"
-                    [matTooltip]="m + '.levelLabels' | translate"
-                    (click)="setLevelLabels(!levelLabels())">
-                    <mat-icon>text_rotation_none</mat-icon>
+                    class="float export"
+                    data-cy="ontology-map-export"
+                    [matMenuTriggerFor]="exportMenu">
+                    <mat-icon>ios_share</mat-icon>
+                    {{ m + '.export' | translate }}
+                    <mat-icon class="drop">arrow_drop_down</mat-icon>
                   </button>
+                  <mat-menu #exportMenu="matMenu" xPosition="before" class="export-menu">
+                    @for (item of exportItems; track item.key) {
+                      @if (item.key === 'copyLink') {
+                        <hr class="menu-divider" />
+                      }
+                      <button
+                        mat-menu-item
+                        [attr.data-cy]="'ontology-map-export-' + item.key"
+                        (click)="export(item.key)">
+                        <mat-icon>{{ item.icon }}</mat-icon>
+                        <span class="export-item">
+                          <span>{{ m + '.exportMenu.' + item.key | translate }}</span>
+                          <span class="export-hint">{{ m + '.exportMenu.' + item.key + 'Hint' | translate }}</span>
+                        </span>
+                      </button>
+                    }
+                  </mat-menu>
                 </div>
 
                 <!-- Zoom, bottom right. -->
@@ -416,9 +451,60 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
         gap: 4px 6px;
       }
 
-      .display {
+      .top-right {
+        position: absolute;
+        z-index: 2;
         top: 16px;
         right: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .float {
+          position: static;
+        }
+      }
+
+      .export {
+        height: 42px;
+        gap: 4px;
+        padding: 0 8px 0 14px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        color: $cool_gray_700;
+        cursor: pointer;
+
+        &:hover {
+          background: $cool_gray_50;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+        .drop {
+          color: $cool_gray_500;
+        }
+      }
+
+      .menu-divider {
+        margin: 4px 0;
+        border: 0;
+        border-top: 1px solid $cool_gray_100;
+      }
+
+      .export-item {
+        display: flex;
+        flex-direction: column;
+        line-height: 18px;
+      }
+
+      .export-hint {
+        font-size: 12px;
+        color: $cool_gray_500;
       }
 
       .zoom {
@@ -624,6 +710,9 @@ export class OntologyMapPageComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _graphs = inject(DataModelGraphService);
+  private readonly _clipboard = inject(Clipboard);
+  private readonly _notification = inject(NotificationService);
+  private readonly _translate = inject(TranslateService);
 
   private readonly _projectOntologies = toSignal(
     combineLatest([this._graphs.projectOntologies$, inject(LocalizationService).currentLanguage$]).pipe(
@@ -666,6 +755,7 @@ export class OntologyMapPageComponent {
   });
 
   readonly layouts = LAYOUTS;
+  readonly exportItems = EXPORT_ITEMS;
   /** The Cytoscape graph; the Map view is no longer offered and is to be removed. */
   readonly view = signal<OntologyMapView>('graph');
   /** How the graph view arranges the classes; remembered in this browser. */
@@ -941,6 +1031,51 @@ export class OntologyMapPageComponent {
   setLayout(layout: GraphLayout): void {
     this.layout.set(layout);
     store(LAYOUT_KEY, layout);
+  }
+
+  /** Runs an Export menu item: a PNG downloaded or copied, or the link to this view copied. */
+  export(key: ExportKey): void {
+    switch (key) {
+      case 'viewPng':
+      case 'wholePng':
+        return this._downloadPng(key === 'viewPng' ? 'view' : 'whole');
+      case 'copyImage':
+        return this._copyImage();
+      case 'copyLink':
+        this._clipboard.copy(window.location.href);
+        return this._notify('linkCopied');
+    }
+  }
+
+  private _downloadPng(area: GraphExportArea): void {
+    const png = this.graphView()?.png(area);
+    if (!png) return;
+    const name = OntologyService.getOntologyNameFromIri(this.selected()?.iri ?? '') || 'data-model';
+    png.then(
+      blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${name}_ontology-map${area === 'whole' ? '_whole' : ''}.png`;
+        link.click();
+        URL.revokeObjectURL(url);
+      },
+      () => this._notify('exportFailed', 'error')
+    );
+  }
+
+  private _copyImage(): void {
+    const png = this.graphView()?.png('view');
+    if (!png) return;
+    // The promise itself goes to the clipboard, so Safari keeps the click's permission while the image is drawn.
+    navigator.clipboard.write([new ClipboardItem({ 'image/png': png })]).then(
+      () => this._notify('imageCopied'),
+      () => this._notify('exportFailed', 'error')
+    );
+  }
+
+  private _notify(key: string, type: 'success' | 'error' = 'success'): void {
+    this._notification.openSnackBar(this._translate.instant(`pages.ontologyMap.exportMenu.${key}`), type);
   }
 
   /** Opens the class in the Data tab. */

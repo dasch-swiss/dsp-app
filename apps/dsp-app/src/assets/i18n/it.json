@@ -822,6 +822,20 @@
         "allShown": "Tutte le {{total}} visibili",
         "hidden": "Nascoste:",
         "showAll": "Mostra tutto"
+      },
+      "export": "Esporta",
+      "exportMenu": {
+        "viewPng": "Scarica la vista in PNG",
+        "viewPngHint": "Ciò che vedi, a 2×",
+        "wholePng": "Scarica tutto il modello in PNG",
+        "wholePngHint": "Tutte le classi mostrate, adattate",
+        "copyImage": "Copia l’immagine",
+        "copyImageHint": "Da incollare in una diapositiva o un documento",
+        "copyLink": "Copia il link a questa vista",
+        "copyLinkHint": "Modello di dati, filtri e pannello aperto",
+        "imageCopied": "Immagine copiata",
+        "linkCopied": "Link copiato",
+        "exportFailed": "Non è stato possibile creare l’immagine."
       }
     }
   },

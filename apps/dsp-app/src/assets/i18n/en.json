@@ -822,6 +822,20 @@
         "allShown": "All {{total}} shown",
         "hidden": "Hidden:",
         "showAll": "Show all"
+      },
+      "export": "Export",
+      "exportMenu": {
+        "viewPng": "Download view as PNG",
+        "viewPngHint": "What you see, at 2×",
+        "wholePng": "Download whole model as PNG",
+        "wholePngHint": "Every class shown, fitted",
+        "copyImage": "Copy image",
+        "copyImageHint": "Paste it into a slide or a document",
+        "copyLink": "Copy link to this view",
+        "copyLinkHint": "Data model, filters and open panel",
+        "imageCopied": "Image copied",
+        "linkCopied": "Link copied",
+        "exportFailed": "The image could not be made."
       }
     }
   },

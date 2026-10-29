@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -160,6 +161,14 @@ describe('OntologyMapPageComponent', () => {
       [],
       expect.objectContaining({ queryParams: { ontology: 'beol', propertyPanel: 'hasAuthor', panel: null } })
     );
+  });
+
+  it('copies the link to the view, data model, filters and panel included', () => {
+    const copy = jest.spyOn(TestBed.inject(Clipboard), 'copy').mockReturnValue(true);
+
+    component.export('copyLink');
+
+    expect(copy).toHaveBeenCalledWith(window.location.href);
   });
 
   it('opens a clicked class in the Data tab', () => {
