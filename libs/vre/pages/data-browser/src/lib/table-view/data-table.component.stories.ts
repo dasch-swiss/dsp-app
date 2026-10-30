@@ -429,6 +429,20 @@ export const HidesRowCheckboxesForAnonymousVisitors: Story = {
   },
 };
 
+/** The open arrow sat a few pixels above the label it opens (DEV-7668). */
+export const CentresTheOpenArrowOnTheLabelsFirstLine: Story = {
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const arrow = (row.querySelector('[data-cy="row-open"]') as HTMLElement).getBoundingClientRect();
+    const range = document.createRange();
+    range.selectNodeContents(within(row).getByText('BRAUT001a'));
+    const firstLine = range.getClientRects()[0];
+
+    const centre = (rect: DOMRect) => rect.top + rect.height / 2;
+    await expect(Math.abs(centre(arrow) - centre(firstLine))).toBeLessThanOrEqual(1.5);
+  },
+};
+
 export const ClosesTheTableWithABottomBorder: Story = {
   play: async ({ canvasElement }) => {
     const rows = canvasElement.querySelectorAll('tr.mat-mdc-row');
