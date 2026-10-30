@@ -836,7 +836,20 @@
         "imageCopied": "Bild kopiert",
         "linkCopied": "Link kopiert",
         "exportFailed": "Das Bild konnte nicht erstellt werden."
-      }
+      },
+      "labelsMenu": {
+        "title": "Beschriftung",
+        "heading": "Auf Klassen und Verknüpfungen",
+        "labels": "Bezeichnungen",
+        "labelsHint": "Wie man sie liest",
+        "names": "Namen",
+        "namesHint": "linkToVideo",
+        "both": "Beides",
+        "bothHint": "Bezeichnung · Name"
+      },
+      "linkTipHint": "Klicken für Details",
+      "copyName": "Namen kopieren",
+      "nameCopied": "Name kopiert"
     }
   },
   "resourceEditor": {

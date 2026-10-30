@@ -20,6 +20,7 @@ import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-impo
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
+  GraphLabels,
   GraphLayout,
   graphScale,
   GraphSize,
@@ -54,16 +55,31 @@ const EXPORT_MAX_SIZE = 8000;
 /** The share of the chosen name size a model is first shown at, at least, though it then does not fit. */
 const READABLE_SHARE = 0.8;
 
-/** The graph's stylesheet, boxes, text and lines scaled by `f`; link labels level or along their line. */
-const styleFor = (f: number, levelLabels = false): StylesheetJson => [
+/** Names are code: they are written in a monospaced font. */
+const FONT = { labels: 'Roboto, sans-serif', names: 'Roboto Mono, ui-monospace, monospace' };
+
+/** The element data each `GraphLabels` writes. */
+const LABEL_DATA: Record<GraphLabels, string> = { labels: 'data(label)', names: 'data(name)', both: 'data(both)' };
+
+/** How the graph writes and turns its texts. */
+export interface GraphTextOptions {
+  /** Whether link labels are drawn level, rather than along their line. */
+  levelLabels: boolean;
+  labels: GraphLabels;
+}
+
+/** The graph's stylesheet, boxes, text and lines scaled by `f`, its texts written as `text` says. */
+const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
   {
     selector: 'node',
     style: {
       shape: 'round-rectangle',
-      label: 'data(label)',
+      label: LABEL_DATA[text.labels],
+      'text-wrap': 'wrap',
+      'text-max-width': '1000px',
       'text-valign': 'center',
       'text-halign': 'center',
-      'font-family': 'Roboto, sans-serif',
+      'font-family': text.labels === 'names' ? FONT.names : FONT.labels,
       'font-size': BASE_FONT_SIZE * f,
       'font-weight': 500,
       color: COLOR.text,
@@ -97,12 +113,14 @@ const styleFor = (f: number, levelLabels = false): StylesheetJson => [
       'target-arrow-shape': 'triangle',
       'target-arrow-color': COLOR.line,
       'arrow-scale': 0.8 * f,
-      label: 'data(label)',
-      'font-family': 'Roboto, sans-serif',
+      label: LABEL_DATA[text.labels],
+      'text-wrap': 'wrap',
+      'text-max-width': '1000px',
+      'font-family': text.labels === 'names' ? FONT.names : FONT.labels,
       // Link labels close to class names in size, so a property reads as easily as the classes it joins.
       'font-size': 13 * f,
       color: COLOR.text,
-      'text-rotation': levelLabels ? 'none' : 'autorotate',
+      'text-rotation': text.levelLabels ? 'none' : 'autorotate',
       'text-background-color': '#F9FAFB',
       'text-background-opacity': 0.9,
       'text-background-padding': '1px',
@@ -142,6 +160,18 @@ const styleFor = (f: number, levelLabels = false): StylesheetJson => [
         ><span class="legend-dashed"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
       >
     </div>
+    @if (hoveredLink(); as link) {
+      <div
+        class="link-tip"
+        role="tooltip"
+        data-cy="ontology-graph-link-tip"
+        [style.left.px]="link.x"
+        [style.top.px]="link.y">
+        <b>{{ link.label }}</b>
+        <code>{{ link.name }}</code>
+        <span class="hint">{{ link.from }} → {{ link.to }} · {{ 'pages.ontologyMap.linkTipHint' | translate }}</span>
+      </div>
+    }
   `,
   styles: [
     `
@@ -197,6 +227,37 @@ const styleFor = (f: number, levelLabels = false): StylesheetJson => [
         fill: #a7aaad;
       }
 
+      // A hovered link's label, name and ends, below the pointer.
+      .link-tip {
+        position: absolute;
+        z-index: 1;
+        transform: translate(-50%, 16px);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        background: #1f2937;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        color: white;
+        font: 400 12px/16px var(--font-sans, Roboto, sans-serif);
+        white-space: nowrap;
+        pointer-events: none;
+
+        b {
+          font-weight: 500;
+        }
+
+        code {
+          font-family: 'Roboto Mono', ui-monospace, monospace;
+          color: #cbd5e1;
+        }
+
+        .hint {
+          color: #94a3b8;
+        }
+      }
+
       .legend-dashed {
         width: 18px;
         height: 12px;
@@ -220,6 +281,8 @@ export class OntologyGraphComponent {
   readonly size = input<GraphSize>('normal');
   /** Whether link labels are drawn level, rather than along their line. */
   readonly levelLabels = input(false);
+  /** Whether classes and links are written with their labels, their names, or both. */
+  readonly labels = input<GraphLabels>('labels');
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
@@ -238,6 +301,10 @@ export class OntologyGraphComponent {
   private readonly _cy = signal<Core | undefined>(undefined);
   readonly failed = signal(false);
   private readonly _hoveredProperty = signal<string | undefined>(undefined);
+  /** The link under the pointer, for its tooltip: its texts and ends, and where to show it in the box. */
+  readonly hoveredLink = signal<
+    { label: string; name: string; from: string; to: string; x: number; y: number } | undefined
+  >(undefined);
   /** Whether the user moved classes since the last layout; their places then survive a resize. */
   private _dragged = false;
   /** The layout, classes and links last laid out, to tell a new model from the same one handed over again. */
@@ -301,13 +368,24 @@ export class OntologyGraphComponent {
         });
         // Hovering a link highlights every link through the same property, wherever it is used; a click opens it.
         cy.on('mouseover', 'edge', event => {
-          this._hoveredProperty.set(event.target.data('property'));
+          const edge = event.target;
+          this._hoveredProperty.set(edge.data('property'));
+          this.hoveredLink.set({
+            label: edge.data('label'),
+            name: edge.data('name'),
+            from: edge.source().data('label'),
+            to: edge.target().data('label'),
+            ...event.renderedPosition,
+          });
           container.style.cursor = 'pointer';
         });
         cy.on('mouseout', 'edge', () => {
           this._hoveredProperty.set(undefined);
+          this.hoveredLink.set(undefined);
           container.style.cursor = '';
         });
+        // A tooltip left behind would cover what is panned or zoomed under it.
+        cy.on('viewport', () => this.hoveredLink.set(undefined));
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
         // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
         // user has dragged some, whose places are then kept and only fitted.
@@ -366,10 +444,11 @@ export class OntologyGraphComponent {
       this.size();
       if (cy) this._rescale(cy);
     });
+    // New texts restyle in place: classes stay where they are, their boxes fitting the new texts.
     effect(() => {
       const cy = this._cy();
-      const level = this.levelLabels();
-      if (cy) cy.style(styleFor(this._scale, level));
+      const text = { levelLabels: this.levelLabels(), labels: this.labels() };
+      if (cy) cy.style(styleFor(this._scale, text));
     });
     effect(() => {
       const cy = this._cy();
@@ -427,7 +506,7 @@ export class OntologyGraphComponent {
   private _style(f: number): StylesheetJson {
     return styleFor(
       f,
-      untracked(() => this.levelLabels())
+      untracked(() => ({ levelLabels: this.levelLabels(), labels: this.labels() }))
     );
   }
 

@@ -8,6 +8,12 @@ export type GraphLayout = 'tree' | 'circle' | 'force' | 'grid';
 /** How big class names read on screen, whatever the number of classes. */
 export type GraphSize = 'small' | 'normal' | 'large';
 
+/** What classes and links are written with: their labels, their names (the end of their IRI), or both. */
+export type GraphLabels = 'labels' | 'names' | 'both';
+
+/** The end of an IRI: a class's or a property's name, such as `linkToVideo`. */
+export const localNameOf = (iri: string) => iri.substring(Math.max(iri.lastIndexOf('#'), iri.lastIndexOf('/')) + 1);
+
 /** On-screen size of class names, in px, per size setting. */
 export const GRAPH_TEXT_SIZE: Record<GraphSize, number> = { small: 11, normal: 14, large: 18 };
 
@@ -76,7 +82,10 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
     group: 'nodes',
     data: {
       id: node.id,
-      label: node.kind === 'generic' && node.id === Constants.Resource ? options.anyResourceLabel : node.label,
+      ...texts(
+        node.kind === 'generic' && node.id === Constants.Resource ? options.anyResourceLabel : node.label,
+        node.id
+      ),
       color: options.colors.get(node.id) ?? '#FFFFFF',
     },
     classes: [
@@ -95,12 +104,18 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
         id: `${edge.source} ${edge.property} ${edge.target}`,
         source: edge.source,
         target: edge.target,
-        label: edge.label,
+        ...texts(edge.label, edge.property),
         property: edge.property,
       },
       classes: edge.kind,
     }));
   return [...nodes, ...edges];
+}
+
+/** An element's texts, one per `GraphLabels`: its label, its name, and both on two lines. */
+function texts(label: string, iri: string): { label: string; name: string; both: string } {
+  const name = localNameOf(iri);
+  return { label, name, both: `${label}\n${name}` };
 }
 
 /** Cytoscape layout options per layout; deterministic, so the same model always lands the same way. */

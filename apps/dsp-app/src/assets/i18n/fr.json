@@ -836,7 +836,20 @@
         "imageCopied": "Image copiée",
         "linkCopied": "Lien copié",
         "exportFailed": "L’image n’a pas pu être créée."
-      }
+      },
+      "labelsMenu": {
+        "title": "Libellés",
+        "heading": "Écrire sur les classes et les liens",
+        "labels": "Libellés",
+        "labelsHint": "Tels qu’on les lit",
+        "names": "Noms",
+        "namesHint": "linkToVideo",
+        "both": "Les deux",
+        "bothHint": "Libellé · nom"
+      },
+      "linkTipHint": "cliquer pour les détails",
+      "copyName": "Copier le nom",
+      "nameCopied": "Nom copié"
     }
   },
   "resourceEditor": {

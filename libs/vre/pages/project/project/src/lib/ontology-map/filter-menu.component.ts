@@ -20,6 +20,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 export interface FilterOption {
   id: string;
   label: string;
+  /** The name in the data model, such as `linkToVideo`: found by the search and shown under the label. */
+  name?: string;
   /** The class's colour in the graph, if any. */
   color?: string;
   /** A count shown after the label, such as the links through a property. */
@@ -103,7 +105,12 @@ const NAMED_HIDDEN = 3;
             @if (option.color) {
               <span class="dot" [style.background]="option.color"></span>
             }
-            {{ option.label }}
+            <span class="option-text">
+              {{ option.label }}
+              @if (option.name && option.name !== option.label) {
+                <code class="option-name">{{ option.name }}</code>
+              }
+            </span>
             @if (option.count !== undefined) {
               <span class="muted">{{ option.count }}</span>
             }
@@ -209,6 +216,19 @@ const NAMED_HIDDEN = 3;
         }
       }
 
+      .option-text {
+        display: inline-flex;
+        flex-direction: column;
+        line-height: 17px;
+        vertical-align: middle;
+      }
+
+      .option-name {
+        font-family: 'Roboto Mono', ui-monospace, monospace;
+        font-size: 11px;
+        color: $cool_gray_500;
+      }
+
       .dot {
         display: inline-block;
         width: 10px;
@@ -284,7 +304,11 @@ export class FilterMenuComponent {
   readonly allIds = computed(() => this.options().map(option => option.id));
   readonly matches = computed(() => {
     const query = this.query().trim().toLowerCase();
-    return query ? this.options().filter(option => option.label.toLowerCase().includes(query)) : this.options();
+    return query
+      ? this.options().filter(
+          option => option.label.toLowerCase().includes(query) || option.name?.toLowerCase().includes(query)
+        )
+      : this.options();
   });
   readonly matchIds = computed(() => this.matches().map(option => option.id));
   /** Whether every choice found is ticked, some are, or none. */

@@ -836,7 +836,20 @@
         "imageCopied": "Image copied",
         "linkCopied": "Link copied",
         "exportFailed": "The image could not be made."
-      }
+      },
+      "labelsMenu": {
+        "title": "Labels",
+        "heading": "Write on classes and links",
+        "labels": "Labels",
+        "labelsHint": "As people read them",
+        "names": "Names",
+        "namesHint": "linkToVideo",
+        "both": "Both",
+        "bothHint": "Label · name"
+      },
+      "linkTipHint": "click for details",
+      "copyName": "Copy the name",
+      "nameCopied": "Name copied"
     }
   },
   "resourceEditor": {

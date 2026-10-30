@@ -46,6 +46,14 @@ describe('FilterMenuComponent', () => {
     expect(emitted).toEqual([['note', 'person']]);
   });
 
+  it('finds a choice by its name too', () => {
+    fixture.componentRef.setInput('options', [...options, { id: 'video', label: 'Video', name: 'linkToVideo' }]);
+
+    component.query.set('linkto');
+
+    expect(component.matches().map(option => option.id)).toEqual(['video']);
+  });
+
   it('names the few unticked choices', () => {
     fixture.componentRef.setInput('ticked', ['letter', 'person']);
 

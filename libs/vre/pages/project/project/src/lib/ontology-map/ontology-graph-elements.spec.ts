@@ -45,6 +45,15 @@ describe('toGraphElements', () => {
     expect(node('Lonely').classes).toBe('');
   });
 
+  it('gives every class and link its label, its name and both, to write either', () => {
+    const edge = elements.find(e => e.group === 'edges' && e.data['property'] === 'director')!;
+
+    expect(edge.data).toEqual(
+      expect.objectContaining({ label: 'Director', name: 'director', both: 'Director\ndirector' })
+    );
+    expect(node(Constants.Resource).data['name']).toBe('Resource');
+  });
+
   it("names knora-api's resource in the current language, drawn as outside the data model", () => {
     expect(node(Constants.Resource).data['label']).toBe('Any resource');
     expect(node(Constants.Resource).classes).toBe('external');

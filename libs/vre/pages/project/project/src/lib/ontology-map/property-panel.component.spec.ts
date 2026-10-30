@@ -53,6 +53,10 @@ describe('PropertyPanelComponent', () => {
     expect(fixture.nativeElement.querySelectorAll('.inherited')).toHaveLength(1);
   });
 
+  it('shows the name of the property, to copy', () => {
+    expect(text('[data-cy="property-panel-name"]')).toEqual(['director']);
+  });
+
   it('opens a class the property points at', () => {
     const selected = jest.fn();
     component.classSelected.subscribe(selected);

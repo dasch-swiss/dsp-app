@@ -836,7 +836,20 @@
         "imageCopied": "Immagine copiata",
         "linkCopied": "Link copiato",
         "exportFailed": "Non è stato possibile creare l’immagine."
-      }
+      },
+      "labelsMenu": {
+        "title": "Etichette",
+        "heading": "Scrivere su classi e collegamenti",
+        "labels": "Etichette",
+        "labelsHint": "Come si leggono",
+        "names": "Nomi",
+        "namesHint": "linkToVideo",
+        "both": "Entrambi",
+        "bothHint": "Etichetta · nome"
+      },
+      "linkTipHint": "clic per i dettagli",
+      "copyName": "Copia il nome",
+      "nameCopied": "Nome copiato"
     }
   },
   "resourceEditor": {

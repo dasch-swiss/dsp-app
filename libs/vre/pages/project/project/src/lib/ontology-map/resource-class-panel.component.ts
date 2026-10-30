@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
-import { TranslatePipe } from '@ngx-translate/core';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/data-model-graph';
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
+import { localNameOf } from './ontology-graph-elements';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1]: 'required',
@@ -59,6 +62,17 @@ interface Connection {
           <mat-icon class="class-icon">{{ icon() }}</mat-icon>
           <div class="title">
             <h2 data-cy="class-panel-title">{{ node.label }}</h2>
+            <span class="name-line">
+              <code class="name" data-cy="class-panel-name">{{ nameOf(classIri()) }}</code>
+              <button
+                type="button"
+                class="copy"
+                [attr.aria-label]="'pages.ontologyMap.copyName' | translate"
+                [matTooltip]="'pages.ontologyMap.copyName' | translate"
+                (click)="copyName(classIri())">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </span>
             <span class="subtitle">{{ t + '.subtitle' | translate: { model: dataModelLabel() } }}</span>
           </div>
           <button
@@ -209,6 +223,41 @@ interface Connection {
           font-size: 20px;
           font-weight: 500;
           line-height: 28px;
+        }
+      }
+
+      .name-line {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .name {
+        padding: 1px 6px;
+        border-radius: 4px;
+        background: $cool_gray_100;
+        font-family: 'Roboto Mono', ui-monospace, monospace;
+        font-size: 12px;
+        color: $cool_gray_700;
+      }
+
+      .copy {
+        display: flex;
+        padding: 2px;
+        border: 0;
+        border-radius: 4px;
+        background: none;
+        color: $cool_gray_500;
+        cursor: pointer;
+
+        &:hover {
+          background: $cool_gray_100;
+        }
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
         }
       }
 
@@ -367,6 +416,10 @@ interface Connection {
   ],
 })
 export class ResourceClassPanelComponent {
+  private readonly _clipboard = inject(Clipboard);
+  private readonly _notification = inject(NotificationService);
+  private readonly _translate = inject(TranslateService);
+
   /** The data model the class belongs to. */
   readonly graph = input.required<DataModelGraph>();
   /** IRI of the class to describe. */
@@ -462,5 +515,15 @@ export class ResourceClassPanelComponent {
       navigable: this.isNavigable(id),
       via: labels.join(', '),
     }));
+  }
+
+  /** The name in the data model, such as `linkToVideo`. */
+  nameOf(iri: string): string {
+    return localNameOf(iri);
+  }
+
+  copyName(iri: string): void {
+    this._clipboard.copy(localNameOf(iri));
+    this._notification.openSnackBar(this._translate.instant('pages.ontologyMap.nameCopied'));
   }
 }
