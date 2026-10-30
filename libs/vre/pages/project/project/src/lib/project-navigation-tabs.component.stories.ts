@@ -19,7 +19,7 @@ export default meta;
 type Story = StoryObj<ProjectNavigationTabsComponent>;
 
 export const RegularMember: Story = {
-  name: 'Shows Data, Search, and Data Models tabs for a regular member',
+  name: 'Shows Data, Search, Data Models and Ontology map tabs for a regular member',
   decorators: [
     applicationConfig({
       providers: [
@@ -39,6 +39,9 @@ export const RegularMember: Story = {
     });
     await step('Data models tab is visible', async () => {
       await expect(canvas.getByText('Data models')).toBeInTheDocument();
+    });
+    await step('Ontology map tab is visible', async () => {
+      await expect(canvas.getByText('Ontology map')).toBeInTheDocument();
     });
     await step('Settings tab is not shown for non-admin', async () => {
       await expect(canvas.queryByText('Settings')).toBeNull();

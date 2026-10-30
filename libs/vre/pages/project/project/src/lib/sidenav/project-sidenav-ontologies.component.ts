@@ -2,12 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
-import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
-import { catchError, combineLatest, first, map, of, shareReplay, switchMap } from 'rxjs';
+import { combineLatest, first, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
+import { DataModelGraphService } from './data-model-map/data-model-graph.service';
+import { DataModelMapContainerComponent } from './data-model-map/data-model-map-container.component';
 import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource-class-sidenav.component';
 import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
 
@@ -18,6 +19,7 @@ import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
     MatIcon,
     ResourceClassSidenavComponent,
     AppProgressIndicatorComponent,
+    DataModelMapContainerComponent,
     TooltipIfTruncatedDirective,
   ],
   template: `
@@ -42,6 +44,9 @@ import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
               <mat-icon class="ontology-chevron">{{ expanded ? 'expand_more' : 'chevron_right' }}</mat-icon>
             </button>
             @if (expanded) {
+              @if (onto.classesAndCount?.length) {
+                <app-data-model-map-container [ontology]="onto" />
+              }
               <app-resource-class-sidenav [ontology]="onto" />
             }
           </div>
@@ -114,19 +119,10 @@ import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
   ],
 })
 export class ProjectSidenavOntologiesComponent implements OnInit {
-  private readonly _projectOntologies$ = this._projectPageService.currentProject$.pipe(
-    switchMap(project =>
-      this._v3.getV3ProjectsProjectiriResourcesperontology(project.id).pipe(
-        catchError(error => {
-          console.error('Error loading project ontologies:', error);
-          return of([]);
-        })
-      )
-    ),
-    shareReplay({ bufferSize: 1, refCount: true })
-  );
-
-  projectOntologies$ = combineLatest([this._projectOntologies$, this._localizationService.currentLanguage$]).pipe(
+  projectOntologies$ = combineLatest([
+    this._dataModelGraphs.projectOntologies$,
+    this._localizationService.currentLanguage$,
+  ]).pipe(
     map(([ontologies, lang]) =>
       [...ontologies].sort((a, b) => SortingHelper.compareStringsByLanguage(a.ontology.label, b.ontology.label, lang))
     )
@@ -137,7 +133,7 @@ export class ProjectSidenavOntologiesComponent implements OnInit {
     private readonly _projectPageService: ProjectPageService,
     private readonly _route: ActivatedRoute,
     private readonly _ontologyService: OntologyService,
-    private readonly _v3: APIV3ApiService,
+    private readonly _dataModelGraphs: DataModelGraphService,
     private readonly _localizationService: LocalizationService
   ) {}
 

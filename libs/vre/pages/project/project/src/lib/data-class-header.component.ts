@@ -36,6 +36,7 @@ import { DataClassViewToggleComponent } from './data-class-view-toggle.component
 import { DataTabTourComponent, DataTabTourStep } from './data-tab-tour/data-tab-tour.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
+import { DataClassConnectionsContainerComponent } from './sidenav/data-model-map/data-class-connections-container.component';
 
 interface SelectedClass {
   classLabel: string;
@@ -67,6 +68,7 @@ interface CreateResourceDialogProps {
             @let description = classSelected.resClass.comments | appStringifyStringLiteral;
             <p class="class-description" [title]="description">{{ description }}</p>
           }
+          <app-data-class-connections-container class="connections" [classIri]="classSelected.resClass.id" />
         </div>
         <div class="actions">
           <!-- "All" and the class total: the export ignores the row selection, search and filters. -->
@@ -137,6 +139,7 @@ interface CreateResourceDialogProps {
     StringifyStringLiteralPipe,
     AdvancedSearchBarComponent,
     DataClassResultMetaComponent,
+    DataClassConnectionsContainerComponent,
     DataClassViewToggleComponent,
     TableViewOptionsComponent,
     DataTabTourComponent,

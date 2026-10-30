@@ -64,6 +64,10 @@
   flex-shrink: 0;
 }
 
+.connections {
+  margin-top: 6px;
+}
+
 .count-badge {
   margin-left: 6px;
   padding: 0 7px;
@@ -100,4 +104,8 @@
   width: 1px;
   height: 24px;
   background: #d1d5db;
+}
+
+.connections:empty {
+  display: none;
 }
