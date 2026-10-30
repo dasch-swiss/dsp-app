@@ -1,5 +1,24 @@
 # Changelog
 
+## [14.1.0](https://github.com/dasch-swiss/dsp-app/compare/v14.0.0...v14.1.0) (2026-10-30)
+
+
+### Enhancements
+
+* **data-browser:** compact download side panel with scrollable property list (DEV-7663) ([#3581](https://github.com/dasch-swiss/dsp-app/issues/3581)) ([335dc1f](https://github.com/dasch-swiss/dsp-app/commit/335dc1f60dfc9dd43d7081492c23f74d28efea06))
+
+
+### Bug Fixes
+
+* **stillImage:** draw still images from Sipi's info.json (DEV-7660) ([#3580](https://github.com/dasch-swiss/dsp-app/issues/3580)) ([4134dcf](https://github.com/dasch-swiss/dsp-app/commit/4134dcf84f8dcb4c7d4308d0947dd27b155fac80))
+
+
+### Maintenances
+
+* **deps:** Update dependency mkdocs-material from 9.7.7 to 9.8.0 ([#3585](https://github.com/dasch-swiss/dsp-app/issues/3585)) ([d32f391](https://github.com/dasch-swiss/dsp-app/commit/d32f3919d0dbf4ae36e1436b1c4066512afc596d))
+* **deps:** Update postcss-deps ([#3587](https://github.com/dasch-swiss/dsp-app/issues/3587)) ([609ee61](https://github.com/dasch-swiss/dsp-app/commit/609ee61ba3c2dbca6db79f6cf796fa76cade435f))
+* **deps:** Update storybook monorepo from 10.6.3 to 10.6.4 ([#3588](https://github.com/dasch-swiss/dsp-app/issues/3588)) ([96a7e21](https://github.com/dasch-swiss/dsp-app/commit/96a7e217bf06c7f59469140647107fa8c9bcbfe5))
+
 ## [14.0.0](https://github.com/dasch-swiss/dsp-app/compare/v13.16.0...v14.0.0) (2026-10-27)
 
 
