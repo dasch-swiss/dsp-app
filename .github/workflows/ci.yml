@@ -248,7 +248,7 @@ jobs:
         run: |
           cd dsp-api
           just init-db-test
-          docker compose -f docker-compose.yml up -d sipi ingest api
+          docker compose -f docker-compose.yml up -d sipi api
           ./modules/webapi/scripts/wait-for-api.sh
       - name: Wait for app to be ready
         run: timeout 180 bash -c 'until curl -sf http://localhost:4200 > /dev/null 2>&1; do sleep 3; done'

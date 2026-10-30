@@ -89,7 +89,7 @@ _Avoid_: Parent resource, multi-page resource
 The IIIF image system that transforms and serves Asset bytes.
 
 **dsp-ingest**:
-The service that accepts an uploaded file and hands back the reference a File value stores. Configured as `ingestUrl` in this client.
+The service that accepts an uploaded file and hands back the reference a File value stores. dsp-api serves it under `/ingest/` on the API host; `ingestUrl` in this client names that base URL, e.g. `https://api.dev.dasch.swiss/ingest`.
 _Avoid_: Ingest as a proper noun, upload service
 
 ### Identity and provenance
