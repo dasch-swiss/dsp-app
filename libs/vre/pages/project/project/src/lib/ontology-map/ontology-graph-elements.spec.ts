@@ -42,7 +42,7 @@ describe('toGraphElements', () => {
     expect(['Film', 'Lonely', 'Person'].map(id => node(id).data['color'])).toEqual(CLASS_COLORS.slice(0, 3));
     expect(node('Film').classes).toBe('main');
     expect(node('Person').classes).toBe('selected');
-    expect(node('Lonely').classes).toBe('unlinked');
+    expect(node('Lonely').classes).toBe('');
   });
 
   it("names knora-api's resource in the current language, drawn as outside the data model", () => {

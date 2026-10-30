@@ -85,7 +85,6 @@ const styleFor = (f: number, levelLabels = false): StylesheetJson => [
       'font-style': 'italic',
     },
   },
-  { selector: 'node.unlinked', style: { 'border-style': 'dashed', 'border-color': COLOR.border } },
   { selector: 'node.main', style: { 'border-width': 2 * f, 'border-color': COLOR.text } },
   { selector: 'node.selected', style: { 'border-width': 3 * f, 'border-color': COLOR.primary } },
   { selector: 'node:active', style: { 'overlay-opacity': 0.08, 'overlay-color': COLOR.primary } },

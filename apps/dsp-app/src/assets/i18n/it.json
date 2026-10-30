@@ -777,7 +777,7 @@
       },
       "fit": "Adatta allo schermo",
       "graphFailed": "Non è stato possibile caricare il grafo.",
-      "legendDashed": "altro modello di dati o nessun collegamento",
+      "legendDashed": "altro modello di dati",
       "classFilter": "Classe",
       "allClasses": "Tutte le classi",
       "resetFilter": "Reimposta",

@@ -68,11 +68,10 @@ export interface GraphElementOptions {
 
 /**
  * The data model as Cytoscape elements: a node per class, an edge per link labelled with its property, a dashed
- * edge per subclass relation if the graph still has any. Each class node carries its colour; node classes carry what else the stylesheet
- * draws: `external`, `unlinked`, `main`, `selected`.
+ * edge per subclass relation if the graph still has any. Each class node carries its colour; node classes carry what
+ * else the stylesheet draws: `external`, `main`, `selected`. A class without links is drawn as any other.
  */
 export function toGraphElements(graph: DataModelGraph, options: GraphElementOptions): ElementDefinition[] {
-  const linked = new Set(graph.edges.flatMap(edge => [edge.source, edge.target]));
   const nodes: ElementDefinition[] = graph.nodes.map(node => ({
     group: 'nodes',
     data: {
@@ -82,7 +81,6 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
     },
     classes: [
       node.kind === 'class' ? '' : 'external',
-      linked.has(node.id) ? '' : 'unlinked',
       node.id === options.mainIri ? 'main' : '',
       node.id === options.selectedIri ? 'selected' : '',
     ]
