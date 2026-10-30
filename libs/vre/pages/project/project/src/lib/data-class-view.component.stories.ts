@@ -5,7 +5,7 @@ import { MultipleViewerService } from '@dasch-swiss/vre/pages/data-browser';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassViewComponent, RESULT_LIST_WIDTH_BELOW_MD, RESULT_LIST_WIDTHS } from './data-class-view.component';
@@ -157,6 +157,23 @@ export const LongTitles: Story = {
     await step('The result list is as wide as the breakpoint says', async () => {
       const list = canvasElement.querySelector('app-data-class-view as-split-area') as HTMLElement;
       await expect(Math.round(list.getBoundingClientRect().width)).toBe(expectedResultListWidth(window.innerWidth));
+    });
+
+    await step('The Download all count is centred on the button label (DEV-7667)', async () => {
+      const badge = await waitFor(() => {
+        const element = canvasElement.querySelector<HTMLElement>('[data-cy="download-count"]');
+        expect(element).not.toBeNull();
+        return element!;
+      });
+      const label = Array.from(badge.parentElement!.childNodes).find(
+        node => node.nodeType === Node.TEXT_NODE && node.textContent!.trim()
+      )!;
+      const range = document.createRange();
+      range.selectNodeContents(label);
+      const centre = (rect: DOMRect) => rect.top + rect.height / 2;
+      await expect(
+        Math.abs(centre(badge.getBoundingClientRect()) - centre(range.getBoundingClientRect()))
+      ).toBeLessThanOrEqual(1.5);
     });
   },
 };

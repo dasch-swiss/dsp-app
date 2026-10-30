@@ -189,6 +189,10 @@ const meta: Meta<DataTableComponent> = {
     visibleColumns: { description: 'Keys of the columns to show, in display order. Label first.' },
     columnWidths: { description: 'Pixel widths the user has set; a column absent here uses its default.' },
     rowHeight: { description: 'Height every row is drawn at from View options; undefined for Auto.' },
+    showComments: {
+      description:
+        'Whether value comments show under their values, from View options; undefined keeps the stored setting.',
+    },
     selectionActive: { description: 'Whether a comparison set is being built; every row then shows its checkbox.' },
     selectable: { description: 'Whether rows can be selected for comparison; off for anonymous visitors.' },
     sortedColumnKey: { description: 'Column the query is sorted by, so its header announces aria-sort.' },
@@ -310,6 +314,52 @@ export const LeavesAnEmptyEditableCellToTheViewersOwnAddControl: Story = {
   },
 };
 
+// ── Value comments ──────────────────────────────────────────────────────────
+
+const COMMENT = 'Title taken from the back of the print';
+
+const commentedRows = () => {
+  const title = textValue(`${ONTO}hasTitle`, 'Brautpaar in Tracht');
+  title.valueHasComment = COMMENT;
+  return [resource('http://rdfh.ch/0001/c', 'BRAUT001c', { [`${ONTO}hasTitle`]: [title] })];
+};
+
+export const ShowsValueCommentsWhenViewOptionsTurnThemOn: Story = {
+  args: { resources: commentedRows(), showComments: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() => expect(canvas.getByText(COMMENT)).toBeInTheDocument());
+  },
+};
+
+export const HidesValueCommentsWhenViewOptionsTurnThemOff: Story = {
+  args: { resources: commentedRows(), showComments: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Brautpaar in Tracht')).toBeInTheDocument();
+    await expect(canvas.queryByText(COMMENT)).toBeNull();
+  },
+};
+
+/** The table's denser value padding left the comment's pointer drawn over the value above it (DEV-7671). */
+export const KeepsTheCommentPointerClearOfTheValue: Story = {
+  args: { resources: commentedRows(), showComments: true },
+  play: async ({ canvasElement }) => {
+    const comment = await waitFor(() => {
+      const element = canvasElement.querySelector<HTMLElement>('[data-cy="property-value-comment"]');
+      expect(element).not.toBeNull();
+      return element!;
+    });
+    const value = within(canvasElement).getByText('Brautpaar in Tracht').getBoundingClientRect();
+    const pointerTop =
+      comment.getBoundingClientRect().top +
+      parseFloat(getComputedStyle(comment).borderTopWidth) +
+      parseFloat(getComputedStyle(comment, '::before').top);
+
+    await expect(pointerTop).toBeGreaterThanOrEqual(value.bottom);
+  },
+};
+
 const COLLAPSING_COLUMNS: TableColumn[] = [column(LABEL_COLUMN_KEY, 'Label'), readOnlyColumn(LINK_PROPERTY, 'Author')];
 
 const manyAuthors = () =>
@@ -376,6 +426,20 @@ export const HidesRowCheckboxesForAnonymousVisitors: Story = {
 
     const labelCell = canvasElement.querySelector('td.is-label-cell') as HTMLElement;
     await expect(getComputedStyle(labelCell).paddingLeft).toBe('44px');
+  },
+};
+
+/** The open arrow sat a few pixels above the label it opens (DEV-7668). */
+export const CentresTheOpenArrowOnTheLabelsFirstLine: Story = {
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const arrow = (row.querySelector('[data-cy="row-open"]') as HTMLElement).getBoundingClientRect();
+    const range = document.createRange();
+    range.selectNodeContents(within(row).getByText('BRAUT001a'));
+    const firstLine = range.getClientRects()[0];
+
+    const centre = (rect: DOMRect) => rect.top + rect.height / 2;
+    await expect(Math.abs(centre(arrow) - centre(firstLine))).toBeLessThanOrEqual(1.5);
   },
 };
 
@@ -681,6 +745,23 @@ export const ShowsTheViewersActionBubbleWhenAValueIsHovered: Story = {
     await expect(bubble).not.toBeNull();
     await expect(bubble?.querySelector('[data-cy="edit-button"]')).not.toBeNull();
     await expect(bubble?.querySelector('[data-cy="delete-button"]')).not.toBeNull();
+  },
+};
+
+/** A bubble that took room re-wrapped a narrow value, moving it from under the pointer and back, over and over (DEV-7670). */
+export const KeepsAValueInPlaceWhileItsActionsShow: Story = {
+  ...editingStory({}),
+  play: async ({ canvasElement }) => {
+    const value = canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement;
+    const content = value.querySelector('.value-content') as HTMLElement;
+    const before = content.getBoundingClientRect();
+
+    await userEvent.hover(value);
+    await waitFor(() => expect(canvasElement.querySelector('[data-cy="action-bubble"]')).not.toBeNull());
+
+    const after = content.getBoundingClientRect();
+    await expect(after.width).toBe(before.width);
+    await expect(after.height).toBe(before.height);
   },
 };
 
@@ -1306,6 +1387,45 @@ export const MovesAColumnByDraggingItsHeader: Story = {
     await waitFor(() =>
       expect(onReorder).toHaveBeenCalledWith([LABEL_COLUMN_KEY, `${ONTO}hasPlace`, `${ONTO}hasTitle`])
     );
+  },
+};
+
+/** CDK clears the dragged header's inline `top` on release; with no reorder to re-render the row, it stopped sticking (DEV-7665). */
+export const KeepsAHeaderStuckWhenItIsDroppedBackInPlace: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const title = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    const from = title.getBoundingClientRect();
+    const y = from.top + from.height / 2;
+    const mouse = (target: EventTarget, type: string, x: number) =>
+      target.dispatchEvent(
+        new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, buttons: 1, detail: 1 })
+      );
+
+    mouse(title.querySelector('.header-label') as HTMLElement, 'mousedown', from.left + 20);
+    for (const x of [from.left + 30, from.left + 60, from.left + 25]) {
+      mouse(document, 'mousemove', x);
+      await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+    // The preview is attached to the body, not the canvas.
+    await waitFor(() => expect(document.querySelector('.cdk-drag-preview')).not.toBeNull());
+    mouse(document, 'mouseup', from.left + 25);
+
+    await waitFor(() => expect(document.querySelector('.cdk-drag-preview')).toBeNull());
+    await waitFor(() => expect(title.style.top).toBe('0px'));
+    await expect(onReorder).not.toHaveBeenCalled();
+  },
+};
+
+/** Half of a handle that straddled the edge was clipped by its cell, so a grab there started the next column's drag (DEV-7666). */
+export const KeepsTheWholeResizeHandleInsideItsHeader: Story = {
+  play: async ({ canvasElement }) => {
+    const title = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    const handle = title.querySelector('[data-cy="column-resize"]') as HTMLElement;
+    const box = handle.getBoundingClientRect();
+
+    await expect(box.right).toBeLessThanOrEqual(title.getBoundingClientRect().right);
+    await expect(document.elementFromPoint(box.right - 1, box.top + box.height / 2)).toBe(handle);
   },
 };
 

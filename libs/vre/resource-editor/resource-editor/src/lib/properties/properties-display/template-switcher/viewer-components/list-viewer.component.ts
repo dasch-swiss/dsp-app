@@ -14,10 +14,7 @@ import { PropertyValueService } from '../../property-value/property-value.servic
   selector: 'app-list-viewer',
   imports: [AsyncPipe, NgStyle, MatIconModule, MatTooltipModule, StringifyStringLiteralPipe],
   template: `
-    <div
-      data-cy="list-switch"
-      style="display: flex;
-    align-items: center;">
+    <div data-cy="list-switch" class="list-path">
       @for (node of nodes$ | async; track node.id; let last = $last; let index = $index) {
         @let comment = node.comments | appStringifyStringLiteral;
         <span
@@ -27,7 +24,7 @@ import { PropertyValueService } from '../../property-value/property-value.servic
           >{{ node.labels | appStringifyStringLiteral }}</span
         >
         @if (!last) {
-          <mat-icon>chevron_right</mat-icon>
+          <mat-icon class="list-path-separator">chevron_right</mat-icon>
         }
       }
       @if (false && linkToSearchList) {
@@ -38,6 +35,20 @@ import { PropertyValueService } from '../../property-value/property-value.servic
       }
     </div>
   `,
+  styles: [
+    `
+      /* In a narrow column (the table's) the path wraps between its nodes rather than squeezing every
+         node down to a letter per line, and the separators keep their size. */
+      .list-path {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .list-path-separator {
+        flex: none;
+      }
+    `,
+  ],
 })
 export class ListViewerComponent implements OnInit {
   @Input() value!: ReadListValue;

@@ -2,6 +2,10 @@ $comment-color: #ededed;
 
 div {
   position: relative;
+  // The pointer overhangs the bubble by 15px into the value's bottom padding. A denser host (the
+  // table, at 4px) leaves less than that, so the bubble makes up the difference instead of the
+  // pointer covering the value.
+  margin-top: max(0px, calc(16px - var(--property-value-padding-block, 16px)));
   border: 2px solid $comment-color;
   border-radius: 4px;
   padding: 8px;

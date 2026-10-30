@@ -202,10 +202,13 @@ table {
   background: #d6e0e8;
 }
 
+// Inside its own cell: the header cell clips its overflow, so a handle straddling the edge left only half
+// a grab area, and a grab just past it landed on the next header and dragged that column instead of
+// resizing this one (DEV-7666).
 .column-resize-handle {
   position: absolute;
   top: 0;
-  right: -4px;
+  right: 0;
   bottom: 0;
   width: 8px;
   z-index: 1;
@@ -299,8 +302,8 @@ tr:focus-within .row-resize-handle {
 .row-controls {
   position: absolute;
   left: 0;
-  // Aligns the 48px cluster with the label's first line.
-  top: -8px;
+  // Centres the 48px cluster on the label's first line, which sits about 20px below the cell's top.
+  top: -4px;
   display: flex;
   align-items: center;
   gap: 0;
@@ -499,6 +502,10 @@ tr.is-checked .row-controls [data-cy='row-check'] {
 
   // The viewer's default property padding would make single-value cells taller than the row height.
   --property-value-padding-block: 4px;
+  // A value's hover actions float over its end: in a narrow column, taking room re-wraps the value under
+  // the pointer and the row jumps (DEV-7670).
+  --property-value-actions-position: absolute;
+  --property-value-actions-background: #f5f8fa;
   --property-value-edit-background: #f5f7f9;
   --authorship-line-padding-inline-start: 0;
   // A value being edited is written at the cells' size, not Material's 16px (DEV-7611). Material's

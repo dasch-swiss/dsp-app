@@ -693,7 +693,9 @@
         "hideAllShort": "Hide all",
         "rowHeight": "Row height",
         "rowHeightAuto": "Auto",
-        "rowHeightManual": "Manual"
+        "rowHeightManual": "Manual",
+        "comments": "Comments",
+        "showComments": "Show comments"
       },
       "tour": {
         "new": "New",

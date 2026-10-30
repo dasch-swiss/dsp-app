@@ -5,6 +5,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   ElementRef,
   inject,
   input,
@@ -401,6 +402,8 @@ export class DataTableComponent {
   readonly selectable = input(true);
   /** Whether the user may edit this project's data. Only then are read-only columns marked. */
   readonly canEdit = input(false);
+  /** Whether value comments are shown under their values. Undefined leaves the stored setting alone. */
+  readonly showComments = input<boolean | undefined>(undefined);
 
   /**
    * A row's checkbox, as a change rather than "add" and "remove" outputs.
@@ -449,6 +452,14 @@ export class DataTableComponent {
   );
 
   constructor() {
+    // The cells' comment components read the table-wide service, not an input.
+    const propertiesDisplay = inject(PropertiesDisplayService);
+    effect(() => {
+      const show = this.showComments();
+      if (show !== undefined) {
+        propertiesDisplay.setShowComments(show);
+      }
+    });
     // Pinning, hiding or resizing a column moves the frozen edge without a scroll event.
     afterRenderEffect({
       read: () => {
@@ -663,6 +674,13 @@ export class DataTableComponent {
   }
 
   protected onColumnDropped(event: CdkDragDrop<unknown>): void {
+    // CDK hides the dragged header with inline `position`, `top` and `left`, and clears all three when it
+    // puts the header back, taking MatTable's sticky offsets with them. A reorder re-renders the header
+    // row and restores them; a drop back in place, or on a refused slot, would leave the header scrolling
+    // away with the body (DEV-7665).
+    this._table()?.updateStickyHeaderRowStyles();
+    this._table()?.updateStickyColumnStyles();
+
     if (event.previousIndex === event.currentIndex) {
       return;
     }

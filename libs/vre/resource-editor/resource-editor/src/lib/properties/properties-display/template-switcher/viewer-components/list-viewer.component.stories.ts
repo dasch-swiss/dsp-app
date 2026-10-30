@@ -6,9 +6,9 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { AvailableLanguage, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, componentWrapperDecorator, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 import { ResourceFetcherService } from '../../../../representation/resource-fetcher.service';
 import { PropertyValueService } from '../../property-value/property-value.service';
 
@@ -45,6 +45,17 @@ const rootNode = makeListNode(
       [literal('en', 'Category A'), literal('de', 'Kategorie A')],
       [makeListNode('http://rdfh.ch/lists/0001/itemA1', [literal('en', 'Item A1'), literal('de', 'Element A1')])]
     ),
+    makeListNode(
+      'http://rdfh.ch/lists/0001/photographs',
+      [literal('en', 'Photographs')],
+      [
+        makeListNode(
+          'http://rdfh.ch/lists/0001/portraits',
+          [literal('en', 'Portraits')],
+          [makeListNode('http://rdfh.ch/lists/0001/weddings', [literal('en', 'Weddings')])]
+        ),
+      ]
+    ),
   ]
 );
 
@@ -69,7 +80,7 @@ const localizationServiceStub: Partial<LocalizationService> = {
   currentLanguage$: of<AvailableLanguage>('en'),
 };
 
-const makeValue = (): ReadListValue => ({ listNode: 'http://rdfh.ch/lists/0001/itemA1' }) as any;
+const makeValue = (listNode = 'http://rdfh.ch/lists/0001/itemA1'): ReadListValue => ({ listNode }) as any;
 const makePropertyDef = (): ResourcePropertyDefinition =>
   ({
     id: 'http://example.org/listProp',
@@ -116,6 +127,40 @@ export const DefaultView: Story = {
     await step('List switch container is rendered', async () => {
       const container = canvasElement.querySelector('[data-cy="list-switch"]');
       await expect(container).not.toBeNull();
+    });
+  },
+};
+
+/**
+ * A table column is narrower than the path and its value display breaks words anywhere: the path used to
+ * squeeze every node down to a letter per line and clip its arrows (DEV-7672).
+ */
+export const WrapsTheListPathBetweenNodesInANarrowColumn: Story = {
+  args: {
+    value: makeValue('http://rdfh.ch/lists/0001/weddings'),
+    propertyDef: makePropertyDef(),
+  },
+  decorators: [componentWrapperDecorator(story => `<div style="width: 120px; overflow-wrap: anywhere">${story}</div>`)],
+  play: async ({ canvasElement, step }) => {
+    const separators = await waitFor(() => {
+      const icons = canvasElement.querySelectorAll<HTMLElement>('.list-path-separator');
+      expect(icons).toHaveLength(2);
+      return Array.from(icons);
+    });
+
+    await step('Every arrow keeps its full size', async () => {
+      for (const separator of separators) {
+        await expect(separator.getBoundingClientRect().width).toBe(24);
+      }
+    });
+
+    await step('Every node stays on one line', async () => {
+      const nodes = Array.from(canvasElement.querySelectorAll<HTMLElement>('[data-cy="list-switch"] > span'));
+      await expect(nodes).toHaveLength(3);
+      for (const node of nodes) {
+        // Two lines are at least twice the font size tall, whatever the line height.
+        await expect(node.getBoundingClientRect().height).toBeLessThan(2 * parseFloat(getComputedStyle(node).fontSize));
+      }
     });
   },
 };
