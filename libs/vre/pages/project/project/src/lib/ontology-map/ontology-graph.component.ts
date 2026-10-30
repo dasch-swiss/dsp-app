@@ -39,6 +39,8 @@ const COLOR = {
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
 const FIT_PADDING = 56;
 
+const edgeKey = (edge: DataModelGraph['edges'][number]) => `${edge.source}>${edge.property}>${edge.target}`;
+
 /** What a PNG of the graph covers: the part in view, or every class shown. */
 export type GraphExportArea = 'view' | 'whole';
 
@@ -239,6 +241,8 @@ export class OntologyGraphComponent {
   private readonly _hoveredProperty = signal<string | undefined>(undefined);
   /** Whether the user moved classes since the last layout; their places then survive a resize. */
   private _dragged = false;
+  /** The layout, classes and links last laid out, to tell a new model from the same one handed over again. */
+  private _shown = '';
   /** How much bigger than at scale 1 boxes, text and lines are drawn; see `graphScale`. */
   private _scale = 1;
 
@@ -333,12 +337,16 @@ export class OntologyGraphComponent {
       }
     });
 
-    // A new data model replaces every element and lays them out again; a new outline only restyles.
+    // Other classes or links replace every element and lay them out again; a new outline only restyles. The same
+    // classes and links, handed over again, change nothing: places the user dragged and the view stay.
     effect(() => {
       const cy = this._cy();
-      this.graph();
+      const graph = this.graph();
       const layout = this.layout();
       if (!cy) return;
+      const shown = `${layout} ${graph.nodes.map(node => node.id).join(' ')} ${graph.edges.map(edgeKey).join(' ')}`;
+      if (shown === this._shown) return;
+      this._shown = shown;
       cy.elements().remove();
       cy.add(untracked(() => this._elements()));
       this._arrange(cy, layout);

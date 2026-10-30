@@ -72,6 +72,9 @@ interface ChipValue {
 
 const NOTHING: DataModelGraph = { nodes: [], edges: [] };
 
+const sameFilter = (a: ListFilter, b: ListFilter) =>
+  a.mode === b.mode && a.iris.length === b.iris.length && a.iris.every((iri, i) => iri === b.iris[i]);
+
 const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
 const DETAIL_KEY = 'dsp-ontology-map-detail';
@@ -795,16 +798,20 @@ export class OntologyMapPageComponent {
   });
 
   /** The class filter in the URL: classes to show with the classes they are linked with, or classes to hide. */
-  readonly classFilter = computed(() =>
-    this._listFilter(ONTOLOGY_MAP_PARAM.filter, ONTOLOGY_MAP_PARAM.hide, name => this._classNamed(name))
+  // Equal filters stay the same object, so opening a panel, which changes the URL too, leaves the graph as it is.
+  readonly classFilter = computed(
+    () => this._listFilter(ONTOLOGY_MAP_PARAM.filter, ONTOLOGY_MAP_PARAM.hide, name => this._classNamed(name)),
+    { equal: sameFilter }
   );
   /** The property filter in the URL: properties to show only the links of, or properties to hide the links of. */
-  readonly propertyFilter = computed(() =>
-    this._listFilter(
-      ONTOLOGY_MAP_PARAM.property,
-      ONTOLOGY_MAP_PARAM.hideProperty,
-      name => this.propertyOptions().find(option => classNameOf(option.id) === name)?.id
-    )
+  readonly propertyFilter = computed(
+    () =>
+      this._listFilter(
+        ONTOLOGY_MAP_PARAM.property,
+        ONTOLOGY_MAP_PARAM.hideProperty,
+        name => this.propertyOptions().find(option => classNameOf(option.id) === name)?.id
+      ),
+    { equal: sameFilter }
   );
   /** The classes shown with the classes they are linked with; none when the filter hides classes instead. */
   readonly filterIris = computed(() => (this.classFilter().mode === 'only' ? this.classFilter().iris : []));

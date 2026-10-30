@@ -171,6 +171,16 @@ describe('OntologyMapPageComponent', () => {
     expect(copy).toHaveBeenCalledWith(window.location.href);
   });
 
+  it('keeps the filtered graph when only the open panel changes, so the view stays', () => {
+    graphs.next(new Map([[BEOL, letterAndPerson]]));
+    params.next(convertToParamMap({ ontology: 'beol', hide: 'Person' }));
+    const shown = component.graphShown();
+
+    params.next(convertToParamMap({ ontology: 'beol', hide: 'Person', panel: 'Letter' }));
+
+    expect(component.graphShown()).toBe(shown);
+  });
+
   it('opens a clicked class in the Data tab', () => {
     component.open(`${BEOL}#Letter`);
 
