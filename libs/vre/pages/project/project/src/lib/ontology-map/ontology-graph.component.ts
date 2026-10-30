@@ -160,18 +160,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         ><span class="legend-dashed"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
       >
     </div>
-    @if (hoveredLink(); as link) {
-      <div
-        class="link-tip"
-        role="tooltip"
-        data-cy="ontology-graph-link-tip"
-        [style.left.px]="link.x"
-        [style.top.px]="link.y">
-        <b>{{ link.label }}</b>
-        <code>{{ link.name }}</code>
-        <span class="hint">{{ link.from }} → {{ link.to }} · {{ 'pages.ontologyMap.linkTipHint' | translate }}</span>
-      </div>
-    }
   `,
   styles: [
     `
@@ -227,37 +215,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         fill: #a7aaad;
       }
 
-      // A hovered link's label, name and ends, below the pointer.
-      .link-tip {
-        position: absolute;
-        z-index: 1;
-        transform: translate(-50%, 16px);
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        padding: 8px 10px;
-        border-radius: 6px;
-        background: #1f2937;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        color: white;
-        font: 400 12px/16px var(--font-sans, Roboto, sans-serif);
-        white-space: nowrap;
-        pointer-events: none;
-
-        b {
-          font-weight: 500;
-        }
-
-        code {
-          font-family: 'Roboto Mono', ui-monospace, monospace;
-          color: #cbd5e1;
-        }
-
-        .hint {
-          color: #94a3b8;
-        }
-      }
-
       .legend-dashed {
         width: 18px;
         height: 12px;
@@ -301,10 +258,6 @@ export class OntologyGraphComponent {
   private readonly _cy = signal<Core | undefined>(undefined);
   readonly failed = signal(false);
   private readonly _hoveredProperty = signal<string | undefined>(undefined);
-  /** The link under the pointer, for its tooltip: its texts and ends, and where to show it in the box. */
-  readonly hoveredLink = signal<
-    { label: string; name: string; from: string; to: string; x: number; y: number } | undefined
-  >(undefined);
   /** Whether the user moved classes since the last layout; their places then survive a resize. */
   private _dragged = false;
   /** The layout, classes and links last laid out, to tell a new model from the same one handed over again. */
@@ -368,24 +321,13 @@ export class OntologyGraphComponent {
         });
         // Hovering a link highlights every link through the same property, wherever it is used; a click opens it.
         cy.on('mouseover', 'edge', event => {
-          const edge = event.target;
-          this._hoveredProperty.set(edge.data('property'));
-          this.hoveredLink.set({
-            label: edge.data('label'),
-            name: edge.data('name'),
-            from: edge.source().data('label'),
-            to: edge.target().data('label'),
-            ...event.renderedPosition,
-          });
+          this._hoveredProperty.set(event.target.data('property'));
           container.style.cursor = 'pointer';
         });
         cy.on('mouseout', 'edge', () => {
           this._hoveredProperty.set(undefined);
-          this.hoveredLink.set(undefined);
           container.style.cursor = '';
         });
-        // A tooltip left behind would cover what is panned or zoomed under it.
-        cy.on('viewport', () => this.hoveredLink.set(undefined));
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
         // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
         // user has dragged some, whose places are then kept and only fitted.

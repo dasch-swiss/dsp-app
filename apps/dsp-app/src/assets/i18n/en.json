@@ -847,7 +847,6 @@
         "both": "Both",
         "bothHint": "Label · name"
       },
-      "linkTipHint": "click for details",
       "copyName": "Copy the name",
       "nameCopied": "Name copied"
     }
