@@ -1,5 +1,29 @@
 # Changelog
 
+## [14.1.0](https://github.com/dasch-swiss/dsp-app/compare/v14.0.0...v14.1.0) (2026-11-02)
+
+
+### Enhancements
+
+* **data-browser:** compact download side panel with scrollable property list (DEV-7663) ([#3581](https://github.com/dasch-swiss/dsp-app/issues/3581)) ([335dc1f](https://github.com/dasch-swiss/dsp-app/commit/335dc1f60dfc9dd43d7081492c23f74d28efea06))
+
+
+### Bug Fixes
+
+* **data-browser:** table view bug fixes from RDU testing (DEV-7700) ([#3586](https://github.com/dasch-swiss/dsp-app/issues/3586)) ([6f164f5](https://github.com/dasch-swiss/dsp-app/commit/6f164f5b6ddf5de396a3da42e6d9bc97d1f386cd))
+* **stillImage:** draw still images from Sipi's info.json (DEV-7660) ([#3580](https://github.com/dasch-swiss/dsp-app/issues/3580)) ([4134dcf](https://github.com/dasch-swiss/dsp-app/commit/4134dcf84f8dcb4c7d4308d0947dd27b155fac80))
+
+
+### Maintenances
+
+* **deps:** unblock lock file maintenance with Angular 21.2.29 and swc-angular 0.23.1 ([#3593](https://github.com/dasch-swiss/dsp-app/issues/3593)) ([df8ff59](https://github.com/dasch-swiss/dsp-app/commit/df8ff5958e0b266b3e639dcf0a6beee4ae1c2895))
+* **deps:** Update dependency mkdocs-material from 9.7.7 to 9.8.0 ([#3585](https://github.com/dasch-swiss/dsp-app/issues/3585)) ([d32f391](https://github.com/dasch-swiss/dsp-app/commit/d32f3919d0dbf4ae36e1436b1c4066512afc596d))
+* **deps:** Update dependency postcss-preset-env from 11.6.1 to 11.6.2 ([#3589](https://github.com/dasch-swiss/dsp-app/issues/3589)) ([7942078](https://github.com/dasch-swiss/dsp-app/commit/79420784c33e8e07258c957004704fcef9849598))
+* **deps:** Update postcss-deps ([#3587](https://github.com/dasch-swiss/dsp-app/issues/3587)) ([609ee61](https://github.com/dasch-swiss/dsp-app/commit/609ee61ba3c2dbca6db79f6cf796fa76cade435f))
+* **deps:** Update storybook monorepo from 10.6.3 to 10.6.4 ([#3588](https://github.com/dasch-swiss/dsp-app/issues/3588)) ([96a7e21](https://github.com/dasch-swiss/dsp-app/commit/96a7e217bf06c7f59469140647107fa8c9bcbfe5))
+* **deps:** Update storybook monorepo from 10.6.4 to 10.6.5 ([#3590](https://github.com/dasch-swiss/dsp-app/issues/3590)) ([2fa4cb4](https://github.com/dasch-swiss/dsp-app/commit/2fa4cb4fbd0f8ad7079875b2cd06f400d74d2125))
+* **open-api:** bump dsp-api spec v40.4.0-2-g97f1108 → v40.5.0-7-gd465883 ([#3592](https://github.com/dasch-swiss/dsp-app/issues/3592)) ([c09783c](https://github.com/dasch-swiss/dsp-app/commit/c09783c4e1f43824307c205c231c46611fef668d))
+
 ## [14.0.0](https://github.com/dasch-swiss/dsp-app/compare/v13.16.0...v14.0.0) (2026-10-27)
 
 
