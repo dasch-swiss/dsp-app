@@ -37,6 +37,9 @@ table {
   // Under `table-layout: fixed` the header's column widths are authoritative. Spare width must go to
   // the filler column, the only one without a width, or real columns render wider than stored.
   width: max-content;
+  // Set here rather than with MatTable's `fixedLayout`, which also makes it cache the column widths its
+  // sticky offsets are computed from: after a resize, the columns frozen after the resized one stayed put.
+  table-layout: fixed;
 }
 
 .mat-mdc-header-cell,

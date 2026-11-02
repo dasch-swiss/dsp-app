@@ -1077,6 +1077,32 @@ export const ShadesTheFrozenEdgeOnceTheTableScrolls: Story = {
   },
 };
 
+/**
+ * A resize writes its width straight to the header; MatTable cached the widths behind its sticky offsets, so the
+ * pinned column and the shadow stayed at the label's old edge (DEV-7700).
+ */
+export const KeepsThePinnedColumnAndShadowOnTheLabelsEdgeWhenItIsResized: Story = {
+  ...pinnedStory(),
+  play: async ({ canvasElement }) => {
+    const scroller = canvasElement.querySelector('.table-scroll') as HTMLElement;
+    const header = (name: string) => canvasElement.querySelector(`th[aria-label="${name}"]`) as HTMLElement;
+    const shadow = () => canvasElement.querySelector('[data-cy="frozen-shadow"]') as HTMLElement;
+    const right = (element: HTMLElement) => Math.round(element.getBoundingClientRect().right);
+
+    scroller.scrollLeft = 200;
+    scroller.dispatchEvent(new Event('scroll'));
+    await waitFor(() => expect(shadow()).not.toBeNull());
+    const before = right(header('Label'));
+
+    header('Label').querySelector<HTMLElement>('[data-cy="column-resize"]')!.focus();
+    await userEvent.keyboard('{ArrowRight}{ArrowRight}{ArrowRight}');
+
+    await waitFor(() => expect(right(header('Label'))).toBe(before + 48));
+    await waitFor(() => expect(Math.round(header('Place').getBoundingClientRect().left)).toBe(right(header('Label'))));
+    await waitFor(() => expect(Math.round(shadow().getBoundingClientRect().left)).toBe(right(header('Place'))));
+  },
+};
+
 export const TintsTheFrozenColumns: Story = {
   ...pinnedStory(),
   play: async ({ canvasElement }) => {

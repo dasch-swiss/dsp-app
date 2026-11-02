@@ -1,13 +1,16 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
+  afterNextRender,
   afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   ElementRef,
   inject,
+  Injector,
   input,
   linkedSignal,
   output,
@@ -88,7 +91,6 @@ const FILLER_COLUMN_KEY = '__filler';
       <table
         mat-table
         [dataSource]="rows()"
-        [fixedLayout]="true"
         [trackBy]="trackRow"
         role="grid"
         [attr.aria-label]="'pages.dataBrowser.table.label' | translate"
@@ -460,11 +462,24 @@ export class DataTableComponent {
         propertiesDisplay.setShowComments(show);
       }
     });
+    // Dragging a frozen column's edge writes its width straight to the header and only reports it on release:
+    // until then the frozen columns after it keep their offsets and the shadow stays at the old edge.
+    const injector = inject(Injector);
+    const frozenHeaders = new ResizeObserver(() => {
+      this._table()?.updateStickyColumnStyles();
+      // MatTable moves the frozen columns in the next render's write phase; the edge is read after it.
+      afterNextRender({ read: () => this.measureScroll() }, { injector });
+    });
+    inject(DestroyRef).onDestroy(() => frozenHeaders.disconnect());
     // Pinning, hiding or resizing a column moves the frozen edge without a scroll event.
     afterRenderEffect({
       read: () => {
         this.renderColumns();
         this.measureScroll();
+        frozenHeaders.disconnect();
+        this._scroller()
+          .nativeElement.querySelectorAll('thead th.is-frozen')
+          .forEach(th => frozenHeaders.observe(th));
       },
     });
     // MatTable does not recompute the sticky offsets after a column is widened for its editor.
@@ -736,7 +751,7 @@ export class DataTableComponent {
   protected onColumnResized(key: string, width: number): void {
     this.columnResized.emit({ key, width });
 
-    // Under `fixedLayout` MatTable only invalidates its cached sticky offsets when the set of columns changes.
+    // A column's width changing is not a change MatTable watches for; the frozen columns after it move here.
     this._table()?.updateStickyColumnStyles();
   }
 
