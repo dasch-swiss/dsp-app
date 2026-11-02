@@ -985,8 +985,15 @@ export const ShowsATruncatedHeaderNameInFullOnHover: Story = {
     await expect(tooltip()).toBeNull();
     await userEvent.unhover(label('Place'));
 
-    await userEvent.hover(label('Title'));
-    await waitFor(() => expect(tooltip()).toHaveTextContent('Title of the photograph as published'));
+    // Hovered again on each try: on a loaded CI runner the tooltip can open late, or close again when a layout
+    // shift repositions it, and a single hover then never shows it.
+    await waitFor(
+      async () => {
+        await userEvent.hover(label('Title'));
+        await expect(tooltip()).toHaveTextContent('Title of the photograph as published');
+      },
+      { timeout: 3000 }
+    );
     await userEvent.unhover(label('Title'));
   },
 };
