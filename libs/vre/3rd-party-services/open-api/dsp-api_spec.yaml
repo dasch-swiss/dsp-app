@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v40.4.0-2-g97f1108
+  version: v40.5.0-7-gd465883
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -5513,7 +5513,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       responses:
         '200':
           description: ''
@@ -5577,7 +5577,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       responses:
         '200':
           description: ''
@@ -5641,7 +5641,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       responses:
         '200':
           description: ''
@@ -5830,7 +5830,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       responses:
         '200':
           description: ''
@@ -5896,7 +5896,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       responses:
         '200':
           description: ''
@@ -6100,7 +6100,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6173,7 +6173,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6247,7 +6247,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6320,7 +6320,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6394,7 +6394,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6467,7 +6467,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6541,7 +6541,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       requestBody:
         content:
           application/json:
@@ -6614,7 +6614,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       requestBody:
         content:
           application/json:
@@ -6687,7 +6687,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       requestBody:
         content:
           application/json:
@@ -6760,7 +6760,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/bPJvAuV0TcWnfwpukUf9zg
+        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
       requestBody:
         content:
           application/json:
@@ -7673,7 +7673,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/PSwAYmpzRVOvF_zpW8kWhw
+        example: http://rdfh.ch/lists/0001/ex2vg-m9Q7qKxdlBAmm9mQ
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7801,7 +7801,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/PSwAYmpzRVOvF_zpW8kWhw
+        example: http://rdfh.ch/lists/0001/ex2vg-m9Q7qKxdlBAmm9mQ
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7920,7 +7920,11 @@ paths:
     get:
       tags:
       - API v2
-      description: Get information about resources of a specific class in a project.
+      description: List the resources of the project named in the X-Knora-Accept-Project
+        header, with their class and dates, deleted resources included. Optionally
+        restricted to one resource class and to resources changed at or after a cutoff.
+        `asOf` is the server time read before the listing was queried; to poll for
+        changes, pass the previous `asOf` minus a safety window as the next cutoff.
         Publicly accessible.
       operationId: getV2ResourcesInfo
       parameters:
@@ -7931,9 +7935,20 @@ paths:
           type: string
       - name: resourceClass
         in: query
-        required: true
+        description: Only list resources of exactly this class (no subclasses). Without
+          it, all classes are listed.
+        required: false
         schema:
           type: string
+      - name: cutoff
+        in: query
+        description: Only list resources whose effective date (lastModificationDate,
+          else creationDate) is at or after this instant. An ISO-8601 instant with
+          an offset, e.g. 2026-10-23T08:00:00Z; a '+' offset must be URL-encoded.
+        required: false
+        schema:
+          type: string
+          format: date-time
       - name: order
         in: query
         description: Sort the results in ascending (asc) or descending (desc) order.
@@ -12435,8 +12450,8 @@ paths:
     put:
       tags:
       - API v2
-      description: Change the metadata of an ontology. Requires ProjectAdmin permissions
-        for the ontology's project.
+      description: Change the metadata of an ontology. Requires SystemAdmin or ProjectAdmin
+        permissions for the ontology's project.
       operationId: putV2OntologiesMetadata
       parameters:
       - name: x-knora-accept-schema
@@ -13309,8 +13324,8 @@ paths:
     delete:
       tags:
       - API v2
-      description: Delete a property from an ontology. Requires ProjectAdmin permissions
-        for the ontology's project.
+      description: Delete a property from an ontology. Requires SystemAdmin or ProjectAdmin
+        permissions for the ontology's project.
       operationId: deleteV2OntologiesPropertiesPropertyiri
       parameters:
       - name: propertyIri
@@ -13666,8 +13681,8 @@ paths:
     delete:
       tags:
       - API v2
-      description: Delete the comment of a class definition. Requires ProjectAdmin
-        permissions for the ontology's project.
+      description: Delete the comment of a class definition. Requires SystemAdmin
+        or ProjectAdmin permissions for the ontology's project.
       operationId: deleteV2OntologiesClassesCommentResourceclassiri
       parameters:
       - name: resourceClassIri
@@ -13789,8 +13804,8 @@ paths:
     delete:
       tags:
       - API v2
-      description: Delete a class from an ontology. Requires ProjectAdmin permissions
-        for the ontology's project.
+      description: Delete a class from an ontology. Requires SystemAdmin or ProjectAdmin
+        permissions for the ontology's project.
       operationId: deleteV2OntologiesClassesResourceclassiri
       parameters:
       - name: resourceClassIri
@@ -13912,8 +13927,8 @@ paths:
     delete:
       tags:
       - API v2
-      description: Delete the comment of an ontology. Requires ProjectAdmin permissions
-        for the ontology's project.
+      description: Delete the comment of an ontology. Requires SystemAdmin or ProjectAdmin
+        permissions for the ontology's project.
       operationId: deleteV2OntologiesCommentOntologyiri
       parameters:
       - name: ontologyIri
@@ -14035,8 +14050,8 @@ paths:
     delete:
       tags:
       - API v2
-      description: Delete the comment of a property definition. Requires ProjectAdmin
-        permissions for the ontology's project.
+      description: Delete the comment of a property definition. Requires SystemAdmin
+        or ProjectAdmin permissions for the ontology's project.
       operationId: deleteV2OntologiesPropertiesCommentPropertyiri
       parameters:
       - name: propertyIri
@@ -14158,8 +14173,8 @@ paths:
     delete:
       tags:
       - API v2
-      description: Delete an ontology. Requires ProjectAdmin permissions for the ontology's
-        project.
+      description: Delete an ontology. Requires SystemAdmin or ProjectAdmin permissions
+        for the ontology's project.
       operationId: deleteV2OntologiesOntologyiri
       parameters:
       - name: ontologyIri
@@ -14281,8 +14296,8 @@ paths:
     put:
       tags:
       - API v2
-      description: Update cardinalities of a class. Requires ProjectAdmin permissions
-        for the ontology's project.
+      description: Update cardinalities of a class. Requires SystemAdmin or ProjectAdmin
+        permissions for the ontology's project.
       operationId: putV2OntologiesCardinalities
       parameters:
       - name: x-knora-accept-schema
@@ -14399,8 +14414,8 @@ paths:
     post:
       tags:
       - API v2
-      description: Add cardinalities to a class. Requires ProjectAdmin permissions
-        for the ontology's project. For more info check out the <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/ontology-information/#adding-cardinalities-to-a-class">documentation</a>.
+      description: Add cardinalities to a class. Requires SystemAdmin or ProjectAdmin
+        permissions for the ontology's project. For more info check out the <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/ontology-information/#adding-cardinalities-to-a-class">documentation</a>.
       operationId: postV2OntologiesCardinalities
       parameters:
       - name: x-knora-accept-schema
@@ -14517,8 +14532,8 @@ paths:
     patch:
       tags:
       - API v2
-      description: Delete cardinalities from a class. Requires ProjectAdmin permissions
-        for the ontology's project.
+      description: Delete cardinalities from a class. Requires SystemAdmin or ProjectAdmin
+        permissions for the ontology's project.
       operationId: patchV2OntologiesCardinalities
       parameters:
       - name: x-knora-accept-schema
@@ -14636,8 +14651,8 @@ paths:
     put:
       tags:
       - API v2
-      description: Change the labels or comments of a class. Requires ProjectAdmin
-        permissions for the ontology's project.
+      description: Change the labels or comments of a class. Requires SystemAdmin
+        or ProjectAdmin permissions for the ontology's project.
       operationId: putV2OntologiesClasses
       parameters:
       - name: x-knora-accept-schema
@@ -14754,8 +14769,8 @@ paths:
     post:
       tags:
       - API v2
-      description: Create a new class. Requires ProjectAdmin permissions for the ontology's
-        project.
+      description: Create a new class. Requires SystemAdmin or ProjectAdmin permissions
+        for the ontology's project.
       operationId: postV2OntologiesClasses
       parameters:
       - name: x-knora-accept-schema
@@ -14873,7 +14888,8 @@ paths:
     post:
       tags:
       - API v2
-      description: Check if cardinalities can be deleted from a class. Publicly accessible.
+      description: Check if cardinalities can be deleted from a class. Requires SystemAdmin
+        or ProjectAdmin permissions for the ontology's project.
       operationId: postV2OntologiesCandeletecardinalities
       parameters:
       - name: x-knora-accept-schema
@@ -14991,8 +15007,8 @@ paths:
     put:
       tags:
       - API v2
-      description: Update a property's labels or comments. Requires ProjectAdmin permissions
-        for the ontology's project.
+      description: Update a property's labels or comments. Requires SystemAdmin or
+        ProjectAdmin permissions for the ontology's project.
       operationId: putV2OntologiesProperties
       parameters:
       - name: x-knora-accept-schema
@@ -15109,8 +15125,8 @@ paths:
     post:
       tags:
       - API v2
-      description: Create a new property. Requires ProjectAdmin permissions for the
-        ontology's project.
+      description: Create a new property. Requires SystemAdmin or ProjectAdmin permissions
+        for the ontology's project.
       operationId: postV2OntologiesProperties
       parameters:
       - name: x-knora-accept-schema
@@ -15228,8 +15244,8 @@ paths:
     post:
       tags:
       - API v2
-      description: Create a new ontology. Requires ProjectAdmin permissions for the
-        project.
+      description: Create a new ontology. Requires SystemAdmin or ProjectAdmin permissions
+        for the project.
       operationId: postV2Ontologies
       parameters:
       - name: x-knora-accept-schema
@@ -15347,8 +15363,8 @@ paths:
     put:
       tags:
       - API v2
-      description: Update the GUI order of properties in a class. Requires ProjectAdmin
-        permissions for the ontology's project.
+      description: Update the GUI order of properties in a class. Requires SystemAdmin
+        or ProjectAdmin permissions for the ontology's project.
       operationId: putV2OntologiesGuiorder
       parameters:
       - name: x-knora-accept-schema
@@ -15466,8 +15482,8 @@ paths:
     put:
       tags:
       - API v2
-      description: Update the GUI element of a property. Requires ProjectAdmin permissions
-        for the ontology's project.
+      description: Update the GUI element of a property. Requires SystemAdmin or ProjectAdmin
+        permissions for the ontology's project.
       operationId: putV2OntologiesPropertiesGuielement
       parameters:
       - name: x-knora-accept-schema
@@ -15760,8 +15776,8 @@ paths:
     post:
       tags:
       - API v3
-      description: Export resources to CSV format. Publicly accessible. Requires appropriate
-        object access permissions on the resources.
+      description: Export the resources of a project for OAI. Requires SystemAdmin
+        permissions.
       operationId: postV3ExportResourcesOai
       requestBody:
         content:
@@ -17315,12 +17331,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v40.4.0-2-g97f1108
-                buildCommit: 97f11083f
+                webapi: v40.5.0-7-gd465883
+                buildCommit: d4658839f
                 buildTime: dev
                 fuseki: 6.2.0
                 scala: 3.8.4
-                sipi: v9.1.1
+                sipi: v10.0.0
                 name: version
         '400':
           description: ''
@@ -18412,6 +18428,7 @@ components:
       type: object
       required:
       - count
+      - asOf
       properties:
         resources:
           type: array
@@ -18420,6 +18437,9 @@ components:
         count:
           type: integer
           format: int32
+        asOf:
+          type: string
+          format: date-time
     ListRootNodeADM:
       title: ListRootNodeADM
       type: object
@@ -19082,11 +19102,14 @@ components:
       type: object
       required:
       - resourceIri
+      - resourceClass
       - creationDate
       - lastModificationDate
       - isDeleted
       properties:
         resourceIri:
+          type: string
+        resourceClass:
           type: string
         creationDate:
           type: string
