@@ -202,6 +202,12 @@
       "enabled": false
     },
     {
+      "description": "playwright-core override for @pixeleye/cli-install: fully disabled, held at 1.59.0. cli-install imports playwright-core/lib/server, a subpath playwright-core stopped exporting in 1.60.0, so pixeleye:ci fails with ERR_PACKAGE_PATH_NOT_EXPORTED on anything newer. Renovate grouped this override with the root playwright-core and bumped it to 1.64.x (#3508, #3539); the stale lock kept the nested 1.59.0 until a from-scratch regeneration applied the override (#3593). The root playwright-core devDependency is unaffected and keeps updating. Lift only when a @pixeleye/cli-install release drops the lib/server import.",
+      "matchPackageNames": ["playwright-core"],
+      "matchDepTypes": ["overrides"],
+      "enabled": false
+    },
+    {
       "description": "Major updates: PRs open automatically but require manual merge. Timing matters — merging a major before a release or production deployment could introduce undetected breakage that poor test coverage would miss. Human decides when it is safe to merge.",
       "matchUpdateTypes": ["major"],
       "automerge": false
@@ -286,9 +292,9 @@
       "groupName": "angular-ecosystem-deps"
     },
     {
-      "description": "Automerge all dev dependency updates (patch + minor) — 3-day age guard prevents adopting a broken release before it gets yanked; dev deps don't affect production. overrides are included because they pin build and test tooling (pixeleye's playwright-core) and Renovate groups an override with its root package, so leaving them out blocks automerge for the whole group.",
+      "description": "Automerge all dev dependency updates (patch + minor) — 3-day age guard prevents adopting a broken release before it gets yanked; dev deps don't affect production.",
       "matchUpdateTypes": ["patch", "minor"],
-      "matchDepTypes": ["devDependencies", "overrides"],
+      "matchDepTypes": ["devDependencies"],
       "automerge": true,
       "platformAutomerge": true,
       "minimumReleaseAge": "3 days",
