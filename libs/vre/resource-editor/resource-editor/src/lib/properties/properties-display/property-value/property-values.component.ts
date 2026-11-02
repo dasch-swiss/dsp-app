@@ -41,6 +41,7 @@ import { PropertyValueService } from './property-value.service';
         mat-button
         type="button"
         class="add-value"
+        [class.is-alone]="editModeData.values.length === 0"
         (click)="currentlyAdding = true"
         data-cy="add-property-value-button">
         <mat-icon>add</mat-icon>
@@ -60,6 +61,11 @@ import { PropertyValueService } from './property-value.service';
 
         margin-top: 2px;
         font-size: 13px;
+      }
+      /* In place of a value, on the label's line: a value's padding, less half of what the 30px button is taller
+         than the label's 16px line. A dense host (a table cell) keeps the 2px. */
+      .add-value.is-alone {
+        margin-top: max(2px, calc(var(--property-value-padding-block, 16px) - 7px));
       }
     `,
   ],
