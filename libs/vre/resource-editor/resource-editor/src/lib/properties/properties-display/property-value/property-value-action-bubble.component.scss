@@ -1,13 +1,13 @@
-// A flex item of the value's row, not a layer over it. The buttons' look is in `property-value-actions.scss`.
+// Laid over the value's end rather than taking room beside it: taking room re-wraps the value, which can move it out
+// from under the pointer, hide the bubble and bring it back, over and over (DEV-7670). The buttons' look is in
+// `property-value-actions.scss`.
 :host {
   display: block;
-  flex: none;
   padding-top: calc(var(--property-value-padding-block, 16px) - 4px);
-  // A narrow host (a table cell) lays it over the value's end instead: taking room there re-wraps the
-  // value, which can move it out from under the pointer, hide the bubble and bring it back, over and over.
-  position: var(--property-value-actions-position, static);
+  position: absolute;
   top: 0;
   right: 0;
   border-radius: 4px;
-  background: var(--property-value-actions-background, none);
+  // Opaque, over the text it covers: the hovered line's tint on a white page. A host on another background sets its own.
+  background: var(--property-value-actions-background, #f3f6f8);
 }

@@ -505,9 +505,7 @@ tr.is-checked .row-controls [data-cy='row-check'] {
 
   // The viewer's default property padding would make single-value cells taller than the row height.
   --property-value-padding-block: 4px;
-  // A value's hover actions float over its end: in a narrow column, taking room re-wraps the value under
-  // the pointer and the row jumps (DEV-7670).
-  --property-value-actions-position: absolute;
+  // The hover actions float over the value's end; this is the hovered cell's tint under them.
   --property-value-actions-background: #f5f8fa;
   --property-value-edit-background: #f5f7f9;
   --authorship-line-padding-inline-start: 0;
