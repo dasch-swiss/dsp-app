@@ -197,9 +197,8 @@
       "enabled": false
     },
     {
-      "description": "webpack ecosystem: major version is pinned by @angular-devkit/build-angular — disable major updates until ng update lifts the constraint",
+      "description": "webpack ecosystem: fully disabled. These four packages are not dependencies, only overrides (one webpack instance, #3083), and each override is set to the exact version @angular-devkit/build-angular pins, because build-angular deep-imports webpack internals (webpack/lib/dependencies/...) that move between webpack minors. A ^5 override let lock file maintenance float webpack past build-angular's pin: 5.112 moved AMDDefineDependency and broke build-storybook (#3591). On every Angular update, copy build-angular's webpack, webpack-dev-middleware, webpack-dev-server and webpack-merge versions into the overrides.",
       "matchPackageNames": ["webpack", "webpack-dev-middleware", "webpack-dev-server", "webpack-merge"],
-      "matchUpdateTypes": ["major"],
       "enabled": false
     },
     {
@@ -262,11 +261,6 @@
       "groupName": "postcss-deps"
     },
     {
-      "description": "webpack ecosystem — exact-pinned by @angular-devkit/build-angular; must move together to stay deduplicated",
-      "matchPackageNames": ["webpack", "webpack-dev-middleware", "webpack-dev-server", "webpack-merge"],
-      "groupName": "webpack-deps"
-    },
-    {
       "description": "UUID",
       "matchPackageNames": ["uuid", "@types/uuid"],
       "groupName": "uuid-deps"
@@ -291,7 +285,7 @@
       "groupName": "angular-ecosystem-deps"
     },
     {
-      "description": "Automerge all dev dependency updates (patch + minor) — 3-day age guard prevents adopting a broken release before it gets yanked; dev deps don't affect production. overrides are included because they pin build and test tooling (webpack, pixeleye's playwright-core) and Renovate groups an override with its root package, so leaving them out blocks automerge for the whole group.",
+      "description": "Automerge all dev dependency updates (patch + minor) — 3-day age guard prevents adopting a broken release before it gets yanked; dev deps don't affect production. overrides are included because they pin build and test tooling (pixeleye's playwright-core) and Renovate groups an override with its root package, so leaving them out blocks automerge for the whole group.",
       "matchUpdateTypes": ["patch", "minor"],
       "matchDepTypes": ["devDependencies", "overrides"],
       "automerge": true,
