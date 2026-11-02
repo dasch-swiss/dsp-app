@@ -535,6 +535,7 @@
         "usePreviousSearch": "Usa la ricerca precedente",
         "fulltextSearch": "Ricerca full-text",
         "reset": "Reimposta",
+        "clearSearch": "Cancella ricerca",
         "addFilter": "Aggiungi filtro",
         "add": "Aggiungi",
         "operator": "Operatore",
@@ -590,7 +591,8 @@
       "resourcesListFetcher": {
         "noResourcesFound": "Nessuna risorsa trovata per questa classe.",
         "noPermissions": "Sembra che tu non abbia i permessi necessari.",
-        "checkPermissions": "Verifica con un amministratore del progetto se hai i permessi necessari o se hai effettuato l'accesso."
+        "checkPermissions": "Verifica con un amministratore del progetto se hai i permessi necessari o se hai effettuato l'accesso.",
+        "noResourcesMatchFilters": "Nessuna risorsa corrisponde a questi filtri."
       },
       "multipleViewer": {
         "selectResource": "Seleziona una risorsa nel pannello di sinistra",
@@ -606,24 +608,106 @@
         "resourceLabel": "Etichetta"
       },
       "downloadDialog": {
-        "title": "Scarica",
-        "resourcesAvailable": "{{count}} risorse disponibili",
+        "downloadAll": "Scarica tutto",
+        "heading": "Scarica {{className}}",
+        "resourceCount": "{{count}} risorse",
         "noResources": "Non ci sono risorse da scaricare.",
         "properties": "Proprietà",
-        "selectAll": "Seleziona tutto",
-        "selectNone": "Deseleziona tutto",
-        "selectedCount": "{{count}} di {{total}} proprietà selezionate",
+        "filterProperties": "Filtra proprietà",
+        "csvSummary": "CSV · {{rows}} righe × {{columns}} colonne",
+        "noMatchingProperties": "Nessuna proprietà corrisponde al filtro.",
         "includeIrisLabel": "Includi IRI delle risorse per le proprietà di riferimento",
         "includeIrisExplanation": "Quando attivata, le proprietà di riferimento esportano sia valori leggibili (ad es. 'Alice') che IRI delle risorse per un corretto riferimento ai dati.",
         "includeArkUrlsLabel": "Includi identificatori ARK",
         "includeArkUrlsExplanation": "Aggiunge una colonna ARK URL come prima colonna nel CSV per ogni risorsa.",
-        "downloadCsv": "Scarica CSV",
+        "downloadResources": "Scarica {{count}} risorse",
+        "downloadOneResource": "Scarica 1 risorsa",
         "downloadSuccess": "CSV scaricato con successo.",
         "downloadError": "Impossibile scaricare il CSV. Riprova.",
         "largeExportWarning": "Questo export contiene {{count}} risorse e potrebbe richiedere diversi minuti. Tieni aperta questa scheda.",
         "progressXofN": "Esportate {{x}} su {{n}} risorse",
         "buildingCsv": "Creazione del file CSV in corso — tieni aperta questa scheda. Il download inizierà non appena il file sarà pronto.",
-        "preparing": "Preparazione…"
+        "preparing": "Preparazione…",
+        "scopeAll": "Il file contiene tutte le risorse di questa classe. La ricerca e i filtri attuali non vengono applicati.",
+        "scopeAllWithSelection": "Il file contiene tutte le risorse di questa classe. Le {{count}} risorse selezionate, la ricerca e i filtri attuali non vengono considerati."
+      },
+      "dataClassHeader": {
+        "searchLabel": "Cerca",
+        "searchPlaceholder": "Cerca"
+      },
+      "resultMeta": {
+        "range": "{{start}} – {{end}} di {{total}}",
+        "ofPages": "di {{total}}",
+        "pageNumber": "Numero di pagina",
+        "pageNumberHint": "Inserisci un numero di pagina e premi Invio.",
+        "updating": "Aggiornamento dei risultati"
+      },
+      "sortHeader": {
+        "sortBy": "Ordina per",
+        "chooseProperty": "Scegli una proprietà per l'ordinamento",
+        "sortAscending": "Ordina in modo crescente",
+        "sortDescending": "Ordina in modo decrescente"
+      },
+      "viewToggle": {
+        "label": "Mostra le risorse come",
+        "list": "Elenco",
+        "table": "Tabella"
+      },
+      "table": {
+        "label": "Risorse di questa classe",
+        "notSet": "— non impostato",
+        "showMore": "Mostra altri {{count}}",
+        "showLess": "Mostra meno",
+        "resizeColumn": "Ridimensiona la colonna {{column}}",
+        "sortColumnAscending": "Ordina per {{column}}, crescente",
+        "sortColumnDescending": "Ordina per {{column}}, decrescente",
+        "filterByColumn": "Filtra per {{column}}",
+        "readOnly": "Sola lettura",
+        "readOnlyInTable": "Non modificabile nella tabella. Apri la risorsa per vedere come è impostato il valore.",
+        "readOnlyProjectWide": "Impostato per l'intero progetto, nelle impostazioni del progetto.",
+        "pinColumn": "Blocca {{column}}",
+        "unpinColumn": "Sblocca {{column}}",
+        "labelColumn": "Etichetta",
+        "imageColumn": "Immagine",
+        "previewImage": "Anteprima dell'immagine di {{label}}",
+        "editColumnFilter": "Modifica il filtro su {{column}}",
+        "sortAscending": "Ordina in modo crescente",
+        "sortDescending": "Ordina in modo decrescente",
+        "filter": "Filtra",
+        "editFilter": "Modifica il filtro",
+        "pin": "Blocca",
+        "unpin": "Sblocca",
+        "scrollBackToStart": "Fai clic per tornare alla prima colonna.",
+        "oneColumnScrolledUnder": "1 colonna nascosta sotto",
+        "columnsScrolledUnder": "{{count}} colonne nascoste sotto",
+        "selectRow": "Aggiungi {{label}} al confronto",
+        "openRow": "Apri {{label}}",
+        "resizeRow": "Ridimensiona la riga di {{label}}"
+      },
+      "viewOptions": {
+        "title": "Opzioni di visualizzazione",
+        "columns": "Colonne",
+        "showAll": "Mostra tutte le colonne",
+        "hideAll": "Nascondi tutte le colonne",
+        "showAllShort": "Mostra tutte",
+        "hideAllShort": "Nascondi tutte",
+        "rowHeight": "Altezza delle righe",
+        "rowHeightAuto": "Automatica",
+        "rowHeightManual": "Manuale",
+        "comments": "Commenti",
+        "showComments": "Mostra i commenti"
+      },
+      "tour": {
+        "new": "Novità",
+        "progress": "{{current}} di {{total}}",
+        "close": "Chiudi il tour",
+        "back": "Indietro",
+        "next": "Avanti",
+        "done": "Ho capito",
+        "searchTitle": "Cerca e filtra qui",
+        "searchBody": "Cerca tra le risorse di questa classe e restringile con i filtri, senza lasciare la scheda Dati.",
+        "tableTitle": "Prova la vista tabella",
+        "tableBody": "Passa a Tabella per vedere le risorse come righe, con le proprietà come colonne, e confrontare i valori fianco a fianco."
       }
     }
   },
@@ -848,7 +932,8 @@
         "edit": "Modifica",
         "delete": "Elimina",
         "cannotDeleteRequired": "Impossibile eliminare la proprietà richiesta",
-        "undo": "Annulla",
+        "addValue": "Aggiungi valore",
+        "cancel": "Annulla",
         "addComment": "Aggiungi commento",
         "removeComment": "Rimuovi commento",
         "save": "Salva",

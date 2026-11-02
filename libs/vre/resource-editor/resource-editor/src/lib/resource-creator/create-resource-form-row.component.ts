@@ -24,7 +24,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
       .grid-h3 {
         width: 140px;
         text-align: end;
-        padding: 16px;
+        /* Level with the field beside it: 16px for a standard 56px field, 8px in a compact host. */
+        padding: var(--create-form-label-padding-block, 16px) 16px;
         margin: 0;
         color: rgb(107, 114, 128);
 

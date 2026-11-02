@@ -1,3 +1,4 @@
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { AfterViewInit, Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatError, MatFormField } from '@angular/material/form-field';
@@ -14,6 +15,7 @@ import { DateValueComponent } from '@dasch-swiss/vre/ui/date-picker';
 import { CkEditorComponent, CommonInputComponent, HumanReadableErrorPipe } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { JsLibPotentialError } from '../property-value/JsLibPotentialError';
+import { provideCompactFormFieldOptions } from './compact-form-field-options';
 import { BooleanValueComponent } from './value-components/boolean-value.component';
 import { ColorValueComponent } from './value-components/color-value.component';
 import { GeolocationValueComponent } from './value-components/geolocation-value.component';
@@ -26,6 +28,7 @@ import { TimeValueComponent } from './value-components/time-value.component';
 @Component({
   selector: 'app-template-editor-switcher',
   imports: [
+    CdkTextareaAutosize,
     MatFormField,
     MatInput,
     ReactiveFormsModule,
@@ -44,6 +47,9 @@ import { TimeValueComponent } from './value-components/time-value.component';
     GeonameValueComponent,
     LinkValueComponent,
   ],
+  // Reaches the editors wherever these templates are stamped: an embedded view injects from where it
+  // was declared.
+  providers: [provideCompactFormFieldOptions()],
   template: `
     <ng-template #intEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
@@ -106,10 +112,14 @@ import { TimeValueComponent } from './value-components/time-value.component';
 
     <ng-template #paragraphEditorTpl let-item="item">
       <mat-form-field style="width: 100%">
+        <!-- Three lines to start, growing with the text up to twelve: nine fixed rows made an
+             empty paragraph the tallest thing in a table row (DEV-7611). -->
         <textarea
           matInput
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="3"
+          cdkAutosizeMaxRows="12"
           [formControl]="item"
-          rows="9"
           [placeholder]="('resourceEditor.templateSwitcher.example' | translate) + ' Lorem ipsum ...'"></textarea>
       </mat-form-field>
       @if (item.touched && item.errors; as errors) {

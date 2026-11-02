@@ -1,6 +1,34 @@
 // Named and valued as in date-picker.component.scss, whose local tokens this follows.
 $primary-600: #336790;
 
+// Stacked by default. A host that sets `--date-value-display: flex` gets the calendar beside the
+// dates when there is room and above them when there is not; notes and errors keep their own line.
+.date-value {
+  display: var(--date-value-display, block);
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 8px;
+
+  > app-calendar-selector {
+    flex: 0 1 360px;
+    min-width: 0;
+  }
+
+  // The dates and their end-date toggle wrap as one block; shrunk beside the calendar, the toggle
+  // would wrap under the date.
+  > .date-fields {
+    flex: none;
+    max-width: 100%;
+  }
+
+  > .stored-value-line,
+  > .date-value-footer,
+  > .date-value-errors {
+    flex-basis: 100%;
+  }
+}
+
 // One line: start, en dash, end, and the control that adds or removes the end. The pickers are
 // closed fields rather than open panels, so the row stays a row.
 .date-fields {
@@ -8,7 +36,7 @@ $primary-600: #336790;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: var(--date-fields-margin-top, 8px);
 }
 
 // `min-width: 0` on a flex child is what lets a long date be ellipsised instead of pushing its
@@ -20,6 +48,9 @@ $primary-600: #336790;
 .start-date,
 .end-date {
   flex: 0 1 220px;
+  // The basis already sets the width in the row; `width` is what makes the row's own natural width
+  // count it, so the row does not end up narrower than its fields when it sits beside the calendar.
+  width: 220px;
   min-width: 0;
 }
 
@@ -75,6 +106,11 @@ $primary-600: #336790;
   font-size: 12px;
   line-height: 1.4;
   color: #4b5563;
+
+  // Always rendered, as a live region must be; no space for it while it has nothing to say.
+  &:empty {
+    margin-top: 0;
+  }
 }
 
 .error-message {

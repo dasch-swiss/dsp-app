@@ -6,36 +6,45 @@ import { DspApiConnectionToken, RouteConstants } from '@dasch-swiss/vre/core/con
 import { ErrorReportingService } from '@dasch-swiss/vre/core/error-handler';
 import { MultipleViewerService } from '@dasch-swiss/vre/pages/data-browser';
 import { DataBrowserPageService, ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { OntologyService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { SearchFilterState } from '@dasch-swiss/vre/pages/search/search-filters';
+import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, of, Subject, throwError } from 'rxjs';
+import { DataClassQueryService } from '../../data-class-query.service';
 import { ResourcesListFetcherComponent } from './resources-list-fetcher.component';
 
 describe('ResourcesListFetcherComponent', () => {
   let component: ResourcesListFetcherComponent;
   let fixture: ComponentFixture<ResourcesListFetcherComponent>;
   let mockDspApiConnection: any;
-  let mockResourceResult: any;
   let mockMultipleViewerService: any;
   let routeParamsSubject: BehaviorSubject<any>;
   let currentProjectSubject: BehaviorSubject<ReadProject>;
+  let querySubject: BehaviorSubject<string>;
+  let hasActiveStateSubject: BehaviorSubject<boolean>;
+  /** Real instance: the replay behaviour of the BehaviorSubject is under test. */
+  let dataBrowserPageService: DataBrowserPageService;
   let handleError: jest.Mock;
   let report: jest.Mock;
 
   const mockResource1 = { id: 'resource-1', label: 'Resource 1' } as ReadResource;
   const mockResource2 = { id: 'resource-2', label: 'Resource 2' } as ReadResource;
-  const mockProject = { shortcode: '0001' } as ReadProject;
+  const mockProject = { shortcode: '0001', id: 'http://rdfh.ch/projects/0001' } as ReadProject;
+
+  const QUERY = 'CONSTRUCT { ?mainRes knora-api:isMainResource true . } WHERE { ?mainRes a <C> . }\nOFFSET 0';
 
   /** Shared so the real-template suite below can reuse the same doubles without duplicating them. */
   const makeProviders = () => [
     { provide: ActivatedRoute, useValue: { params: routeParamsSubject.asObservable() } },
     { provide: Router, useValue: { navigate: jest.fn() } },
     { provide: DspApiConnectionToken, useValue: mockDspApiConnection },
-    { provide: ResourceResultService, useValue: mockResourceResult },
-    { provide: OntologyService, useValue: { getIriBaseUrl: () => 'http://api.knora.org' } },
+    // Real service: the paging cases need a live `pageIndex$`.
+    ResourceResultService,
     { provide: ProjectPageService, useValue: { currentProject$: currentProjectSubject.asObservable() } },
     { provide: MultipleViewerService, useValue: mockMultipleViewerService },
-    { provide: DataBrowserPageService, useValue: { onNavigationReload$: of(undefined) } },
+    { provide: DataBrowserPageService, useValue: dataBrowserPageService },
+    { provide: DataClassQueryService, useValue: { query$: querySubject.asObservable() } },
+    { provide: SearchFilterState, useValue: { hasActiveState$: hasActiveStateSubject.asObservable() } },
     { provide: ErrorHandler, useValue: { handleError } },
     { provide: ErrorReportingService, useValue: { report } },
   ];
@@ -43,6 +52,9 @@ describe('ResourcesListFetcherComponent', () => {
   beforeEach(async () => {
     routeParamsSubject = new BehaviorSubject({ [RouteConstants.classParameter]: 'TestClass' });
     currentProjectSubject = new BehaviorSubject(mockProject);
+    querySubject = new BehaviorSubject(QUERY);
+    hasActiveStateSubject = new BehaviorSubject(false);
+    dataBrowserPageService = new DataBrowserPageService();
 
     mockDspApiConnection = {
       v2: {
@@ -51,12 +63,6 @@ describe('ResourcesListFetcherComponent', () => {
           doExtendedSearchCountQuery: jest.fn().mockReturnValue(of({ numberOfResults: 0 })),
         },
       },
-    };
-
-    mockResourceResult = {
-      updatePageIndex: jest.fn(),
-      pageIndex$: of(0),
-      numberOfResults: 0,
     };
 
     mockMultipleViewerService = {
@@ -115,6 +121,31 @@ describe('ResourcesListFetcherComponent', () => {
     expect(mockMultipleViewerService.reset).toHaveBeenCalled();
   });
 
+  /** A List/Table switch recreates the fetcher, so "entry already happened" cannot live on the instance. */
+  it('should not auto-select when another view already resolved the selection for this class', async () => {
+    dataBrowserPageService.selectionResolvedForClass = 'TestClass';
+    mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1, mockResource2] }));
+    mockDspApiConnection.v2.search.doExtendedSearchCountQuery.mockReturnValue(of({ numberOfResults: 2 }));
+
+    component.ngOnChanges();
+
+    await firstValueFrom(component.data$);
+
+    expect(mockMultipleViewerService.selectOneResource).not.toHaveBeenCalled();
+  });
+
+  it('should auto-select again when the resolved class is a different one', async () => {
+    dataBrowserPageService.selectionResolvedForClass = 'OtherClass';
+    mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1, mockResource2] }));
+    mockDspApiConnection.v2.search.doExtendedSearchCountQuery.mockReturnValue(of({ numberOfResults: 2 }));
+
+    component.ngOnChanges();
+
+    await firstValueFrom(component.data$);
+
+    expect(mockMultipleViewerService.selectOneResource).toHaveBeenCalledWith(mockResource1);
+  });
+
   it('should not auto-select when selectMode is true', async () => {
     mockMultipleViewerService.selectMode = true;
     mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1, mockResource2] }));
@@ -154,8 +185,6 @@ describe('ResourcesListFetcherComponent', () => {
       expect(emitted.at(-1)?.resources).toEqual([mockResource1, mockResource2]);
       expect(component.failed()).toBe(false);
       // Null, not the page length: substituting a wrong total would have the UI assert it as fact.
-      // The component provides its own ResourceResultService, so read that instance rather than the
-      // module-level mock, which this component never sees.
       expect(fixture.debugElement.injector.get(ResourceResultService).numberOfResults).toBeNull();
       sub.unsubscribe();
     });
@@ -260,11 +289,186 @@ describe('ResourcesListFetcherComponent', () => {
     });
   });
 
+  describe('query-driven re-querying (DEV-7453)', () => {
+    const lastQuery = () => mockDspApiConnection.v2.search.doExtendedSearch.mock.calls.at(-1)[0] as string;
+
+    const start = () => {
+      component.ngOnChanges();
+      return component.data$.subscribe();
+    };
+
+    it('returns to page 0 when the query changes', () => {
+      const sub = start();
+      const resourceResult = fixture.debugElement.injector.get(ResourceResultService);
+      resourceResult.updatePageIndex(3);
+
+      querySubject.next(`${QUERY} FILTER(?x)`);
+
+      // The old offset would land on an empty page of the narrower result set.
+      expect(lastQuery()).toContain('OFFSET 0');
+      sub.unsubscribe();
+    });
+
+    it('keeps the page index across a retry', () => {
+      const sub = start();
+      const resourceResult = fixture.debugElement.injector.get(ResourceResultService);
+      resourceResult.updatePageIndex(2);
+      expect(lastQuery()).toContain('OFFSET 2');
+
+      component.onRetry();
+
+      // A retry repeats the failed request, not page 1.
+      expect(lastQuery()).toContain('OFFSET 2');
+      sub.unsubscribe();
+    });
+
+    it('splices the offset at the last OFFSET, not the first', () => {
+      // A fulltext term can contain the word OFFSET before the real offset clause.
+      querySubject.next('CONSTRUCT { ?x ?y ?z } WHERE { FILTER regex(?label, "OFFSET") }\nOFFSET 0');
+      const sub = start();
+
+      expect(lastQuery()).toContain('regex(?label, "OFFSET")');
+      expect(lastQuery()).toMatch(/OFFSET 0$/);
+      sub.unsubscribe();
+    });
+
+    it('scopes both the result and the count query to the current project', () => {
+      const sub = start();
+
+      expect(mockDspApiConnection.v2.search.doExtendedSearch).toHaveBeenCalledWith(
+        expect.any(String),
+        'http://rdfh.ch/projects/0001'
+      );
+      expect(mockDspApiConnection.v2.search.doExtendedSearchCountQuery).toHaveBeenCalledWith(
+        expect.any(String),
+        'http://rdfh.ch/projects/0001'
+      );
+      sub.unsubscribe();
+    });
+
+    it('leaves the viewer alone when a filter change empties the list', () => {
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1] }));
+      const sub = start();
+      expect(mockMultipleViewerService.selectOneResource).toHaveBeenCalledWith(mockResource1);
+
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [] }));
+      querySubject.next(`${QUERY} FILTER(?narrow)`);
+
+      // Entry behaviour only: a filter-driven empty result must not clear the viewer.
+      expect(mockMultipleViewerService.reset).not.toHaveBeenCalled();
+      sub.unsubscribe();
+    });
+
+    it('reloads when the panel reports a newly created resource', () => {
+      const sub = start();
+      const callsBefore = mockDspApiConnection.v2.search.doExtendedSearch.mock.calls.length;
+
+      dataBrowserPageService.reloadNavigation();
+
+      // Losing this trigger is silent: the new resource would just not appear.
+      expect(mockDspApiConnection.v2.search.doExtendedSearch.mock.calls.length).toBeGreaterThan(callsBefore);
+      sub.unsubscribe();
+    });
+
+    it('does not run the initial load twice for the replayed reload value', () => {
+      const sub = start();
+
+      // The BehaviorSubject replays on subscribe; without skip(1) that fires a second full load.
+      expect(mockDspApiConnection.v2.search.doExtendedSearch).toHaveBeenCalledTimes(1);
+      sub.unsubscribe();
+    });
+
+    it('shows the empty state rather than the permissions panel while filters are active', () => {
+      hasActiveStateSubject.next(true);
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [] }));
+      mockDspApiConnection.v2.search.doExtendedSearchCountQuery.mockReturnValue(of({ numberOfResults: 5 }));
+
+      const sub = start();
+
+      // Zero results is the expected outcome of narrowing, not a permissions signal.
+      expect(component.userCanViewResources).toBe(true);
+      sub.unsubscribe();
+    });
+  });
+
   /**
    * The suites above replace the template, so `(retry)="onRetry()"` is never exercised and a broken
    * binding would pass every one of them. This component has no stories, so the real template is
    * mounted here instead to cover the click path end to end.
    */
+  describe('refresh state (DEV-7466)', () => {
+    let resourceResult: ResourceResultService;
+    let pending: Subject<{ resources: ReadResource[] }>;
+
+    beforeEach(() => {
+      resourceResult = fixture.debugElement.injector.get(ResourceResultService);
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(of({ resources: [mockResource1] }));
+      mockDspApiConnection.v2.search.doExtendedSearchCountQuery.mockReturnValue(of({ numberOfResults: 100 }));
+    });
+
+    const loadThenHoldNext = () => {
+      component.ngOnChanges();
+      const sub = component.data$.subscribe();
+      pending = new Subject();
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(pending);
+      return sub;
+    };
+
+    it('does not mark the first load as a refresh', () => {
+      pending = new Subject();
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(pending);
+
+      component.ngOnChanges();
+      const sub = component.data$.subscribe();
+
+      expect(resourceResult.isRefreshing()).toBe(false);
+      sub.unsubscribe();
+    });
+
+    it('marks a page change as a refresh until the new page arrives', () => {
+      const sub = loadThenHoldNext();
+
+      resourceResult.updatePageIndex(1);
+      expect(resourceResult.isRefreshing()).toBe(true);
+
+      pending.next({ resources: [mockResource2] });
+      expect(resourceResult.isRefreshing()).toBe(false);
+      sub.unsubscribe();
+    });
+
+    it('marks a query change as a refresh', () => {
+      const sub = loadThenHoldNext();
+
+      querySubject.next(`${QUERY} FILTER(?x)`);
+
+      expect(resourceResult.isRefreshing()).toBe(true);
+      sub.unsubscribe();
+    });
+
+    it('ends the refresh when the new page fails', () => {
+      const sub = loadThenHoldNext();
+      resourceResult.updatePageIndex(1);
+
+      pending.error(new Error('page 2 timed out'));
+
+      expect(resourceResult.isRefreshing()).toBe(false);
+      sub.unsubscribe();
+    });
+
+    it('does not mark a retry as a refresh', () => {
+      const sub = loadThenHoldNext();
+      resourceResult.updatePageIndex(1);
+      pending.error(new Error('page 2 timed out'));
+
+      pending = new Subject();
+      mockDspApiConnection.v2.search.doExtendedSearch.mockReturnValue(pending);
+      component.onRetry();
+
+      expect(resourceResult.isRefreshing()).toBe(false);
+      sub.unsubscribe();
+    });
+  });
+
   describe('retry binding with the real template (DEV-6871)', () => {
     beforeEach(async () => {
       TestBed.resetTestingModule();

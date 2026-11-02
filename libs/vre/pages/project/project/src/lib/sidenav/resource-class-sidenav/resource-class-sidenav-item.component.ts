@@ -7,6 +7,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { combineLatest, filter, first, map, of, startWith, switchMap } from 'rxjs';
+import { DATA_CLASS_PARAM } from '../../data-class-url-state.service';
 import { ProjectPageService } from '../../project-page.service';
 import { TooltipIfTruncatedDirective } from '../tooltip-if-truncated.directive';
 
@@ -152,6 +153,14 @@ export class ResourceClassSidenavItemComponent {
     const [ontologyIri, className] = this.iri.split('#');
     const ontologyName = OntologyService.getOntologyNameFromIri(ontologyIri);
 
-    this._router.navigate([ontologyName, className], { relativeTo: this._route });
+    // Only `view` carries across a class switch; naming the params replaces the rest (filters, term
+    // and sort belong to the class being left). Read off the router's URL: the sidenav sits outside
+    // the class view that owns the state service.
+    const view = this._router.routerState.snapshot.root.queryParamMap.get(DATA_CLASS_PARAM.view);
+
+    this._router.navigate([ontologyName, className], {
+      relativeTo: this._route,
+      queryParams: { [DATA_CLASS_PARAM.view]: view },
+    });
   }
 }

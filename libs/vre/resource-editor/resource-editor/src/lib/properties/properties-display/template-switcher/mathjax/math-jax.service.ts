@@ -61,9 +61,14 @@ export class MathJaxService {
     });
   }
 
+  /**
+   * MathJax supports one typeset at a time: overlapping calls (a table renders many cells at once)
+   * break the on-demand loading of TeX extensions such as `\enclose`, which then render as red
+   * undefined macros. Each call is queued behind the previous one.
+   */
   render(element: HTMLElement) {
-    window.MathJax.startup.promise.then(() => {
-      window.MathJax.typesetPromise([element]);
-    });
+    window.MathJax.startup.promise = window.MathJax.startup.promise
+      .then(() => window.MathJax.typesetPromise([element]))
+      .catch(err => console.log('MathJax typeset failed', err));
   }
 }

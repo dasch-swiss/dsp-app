@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Operator } from '@dasch-swiss/vre/pages/search/search-filters';
+import { SearchFlowLogger } from '@dasch-swiss/vre/pages/search/search-filters';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { Operator } from '../../operators.config';
-import { SearchFlowLogger } from '../search-flow-logger.service';
 import { FilterParam, SearchUrlParams, SearchUrlSyncService } from '../search-url-sync.service';
 
 /**
@@ -50,6 +50,63 @@ describe('SearchUrlSyncService — URL param contract (DEV-6576 Phase 0)', () =>
       ],
     });
     service = TestBed.inject(SearchUrlSyncService);
+  });
+
+  /**
+   * `setFilters` must clear a now-orphaned sort in the SAME navigation: two synchronous `navigate` calls are
+   * coalesced by the Router and the second discards the first.
+   */
+  describe('setFilters — orphaned sort cleanup (DEV-6576)', () => {
+    const TITLE_IRI = 'http://x/hasTitle';
+    const AUTHOR_IRI = 'http://x/hasAuthor';
+
+    const filter = (predicateIri: string, value: string): FilterParam => ({
+      predicateIri,
+      operator: Operator.Equals,
+      value,
+      parentIndex: null,
+    });
+
+    const writtenParams = (): Record<string, string | null> => navigateSpy.mock.calls[0][1].queryParams;
+
+    it('clears orderBy and orderDir in one navigation when the removed filter owned the active sort', () => {
+      queryParams = { orderBy: TITLE_IRI, orderDir: 'desc' };
+
+      service.setFilters([], TITLE_IRI);
+
+      expect(navigateSpy).toHaveBeenCalledTimes(1);
+      const params = writtenParams();
+      expect(params['filters']).toBeNull();
+      expect(params['orderBy']).toBeNull();
+      expect(params['orderDir']).toBeNull();
+    });
+
+    it('leaves the sort untouched when the removed filter was not the active sort', () => {
+      queryParams = { orderBy: AUTHOR_IRI };
+
+      service.setFilters([filter(TITLE_IRI, 'stays')], TITLE_IRI);
+
+      expect(navigateSpy).toHaveBeenCalledTimes(1);
+      const params = writtenParams();
+      expect(params).not.toHaveProperty('orderBy');
+      expect(params).not.toHaveProperty('orderDir');
+      expect(decodeURIComponent(params['filters'] as string)).toContain('stays');
+    });
+
+    it('leaves the sort untouched when no filter was removed', () => {
+      queryParams = { orderBy: TITLE_IRI };
+
+      service.setFilters([filter(TITLE_IRI, 'stays')]);
+
+      expect(writtenParams()).not.toHaveProperty('orderBy');
+    });
+
+    it('omits parentIndex for a top-level filter, so shared links stay byte-identical', () => {
+      service.setFilters([filter(TITLE_IRI, 'x')]);
+
+      const encoded = decodeURIComponent(writtenParams()['filters'] as string);
+      expect(encoded).not.toContain('parentIndex');
+    });
   });
 
   describe('encodeFilters / decodeFilters round-trip', () => {

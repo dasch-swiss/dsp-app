@@ -1,0 +1,91 @@
+@use '@angular/material' as mat;
+
+mat-form-field {
+  margin-left: 8px;
+}
+
+.chip-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px;
+  // Explicit left padding so the first chip lines up with the fulltext input whether or not the data-model chip renders.
+  padding: 8px 0 8px 8px;
+}
+
+.no-data-model {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0 16px 8px;
+  color: var(--mat-sys-on-surface-variant, rgba(0, 0, 0, 0.6));
+}
+
+// Compact density (Data tab): styling only. Expressed through inherited CSS custom properties and host rules, since
+// Material's field internals are out of reach of emulated encapsulation and `::ng-deep` is forbidden.
+:host(.compact) {
+  // The density mixin reaches the outlined field; -5 is the floor of Material's scale (36px).
+  @include mat.form-field-density(-5);
+
+  font-size: 13px;
+
+  // One row: the Search tab projects chips into the leading slot, which do not fit beside the input in standard density.
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+
+  .chip-bar {
+    gap: 6px;
+    padding: 6px 0;
+  }
+
+  // Flush left so the field's outline aligns with the class heading above.
+  mat-form-field {
+    margin-left: 0;
+  }
+
+  // Hairline outline and 13px text via Material's own tokens: custom properties inherit into the field's internals,
+  // plain selectors do not.
+  --mdc-outlined-text-field-outline-color: rgba(0, 0, 0, 0.18);
+  --mdc-outlined-text-field-container-shape: 4px;
+  --mat-form-field-container-text-size: 13px;
+  --mat-form-field-container-text-line-height: 18px;
+
+  // `padding: 0` removes Material's 12px prefix-icon padding, which stacks with the wrapper's spacing and detaches the icon.
+  mat-icon[matPrefix] {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    padding: 0;
+    margin: 0 6px 0 10px;
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  // `input[matInput]`, not a bare `input`, to beat Material's `.mat-mdc-input-element`. An explicit height, not `100%`:
+  // the infix's 36px is a used value from `min-height`, so a percentage falls back to auto. 24px is 36px less the
+  // infix's 6px padding above and below.
+  input[matInput] {
+    height: 24px;
+    line-height: normal;
+    box-sizing: border-box;
+  }
+
+  // Material's 48px touch target would make the clear button the tallest flex item and top-align the text; shrinking
+  // it lets the text area set the height.
+  button[matSuffix] {
+    --mdc-icon-button-state-layer-size: 28px;
+
+    width: 28px;
+    height: 28px;
+    padding: 0;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      line-height: 16px;
+    }
+  }
+}

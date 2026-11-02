@@ -1,16 +1,13 @@
+// Laid over the value's end rather than taking room beside it: taking room re-wraps the value, which can move it out
+// from under the pointer, hide the bubble and bring it back, over and over. The buttons' look is in
+// `property-value-actions.scss`.
 :host {
   display: block;
+  padding-top: calc(var(--property-value-padding-block, 16px) - 4px);
   position: absolute;
   top: 0;
   right: 0;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.action-bubble {
-  position: absolute;
-  right: 16px;
-  top: 8px;
+  border-radius: 4px;
+  // Opaque, over the text it covers: the hovered line's tint on a white page. A host on another background sets its own.
+  background: var(--property-value-actions-background, #f3f6f8);
 }

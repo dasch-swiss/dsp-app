@@ -18,7 +18,7 @@ import {
   makeTextValue,
   resourceFetcherServiceStub,
 } from '../../resource-stories.helper';
-import { STORY_IIIF_BASE_URL, STORY_IMAGE_URL } from '../../stories.helpers';
+import { STORY_IIIF_BASE_URL, STORY_IMAGE_URL, storyGetIiifImageInfo } from '../../stories.helpers';
 import { OpenSeaDragonService } from '../still-image/open-sea-dragon.service';
 import { OsdDrawerService } from '../still-image/osd-drawer.service';
 import { ResourceAnnotationComponent } from './resource-annotation.component';
@@ -135,6 +135,7 @@ const meta: Meta<ResourceAnnotationComponent> = {
           useValue: {
             downloadProjectFile: () => {},
             getFileInfo: () => of({ originalFilename: 'image.jp2' }),
+            getIiifImageInfo: storyGetIiifImageInfo,
             getIngestOriginalUrl: () => of(''),
           },
         },

@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { HumanReadableErrorPipe } from './human-readable-error.pipe';
@@ -8,7 +8,7 @@ import { HumanReadableErrorPipe } from './human-readable-error.pipe';
 @Component({
   selector: 'app-common-input',
   template: `
-    <mat-form-field style="width: 100%" [subscriptSizing]="showsError ? 'dynamic' : 'fixed'">
+    <mat-form-field style="width: 100%" [subscriptSizing]="subscriptSizing">
       @if (withLabel) {
         <mat-label data-cy="common-input-label">{{ label }}</mat-label>
       }
@@ -39,6 +39,8 @@ export class CommonInputComponent {
   @Input() validatorErrors: { errorKey: string; message: string }[] | null = null;
   @Input() type: 'number' | 'text' = 'text';
 
+  private readonly _formFieldDefaults = inject(MAT_FORM_FIELD_DEFAULT_OPTIONS, { optional: true });
+
   /**
    * Whether the form field is currently displaying its error message, which decides how the
    * subscript below the field is sized (DEV-7450).
@@ -57,5 +59,17 @@ export class CommonInputComponent {
    */
   get showsError(): boolean {
     return this.control.invalid && this.control.touched;
+  }
+
+  /**
+   * `dynamic` throughout where the surrounding context asks for it through Material's own default
+   * options — the resource editor's compact value editors (DEV-7611), which space their values
+   * themselves. Everywhere else, sized per state as described on `showsError`.
+   */
+  get subscriptSizing(): 'fixed' | 'dynamic' {
+    if (this._formFieldDefaults?.subscriptSizing === 'dynamic') {
+      return 'dynamic';
+    }
+    return this.showsError ? 'dynamic' : 'fixed';
   }
 }

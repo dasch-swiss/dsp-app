@@ -62,6 +62,7 @@ interface ResourceGroup {
         [attr.aria-label]="'resourceEditor.templateSwitcher.linkValue.label' | translate"
         [placeholder]="'resourceEditor.templateSwitcher.linkValue.placeholder' | translate"
         data-cy="link-input"
+        (focus)="hasBeenFocused = true"
         (input)="onInputValueChange()"
         [matAutocomplete]="auto" />
       <mat-autocomplete
@@ -99,7 +100,11 @@ interface ResourceGroup {
           </mat-option>
         }
       </mat-autocomplete>
-      <mat-hint>{{ 'resourceEditor.resourceProperties.valueComponents.searchHelp' | translate }}</mat-hint>
+      @if (showsSearchHelp) {
+        <mat-hint data-cy="link-search-help">{{
+          'resourceEditor.resourceProperties.valueComponents.searchHelp' | translate
+        }}</mat-hint>
+      }
       @if (control.errors; as errors) {
         <mat-error>{{ errors | humanReadableError }}</mat-error>
       }
@@ -115,6 +120,8 @@ interface ResourceGroup {
   `,
 })
 export class LinkValueComponent implements OnInit {
+  private static readonly MIN_SEARCH_LENGTH = 3;
+
   private cancelPreviousSearchRequest$ = new Subject<void>();
 
   @Input({ required: true }) control!: FormControl<string | null>;
@@ -127,6 +134,7 @@ export class LinkValueComponent implements OnInit {
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
 
   loading = false;
+  hasBeenFocused = false;
   useDefaultValue = true;
   hasSearched = false;
   groupedResources: ResourceGroup[] = [];
@@ -140,6 +148,17 @@ export class LinkValueComponent implements OnInit {
     public linkValueDataService: LinkValueDataService,
     private _viewContainerRef: ViewContainerRef
   ) {}
+
+  /**
+   * The "type 3 letters" help from the first focus on, until enough is typed to search or a resource
+   * is chosen (whose label may well be shorter). It does not go away on blur: that would move
+   * whatever is below the field while it is being clicked.
+   */
+  get showsSearchHelp(): boolean {
+    const text = this.input?.nativeElement.value ?? '';
+    const showsChosenResource = text !== '' && text === this.displayResource(this.control.value);
+    return this.hasBeenFocused && !showsChosenResource && text.length < LinkValueComponent.MIN_SEARCH_LENGTH;
+  }
 
   ngOnInit() {
     this._getResourceProperties();
@@ -158,7 +177,7 @@ export class LinkValueComponent implements OnInit {
   onInputValueChange() {
     this.groupedResources = [];
     const searchTerm = this.input.nativeElement.value;
-    if (!this.readResource || searchTerm?.length < 3) {
+    if (!this.readResource || searchTerm?.length < LinkValueComponent.MIN_SEARCH_LENGTH) {
       return;
     }
 

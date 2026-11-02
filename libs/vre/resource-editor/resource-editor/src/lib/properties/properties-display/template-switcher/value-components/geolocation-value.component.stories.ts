@@ -1,9 +1,10 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, componentWrapperDecorator, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent } from 'storybook/test';
 
+import { provideCompactFormFieldOptions } from '../compact-form-field-options';
 import { CRS_84, CRS_LV95, GeolocationFormValue } from './geolocation-crs';
 import { GeolocationValueComponent } from './geolocation-value.component';
 
@@ -18,7 +19,11 @@ const meta: Meta<GeolocationValueComponent> = {
   title:
     'Resource Editor / 4. Properties / Resource Default Tabs / Properties Display / Template Switcher / Geolocation Value',
   component: GeolocationValueComponent,
-  decorators: [applicationConfig({ providers: [importProvidersFrom(OverlayModule)] })],
+  // Compact, as the template editor switcher and the value editor render it in the app (DEV-7611).
+  decorators: [
+    applicationConfig({ providers: [importProvidersFrom(OverlayModule), provideCompactFormFieldOptions()] }),
+    componentWrapperDecorator(story => `<div class="compact-value-editor">${story}</div>`),
+  ],
   argTypes: {
     control: {
       description:

@@ -1,0 +1,281 @@
+import { importProvidersFrom } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
+import { StringLiteralV2 } from '@dasch-swiss/dsp-js';
+import { UserService } from '@dasch-swiss/vre/core/session';
+import { TranslateLoader, TranslateModule, TranslationObject } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
+import { IriLabelPair } from './model';
+import { SearchFilterState } from './search-filter-state';
+import { ConfirmedSearchStateService } from './service/confirmed-search-state.service';
+import { ListNodeLabelResolver } from './service/list-node-label.resolver';
+import { OntologyDataService } from './service/ontology-data.service';
+import { SearchFlowLogger } from './service/search-flow-logger.service';
+import { StatementDraftStore } from './service/statement-draft.store';
+import { toLabels } from './util/labels';
+
+/**
+ * A quiet search state (no filters, no term, nothing active) covering the `SearchFilterState` port. Every stream
+ * must emit at least once: the bar and the derivation subscribe on construction.
+ */
+export const EMPTY_SEARCH_STATE = {
+  params$: of({}),
+  readParams: () => ({}),
+  writeState: () => {},
+  clearAll: () => {},
+  encodeFilters: () => '',
+  decodeFilters: () => [],
+  filters$: of([]),
+  fulltextTerm$: of(''),
+  ontologyIri$: of(undefined),
+  resourceClassIri$: of(undefined),
+  hasActiveState$: of(false),
+  setFulltextTerm: () => {},
+  setFilters: () => {},
+  reset: () => {},
+};
+
+const searchFilterStateStub = {
+  provide: SearchFilterState,
+  useValue: EMPTY_SEARCH_STATE as unknown as SearchFilterState,
+};
+
+const searchFlowLoggerStub = {
+  provide: SearchFlowLogger,
+  useValue: {
+    urlRead: () => {},
+    urlWrite: () => {},
+    urlClear: () => {},
+    fulltextChanged: () => {},
+    filterConfirmed: () => {},
+    filterRemoved: () => {},
+    searchStart: () => {},
+    searchSuccess: () => {},
+    searchError: () => {},
+  } as Partial<SearchFlowLogger>,
+};
+
+// Static English translations mirroring en.json `pages.search.advancedSearch`; keep in sync with it.
+const STORY_TRANSLATIONS = {
+  ui: {
+    common: {
+      actions: {
+        retry: 'Retry',
+        next: 'Next',
+      },
+    },
+    pager: {
+      firstPage: 'First page',
+      previousPage: 'Previous page',
+      lastPage: 'Last page',
+    },
+    datePicker: {
+      clickToSelect: 'Click to select a date',
+      calendar: 'Calendar',
+      today: 'Today',
+      month: 'Month',
+      none: 'None',
+      year: 'Year',
+      era: 'Era',
+      noDay: 'Month precision (no day)',
+      yearPrecisionShortcut: 'Year precision',
+      suggestedMonth:
+        'Showing the current month as a suggestion. Nothing is entered until you pick a day or choose a month.',
+      yearPrecision: 'Year precision. Choose a month to select a day.',
+      done: 'Done',
+    },
+    calendarMarker: {
+      calendars: { GREGORIAN: 'Gregorian', JULIAN: 'Julian', ISLAMIC: 'Islamic (tabular)' },
+    },
+    weekdays: {
+      monday: { short: 'M' },
+      tuesday: { short: 'T' },
+      wednesday: { short: 'W' },
+      thursday: { short: 'T' },
+      friday: { short: 'F' },
+      saturday: { short: 'S' },
+      sunday: { short: 'S' },
+    },
+  },
+  pages: {
+    search: {
+      searchFailed: {
+        title: 'Search failed',
+        message: 'Something went wrong and the search could not be completed. Please try again.',
+      },
+      termValidation: {
+        tooShort: 'Enter at least 3 characters',
+        unclosedPhrase: 'Close the quotation mark to search for a phrase',
+        trailingEscape: 'A backslash needs a character after it',
+        danglingOperator: 'AND, OR and NOT need a search term next to them',
+      },
+      advancedSearch: {
+        allResourceClasses: 'All resources',
+        dataModel: 'Data model',
+        orderBy: 'Sort by',
+        property: 'Property',
+        propertyOfClass: 'Property of {{class}}',
+        resourceClass: 'Resource Class',
+        fulltextSearch: 'Full-text search',
+        fulltextSearchPlaceholder: 'Search…',
+        reset: 'Reset',
+        clearSearch: 'Clear search',
+        addFilter: 'Add filter',
+        add: 'Add',
+        operator: 'Operator',
+        noResultsFound:
+          "We couldn't find any resources matching your search criteria. Try adjusting your search parameters.",
+        resultsTitle: 'Advanced search results',
+        searchForResource: 'Search for a resource',
+        noResourcesFound: 'No resources found for "{{term}}"',
+        typeToSearch: 'Type at least 3 characters to search',
+        loadingResources: 'Loading resources...',
+        showingResults: 'Showing {{count}} results of {{total}}',
+        valueLabels: {
+          label: "Label's value",
+          text: 'Text Value',
+          boolean: 'Value',
+          uri: 'URI Value',
+          integer: 'Integer Value',
+          decimal: 'Decimal Value',
+          true: 'True',
+          false: 'False',
+        },
+        errors: {
+          uri: 'Value must be a URI value.',
+          integer: 'Value must be an integer value.',
+          decimal: 'Value must be a decimal value.',
+          invalidRegex: 'Not a valid regular expression. Use .* to match any characters, e.g. .*word.*',
+        },
+        tooltips: {
+          addCriteria: 'Add search criteria',
+          addSubCriteria: 'Add sub-criteria',
+          clearResourceClass: 'Clear resource class',
+          orderByDisabled: 'Search cannot be ordered by a URI property or a property that links to a resource.',
+          removeCriteria: 'Remove search criteria',
+          removeFilter: 'Remove filter',
+          removeSubcriteria: 'Remove sub-criteria',
+          sortAscending: 'Sorted ascending — click for descending',
+          sortDescending: 'Sorted descending — click for ascending',
+        },
+      },
+    },
+    dataBrowser: {
+      dataClassHeader: {
+        searchLabel: 'Search',
+        searchPlaceholder: 'Search',
+      },
+      sortHeader: {
+        sortBy: 'Sort by',
+        chooseProperty: 'Choose a property to sort by',
+        sortAscending: 'Sort ascending',
+        sortDescending: 'Sort descending',
+      },
+      resourcesListFetcher: {
+        noResourcesFound: 'No resources found',
+        noResourcesMatchFilters: 'No resources match these filters.',
+      },
+      resourcesList: {
+        countUnavailable: 'Result count unavailable',
+      },
+      resultMeta: {
+        range: '{{start}} – {{end}} of {{total}}',
+        ofPages: 'of {{total}}',
+        pageNumber: 'Page number',
+        pageNumberHint: 'Type a page number and press Enter.',
+      },
+    },
+  },
+};
+
+class StoryTranslateLoader implements TranslateLoader {
+  getTranslation(): Observable<TranslationObject> {
+    return of(STORY_TRANSLATIONS);
+  }
+}
+
+export const STORY_PROVIDERS = [
+  provideAnimations(),
+  provideRouter([{ path: '**', redirectTo: '' }]),
+  importProvidersFrom(
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: { provide: TranslateLoader, useClass: StoryTranslateLoader },
+    })
+  ),
+  { provide: UserService, useValue: { currentUser: null } as Partial<UserService> },
+  searchFilterStateStub,
+  searchFlowLoggerStub,
+];
+
+/** Use these AFTER provideSearchFilters() to override the real services with story-safe stubs. */
+export const SEARCH_FILTER_SERVICE_STUBS = [searchFilterStateStub, searchFlowLoggerStub];
+
+export const SAMPLE_ONTOLOGIES: IriLabelPair[] = [
+  { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2', labels: toLabels('Test Ontology'), comments: [] },
+  { iri: 'http://0.0.0.0:3333/ontology/0001/images/v2', labels: toLabels('Images Ontology'), comments: [] },
+];
+
+export const SAMPLE_RESOURCE_CLASSES: IriLabelPair[] = [
+  { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2#Book', labels: toLabels('Book'), comments: [] },
+  { iri: 'http://0.0.0.0:3333/ontology/0001/test/v2#Person', labels: toLabels('Person'), comments: [] },
+];
+
+export const makeOntologyDataServiceStub = (
+  partial: Partial<OntologyDataService> = {}
+): Partial<OntologyDataService> => ({
+  ontologies$: of(SAMPLE_ONTOLOGIES),
+  selectedOntology$: of({ id: SAMPLE_ONTOLOGIES[0].iri, label: SAMPLE_ONTOLOGIES[0].labels[0].value } as any),
+  ontologyLoading$: of(false),
+  resourceClasses$: of(SAMPLE_RESOURCE_CLASSES),
+  selectedOntology: SAMPLE_ONTOLOGIES[0],
+  classIris: [],
+  init: () => {},
+  setOntology: () => {},
+  getProperties$: () => of([]),
+  getResourceClassObjectsForProperty$: () => of(SAMPLE_RESOURCE_CLASSES),
+  getSubclassesOfResourceClass$: () => of([]),
+  ...partial,
+});
+
+/** Build a `ListNodeLabelResolver` stub whose `getLabels` returns the given static `nodeIri → labels[]` map. */
+export const makeListNodeLabelResolverStub = (
+  labelsByNodeIri: Record<string, StringLiteralV2[]> = {}
+): Partial<ListNodeLabelResolver> => ({
+  getLabels: (_rootIri: string, nodeIri: string) => labelsByNodeIri[nodeIri],
+  changes$: of(undefined),
+});
+
+/** The draft store plus a quiet confirmed state; the store must see one emission to produce its initial blank row. */
+export const PROPERTY_FORM_MANAGER_STORY_PROVIDERS = [
+  {
+    provide: ConfirmedSearchStateService,
+    useValue: {
+      confirmedState$: of({ resourceClass: null, statements: [] }),
+    } as Partial<ConfirmedSearchStateService>,
+  },
+  StatementDraftStore,
+];
+
+/** Default chip-label story providers; a story can override a service by providing it after this spread. */
+export const CHIP_LABEL_STORY_PROVIDERS = [
+  ...PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
+  { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
+  { provide: ListNodeLabelResolver, useValue: makeListNodeLabelResolverStub() },
+];
+
+export const makeDspApiConnectionStub = (partial: Record<string, unknown> = {}) => ({
+  v2: {
+    onto: {
+      getOntologiesByProjectIri: () => of({ ontologies: [] }),
+      getOntology: () => of({ id: SAMPLE_ONTOLOGIES[0].iri, label: SAMPLE_ONTOLOGIES[0].labels[0].value }),
+    },
+    search: {
+      doFulltextSearch: () => of({ resources: [] }),
+      doFulltextSearchCountQuery: () => of({ numberOfResults: 0 }),
+      doExtendedSearch: () => of({ resources: [] }),
+      doExtendedSearchCountQuery: () => of({ numberOfResults: 0 }),
+    },
+    ...partial,
+  },
+});

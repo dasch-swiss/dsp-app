@@ -54,7 +54,7 @@ export default meta;
 type Story = StoryObj<PropertyValueAddComponent>;
 
 export const DefaultView: Story = {
-  name: 'Shows add form with save and undo buttons',
+  name: 'Shows add form with save and cancel buttons',
   play: async ({ canvasElement, step }) => {
     await step('Save button is rendered', async () => {
       const saveButton = canvasElement.querySelector('[data-cy="save-button"]');

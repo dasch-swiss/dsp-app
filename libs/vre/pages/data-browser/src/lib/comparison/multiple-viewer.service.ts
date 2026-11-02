@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
+/** Selection is compared by `ReadResource.id`, never by object identity: a re-query builds fresh instances. */
 @Injectable()
 export class MultipleViewerService {
   private _selectedResourcesSubject = new BehaviorSubject<ReadResource[]>([]);
@@ -11,36 +12,33 @@ export class MultipleViewerService {
 
   searchKeyword?: string;
 
+  private _resourceChangedSubject = new Subject<string>();
+
+  /** The IRI of a resource changed outside the viewer showing it; the viewer re-reads it from dsp-api rather than trusting a handed-over resource. */
+  resourceChanged$ = this._resourceChangedSubject.asObservable();
+
+  notifyResourceChanged(resourceIri: string) {
+    this._resourceChangedSubject.next(resourceIri);
+  }
+
+  /** Every emission is a new array, never the previous one mutated: reference comparisons (`signal.set`, `distinctUntilChanged`) must see the change. */
   addResources(resources: ReadResource[]) {
     const currentResources = this._selectedResourcesSubject.getValue();
-    if (!this.selectMode && currentResources.length === 1) {
-      currentResources.length = 0; // Clear the previous single selection if switching to multi-mode
-    }
+    // Ticking a checkbox replaces a lone click-selection rather than adding to it.
+    const base = !this.selectMode && currentResources.length === 1 ? [] : currentResources;
+    const added = resources.filter(resource => !base.some(selected => selected.id === resource.id));
 
-    resources.forEach(resource => {
-      if (!currentResources.includes(resource)) {
-        currentResources.push(resource);
-      }
-    });
-    this._selectedResourcesSubject.next(currentResources);
-
+    this._selectedResourcesSubject.next([...base, ...added]);
     this.selectMode = true;
   }
 
   removeResources(resources: ReadResource[]) {
-    const currentResources = this._selectedResourcesSubject.getValue();
+    const remaining = this._selectedResourcesSubject
+      .getValue()
+      .filter(selected => !resources.some(resource => resource.id === selected.id));
 
-    resources.forEach(resource => {
-      const index = currentResources.indexOf(resource);
-      if (index < 0) {
-        return;
-      }
-
-      currentResources.splice(index, 1);
-    });
-
-    this._selectedResourcesSubject.next(currentResources);
-    this.selectMode = currentResources.length > 0;
+    this._selectedResourcesSubject.next(remaining);
+    this.selectMode = remaining.length > 0;
   }
 
   selectOneResource(resource: ReadResource) {

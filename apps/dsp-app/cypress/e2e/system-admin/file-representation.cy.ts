@@ -68,7 +68,12 @@ describe('File representation', () => {
         cy.get('[data-cy=external-iiif-input]').clear().type(encodedValidIifImageUrl);
         cy.wait('@fetchPreviewImage');
 
-        cy.get('img[alt="IIIF Preview"]').should('have.attr', 'src', encodedValidIifImageUrl).and('be.visible');
+        // Scrolled to first: the failed submit scrolled to the input, and the preview appears above
+        // it, under the fixed toolbar, in the compact create form (DEV-7611).
+        cy.get('img[alt="IIIF Preview"]')
+          .scrollIntoView()
+          .should('have.attr', 'src', encodedValidIifImageUrl)
+          .and('be.visible');
       });
     });
   });
