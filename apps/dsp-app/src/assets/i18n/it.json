@@ -693,7 +693,9 @@
         "hideAllShort": "Nascondi tutte",
         "rowHeight": "Altezza delle righe",
         "rowHeightAuto": "Automatica",
-        "rowHeightManual": "Manuale"
+        "rowHeightManual": "Manuale",
+        "comments": "Commenti",
+        "showComments": "Mostra i commenti"
       },
       "tour": {
         "new": "Novità",

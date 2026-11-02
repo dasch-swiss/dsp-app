@@ -65,6 +65,10 @@
 }
 
 .count-badge {
+  // Inline, the pill sits on the text's baseline and rides below the label; as a block aligned to the
+  // text's top it is centred on the same line box.
+  display: inline-block;
+  vertical-align: text-top;
   margin-left: 6px;
   padding: 0 7px;
   border-radius: 10px;

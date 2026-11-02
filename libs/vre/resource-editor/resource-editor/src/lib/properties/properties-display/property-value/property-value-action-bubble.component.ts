@@ -4,7 +4,7 @@ import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip, MatTooltipDefaultOptions } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { EMPTY, map, Observable, of } from 'rxjs';
@@ -83,6 +83,20 @@ import { VALUE_ACTIONS_OPTIONS, ValueActionsOptions } from './value-actions-opti
   `,
   styleUrls: ['./property-value-actions.scss', './property-value-action-bubble.component.scss'],
   host: { '[class.is-empty]': 'isEmpty' },
+  // The bubble shows only while the pointer is over its value. An interactive tooltip, opening under the
+  // pointer, takes the hover away from the value, which hides the bubble and its tooltip, and the pointer is
+  // back over the value: the actions blink on and off.
+  providers: [
+    {
+      provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
+      useValue: {
+        showDelay: 0,
+        hideDelay: 0,
+        touchendHideDelay: 1500,
+        disableTooltipInteractivity: true,
+      } satisfies MatTooltipDefaultOptions,
+    },
+  ],
 })
 export class PropertyValueActionBubbleComponent implements OnInit {
   @Input({ required: true }) date!: string;

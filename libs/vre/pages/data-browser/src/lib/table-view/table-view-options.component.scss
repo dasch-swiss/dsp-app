@@ -71,6 +71,19 @@
   }
 }
 
+.comments-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 16px 8px;
+}
+
+.comments-label {
+  font: 400 14px/20px var(--font-sans, inherit);
+  cursor: pointer;
+}
+
 .section-action {
   --mat-button-text-container-height: 24px;
   --mat-button-text-horizontal-padding: 6px;

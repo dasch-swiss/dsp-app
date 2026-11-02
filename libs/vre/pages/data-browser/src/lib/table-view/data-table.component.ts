@@ -1,12 +1,16 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
+  afterNextRender,
   afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  effect,
   ElementRef,
   inject,
+  Injector,
   input,
   linkedSignal,
   output,
@@ -87,7 +91,6 @@ const FILLER_COLUMN_KEY = '__filler';
       <table
         mat-table
         [dataSource]="rows()"
-        [fixedLayout]="true"
         [trackBy]="trackRow"
         role="grid"
         [attr.aria-label]="'pages.dataBrowser.table.label' | translate"
@@ -401,6 +404,8 @@ export class DataTableComponent {
   readonly selectable = input(true);
   /** Whether the user may edit this project's data. Only then are read-only columns marked. */
   readonly canEdit = input(false);
+  /** Whether value comments are shown under their values. Undefined leaves the stored setting alone. */
+  readonly showComments = input<boolean | undefined>(undefined);
 
   /**
    * A row's checkbox, as a change rather than "add" and "remove" outputs.
@@ -449,11 +454,32 @@ export class DataTableComponent {
   );
 
   constructor() {
+    // The cells' comment components read the table-wide service, not an input.
+    const propertiesDisplay = inject(PropertiesDisplayService);
+    effect(() => {
+      const show = this.showComments();
+      if (show !== undefined) {
+        propertiesDisplay.setShowComments(show);
+      }
+    });
+    // Dragging a frozen column's edge writes its width straight to the header and only reports it on release:
+    // until then the frozen columns after it keep their offsets and the shadow stays at the old edge.
+    const injector = inject(Injector);
+    const frozenHeaders = new ResizeObserver(() => {
+      this._table()?.updateStickyColumnStyles();
+      // MatTable moves the frozen columns in the next render's write phase; the edge is read after it.
+      afterNextRender({ read: () => this.measureScroll() }, { injector });
+    });
+    inject(DestroyRef).onDestroy(() => frozenHeaders.disconnect());
     // Pinning, hiding or resizing a column moves the frozen edge without a scroll event.
     afterRenderEffect({
       read: () => {
         this.renderColumns();
         this.measureScroll();
+        frozenHeaders.disconnect();
+        this._scroller()
+          .nativeElement.querySelectorAll('thead th.is-frozen')
+          .forEach(th => frozenHeaders.observe(th));
       },
     });
     // MatTable does not recompute the sticky offsets after a column is widened for its editor.
@@ -663,6 +689,13 @@ export class DataTableComponent {
   }
 
   protected onColumnDropped(event: CdkDragDrop<unknown>): void {
+    // CDK hides the dragged header with inline `position`, `top` and `left`, and clears all three when it
+    // puts the header back, taking MatTable's sticky offsets with them. A reorder re-renders the header
+    // row and restores them; a drop back in place, or on a refused slot, would leave the header scrolling
+    // away with the body.
+    this._table()?.updateStickyHeaderRowStyles();
+    this._table()?.updateStickyColumnStyles();
+
     if (event.previousIndex === event.currentIndex) {
       return;
     }
@@ -718,7 +751,7 @@ export class DataTableComponent {
   protected onColumnResized(key: string, width: number): void {
     this.columnResized.emit({ key, width });
 
-    // Under `fixedLayout` MatTable only invalidates its cached sticky offsets when the set of columns changes.
+    // A column's width changing is not a change MatTable watches for; the frozen columns after it move here.
     this._table()?.updateStickyColumnStyles();
   }
 

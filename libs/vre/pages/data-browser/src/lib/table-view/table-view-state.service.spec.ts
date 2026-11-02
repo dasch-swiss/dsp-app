@@ -129,6 +129,27 @@ describe('TableViewStateService', () => {
     });
   });
 
+  describe('comments', () => {
+    it('StartsHiddenWhenNothingIsStored', () => {
+      expect(service.showComments()).toBe(false);
+    });
+
+    it('SharesTheResourceViewsStoredSetting', () => {
+      service.setShowComments(true);
+
+      expect(service.showComments()).toBe(true);
+      expect(localStorage.getItem('SHOW_ALL_COMMENTS')).toBe('true');
+    });
+
+    it('TakesUpWhatTheResourceViewStoredWhenATableOpensAgain', () => {
+      localStorage.setItem('SHOW_ALL_COMMENTS', 'true');
+
+      service.init(CLASS_IRI, COLUMNS);
+
+      expect(service.showComments()).toBe(true);
+    });
+  });
+
   describe('pinning', () => {
     it('MovesAPinnedColumnRightAfterTheLabel', () => {
       service.togglePinned('p2');
