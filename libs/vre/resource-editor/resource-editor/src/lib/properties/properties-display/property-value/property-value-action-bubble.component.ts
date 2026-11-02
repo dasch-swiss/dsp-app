@@ -85,7 +85,7 @@ import { VALUE_ACTIONS_OPTIONS, ValueActionsOptions } from './value-actions-opti
   host: { '[class.is-empty]': 'isEmpty' },
   // The bubble shows only while the pointer is over its value. An interactive tooltip, opening under the
   // pointer, takes the hover away from the value, which hides the bubble and its tooltip, and the pointer is
-  // back over the value: the actions blink on and off (DEV-7670).
+  // back over the value: the actions blink on and off.
   providers: [
     {
       provide: MAT_TOOLTIP_DEFAULT_OPTIONS,

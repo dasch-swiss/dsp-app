@@ -37,6 +37,8 @@ export class TableViewStateService {
   readonly showComments = toSignal(this._commentsDisplay.showComments$, { requireSync: true });
 
   init(classIri: string, columns: TableColumn[]): void {
+    // This service outlives the table; the resource view may have changed the setting in between.
+    this._commentsDisplay.reloadShowComments();
     this._classIri = classIri;
     this.columns.set(columns);
     this.layout.set(this._layoutStore.load(classIri, columns));

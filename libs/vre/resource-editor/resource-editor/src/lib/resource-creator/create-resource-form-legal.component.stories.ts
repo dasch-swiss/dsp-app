@@ -63,8 +63,8 @@ export const DefaultView: Story = {
 };
 
 /**
- * In the create form the fields are compact and reserve no error line: the rows touched, and the
- * Authorship field sat 9px below its label (DEV-7669).
+ * In the create form the fields are compact and reserve no error line, so the rows need their own gap, and the
+ * Authorship field must start level with its label.
  */
 export const SpacesTheRowsAndLevelsEachFieldWithItsLabelInTheCompactForm: Story = {
   args: {

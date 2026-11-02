@@ -30,6 +30,14 @@ export class PropertiesDisplayService {
     this.setShowComments(!this._showComments.value);
   }
 
+  /** Take up the stored setting, which another instance (another view) may have changed since this one read it. */
+  reloadShowComments() {
+    const stored = localStorage.getItem(this._SHOW_ALL_COMMENTS_KEY) === 'true';
+    if (stored !== this._showComments.value) {
+      this._showComments.next(stored);
+    }
+  }
+
   setShowComments(show: boolean) {
     if (show === this._showComments.value) {
       return;

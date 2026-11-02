@@ -159,7 +159,7 @@ export const LongTitles: Story = {
       await expect(Math.round(list.getBoundingClientRect().width)).toBe(expectedResultListWidth(window.innerWidth));
     });
 
-    await step('The Download all count is centred on the button label (DEV-7667)', async () => {
+    await step('The Download all count is centred on the button label', async () => {
       const badge = await waitFor(() => {
         const element = canvasElement.querySelector<HTMLElement>('[data-cy="download-count"]');
         expect(element).not.toBeNull();

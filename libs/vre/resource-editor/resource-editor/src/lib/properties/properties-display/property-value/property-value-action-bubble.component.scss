@@ -1,5 +1,5 @@
 // Laid over the value's end rather than taking room beside it: taking room re-wraps the value, which can move it out
-// from under the pointer, hide the bubble and bring it back, over and over (DEV-7670). The buttons' look is in
+// from under the pointer, hide the bubble and bring it back, over and over. The buttons' look is in
 // `property-value-actions.scss`.
 :host {
   display: block;

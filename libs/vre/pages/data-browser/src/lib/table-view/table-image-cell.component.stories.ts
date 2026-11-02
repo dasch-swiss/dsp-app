@@ -42,7 +42,7 @@ const meta: Meta<TableImageCellComponent> = {
 export default meta;
 type Story = StoryObj<TableImageCellComponent>;
 
-/** The thumbnail stands in until the larger rendition arrives; it used to open at its own size and jump (DEV-7674). */
+/** The thumbnail stands in until the larger rendition arrives, at the size the larger one will take. */
 export const DrawsThePreviewAtItsFinalSizeBeforeTheLargerImageArrives: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: /BRAUT001a/ }));

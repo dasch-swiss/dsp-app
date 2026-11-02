@@ -38,7 +38,7 @@ table {
   // the filler column, the only one without a width, or real columns render wider than stored.
   width: max-content;
   // Set here rather than with MatTable's `fixedLayout`, which also makes it cache the column widths its
-  // sticky offsets are computed from: after a resize, the columns frozen after the resized one stayed put.
+  // sticky offsets are computed from: a resize would leave the frozen columns after it at their old offsets.
   table-layout: fixed;
 }
 
@@ -205,9 +205,8 @@ table {
   background: #d6e0e8;
 }
 
-// Inside its own cell: the header cell clips its overflow, so a handle straddling the edge left only half
-// a grab area, and a grab just past it landed on the next header and dragged that column instead of
-// resizing this one (DEV-7666).
+// Inside its own cell: the header cell clips its overflow, so a handle straddling the edge loses half its grab
+// area, and a grab just past it lands on the next header and drags that column instead.
 .column-resize-handle {
   position: absolute;
   top: 0;

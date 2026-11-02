@@ -132,8 +132,8 @@ export const DefaultView: Story = {
 };
 
 /**
- * A table column is narrower than the path and its value display breaks words anywhere: the path used to
- * squeeze every node down to a letter per line and clip its arrows (DEV-7672).
+ * A table column is narrower than the path and its value display breaks words anywhere: the path must wrap
+ * between nodes, not squeeze each down to a letter per line or clip its arrows.
  */
 export const WrapsTheListPathBetweenNodesInANarrowColumn: Story = {
   args: {

@@ -692,7 +692,7 @@ export class DataTableComponent {
     // CDK hides the dragged header with inline `position`, `top` and `left`, and clears all three when it
     // puts the header back, taking MatTable's sticky offsets with them. A reorder re-renders the header
     // row and restores them; a drop back in place, or on a refused slot, would leave the header scrolling
-    // away with the body (DEV-7665).
+    // away with the body.
     this._table()?.updateStickyHeaderRowStyles();
     this._table()?.updateStickyColumnStyles();
 

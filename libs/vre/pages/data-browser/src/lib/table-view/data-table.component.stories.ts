@@ -341,7 +341,7 @@ export const HidesValueCommentsWhenViewOptionsTurnThemOff: Story = {
   },
 };
 
-/** The table's denser value padding left the comment's pointer drawn over the value above it (DEV-7671). */
+/** The table's denser value padding leaves less room than the comment's pointer needs above the bubble. */
 export const KeepsTheCommentPointerClearOfTheValue: Story = {
   args: { resources: commentedRows(), showComments: true },
   play: async ({ canvasElement }) => {
@@ -429,7 +429,6 @@ export const HidesRowCheckboxesForAnonymousVisitors: Story = {
   },
 };
 
-/** The open arrow sat a few pixels above the label it opens (DEV-7668). */
 export const CentresTheOpenArrowOnTheLabelsFirstLine: Story = {
   play: async ({ canvasElement }) => {
     const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
@@ -748,7 +747,7 @@ export const ShowsTheViewersActionBubbleWhenAValueIsHovered: Story = {
   },
 };
 
-/** A bubble that took room re-wrapped a narrow value, moving it from under the pointer and back, over and over (DEV-7670). */
+/** A bubble that takes room re-wraps a narrow value, moving it from under the pointer and back, over and over. */
 export const KeepsAValueInPlaceWhileItsActionsShow: Story = {
   ...editingStory({}),
   play: async ({ canvasElement }) => {
@@ -1084,10 +1083,7 @@ export const ShadesTheFrozenEdgeOnceTheTableScrolls: Story = {
   },
 };
 
-/**
- * A resize writes its width straight to the header; MatTable cached the widths behind its sticky offsets, so the
- * pinned column and the shadow stayed at the label's old edge (DEV-7700).
- */
+/** A resize writes its width straight to the header, a change MatTable's sticky offsets do not watch for. */
 export const KeepsThePinnedColumnAndShadowOnTheLabelsEdgeWhenItIsResized: Story = {
   ...pinnedStory(),
   play: async ({ canvasElement }) => {
@@ -1423,7 +1419,7 @@ export const MovesAColumnByDraggingItsHeader: Story = {
   },
 };
 
-/** CDK clears the dragged header's inline `top` on release; with no reorder to re-render the row, it stopped sticking (DEV-7665). */
+/** CDK clears the dragged header's inline `top` on release, and with no reorder nothing re-renders the row. */
 export const KeepsAHeaderStuckWhenItIsDroppedBackInPlace: Story = {
   ...keyboardStory(),
   play: async ({ canvasElement }) => {
@@ -1450,7 +1446,7 @@ export const KeepsAHeaderStuckWhenItIsDroppedBackInPlace: Story = {
   },
 };
 
-/** Half of a handle that straddled the edge was clipped by its cell, so a grab there started the next column's drag (DEV-7666). */
+/** The header cell clips its overflow: a handle straddling the edge would leave a grab there to the next column's drag. */
 export const KeepsTheWholeResizeHandleInsideItsHeader: Story = {
   play: async ({ canvasElement }) => {
     const title = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
