@@ -19,14 +19,14 @@ export default meta;
 type Story = StoryObj<AssetRestrictedBadgeComponent>;
 
 export const DefaultView: Story = {
-  name: 'Marks the asset viewer as serving a reduced-quality file',
+  name: 'Marks the image viewer as serving a restricted view',
   play: async ({ canvasElement, step }) => {
     await step('Badge is rendered', async () => {
       await expect(canvasElement.querySelector('[data-cy="asset-restricted-badge"]')).not.toBeNull();
     });
     await step('Badge names the restriction without blaming the resource', async () => {
       const text = canvasElement.querySelector('[data-cy="asset-restricted-badge"]')?.textContent?.toLowerCase() ?? '';
-      await expect(text).toContain('quality');
+      await expect(text).toContain('restricted');
     });
   },
 };

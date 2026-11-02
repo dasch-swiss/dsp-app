@@ -633,8 +633,8 @@
     "representation": "Rappresentazione",
     "restricted": "Accesso limitato: alcuni valori di questa risorsa sono nascosti.",
     "restrictedAsset": {
-      "label": "Qualità ridotta",
-      "hint": "Il tuo accesso a questo file è limitato, pertanto potrebbe essere servito in qualità ridotta."
+      "label": "Visualizzazione limitata",
+      "hint": "Il tuo accesso a questa immagine è limitato, pertanto potrebbe essere mostrata in dimensioni ridotte o con una filigrana."
     },
     "versioned": "Questa è una versione obsoleta di questa risorsa.",
     "seeCurrentVersion": "Vai alla versione più recente",

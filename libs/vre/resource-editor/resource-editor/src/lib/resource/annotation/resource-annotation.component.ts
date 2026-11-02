@@ -9,7 +9,7 @@ import { ResourceRestrictionComponent } from '../../meta/resource-restriction.co
 import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
 import { ResourceDefaultTabsComponent } from '../../properties/resource-default-tabs.component';
 import { getFileValue } from '../../representation/get-file-value';
-import { isRestrictedFileValue } from '../../representation/is-restricted-file-value';
+import { isRestrictedImage } from '../../representation/is-restricted-image';
 import { RegionService } from '../../representation/region.service';
 import { RepresentationErrorMessageComponent } from '../../representation/representation-error-message.component';
 import { ResourceRepresentationContainerComponent } from '../../representation/resource-representation-container.component';
@@ -25,7 +25,7 @@ import { StillImageComponent } from '../still-image/still-image.component';
     <!-- Bound through @let so the single imageResource$ subscription feeds both the viewer and the
          restriction badge; a second async pipe would re-issue the resource request. -->
     @let imageResource = imageResource$ | async;
-    <app-resource-representation-container [restrictedView]="isRestrictedAsset(fileValueOf(imageResource))">
+    <app-resource-representation-container [restrictedView]="isRestrictedImage(fileValueOf(imageResource))">
       @if (missingImageLink) {
         <app-representation-error-message />
       } @else if (imageResource) {
@@ -52,10 +52,10 @@ export class ResourceAnnotationComponent implements OnInit {
   missingImageLink = false;
 
   /**
-   * Asset-level restriction: the annotation displays the *linked* image, so the badge follows that
+   * Image-level restriction: the annotation displays the *linked* image, so the badge follows that
    * image's file value — not the annotation's own permission (DEV-7392).
    */
-  protected readonly isRestrictedAsset = isRestrictedFileValue;
+  protected readonly isRestrictedImage = isRestrictedImage;
 
   protected fileValueOf(imageResource: ReadResource | null) {
     return imageResource ? getFileValue(imageResource) : null;

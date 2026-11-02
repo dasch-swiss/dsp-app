@@ -25,7 +25,7 @@ export const DefaultView: Story = {
 };
 
 export const SpeaksOnlyAboutTheResource: Story = {
-  name: 'Describes hidden values without claiming the asset is degraded',
+  name: 'Describes hidden values without claiming the image is restricted',
   play: async ({ canvasElement, step }) => {
     await step('Message mentions the resource values that are hidden', async () => {
       const text = canvasElement.textContent?.toLowerCase() ?? '';

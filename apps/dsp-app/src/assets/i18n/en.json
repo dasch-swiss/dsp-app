@@ -633,8 +633,8 @@
     "representation": "Representation",
     "restricted": "Restricted access: some values of this resource are hidden.",
     "restrictedAsset": {
-      "label": "Reduced quality",
-      "hint": "Your access to this file is restricted, so it may be served in reduced quality."
+      "label": "Restricted view",
+      "hint": "Your access to this image is restricted, so it may be shown in reduced size or with a watermark."
     },
     "versioned": "This is an outdated version of the resource.",
     "seeCurrentVersion": "Go to current version",

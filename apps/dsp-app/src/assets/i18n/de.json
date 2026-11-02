@@ -633,8 +633,8 @@
     "representation": "Repräsentation",
     "restricted": "Eingeschränkter Zugriff: Einige Werte dieser Ressource sind ausgeblendet.",
     "restrictedAsset": {
-      "label": "Reduzierte Qualität",
-      "hint": "Ihr Zugriff auf diese Datei ist eingeschränkt, sie wird daher möglicherweise in reduzierter Qualität ausgeliefert."
+      "label": "Eingeschränkte Ansicht",
+      "hint": "Ihr Zugriff auf dieses Bild ist eingeschränkt, es wird daher möglicherweise verkleinert oder mit Wasserzeichen angezeigt."
     },
     "versioned": "Dies ist eine ältere Version der Ressource.",
     "seeCurrentVersion": "Zur aktuellen Version",

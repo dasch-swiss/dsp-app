@@ -15,7 +15,7 @@ const meta: Meta<ResourceRepresentationContainerComponent> = {
     },
     restrictedView: {
       description:
-        'Whether the asset inside the container is served in reduced quality, i.e. the file value is RV. Overlays the asset-level restriction badge.',
+        'Whether the image inside the container is served in restricted view (reduced size or watermarked), i.e. its file value is RV. Overlays the image-level restriction badge.',
       table: { type: { summary: 'boolean' }, category: 'State' },
       control: { type: 'boolean' },
     },

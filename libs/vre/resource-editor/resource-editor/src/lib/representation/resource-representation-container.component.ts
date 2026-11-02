@@ -35,8 +35,8 @@ export class ResourceRepresentationContainerComponent {
   @Input() height: 'auto' | 'small' | 'big' = 'big';
 
   /**
-   * Whether the asset shown inside this container is served in restricted (degraded) quality,
-   * i.e. the *file value* — not the resource — is `RV`. See `isRestrictedFileValue` (DEV-7392).
+   * Whether the image shown inside this container is served in restricted view (reduced size or watermarked),
+   * i.e. its *file value* — not the resource — is `RV`. Only applies to images, see `isRestrictedImage` (DEV-7392).
    */
   @Input() restrictedView = false;
 
