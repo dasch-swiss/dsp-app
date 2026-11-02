@@ -21,4 +21,11 @@
   .ck-editor__editable_inline {
     min-height: 96px;
   }
+
+  // The density shrinks the chip to 24px but not its graphic (the selected checkmark, 28px), which then
+  // overflows the chip's button; that button clips only horizontally, so it scrolls vertically and shows a
+  // scrollbar. The checkmark itself is 20px and still fits.
+  .mat-mdc-standard-chip .mat-mdc-chip-graphic {
+    height: 100%;
+  }
 }
