@@ -176,14 +176,14 @@
       "enabled": false
     },
     {
-      "description": "@jscutlery/swc-angular: fully disabled — bridges frozen Angular with SWC; package is at v0.x so the major-disable rule is a no-op, and any update is a coordinated toolchain decision",
-      "matchPackageNames": ["@jscutlery/swc-angular"],
+      "description": "@jscutlery/swc-angular and @jscutlery/swc-angular-plugin: fully disabled, exact-pinned, and moved together with @swc/core. The plugin is a compiled WASM swc plugin, loaded via swcAngularJestTransformer in jest.preset.js on every unit-test run, and works only with the @swc/core minor it was built for. It is a peer of swc-angular, so it must stay a direct exact devDependency: as a bare peer, lock file maintenance resolved it to the newest release, 0.23.1 built for @swc/core 1.16, against @swc/core 1.15 and every jest suite failed with \"Failed to deserialize program received from host\" (#3591). Package is v0.x, so the major-disable rule is a no-op.",
+      "matchPackageNames": ["@jscutlery/swc-angular", "@jscutlery/swc-angular-plugin"],
       "enabled": false
     },
     {
-      "description": "@swc/core: capped at ~1.15.x by @jscutlery/swc-angular@0.22.0 (frozen above; latest published), which declares peer @swc/core ~1.15.0 — a tilde range accepting patches only. Its companion @jscutlery/swc-angular-plugin ships a compiled WASM swc plugin, loaded via swcAngularJestTransformer in jest.preset.js on every unit-test run, so the narrow range is the author's ABI contract rather than conservatism: overriding the peer would break the jest transform, not just the install. Any minor bump therefore makes npm lock regeneration fail with ERESOLVE — Renovate produces no lock, the PR carries a package.json change alone, and every npm ci in CI fails with EUSAGE (#3346). Lift this cap only together with a @jscutlery/swc-angular release that widens its peer range, and set allowedVersions to that new range verbatim. Only @swc/core needs the cap: @swc/helpers, @swc/jest and @swc-node/register are not peer-constrained by swc-angular, and the @swc/core-* platform binaries are lock-only.",
+      "description": "@swc/core: capped at the @swc/core peer range of the pinned @jscutlery/swc-angular (0.23.1: ~1.16.0, patches only). The range is the author's ABI contract for the companion WASM plugin, not conservatism: overriding the peer breaks the jest transform, and a minor bump makes npm lock regeneration fail with ERESOLVE, so Renovate produces no lock and every npm ci in CI fails with EUSAGE (#3346). Lift this cap only together with a swc-angular + plugin release that widens the range, and set allowedVersions to that new range verbatim. Only @swc/core needs the cap: @swc/helpers, @swc/jest and @swc-node/register are not peer-constrained by swc-angular, and the @swc/core-* platform binaries are lock-only.",
       "matchPackageNames": ["@swc/core"],
-      "allowedVersions": "~1.15.0"
+      "allowedVersions": "~1.16.0"
     },
     {
       "description": "Angular-coupled ecosystem: major version must align with Angular major — upgrade only after ng update",
@@ -211,7 +211,8 @@
       "matchPackageNames": [
         "/^@swc//",
         "@swc-node/register",
-        "@jscutlery/swc-angular"
+        "@jscutlery/swc-angular",
+        "@jscutlery/swc-angular-plugin"
       ],
       "groupName": "swc-deps"
     },
