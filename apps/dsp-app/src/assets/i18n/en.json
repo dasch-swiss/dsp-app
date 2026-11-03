@@ -826,7 +826,7 @@
     },
     "dataModels2": {
       "map": "Map",
-      "graph": "Graph",
+      "graph": "Overview",
       "classes": "Classes",
       "definitions": "Definitions",
       "properties": "Properties",

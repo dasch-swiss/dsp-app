@@ -477,9 +477,11 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
         }
       }
 
+      // The counts open the pill, so its text gets the room a button would have.
       .filters {
         flex-wrap: wrap;
         gap: 4px 6px;
+        padding-left: 14px;
       }
 
       // Wrapped onto a second line, the display controls stay on the right.

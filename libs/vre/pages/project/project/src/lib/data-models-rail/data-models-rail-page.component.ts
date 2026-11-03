@@ -84,7 +84,10 @@ import { DataModelsRailState } from './data-models-rail-state';
             routerLinkActive
             #active="routerLinkActive"
             [routerLinkActiveOptions]="activeOptions"
+            class="rail-link"
+            [class.current]="active.isActive"
             [activated]="active.isActive"
+            [attr.aria-current]="active.isActive ? 'page' : null"
             [routerLink]="section.path"
             [queryParams]="state.modelParam()"
             [attr.data-cy]="'data-models-rail-' + section.path">
@@ -125,10 +128,45 @@ import { DataModelsRailState } from './data-models-rail-state';
         overflow: auto;
 
         mat-nav-list {
-          --mat-list-list-item-one-line-container-height: 36px;
-          --mat-list-list-item-label-text-size: 14px;
-          --mat-list-active-indicator-shape: 6px;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
           padding: 0;
+        }
+      }
+
+      // Rail rows as in the V3 design: compact, rounded, a pale blue for the current section. Specific enough to win
+      // over Material's own list item rules.
+      .rail .rail-link.mat-mdc-list-item {
+        --mat-list-list-item-one-line-container-height: 36px;
+        --mat-list-list-item-leading-icon-size: 18px;
+        --mat-list-list-item-leading-icon-start-space: 12px;
+        --mat-list-list-item-leading-icon-end-space: 10px;
+        --mat-list-list-item-label-text-size: 14px;
+        --mat-list-list-item-label-text-color: #{$cool_gray_700};
+        --mat-list-list-item-hover-label-text-color: #{$cool_gray_900};
+        --mat-list-list-item-leading-icon-color: #{$cool_gray_500};
+        --mat-list-list-item-hover-leading-icon-color: #{$cool_gray_700};
+        --mat-list-list-item-hover-state-layer-color: #{$cool_gray_500};
+        --mat-list-list-item-hover-state-layer-opacity: 0.08;
+        --mat-list-active-indicator-shape: 6px;
+        --mat-list-active-indicator-color: transparent;
+        // Material sets a taller fixed height on items with a leading icon.
+        height: 36px;
+        border-radius: 6px;
+        cursor: pointer;
+
+        &.current {
+          --mat-list-list-item-label-text-color: #{$primary_700};
+          --mat-list-list-item-hover-label-text-color: #{$primary_700};
+          --mat-list-list-item-leading-icon-color: #{$primary};
+          --mat-list-list-item-hover-leading-icon-color: #{$primary};
+          background: $primary_50;
+          font-weight: 500;
+
+          .count {
+            color: $primary_700;
+          }
         }
       }
 
@@ -138,6 +176,9 @@ import { DataModelsRailState } from './data-models-rail-state';
         width: calc(100% - 8px);
         margin: 0 4px 10px;
         --mat-button-outlined-container-shape: 6px;
+        --mat-button-outlined-container-height: 38px;
+        background: white;
+        cursor: pointer;
 
         b {
           font-weight: 500;
@@ -146,6 +187,7 @@ import { DataModelsRailState } from './data-models-rail-state';
         }
 
         &.static {
+          cursor: default;
           box-sizing: border-box;
           padding: 8px 12px;
           border: 1px solid $cool_gray_300;
@@ -165,6 +207,7 @@ import { DataModelsRailState } from './data-models-rail-state';
 
       .count {
         font-size: 12px;
+        font-weight: 400;
         color: $cool_gray_500;
       }
 

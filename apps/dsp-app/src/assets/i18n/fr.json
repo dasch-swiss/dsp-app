@@ -826,7 +826,7 @@
     },
     "dataModels2": {
       "map": "Carte",
-      "graph": "Graphe",
+      "graph": "Vue d’ensemble",
       "classes": "Classes",
       "definitions": "Définitions",
       "properties": "Propriétés",

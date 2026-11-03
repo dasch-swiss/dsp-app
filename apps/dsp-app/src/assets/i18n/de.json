@@ -826,7 +826,7 @@
     },
     "dataModels2": {
       "map": "Karte",
-      "graph": "Graph",
+      "graph": "Übersicht",
       "classes": "Klassen",
       "definitions": "Definitionen",
       "properties": "Eigenschaften",
