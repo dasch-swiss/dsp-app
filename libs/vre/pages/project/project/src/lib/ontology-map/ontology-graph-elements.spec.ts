@@ -142,6 +142,13 @@ describe('withInheritedLinks', () => {
     expect(result.nodes.map(n => n.id)).not.toContain('Other');
     expect(result.nodes.map(n => n.id)).toContain('Lonely');
   });
+
+  it('gives subclasses no links of their own when inherited links are hidden', () => {
+    const hidden = withInheritedLinks(family, false);
+
+    expect(hidden.edges.some(e => e.kind === 'subclass' || e.source === 'Short' || e.source === 'Clip')).toBe(false);
+    expect(hidden.nodes.map(n => n.id)).toContain('Short');
+  });
 });
 
 describe('propertyUsage', () => {

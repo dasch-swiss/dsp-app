@@ -842,7 +842,9 @@
           "ArchiveRepresentation": "Archiv",
           "DDDRepresentation": "3D-Modell"
         }
-      }
+      },
+      "inheritedLinks": "Geerbte Verknüpfungen",
+      "inheritedLinksHint": "Unterklassen zeigen auch die Verknüpfungen ihrer Oberklassen"
     },
     "dataModels2": {
       "map": "Karte",

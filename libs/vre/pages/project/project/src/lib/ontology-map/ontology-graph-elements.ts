@@ -261,14 +261,14 @@ export function throughProperties(graph: DataModelGraph, propertyIris: readonly 
 }
 
 /**
- * The data model with no subclass arrows; a subclass gets its superclasses' links instead, as it inherits them.
- * Classes outside the data model that only a subclass arrow brought in are left out.
+ * The data model with no subclass arrows; a subclass gets its superclasses' links instead, as it inherits them, unless
+ * `inherit` is false. Classes outside the data model that only a subclass arrow brought in are left out.
  */
-export function withInheritedLinks(graph: DataModelGraph): DataModelGraph {
+export function withInheritedLinks(graph: DataModelGraph, inherit = true): DataModelGraph {
   const { children, ancestors } = superclasses(graph);
   const links = graph.edges.filter(edge => edge.kind === 'link');
   const edges = new Map(links.map(edge => [`${edge.source} ${edge.property} ${edge.target}`, edge]));
-  for (const child of children) {
+  for (const child of inherit ? children : []) {
     const inherited = ancestors(child);
     for (const edge of links) {
       if (!inherited.has(edge.source) || edge.target === child) continue;
