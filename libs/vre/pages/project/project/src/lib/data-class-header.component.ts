@@ -1,34 +1,22 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
-import { Component, computed, ElementRef, inject, Input, viewChild, ViewContainerRef } from '@angular/core';
+import { Component, computed, ElementRef, Inject, inject, Input, viewChild, ViewContainerRef } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { KnoraApiConnection, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
-  MultipleViewerService,
   ResourceClassCountApi,
   TableViewOptionsComponent,
   TableViewStateService,
 } from '@dasch-swiss/vre/pages/data-browser';
 import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search-filters';
-import { filterUndefined, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
+import { filterUndefined, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import {
-  catchError,
-  combineLatest,
-  distinctUntilChanged,
-  first,
-  from,
-  of,
-  ReplaySubject,
-  startWith,
-  switchMap,
-} from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
+import { catchError, distinctUntilChanged, from, of, ReplaySubject, startWith, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
@@ -69,14 +57,14 @@ interface CreateResourceDialogProps {
           }
         </div>
         <div class="actions">
-          <!-- "All" and the class total: the export ignores the row selection, search and filters. -->
-          <button mat-stroked-button (click)="openDownloadDialog()" data-cy="download-btn">
-            <mat-icon>download</mat-icon>
-            {{ 'pages.dataBrowser.downloadDialog.downloadAll' | translate }}
-            @if (classCount$ | async; as classCount) {
+          <!-- "All" and the class total: the export ignores search and filters. Hidden while loading and for an empty class. -->
+          @if (classCount$ | async; as classCount) {
+            <button mat-stroked-button (click)="openDownloadDialog(classCount)" data-cy="download-btn">
+              <mat-icon>download</mat-icon>
+              {{ 'pages.dataBrowser.downloadDialog.downloadAll' | translate }}
               <span class="count-badge" data-cy="download-count">{{ classCount | number }}</span>
-            }
-          </button>
+            </button>
+          }
           @if (hasProjectMemberRights$ | async) {
             <button mat-flat-button color="primary" (click)="goToAddClassInstance()" data-cy="create-resource-btn">
               <mat-icon>add</mat-icon>
@@ -206,12 +194,10 @@ export class DataClassHeaderComponent {
     private readonly _dialog: MatDialog,
     private readonly _viewContainerRef: ViewContainerRef,
     private readonly _projectPageService: ProjectPageService,
-    private readonly _multipleViewerService: MultipleViewerService,
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
     private readonly _resClassCountApi: ResourceClassCountApi,
     private readonly _stringifyStringLiteralPipe: StringifyStringLiteralPipe,
-    private readonly _notificationService: NotificationService,
-    private readonly _dataBrowserPageService: DataBrowserPageService,
-    private readonly _translateService: TranslateService
+    private readonly _dataBrowserPageService: DataBrowserPageService
   ) {}
 
   goToAddClassInstance() {
@@ -254,19 +240,13 @@ export class DataClassHeaderComponent {
       });
   }
 
-  openDownloadDialog() {
-    combineLatest([
-      this._resClassCountApi.getResourceClassCount(this.classSelected.resClass.id),
-      this._multipleViewerService.selectedResources$.pipe(first()),
-    ]).subscribe(([resClassCount, resources]) => {
-      if (resClassCount === 0 || resources.length === 0) {
-        this._notificationService.openSnackBar(
-          this._translateService.instant('pages.dataBrowser.downloadDialog.noResources')
-        );
-        return;
-      }
-
-      const properties = generateDspResource(resources[0]).resProps.filter(prop => prop.propDef.isEditable);
+  openDownloadDialog(resClassCount: number) {
+    const classIri = this.classSelected.resClass.id;
+    // The export is the whole class, so the columns come from the class definition, not from a selected row.
+    this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(classIri).subscribe(classDefinitions => {
+      const properties = GenerateProperty.classProperty(classDefinitions.classes[classIri]).filter(
+        prop => prop.propDef.isEditable
+      );
 
       // Full-height side panel: the property list scrolls inside it and the actions stay visible.
       this._dialog.open(DownloadDialogComponent, {
@@ -276,8 +256,6 @@ export class DataClassHeaderComponent {
             resClass: this.classSelected.resClass,
             classLabel: this._stringifyStringLiteralPipe.transform(this.classSelected.resClass.labels),
             properties,
-            // In list view one resource is always "selected" by clicking it; only checkbox selection counts.
-            selectedCount: this._multipleViewerService.selectMode ? resources.length : 0,
           },
           true
         ),

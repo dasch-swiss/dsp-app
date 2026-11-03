@@ -41,7 +41,6 @@ describe('DownloadDialogComponent', () => {
       resClass: mockResClass,
       resourceCount: 42,
       classLabel: 'Test Resource Class',
-      selectedCount: 0,
       properties: [mockProperty1, mockProperty2],
     };
 
@@ -111,7 +110,6 @@ describe('DownloadDialogComponent', () => {
           resClass: mockResClass,
           resourceCount: count,
           classLabel: 'Test Resource Class',
-          selectedCount: 0,
           properties: [mockProperty1],
         };
 
@@ -124,7 +122,6 @@ describe('DownloadDialogComponent', () => {
         resClass: mockResClass,
         resourceCount: 5,
         classLabel: 'Test Resource Class',
-        selectedCount: 0,
         properties: [],
       };
 
@@ -138,7 +135,6 @@ describe('DownloadDialogComponent', () => {
         resClass: mockResClass,
         resourceCount: 100,
         classLabel: 'Test Resource Class',
-        selectedCount: 0,
         properties: manyProperties,
       };
 
@@ -167,7 +163,6 @@ describe('DownloadDialogComponent', () => {
         resClass: mockResClass,
         resourceCount: 10,
         classLabel: 'Test Resource Class',
-        selectedCount: 0,
         properties: [mockProperty1],
       };
 
@@ -187,7 +182,6 @@ describe('DownloadDialogComponent', () => {
         resClass: customResClass,
         resourceCount: 5,
         classLabel: 'Test Resource Class',
-        selectedCount: 0,
         properties: [],
       };
 
