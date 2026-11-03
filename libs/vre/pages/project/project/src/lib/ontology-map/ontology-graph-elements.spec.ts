@@ -3,9 +3,11 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
   CLASS_COLORS,
   classColors,
+  classRows,
   graphScale,
   layoutOptions,
   linkedWith,
+  propertyRows,
   propertyUsage,
   throughProperties,
   toGraphElements,
@@ -174,6 +176,7 @@ describe('propertyUsage', () => {
     expect(propertyUsage(family, 'director')).toEqual({
       label: 'Director',
       description: 'Who directed it',
+      type: 'Link',
       targets: ['Person'],
       links: 2,
       users: [
@@ -214,6 +217,68 @@ describe('withoutProperties', () => {
 
     expect(rest.nodes).toBe(graph.nodes);
     expect(rest.edges.map(e => e.property)).toEqual(['sequel', 'mentions']);
+  });
+});
+
+describe('classRows and propertyRows', () => {
+  const model: DataModelGraph = {
+    nodes: [
+      {
+        id: 'x#Film',
+        label: 'Film',
+        kind: 'class',
+        navigable: true,
+        propertyDetails: [
+          { id: 'x#title', label: 'Title', description: '', type: 'Text', cardinality: Cardinality._1 },
+          {
+            id: 'x#director',
+            label: 'Director',
+            description: '',
+            type: 'Link',
+            linkTarget: 'x#Person',
+            cardinality: Cardinality._0_n,
+          },
+        ],
+      },
+      {
+        id: 'x#Person',
+        label: 'Person',
+        kind: 'class',
+        navigable: true,
+        propertyDetails: [
+          { id: 'x#title', label: 'Title', description: '', type: 'Text', cardinality: Cardinality._0_1 },
+        ],
+      },
+    ],
+    edges: [{ source: 'x#Film', target: 'x#Person', property: 'x#director', label: 'Director', kind: 'link' }],
+  };
+
+  it('lists each class with its name, its properties and the classes it links to', () => {
+    expect(classRows(model)).toEqual([
+      { id: 'x#Film', label: 'Film', name: 'Film', properties: 2, linksTo: ['x#Person'] },
+      { id: 'x#Person', label: 'Person', name: 'Person', properties: 1, linksTo: [] },
+    ]);
+  });
+
+  it('lists each property once, with the classes that have it', () => {
+    expect(propertyRows(model)).toEqual([
+      {
+        id: 'x#director',
+        label: 'Director',
+        name: 'director',
+        type: 'Link',
+        linkTarget: 'x#Person',
+        usedBy: ['x#Film'],
+      },
+      {
+        id: 'x#title',
+        label: 'Title',
+        name: 'title',
+        type: 'Text',
+        linkTarget: undefined,
+        usedBy: ['x#Film', 'x#Person'],
+      },
+    ]);
   });
 });
 

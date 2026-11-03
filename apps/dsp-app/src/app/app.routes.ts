@@ -17,6 +17,10 @@ import {
   ImageSettingsComponent,
   LegalSettingsComponent,
   OntologyMapPageComponent,
+  DataModelsRailPageComponent,
+  DataModelClassesComponent,
+  DataModelPropertiesComponent,
+  DataModelListsComponent,
   ProjectAdminGuard,
   ProjectPageComponent,
   ProjectPageGuard,
@@ -66,8 +70,20 @@ export const routes: Routes = [
         component: DataModelsPageComponent,
       },
       {
+        path: RouteConstants.dataModels2,
+        component: DataModelsRailPageComponent,
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: RouteConstants.graph },
+          { path: RouteConstants.graph, component: OntologyMapPageComponent },
+          { path: RouteConstants.classes, component: DataModelClassesComponent },
+          { path: RouteConstants.properties, component: DataModelPropertiesComponent },
+          { path: RouteConstants.lists, component: DataModelListsComponent },
+        ],
+      },
+      // The Ontology map tab became Data models 2 › Graph; links to it, with their query, land there.
+      {
         path: RouteConstants.ontologyMap,
-        component: OntologyMapPageComponent,
+        redirectTo: `${RouteConstants.dataModels2}/${RouteConstants.graph}`,
       },
       {
         path: RouteConstants.ontologyEditorRelative,

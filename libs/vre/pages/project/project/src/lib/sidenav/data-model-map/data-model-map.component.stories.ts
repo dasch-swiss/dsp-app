@@ -81,9 +81,12 @@ const meta: Meta<MapArgs> = {
     anyResourceLabel: { description: 'Label of the card for links that point at any resource.' },
     classSelected: { description: 'Emits the IRI of a class card that was clicked or activated by keyboard.' },
     openFullMap: {
-      description: 'Emits when "Full map" is clicked; the container opens the Ontology map tab on this data model.',
+      description:
+        'Emits when "Full map" is clicked; the container opens the graph of this data model in the Data models 2 tab.',
     },
-    full: { description: 'Draws the map large, as in the Ontology map tab: no header, full cards, wider rows.' },
+    full: {
+      description: 'Draws the map large, as in the Graph of the Data models 2 tab: no header, full cards, wider rows.',
+    },
   },
 };
 

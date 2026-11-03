@@ -204,7 +204,7 @@ function superclasses(graph: DataModelGraph): { children: string[]; ancestors: (
   return { children: [...parents.keys()], ancestors };
 }
 
-/** A class with a link property, for the property panel. */
+/** A class with a property, for the property panel. */
 export interface PropertyUser {
   classIri: string;
   /** How many values the class takes; unknown for a class outside the data model. */
@@ -213,11 +213,13 @@ export interface PropertyUser {
   inheritedFrom?: string;
 }
 
-/** What the property panel shows of a link property. */
+/** What the property panel shows of a property. */
 export interface PropertyUsage {
   label: string;
   description: string;
-  /** The classes its links point at. */
+  /** The value type, as `DataModelProperty.type` names it: `Link` for a link. */
+  type: string;
+  /** The classes a link points at; none for other properties. */
   targets: string[];
   /** Its links between two different classes, as the graph draws them. */
   links: number;
@@ -225,30 +227,93 @@ export interface PropertyUsage {
 }
 
 /**
- * How a link property is used in the data model: the classes that have it, inherited ones included, and the classes it
- * points at; `undefined` when no class has it.
+ * How a property is used in the data model: the classes that have it, inherited ones included, and for a link the
+ * classes it points at; `undefined` when no class has it.
  */
 export function propertyUsage(graph: DataModelGraph, propertyIri: string): PropertyUsage | undefined {
   const edges = withInheritedLinks(graph).edges.filter(edge => edge.property === propertyIri);
-  if (edges.length === 0) return undefined;
-  const declaring = new Set(
-    graph.edges.filter(edge => edge.kind === 'link' && edge.property === propertyIri).map(edge => edge.source)
-  );
-  const { ancestors } = superclasses(graph);
   const details = (iri: string) =>
     graph.nodes.find(node => node.id === iri)?.propertyDetails?.find(property => property.id === propertyIri);
-  const users = [...new Set(edges.map(edge => edge.source))].map(classIri => ({
+  const withDetails = graph.nodes.filter(node => details(node.id)).map(node => node.id);
+  const userIris = [...new Set([...edges.map(edge => edge.source), ...withDetails])];
+  if (userIris.length === 0) return undefined;
+  const having = new Set(userIris);
+  const { ancestors } = superclasses(graph);
+  const users = userIris.map(classIri => ({
     classIri,
     cardinality: details(classIri)?.cardinality,
-    inheritedFrom: declaring.has(classIri) ? undefined : [...ancestors(classIri)].find(iri => declaring.has(iri)),
+    inheritedFrom: [...ancestors(classIri)].find(iri => having.has(iri)),
   }));
+  const detail = userIris.map(details).find(Boolean);
   return {
-    label: edges[0].label,
-    description: users.map(user => details(user.classIri)?.description).find(Boolean) ?? '',
-    targets: [...new Set(edges.map(edge => edge.target))],
+    label: detail?.label ?? edges[0].label,
+    description: userIris.map(iri => details(iri)?.description).find(Boolean) ?? '',
+    type: detail?.type ?? 'Link',
+    targets: [...new Set([...edges.map(edge => edge.target), ...(detail?.linkTarget ? [detail.linkTarget] : [])])],
     links: edges.filter(edge => edge.source !== edge.target).length,
     users,
   };
+}
+
+/** One class of the data model, as the Classes table lists it. */
+export interface ClassRow {
+  id: string;
+  label: string;
+  name: string;
+  /** How many properties it has, inherited ones included. */
+  properties: number;
+  /** The classes it links to, each once, its superclasses' links included. */
+  linksTo: string[];
+}
+
+/** The classes of the data model, by label, for the Classes table. */
+export function classRows(graph: DataModelGraph): ClassRow[] {
+  const edges = withInheritedLinks(graph).edges;
+  return graph.nodes
+    .filter(node => node.kind === 'class')
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .map(node => ({
+      id: node.id,
+      label: node.label,
+      name: localNameOf(node.id),
+      properties: node.propertyDetails?.length ?? 0,
+      linksTo: [
+        ...new Set(edges.filter(edge => edge.source === node.id && edge.target !== node.id).map(edge => edge.target)),
+      ],
+    }));
+}
+
+/** One property of the data model, as the Properties table lists it. */
+export interface PropertyRow {
+  id: string;
+  label: string;
+  name: string;
+  type: string;
+  /** The class a link points at; only set for links. */
+  linkTarget?: string;
+  /** The classes that have it, inherited ones included, by label. */
+  usedBy: string[];
+}
+
+/** Every property the classes of the data model have, each once, by label, for the Properties table. */
+export function propertyRows(graph: DataModelGraph): PropertyRow[] {
+  const rows = new Map<string, PropertyRow>();
+  const classes = graph.nodes.filter(node => node.kind === 'class').sort((a, b) => a.label.localeCompare(b.label));
+  for (const node of classes) {
+    for (const property of node.propertyDetails ?? []) {
+      const row = rows.get(property.id) ?? {
+        id: property.id,
+        label: property.label,
+        name: localNameOf(property.id),
+        type: property.type,
+        linkTarget: property.linkTarget,
+        usedBy: [],
+      };
+      row.usedBy.push(node.id);
+      rows.set(property.id, row);
+    }
+  }
+  return [...rows.values()].sort((a, b) => a.label.localeCompare(b.label) || a.name.localeCompare(b.name));
 }
 
 /** The data model without these classes and their links. */

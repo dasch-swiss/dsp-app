@@ -10,7 +10,6 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -121,7 +120,6 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
   imports: [
     DataModelMapComponent,
     FilterMenuComponent,
-    MatButton,
     MatIcon,
     MatMenu,
     MatMenuContent,
@@ -173,24 +171,6 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                 <div class="top-bar" [class.beside-panel]="panelOpen()">
                   <!-- What to show: the data model and its filters, on the left. -->
                   <div class="float filters">
-                    @if (ontologies().length > 1) {
-                      <button
-                        mat-button
-                        class="data-model"
-                        data-cy="ontology-map-data-model"
-                        [attr.aria-label]="m + '.dataModel' | translate"
-                        [matMenuTriggerFor]="dataModels">
-                        {{ selected.label }}
-                        <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
-                      </button>
-                    } @else {
-                      <span class="data-model static" data-cy="ontology-map-data-model">{{ selected.label }}</span>
-                    }
-                    <mat-menu #dataModels="matMenu">
-                      @for (ontology of ontologies(); track ontology.iri) {
-                        <button mat-menu-item (click)="show(ontology.iri)">{{ ontology.label }}</button>
-                      }
-                    </mat-menu>
                     @if (counts(); as counts) {
                       <span class="counts">{{ m + '.counts' | translate: counts }}</span>
                     }
@@ -832,7 +812,8 @@ export class OntologyMapPageComponent {
   );
   readonly ontologies = computed(() => this._projectOntologies() ?? []);
   readonly ontologiesLoaded = computed(() => this._projectOntologies() !== undefined);
-  readonly canEdit = toSignal(inject(ProjectPageService).hasProjectAdminRights$);
+  private readonly _projectPage = inject(ProjectPageService);
+  readonly canEdit = toSignal(this._projectPage.hasProjectAdminRights$);
 
   private readonly _graphsByIri = toSignal(this._graphs.graphs$);
   private readonly _params = toSignal(this._route.queryParamMap);
@@ -983,14 +964,6 @@ export class OntologyMapPageComponent {
   });
   /** The class the map outlines: the one whose panel is open, else the one named in the URL. */
   readonly classIri = computed(() => this.panelIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
-
-  /** Shows another data model, with no panel open and no filter. */
-  show(ontologyIri: string): void {
-    this._router.navigate([], {
-      relativeTo: this._route,
-      queryParams: { [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri) },
-    });
-  }
 
   setDetail(detail: MapDetail): void {
     this.detail.set(detail);
@@ -1209,9 +1182,9 @@ export class OntologyMapPageComponent {
   /** Opens the class in the Data tab. */
   open(iri: string): void {
     const [ontologyIri, className] = iri.split('#');
-    this._router.navigate(['..', RouteConstants.data, OntologyService.getOntologyNameFromIri(ontologyIri), className], {
-      relativeTo: this._route,
-    });
+    this._router.navigate(
+      this._projectPath(RouteConstants.data, OntologyService.getOntologyNameFromIri(ontologyIri), className)
+    );
   }
 
   /** Opens the class's data model in the data model editor. */
@@ -1227,9 +1200,18 @@ export class OntologyMapPageComponent {
   private _openEditor(iri: string, page: string): void {
     const [ontologyIri] = iri.split('#');
     this._router.navigate(
-      ['..', RouteConstants.ontology, OntologyService.getOntologyNameFromIri(ontologyIri), RouteConstants.editor, page],
-      { relativeTo: this._route }
+      this._projectPath(
+        RouteConstants.ontology,
+        OntologyService.getOntologyNameFromIri(ontologyIri),
+        RouteConstants.editor,
+        page
+      )
     );
+  }
+
+  /** The path to a page of the project from the app's root: this page sits at different depths. */
+  private _projectPath(...segments: string[]): string[] {
+    return ['/', RouteConstants.project, this._projectPage.currentProjectUuid, ...segments];
   }
 }
 

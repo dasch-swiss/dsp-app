@@ -49,9 +49,9 @@ export class DataModelMapContainerComponent {
     navigateToResourceClass(this._router, this._route, iri);
   }
 
-  /** Opens the Ontology map tab on this data model, the class being browsed outlined. */
+  /** Opens the data model's graph, in the Data models 2 tab, the class being browsed outlined. */
   openFullMap(): void {
-    this._router.navigate(['..', RouteConstants.ontologyMap], {
+    this._router.navigate(['..', RouteConstants.dataModels2, RouteConstants.graph], {
       relativeTo: this._route,
       queryParams: {
         [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(this.ontology().ontology.iri),

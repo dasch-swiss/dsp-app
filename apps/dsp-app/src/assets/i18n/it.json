@@ -801,7 +801,9 @@
         "usedBy": "Usata da · {{count}} classi",
         "inheritedFrom": "ereditata da {{class}}",
         "filter": "Mostra solo questi collegamenti",
-        "edit": "Modifica la proprietà"
+        "edit": "Modifica la proprietà",
+        "type": "Tipo",
+        "valueSubtitle": "Proprietà · {{model}}"
       },
       "display": "Visualizzazione",
       "zoom": "Zoom",
@@ -849,6 +851,29 @@
       },
       "copyName": "Copia il nome",
       "nameCopied": "Nome copiato"
+    },
+    "dataModels2": {
+      "map": "Mappa",
+      "graph": "Grafo",
+      "classes": "Classi",
+      "definitions": "Definizioni",
+      "properties": "Proprietà",
+      "lists": "Liste",
+      "findClass": "Cerca una classe",
+      "findProperty": "Etichetta o nome",
+      "findList": "Cerca una lista",
+      "propertiesCount": "{{count}} proprietà · {{links}} collegamenti",
+      "listsCount": "{{count}} liste di valori controllati",
+      "colClass": "Classe",
+      "colProperties": "Proprietà",
+      "colLinksTo": "Collega a",
+      "colProperty": "Proprietà",
+      "colType": "Tipo",
+      "colPointsTo": "Punta a",
+      "colUsedBy": "Usata da",
+      "allTypes": "Tutti",
+      "noMatch": "Nessun risultato per la ricerca.",
+      "noLists": "Questo progetto non ha ancora liste."
     }
   },
   "resourceEditor": {
@@ -1373,7 +1398,7 @@
         "data": "Dati",
         "dataModels": "Modelli di dati",
         "settings": "Impostazioni",
-        "ontologyMap": "Mappa dell’ontologia"
+        "dataModels2": "Modelli di dati 2"
       }
     },
     "grid": {

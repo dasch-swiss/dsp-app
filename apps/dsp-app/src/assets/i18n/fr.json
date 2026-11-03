@@ -801,7 +801,9 @@
         "usedBy": "Utilisée par · {{count}} classes",
         "inheritedFrom": "héritée de {{class}}",
         "filter": "Afficher seulement ces liens",
-        "edit": "Modifier la propriété"
+        "edit": "Modifier la propriété",
+        "type": "Type",
+        "valueSubtitle": "Propriété · {{model}}"
       },
       "display": "Affichage",
       "zoom": "Zoom",
@@ -849,6 +851,29 @@
       },
       "copyName": "Copier le nom",
       "nameCopied": "Nom copié"
+    },
+    "dataModels2": {
+      "map": "Carte",
+      "graph": "Graphe",
+      "classes": "Classes",
+      "definitions": "Définitions",
+      "properties": "Propriétés",
+      "lists": "Listes",
+      "findClass": "Chercher une classe",
+      "findProperty": "Libellé ou nom",
+      "findList": "Chercher une liste",
+      "propertiesCount": "{{count}} propriétés · {{links}} liens",
+      "listsCount": "{{count}} listes de valeurs contrôlées",
+      "colClass": "Classe",
+      "colProperties": "Propriétés",
+      "colLinksTo": "Liens vers",
+      "colProperty": "Propriété",
+      "colType": "Type",
+      "colPointsTo": "Pointe vers",
+      "colUsedBy": "Utilisée par",
+      "allTypes": "Tous",
+      "noMatch": "Rien ne correspond à la recherche.",
+      "noLists": "Ce projet n’a pas encore de listes."
     }
   },
   "resourceEditor": {
@@ -1373,7 +1398,7 @@
         "data": "Données",
         "dataModels": "Modèles de données",
         "settings": "Paramètres",
-        "ontologyMap": "Carte de l’ontologie"
+        "dataModels2": "Modèles de données 2"
       }
     },
     "grid": {

@@ -8,6 +8,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { localNameOf, propertyUsage } from './ontology-graph-elements';
+import { typeIconOf, typeNameOf } from './property-types';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1]: 'required',
@@ -17,8 +18,8 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 };
 
 /**
- * The details of one link property of a data model, docked beside the Ontology map: its description, the classes it
- * points at, and the classes that have it, each with how many values it takes there.
+ * The details of one property of a data model, docked beside the Ontology map: its description, the classes a link
+ * points at or a value's type, and the classes that have it, each with how many values it takes there.
  */
 @Component({
   selector: 'app-property-panel',
@@ -31,7 +32,9 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
     @if (usage(); as usage) {
       <section class="panel" data-cy="property-panel" [attr.aria-label]="usage.label">
         <header class="header">
-          <span class="property-icon"><mat-icon>link</mat-icon></span>
+          <span class="property-icon" [attr.data-type]="usage.type"
+            ><mat-icon>{{ typeIcon(usage.type) }}</mat-icon></span
+          >
           <div class="title">
             <h2 data-cy="property-panel-title">{{ usage.label }}</h2>
             <span class="name-line">
@@ -45,7 +48,9 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                 <mat-icon>content_copy</mat-icon>
               </button>
             </span>
-            <span class="subtitle">{{ t + '.subtitle' | translate: { model: dataModelLabel() } }}</span>
+            <span class="subtitle">{{
+              t + (usage.type === 'Link' ? '.subtitle' : '.valueSubtitle') | translate: { model: dataModelLabel() }
+            }}</span>
           </div>
           <button
             mat-icon-button
@@ -62,29 +67,39 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         }
 
         <div class="facts">
-          <div class="fact">
-            <h3>{{ t + '.pointsTo' | translate }}</h3>
-            <span class="targets">
-              @for (target of usage.targets; track target) {
-                <button
-                  type="button"
-                  class="chip"
-                  data-cy="property-panel-target"
-                  [style.background]="colors().get(target) ?? 'white'"
-                  [disabled]="!isNavigable(target)"
-                  (click)="classSelected.emit(target)">
-                  {{ labelOf(target) }}
-                  @if (isNavigable(target)) {
-                    <mat-icon>chevron_right</mat-icon>
-                  }
-                </button>
-              }
-            </span>
-          </div>
-          <div class="fact">
-            <h3>{{ t + '.inModel' | translate }}</h3>
-            <span class="count">{{ t + '.links' | translate: { count: usage.links } }}</span>
-          </div>
+          @if (usage.type === 'Link') {
+            <div class="fact">
+              <h3>{{ t + '.pointsTo' | translate }}</h3>
+              <span class="targets">
+                @for (target of usage.targets; track target) {
+                  <button
+                    type="button"
+                    class="chip"
+                    data-cy="property-panel-target"
+                    [style.background]="colors().get(target) ?? 'white'"
+                    [disabled]="!isNavigable(target)"
+                    (click)="classSelected.emit(target)">
+                    {{ labelOf(target) }}
+                    @if (isNavigable(target)) {
+                      <mat-icon>chevron_right</mat-icon>
+                    }
+                  </button>
+                }
+              </span>
+            </div>
+            <div class="fact">
+              <h3>{{ t + '.inModel' | translate }}</h3>
+              <span class="count">{{ t + '.links' | translate: { count: usage.links } }}</span>
+            </div>
+          } @else {
+            <div class="fact" data-cy="property-panel-type">
+              <h3>{{ t + '.type' | translate }}</h3>
+              <span class="type" [attr.data-type]="usage.type">
+                <mat-icon>{{ typeIcon(usage.type) }}</mat-icon
+                >{{ typeName(usage.type) }}
+              </span>
+            </div>
+          }
         </div>
 
         <div class="group">
@@ -110,10 +125,16 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         </div>
 
         <div class="actions">
-          <button mat-flat-button color="primary" data-cy="property-panel-filter" (click)="filter.emit(propertyIri())">
-            <mat-icon>filter_alt</mat-icon>
-            {{ t + '.filter' | translate }}
-          </button>
+          @if (usage.type === 'Link') {
+            <button
+              mat-flat-button
+              color="primary"
+              data-cy="property-panel-filter"
+              (click)="filter.emit(propertyIri())">
+              <mat-icon>filter_alt</mat-icon>
+              {{ t + '.filter' | translate }}
+            </button>
+          }
           @if (canEdit()) {
             <button mat-stroked-button data-cy="property-panel-edit" (click)="edit.emit(propertyIri())">
               {{ t + '.edit' | translate }}
@@ -238,6 +259,25 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         letter-spacing: 0.04em;
         text-transform: uppercase;
         color: $cool_gray_500;
+      }
+
+      .property-icon[data-type='List'],
+      .type[data-type='List'] {
+        color: #92400e;
+      }
+
+      .type {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 15px;
+        font-weight: 500;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
       }
 
       .facts {
@@ -393,6 +433,14 @@ export class PropertyPanelComponent {
   labelOf(iri: string): string {
     if (iri === Constants.Resource) return this.anyResourceLabel();
     return this.graph().nodes.find(node => node.id === iri)?.label ?? iri.substring(iri.lastIndexOf('#') + 1);
+  }
+
+  typeIcon(type: string): string {
+    return typeIconOf(type);
+  }
+
+  typeName(type: string): string {
+    return typeNameOf(type);
   }
 
   cardinalityKey(cardinality: Cardinality): string {
