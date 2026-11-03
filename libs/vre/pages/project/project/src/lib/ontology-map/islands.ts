@@ -190,6 +190,8 @@ export function textureImage(texture: FamilyTexture, color: string): string | un
 const ISLAND_GAP = 120;
 /** Room between the classes of a family, and between blocks laid side by side, at scale 1. */
 const BLOCK_GAP = 28;
+/** Room inside an island's frame, at scale 1; the graph's stylesheet draws it. */
+export const ISLAND_PADDING = 28;
 /** Subclasses side by side under their family's top class, at most. */
 const FAMILY_COLUMNS = 3;
 /** Room a family's frame and its title take around its classes, at scale 1. */
@@ -413,7 +415,15 @@ function placeBlock(block: Block, x: number, y: number, room: Room): void {
 /** Moves islands, biggest first, into a row: the first alone, then columns as tall as it, left to right. */
 function pack(islands: NodeSingular[], room: Room): void {
   if (islands.length === 0) return;
-  const boxes = islands.map(island => island.boundingBox({}));
+  // Measured from the classes, as a frame's own box may not follow them yet; widened by the room the frames take.
+  const margin = ISLAND_PADDING * room.scale + room.top;
+  const boxes = islands.map(island => {
+    const box = island
+      .descendants()
+      .filter(node => !node.isParent())
+      .boundingBox({});
+    return { x1: box.x1 - margin, y1: box.y1 - margin, w: box.w + 2 * margin, h: box.h + 2 * margin };
+  });
   const height = boxes[0].h;
   let x = 0;
   let column: { y: number; width: number } = { y: 0, width: 0 };
