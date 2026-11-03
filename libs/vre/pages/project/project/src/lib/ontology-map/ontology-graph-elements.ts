@@ -153,17 +153,28 @@ const islandId = (index: number) => `island:${index}`;
 const UNLINKED_ISLAND = 'island:unlinked';
 const familyId = (island: string, root: string) => `family:${island}:${root}`;
 
-/** The islands of the Islands view, each listing its classes; the unlinked classes last, as one island. */
-function islandGroups(graph: DataModelGraph): { id: string; iris: string[] }[] {
-  const groups = islandsOf(graph).map((iris, index) => ({ id: islandId(index), iris }));
-  const unlinked = unlinkedOf(graph);
+/**
+ * The islands of the Islands view, each listing its classes; the unlinked classes last, as one island. A subclass
+ * counts as linked with the top class of its family, so a family stays in one island, links or not.
+ */
+function islandGroups(graph: DataModelGraph, families: Map<string, ClassFamily>): { id: string; iris: string[] }[] {
+  const shown = new Set(graph.nodes.map(node => node.id));
+  const familyEdges = graph.nodes.flatMap(node => {
+    const root = families.get(node.id)?.root;
+    return root && root !== node.id && shown.has(root)
+      ? [{ source: node.id, target: root, property: 'family', label: '', kind: 'subclass' as const }]
+      : [];
+  });
+  const grouped = { nodes: graph.nodes, edges: [...graph.edges, ...familyEdges] };
+  const groups = islandsOf(grouped).map((iris, index) => ({ id: islandId(index), iris }));
+  const unlinked = unlinkedOf(grouped);
   return unlinked.length ? [...groups, { id: UNLINKED_ISLAND, iris: unlinked }] : groups;
 }
 
 /** The compound node each class sits in: its family's, if more of its family share its island, else its island's. */
 function islandParents(graph: DataModelGraph, options: IslandElementOptions): Map<string, string> {
   const parents = new Map<string, string>();
-  for (const { id, iris } of islandGroups(graph)) {
+  for (const { id, iris } of islandGroups(graph, options.families)) {
     const roots = iris.map(iri => options.families.get(iri)?.root);
     iris.forEach((iri, i) => {
       const root = roots[i];
@@ -180,7 +191,7 @@ function islandParents(graph: DataModelGraph, options: IslandElementOptions): Ma
  */
 function islandNodes(graph: DataModelGraph, options: IslandElementOptions): ElementDefinition[] {
   const parents = islandParents(graph, options);
-  const groups = islandGroups(graph);
+  const groups = islandGroups(graph, options.families);
   const elements: ElementDefinition[] = [];
   for (const { id, iris } of groups) {
     elements.push({

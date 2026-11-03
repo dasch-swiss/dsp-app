@@ -110,7 +110,11 @@ describe('toGraphElements in the Islands view', () => {
     expect(node('Image').data.parent).toBe(node('Photo').data.parent);
     expect(node(node('Image').data.parent!).data['label']).toBe('Image');
     expect(node('Church').data.parent).toBe('island:0');
-    expect(node('Drawing').data.parent).toBe('island:unlinked');
+    expect(node('Note').data.parent).toBe('island:unlinked');
+  });
+
+  it('keeps a subclass without links in the island of its family', () => {
+    expect(node('Drawing').data.parent).toBe(node('Image').data.parent);
   });
 
   it('gives a class with a file its icon, and one without none', () => {
