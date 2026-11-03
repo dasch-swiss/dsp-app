@@ -187,7 +187,7 @@ export function textureImage(texture: FamilyTexture, color: string): string | un
 }
 
 /** Room between islands, and between a column of small islands and the next, at scale 1. */
-const ISLAND_GAP = 120;
+const ISLAND_GAP = 48;
 /** Room between the classes of a family, and between blocks laid side by side, at scale 1. */
 const BLOCK_GAP = 28;
 /** Room inside an island's frame, at scale 1; the graph's stylesheet draws it. */
@@ -204,6 +204,8 @@ export type CytoscapeFactory = (options: Record<string, unknown>) => Core;
 interface Room {
   /** How much bigger than at scale 1 boxes are drawn. */
   scale: number;
+  /** The shape of the room the graph is shown in: its width over its height. */
+  aspect: number;
   island: number;
   block: number;
   side: number;
@@ -223,10 +225,11 @@ interface Block {
  * blocks spread by a force layout, so families never overlap; then the islands packed side by side, the biggest on
  * the left and the smaller ones in columns to its right, about as tall as it.
  */
-export function arrangeIslands(cy: Core, cytoscape: CytoscapeFactory, scale = 1): void {
+export function arrangeIslands(cy: Core, cytoscape: CytoscapeFactory, scale = 1, aspect = 16 / 9): void {
   const room: Room = {
     island: ISLAND_GAP * scale,
     scale,
+    aspect,
     block: BLOCK_GAP * scale,
     side: FAMILY_FRAME.side * scale,
     top: FAMILY_FRAME.top * scale,
@@ -322,10 +325,10 @@ function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room): void 
       animate: false,
       randomize: false,
       fit: false,
-      idealEdgeLength: () => 90,
+      idealEdgeLength: () => 50,
       nodeOverlap: 40,
-      nodeRepulsion: () => 60000,
-      gravity: 1.2,
+      nodeRepulsion: () => 8000,
+      gravity: 2.5,
       numIter: 2500,
     } as never)
     .run();
@@ -335,18 +338,48 @@ function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room): void 
       return [block.id, { x: x * room.scale, y: y * room.scale }];
     })
   );
-  // Screens are wide: an island the layout made taller than wide is turned on its side.
+  // The island takes the shape of the room it is shown in: stretched one way, squeezed the other, as big as before.
   const xs = [...centers.values()].map(c => c.x);
   const ys = [...centers.values()].map(c => c.y);
-  if (Math.max(...ys) - Math.min(...ys) > Math.max(...xs) - Math.min(...xs)) {
-    for (const center of centers.values()) [center.x, center.y] = [center.y, center.x];
+  const spanX = Math.max(...xs) - Math.min(...xs);
+  const spanY = Math.max(...ys) - Math.min(...ys);
+  if (spanX > 0 && spanY > 0) {
+    const stretch = Math.sqrt(room.aspect / (spanX / spanY));
+    for (const center of centers.values()) {
+      center.x *= stretch;
+      center.y /= stretch;
+    }
   }
+  tighten(blocks, centers, room.block);
   separate(blocks, centers, room.block);
   for (const block of blocks) {
     const center = centers.get(block.id)!;
     placeBlock(block, center.x - block.w / 2, center.y - block.h / 2, room);
   }
   layout.destroy();
+}
+
+/**
+ * Moves blocks closer together, or further apart, all by the same factor, to the tightest spacing at which none
+ * overlaps another with `gap` between them; the force layout leaves room to spare between most.
+ */
+function tighten(blocks: Block[], centers: Map<string, { x: number; y: number }>, gap: number): void {
+  let factor = 0;
+  for (let i = 0; i < blocks.length; i++) {
+    for (let j = i + 1; j < blocks.length; j++) {
+      const [a, b] = [blocks[i], blocks[j]];
+      const [ca, cb] = [centers.get(a.id)!, centers.get(b.id)!];
+      // Two blocks are clear of each other once far enough apart across or down, whichever comes first.
+      const across = Math.abs(cb.x - ca.x) > 0 ? ((a.w + b.w) / 2 + gap) / Math.abs(cb.x - ca.x) : Infinity;
+      const down = Math.abs(cb.y - ca.y) > 0 ? ((a.h + b.h) / 2 + gap) / Math.abs(cb.y - ca.y) : Infinity;
+      factor = Math.max(factor, Math.min(across, down));
+    }
+  }
+  if (factor === 0 || !Number.isFinite(factor)) return;
+  for (const center of centers.values()) {
+    center.x *= factor;
+    center.y *= factor;
+  }
 }
 
 /**
@@ -412,34 +445,63 @@ function placeBlock(block: Block, x: number, y: number, room: Room): void {
   }
 }
 
-/** Moves islands, biggest first, into a row: the first alone, then columns as tall as it, left to right. */
+interface Box {
+  x1: number;
+  y1: number;
+  w: number;
+  h: number;
+}
+
+/**
+ * Moves islands, biggest first: the first alone, the others in columns to its right, as tall as it, or in rows below
+ * it, as wide as it, whichever makes the whole closer to the shape of the room it is shown in.
+ */
 function pack(islands: NodeSingular[], room: Room): void {
   if (islands.length === 0) return;
   // Measured from the classes, as a frame's own box may not follow them yet; widened by the room the frames take.
   const margin = ISLAND_PADDING * room.scale + room.top;
-  const boxes = islands.map(island => {
+  const boxes: Box[] = islands.map(island => {
     const box = island
       .descendants()
       .filter(node => !node.isParent())
       .boundingBox({});
     return { x1: box.x1 - margin, y1: box.y1 - margin, w: box.w + 2 * margin, h: box.h + 2 * margin };
   });
-  const height = boxes[0].h;
-  let x = 0;
-  let column: { y: number; width: number } = { y: 0, width: 0 };
-  islands.forEach((island, i) => {
-    const box = boxes[i];
-    if (i === 0) {
-      move(island, -box.x1, -box.y1);
-      x = box.w + room.island;
-      return;
+  const right = flow(boxes, room.island, 'right');
+  const below = flow(boxes, room.island, 'below');
+  const misfit = (places: { x: number; y: number }[]) => {
+    const w = Math.max(...places.map((place, i) => place.x + boxes[i].w));
+    const h = Math.max(...places.map((place, i) => place.y + boxes[i].h));
+    return Math.abs(Math.log(w / h / room.aspect));
+  };
+  const places = misfit(below) < misfit(right) ? below : right;
+  islands.forEach((island, i) => move(island, places[i].x - boxes[i].x1, places[i].y - boxes[i].y1));
+}
+
+/**
+ * Where islands go, by their top left corner: the first at the origin, the others in columns right of it as tall as
+ * it (`right`), or in rows below it as wide as it (`below`).
+ */
+function flow(boxes: Box[], gap: number, side: 'right' | 'below'): { x: number; y: number }[] {
+  const [first] = boxes;
+  const across = side === 'right';
+  // Along the line, how far a line of small islands may run; across it, where the next line starts.
+  const limit = across ? first.h : first.w;
+  let line = across ? first.w + gap : first.h + gap;
+  let along = 0;
+  let thickness = 0;
+  return boxes.map((box, i) => {
+    if (i === 0) return { x: 0, y: 0 };
+    const length = across ? box.h : box.w;
+    if (along > 0 && along + length > limit) {
+      line += thickness + gap;
+      along = 0;
+      thickness = 0;
     }
-    if (column.y > 0 && column.y + box.h > height) {
-      x += column.width + room.island;
-      column = { y: 0, width: 0 };
-    }
-    move(island, x - box.x1, column.y - box.y1);
-    column = { y: column.y + box.h + room.island, width: Math.max(column.width, box.w) };
+    const place = across ? { x: line, y: along } : { x: along, y: line };
+    along += length + gap;
+    thickness = Math.max(thickness, across ? box.w : box.h);
+    return place;
   });
 }
 

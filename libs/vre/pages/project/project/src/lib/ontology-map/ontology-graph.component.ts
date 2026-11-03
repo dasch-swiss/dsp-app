@@ -54,8 +54,11 @@ const EXPORT_BACKGROUND = '#F9FAFB';
 /** The whole model of a big data model is drawn no bigger than this, in px each way. */
 const EXPORT_MAX_SIZE = 8000;
 
+/** How far apart, at most, classes are spread to fill the box; past it, links grow too long to follow. */
+const MAX_SPREAD = 2.5;
+
 /** The share of the chosen name size a model is first shown at, at least, though it then does not fit. */
-const READABLE_SHARE = 0.8;
+const READABLE_SHARE = 0.6;
 
 /** Names are code: they are written in a monospaced font. */
 const FONT = { labels: 'Roboto, sans-serif', names: 'Roboto Mono, ui-monospace, monospace' };
@@ -721,7 +724,7 @@ export class OntologyGraphComponent {
     // Lay out at scale 1, so the scale changes how big things are drawn, not how far apart they are.
     cy.style(this._style(1));
     if (layout === 'islands') {
-      arrangeIslands(cy, this._cytoscape!);
+      arrangeIslands(cy, this._cytoscape!, 1, this._aspect(cy));
     } else {
       cy.layout(layoutOptions(layout) as never).run();
     }
@@ -747,14 +750,74 @@ export class OntologyGraphComponent {
     cy.style(this._style(this._scale));
     // Islands are laid out again with the boxes as drawn, so families and classes stay clear of each other.
     if (untracked(() => this.layout()) === 'islands' && this._cytoscape) {
-      arrangeIslands(cy, this._cytoscape, this._scale);
+      arrangeIslands(cy, this._cytoscape, this._scale, this._aspect(cy));
     }
+    this._spread(cy);
     this._fit(cy);
     const readable = (textSize * READABLE_SHARE) / (BASE_FONT_SIZE * this._scale);
     if (cy.zoom() < readable) {
       cy.zoom(readable);
       cy.center();
     }
+  }
+
+  /**
+   * Spreads the classes apart, across and down each on its own, so the model fills the box instead of leaving room
+   * to spare on a side: the side the fit leaves empty, or both when names reach their chosen size before it fits.
+   * Boxes and text keep their size, only the room between them grows. A family's classes move together.
+   */
+  private _spread(cy: Core): void {
+    const screen = this._room(cy);
+    const before = cy.elements().boundingBox({});
+    // The zoom the model is fitted at, at most the one that draws names at the chosen size.
+    const zoom = Math.min(
+      GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale),
+      screen.w / before.w,
+      screen.h / before.h
+    );
+    const room = { w: screen.w / zoom, h: screen.h / zoom };
+    const units = new Map<string, NodeSingular[]>();
+    cy.nodes()
+      .filter(node => !node.isParent())
+      .forEach(node => {
+        const family = node.parent().filter('.family');
+        const key = family.nonempty() ? family.id() : node.id();
+        units.set(key, [...(units.get(key) ?? []), node]);
+      });
+    if (units.size < 2) return;
+    const centers = [...units.values()].map(nodes => ({
+      nodes,
+      x: nodes.reduce((sum, node) => sum + node.position('x'), 0) / nodes.length,
+      y: nodes.reduce((sum, node) => sum + node.position('y'), 0) / nodes.length,
+    }));
+    const box = cy.elements().boundingBox({});
+    const factor = (axis: 'x' | 'y', size: number, space: number) => {
+      const values = centers.map(center => center[axis]);
+      const span = Math.max(...values) - Math.min(...values);
+      // The boxes at the edges take as much room as before; only the span between centres stretches.
+      return span > 0 ? Math.min(MAX_SPREAD, Math.max(1, (space - (size - span)) / span)) : 1;
+    };
+    const fx = factor('x', box.w, room.w);
+    const fy = factor('y', box.h, room.h);
+    if (fx === 1 && fy === 1) return;
+    const mid = { x: (box.x1 + box.x2) / 2, y: (box.y1 + box.y2) / 2 };
+    for (const { nodes, x, y } of centers) {
+      const dx = (x - mid.x) * (fx - 1);
+      const dy = (y - mid.y) * (fy - 1);
+      for (const node of nodes) node.position({ x: node.position('x') + dx, y: node.position('y') + dy });
+    }
+  }
+
+  /** The shape of the room the model is fitted in: its width over its height. */
+  private _aspect(cy: Core): number {
+    const room = this._room(cy);
+    return room.h > 0 ? room.w / room.h : 16 / 9;
+  }
+
+  /** The room the model is fitted in, in screen pixels: the box less its padding and the Islands view's legend. */
+  private _room(cy: Core): { w: number; h: number } {
+    const legend = this._legend()?.nativeElement.offsetHeight ?? 0;
+    return { w: cy.width() - 2 * FIT_PADDING, h: cy.height() - 2 * FIT_PADDING - legend };
   }
 
   /**
