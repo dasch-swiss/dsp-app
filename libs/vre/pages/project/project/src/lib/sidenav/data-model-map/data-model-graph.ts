@@ -43,8 +43,6 @@ export interface DataModelNode {
   representationClass?: RepresentationClass;
   /** The class's description in the ontology; only set for classes of the mapped data model. */
   description?: string;
-  /** Labels of the class's own properties, in their form order; only set for classes of the mapped data model. */
-  properties?: string[];
   /** The class's own properties, in their form order; only set for classes of the mapped data model. */
   propertyDetails?: DataModelProperty[];
 }
@@ -120,7 +118,6 @@ export function buildDataModelGraph(
       navigable: true,
       representationClass: resourceClass.representationClass,
       description: classDef ? textOf(classDef, 'comments', 'comment', labelOf) : '',
-      properties: [...new Set(own.map(property => property.label))],
       propertyDetails: own,
     });
   }
