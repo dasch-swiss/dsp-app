@@ -825,8 +825,6 @@
       "copyName": "Copia il nome",
       "nameCopied": "Nome copiato",
       "islands": {
-        "island": "{{name}} · {{count}} classi",
-        "unlinked": "Senza collegamenti · {{count}}",
         "legend": "Legenda",
         "hint": "Punta una famiglia per evidenziarla, clicca per mantenerla",
         "collapse": "Nascondi la legenda",

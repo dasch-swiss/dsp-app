@@ -14,7 +14,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
@@ -174,6 +174,11 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       color: 'data(dark)',
       'text-margin-y': -3 * f,
     },
+  },
+  // A lone island is only there for the layout: no frame, and clicks go through to the background.
+  {
+    selector: 'node.island.alone',
+    style: { 'background-opacity': 0, 'border-width': 0, padding: '0px', events: 'no' },
   },
   { selector: 'node.main', style: { 'border-width': 2 * f, 'border-color': COLOR.text } },
   { selector: 'node.selected', style: { 'border-width': 3 * f, 'border-color': COLOR.primary } },
@@ -613,17 +618,11 @@ export class OntologyGraphComponent {
   /** How much bigger than at scale 1 boxes, text and lines are drawn; see `graphScale`. */
   private _scale = 1;
 
-  private readonly _translate = inject(TranslateService);
   private readonly _counts = computed(() => linkCounts(this.graph()));
   private readonly _islands = computed(() => {
     const families = this.families();
     if (this.layout() !== 'islands' || !families) return undefined;
-    const t = 'pages.ontologyMap.islands';
-    return {
-      families,
-      islandLabel: (name: string, count: number) => this._translate.instant(`${t}.island`, { name, count }),
-      unlinkedLabel: (count: number) => this._translate.instant(`${t}.unlinked`, { count }),
-    };
+    return { families };
   });
   private readonly _elements = computed(() =>
     toGraphElements(this.graph(), {

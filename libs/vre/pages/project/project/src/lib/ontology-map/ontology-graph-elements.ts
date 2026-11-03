@@ -90,10 +90,6 @@ export interface GraphElementOptions {
 export interface IslandElementOptions {
   /** The family of every class of the data model; see `classFamilies`. */
   families: Map<string, ClassFamily>;
-  /** The text on an island: the label of its most linked class, and how many classes it has. */
-  islandLabel: (name: string, count: number) => string;
-  /** The text on the island of classes linked with no other class. */
-  unlinkedLabel: (count: number) => string;
 }
 
 /** Room for a file icon at the start of a class's first line, as the graph cannot pad one side only. */
@@ -103,8 +99,8 @@ export const ICON_ROOM = '  ';
  * The data model as Cytoscape elements: a node per class, an edge per link labelled with its property, a dashed
  * edge per subclass relation if the graph still has any. Each class node carries its colour; node classes carry what
  * else the stylesheet draws: `external`, `main`, `selected`. A class without links is drawn as any other. In the
- * Islands view, compound nodes group the classes: an `island` per group of linked classes, a `family` per class and
- * its subclasses within it.
+ * Islands view, compound nodes group the classes: an `island` per group of linked classes, framed only when there
+ * are several, and a `family` per class and its subclasses within it.
  */
 export function toGraphElements(graph: DataModelGraph, options: GraphElementOptions): ElementDefinition[] {
   const islands = options.islands;
@@ -188,28 +184,21 @@ function islandParents(graph: DataModelGraph, options: IslandElementOptions): Ma
   return parents;
 }
 
-/** The compound nodes of the Islands view: an island per group of linked classes, a family per shared family. */
+/**
+ * The compound nodes of the Islands view: an island per group of linked classes, unnamed, and a family per shared
+ * family. A lone island is kept for the layout, but `alone`: drawn without a frame.
+ */
 function islandNodes(graph: DataModelGraph, options: IslandElementOptions): ElementDefinition[] {
-  const counts = new Map<string, number>();
-  for (const edge of graph.edges) {
-    if (edge.source === edge.target) continue;
-    for (const iri of [edge.source, edge.target]) counts.set(iri, (counts.get(iri) ?? 0) + 1);
-  }
-  const labelOf = new Map(graph.nodes.map(node => [node.id, node.label]));
-  const kindOf = new Map(graph.nodes.map(node => [node.id, node.kind]));
   const parents = islandParents(graph, options);
+  const groups = islandGroups(graph);
   const elements: ElementDefinition[] = [];
-  for (const { id, iris } of islandGroups(graph)) {
-    const classes = iris.filter(iri => kindOf.get(iri) === 'class');
-    const unlinked = id === UNLINKED_ISLAND;
-    const top = [...classes].sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0))[0] ?? iris[0];
-    const text = unlinked
-      ? options.unlinkedLabel(classes.length)
-      : options.islandLabel(labelOf.get(top) ?? '', classes.length);
+  for (const { id, iris } of groups) {
     elements.push({
       group: 'nodes',
-      data: { id, label: text, name: text, both: text },
-      classes: unlinked ? 'island unlinked' : 'island',
+      data: { id, label: '', name: '', both: '' },
+      classes: ['island', id === UNLINKED_ISLAND ? 'unlinked' : '', groups.length === 1 ? 'alone' : '']
+        .filter(Boolean)
+        .join(' '),
     });
     for (const parent of new Set(iris.map(iri => parents.get(iri)).filter(p => p && p !== id))) {
       const family = options.families.get(iris.find(iri => parents.get(iri) === parent)!)!;

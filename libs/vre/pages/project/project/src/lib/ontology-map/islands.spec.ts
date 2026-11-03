@@ -85,16 +85,25 @@ describe('toGraphElements in the Islands view', () => {
     anyResourceLabel: 'Any resource',
     islands: {
       families: classFamilies(graph),
-      islandLabel: (name, count) => `${name} · ${count}`,
-      unlinkedLabel: count => `Not linked · ${count}`,
     },
   });
   const node = (id: string) => elements.find(e => e.group === 'nodes' && e.data.id === id)!;
 
-  it('draws an island per group of linked classes, named after its most linked class, and one for the rest', () => {
-    const islands = elements.filter(e => e.classes?.includes('island')).map(e => e.data['label']);
+  it('draws an unnamed island per group of linked classes, and one for the rest', () => {
+    const islands = elements.filter(e => e.classes?.includes('island'));
 
-    expect(islands).toEqual(['Church · 3', 'Tour · 2', 'Not linked · 2']);
+    expect(islands.map(e => e.data.id)).toEqual(['island:0', 'island:1', 'island:unlinked']);
+    expect(islands.map(e => e.data['label'])).toEqual(['', '', '']);
+    expect(islands.some(e => e.classes?.includes('alone'))).toBe(false);
+  });
+
+  it('draws no frame around a lone island', () => {
+    const lone = toGraphElements(
+      { nodes: links.nodes.filter(n => ['Stop', 'Tour'].includes(n.id)), edges: links.edges },
+      { colors: new Map(), anyResourceLabel: 'Any resource', islands: { families: classFamilies(graph) } }
+    );
+
+    expect(lone.find(e => e.data.id === 'island:0')?.classes).toBe('island alone');
   });
 
   it('groups the classes of a family sharing an island in a family node, others straight in the island', () => {
