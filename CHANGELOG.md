@@ -1,5 +1,18 @@
 # Changelog
 
+## [14.1.1](https://github.com/dasch-swiss/dsp-app/compare/v14.1.0...v14.1.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* **data-browser:** Download all exports the class, not the selection (DEV-7736, DEV-7737) ([#3596](https://github.com/dasch-swiss/dsp-app/issues/3596)) ([6bf6ba4](https://github.com/dasch-swiss/dsp-app/commit/6bf6ba4b3d200ac83433aba1a69b3ad53ee80a72))
+* **monitoring:** stop Sentry and Faro reporting each other's requests (DEV-7740) ([#3597](https://github.com/dasch-swiss/dsp-app/issues/3597)) ([3ad20c0](https://github.com/dasch-swiss/dsp-app/commit/3ad20c0edcbb5a1810d976134be77aee3143f2d5))
+
+
+### Maintenances
+
+* **deps:** Update grafana/grafana Docker tag to v13.3.0 ([#3594](https://github.com/dasch-swiss/dsp-app/issues/3594)) ([1d4d5b7](https://github.com/dasch-swiss/dsp-app/commit/1d4d5b750b9cb208239985f6c6a6434a1d634def))
+
 ## [14.1.0](https://github.com/dasch-swiss/dsp-app/compare/v14.0.0...v14.1.0) (2026-11-02)
 
 
