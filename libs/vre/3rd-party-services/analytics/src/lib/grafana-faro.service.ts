@@ -66,6 +66,8 @@ export class GrafanaFaroService {
             },
           }),
         ],
+        // Don't record Sentry's own requests, otherwise Sentry and Faro report each other endlessly
+        ignoreUrls: [/\.sentry\.io\//],
         sessionTracking: faroConfig.sessionTracking,
         // Faro v2: Console configuration at top level
         consoleInstrumentation: {
