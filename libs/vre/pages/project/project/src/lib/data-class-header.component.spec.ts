@@ -1,15 +1,15 @@
 import { CUSTOM_ELEMENTS_SCHEMA, ViewContainerRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { ReadResource, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { MultipleViewerService, ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
+import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassHeaderComponent } from './data-class-header.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
@@ -22,15 +22,11 @@ describe('DataClassHeaderComponent', () => {
   let mockDialog: jest.Mocked<MatDialog>;
   let mockViewContainerRef: jest.Mocked<ViewContainerRef>;
   let mockProjectPageService: jest.Mocked<ProjectPageService>;
-  let mockMultipleViewerService: jest.Mocked<MultipleViewerService>;
+  let mockOntologyCache: { getResourceClassDefinition: jest.Mock };
   let mockResClassCountApi: jest.Mocked<ResourceClassCountApi>;
   let mockStringifyPipe: jest.Mocked<StringifyStringLiteralPipe>;
-  let mockNotificationService: jest.Mocked<NotificationService>;
   let mockDataBrowserPageService: jest.Mocked<DataBrowserPageService>;
   let mockLocalizationService: Partial<LocalizationService>;
-
-  // Mock observables
-  let selectedResourcesSubject: BehaviorSubject<ReadResource[]>;
 
   // Mock data
   const mockResClass = {
@@ -48,34 +44,28 @@ describe('DataClassHeaderComponent', () => {
     resClass: mockResClass,
   };
 
-  const createMockResource = (id: string): ReadResource => {
-    const mockResourceClass = {
-      getResourcePropertiesList: jest.fn().mockReturnValue([]),
-    };
+  const mockProperty = (id: string, guiOrder: number, overrides: Record<string, unknown> = {}) => ({
+    propertyIndex: id,
+    guiOrder,
+    propertyDefinition: { id, isEditable: true, isLinkProperty: false, subPropertyOf: [], ...overrides },
+  });
 
-    const resource = {
-      id,
-      type: 'http://api.knora.org/ontology/knora-api/v2#Resource',
-      label: `Resource ${id}`,
-      entityInfo: {
-        classes: {
-          'http://api.knora.org/ontology/knora-api/v2#Resource': mockResourceClass,
-        },
-        getPropertyDefinitionsByType: jest.fn().mockReturnValue([]),
+  // Class definition as the ontology cache returns it: editable, non-editable and link properties.
+  const mockClassDefinitions = {
+    classes: {
+      [mockResClass.id]: {
+        id: mockResClass.id,
+        getResourcePropertiesList: () => [
+          mockProperty('prop:date', 2),
+          mockProperty('prop:title', 1),
+          mockProperty('prop:creator', 3, { isEditable: false }),
+          mockProperty('prop:linksTo', 4, { isLinkProperty: true }),
+        ],
       },
-      getPropertyByName: jest.fn().mockReturnValue({
-        values: [],
-      }),
-      properties: {},
-    } as any;
-
-    return resource;
+    },
   };
 
   beforeEach(async () => {
-    // Initialize subjects
-    selectedResourcesSubject = new BehaviorSubject<ReadResource[]>([]);
-
     // Create mock services
     mockDialog = {
       open: jest.fn().mockReturnValue({
@@ -100,9 +90,9 @@ describe('DataClassHeaderComponent', () => {
       },
     } as any;
 
-    mockMultipleViewerService = {
-      selectedResources$: selectedResourcesSubject.asObservable(),
-    } as any;
+    mockOntologyCache = {
+      getResourceClassDefinition: jest.fn().mockReturnValue(of(mockClassDefinitions)),
+    };
 
     mockResClassCountApi = {
       getResourceClassCount: jest.fn(),
@@ -110,10 +100,6 @@ describe('DataClassHeaderComponent', () => {
 
     mockStringifyPipe = {
       transform: jest.fn().mockReturnValue('Transformed Label'),
-    } as any;
-
-    mockNotificationService = {
-      openSnackBar: jest.fn(),
     } as any;
 
     mockDataBrowserPageService = {
@@ -129,9 +115,8 @@ describe('DataClassHeaderComponent', () => {
         { provide: MatDialog, useValue: mockDialog },
         { provide: ViewContainerRef, useValue: mockViewContainerRef },
         { provide: ProjectPageService, useValue: mockProjectPageService },
-        { provide: MultipleViewerService, useValue: mockMultipleViewerService },
+        { provide: DspApiConnectionToken, useValue: { v2: { ontologyCache: mockOntologyCache } } },
         { provide: ResourceClassCountApi, useValue: mockResClassCountApi },
-        { provide: NotificationService, useValue: mockNotificationService },
         { provide: DataBrowserPageService, useValue: mockDataBrowserPageService },
         { provide: LocalizationService, useValue: mockLocalizationService },
         // Route-scoped in the app; this isolated fixture has no route.
@@ -177,70 +162,17 @@ describe('DataClassHeaderComponent', () => {
   });
 
   describe('openDownloadDialog', () => {
-    const mockResource1 = createMockResource('resource-1');
-
-    beforeEach(() => {
-      // Mock generateDspResource to return a resource with editable properties
-      selectedResourcesSubject.next([mockResource1]);
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
-    });
-
-    it('should get resource class count', done => {
-      component.openDownloadDialog();
+    it('should get the class definition', done => {
+      component.openDownloadDialog(10);
 
       setTimeout(() => {
-        expect(mockResClassCountApi.getResourceClassCount).toHaveBeenCalledWith(mockResClass.id);
+        expect(mockOntologyCache.getResourceClassDefinition).toHaveBeenCalledWith(mockResClass.id);
         done();
       }, 0);
     });
 
-    it('should show notification when resource count is 0', done => {
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(0));
-
-      component.openDownloadDialog();
-
-      setTimeout(() => {
-        expect(mockNotificationService.openSnackBar).toHaveBeenCalledWith(
-          'pages.dataBrowser.downloadDialog.noResources'
-        );
-        expect(mockDialog.open).not.toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should show notification when no resources selected', done => {
-      selectedResourcesSubject.next([]);
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
-
-      component.openDownloadDialog();
-
-      setTimeout(() => {
-        expect(mockNotificationService.openSnackBar).toHaveBeenCalledWith(
-          'pages.dataBrowser.downloadDialog.noResources'
-        );
-        expect(mockDialog.open).not.toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should not open dialog when both count and resources are 0', done => {
-      selectedResourcesSubject.next([]);
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(0));
-
-      component.openDownloadDialog();
-
-      setTimeout(() => {
-        expect(mockDialog.open).not.toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should open download dialog with correct data when resources exist', done => {
-      const mockResources = [mockResource1];
-      selectedResourcesSubject.next(mockResources);
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(25));
-
-      component.openDownloadDialog();
+    it('should open download dialog as a side panel', done => {
+      component.openDownloadDialog(10);
 
       setTimeout(() => {
         expect(mockDialog.open).toHaveBeenCalledWith(
@@ -256,98 +188,29 @@ describe('DataClassHeaderComponent', () => {
       }, 0);
     });
 
-    it('should pass resource count to dialog', done => {
-      const resourceCount = 42;
-      selectedResourcesSubject.next([mockResource1]);
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(resourceCount));
-
-      component.openDownloadDialog();
+    it('should pass resource count and class to dialog', done => {
+      component.openDownloadDialog(42);
 
       setTimeout(() => {
-        const callArgs = mockDialog.open.mock.calls[0];
-        const config = callArgs[1] as any;
-        expect(config.data.resourceCount).toBe(resourceCount);
-        done();
-      }, 0);
-    });
-
-    it('should pass resource class to dialog', done => {
-      selectedResourcesSubject.next([mockResource1]);
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
-
-      component.openDownloadDialog();
-
-      setTimeout(() => {
-        const callArgs = mockDialog.open.mock.calls[0];
-        const config = callArgs[1] as any;
+        const config = mockDialog.open.mock.calls[0][1] as any;
+        expect(config.data.resourceCount).toBe(42);
         expect(config.data.resClass).toBe(mockResClass);
         done();
       }, 0);
     });
 
-    it('should use first() operator on selectedResources$ to get single emission', done => {
-      selectedResourcesSubject.next([mockResource1]);
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
-
-      component.openDownloadDialog();
+    it('lists the editable properties of the class, not of a selected resource', done => {
+      component.openDownloadDialog(10);
 
       setTimeout(() => {
-        // Change the subject after the subscription
-        selectedResourcesSubject.next([mockResource1, createMockResource('resource-2')]);
-
-        // Dialog should still only be called once with the first value
-        expect(mockDialog.open).toHaveBeenCalledTimes(1);
+        const config = mockDialog.open.mock.calls[0][1] as any;
+        expect(config.data.properties.map((p: any) => p.propDef.id)).toEqual(['prop:title', 'prop:date']);
         done();
-      }, 10);
-    });
-
-    it('should handle multiple calls independently', done => {
-      selectedResourcesSubject.next([mockResource1]);
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(5));
-
-      component.openDownloadDialog();
-
-      setTimeout(() => {
-        mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
-        component.openDownloadDialog();
-
-        setTimeout(() => {
-          expect(mockDialog.open).toHaveBeenCalledTimes(2);
-          done();
-        }, 10);
-      }, 10);
+      }, 0);
     });
   });
 
   describe('download scope', () => {
-    it('passes the checkbox selection count to the dialog', done => {
-      selectedResourcesSubject.next([createMockResource('resource-1'), createMockResource('resource-2')]);
-      mockMultipleViewerService.selectMode = true;
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
-
-      component.openDownloadDialog();
-
-      setTimeout(() => {
-        const config = mockDialog.open.mock.calls[0][1] as any;
-        expect(config.data.selectedCount).toBe(2);
-        done();
-      }, 0);
-    });
-
-    it('does not count a list-view click selection as a selection', done => {
-      selectedResourcesSubject.next([createMockResource('resource-1')]);
-      mockMultipleViewerService.selectMode = false;
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(10));
-
-      component.openDownloadDialog();
-
-      setTimeout(() => {
-        const config = mockDialog.open.mock.calls[0][1] as any;
-        expect(config.data.selectedCount).toBe(0);
-        done();
-      }, 0);
-    });
-
     it('exposes the class total for the Download all badge', done => {
       mockResClassCountApi.getResourceClassCount.mockReturnValue(of(66));
       const emitted: (number | null)[] = [];

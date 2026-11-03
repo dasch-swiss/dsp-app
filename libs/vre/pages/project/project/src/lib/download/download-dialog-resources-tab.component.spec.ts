@@ -437,14 +437,8 @@ describe('DownloadDialogResourcesTabComponent', () => {
       return fixture.nativeElement.querySelector('[data-cy="download-scope-note"]').textContent;
     };
 
-    it('states the class-wide scope when nothing is selected', () => {
+    it('states the class-wide scope', () => {
       expect(scopeNote()).toContain('pages.dataBrowser.downloadDialog.scopeAll');
-      expect(scopeNote()).not.toContain('scopeAllWithSelection');
-    });
-
-    it('names the selection when rows are selected', () => {
-      component.selectedCount = 2;
-      expect(scopeNote()).toContain('pages.dataBrowser.downloadDialog.scopeAllWithSelection');
     });
   });
 

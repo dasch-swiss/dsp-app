@@ -611,7 +611,6 @@
         "downloadAll": "Tout télécharger",
         "heading": "Télécharger {{className}}",
         "resourceCount": "{{count}} ressources",
-        "noResources": "Il n'y a pas de ressources à télécharger.",
         "properties": "Propriétés",
         "filterProperties": "Filtrer les propriétés",
         "csvSummary": "CSV · {{rows}} lignes × {{columns}} colonnes",
@@ -628,8 +627,7 @@
         "progressXofN": "{{x}} sur {{n}} ressources exportées",
         "buildingCsv": "Création de votre fichier CSV — veuillez garder cet onglet ouvert. Le téléchargement démarrera dès que le fichier sera prêt.",
         "preparing": "Préparation…",
-        "scopeAll": "Le fichier contient toutes les ressources de cette classe. La recherche et les filtres actuels ne sont pas appliqués.",
-        "scopeAllWithSelection": "Le fichier contient toutes les ressources de cette classe. Vos {{count}} ressources sélectionnées, la recherche et les filtres actuels ne sont pas pris en compte."
+        "scopeAll": "Le fichier contient toutes les ressources de cette classe. La recherche et les filtres actuels ne sont pas appliqués."
       },
       "dataClassHeader": {
         "searchLabel": "Rechercher",
