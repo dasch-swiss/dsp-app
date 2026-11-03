@@ -18,16 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
-import {
-  arrangeIslands,
-  ClassFamily,
-  CytoscapeFactory,
-  FILE_KINDS,
-  ISLAND_PADDING,
-  familyHue,
-  familyTexture,
-  FamilyTexture,
-} from './islands';
+import { arrangeIslands, ClassFamily, CytoscapeFactory, FILE_KINDS, ISLAND_PADDING } from './islands';
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
@@ -129,10 +120,10 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         `${node.data('texture') ?? NO_IMAGE} ${node.data('icon') ?? NO_IMAGE}` as never,
       'background-fit': 'none none' as never,
       'background-clip': 'node none' as never,
-      'background-width': `auto ${20 * f}px` as never,
-      'background-height': `auto ${20 * f}px` as never,
+      'background-width': `auto ${26 * f}px` as never,
+      'background-height': `auto ${26 * f}px` as never,
       // Measured from inside the padding, where the label starts; the label leaves room for the icon there.
-      'background-position-x': `50% ${-2 * f}px` as never,
+      'background-position-x': `50% ${-5 * f}px` as never,
       'background-position-y': `50% 50%` as never,
     },
   },
@@ -208,7 +199,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'min-zoomed-font-size': 7,
     },
   },
-  { selector: '.faded', style: { opacity: 0.2 } },
   {
     selector: 'edge.highlighted, edge.same-property',
     style: { width: 2 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
@@ -234,9 +224,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       <div #islandsLegend class="islands-legend" role="region" [attr.aria-label]="i + '.legend' | translate">
         <div class="legend-head">
           <span class="legend-title">{{ i + '.legend' | translate }}</span>
-          @if (legendOpen()) {
-            <span class="legend-hint">{{ i + '.hint' | translate }}</span>
-          }
           <span class="spacer"></span>
           <button
             type="button"
@@ -250,26 +237,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         </div>
         @if (legendOpen()) {
           <div class="legend-body">
-            <div class="legend-families">
-              <span class="legend-heading">{{ i + '.families' | translate: { count: legend.families.length } }}</span>
-              <div class="family-grid">
-                @for (family of legend.families; track family.root) {
-                  <button
-                    type="button"
-                    class="family"
-                    data-cy="islands-legend-family"
-                    [class.on]="pinnedFamily() === family.root"
-                    [attr.aria-pressed]="pinnedFamily() === family.root"
-                    (mouseenter)="hoveredFamily.set(family.root)"
-                    (mouseleave)="hoveredFamily.set(undefined)"
-                    (click)="pinnedFamily.set(pinnedFamily() === family.root ? undefined : family.root)">
-                    <span class="swatch" [style.background]="family.swatch" [style.border-color]="family.dark"></span>
-                    <span class="family-label">{{ family.label }}</span>
-                    <span class="family-count">{{ family.count }}</span>
-                  </button>
-                }
-              </div>
-            </div>
             @if (legend.files.length) {
               <div class="legend-files">
                 <span class="legend-heading">{{ i + '.files' | translate }}</span>
@@ -377,12 +344,12 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         border-radius: 3px;
       }
 
-      // The Islands view's legend: families with their colour, the kinds of file shown, and the shapes.
+      // The Islands view's legend: the kinds of file shown, and the shapes.
       .islands-legend {
         position: absolute;
         left: 16px;
         bottom: 16px;
-        width: min(720px, calc(100% - 96px));
+        max-width: calc(100% - 96px);
         box-sizing: border-box;
         padding: 10px 12px 12px;
         display: flex;
@@ -406,11 +373,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         font-size: 13px;
         font-weight: 600;
         color: $cool_gray_900;
-      }
-
-      .legend-hint {
-        font-size: 11.5px;
-        color: $cool_gray_500;
       }
 
       .spacer {
@@ -456,66 +418,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         letter-spacing: 0.06em;
         text-transform: uppercase;
         color: $cool_gray_500;
-      }
-
-      .legend-families {
-        flex: 1 1 260px;
-        min-width: 0;
-        max-height: 180px;
-        overflow: auto;
-      }
-
-      .family-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        column-gap: 8px;
-      }
-
-      .family {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        height: 26px;
-        padding: 0 6px;
-        border: 0;
-        border-radius: 6px;
-        background: transparent;
-        font: inherit;
-        color: inherit;
-        text-align: left;
-        cursor: pointer;
-
-        &:hover,
-        &.on {
-          background: $cool_gray_100;
-        }
-
-        &.on {
-          font-weight: 500;
-        }
-      }
-
-      .swatch {
-        flex: none;
-        width: 16px;
-        height: 16px;
-        box-sizing: border-box;
-        border: 1.5px solid;
-        border-radius: 4px;
-      }
-
-      .family-label {
-        flex: 1;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .family-count {
-        font-size: 11.5px;
-        color: $cool_gray_500;
-        font-variant-numeric: tabular-nums;
       }
 
       .legend-files,
@@ -637,30 +539,13 @@ export class OntologyGraphComponent {
 
   /** Whether the Islands view's legend is open. */
   readonly legendOpen = signal(true);
-  /** A family pointed at in the legend; the graph fades every other class. */
-  readonly hoveredFamily = signal<string | undefined>(undefined);
-  /** A family clicked in the legend, faded around until clicked again. */
-  readonly pinnedFamily = signal<string | undefined>(undefined);
   private readonly _legend = viewChild<ElementRef<HTMLElement>>('islandsLegend');
 
-  /** What the Islands view's legend lists: the families and kinds of file of the classes shown. */
+  /** What the Islands view's legend lists: the kinds of file the classes shown carry. */
   readonly islandsLegend = computed(() => {
-    const islands = this._islands();
-    if (!islands) return undefined;
-    const families = new Map<string, LegendFamily>();
-    const files = new Set<string>();
-    for (const node of this.graph().nodes) {
-      const family = islands.families.get(node.id);
-      if (!family) continue;
-      if (node.representationClass) files.add(node.representationClass);
-      const entry = families.get(family.root) ?? legendFamily(family);
-      entry.count++;
-      families.set(family.root, entry);
-    }
-    return {
-      families: [...families.values()].sort((a, b) => a.index - b.index),
-      files: FILE_KINDS.filter(kind => files.has(kind.representation)),
-    };
+    if (!this._islands()) return undefined;
+    const files = new Set(this.graph().nodes.map(node => node.representationClass));
+    return { files: FILE_KINDS.filter(kind => files.has(kind.representation)) };
   });
   /** Classes the user may open; other data models' classes and knora-api's are drawn but not clickable. */
   private readonly _navigable = computed(
@@ -781,38 +666,6 @@ export class OntologyGraphComponent {
       const text = { levelLabels: this.levelLabels(), labels: this.labels() };
       if (cy) cy.style(styleFor(this._scale, text));
     });
-    // A family picked in the legend stands out: every other class and every link not touching it fades.
-    effect(() => {
-      const cy = this._cy();
-      const root = this.hoveredFamily() ?? this.pinnedFamily();
-      const families = this.families();
-      this._elements();
-      if (!cy) return;
-      cy.elements().removeClass('faded');
-      if (!root || !families) return;
-      const inFamily = (iri: string) => families.get(iri)?.root === root;
-      cy.nodes()
-        .filter(node => !node.isParent() && !inFamily(node.id()))
-        .addClass('faded');
-      cy.nodes('.family')
-        .filter(
-          node =>
-            !node
-              .children()
-              .toArray()
-              .some(child => inFamily(child.id()))
-        )
-        .addClass('faded');
-      cy.edges()
-        .filter(edge => !inFamily(edge.source().id()) && !inFamily(edge.target().id()))
-        .addClass('faded');
-    });
-    // A new data model or view starts with no family picked.
-    effect(() => {
-      this.graph();
-      this.layout();
-      untracked(() => this.pinnedFamily.set(undefined));
-    });
     effect(() => {
       const cy = this._cy();
       const selected = this.selectedIri();
@@ -923,37 +776,4 @@ export class OntologyGraphComponent {
     const cy = this._cy();
     if (cy) this._fit(cy);
   }
-}
-
-/** A family as the Islands view's legend lists it. */
-interface LegendFamily {
-  root: string;
-  label: string;
-  index: number;
-  /** How many of the classes shown are in it. */
-  count: number;
-  dark: string;
-  /** The swatch's CSS background: the family's hue, with its texture. */
-  swatch: string;
-}
-
-function legendFamily(family: ClassFamily): LegendFamily {
-  const hue = familyHue(family.index);
-  return {
-    root: family.root,
-    label: family.rootLabel,
-    index: family.index,
-    count: 0,
-    dark: hue.dark,
-    swatch: swatchBackground(familyTexture(family.index), hue.base, hue.dark),
-  };
-}
-
-/** A family's texture in CSS, for its legend swatch, as the graph draws it on the family's boxes. */
-function swatchBackground(texture: FamilyTexture, base: string, dark: string): string {
-  const shade = (alpha: number) => `color-mix(in srgb, ${dark} ${alpha}%, transparent)`;
-  if (texture === 'stripes')
-    return `repeating-linear-gradient(135deg, ${shade(32)} 0 2px, transparent 2px 6px), ${base}`;
-  if (texture === 'dots') return `radial-gradient(${shade(45)} 1.2px, transparent 1.6px) 0 0 / 5px 5px, ${base}`;
-  return base;
 }

@@ -93,7 +93,7 @@ export interface IslandElementOptions {
 }
 
 /** Room for a file icon at the start of a class's first line, as the graph cannot pad one side only. */
-export const ICON_ROOM = '  ';
+export const ICON_ROOM = '\u2003\u2003\u2009';
 
 /**
  * The data model as Cytoscape elements: a node per class, an edge per link labelled with its property, a dashed

@@ -826,10 +826,8 @@
       "nameCopied": "Name copied",
       "islands": {
         "legend": "Legend",
-        "hint": "Point at a family to pick it out, click to keep it",
         "collapse": "Hide the legend",
         "expand": "Show the legend",
-        "families": "Families · {{count}}",
         "files": "Files",
         "shapes": "Shapes",
         "parent": "Parent class",
