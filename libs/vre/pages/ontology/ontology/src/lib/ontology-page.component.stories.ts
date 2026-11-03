@@ -5,7 +5,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, componentWrapperDecorator, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, within } from 'storybook/test';
 import { OntologyPageComponent } from './ontology-page.component';
@@ -63,6 +63,20 @@ export const DefaultView: Story = {
   play: async ({ canvasElement, step }) => {
     await step('Ontology page container renders', async () => {
       await expect(canvasElement).toBeInTheDocument();
+    });
+  },
+};
+
+export const KeepsMinimumWidthOnNarrowScreens: Story = {
+  name: 'Keeps the minimum supported width on a narrow screen so the page scrolls',
+  decorators: [
+    applicationConfig({ providers: sharedProviders }),
+    componentWrapperDecorator(story => `<div style="width: 375px">${story}</div>`),
+  ],
+  play: async ({ canvasElement, step }) => {
+    await step('The editor is not squeezed below 768px', async () => {
+      const editor = canvasElement.querySelector<HTMLElement>('.ontology-editor')!;
+      await expect(editor.getBoundingClientRect().width).toBeGreaterThanOrEqual(768);
     });
   },
 };

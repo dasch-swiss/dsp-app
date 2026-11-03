@@ -27,7 +27,9 @@ $fg-secondary: #6b7280;
   align-items: center;
   gap: 8px;
   width: 100%;
-  min-height: 48px;
+  // A denser host — the resource editor's compact value editors — sets the variable to line up
+  // with the Material fields around it (DEV-7611). A caption still grows the field past it.
+  min-height: var(--date-field-min-height, 48px);
   padding: 6px 12px;
   box-sizing: border-box;
   background: #fff;

@@ -1,11 +1,16 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { importProvidersFrom } from '@angular/core';
+import { OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
+import {
+  ConfirmedSearchStateService,
+  EMPTY_SEARCH_STATE,
+  SearchFilterState,
+  StatementDraftStore,
+} from '@dasch-swiss/vre/pages/search/search-filters';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { DerivedSearchState, DerivedSearchStateService } from '../../service/derived-search-state.service';
-import { OntologyDataService } from '../../service/ontology-data.service';
-import { StatementDraftStore } from '../../service/statement-draft.store';
 import {
   makeDerivedSearchStateServiceStub,
   makeOntologyDataServiceStub,
@@ -33,6 +38,8 @@ const baseProviders = [
   importProvidersFrom(OverlayModule),
   { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
   derivationWithClass(null),
+  { provide: SearchFilterState, useValue: EMPTY_SEARCH_STATE as unknown as SearchFilterState },
+  ConfirmedSearchStateService,
   StatementDraftStore,
 ];
 
@@ -45,6 +52,8 @@ export const ShowsAllResourceClasses: Story = {
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
         derivationWithClass(null),
+        { provide: SearchFilterState, useValue: EMPTY_SEARCH_STATE as unknown as SearchFilterState },
+        ConfirmedSearchStateService,
         StatementDraftStore,
       ],
     }),
@@ -66,6 +75,8 @@ export const ShowsSelectedClass: Story = {
         importProvidersFrom(OverlayModule),
         { provide: OntologyDataService, useValue: makeOntologyDataServiceStub() },
         derivationWithClass(SAMPLE_RESOURCE_CLASSES[0]),
+        { provide: SearchFilterState, useValue: EMPTY_SEARCH_STATE as unknown as SearchFilterState },
+        ConfirmedSearchStateService,
         StatementDraftStore,
       ],
     }),

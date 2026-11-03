@@ -1,4 +1,4 @@
-@use "config" as *;
+@use 'config' as *;
 
 :host {
   width: 100%;
@@ -16,6 +16,8 @@
 
 .property-info {
   padding: 16px;
+  // A property id is one long word; on a narrow screen it must break rather than run out of the card.
+  overflow-wrap: anywhere;
 }
 
 .prop-container {
@@ -50,26 +52,33 @@
       position: relative;
     }
   }
+}
 
-  &.info {
+// Not under `.mat-line`: the elements only carry a `mat-line` attribute, so rules nested there never applied
+// and a long "used in" line was cut off by the list item's nowrap (DEV-7481).
+.info {
+  font-size: small;
+
+  .mat-caption {
+    color: rgba($dark, 0.7);
+  }
+
+  .mat-icon {
+    width: 12px;
+    height: 12px;
     font-size: small;
-
-    .mat-caption {
-      color: rgba($dark, 0.7);
-    }
-
-    .mat-icon {
-      width: 12px;
-      height: 12px;
-      font-size: small;
-      top: 2px;
-      position: relative;
-    }
+    top: 2px;
+    position: relative;
   }
+}
 
-  &.with-line-break {
-    white-space: normal;
-  }
+.with-line-break {
+  white-space: normal;
+}
+
+// Keeps a class name and its dot together, so a long "used in" line wraps between classes, never inside a name.
+.used-in-class {
+  display: inline-block;
 }
 
 .edit-menu {
@@ -77,6 +86,25 @@
   top: 0;
   right: 0;
   align-items: center;
+}
+
+// The dot between "used in" classes carries its own spacing, so it is equal on both sides (DEV-7481).
+.used-in-separator {
+  margin-inline: 0.35em;
+}
+
+// Screen readers get a comma instead of the hidden dot, so the class names are not read as one word.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.restricted-lock {
+  margin-left: 0.25em;
 }
 
 .not-used {

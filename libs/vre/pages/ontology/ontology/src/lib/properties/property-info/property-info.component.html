@@ -51,13 +51,14 @@
       <span>
         <span class="mat-caption">&gt; {{ 'pages.ontology.propertyInfo.usedIn' | translate }} </span>
         @for (c of property.usedByClasses; track trackByFn($index, c); let last = $last) {
-        <span>
+        <span class="used-in-class">
           <span
             [matTooltip]="(c.labels | appStringifyStringLiteral ) + ': ' +(c.comments | appStringifyStringLiteral )"
             matTooltipPosition="above"
             [matTooltipDisabled]="isLockHovered"
-            >{{ c.labels | appStringifyStringLiteral }} @if (c.id && c.id === c.restrictedToClass) {
+            >{{ c.labels | appStringifyStringLiteral }}@if (c.id && c.id === c.restrictedToClass) {
             <span
+              class="restricted-lock"
               [matTooltip]="
                 _translate.instant('pages.ontology.propertyInfo.restrictedTo', {
                   className: c.labels | appStringifyStringLiteral
@@ -65,11 +66,11 @@
               "
               (mouseenter)="isLockHovered = true"
               (mouseleave)="isLockHovered = false">
-              <mat-icon class="type">lock</mat-icon>
+              <mat-icon>lock</mat-icon>
             </span>
             }</span
-          >@if (!last) {
-          <span>&nbsp;&middot;</span>
+          >@if (!last) { <span class="visually-hidden">, </span
+          ><span class="used-in-separator" aria-hidden="true">&middot;</span>
           }
         </span>
         }

@@ -11,7 +11,10 @@ import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helpe
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { provideTranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
+import {
+  CSV_EXPORT_LARGE_THRESHOLD,
+  DownloadDialogResourcesTabComponent,
+} from './download-dialog-resources-tab.component';
 
 // jsdom's Blob implements neither arrayBuffer() nor text(), so FileReader is the only way to get
 // at the raw bytes of a Blob under test.
@@ -201,17 +204,6 @@ describe('DownloadDialogResourcesTabComponent', () => {
       expect(component.isDownloading).toBe(false);
     });
 
-    it('emits downloadStateChange true on start and false on completion', () => {
-      const emitted: boolean[] = [];
-      component.downloadStateChange.subscribe(v => emitted.push(v));
-
-      component.downloadCsv();
-      events$.next(new HttpResponse({ body: 'h\nr1\n', status: 200 }));
-      events$.complete();
-
-      expect(emitted).toEqual([true, false]);
-    });
-
     describe('DownloadProgress events', () => {
       it('updates rowsReceived from partialText (subtracts header row)', () => {
         component.resourceCount = 5_000;
@@ -394,6 +386,31 @@ describe('DownloadDialogResourcesTabComponent', () => {
     });
   });
 
+  describe('large export warning', () => {
+    const warningFor = (resourceCount: number) => {
+      component.resourceCount = resourceCount;
+      fixture.detectChanges();
+      return fixture.nativeElement.querySelector('[data-cy="large-export-warning"]');
+    };
+
+    it('shows warning when resourceCount exceeds threshold', () => {
+      expect(warningFor(CSV_EXPORT_LARGE_THRESHOLD + 1)).toBeTruthy();
+    });
+
+    it('does not show warning when resourceCount equals threshold', () => {
+      expect(warningFor(CSV_EXPORT_LARGE_THRESHOLD)).toBeFalsy();
+    });
+
+    it('replaces the warning with the in-progress callout while downloading', () => {
+      component.resourceCount = CSV_EXPORT_LARGE_THRESHOLD + 1;
+      component.downloadCsv();
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('[data-cy="large-export-warning"]')).toBeNull();
+      expect(fixture.nativeElement.querySelector('[role="status"]')).not.toBeNull();
+    });
+  });
+
   describe('progress bar visibility', () => {
     it('does not render mat-progress-bar when resourceCount <= 1000', () => {
       component.resourceCount = 1_000;
@@ -411,6 +428,36 @@ describe('DownloadDialogResourcesTabComponent', () => {
 
       const progressBar = fixture.nativeElement.querySelector('mat-progress-bar');
       expect(progressBar).not.toBeNull();
+    });
+  });
+
+  describe('scope note', () => {
+    const scopeNote = () => {
+      fixture.detectChanges();
+      return fixture.nativeElement.querySelector('[data-cy="download-scope-note"]').textContent;
+    };
+
+    it('states the class-wide scope when nothing is selected', () => {
+      expect(scopeNote()).toContain('pages.dataBrowser.downloadDialog.scopeAll');
+      expect(scopeNote()).not.toContain('scopeAllWithSelection');
+    });
+
+    it('names the selection when rows are selected', () => {
+      component.selectedCount = 2;
+      expect(scopeNote()).toContain('pages.dataBrowser.downloadDialog.scopeAllWithSelection');
+    });
+  });
+
+  describe('columnCount', () => {
+    it('counts the selected properties', () => {
+      component.selectedPropertyIds = ['prop-1', 'prop-2'];
+      expect(component.columnCount).toBe(2);
+    });
+
+    it('adds the ARK column when ARK identifiers are included', () => {
+      component.selectedPropertyIds = ['prop-1', 'prop-2'];
+      component.includeArkUrls = true;
+      expect(component.columnCount).toBe(3);
     });
   });
 

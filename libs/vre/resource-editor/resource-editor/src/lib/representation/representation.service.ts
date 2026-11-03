@@ -6,6 +6,7 @@ import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { AccessTokenService, UserService } from '@dasch-swiss/vre/core/session';
 import { triggerBlobDownload } from '@dasch-swiss/vre/shared/app-common';
 import { map, Observable, take } from 'rxjs';
+import { IiifImageInfo } from './iiif-image-info';
 import { FileRepresentationInput, ParentResourceInput } from './representation-inputs';
 import { ResourceUtil } from './resource.util';
 
@@ -33,6 +34,15 @@ export class RepresentationService {
     const authToken = this._accessTokenService.getAccessToken();
     const headers = authToken ? new HttpHeaders({ Authorization: `Bearer ${authToken}` }) : undefined;
     return this._http.get(url, { responseType: 'blob', headers });
+  }
+
+  // Sipi's info.json describes the image this user may see (e.g. the reduced size of a restricted
+  // image), so the viewer draws from it rather than from the native dimX/dimY of the file value.
+  // The URL follows the IIIF URI syntax {base}/{identifier}/info.json (DEV-7660).
+  getIiifImageInfo(iiifBaseUrl: string, filename: string): Observable<IiifImageInfo> {
+    const authToken = this._accessTokenService.getAccessToken();
+    const headers = authToken ? new HttpHeaders({ Authorization: `Bearer ${authToken}` }) : undefined;
+    return this._http.get<IiifImageInfo>(`${iiifBaseUrl}/${filename}/info.json`, { headers });
   }
 
   getSvgContent(url: string): Observable<string> {

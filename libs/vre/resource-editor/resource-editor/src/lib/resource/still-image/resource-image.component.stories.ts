@@ -26,7 +26,7 @@ import {
   resourceFetcherServiceStub,
   withheldFileValue,
 } from '../../resource-stories.helper';
-import { STORY_IIIF_BASE_URL, STORY_IMAGE_URL } from '../../stories.helpers';
+import { STORY_IIIF_BASE_URL, STORY_IMAGE_URL, storyGetIiifImageInfo } from '../../stories.helpers';
 import { ResourceImageComponent } from './resource-image.component';
 
 /**
@@ -160,7 +160,11 @@ const meta: Meta<ResourceImageComponent> = {
         { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub('0803') },
         {
           provide: RepresentationService,
-          useValue: { getFileInfo: () => of({ originalFilename: 'image.jpx' }), downloadProjectFile: () => {} },
+          useValue: {
+            getFileInfo: () => of({ originalFilename: 'image.jpx' }),
+            getIiifImageInfo: storyGetIiifImageInfo,
+            downloadProjectFile: () => {},
+          },
         },
         { provide: NotificationService, useValue: { openSnackBar: () => {} } },
         {

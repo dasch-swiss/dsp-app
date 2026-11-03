@@ -54,6 +54,15 @@ export class ResourceFetcherService {
     });
   }
 
+  /**
+   * Adopt a resource the caller has already fetched, without issuing a request. `reload()` and the
+   * subtree's action bubble assume a first emission, so a host mounting editor components over a held
+   * resource must call this before the subtree renders. Safe to call again with a newer copy.
+   */
+  prime(resource: DspResource) {
+    this._resourceSubject.next(resource);
+  }
+
   reload() {
     const resourceIri = this._resourceSubject.value?.res.id;
     if (!resourceIri) {

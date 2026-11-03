@@ -13,7 +13,7 @@
       "configurations": {
         "ci": {
           "ci": true,
-          "runInBand": true,
+          "maxWorkers": 2,
           "coverage": true
         }
       }

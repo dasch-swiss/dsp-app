@@ -10,13 +10,15 @@ import { sortByKeys } from './property-value/sortByKeys';
 
 @Component({
   selector: 'app-standoff-links-property',
-  template: ` <app-property-row
-    [tooltip]="'resourceEditor.propertiesDisplay.standoffLinkTooltip' | translate"
-    [label]="'resourceEditor.propertiesDisplay.standoffLinkLabel' | translate"
-    [isEmptyRow]="standoffLinks.length === 0"
-    [borderBottom]="true">
-    <app-incoming-standoff-link-value [links]="standoffLinks" />
-  </app-property-row>`,
+  template: `@if (standoffLinks.length > 0) {
+    <app-property-row
+      [tooltip]="'resourceEditor.propertiesDisplay.standoffLinkTooltip' | translate"
+      [label]="'resourceEditor.propertiesDisplay.standoffLinkLabel' | translate"
+      [isEmptyRow]="false"
+      [borderBottom]="true">
+      <app-incoming-standoff-link-value [links]="standoffLinks" />
+    </app-property-row>
+  }`,
   imports: [PropertyRowComponent, IncomingStandoffLinkValueComponent, TranslatePipe],
 })
 export class StandoffLinksPropertyComponent implements OnChanges {

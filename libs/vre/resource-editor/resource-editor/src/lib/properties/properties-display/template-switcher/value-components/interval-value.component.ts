@@ -24,6 +24,16 @@ import { startWith } from 'rxjs/operators';
       </mat-error>
     }
   `,
+  // The fields reserve no error line (DEV-7611), so Start and End are spaced here; the top padding
+  // is room for Start's outlined label, which rises above its field's border.
+  styles: `
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 6px;
+    }
+  `,
 })
 export class IntervalValueComponent implements OnInit {
   @Input({ required: true }) control!: FormControl<{ start: number; end: number } | null>;

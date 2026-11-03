@@ -121,6 +121,12 @@ a {
   --mat-snack-bar-button-color: rgb(255, 255, 255) !important;
 }
 
+// Data tab tour (DEV-7545): the spotlight's overlay pane sits over the control it highlights, which
+// must stay clickable. The pane lives in the CDK overlay container, outside the component's styles.
+.cdk-overlay-pane.data-tab-tour-spotlight-pane {
+  pointer-events: none;
+}
+
 // action bubble
 .action-bubble {
   position: absolute;

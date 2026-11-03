@@ -1,7 +1,12 @@
-@use "config" as *;
+@use 'sass:map';
+@use 'config' as *;
+@use 'responsive' as *;
 
 .ontology-editor {
   width: auto;
+  // Below the minimum supported width the layout does not change; the page scrolls instead,
+  // so the fixed side panel never squeezes the property cards (DEV-7481, see _responsive.scss).
+  min-width: map.get($breakpoints, sm);
   min-height: calc(100vh - #{$header-height} - #{$tab-bar-margin} - 100px);
   height: calc(100vh - #{$header-height} - 2px);
   position: relative;
@@ -22,7 +27,6 @@
     display: flex;
     flex-direction: column;
     border-right: 1px solid rgba(0, 0, 0, 0.12);
-
   }
 
   .sticky-header {
@@ -37,5 +41,3 @@
     min-height: 0;
   }
 }
-
-
