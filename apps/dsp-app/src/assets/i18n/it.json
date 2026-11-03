@@ -745,7 +745,8 @@
         "tree": "Albero",
         "circle": "Cerchio",
         "force": "Forze",
-        "grid": "Griglia"
+        "grid": "Griglia",
+        "islands": "Isole"
       },
       "fit": "Adatta allo schermo",
       "graphFailed": "Non è stato possibile caricare il grafo.",
@@ -822,7 +823,30 @@
         "bothHint": "Etichetta · nome"
       },
       "copyName": "Copia il nome",
-      "nameCopied": "Nome copiato"
+      "nameCopied": "Nome copiato",
+      "islands": {
+        "island": "{{name}} · {{count}} classi",
+        "unlinked": "Senza collegamenti · {{count}}",
+        "legend": "Legenda",
+        "hint": "Punta una famiglia per evidenziarla, clicca per mantenerla",
+        "collapse": "Nascondi la legenda",
+        "expand": "Mostra la legenda",
+        "families": "Famiglie · {{count}}",
+        "files": "File",
+        "shapes": "Forme",
+        "parent": "Classe madre",
+        "subclass": "Sottoclasse",
+        "link": "Collegamento",
+        "fileKinds": {
+          "StillImageRepresentation": "Immagine",
+          "MovingImageRepresentation": "Video",
+          "AudioRepresentation": "Audio",
+          "DocumentRepresentation": "Documento",
+          "TextRepresentation": "Testo",
+          "ArchiveRepresentation": "Archivio",
+          "DDDRepresentation": "Modello 3D"
+        }
+      }
     },
     "dataModels2": {
       "map": "Mappa",

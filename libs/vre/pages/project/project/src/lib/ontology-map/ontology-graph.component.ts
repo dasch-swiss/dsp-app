@@ -13,10 +13,20 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
-import type { Core, StylesheetJson } from 'cytoscape';
+import { MatIcon } from '@angular/material/icon';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
+import {
+  arrangeIslands,
+  ClassFamily,
+  CytoscapeFactory,
+  FILE_KINDS,
+  familyHue,
+  familyTexture,
+  FamilyTexture,
+} from './islands';
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
@@ -57,6 +67,10 @@ const READABLE_SHARE = 0.8;
 
 /** Names are code: they are written in a monospaced font. */
 const FONT = { labels: 'Roboto, sans-serif', names: 'Roboto Mono, ui-monospace, monospace' };
+
+/** An empty image, for a class box with only one of its two images: a texture and a file icon. */
+const NO_IMAGE =
+  'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221%22%20height%3D%221%22%2F%3E';
 
 /** The element data each `GraphLabels` writes. */
 const LABEL_DATA: Record<GraphLabels, string> = { labels: 'data(label)', names: 'data(name)', both: 'data(both)' };
@@ -101,6 +115,66 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'font-style': 'italic',
     },
   },
+  // Islands view: a family's top class has a strong border in its hue, its subclasses a thin one.
+  {
+    selector: 'node.family-member',
+    style: { 'border-width': 2 * f, 'border-color': 'data(dark)', 'font-weight': 600 },
+  },
+  { selector: 'node.family-member.sub', style: { 'border-width': f, 'font-weight': 500 } },
+  {
+    selector: 'node[icon], node[texture]',
+    style: {
+      'background-image': (node: NodeSingular) =>
+        `${node.data('texture') ?? NO_IMAGE} ${node.data('icon') ?? NO_IMAGE}` as never,
+      'background-fit': 'none none' as never,
+      'background-clip': 'node none' as never,
+      'background-width': `auto ${20 * f}px` as never,
+      'background-height': `auto ${20 * f}px` as never,
+      // Measured from inside the padding, where the label starts; the label leaves room for the icon there.
+      'background-position-x': `50% ${-2 * f}px` as never,
+      'background-position-y': `50% 50%` as never,
+    },
+  },
+  {
+    selector: 'node.island',
+    style: {
+      shape: 'round-rectangle',
+      'background-color': '#FFFFFF',
+      'background-opacity': 0.6,
+      'border-width': 1.5 * f,
+      'border-style': 'dashed',
+      'border-color': '#CBD5E1',
+      padding: `${28 * f}px`,
+      'text-valign': 'top',
+      'text-halign': 'center',
+      'font-family': FONT.labels,
+      'font-size': 14 * f,
+      'font-weight': 500,
+      'font-style': 'normal',
+      color: '#334155',
+      'text-margin-y': -6 * f,
+    },
+  },
+  {
+    selector: 'node.family',
+    style: {
+      shape: 'round-rectangle',
+      'background-color': 'data(color)',
+      'background-opacity': 0.25,
+      'border-width': f,
+      'border-color': 'data(dark)',
+      'border-opacity': 0.25,
+      padding: `${12 * f}px`,
+      'text-valign': 'top',
+      'text-halign': 'center',
+      'font-family': FONT.labels,
+      'font-size': 11 * f,
+      'font-weight': 600,
+      'text-transform': 'uppercase',
+      color: 'data(dark)',
+      'text-margin-y': -3 * f,
+    },
+  },
   { selector: 'node.main', style: { 'border-width': 2 * f, 'border-color': COLOR.text } },
   { selector: 'node.selected', style: { 'border-width': 3 * f, 'border-color': COLOR.primary } },
   { selector: 'node:active', style: { 'overlay-opacity': 0.08, 'overlay-color': COLOR.primary } },
@@ -128,6 +202,7 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'min-zoomed-font-size': 7,
     },
   },
+  { selector: '.faded', style: { opacity: 0.2 } },
   {
     selector: 'edge.highlighted, edge.same-property',
     style: { width: 2 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
@@ -141,25 +216,98 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
 @Component({
   selector: 'app-ontology-graph',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [MatIcon, TranslatePipe],
   template: `
     @let t = 'pages.dataBrowser.dataModelMap';
+    @let i = 'pages.ontologyMap.islands';
     <div #canvas class="canvas" data-cy="ontology-graph"></div>
     @if (failed()) {
       <p class="failed">{{ 'pages.ontologyMap.graphFailed' | translate }}</p>
     }
-    <div class="legend" aria-hidden="true">
-      <span class="legend-item">
-        <svg width="28" height="8" viewBox="0 0 28 8">
-          <path class="legend-line" d="M 0 4 L 22 4" />
-          <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
-        </svg>
-        {{ t + '.legendLink' | translate }}
-      </span>
-      <span class="legend-item"
-        ><span class="legend-dashed"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
-      >
-    </div>
+    @if (islandsLegend(); as legend) {
+      <div #islandsLegend class="islands-legend" role="region" [attr.aria-label]="i + '.legend' | translate">
+        <div class="legend-head">
+          <span class="legend-title">{{ i + '.legend' | translate }}</span>
+          @if (legendOpen()) {
+            <span class="legend-hint">{{ i + '.hint' | translate }}</span>
+          }
+          <span class="spacer"></span>
+          <button
+            type="button"
+            class="legend-toggle"
+            data-cy="islands-legend-toggle"
+            [attr.aria-expanded]="legendOpen()"
+            [attr.aria-label]="i + (legendOpen() ? '.collapse' : '.expand') | translate"
+            (click)="legendOpen.set(!legendOpen())">
+            <mat-icon>{{ legendOpen() ? 'expand_more' : 'expand_less' }}</mat-icon>
+          </button>
+        </div>
+        @if (legendOpen()) {
+          <div class="legend-body">
+            <div class="legend-families">
+              <span class="legend-heading">{{ i + '.families' | translate: { count: legend.families.length } }}</span>
+              <div class="family-grid">
+                @for (family of legend.families; track family.root) {
+                  <button
+                    type="button"
+                    class="family"
+                    data-cy="islands-legend-family"
+                    [class.on]="pinnedFamily() === family.root"
+                    [attr.aria-pressed]="pinnedFamily() === family.root"
+                    (mouseenter)="hoveredFamily.set(family.root)"
+                    (mouseleave)="hoveredFamily.set(undefined)"
+                    (click)="pinnedFamily.set(pinnedFamily() === family.root ? undefined : family.root)">
+                    <span class="swatch" [style.background]="family.swatch" [style.border-color]="family.dark"></span>
+                    <span class="family-label">{{ family.label }}</span>
+                    <span class="family-count">{{ family.count }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+            @if (legend.files.length) {
+              <div class="legend-files">
+                <span class="legend-heading">{{ i + '.files' | translate }}</span>
+                @for (file of legend.files; track file.representation) {
+                  <span class="file"
+                    ><span class="file-icon"
+                      ><mat-icon>{{ file.icon }}</mat-icon></span
+                    >{{ i + '.fileKinds.' + file.representation | translate }}</span
+                  >
+                }
+              </div>
+            }
+            <div class="legend-shapes">
+              <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
+              <span class="shape"><span class="shape-box parent"></span>{{ i + '.parent' | translate }}</span>
+              <span class="shape"><span class="shape-box sub"></span>{{ i + '.subclass' | translate }}</span>
+              <span class="shape"
+                ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
+              >
+              <span class="shape">
+                <svg width="26" height="8" viewBox="0 0 28 8" aria-hidden="true">
+                  <path class="legend-line" d="M 0 4 L 22 4" />
+                  <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
+                </svg>
+                {{ i + '.link' | translate }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="legend" aria-hidden="true">
+        <span class="legend-item">
+          <svg width="28" height="8" viewBox="0 0 28 8">
+            <path class="legend-line" d="M 0 4 L 22 4" />
+            <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
+          </svg>
+          {{ t + '.legendLink' | translate }}
+        </span>
+        <span class="legend-item"
+          ><span class="legend-dashed"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
+        >
+      </div>
+    }
   `,
   styles: [
     `
@@ -222,6 +370,202 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         border: 1px dashed #bdbfc1;
         border-radius: 3px;
       }
+
+      // The Islands view's legend: families with their colour, the kinds of file shown, and the shapes.
+      .islands-legend {
+        position: absolute;
+        left: 16px;
+        bottom: 16px;
+        width: min(720px, calc(100% - 96px));
+        box-sizing: border-box;
+        padding: 10px 12px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: white;
+        border: 1px solid $cool_gray_200;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        font: 400 12.5px/1.3 var(--font-sans, Roboto, sans-serif);
+        color: $cool_gray_800;
+      }
+
+      .legend-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .legend-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: $cool_gray_900;
+      }
+
+      .legend-hint {
+        font-size: 11.5px;
+        color: $cool_gray_500;
+      }
+
+      .spacer {
+        flex: 1;
+      }
+
+      .legend-toggle {
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 0;
+        border-radius: 13px;
+        background: transparent;
+        color: $cool_gray_500;
+        cursor: pointer;
+
+        &:hover {
+          background: $cool_gray_100;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .legend-body {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 24px;
+        align-items: flex-start;
+      }
+
+      .legend-heading {
+        display: block;
+        padding: 0 6px 4px 0;
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: $cool_gray_500;
+      }
+
+      .legend-families {
+        flex: 1 1 260px;
+        min-width: 0;
+        max-height: 180px;
+        overflow: auto;
+      }
+
+      .family-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        column-gap: 8px;
+      }
+
+      .family {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 26px;
+        padding: 0 6px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        font: inherit;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
+
+        &:hover,
+        &.on {
+          background: $cool_gray_100;
+        }
+
+        &.on {
+          font-weight: 500;
+        }
+      }
+
+      .swatch {
+        flex: none;
+        width: 16px;
+        height: 16px;
+        box-sizing: border-box;
+        border: 1.5px solid;
+        border-radius: 4px;
+      }
+
+      .family-label {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .family-count {
+        font-size: 11.5px;
+        color: $cool_gray_500;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .legend-files,
+      .legend-shapes {
+        flex: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .file,
+      .shape {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 22px;
+      }
+
+      .file-icon {
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        background: $cool_gray_100;
+
+        mat-icon {
+          font-size: 15px;
+          width: 15px;
+          height: 15px;
+          color: $cool_gray_600;
+        }
+      }
+
+      .shape-box {
+        width: 26px;
+        height: 14px;
+        box-sizing: border-box;
+        border-radius: 3px;
+
+        &.parent {
+          border: 2px solid $cool_gray_600;
+          background: $cool_gray_300;
+        }
+
+        &.sub {
+          border: 1px solid $cool_gray_400;
+          background: $cool_gray_200;
+        }
+
+        &.other {
+          border: 1.5px dashed $cool_gray_400;
+          background: white;
+        }
+      }
     `,
   ],
 })
@@ -244,6 +588,8 @@ export class OntologyGraphComponent {
   readonly highlightedProperty = input<string | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
   readonly anyResourceLabel = input('Any resource');
+  /** The family of every class of the data model, for the Islands view; see `classFamilies`. */
+  readonly families = input<Map<string, ClassFamily> | undefined>(undefined);
 
   /** A class of this project was clicked; emits its IRI. */
   readonly classSelected = output<string>();
@@ -262,18 +608,60 @@ export class OntologyGraphComponent {
   private _dragged = false;
   /** The layout, classes and links last laid out, to tell a new model from the same one handed over again. */
   private _shown = '';
+  /** The Cytoscape factory, once loaded, for layouts run apart from the graph shown. */
+  private _cytoscape?: CytoscapeFactory;
   /** How much bigger than at scale 1 boxes, text and lines are drawn; see `graphScale`. */
   private _scale = 1;
 
+  private readonly _translate = inject(TranslateService);
   private readonly _counts = computed(() => linkCounts(this.graph()));
+  private readonly _islands = computed(() => {
+    const families = this.families();
+    if (this.layout() !== 'islands' || !families) return undefined;
+    const t = 'pages.ontologyMap.islands';
+    return {
+      families,
+      islandLabel: (name: string, count: number) => this._translate.instant(`${t}.island`, { name, count }),
+      unlinkedLabel: (count: number) => this._translate.instant(`${t}.unlinked`, { count }),
+    };
+  });
   private readonly _elements = computed(() =>
     toGraphElements(this.graph(), {
       colors: this.colors(),
       mainIri: mainClass(this._counts())?.id,
       selectedIri: this.selectedIri(),
       anyResourceLabel: this.anyResourceLabel(),
+      islands: this._islands(),
     })
   );
+
+  /** Whether the Islands view's legend is open. */
+  readonly legendOpen = signal(true);
+  /** A family pointed at in the legend; the graph fades every other class. */
+  readonly hoveredFamily = signal<string | undefined>(undefined);
+  /** A family clicked in the legend, faded around until clicked again. */
+  readonly pinnedFamily = signal<string | undefined>(undefined);
+  private readonly _legend = viewChild<ElementRef<HTMLElement>>('islandsLegend');
+
+  /** What the Islands view's legend lists: the families and kinds of file of the classes shown. */
+  readonly islandsLegend = computed(() => {
+    const islands = this._islands();
+    if (!islands) return undefined;
+    const families = new Map<string, LegendFamily>();
+    const files = new Set<string>();
+    for (const node of this.graph().nodes) {
+      const family = islands.families.get(node.id);
+      if (!family) continue;
+      if (node.representationClass) files.add(node.representationClass);
+      const entry = families.get(family.root) ?? legendFamily(family);
+      entry.count++;
+      families.set(family.root, entry);
+    }
+    return {
+      families: [...families.values()].sort((a, b) => a.index - b.index),
+      files: FILE_KINDS.filter(kind => files.has(kind.representation)),
+    };
+  });
   /** Classes the user may open; other data models' classes and knora-api's are drawn but not clickable. */
   private readonly _navigable = computed(
     () =>
@@ -289,6 +677,7 @@ export class OntologyGraphComponent {
     afterNextRender(async () => {
       try {
         const { default: cytoscape } = await import('cytoscape');
+        this._cytoscape = cytoscape as unknown as CytoscapeFactory;
         const cy = cytoscape({
           container: this._canvas().nativeElement,
           style: this._style(1),
@@ -392,6 +781,38 @@ export class OntologyGraphComponent {
       const text = { levelLabels: this.levelLabels(), labels: this.labels() };
       if (cy) cy.style(styleFor(this._scale, text));
     });
+    // A family picked in the legend stands out: every other class and every link not touching it fades.
+    effect(() => {
+      const cy = this._cy();
+      const root = this.hoveredFamily() ?? this.pinnedFamily();
+      const families = this.families();
+      this._elements();
+      if (!cy) return;
+      cy.elements().removeClass('faded');
+      if (!root || !families) return;
+      const inFamily = (iri: string) => families.get(iri)?.root === root;
+      cy.nodes()
+        .filter(node => !node.isParent() && !inFamily(node.id()))
+        .addClass('faded');
+      cy.nodes('.family')
+        .filter(
+          node =>
+            !node
+              .children()
+              .toArray()
+              .some(child => inFamily(child.id()))
+        )
+        .addClass('faded');
+      cy.edges()
+        .filter(edge => !inFamily(edge.source().id()) && !inFamily(edge.target().id()))
+        .addClass('faded');
+    });
+    // A new data model or view starts with no family picked.
+    effect(() => {
+      this.graph();
+      this.layout();
+      untracked(() => this.pinnedFamily.set(undefined));
+    });
     effect(() => {
       const cy = this._cy();
       const selected = this.selectedIri();
@@ -406,7 +827,11 @@ export class OntologyGraphComponent {
     if (cy.elements().empty()) return;
     // Lay out at scale 1, so the scale changes how big things are drawn, not how far apart they are.
     cy.style(this._style(1));
-    cy.layout(layoutOptions(layout) as never).run();
+    if (layout === 'islands') {
+      arrangeIslands(cy, this._cytoscape!);
+    } else {
+      cy.layout(layoutOptions(layout) as never).run();
+    }
     this._dragged = false;
     this._rescale(cy);
   }
@@ -427,6 +852,10 @@ export class OntologyGraphComponent {
       this._scale = graphScale(textSize, cy.zoom());
     }
     cy.style(this._style(this._scale));
+    // Islands are laid out again with the boxes as drawn, so families and classes stay clear of each other.
+    if (untracked(() => this.layout()) === 'islands' && this._cytoscape) {
+      arrangeIslands(cy, this._cytoscape, this._scale);
+    }
     this._fit(cy);
     const readable = (textSize * READABLE_SHARE) / (BASE_FONT_SIZE * this._scale);
     if (cy.zoom() < readable) {
@@ -435,9 +864,23 @@ export class OntologyGraphComponent {
     }
   }
 
-  /** Fits the whole model in the box, zooming in no further than the chosen size of class names. */
+  /**
+   * Fits the whole model in the box, clear of the Islands view's legend, zooming in no further than the chosen size of
+   * class names.
+   */
   private _fit(cy: Core): void {
     cy.fit(undefined, FIT_PADDING);
+    const legend = this._legend()?.nativeElement.offsetHeight;
+    if (legend) {
+      const box = cy.elements().boundingBox({});
+      const height = cy.height() - 2 * FIT_PADDING - legend;
+      const zoom = Math.min(cy.zoom(), height / box.h);
+      cy.zoom(zoom);
+      cy.pan({
+        x: (cy.width() - box.w * zoom) / 2 - box.x1 * zoom,
+        y: FIT_PADDING + (height - box.h * zoom) / 2 - box.y1 * zoom,
+      });
+    }
     const zoom = GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale);
     if (cy.zoom() > zoom) {
       cy.zoom(zoom);
@@ -480,4 +923,37 @@ export class OntologyGraphComponent {
     const cy = this._cy();
     if (cy) this._fit(cy);
   }
+}
+
+/** A family as the Islands view's legend lists it. */
+interface LegendFamily {
+  root: string;
+  label: string;
+  index: number;
+  /** How many of the classes shown are in it. */
+  count: number;
+  dark: string;
+  /** The swatch's CSS background: the family's hue, with its texture. */
+  swatch: string;
+}
+
+function legendFamily(family: ClassFamily): LegendFamily {
+  const hue = familyHue(family.index);
+  return {
+    root: family.root,
+    label: family.rootLabel,
+    index: family.index,
+    count: 0,
+    dark: hue.dark,
+    swatch: swatchBackground(familyTexture(family.index), hue.base, hue.dark),
+  };
+}
+
+/** A family's texture in CSS, for its legend swatch, as the graph draws it on the family's boxes. */
+function swatchBackground(texture: FamilyTexture, base: string, dark: string): string {
+  const shade = (alpha: number) => `color-mix(in srgb, ${dark} ${alpha}%, transparent)`;
+  if (texture === 'stripes')
+    return `repeating-linear-gradient(135deg, ${shade(32)} 0 2px, transparent 2px 6px), ${base}`;
+  if (texture === 'dots') return `radial-gradient(${shade(45)} 1.2px, transparent 1.6px) 0 0 / 5px 5px, ${base}`;
+  return base;
 }

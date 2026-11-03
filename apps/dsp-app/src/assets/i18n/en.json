@@ -745,7 +745,8 @@
         "tree": "Tree",
         "circle": "Circle",
         "force": "Force",
-        "grid": "Grid"
+        "grid": "Grid",
+        "islands": "Islands"
       },
       "fit": "Fit to screen",
       "graphFailed": "The graph could not be loaded.",
@@ -822,7 +823,30 @@
         "bothHint": "Label · name"
       },
       "copyName": "Copy the name",
-      "nameCopied": "Name copied"
+      "nameCopied": "Name copied",
+      "islands": {
+        "island": "{{name}} · {{count}} classes",
+        "unlinked": "Not linked · {{count}}",
+        "legend": "Legend",
+        "hint": "Point at a family to pick it out, click to keep it",
+        "collapse": "Hide the legend",
+        "expand": "Show the legend",
+        "families": "Families · {{count}}",
+        "files": "Files",
+        "shapes": "Shapes",
+        "parent": "Parent class",
+        "subclass": "Subclass",
+        "link": "Link",
+        "fileKinds": {
+          "StillImageRepresentation": "Image",
+          "MovingImageRepresentation": "Video",
+          "AudioRepresentation": "Audio",
+          "DocumentRepresentation": "Document",
+          "TextRepresentation": "Text",
+          "ArchiveRepresentation": "Archive",
+          "DDDRepresentation": "3D model"
+        }
+      }
     },
     "dataModels2": {
       "map": "Map",

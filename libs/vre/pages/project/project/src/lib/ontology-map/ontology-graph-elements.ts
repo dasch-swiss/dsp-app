@@ -1,9 +1,22 @@
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import type { ElementDefinition } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
+import {
+  ClassFamily,
+  familyColor,
+  familyHue,
+  familyTexture,
+  fileIconImage,
+  islandsOf,
+  textureImage,
+  unlinkedOf,
+} from './islands';
 
-/** The layouts the graph view offers: a tree following the links, a circle, a force-directed spread, a grid. */
-export type GraphLayout = 'tree' | 'circle' | 'force' | 'grid';
+/**
+ * The layouts the graph view offers: a tree following the links, a circle, a force-directed spread, a grid, and
+ * islands of linked classes with their families together; see `islands.ts`.
+ */
+export type GraphLayout = 'tree' | 'circle' | 'force' | 'grid' | 'islands';
 
 /** How big class names read on screen, whatever the number of classes. */
 export type GraphSize = 'small' | 'normal' | 'large';
@@ -70,32 +83,58 @@ export interface GraphElementOptions {
   mainIri?: string;
   selectedIri?: string;
   anyResourceLabel: string;
+  /** Set for the Islands view: classes are grouped in islands and families, and show the file they carry. */
+  islands?: IslandElementOptions;
 }
+
+export interface IslandElementOptions {
+  /** The family of every class of the data model; see `classFamilies`. */
+  families: Map<string, ClassFamily>;
+  /** The text on an island: the label of its most linked class, and how many classes it has. */
+  islandLabel: (name: string, count: number) => string;
+  /** The text on the island of classes linked with no other class. */
+  unlinkedLabel: (count: number) => string;
+}
+
+/** Room for a file icon at the start of a class's first line, as the graph cannot pad one side only. */
+export const ICON_ROOM = '  ';
 
 /**
  * The data model as Cytoscape elements: a node per class, an edge per link labelled with its property, a dashed
  * edge per subclass relation if the graph still has any. Each class node carries its colour; node classes carry what
- * else the stylesheet draws: `external`, `main`, `selected`. A class without links is drawn as any other.
+ * else the stylesheet draws: `external`, `main`, `selected`. A class without links is drawn as any other. In the
+ * Islands view, compound nodes group the classes: an `island` per group of linked classes, a `family` per class and
+ * its subclasses within it.
  */
 export function toGraphElements(graph: DataModelGraph, options: GraphElementOptions): ElementDefinition[] {
-  const nodes: ElementDefinition[] = graph.nodes.map(node => ({
-    group: 'nodes',
-    data: {
-      id: node.id,
-      ...texts(
-        node.kind === 'generic' && node.id === Constants.Resource ? options.anyResourceLabel : node.label,
-        node.id
-      ),
-      color: options.colors.get(node.id) ?? '#FFFFFF',
-    },
-    classes: [
-      node.kind === 'class' ? '' : 'external',
-      node.id === options.mainIri ? 'main' : '',
-      node.id === options.selectedIri ? 'selected' : '',
-    ]
-      .filter(Boolean)
-      .join(' '),
-  }));
+  const islands = options.islands;
+  const parents = islands ? islandParents(graph, islands) : undefined;
+  const nodes: ElementDefinition[] = graph.nodes.map(node => {
+    const family = islands?.families.get(node.id);
+    const hue = family && familyHue(family.index);
+    const icon = islands && hue ? fileIconImage(node.representationClass, hue.dark) : undefined;
+    const label = node.kind === 'generic' && node.id === Constants.Resource ? options.anyResourceLabel : node.label;
+    const nodeTexts = texts(label, node.id);
+    return {
+      group: 'nodes',
+      data: {
+        id: node.id,
+        ...(icon ? withIconRoom(nodeTexts) : nodeTexts),
+        color: family ? familyColor(family) : (options.colors.get(node.id) ?? '#FFFFFF'),
+        ...(hue ? { dark: hue.dark, texture: textureImage(familyTexture(family.index), hue.dark), icon } : {}),
+        ...(parents?.get(node.id) ? { parent: parents.get(node.id) } : {}),
+      },
+      classes: [
+        node.kind === 'class' ? '' : 'external',
+        node.id === options.mainIri ? 'main' : '',
+        node.id === options.selectedIri ? 'selected' : '',
+        family ? (family.sub ? 'family-member sub' : 'family-member') : '',
+      ]
+        .filter(Boolean)
+        .join(' '),
+    };
+  });
+  if (parents) nodes.unshift(...islandNodes(graph, islands!));
   const edges: ElementDefinition[] = graph.edges
     .filter(edge => edge.source !== edge.target)
     .map(edge => ({
@@ -118,6 +157,81 @@ function texts(label: string, iri: string): { label: string; name: string; both:
   return { label, name, both: `${label}\n${name}` };
 }
 
+const withIconRoom = (t: { label: string; name: string; both: string }) => ({
+  label: ICON_ROOM + t.label,
+  name: ICON_ROOM + t.name,
+  both: ICON_ROOM + t.both,
+});
+
+const islandId = (index: number) => `island:${index}`;
+const UNLINKED_ISLAND = 'island:unlinked';
+const familyId = (island: string, root: string) => `family:${island}:${root}`;
+
+/** The islands of the Islands view, each listing its classes; the unlinked classes last, as one island. */
+function islandGroups(graph: DataModelGraph): { id: string; iris: string[] }[] {
+  const groups = islandsOf(graph).map((iris, index) => ({ id: islandId(index), iris }));
+  const unlinked = unlinkedOf(graph);
+  return unlinked.length ? [...groups, { id: UNLINKED_ISLAND, iris: unlinked }] : groups;
+}
+
+/** The compound node each class sits in: its family's, if more of its family share its island, else its island's. */
+function islandParents(graph: DataModelGraph, options: IslandElementOptions): Map<string, string> {
+  const parents = new Map<string, string>();
+  for (const { id, iris } of islandGroups(graph)) {
+    const roots = iris.map(iri => options.families.get(iri)?.root);
+    iris.forEach((iri, i) => {
+      const root = roots[i];
+      const shared = root !== undefined && roots.filter(other => other === root).length > 1;
+      parents.set(iri, shared ? familyId(id, root) : id);
+    });
+  }
+  return parents;
+}
+
+/** The compound nodes of the Islands view: an island per group of linked classes, a family per shared family. */
+function islandNodes(graph: DataModelGraph, options: IslandElementOptions): ElementDefinition[] {
+  const counts = new Map<string, number>();
+  for (const edge of graph.edges) {
+    if (edge.source === edge.target) continue;
+    for (const iri of [edge.source, edge.target]) counts.set(iri, (counts.get(iri) ?? 0) + 1);
+  }
+  const labelOf = new Map(graph.nodes.map(node => [node.id, node.label]));
+  const kindOf = new Map(graph.nodes.map(node => [node.id, node.kind]));
+  const parents = islandParents(graph, options);
+  const elements: ElementDefinition[] = [];
+  for (const { id, iris } of islandGroups(graph)) {
+    const classes = iris.filter(iri => kindOf.get(iri) === 'class');
+    const unlinked = id === UNLINKED_ISLAND;
+    const top = [...classes].sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0))[0] ?? iris[0];
+    const text = unlinked
+      ? options.unlinkedLabel(classes.length)
+      : options.islandLabel(labelOf.get(top) ?? '', classes.length);
+    elements.push({
+      group: 'nodes',
+      data: { id, label: text, name: text, both: text },
+      classes: unlinked ? 'island unlinked' : 'island',
+    });
+    for (const parent of new Set(iris.map(iri => parents.get(iri)).filter(p => p && p !== id))) {
+      const family = options.families.get(iris.find(iri => parents.get(iri) === parent)!)!;
+      const hue = familyHue(family.index);
+      elements.push({
+        group: 'nodes',
+        data: {
+          id: parent!,
+          parent: id,
+          label: family.rootLabel,
+          name: family.rootLabel,
+          both: family.rootLabel,
+          color: hue.base,
+          dark: hue.dark,
+        },
+        classes: 'family',
+      });
+    }
+  }
+  return elements;
+}
+
 /** Cytoscape layout options per layout; deterministic, so the same model always lands the same way. */
 export function layoutOptions(layout: GraphLayout): { name: string } & Record<string, unknown> {
   switch (layout) {
@@ -136,6 +250,9 @@ export function layoutOptions(layout: GraphLayout): { name: string } & Record<st
       };
     case 'grid':
       return { name: 'grid', padding: 32, avoidOverlap: true, animate: false };
+    case 'islands':
+      // Laid out island by island; see `arrangeIslands`.
+      return { name: 'preset', fit: false, animate: false };
   }
 }
 

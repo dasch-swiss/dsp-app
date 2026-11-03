@@ -24,6 +24,7 @@ import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
+import { classFamilies, familyColor } from './islands';
 import {
   classColors,
   GraphLabels,
@@ -101,6 +102,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
   { value: 'tree', icon: 'account_tree' },
   { value: 'force', icon: 'bubble_chart' },
   { value: 'grid', icon: 'grid_view' },
+  { value: 'islands', icon: 'view_quilt' },
 ];
 
 /**
@@ -143,6 +145,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                 [labels]="labels()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                 [colors]="colors()"
+                [families]="families()"
                 [anyResourceLabel]="t + '.anyResource' | translate"
                 (classSelected)="openPanel($event)"
                 (classFiltered)="filterOn($event)"
@@ -832,10 +835,24 @@ export class OntologyMapPageComponent {
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
   readonly graphView = viewChild(OntologyGraphComponent);
 
-  /** A colour per class of the data model, the same whatever the graph is filtered on. */
+  /** The family of every class of the data model, which the Islands view groups and colours classes by. */
+  readonly families = computed(() => {
+    const graph = this.graph();
+    return graph ? classFamilies(graph) : undefined;
+  });
+
+  /**
+   * A colour per class of the data model, the same whatever the graph is filtered on: in the Islands view its
+   * family's, else its own.
+   */
   readonly colors = computed(() => {
     const graph = this.graph();
-    return graph ? classColors(graph) : new Map<string, string>();
+    if (!graph) return new Map<string, string>();
+    const families = this.families();
+    if (this.layout() === 'islands' && families) {
+      return new Map([...families].map(([iri, family]) => [iri, familyColor(family)]));
+    }
+    return classColors(graph);
   });
 
   /** The class filter in the URL: classes to show with the classes they are linked with, or classes to hide. */

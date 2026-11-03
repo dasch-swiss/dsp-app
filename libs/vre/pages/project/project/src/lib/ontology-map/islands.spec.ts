@@ -1,0 +1,112 @@
+import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
+import {
+  classFamilies,
+  FAMILY_HUES,
+  familyColor,
+  familyTexture,
+  fileIconImage,
+  islandsOf,
+  textureImage,
+  unlinkedOf,
+} from './islands';
+import { ICON_ROOM, toGraphElements } from './ontology-graph-elements';
+
+const graph: DataModelGraph = {
+  nodes: [
+    { id: 'Image', label: 'Image', kind: 'class', navigable: true, representationClass: 'StillImageRepresentation' },
+    { id: 'Photo', label: 'Photo', kind: 'class', navigable: true, representationClass: 'StillImageRepresentation' },
+    { id: 'Drawing', label: 'Drawing', kind: 'class', navigable: true },
+    { id: 'Church', label: 'Church', kind: 'class', navigable: true },
+    { id: 'Tour', label: 'Tour', kind: 'class', navigable: true },
+    { id: 'Stop', label: 'Stop', kind: 'class', navigable: true, representationClass: 'AudioRepresentation' },
+    { id: 'Note', label: 'Note', kind: 'class', navigable: true },
+  ],
+  edges: [
+    { source: 'Photo', target: 'Image', property: 'subClassOf', label: '', kind: 'subclass' },
+    { source: 'Drawing', target: 'Photo', property: 'subClassOf', label: '', kind: 'subclass' },
+    { source: 'Image', target: 'Church', property: 'depicts', label: 'Depicts', kind: 'link' },
+    { source: 'Photo', target: 'Church', property: 'depicts', label: 'Depicts', kind: 'link' },
+    { source: 'Stop', target: 'Tour', property: 'stopOf', label: 'Stop of', kind: 'link' },
+    { source: 'Note', target: 'Note', property: 'seeAlso', label: 'See also', kind: 'link' },
+  ],
+};
+/** The graph as the view draws it: links only, the subclass relations kept apart. */
+const links: DataModelGraph = { nodes: graph.nodes, edges: graph.edges.filter(edge => edge.kind === 'link') };
+
+describe('classFamilies', () => {
+  const families = classFamilies(graph);
+
+  it('puts a class in the family of its topmost superclass, at any depth', () => {
+    expect(['Image', 'Photo', 'Drawing'].map(iri => families.get(iri)?.root)).toEqual(['Image', 'Image', 'Image']);
+    expect(families.get('Image')?.sub).toBe(false);
+    expect(families.get('Drawing')?.sub).toBe(true);
+    expect(families.get('Drawing')?.rootLabel).toBe('Image');
+  });
+
+  it('orders families biggest first, then by label', () => {
+    expect(['Image', 'Church', 'Note', 'Stop', 'Tour'].map(iri => families.get(iri)?.index)).toEqual([0, 1, 2, 3, 4]);
+  });
+
+  it('draws a top class in its hue and its subclasses lighter', () => {
+    expect(familyColor(families.get('Image')!)).toBe(FAMILY_HUES[0].base);
+    expect(familyColor(families.get('Photo')!)).toBe(FAMILY_HUES[0].light);
+  });
+});
+
+describe('familyTexture', () => {
+  it('keeps 8 hues plain, then stripes them, then dots them', () => {
+    expect([0, 7, 8, 15, 16].map(familyTexture)).toEqual(['solid', 'solid', 'stripes', 'stripes', 'dots']);
+    expect(textureImage('solid', '#000000')).toBeUndefined();
+    expect(textureImage('stripes', '#000000')).toMatch(/^data:image\/svg\+xml/);
+  });
+});
+
+describe('fileIconImage', () => {
+  it('draws an icon for a class with a file, none without', () => {
+    expect(fileIconImage('AudioRepresentation', '#000000')).toMatch(/^data:image\/svg\+xml/);
+    expect(fileIconImage(undefined, '#000000')).toBeUndefined();
+    expect(fileIconImage('WithoutRepresentation', '#000000')).toBeUndefined();
+  });
+});
+
+describe('islandsOf', () => {
+  it('splits classes into groups linked together, biggest first, leaving out the unlinked', () => {
+    expect(islandsOf(links)).toEqual([
+      ['Image', 'Church', 'Photo'],
+      ['Tour', 'Stop'],
+    ]);
+    expect(unlinkedOf(links)).toEqual(['Drawing', 'Note']);
+  });
+});
+
+describe('toGraphElements in the Islands view', () => {
+  const elements = toGraphElements(links, {
+    colors: new Map(),
+    anyResourceLabel: 'Any resource',
+    islands: {
+      families: classFamilies(graph),
+      islandLabel: (name, count) => `${name} · ${count}`,
+      unlinkedLabel: count => `Not linked · ${count}`,
+    },
+  });
+  const node = (id: string) => elements.find(e => e.group === 'nodes' && e.data.id === id)!;
+
+  it('draws an island per group of linked classes, named after its most linked class, and one for the rest', () => {
+    const islands = elements.filter(e => e.classes?.includes('island')).map(e => e.data['label']);
+
+    expect(islands).toEqual(['Church · 3', 'Tour · 2', 'Not linked · 2']);
+  });
+
+  it('groups the classes of a family sharing an island in a family node, others straight in the island', () => {
+    expect(node('Image').data.parent).toBe(node('Photo').data.parent);
+    expect(node(node('Image').data.parent!).data['label']).toBe('Image');
+    expect(node('Church').data.parent).toBe('island:0');
+    expect(node('Drawing').data.parent).toBe('island:unlinked');
+  });
+
+  it('leaves room for a file icon before the texts of a class with a file', () => {
+    expect(node('Photo').data['icon']).toBeDefined();
+    expect(node('Photo').data['label']).toBe(`${ICON_ROOM}Photo`);
+    expect(node('Church').data['label']).toBe('Church');
+  });
+});
