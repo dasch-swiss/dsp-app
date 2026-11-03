@@ -154,10 +154,11 @@ export const RAIL_SECTION_STYLES = `
     padding: 16px;
   }
 
-  // The panel floats over the right of the section, as over the graph.
+  // The panel floats over the right of the section, as over the graph, and over the table's sticky header (z-index
+  // 100) too.
   .panel {
     position: absolute;
-    z-index: 1;
+    z-index: 101;
     top: 0;
     right: 0;
     bottom: 0;
