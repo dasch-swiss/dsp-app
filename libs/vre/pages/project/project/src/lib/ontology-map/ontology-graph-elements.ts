@@ -92,9 +92,6 @@ export interface IslandElementOptions {
   families: Map<string, ClassFamily>;
 }
 
-/** Room for a file icon at the start of a class's first line, as the graph cannot pad one side only. */
-export const ICON_ROOM = '\u2003\u2003\u2009';
-
 /**
  * The data model as Cytoscape elements: a node per class, an edge per link labelled with its property, a dashed
  * edge per subclass relation if the graph still has any. Each class node carries its colour; node classes carry what
@@ -110,12 +107,11 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
     const hue = family && familyHue(family.index);
     const icon = islands && hue ? fileIconImage(node.representationClass, hue.dark) : undefined;
     const label = node.kind === 'generic' && node.id === Constants.Resource ? options.anyResourceLabel : node.label;
-    const nodeTexts = texts(label, node.id);
     return {
       group: 'nodes',
       data: {
         id: node.id,
-        ...(icon ? withIconRoom(nodeTexts) : nodeTexts),
+        ...texts(label, node.id),
         color: family ? familyColor(family) : (options.colors.get(node.id) ?? '#FFFFFF'),
         ...(hue ? { dark: hue.dark, texture: textureImage(familyTexture(family.index), hue.dark), icon } : {}),
         ...(parents?.get(node.id) ? { parent: parents.get(node.id) } : {}),
@@ -152,12 +148,6 @@ function texts(label: string, iri: string): { label: string; name: string; both:
   const name = localNameOf(iri);
   return { label, name, both: `${label}\n${name}` };
 }
-
-const withIconRoom = (t: { label: string; name: string; both: string }) => ({
-  label: ICON_ROOM + t.label,
-  name: ICON_ROOM + t.name,
-  both: ICON_ROOM + t.both,
-});
 
 const islandId = (index: number) => `island:${index}`;
 const UNLINKED_ISLAND = 'island:unlinked';

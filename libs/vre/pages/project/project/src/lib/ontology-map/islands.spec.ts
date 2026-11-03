@@ -9,7 +9,7 @@ import {
   textureImage,
   unlinkedOf,
 } from './islands';
-import { ICON_ROOM, toGraphElements } from './ontology-graph-elements';
+import { toGraphElements } from './ontology-graph-elements';
 
 const graph: DataModelGraph = {
   nodes: [
@@ -113,9 +113,8 @@ describe('toGraphElements in the Islands view', () => {
     expect(node('Drawing').data.parent).toBe('island:unlinked');
   });
 
-  it('leaves room for a file icon before the texts of a class with a file', () => {
+  it('gives a class with a file its icon, and one without none', () => {
     expect(node('Photo').data['icon']).toBeDefined();
-    expect(node('Photo').data['label']).toBe(`${ICON_ROOM}Photo`);
-    expect(node('Church').data['label']).toBe('Church');
+    expect(node('Church').data['icon']).toBeUndefined();
   });
 });

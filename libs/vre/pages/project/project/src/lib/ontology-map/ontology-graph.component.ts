@@ -64,6 +64,36 @@ const FONT = { labels: 'Roboto, sans-serif', names: 'Roboto Mono, ui-monospace, 
 const NO_IMAGE =
   'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221%22%20height%3D%221%22%2F%3E';
 
+/** A file icon in a class's box, at scale 1: its size, its gap from the box's left edge, and the room it takes. */
+const ICON = { size: 26, inset: 12, room: 28 };
+
+let measuring: CanvasRenderingContext2D | null | undefined;
+
+/** How wide a text is drawn in a font, its longest line for a text on several lines. */
+function textWidth(text: string, font: string): number {
+  measuring ??= document.createElement('canvas').getContext('2d');
+  if (!measuring) return text.length * 9;
+  measuring.font = font;
+  return Math.max(...text.split('\n').map(line => measuring!.measureText(line).width));
+}
+
+/**
+ * Stores, on every class with a file icon, how wide its box is at scale 1 for each of its texts: its label and the
+ * icon's room. The graph cannot widen a box for an icon by itself.
+ */
+function measureIconBoxes(cy: Core): void {
+  cy.nodes('[icon]').forEach(node => {
+    const weight = node.hasClass('sub') ? 500 : 600;
+    for (const key of ['labels', 'names', 'both'] as const) {
+      const font = `${weight} ${BASE_FONT_SIZE}px ${key === 'names' ? FONT.names : FONT.labels}`;
+      node.data(`${key}Width`, textWidth(node.data(DATA_KEY[key]) ?? '', font) + ICON.room);
+    }
+  });
+}
+
+/** The element data each `GraphLabels` writes, by key. */
+const DATA_KEY: Record<GraphLabels, string> = { labels: 'label', names: 'name', both: 'both' };
+
 /** The element data each `GraphLabels` writes. */
 const LABEL_DATA: Record<GraphLabels, string> = { labels: 'data(label)', names: 'data(name)', both: 'data(both)' };
 
@@ -113,6 +143,15 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     style: { 'border-width': 2 * f, 'border-color': 'data(dark)', 'font-weight': 600 },
   },
   { selector: 'node.family-member.sub', style: { 'border-width': f, 'font-weight': 500 } },
+  // A class with a file is widened for its icon, its label moved right to make room.
+  {
+    selector: 'node[icon]',
+    style: {
+      // Its width at scale 1, from `measureIconBoxes`, times `f`.
+      width: `mapData(${text.labels}Width, 0, 10000, 0, ${10000 * f})`,
+      'text-margin-x': (ICON.room * f) / 2,
+    },
+  },
   {
     selector: 'node[icon], node[texture]',
     style: {
@@ -120,10 +159,10 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         `${node.data('texture') ?? NO_IMAGE} ${node.data('icon') ?? NO_IMAGE}` as never,
       'background-fit': 'none none' as never,
       'background-clip': 'node none' as never,
-      'background-width': `auto ${26 * f}px` as never,
-      'background-height': `auto ${26 * f}px` as never,
-      // Measured from inside the padding, where the label starts; the label leaves room for the icon there.
-      'background-position-x': `50% ${-5 * f}px` as never,
+      'background-width': `auto ${ICON.size * f}px` as never,
+      'background-height': `auto ${ICON.size * f}px` as never,
+      // From the box's left edge, about as far as from its top.
+      'background-position-x': `50% ${ICON.inset * f}px` as never,
       'background-position-y': `50% 50%` as never,
     },
   },
@@ -642,6 +681,7 @@ export class OntologyGraphComponent {
       this._shown = shown;
       cy.elements().remove();
       cy.add(untracked(() => this._elements()));
+      measureIconBoxes(cy);
       this._arrange(cy, layout);
     });
     effect(() => {
