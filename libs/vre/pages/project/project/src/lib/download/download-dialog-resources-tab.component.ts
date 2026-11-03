@@ -186,14 +186,9 @@ const UTF8_BOM = '﻿';
     <app-download-property-list [propertyDefinitions]="properties" (propertiesChange)="selectedPropertyIds = $event" />
 
     <footer class="footer">
-      <!-- The export ignores the row selection and the Data tab's search and filters; say so before the click. -->
+      <!-- The export ignores the Data tab's search and filters; say so before the click. -->
       <p class="summary" data-cy="download-scope-note">
-        {{
-          (selectedCount
-            ? 'pages.dataBrowser.downloadDialog.scopeAllWithSelection'
-            : 'pages.dataBrowser.downloadDialog.scopeAll'
-          ) | translate: { count: selectedCount }
-        }}
+        {{ 'pages.dataBrowser.downloadDialog.scopeAll' | translate }}
       </p>
 
       <div class="options">
@@ -274,8 +269,6 @@ export class DownloadDialogResourcesTabComponent {
   @Input({ required: true }) properties!: PropertyInfoValues[];
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) resourceCount!: number;
-  // Checkbox-selected rows in the Data tab; the scope note says they are not what gets exported.
-  @Input() selectedCount = 0;
   @Output() afterClosed = new EventEmitter<void>();
   readonly largeThreshold = CSV_EXPORT_LARGE_THRESHOLD;
   includeArkUrls = false;

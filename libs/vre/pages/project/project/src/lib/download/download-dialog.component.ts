@@ -14,8 +14,6 @@ export interface DownloadDialogData {
   /** Shown in the dialog title. */
   classLabel: string;
   properties: PropertyInfoValues[];
-  /** Checkbox-selected rows; named in the scope note so nobody expects a selection export. */
-  selectedCount: number;
 }
 
 @Component({
@@ -39,7 +37,6 @@ export interface DownloadDialogData {
       [properties]="data.properties"
       [resourceClassIri]="data.resClass.id"
       [resourceCount]="data.resourceCount"
-      [selectedCount]="data.selectedCount"
       (afterClosed)="dialogRef.close()" />
   `,
   styles: [
