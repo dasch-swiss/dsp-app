@@ -71,7 +71,7 @@ const MAX_SPREAD = 2.5;
 const READABLE_SHARE = 0.6;
 
 /** How long no layout must follow, on load, before the graph is shown. */
-const SETTLE_MS = 250;
+const SETTLE_MS = 150;
 
 /** Size of a link's label at scale 1. */
 const LINK_FONT_SIZE = 13;
@@ -597,6 +597,8 @@ export class OntologyGraphComponent {
   /** Whether the graph is laid out for good and shown; see `_revealWhenSettled`. */
   readonly laidOut = signal(false);
   private _reveal?: ReturnType<typeof setTimeout>;
+  /** Whether the canvas's box has had its first size; see the constructor's `ResizeObserver`. */
+  private _sized = false;
 
   private readonly _counts = computed(() => linkCounts(this.graph()));
   private readonly _islands = computed(() => {
@@ -689,11 +691,13 @@ export class OntologyGraphComponent {
         });
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
         // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
-        // user has dragged some, whose places are then kept and only fitted.
+        // user has dragged some, whose places are then kept and only fitted. The first size, once the box has one,
+        // lays out the classes for the first time.
         let frame = 0;
         const observer = new ResizeObserver(() => {
           cancelAnimationFrame(frame);
           frame = requestAnimationFrame(() => {
+            this._sized = true;
             cy.resize();
             if (this._dragged) {
               this._fit(cy);
@@ -729,7 +733,8 @@ export class OntologyGraphComponent {
       cy.elements().remove();
       cy.add(withLabelsOnTop(untracked(() => this._elements())));
       measureIconBoxes(cy);
-      this._arrange(cy, layout);
+      // Before the box has its size, the first size lays them out; laid out now, they would be again then.
+      if (this._sized) this._arrange(cy, layout);
     });
     effect(() => {
       const cy = this._cy();
@@ -741,11 +746,15 @@ export class OntologyGraphComponent {
           .filter(edge => edge.data('property') === property)
           .addClass('same-property');
     });
-    // A new size rescales in place: classes stay where they are, only boxes, text and lines grow or shrink.
+    // A new size rescales in place: classes stay where they are, only boxes, text and lines grow or shrink. The size
+    // the graph starts with is already the one it is laid out at.
+    let sizeShown = untracked(() => this.size());
     effect(() => {
       const cy = this._cy();
-      this.size();
-      if (cy) this._rescale(cy);
+      const size = this.size();
+      if (!cy || size === sizeShown) return;
+      sizeShown = size;
+      this._rescale(cy);
     });
     // New texts restyle in place: classes stay where they are, their boxes fitting the new texts.
     effect(() => {
@@ -794,7 +803,7 @@ export class OntologyGraphComponent {
     cy.style(this._style(this._scale));
     // Islands are laid out again with the boxes as drawn, so families and classes stay clear of each other.
     if (untracked(() => this.layout()) === 'islands' && this._cytoscape) {
-      arrangeIslands(cy, this._cytoscape, this._scale, this._aspect(cy), this._labelWidth());
+      arrangeIslands(cy, this._cytoscape, this._scale, this._aspect(cy), this._labelWidth(), true);
     }
     this._spread(cy);
     routeEdges(cy, this._scale);

@@ -252,6 +252,8 @@ interface LinkedIsland {
   centers: Map<string, { x: number; y: number }>;
   /** Per pair of linked blocks, how long a line between them must be to show its labels. */
   links: Map<string, number>;
+  /** The order of the blocks round the circle the force layout started from. */
+  order: string[];
 }
 
 /** How islands are shaped: all like the room, or only the first, the others about as wide as tall. */
@@ -260,18 +262,24 @@ type IslandShapes = 'all' | 'main';
 /** The ways islands are packed: see `flow` and `around`. */
 const PACKINGS = ['right', 'below', 'around'] as const;
 
+/** Where an island keeps the starting order its force layout was best run from, once searched for. */
+const START_ORDER = 'islandsStartOrder';
+
 /**
  * Lays out the Islands view: in each island, every family as a compact block, its top class above its subclasses;
  * blocks spread by a force layout, so families never overlap, and just far apart for links to show their labels;
  * then the islands packed together. Islands can be shaped and packed in several ways: the one that shows the model
- * biggest in the room is kept.
+ * biggest in the room is kept. With `search`, an island not laid out yet tries several starts of its force layout and
+ * keeps the one whose links cross least, which later layouts of it start from again; without, it starts from that
+ * one, or as its classes come.
  */
 export function arrangeIslands(
   cy: Core,
   cytoscape: CytoscapeFactory,
   scale = 1,
   aspect = 16 / 9,
-  labelWidth: LabelWidth = () => 0
+  labelWidth: LabelWidth = () => 0,
+  search = false
 ): void {
   const room: Room = {
     island: ISLAND_GAP * scale,
@@ -291,15 +299,20 @@ export function arrangeIslands(
     if (island.hasClass('unlinked')) {
       placeInRows(blocks, room);
     } else {
+      const stored: string[] | undefined = island.scratch(START_ORDER);
+      // An order kept for other blocks, from before the classes changed, is no start for these.
+      const known =
+        stored?.length === blocks.length && blocks.every(block => stored.includes(block.id)) ? stored : undefined;
+      const runs = spread(blocks, cytoscape, room, labelWidth, known ? 'known' : search ? 'search' : 'first', known);
       // Of the force layout's runs, the one whose links cross least, then the smallest.
-      const runs = spread(blocks, cytoscape, room, labelWidth);
       const scored = runs.map(run => {
-        placeIsland(run, room.aspect, room);
-        const box = island.descendants().boundingBox({});
-        return { run, crossings: linkCrossings(island), area: box.w * box.h };
+        if (runs.length > 1) placeIsland(run, room.aspect, room);
+        const box = runs.length > 1 ? island.descendants().boundingBox({}) : { w: 0, h: 0 };
+        return { run, crossings: runs.length > 1 ? linkCrossings(island) : 0, area: box.w * box.h };
       });
       scored.sort((a, b) => a.crossings - b.crossings || a.area - b.area);
       linked.set(island, scored[0].run);
+      if (search && !known) island.scratch(START_ORDER, scored[0].run.order);
     }
   }
   const shape = (shapes: IslandShapes) =>
@@ -387,11 +400,18 @@ const pairKey = (a: string, b: string) => (a < b ? `${a}\n${b}` : `${b}\n${a}`);
 
 /**
  * Spreads an island's blocks with a force layout run on the blocks alone, apart from the graph shown, each block as
- * big as its classes; linked blocks pull together, as far apart as their labels need, all push apart. It runs once
- * per starting order of the blocks round a circle (see `startOrders`), as each can land differently; the same model
- * always lands the same way.
+ * big as its classes; linked blocks pull together, as far apart as their labels need, all push apart. It starts from
+ * the blocks round a circle, in the `known` order, in each of `startOrders` to `search` among them, as each can land
+ * differently, or as the blocks come; the same model always lands the same way.
  */
-function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room, labelWidth: LabelWidth): LinkedIsland[] {
+function spread(
+  blocks: Block[],
+  cytoscape: CytoscapeFactory,
+  room: Room,
+  labelWidth: LabelWidth,
+  starts: 'known' | 'search' | 'first',
+  known?: string[]
+): LinkedIsland[] {
   const blockOf = new Map(blocks.flatMap(block => block.classes.map(node => [node.id(), block.id] as const)));
   // At scale 1, the longest label between each pair of linked blocks, with room around it.
   const links = new Map<string, number>();
@@ -422,7 +442,9 @@ function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room, labelW
       }),
     ],
   });
-  const runs = startOrders(blocks, links).map(order => {
+  const ids = blocks.map(block => block.id);
+  const orders = starts === 'known' && known ? [known] : starts === 'search' ? startOrders(blocks, links) : [ids];
+  const runs = orders.map(order => {
     order.forEach((id, i) =>
       graph.getElementById(id).position({
         x: radius * Math.cos((2 * Math.PI * i) / order.length),
@@ -442,16 +464,17 @@ function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room, labelW
         numIter: 2500,
       } as never)
       .run();
-    return new Map(
+    const centers = new Map(
       blocks.map(block => {
         const { x, y } = graph.getElementById(block.id).position();
         return [block.id, { x: x * room.scale, y: y * room.scale }];
       })
     );
+    return { order, centers };
   });
   graph.destroy();
   const scaled = new Map([...links].map(([key, length]) => [key, length * room.scale]));
-  return runs.map(centers => ({ blocks, centers, links: scaled }));
+  return runs.map(({ order, centers }) => ({ blocks, centers, links: scaled, order }));
 }
 
 /**
