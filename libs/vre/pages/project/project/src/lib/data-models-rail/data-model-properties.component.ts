@@ -160,7 +160,6 @@ const USED_BY_SHOWN = 3;
             [graph]="graph"
             [propertyIri]="iri"
             [colors]="state.colors()"
-            [dataModelLabel]="state.selected()?.label ?? ''"
             [anyResourceLabel]="t + '.anyResource' | translate"
             [canEdit]="state.canEdit()"
             (classSelected)="showClass($event)"

@@ -122,7 +122,6 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
             class="panel"
             [graph]="graph"
             [classIri]="iri"
-            [dataModelLabel]="state.selected()?.label ?? ''"
             [anyResourceLabel]="t + '.anyResource' | translate"
             [subclassLabel]="t + '.subclassOf' | translate"
             [canEdit]="state.canEdit()"

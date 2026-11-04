@@ -54,7 +54,6 @@ interface Connection {
                 <mat-icon>content_copy</mat-icon>
               </button>
             </span>
-            <span class="subtitle">{{ t + '.subtitle' | translate: { model: dataModelLabel() } }}</span>
           </div>
           <button
             mat-icon-button
@@ -242,11 +241,6 @@ interface Connection {
         }
       }
 
-      .subtitle {
-        font-size: 12px;
-        color: $cool_gray_500;
-      }
-
       .description {
         margin: 0;
         color: $cool_gray_700;
@@ -405,8 +399,6 @@ export class ResourceClassPanelComponent {
   readonly graph = input.required<DataModelGraph>();
   /** IRI of the class to describe. */
   readonly classIri = input.required<string>();
-  /** Name of the data model, for the subtitle. */
-  readonly dataModelLabel = input('');
   /** Label of the card for links that point at any resource, in the current language. */
   readonly anyResourceLabel = input('Any resource');
   /** Label of a relation between a class and its superclass or subclass. */

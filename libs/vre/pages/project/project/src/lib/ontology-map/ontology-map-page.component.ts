@@ -77,7 +77,8 @@ const sameFilter = (a: ListFilter, b: ListFilter) =>
 
 const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
-const SIZE_KEY = 'dsp-ontology-map-size';
+// Renamed when the sizes moved up a step, so a size chosen before starts again from the new normal, the old large.
+const SIZE_KEY = 'dsp-ontology-map-text-size';
 /** How wide a class or property panel is, at most half the page; its styles say the same. */
 const PANEL_WIDTH = 440;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
@@ -364,7 +365,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   class="panel"
                   [graph]="graph"
                   [classIri]="openIri"
-                  [dataModelLabel]="selected.label"
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   [subclassLabel]="t + '.subclassOf' | translate"
                   [canEdit]="canEdit() ?? false"
@@ -380,7 +380,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [graph]="graph"
                   [propertyIri]="propertyIri"
                   [colors]="colors()"
-                  [dataModelLabel]="selected.label"
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   [canEdit]="canEdit() ?? false"
                   (classSelected)="openPanel($event)"

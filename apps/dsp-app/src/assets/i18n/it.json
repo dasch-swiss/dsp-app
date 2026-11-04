@@ -722,7 +722,6 @@
       "dataModels": "Modelli di dati",
       "noDataModels": "Questo progetto non ha ancora un modello di dati.",
       "classPanel": {
-        "subtitle": "Classe di risorse · {{model}}",
         "close": "Chiudi i dettagli della classe",
         "properties": "Proprietà · {{count}}",
         "noProperties": "Questa classe non ha proprietà proprie.",
@@ -759,7 +758,6 @@
       "propertiesChosen": "{{count}} proprietà",
       "levelLabels": "Etichette dei collegamenti orizzontali",
       "propertyPanel": {
-        "subtitle": "Proprietà di collegamento · {{model}}",
         "close": "Chiudi i dettagli della proprietà",
         "pointsTo": "Punta a",
         "inModel": "In questo modello",
@@ -768,8 +766,7 @@
         "inheritedFrom": "ereditata da {{class}}",
         "filter": "Mostra solo questi collegamenti",
         "edit": "Modifica la proprietà",
-        "type": "Tipo",
-        "valueSubtitle": "Proprietà · {{model}}"
+        "type": "Tipo"
       },
       "display": "Visualizzazione",
       "zoom": "Zoom",

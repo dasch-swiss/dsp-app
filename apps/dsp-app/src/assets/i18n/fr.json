@@ -722,7 +722,6 @@
       "dataModels": "Modèles de données",
       "noDataModels": "Ce projet n'a pas encore de modèle de données.",
       "classPanel": {
-        "subtitle": "Classe de ressource · {{model}}",
         "close": "Fermer les détails de la classe",
         "properties": "Propriétés · {{count}}",
         "noProperties": "Cette classe n'a pas de propriétés propres.",
@@ -759,7 +758,6 @@
       "propertiesChosen": "{{count}} propriétés",
       "levelLabels": "Libellés des liens à l’horizontale",
       "propertyPanel": {
-        "subtitle": "Propriété de lien · {{model}}",
         "close": "Fermer les détails de la propriété",
         "pointsTo": "Pointe vers",
         "inModel": "Dans ce modèle",
@@ -768,8 +766,7 @@
         "inheritedFrom": "héritée de {{class}}",
         "filter": "Afficher seulement ces liens",
         "edit": "Modifier la propriété",
-        "type": "Type",
-        "valueSubtitle": "Propriété · {{model}}"
+        "type": "Type"
       },
       "display": "Affichage",
       "zoom": "Zoom",

@@ -722,7 +722,6 @@
       "dataModels": "Data models",
       "noDataModels": "This project does not have any data model yet.",
       "classPanel": {
-        "subtitle": "Resource class · {{model}}",
         "close": "Close the class details",
         "properties": "Properties · {{count}}",
         "noProperties": "This class has no properties of its own.",
@@ -759,7 +758,6 @@
       "propertiesChosen": "{{count}} properties",
       "levelLabels": "Horizontal link labels",
       "propertyPanel": {
-        "subtitle": "Link property · {{model}}",
         "close": "Close the property details",
         "pointsTo": "Points to",
         "inModel": "In this model",
@@ -768,8 +766,7 @@
         "inheritedFrom": "inherited from {{class}}",
         "filter": "Show only these links",
         "edit": "Edit property",
-        "type": "Type",
-        "valueSubtitle": "Property · {{model}}"
+        "type": "Type"
       },
       "display": "Display",
       "zoom": "Zoom",

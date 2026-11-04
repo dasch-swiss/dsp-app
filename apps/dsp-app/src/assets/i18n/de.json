@@ -722,7 +722,6 @@
       "dataModels": "Datenmodelle",
       "noDataModels": "Dieses Projekt hat noch kein Datenmodell.",
       "classPanel": {
-        "subtitle": "Ressourcenklasse · {{model}}",
         "close": "Klassendetails schliessen",
         "properties": "Eigenschaften · {{count}}",
         "noProperties": "Diese Klasse hat keine eigenen Eigenschaften.",
@@ -759,7 +758,6 @@
       "propertiesChosen": "{{count}} Eigenschaften",
       "levelLabels": "Verknüpfungsbeschriftungen waagrecht",
       "propertyPanel": {
-        "subtitle": "Verknüpfungseigenschaft · {{model}}",
         "close": "Details der Eigenschaft schliessen",
         "pointsTo": "Verweist auf",
         "inModel": "In diesem Modell",
@@ -768,8 +766,7 @@
         "inheritedFrom": "geerbt von {{class}}",
         "filter": "Nur diese Verknüpfungen zeigen",
         "edit": "Eigenschaft bearbeiten",
-        "type": "Typ",
-        "valueSubtitle": "Eigenschaft · {{model}}"
+        "type": "Typ"
       },
       "display": "Darstellung",
       "zoom": "Zoom",

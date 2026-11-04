@@ -23,7 +23,7 @@ export type GraphLabels = 'labels' | 'names' | 'both';
 export const localNameOf = (iri: string) => iri.substring(Math.max(iri.lastIndexOf('#'), iri.lastIndexOf('/')) + 1);
 
 /** On-screen size of class names, in px, per size setting. */
-export const GRAPH_TEXT_SIZE: Record<GraphSize, number> = { small: 11, normal: 14, large: 18 };
+export const GRAPH_TEXT_SIZE: Record<GraphSize, number> = { small: 14, normal: 18, large: 23 };
 
 /** Class names' font size at scale 1; boxes, text and lines are drawn at a multiple of it. */
 export const BASE_FONT_SIZE = 15;
