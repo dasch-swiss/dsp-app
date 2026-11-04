@@ -225,7 +225,8 @@ function islandParents(graph: DataModelGraph, options: IslandElementOptions): Ma
 
 /**
  * The compound nodes of the Islands view: an island per group of linked classes, unnamed, and a family per shared
- * family. A lone island is kept for the layout, but `alone`: drawn without a frame.
+ * family. A lone island, or one of a single class, is kept for the layout, but `alone`: drawn without a frame, even
+ * when hovered.
  */
 function islandNodes(graph: DataModelGraph, options: IslandElementOptions): ElementDefinition[] {
   const parents = islandParents(graph, options);
@@ -235,7 +236,11 @@ function islandNodes(graph: DataModelGraph, options: IslandElementOptions): Elem
     elements.push({
       group: 'nodes',
       data: { id, label: '', name: '', both: '' },
-      classes: ['island', id === UNLINKED_ISLAND ? 'unlinked' : '', groups.length === 1 ? 'alone' : '']
+      classes: [
+        'island',
+        id === UNLINKED_ISLAND ? 'unlinked' : '',
+        groups.length === 1 || iris.length === 1 ? 'alone' : '',
+      ]
         .filter(Boolean)
         .join(' '),
     });

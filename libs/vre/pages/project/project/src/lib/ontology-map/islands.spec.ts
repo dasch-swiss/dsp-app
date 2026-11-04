@@ -108,7 +108,8 @@ describe('toGraphElements in the Islands view', () => {
 
     expect(islands.map(e => e.data.id)).toEqual(['island:0', 'island:1', 'island:unlinked']);
     expect(islands.map(e => e.data['label'])).toEqual(['', '', '']);
-    expect(islands.some(e => e.classes?.includes('alone'))).toBe(false);
+    // Only the island of a single class, Note, is drawn without a frame.
+    expect(islands.filter(e => e.classes?.includes('alone')).map(e => e.data.id)).toEqual(['island:unlinked']);
   });
 
   it('draws no frame around a lone island', () => {

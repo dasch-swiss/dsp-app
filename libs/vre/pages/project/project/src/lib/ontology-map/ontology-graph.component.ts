@@ -232,7 +232,8 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     },
   },
   { selector: 'node.island.hovered', style: { 'background-opacity': 0.6, 'border-opacity': 1 } },
-  // A lone island is only there for the layout: no frame, and clicks go through to the background.
+  // A lone island, or one of a single class, is only there for the layout: no frame, not even hovered, and clicks go
+  // through to the background.
   {
     selector: 'node.island.alone',
     style: { 'background-opacity': 0, 'border-width': 0, padding: '0px', events: 'no' },
