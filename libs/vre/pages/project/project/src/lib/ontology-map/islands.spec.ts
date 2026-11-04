@@ -40,7 +40,6 @@ describe('classFamilies', () => {
     expect(['Image', 'Photo', 'Drawing'].map(iri => families.get(iri)?.root)).toEqual(['Image', 'Image', 'Image']);
     expect(families.get('Image')?.sub).toBe(false);
     expect(families.get('Drawing')?.sub).toBe(true);
-    expect(families.get('Drawing')?.rootLabel).toBe('Image');
   });
 
   it('orders families biggest first, then by label', () => {
@@ -121,9 +120,9 @@ describe('toGraphElements in the Islands view', () => {
     expect(lone.find(e => e.data.id === 'island:0')?.classes).toBe('island alone');
   });
 
-  it('groups the classes of a family sharing an island in a family node, others straight in the island', () => {
+  it('groups the classes of a family sharing an island in an unnamed family node, others straight in the island', () => {
     expect(node('Image').data.parent).toBe(node('Photo').data.parent);
-    expect(node(node('Image').data.parent!).data['label']).toBe('Image');
+    expect(node(node('Image').data.parent!).data['label']).toBe('');
     expect(node('Church').data.parent).toBe('island:0');
     expect(node('Note').data.parent).toBe('island:unlinked');
   });

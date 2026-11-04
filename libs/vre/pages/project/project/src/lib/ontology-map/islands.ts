@@ -49,8 +49,6 @@ export interface ClassFamily {
   index: number;
   /** Whether the class is a subclass, drawn lighter than the top class. */
   sub: boolean;
-  /** The top class's label, which names the family. */
-  rootLabel: string;
 }
 
 export const familyHue = (index: number) => FAMILY_HUES[index % FAMILY_HUES.length];
@@ -97,7 +95,7 @@ export function classFamilies(graph: DataModelGraph): Map<string, ClassFamily> {
   const families = new Map<string, ClassFamily>();
   roots.forEach((root, index) => {
     for (const iri of members.get(root)!) {
-      families.set(iri, { root, index, sub: iri !== root, rootLabel: labelOf.get(root) ?? '' });
+      families.set(iri, { root, index, sub: iri !== root });
     }
   });
   return families;
@@ -214,8 +212,8 @@ const BLOCK_GAP = 28;
 export const ISLAND_PADDING = 12;
 /** Subclasses side by side under their family's top class, at most. */
 const FAMILY_COLUMNS = 3;
-/** Room a family's frame and its title take around its classes, at scale 1. */
-const FAMILY_FRAME = { side: 16, top: 34 };
+/** Room a family's frame takes around its classes, at scale 1; it has no title, so as much above as on the sides. */
+const FAMILY_FRAME = { side: 16, top: 16 };
 
 /** The Cytoscape factory, for a layout run apart from the graph shown. */
 export type CytoscapeFactory = (options: Record<string, unknown>) => Core;

@@ -224,7 +224,7 @@ function islandParents(graph: DataModelGraph, options: IslandElementOptions): Ma
 }
 
 /**
- * The compound nodes of the Islands view: an island per group of linked classes, unnamed, and a family per shared
+ * The compound nodes of the Islands view, all unnamed: an island per group of linked classes, and a family per shared
  * family. A lone island, or one of a single class, is kept for the layout, but `alone`: drawn without a frame, even
  * when hovered.
  */
@@ -252,9 +252,10 @@ function islandNodes(graph: DataModelGraph, options: IslandElementOptions): Elem
         data: {
           id: parent!,
           parent: id,
-          label: family.rootLabel,
-          name: family.rootLabel,
-          both: family.rootLabel,
+          // A family's frame and hue group its classes; it is not named.
+          label: '',
+          name: '',
+          both: '',
           color: hue.base,
           dark: hue.dark,
         },
