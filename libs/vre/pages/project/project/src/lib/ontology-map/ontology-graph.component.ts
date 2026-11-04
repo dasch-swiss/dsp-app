@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
@@ -25,10 +25,12 @@ import {
   ClassFamily,
   CytoscapeFactory,
   FILE_KINDS,
+  fileIconImage,
   ISLAND_PADDING,
   LabelWidth,
   TEXTURE_TILE,
 } from './islands';
+import { LegendTexts, withLegend } from './legend-image';
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
@@ -61,6 +63,8 @@ const EXPORT_SCALE = 2;
 const EXPORT_BACKGROUND = '#F9FAFB';
 /** The whole model of a big data model is drawn no bigger than this, in px each way. */
 const EXPORT_MAX_SIZE = 8000;
+/** Size of the legend's text at scale 1, as on screen and in an exported image; see `withLegend`. */
+const LEGEND_TEXT_SIZE = 12.5;
 
 /** How far apart, at most, classes are spread to fill the box; past it, links grow too long to follow. */
 const MAX_SPREAD = 2.5;
@@ -595,6 +599,7 @@ export class OntologyGraphComponent {
   /** The background, not a class or a link, was clicked. */
   readonly backgroundClicked = output<void>();
 
+  private readonly _translate = inject(TranslateService);
   private readonly _canvas = viewChild.required<ElementRef<HTMLElement>>('canvas');
   private readonly _cy = signal<Core | undefined>(undefined);
   readonly failed = signal(false);
@@ -954,11 +959,11 @@ export class OntologyGraphComponent {
   }
 
   /**
-   * The graph as a PNG at twice the screen's resolution, on the graph's background: the part in view, or every class
-   * shown; `undefined` before the graph has loaded.
+   * The graph as a PNG at twice the screen's resolution, on the graph's background, its legend under it: the part in
+   * view, or every class shown; `undefined` before the graph has loaded.
    */
   png(area: GraphExportArea): Promise<Blob> | undefined {
-    return this._cy()?.png({
+    const png = this._cy()?.png({
       output: 'blob-promise',
       full: area === 'whole',
       // Cytoscape already draws at the screen's pixel ratio; the scale is against CSS pixels.
@@ -967,6 +972,36 @@ export class OntologyGraphComponent {
       maxWidth: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
       maxHeight: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
     });
+    const cy = this._cy();
+    const legend = this._legendTexts();
+    if (!png || !cy || !legend) return png;
+    // The legend's text as big in the image as the class names: image pixels per graph unit, times their size.
+    const model = cy.elements().boundingBox({});
+    const scaleFor = (width: number) => {
+      const perUnit = area === 'whole' ? width / model.w : EXPORT_SCALE * cy.zoom();
+      return Math.max(EXPORT_SCALE, (BASE_FONT_SIZE * this._scale * perUnit) / LEGEND_TEXT_SIZE);
+    };
+    return png.then(image => withLegend(image, legend, scaleFor, EXPORT_BACKGROUND));
+  }
+
+  /** The legend's texts and file icons in the current language, as the export draws them; none without a legend. */
+  private _legendTexts(): LegendTexts | undefined {
+    const legend = this.islandsLegend();
+    if (!legend) return undefined;
+    const t = (key: string) => this._translate.instant(`pages.ontologyMap.${key}`);
+    return {
+      title: t('islands.legend'),
+      shapes: t('islands.shapes'),
+      parent: t('islands.parent'),
+      subclass: t('islands.subclass'),
+      other: t('legendDashed'),
+      link: t('islands.link'),
+      files: t('islands.files'),
+      fileKinds: legend.files.map(kind => ({
+        label: t(`islands.fileKinds.${kind.representation}`),
+        icon: fileIconImage(kind.representation, '#4B5563')!,
+      })),
+    };
   }
 
   /** Zooms in (`factor` above 1) or out, about the middle of the box. */
