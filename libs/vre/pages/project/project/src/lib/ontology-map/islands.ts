@@ -291,7 +291,15 @@ export function arrangeIslands(
     if (island.hasClass('unlinked')) {
       placeInRows(blocks, room);
     } else {
-      linked.set(island, spread(blocks, cytoscape, room, labelWidth));
+      // Of the force layout's runs, the one whose links cross least, then the smallest.
+      const runs = spread(blocks, cytoscape, room, labelWidth);
+      const scored = runs.map(run => {
+        placeIsland(run, room.aspect, room);
+        const box = island.descendants().boundingBox({});
+        return { run, crossings: linkCrossings(island), area: box.w * box.h };
+      });
+      scored.sort((a, b) => a.crossings - b.crossings || a.area - b.area);
+      linked.set(island, scored[0].run);
     }
   }
   const shape = (shapes: IslandShapes) =>
@@ -379,10 +387,11 @@ const pairKey = (a: string, b: string) => (a < b ? `${a}\n${b}` : `${b}\n${a}`);
 
 /**
  * Spreads an island's blocks with a force layout run on the blocks alone, apart from the graph shown, each block as
- * big as its classes; linked blocks pull together, as far apart as their labels need, all push apart. It starts from
- * a circle, so the same model always lands the same way.
+ * big as its classes; linked blocks pull together, as far apart as their labels need, all push apart. It runs once
+ * per starting order of the blocks round a circle (see `startOrders`), as each can land differently; the same model
+ * always lands the same way.
  */
-function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room, labelWidth: LabelWidth): LinkedIsland {
+function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room, labelWidth: LabelWidth): LinkedIsland[] {
   const blockOf = new Map(blocks.flatMap(block => block.classes.map(node => [node.id(), block.id] as const)));
   // At scale 1, the longest label between each pair of linked blocks, with room around it.
   const links = new Map<string, number>();
@@ -397,19 +406,15 @@ function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room, labelW
     }
   }
   const radius = Math.max(100, (blocks.length * 160) / (2 * Math.PI));
-  const layout = cytoscape({
+  const graph = cytoscape({
     headless: true,
     styleEnabled: true,
     style: [{ selector: 'node', style: { shape: 'rectangle', width: 'data(w)', height: 'data(h)' } }],
     elements: [
-      ...blocks.map((block, i) => ({
+      ...blocks.map(block => ({
         group: 'nodes',
         // At scale 1, as the force layout's distances are set for it; its result is scaled up after.
         data: { id: block.id, w: (block.w + room.block) / room.scale, h: (block.h + room.block) / room.scale },
-        position: {
-          x: radius * Math.cos((2 * Math.PI * i) / blocks.length),
-          y: radius * Math.sin((2 * Math.PI * i) / blocks.length),
-        },
       })),
       ...[...links].map(([link, length]) => {
         const [source, target] = link.split('\n');
@@ -417,28 +422,96 @@ function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room, labelW
       }),
     ],
   });
-  layout
-    .layout({
-      name: 'cose',
-      animate: false,
-      randomize: false,
-      fit: false,
-      idealEdgeLength: (edge: EdgeSingular) => Math.max(50, edge.data('length')),
-      nodeOverlap: 40,
-      nodeRepulsion: () => 8000,
-      gravity: 2.5,
-      numIter: 2500,
-    } as never)
-    .run();
-  const centers = new Map(
-    blocks.map(block => {
-      const { x, y } = layout.getElementById(block.id).position();
-      return [block.id, { x: x * room.scale, y: y * room.scale }];
-    })
-  );
-  layout.destroy();
-  for (const [key, length] of links) links.set(key, length * room.scale);
-  return { blocks, centers, links };
+  const runs = startOrders(blocks, links).map(order => {
+    order.forEach((id, i) =>
+      graph.getElementById(id).position({
+        x: radius * Math.cos((2 * Math.PI * i) / order.length),
+        y: radius * Math.sin((2 * Math.PI * i) / order.length),
+      })
+    );
+    graph
+      .layout({
+        name: 'cose',
+        animate: false,
+        randomize: false,
+        fit: false,
+        idealEdgeLength: (edge: EdgeSingular) => Math.max(50, edge.data('length')),
+        nodeOverlap: 40,
+        nodeRepulsion: () => 8000,
+        gravity: 2.5,
+        numIter: 2500,
+      } as never)
+      .run();
+    return new Map(
+      blocks.map(block => {
+        const { x, y } = graph.getElementById(block.id).position();
+        return [block.id, { x: x * room.scale, y: y * room.scale }];
+      })
+    );
+  });
+  graph.destroy();
+  const scaled = new Map([...links].map(([key, length]) => [key, length * room.scale]));
+  return runs.map(centers => ({ blocks, centers, links: scaled }));
+}
+
+/**
+ * Orders to start the force layout from, round a circle: as the blocks come, the most linked first, and walks along
+ * the links from each of the three most linked blocks, breadth first and depth first, so linked blocks start side by
+ * side and their links are less likely to cross.
+ */
+function startOrders(blocks: Block[], links: Map<string, number>): string[][] {
+  const ids = blocks.map(block => block.id);
+  const neighbours = new Map(ids.map(id => [id, [] as string[]]));
+  for (const key of links.keys()) {
+    const [a, b] = key.split('\n');
+    neighbours.get(a)?.push(b);
+    neighbours.get(b)?.push(a);
+  }
+  const byLinks = [...ids].sort((a, b) => neighbours.get(b)!.length - neighbours.get(a)!.length);
+  // From `root`, the most linked neighbours first; breadth first takes the oldest found block next, depth first the newest.
+  const walk = (root: string, depthFirst: boolean) => {
+    const order: string[] = [];
+    const pending = [root];
+    while (pending.length) {
+      const id = depthFirst ? pending.pop()! : pending.shift()!;
+      if (order.includes(id)) continue;
+      order.push(id);
+      const next = neighbours
+        .get(id)!
+        .filter(other => !order.includes(other))
+        .sort((a, b) => neighbours.get(b)!.length - neighbours.get(a)!.length);
+      pending.push(...(depthFirst ? next.reverse() : next));
+    }
+    return [...order, ...byLinks.filter(id => !order.includes(id))];
+  };
+  const orders = [ids, byLinks, ...byLinks.slice(0, 3).flatMap(root => [walk(root, false), walk(root, true)])];
+  return orders.filter((order, i) => orders.findIndex(other => other.join('\n') === order.join('\n')) === i);
+}
+
+/** How many times the island's links cross each other, drawn straight between their classes. */
+function linkCrossings(island: NodeSingular): number {
+  const segments = island
+    .descendants()
+    .connectedEdges()
+    .toArray()
+    .filter(edge => edge.source().id() !== edge.target().id())
+    .map(edge => ({
+      ends: [edge.source().id(), edge.target().id()],
+      a: edge.source().position(),
+      b: edge.target().position(),
+    }));
+  const side = (p: { x: number; y: number }, q: { x: number; y: number }, r: { x: number; y: number }) =>
+    Math.sign((q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x));
+  let count = 0;
+  for (let i = 0; i < segments.length; i++) {
+    for (let j = i + 1; j < segments.length; j++) {
+      const [s, t] = [segments[i], segments[j]];
+      // Links that share a class meet there, which is no crossing.
+      if (s.ends.some(end => t.ends.includes(end))) continue;
+      if (side(s.a, s.b, t.a) * side(s.a, s.b, t.b) < 0 && side(t.a, t.b, s.a) * side(t.a, t.b, s.b) < 0) count++;
+    }
+  }
+  return count;
 }
 
 /**

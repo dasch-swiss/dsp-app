@@ -18,6 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
+import { routeEdges } from './edge-routes';
 import {
   arrangeIslands,
   ClassFamily,
@@ -257,6 +258,15 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'text-background-padding': '1px',
       // Labels give way when zoomed out, so a big model stays readable.
       'min-zoomed-font-size': 7,
+    },
+  },
+  // A link that would pass through a class's box bends round it; see `routeEdges`.
+  {
+    selector: 'edge[bend]',
+    style: {
+      'curve-style': 'unbundled-bezier',
+      'control-point-distances': 'data(bend)' as never,
+      'control-point-weights': 'data(weight)' as never,
     },
   },
   {
@@ -618,7 +628,10 @@ export class OntologyGraphComponent {
           if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
         cy.on('tap', 'edge.link', event => this.propertySelected.emit(event.target.data('property')));
-        cy.on('dragfree', 'node', () => (this._dragged = true));
+        cy.on('dragfree', 'node', () => {
+          this._dragged = true;
+          routeEdges(cy, this._scale);
+        });
         // Hovering a class highlights its links; a class that opens on click shows a link's pointer.
         const container = this._canvas().nativeElement;
         cy.on('mouseover', 'node', event => {
@@ -751,6 +764,7 @@ export class OntologyGraphComponent {
       arrangeIslands(cy, this._cytoscape, this._scale, this._aspect(cy), this._labelWidth());
     }
     this._spread(cy);
+    routeEdges(cy, this._scale);
     this._fit(cy);
     const readable = (textSize * READABLE_SHARE) / (BASE_FONT_SIZE * this._scale);
     if (cy.zoom() < readable) {
