@@ -5,7 +5,8 @@ import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { combineLatest, map, switchMap } from 'rxjs';
-import { classColors, classRows, propertyRows } from '../ontology-map/ontology-graph-elements';
+import { familyColors } from '../ontology-map/islands';
+import { classRows, propertyRows } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
@@ -46,9 +47,10 @@ export class DataModelsRailState {
     const iri = this.selected()?.iri;
     return iri ? this._graphsByIri()?.get(iri) : undefined;
   });
+  /** A colour per class, its family's, as the Overview graph draws it. */
   readonly colors = computed(() => {
     const graph = this.graph();
-    return graph ? classColors(graph) : new Map<string, string>();
+    return graph ? familyColors(graph) : new Map<string, string>();
   });
   readonly classRows = computed(() => {
     const graph = this.graph();

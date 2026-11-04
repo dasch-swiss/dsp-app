@@ -71,6 +71,27 @@ export function familyTint(hue: string, share = 0.25): string {
     .join('')}`;
 }
 
+/**
+ * A colour per class of the data model, as a CSS background: its family's hue with the stripes the graph draws over
+ * it, so a class looks the same in the graph and in the lists of classes and properties, whatever is filtered.
+ */
+export function familyColors(graph: DataModelGraph): Map<string, string> {
+  return new Map([...classFamilies(graph)].map(([iri, family]) => [iri, familySwatch(family)]));
+}
+
+/** A class's look as a CSS background: its fill, and over it its family's stripes, as `textureImage` draws them. */
+export function familySwatch(family: ClassFamily): string {
+  const fill = familyColor(family);
+  const { stripes } = familyTexture(family.index);
+  if (!stripes) return fill;
+  const { dark } = familyHue(family.index);
+  const white = stripes === 'white' && !family.sub;
+  const [color, opacity] = stripes === 'dark' ? [dark, 0.55] : white ? ['#FFFFFF', 0.7] : [dark, 0.45];
+  const [r, g, b] = [1, 3, 5].map(i => parseInt(color.slice(i, i + 2), 16));
+  const line = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  return `repeating-linear-gradient(45deg, ${line} 0 2px, transparent 2px 6px), ${fill}`;
+}
+
 /** A class's fill in the Islands view: its family's hue, lighter for a subclass. */
 export const familyColor = (family: ClassFamily) =>
   family.sub ? familyHue(family.index).light : familyHue(family.index).base;

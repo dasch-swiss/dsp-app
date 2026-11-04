@@ -3,6 +3,8 @@ import {
   classFamilies,
   FAMILY_HUES,
   familyColor,
+  familyColors,
+  familySwatch,
   familyTexture,
   familyTint,
   fileIconImage,
@@ -50,6 +52,20 @@ describe('classFamilies', () => {
   it('draws a top class in its hue and its subclasses lighter', () => {
     expect(familyColor(families.get('Image')!)).toBe(FAMILY_HUES[0].base);
     expect(familyColor(families.get('Photo')!)).toBe(FAMILY_HUES[0].light);
+  });
+
+  it('gives every class the colour the graph draws it in, for the lists of classes and properties', () => {
+    expect(familyColors(graph).get('Image')).toBe(FAMILY_HUES[0].base);
+    expect(familyColors(graph).get('Drawing')).toBe(FAMILY_HUES[0].light);
+  });
+
+  it('stripes the colour of a family past the first ten, as the graph does', () => {
+    expect(familySwatch({ root: 'A', index: 10, sub: false })).toBe(
+      `repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.7) 0 2px, transparent 2px 6px), ${FAMILY_HUES[0].base}`
+    );
+    expect(familySwatch({ root: 'A', index: 20, sub: true })).toMatch(
+      /^repeating-linear-gradient.*rgba\(47, 106, 154, 0\.55\)/
+    );
   });
 });
 

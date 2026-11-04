@@ -1,8 +1,6 @@
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
-  CLASS_COLORS,
-  classColors,
   classRows,
   graphScale,
   linkedWith,
@@ -31,8 +29,13 @@ const graph: DataModelGraph = {
 };
 
 describe('toGraphElements', () => {
+  const colors = new Map([
+    ['Film', '#111111'],
+    ['Lonely', '#222222'],
+    ['Person', '#333333'],
+  ]);
   const elements = toGraphElements(graph, {
-    colors: classColors(graph),
+    colors,
     mainIri: 'Film',
     selectedIri: 'Person',
     anyResourceLabel: 'Any resource',
@@ -40,7 +43,7 @@ describe('toGraphElements', () => {
   const node = (id: string) => elements.find(e => e.group === 'nodes' && e.data.id === id)!;
 
   it('draws a node per class in its own colour, styled by its main and selected state', () => {
-    expect(['Film', 'Lonely', 'Person'].map(id => node(id).data['color'])).toEqual(CLASS_COLORS.slice(0, 3));
+    expect(['Film', 'Lonely', 'Person'].map(id => node(id).data['color'])).toEqual(['#111111', '#222222', '#333333']);
     expect(node('Film').classes).toBe('main');
     expect(node('Person').classes).toBe('selected');
     expect(node('Lonely').classes).toBe('');

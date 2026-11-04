@@ -39,41 +39,8 @@ export function graphScale(textSize: number, zoom: number): number {
   return Math.min(MAX_SCALE, Math.max(1, textSize / (BASE_FONT_SIZE * zoom)));
 }
 
-/**
- * Light colours that tell classes apart, all dark-text legible (ColorBrewer Set3, then Pastel1); a data model with
- * more classes repeats them.
- */
-export const CLASS_COLORS = [
-  '#8DD3C7',
-  '#FFFFB3',
-  '#BEBADA',
-  '#FB8072',
-  '#80B1D3',
-  '#FDB462',
-  '#B3DE69',
-  '#FCCDE5',
-  '#BC80BD',
-  '#CCEBC5',
-  '#FFED6F',
-  '#D9D9D9',
-  '#FBB4AE',
-  '#B3CDE3',
-  '#DECBE4',
-  '#FED9A6',
-  '#E5D8BD',
-  '#FDDAEC',
-];
-
-/** A colour per class of the data model, in label order, so a class keeps its colour whatever is filtered. */
-export function classColors(graph: DataModelGraph): Map<string, string> {
-  const classes = graph.nodes
-    .filter(node => node.kind === 'class')
-    .sort((a, b) => a.label.localeCompare(b.label) || a.id.localeCompare(b.id));
-  return new Map(classes.map((node, index) => [node.id, CLASS_COLORS[index % CLASS_COLORS.length]]));
-}
-
 export interface GraphElementOptions {
-  /** Colour per class; see `classColors`. */
+  /** Colour per class, for a class outside any family; see `familyColors`. */
   colors: Map<string, string>;
   mainIri?: string;
   selectedIri?: string;

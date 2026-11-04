@@ -24,7 +24,7 @@ import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
-import { classFamilies, familyColor } from './islands';
+import { classFamilies, familyColors } from './islands';
 import {
   GraphLabels,
   GraphSize,
@@ -813,10 +813,8 @@ export class OntologyMapPageComponent {
 
   /** A colour per class of the data model, its family's, the same whatever the graph is filtered on. */
   readonly colors = computed(() => {
-    const families = this.families();
-    return families
-      ? new Map([...families].map(([iri, family]) => [iri, familyColor(family)]))
-      : new Map<string, string>();
+    const graph = this.graph();
+    return graph ? familyColors(graph) : new Map<string, string>();
   });
 
   /** The class filter in the URL: classes to show with the classes they are linked with, or classes to hide. */

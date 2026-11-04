@@ -569,7 +569,7 @@ export class OntologyGraphComponent {
   readonly graph = input.required<DataModelGraph>();
   /** IRI of the class to outline, if any. */
   readonly selectedIri = input<string | undefined>(undefined);
-  /** Colour per class, from the whole data model so a filter keeps them; see `classColors`. */
+  /** Colour per class, from the whole data model so a filter keeps them; see `familyColors`. */
   readonly colors = input.required<Map<string, string>>();
   /** How big boxes, text and lines are drawn. */
   readonly size = input<GraphSize>('normal');
