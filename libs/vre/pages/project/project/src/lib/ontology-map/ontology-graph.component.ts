@@ -169,15 +169,17 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'background-position-y': `50% 50%` as never,
     },
   },
+  // An island's frame shows only while hovered.
   {
     selector: 'node.island',
     style: {
       shape: 'round-rectangle',
       'background-color': '#FFFFFF',
-      'background-opacity': 0.6,
+      'background-opacity': 0,
       'border-width': 1.5 * f,
       'border-style': 'dashed',
       'border-color': '#CBD5E1',
+      'border-opacity': 0,
       padding: `${ISLAND_PADDING * f}px`,
       'text-valign': 'top',
       'text-halign': 'center',
@@ -209,6 +211,7 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'text-margin-y': -3 * f,
     },
   },
+  { selector: 'node.island.hovered', style: { 'background-opacity': 0.6, 'border-opacity': 1 } },
   // A lone island is only there for the layout: no frame, and clicks go through to the background.
   {
     selector: 'node.island.alone',
@@ -629,19 +632,23 @@ export class OntologyGraphComponent {
         const container = this._canvas().nativeElement;
         cy.on('mouseover', 'node', event => {
           event.target.connectedEdges().addClass('highlighted');
+          event.target.ancestors('.island').union(event.target.filter('.island')).addClass('hovered');
           if (this._navigable().has(event.target.id())) container.style.cursor = 'pointer';
         });
         cy.on('mouseout', 'node', event => {
           event.target.connectedEdges().removeClass('highlighted');
+          cy.nodes('.island.hovered').removeClass('hovered');
           container.style.cursor = '';
         });
         // Hovering a link highlights every link through the same property, wherever it is used; a click opens it.
         cy.on('mouseover', 'edge', event => {
           this._hoveredProperty.set(event.target.data('property'));
+          event.target.source().ancestors('.island').addClass('hovered');
           container.style.cursor = 'pointer';
         });
         cy.on('mouseout', 'edge', () => {
           this._hoveredProperty.set(undefined);
+          cy.nodes('.island.hovered').removeClass('hovered');
           container.style.cursor = '';
         });
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
