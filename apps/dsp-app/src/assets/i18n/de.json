@@ -738,7 +738,8 @@
         "filter": "Filtern",
         "more": "+{{count}} weitere",
         "noConnections": "Mit keiner anderen Klasse verknüpft",
-        "filterHint": "Im Graphen nur diese Klasse und die mit ihr verknüpften Klassen zeigen"
+        "filterHint": "Im Graphen nur diese Klasse und die mit ihr verknüpften Klassen zeigen",
+        "editProperty": "Eigenschaft {{property}} bearbeiten"
       },
       "dataModel": "Datenmodell",
       "counts": "{{classes}} Klassen · {{links}} Verknüpfungen",

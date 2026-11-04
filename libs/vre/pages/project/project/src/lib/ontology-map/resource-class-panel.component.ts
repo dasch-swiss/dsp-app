@@ -106,6 +106,17 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                     {{ typeName(property) }} · {{ t + '.' + cardinalityKey(property) | translate }}
                   </span>
                 }
+                @if (canEdit() && isEditable(property)) {
+                  <button
+                    type="button"
+                    class="edit-property"
+                    data-cy="class-panel-edit-property"
+                    [attr.aria-label]="t + '.editProperty' | translate: { property: property.label }"
+                    [matTooltip]="t + '.editProperty' | translate: { property: property.label }"
+                    (click)="editProperty.emit(property.id)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                }
               </div>
               @if (open && property.description) {
                 <p class="property-description">{{ property.description }}</p>
@@ -344,6 +355,35 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         }
       }
 
+      // A pencil at the end of the row, shown while the row is hovered or has focus; its room is kept, so the row's
+      // texts do not move.
+      .edit-property {
+        flex: none;
+        display: flex;
+        padding: 3px;
+        border: 0;
+        border-radius: 50%;
+        background: none;
+        color: $primary;
+        cursor: pointer;
+        visibility: hidden;
+
+        &:hover {
+          background: $primary_50;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .property:hover .edit-property,
+      .property:focus-within .edit-property {
+        visibility: visible;
+      }
+
       .property-description {
         margin: 0;
         padding-left: 24px;
@@ -409,6 +449,8 @@ export class ResourceClassPanelComponent {
   readonly filter = output<string>();
   /** "Edit class" was clicked; emits the class IRI. */
   readonly edit = output<string>();
+  /** A property row's pencil was clicked; emits the property IRI. */
+  readonly editProperty = output<string>();
 
   readonly node = computed(() => this.graph().nodes.find(node => node.id === this.classIri()));
   readonly properties = computed(() => this.node()?.propertyDetails ?? []);
@@ -444,6 +486,11 @@ export class ResourceClassPanelComponent {
   labelOf(iri: string): string {
     if (iri === Constants.Resource) return this.anyResourceLabel();
     return this.graph().nodes.find(node => node.id === iri)?.label ?? iri.substring(iri.lastIndexOf('#') + 1);
+  }
+
+  /** Whether the property belongs to a data model, which the project can edit, rather than to knora-api. */
+  isEditable(property: DataModelProperty): boolean {
+    return !property.id.startsWith(Constants.KnoraApiV2);
   }
 
   typeIcon(property: DataModelProperty): string {

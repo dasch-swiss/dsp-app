@@ -738,7 +738,8 @@
         "filter": "Filtra",
         "more": "+{{count}} altri",
         "noConnections": "Non collegata ad altre classi",
-        "filterHint": "Mostrare nel grafo solo questa classe e le classi collegate"
+        "filterHint": "Mostrare nel grafo solo questa classe e le classi collegate",
+        "editProperty": "Modifica la proprietà {{property}}"
       },
       "dataModel": "Modello di dati",
       "counts": "{{classes}} classi · {{links}} collegamenti",

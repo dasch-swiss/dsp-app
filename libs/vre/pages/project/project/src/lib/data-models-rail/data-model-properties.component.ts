@@ -19,8 +19,8 @@ import {
 } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
+import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { localNameOf } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
@@ -216,6 +216,7 @@ export class DataModelPropertiesComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _params = toSignal(this._route.queryParamMap);
+  private readonly _editing = injectDataModelEditing();
 
   readonly columns = ['property', 'type', 'pointsTo', 'usedBy'];
   readonly usedByShown = USED_BY_SHOWN;
@@ -268,16 +269,8 @@ export class DataModelPropertiesComponent {
     this.state.openSection(RouteConstants.graph, { [ONTOLOGY_MAP_PARAM.property]: localNameOf(iri) });
   }
 
-  /** Opens the property's data model in the data model editor, on its properties. */
+  /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
   edit(iri: string): void {
-    const [ontologyIri] = iri.split('#');
-    this._router.navigate(
-      this.state.projectPath(
-        RouteConstants.ontology,
-        OntologyService.getOntologyNameFromIri(ontologyIri),
-        RouteConstants.editor,
-        RouteConstants.properties
-      )
-    );
+    this._editing.editProperty(iri);
   }
 }

@@ -114,4 +114,18 @@ describe('ResourceClassPanelComponent', () => {
 
     expect(filtered).toEqual(['Film']);
   });
+
+  it('offers to edit each property only to those who may edit the data model', () => {
+    const pencils = () => fixture.nativeElement.querySelectorAll('[data-cy="class-panel-edit-property"]');
+    expect(pencils().length).toBe(0);
+
+    fixture.componentRef.setInput('canEdit', true);
+    fixture.detectChanges();
+    const edited: string[] = [];
+    component.editProperty.subscribe(iri => edited.push(iri));
+    pencils()[1].click();
+
+    expect(pencils().length).toBe(2);
+    expect(edited).toEqual(['director']);
+  });
 });

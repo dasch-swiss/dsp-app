@@ -3,14 +3,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   effect,
   inject,
   signal,
   untracked,
   viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -20,11 +19,11 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { combineLatest, filter, map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
-import { CLASS_EDITOR } from './class-editor';
+import { injectDataModelEditing } from './data-model-editor';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
 import { classFamilies, familyColors } from './islands';
 import {
@@ -413,7 +412,8 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   (browse)="open($event)"
                   (filter)="filterOn($event)"
                   (propertyHovered)="hoveredProperty.set($event)"
-                  (edit)="edit($event)" />
+                  (edit)="edit($event)"
+                  (editProperty)="editProperty($event)" />
               } @else if (propertyPanelIri(); as propertyIri) {
                 <app-property-panel
                   class="panel"
@@ -847,8 +847,7 @@ export class OntologyMapPageComponent {
   private readonly _clipboard = inject(Clipboard);
   private readonly _notification = inject(NotificationService);
   private readonly _translate = inject(TranslateService);
-  private readonly _classEditor = inject(CLASS_EDITOR, { optional: true });
-  private readonly _destroyRef = inject(DestroyRef);
+  private readonly _editing = injectDataModelEditing();
 
   private readonly _projectOntologies = toSignal(
     combineLatest([this._graphs.projectOntologies$, inject(LocalizationService).currentLanguage$]).pipe(
@@ -1237,35 +1236,14 @@ export class OntologyMapPageComponent {
     );
   }
 
-  /** Opens the class's data model in the data model editor. */
-  /** Edits the class in the data model editor's dialog, in place; without it, opens the data model editor. */
+  /** Edits the class in the data model editor's dialog; see `injectDataModelEditing`. */
   edit(iri: string): void {
-    if (!this._classEditor) {
-      this._openEditor(iri, RouteConstants.classes);
-      return;
-    }
-    // A saved class is read again with the whole project, so the graph and the panel show its new texts.
-    this._classEditor
-      .edit(iri)
-      .pipe(filter(Boolean), takeUntilDestroyed(this._destroyRef))
-      .subscribe(() => this._projectPage.reloadProject());
+    this._editing.editClass(iri);
   }
 
-  /** Opens the property's data model in the data model editor, on its properties. */
+  /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
   editProperty(iri: string): void {
-    this._openEditor(iri, RouteConstants.properties);
-  }
-
-  private _openEditor(iri: string, page: string): void {
-    const [ontologyIri] = iri.split('#');
-    this._router.navigate(
-      this._projectPath(
-        RouteConstants.ontology,
-        OntologyService.getOntologyNameFromIri(ontologyIri),
-        RouteConstants.editor,
-        page
-      )
-    );
+    this._editing.editProperty(iri);
   }
 
   /** The path to a page of the project from the app's root: this page sits at different depths. */

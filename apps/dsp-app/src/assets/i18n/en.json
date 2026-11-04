@@ -738,7 +738,8 @@
         "filter": "Filter",
         "more": "+{{count}} more",
         "noConnections": "Not linked with other classes",
-        "filterHint": "Show the graph with only this class and the classes it is linked with"
+        "filterHint": "Show the graph with only this class and the classes it is linked with",
+        "editProperty": "Edit the property {{property}}"
       },
       "dataModel": "Data model",
       "counts": "{{classes}} classes · {{links}} links",
