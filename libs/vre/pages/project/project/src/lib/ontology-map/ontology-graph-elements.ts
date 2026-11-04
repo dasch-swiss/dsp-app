@@ -83,6 +83,8 @@ export interface GraphElementOptions {
   mainIri?: string;
   selectedIri?: string;
   anyResourceLabel: string;
+  /** The word after the count on a link standing for several, as in "5 links". */
+  linksLabel?: string;
   /** Set for the Islands view: classes are grouped in islands and families, and show the file they carry. */
   islands?: IslandElementOptions;
 }
@@ -129,21 +131,55 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
     };
   });
   if (parents) nodes.unshift(...islandNodes(graph, islands!));
-  const edges: ElementDefinition[] = graph.edges
-    .filter(edge => edge.source !== edge.target)
-    .map(edge => ({
-      group: 'edges',
-      data: {
-        id: `${edge.source} ${edge.property} ${edge.target}`,
-        source: edge.source,
-        target: edge.target,
-        ...texts(edge.label, edge.property),
-        property: edge.property,
+  // More than a few links from one class to another are drawn as one, which says how many they are.
+  const drawn = graph.edges.filter(edge => edge.source !== edge.target);
+  const between = new Map<string, number>();
+  for (const edge of drawn) {
+    if (edge.kind === 'link')
+      between.set(`${edge.source}\n${edge.target}`, (between.get(`${edge.source}\n${edge.target}`) ?? 0) + 1);
+  }
+  const merged = new Set<string>();
+  const edges: ElementDefinition[] = drawn.flatMap(edge => {
+    const pair = `${edge.source}\n${edge.target}`;
+    const count = edge.kind === 'link' ? (between.get(pair) ?? 0) : 0;
+    if (count <= MAX_PARALLEL_LINKS) {
+      return [
+        {
+          group: 'edges',
+          data: {
+            id: `${edge.source} ${edge.property} ${edge.target}`,
+            source: edge.source,
+            target: edge.target,
+            ...texts(edge.label, edge.property),
+            property: edge.property,
+          },
+          classes: edge.kind,
+        },
+      ];
+    }
+    if (merged.has(pair)) return [];
+    merged.add(pair);
+    const label = `${count} ${options.linksLabel ?? 'links'}`;
+    return [
+      {
+        group: 'edges',
+        data: {
+          id: `${edge.source} links ${edge.target}`,
+          source: edge.source,
+          target: edge.target,
+          label,
+          name: label,
+          both: label,
+        },
+        classes: 'links',
       },
-      classes: edge.kind,
-    }));
+    ];
+  });
   return [...nodes, ...edges];
 }
+
+/** How many links from one class to another are drawn one by one; more are drawn as one. */
+export const MAX_PARALLEL_LINKS = 4;
 
 /** An element's texts, one per `GraphLabels`: its label, its name, and both on two lines. */
 function texts(label: string, iri: string): { label: string; name: string; both: string } {

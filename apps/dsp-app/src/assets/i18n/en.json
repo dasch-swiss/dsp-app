@@ -842,7 +842,8 @@
           "ArchiveRepresentation": "Archive",
           "DDDRepresentation": "3D model"
         }
-      }
+      },
+      "links": "links"
     },
     "dataModels2": {
       "map": "Map",

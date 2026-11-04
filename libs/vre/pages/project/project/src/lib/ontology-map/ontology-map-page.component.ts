@@ -147,6 +147,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                 [colors]="colors()"
                 [families]="families()"
                 [anyResourceLabel]="t + '.anyResource' | translate"
+                [linksLabel]="'pages.ontologyMap.links' | translate"
                 (classSelected)="openPanel($event)"
                 (classFiltered)="filterOn($event)"
                 (propertySelected)="openPropertyPanel($event)"

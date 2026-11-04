@@ -842,7 +842,8 @@
           "ArchiveRepresentation": "Archivio",
           "DDDRepresentation": "Modello 3D"
         }
-      }
+      },
+      "links": "collegamenti"
     },
     "dataModels2": {
       "map": "Mappa",

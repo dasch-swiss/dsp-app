@@ -542,6 +542,8 @@ export class OntologyGraphComponent {
   readonly highlightedProperty = input<string | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
   readonly anyResourceLabel = input('Any resource');
+  /** The word after the count on a link standing for several, as in "5 links", in the current language. */
+  readonly linksLabel = input('links');
   /** The family of every class of the data model, for the Islands view; see `classFamilies`. */
   readonly families = input<Map<string, ClassFamily> | undefined>(undefined);
 
@@ -579,6 +581,7 @@ export class OntologyGraphComponent {
       mainIri: mainClass(this._counts())?.id,
       selectedIri: this.selectedIri(),
       anyResourceLabel: this.anyResourceLabel(),
+      linksLabel: this.linksLabel(),
       islands: this._islands(),
     })
   );

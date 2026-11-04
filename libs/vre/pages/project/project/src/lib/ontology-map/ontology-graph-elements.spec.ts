@@ -72,6 +72,33 @@ describe('toGraphElements', () => {
   });
 });
 
+describe('toGraphElements with many links between two classes', () => {
+  const links = (count: number, source: string, target: string) =>
+    Array.from({ length: count }, (_, i) => ({
+      source,
+      target,
+      property: `${source}${i}`,
+      label: `Link ${i}`,
+      kind: 'link' as const,
+    }));
+  const edgesOf = (edges: DataModelGraph['edges']) =>
+    toGraphElements(
+      { nodes: graph.nodes, edges },
+      { colors: new Map(), anyResourceLabel: 'Any resource', linksLabel: 'links' }
+    ).filter(e => e.group === 'edges');
+
+  it('draws up to 4 links from one class to another one by one', () => {
+    expect(edgesOf(links(4, 'Film', 'Person'))).toHaveLength(4);
+  });
+
+  it('draws more than 4 as one link saying how many, one per direction', () => {
+    const edges = edgesOf([...links(5, 'Film', 'Person'), ...links(2, 'Person', 'Film')]);
+
+    expect(edges.map(e => e.data['label'])).toEqual(['5 links', 'Link 0', 'Link 1']);
+    expect(edges[0].classes).toBe('links');
+  });
+});
+
 describe('linkedWith', () => {
   it('keeps the class with the classes linking to it and those it links to, with only those links', () => {
     const focused = linkedWith(graph, ['Person']);
