@@ -268,9 +268,6 @@ interface LinkedIsland {
   order: string[];
 }
 
-/** How islands are shaped: all like the room, or only the first, the others about as wide as tall. */
-type IslandShapes = 'all' | 'main';
-
 /** The ways islands are packed: see `flow` and `around`. */
 const PACKINGS = ['right', 'below', 'around'] as const;
 
@@ -326,28 +323,151 @@ export function arrangeIslands(
       if (search && !known) island.scratch(START_ORDER, scored[0].run.order);
     }
   }
-  const shape = (shapes: IslandShapes) =>
-    islands.forEach((island, i) => {
+  // Islands of a single class have no frame: they go in an empty corner once the others are packed.
+  const singles =
+    islands.length > 1
+      ? islands.filter(island => island.descendants().filter(node => !node.isParent()).length === 1)
+      : [];
+  const packed = islands.filter(island => !singles.includes(island));
+  const mainLinked = packed.length > 0 && linked.has(packed[0]);
+  // The main island shaped `main` (its width over its height), the others `others`.
+  const shape = (main: number, others: number) =>
+    packed.forEach((island, i) => {
       const forces = linked.get(island);
-      if (forces) placeIsland(forces, shapes === 'all' || i === 0 ? room.aspect : 1, room);
+      if (forces) placeIsland(forces, i === 0 ? main : others, room);
     });
-  let best: { cost: number; shapes: IslandShapes; places: { x: number; y: number }[]; boxes: Box[] } | undefined;
-  for (const shapes of linked.size > 1 ? (['all', 'main'] as const) : (['all'] as const)) {
-    shape(shapes);
-    const boxes = islandBoxes(islands, room);
+  const attempt = (main: number, others: number, packing: (typeof PACKINGS)[number]) => {
+    shape(main, others);
+    const boxes = islandBoxes(packed, room);
+    const places = packing === 'around' ? around(boxes, room.island, room.aspect) : flow(boxes, room.island, packing);
+    const cost = extent(
+      places.map((place, i) => ({ ...place, w: boxes[i].w, h: boxes[i].h })),
+      room.aspect
+    );
+    return { main, others, packing, places, boxes, cost };
+  };
+  let best: ReturnType<typeof attempt> | undefined;
+  const keep = (option: ReturnType<typeof attempt>) => {
+    if (!best || option.cost < best.cost - 0.5) best = option;
+  };
+  for (const others of linked.size > 1 ? [room.aspect, 1] : [room.aspect]) {
     for (const packing of PACKINGS) {
-      const places = packing === 'around' ? around(boxes, room.island, room.aspect) : flow(boxes, room.island, packing);
-      const cost = extent(
-        places.map((place, i) => ({ ...place, w: boxes[i].w, h: boxes[i].h })),
-        room.aspect
-      );
-      if (!best || cost < best.cost - 0.5) best = { cost, shapes, places, boxes };
+      let option = attempt(room.aspect, others, packing);
+      keep(option);
+      // Beside or below the main island, the others take a strip of the room: the main island is shaped again for
+      // what they leave, twice, as its new shape moves them.
+      if (!mainLinked || packed.length < 2 || packing === 'around') continue;
+      for (let round = 0; round < 2; round++) {
+        const main = fittedShape(option.main, option.places, option.boxes, packing, room.aspect);
+        if (!main) break;
+        option = attempt(main, others, packing);
+        keep(option);
+      }
     }
   }
   if (!best) return;
-  if (best.shapes !== 'main' && linked.size > 1) shape(best.shapes);
-  const { places, boxes } = best;
-  islands.forEach((island, i) => move(island, places[i].x - boxes[i].x1, places[i].y - boxes[i].y1));
+  const { main, others, places, boxes } = best;
+  shape(main, others);
+  packed.forEach((island, i) => move(island, places[i].x - boxes[i].x1, places[i].y - boxes[i].y1));
+  placeSingles(singles, packed, room);
+}
+
+/**
+ * The shape the main island, first of `boxes`, is to take so it fills the room the others leave beside it
+ * (`right`) or below it (`below`): from `shaped`, the shape it was given, as its box came out of that shape.
+ */
+function fittedShape(
+  shaped: number,
+  places: { x: number; y: number }[],
+  boxes: Box[],
+  packing: 'right' | 'below',
+  aspect: number
+): number | undefined {
+  const [first] = boxes;
+  const width = Math.max(...places.map((place, i) => place.x + boxes[i].w));
+  const height = Math.max(...places.map((place, i) => place.y + boxes[i].h));
+  // The box the main island is to have: the room's shape, less the strip the others take.
+  const wanted =
+    packing === 'right'
+      ? (aspect * height - (width - first.w)) / height
+      : first.w / (first.w / aspect - (height - first.h));
+  if (!(wanted > 0) || !Number.isFinite(wanted)) return undefined;
+  return Math.max(aspect / 4, Math.min(aspect * 4, (shaped * wanted) / (first.w / first.h)));
+}
+
+/**
+ * Places each island of a single class, which has no frame, in an empty spot inside the packed islands' outline,
+ * the closest to a corner, clear of every class and link; where there is none, right of the outline.
+ */
+function placeSingles(singles: NodeSingular[], packed: NodeSingular[], room: Room): void {
+  if (!singles.length) return;
+  const boxes = islandBoxes(packed, room);
+  const outline = boxes.length
+    ? {
+        x1: Math.min(...boxes.map(b => b.x1)),
+        y1: Math.min(...boxes.map(b => b.y1)),
+        x2: Math.max(...boxes.map(b => b.x1 + b.w)),
+        y2: Math.max(...boxes.map(b => b.y1 + b.h)),
+      }
+    : { x1: 0, y1: 0, x2: 0, y2: 0 };
+  const gap = room.block;
+  // What a single must stay clear of: every class and family frame, and every link drawn straight.
+  const taken: Bounds[] = packed.flatMap(island =>
+    island
+      .descendants()
+      .toArray()
+      .filter(node => !node.isParent() || node.hasClass('family'))
+      .map(node => node.boundingBox({ includeLabels: false }))
+  );
+  const lines = packed
+    .flatMap(island => island.descendants().connectedEdges('[^labelOf]').toArray())
+    .map(edge => [edge.source().position(), edge.target().position()] as const);
+  const right = outline.x2 + room.island;
+  let below = outline.y1;
+  for (const single of singles) {
+    const node = single.descendants().filter(leaf => !leaf.isParent())[0];
+    const [w, h] = [node.outerWidth(), node.outerHeight()];
+    const corners = [
+      { x: outline.x1, y: outline.y1 },
+      { x: outline.x2, y: outline.y1 },
+      { x: outline.x1, y: outline.y2 },
+      { x: outline.x2, y: outline.y2 },
+    ];
+    let spot: { x: number; y: number; score: number } | undefined;
+    const step = Math.max(gap, h / 2);
+    for (let x = outline.x1 + w / 2; x <= outline.x2 - w / 2; x += step) {
+      for (let y = outline.y1 + h / 2; y <= outline.y2 - h / 2; y += step) {
+        const box = { x1: x - w / 2 - gap, y1: y - h / 2 - gap, x2: x + w / 2 + gap, y2: y + h / 2 + gap };
+        const free =
+          taken.every(other => box.x2 <= other.x1 || other.x2 <= box.x1 || box.y2 <= other.y1 || other.y2 <= box.y1) &&
+          lines.every(([a, b]) => !lineInBox(a, b, box));
+        if (!free) continue;
+        const score = Math.min(...corners.map(corner => Math.hypot(corner.x - x, corner.y - y)));
+        if (!spot || score < spot.score) spot = { x, y, score };
+      }
+    }
+    // No room inside: one under the other, right of the outline.
+    if (!spot) {
+      spot = { x: right + w / 2, y: below + h / 2, score: 0 };
+      below += h + gap;
+    }
+    const at = node.position();
+    move(single, spot.x - at.x, spot.y - at.y);
+    taken.push({ x1: spot.x - w / 2, y1: spot.y - h / 2, x2: spot.x + w / 2, y2: spot.y + h / 2 });
+  }
+}
+
+/** Whether the segment `a`–`b` passes through `box`. */
+function lineInBox(a: Point, b: Point, box: Bounds): boolean {
+  const inside = (p: Point) => p.x > box.x1 && p.x < box.x2 && p.y > box.y1 && p.y < box.y2;
+  if (inside(a) || inside(b)) return true;
+  const corners = [
+    { x: box.x1, y: box.y1 },
+    { x: box.x2, y: box.y1 },
+    { x: box.x2, y: box.y2 },
+    { x: box.x1, y: box.y2 },
+  ];
+  return corners.some((corner, i) => crosses(a, b, corner, corners[(i + 1) % 4]));
 }
 
 /**
