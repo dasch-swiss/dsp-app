@@ -1,5 +1,5 @@
 import type { RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import type { Core, NodeSingular } from 'cytoscape';
+import type { Core, EdgeSingular, NodeSingular } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 
 /**
@@ -240,12 +240,39 @@ interface Block {
   h: number;
 }
 
+/** How wide a link's label is drawn at scale 1, so the link can be drawn long enough to show it. */
+export type LabelWidth = (edge: EdgeSingular) => number;
+
+/** Room left around a link's label on its line, at scale 1. */
+const LABEL_ROOM = 24;
+
+/** An island laid out by the force layout, before it is given its shape. */
+interface LinkedIsland {
+  blocks: Block[];
+  centers: Map<string, { x: number; y: number }>;
+  /** Per pair of linked blocks, how long a line between them must be to show its labels. */
+  links: Map<string, number>;
+}
+
+/** How islands are shaped: all like the room, or only the first, the others about as wide as tall. */
+type IslandShapes = 'all' | 'main';
+
+/** The ways islands are packed: see `flow` and `around`. */
+const PACKINGS = ['right', 'below', 'around'] as const;
+
 /**
  * Lays out the Islands view: in each island, every family as a compact block, its top class above its subclasses;
- * blocks spread by a force layout, so families never overlap; then the islands packed side by side, the biggest on
- * the left and the smaller ones in columns to its right, about as tall as it.
+ * blocks spread by a force layout, so families never overlap, and just far apart for links to show their labels;
+ * then the islands packed together. Islands can be shaped and packed in several ways: the one that shows the model
+ * biggest in the room is kept.
  */
-export function arrangeIslands(cy: Core, cytoscape: CytoscapeFactory, scale = 1, aspect = 16 / 9): void {
+export function arrangeIslands(
+  cy: Core,
+  cytoscape: CytoscapeFactory,
+  scale = 1,
+  aspect = 16 / 9,
+  labelWidth: LabelWidth = () => 0
+): void {
   const room: Room = {
     island: ISLAND_GAP * scale,
     scale,
@@ -255,6 +282,7 @@ export function arrangeIslands(cy: Core, cytoscape: CytoscapeFactory, scale = 1,
     top: FAMILY_FRAME.top * scale,
   };
   const islands = cy.nodes('.island').toArray();
+  const linked = new Map<NodeSingular, LinkedIsland>();
   for (const island of islands) {
     const blocks = island
       .children()
@@ -263,10 +291,31 @@ export function arrangeIslands(cy: Core, cytoscape: CytoscapeFactory, scale = 1,
     if (island.hasClass('unlinked')) {
       placeInRows(blocks, room);
     } else {
-      spread(blocks, cytoscape, room);
+      linked.set(island, spread(blocks, cytoscape, room, labelWidth));
     }
   }
-  pack(islands, room);
+  const shape = (shapes: IslandShapes) =>
+    islands.forEach((island, i) => {
+      const forces = linked.get(island);
+      if (forces) placeIsland(forces, shapes === 'all' || i === 0 ? room.aspect : 1, room);
+    });
+  let best: { cost: number; shapes: IslandShapes; places: { x: number; y: number }[]; boxes: Box[] } | undefined;
+  for (const shapes of linked.size > 1 ? (['all', 'main'] as const) : (['all'] as const)) {
+    shape(shapes);
+    const boxes = islandBoxes(islands, room);
+    for (const packing of PACKINGS) {
+      const places = packing === 'around' ? around(boxes, room.island, room.aspect) : flow(boxes, room.island, packing);
+      const cost = extent(
+        places.map((place, i) => ({ ...place, w: boxes[i].w, h: boxes[i].h })),
+        room.aspect
+      );
+      if (!best || cost < best.cost - 0.5) best = { cost, shapes, places, boxes };
+    }
+  }
+  if (!best) return;
+  if (best.shapes !== 'main' && linked.size > 1) shape(best.shapes);
+  const { places, boxes } = best;
+  islands.forEach((island, i) => move(island, places[i].x - boxes[i].x1, places[i].y - boxes[i].y1));
 }
 
 /** A family's classes placed as a block: its top class, then its subclasses in rows below, by label. */
@@ -302,19 +351,25 @@ function classBlock(node: NodeSingular): Block {
   return { id: node.id(), classes: [node], w: node.outerWidth(), h: node.outerHeight() };
 }
 
+/** The key of a pair of blocks, the same both ways. */
+const pairKey = (a: string, b: string) => (a < b ? `${a}\n${b}` : `${b}\n${a}`);
+
 /**
  * Spreads an island's blocks with a force layout run on the blocks alone, apart from the graph shown, each block as
- * big as its classes; linked blocks pull together, all push apart, none overlap. It starts from a circle, so the
- * same model always lands the same way.
+ * big as its classes; linked blocks pull together, as far apart as their labels need, all push apart. It starts from
+ * a circle, so the same model always lands the same way.
  */
-function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room): void {
+function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room, labelWidth: LabelWidth): LinkedIsland {
   const blockOf = new Map(blocks.flatMap(block => block.classes.map(node => [node.id(), block.id] as const)));
-  const links = new Set<string>();
+  // At scale 1, the longest label between each pair of linked blocks, with room around it.
+  const links = new Map<string, number>();
   for (const block of blocks) {
     for (const node of block.classes) {
       for (const edge of node.connectedEdges().toArray()) {
         const [a, b] = [blockOf.get(edge.source().id()), blockOf.get(edge.target().id())];
-        if (a && b && a !== b) links.add(a < b ? `${a}\n${b}` : `${b}\n${a}`);
+        if (!a || !b || a === b) continue;
+        const key = pairKey(a, b);
+        links.set(key, Math.max(links.get(key) ?? 0, labelWidth(edge) + LABEL_ROOM));
       }
     }
   }
@@ -333,9 +388,9 @@ function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room): void 
           y: radius * Math.sin((2 * Math.PI * i) / blocks.length),
         },
       })),
-      ...[...links].map(link => {
+      ...[...links].map(([link, length]) => {
         const [source, target] = link.split('\n');
-        return { group: 'edges', data: { source, target } };
+        return { group: 'edges', data: { source, target, length } };
       }),
     ],
   });
@@ -345,7 +400,7 @@ function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room): void 
       animate: false,
       randomize: false,
       fit: false,
-      idealEdgeLength: () => 50,
+      idealEdgeLength: (edge: EdgeSingular) => Math.max(50, edge.data('length')),
       nodeOverlap: 40,
       nodeRepulsion: () => 8000,
       gravity: 2.5,
@@ -358,25 +413,38 @@ function spread(blocks: Block[], cytoscape: CytoscapeFactory, room: Room): void 
       return [block.id, { x: x * room.scale, y: y * room.scale }];
     })
   );
-  // The island takes the shape of the room it is shown in: stretched one way, squeezed the other, as big as before.
+  layout.destroy();
+  for (const [key, length] of links) links.set(key, length * room.scale);
+  return { blocks, centers, links };
+}
+
+/**
+ * Places an island's blocks where the force layout left them, the island given a shape, `aspect` its width over its
+ * height: stretched one way, squeezed the other, as big as before; then as tight as its links' labels allow.
+ */
+function placeIsland(island: LinkedIsland, aspect: number, room: Room): void {
+  const centers = new Map([...island.centers].map(([id, { x, y }]) => [id, { x, y }]));
   const xs = [...centers.values()].map(c => c.x);
   const ys = [...centers.values()].map(c => c.y);
   const spanX = Math.max(...xs) - Math.min(...xs);
   const spanY = Math.max(...ys) - Math.min(...ys);
   if (spanX > 0 && spanY > 0) {
-    const stretch = Math.sqrt(room.aspect / (spanX / spanY));
+    const stretch = Math.sqrt(aspect / (spanX / spanY));
     for (const center of centers.values()) {
       center.x *= stretch;
       center.y /= stretch;
     }
   }
-  tighten(blocks, centers, room.block);
-  separate(blocks, centers, room.block);
-  for (const block of blocks) {
+  tighten(island.blocks, centers, room.block);
+  separate(island.blocks, centers, room.block);
+  // Lengthening a link can bring blocks together elsewhere: both again, until neither moves anything.
+  for (let round = 0; round < 10 && lengthen(island.blocks, centers, island.links); round++) {
+    separate(island.blocks, centers, room.block);
+  }
+  for (const block of island.blocks) {
     const center = centers.get(block.id)!;
     placeBlock(block, center.x - block.w / 2, center.y - block.h / 2, room);
   }
-  layout.destroy();
 }
 
 /**
@@ -389,9 +457,10 @@ function tighten(blocks: Block[], centers: Map<string, { x: number; y: number }>
     for (let j = i + 1; j < blocks.length; j++) {
       const [a, b] = [blocks[i], blocks[j]];
       const [ca, cb] = [centers.get(a.id)!, centers.get(b.id)!];
+      const [dx, dy] = [Math.abs(cb.x - ca.x), Math.abs(cb.y - ca.y)];
       // Two blocks are clear of each other once far enough apart across or down, whichever comes first.
-      const across = Math.abs(cb.x - ca.x) > 0 ? ((a.w + b.w) / 2 + gap) / Math.abs(cb.x - ca.x) : Infinity;
-      const down = Math.abs(cb.y - ca.y) > 0 ? ((a.h + b.h) / 2 + gap) / Math.abs(cb.y - ca.y) : Infinity;
+      const across = dx > 0 ? ((a.w + b.w) / 2 + gap) / dx : Infinity;
+      const down = dy > 0 ? ((a.h + b.h) / 2 + gap) / dy : Infinity;
       factor = Math.max(factor, Math.min(across, down));
     }
   }
@@ -400,6 +469,42 @@ function tighten(blocks: Block[], centers: Map<string, { x: number; y: number }>
     center.x *= factor;
     center.y *= factor;
   }
+}
+
+/**
+ * Pushes linked blocks apart along their line, each pair only as far as its labels need: the line from one block's
+ * edge to the other's as long as its longest label. Whether any moved.
+ */
+function lengthen(
+  blocks: Block[],
+  centers: Map<string, { x: number; y: number }>,
+  links: Map<string, number>
+): boolean {
+  let moved = false;
+  for (let i = 0; i < blocks.length; i++) {
+    for (let j = i + 1; j < blocks.length; j++) {
+      const [a, b] = [blocks[i], blocks[j]];
+      const label = links.get(pairKey(a.id, b.id));
+      if (!label) continue;
+      const [ca, cb] = [centers.get(a.id)!, centers.get(b.id)!];
+      const [dx, dy] = [cb.x - ca.x, cb.y - ca.y];
+      const distance = Math.hypot(dx, dy);
+      if (distance === 0) continue;
+      const [ux, uy] = [Math.abs(dx) / distance, Math.abs(dy) / distance];
+      // How far a block reaches from its centre towards the other.
+      const reach = (block: Block) =>
+        Math.min(ux > 0 ? block.w / 2 / ux : Infinity, uy > 0 ? block.h / 2 / uy : Infinity);
+      const missing = reach(a) + reach(b) + label - distance;
+      if (missing <= 0.5) continue;
+      moved = true;
+      const [px, py] = [((dx / distance) * missing) / 2, ((dy / distance) * missing) / 2];
+      ca.x -= px;
+      ca.y -= py;
+      cb.x += px;
+      cb.y += py;
+    }
+  }
+  return moved;
 }
 
 /**
@@ -472,31 +577,77 @@ interface Box {
   h: number;
 }
 
-/**
- * Moves islands, biggest first: the first alone, the others in columns to its right, as tall as it, or in rows below
- * it, as wide as it, whichever makes the whole closer to the shape of the room it is shown in.
- */
-function pack(islands: NodeSingular[], room: Room): void {
-  if (islands.length === 0) return;
-  // Measured from the classes, as a frame's own box may not follow them yet; widened by the room the frames take.
+/** Where each island is: measured from its classes, as a frame's own box may not follow them yet, plus its frame. */
+function islandBoxes(islands: NodeSingular[], room: Room): Box[] {
   const margin = ISLAND_PADDING * room.scale + room.top;
-  const boxes: Box[] = islands.map(island => {
+  return islands.map(island => {
     const box = island
       .descendants()
       .filter(node => !node.isParent())
       .boundingBox({});
     return { x1: box.x1 - margin, y1: box.y1 - margin, w: box.w + 2 * margin, h: box.h + 2 * margin };
   });
-  const right = flow(boxes, room.island, 'right');
-  const below = flow(boxes, room.island, 'below');
-  const misfit = (places: { x: number; y: number }[]) => {
-    const w = Math.max(...places.map((place, i) => place.x + boxes[i].w));
-    const h = Math.max(...places.map((place, i) => place.y + boxes[i].h));
-    return Math.abs(Math.log(w / h / room.aspect));
-  };
-  const places = misfit(below) < misfit(right) ? below : right;
-  islands.forEach((island, i) => move(island, places[i].x - boxes[i].x1, places[i].y - boxes[i].y1));
 }
+
+interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/**
+ * How big rectangles together are for a room of shape `aspect`: the width the room must have to show them all. The
+ * smaller, the bigger they are shown once fitted.
+ */
+function extent(rects: Rect[], aspect: number): number {
+  const w = Math.max(...rects.map(r => r.x + r.w)) - Math.min(...rects.map(r => r.x));
+  const h = Math.max(...rects.map(r => r.y + r.h)) - Math.min(...rects.map(r => r.y));
+  return Math.max(w, h * aspect);
+}
+
+/**
+ * Where islands go, by their top left corner: the first in the middle, each next one beside one already placed, on
+ * any side, where the whole stays smallest for the room; between equal places, the one closest to the middle.
+ */
+function around(boxes: Box[], gap: number, aspect: number): { x: number; y: number }[] {
+  const placed: Rect[] = [];
+  return boxes.map((box, i) => {
+    if (i === 0) {
+      placed.push({ x: -box.w / 2, y: -box.h / 2, w: box.w, h: box.h });
+      return placed[0];
+    }
+    let best: { rect: Rect; cost: number; distance: number } | undefined;
+    for (const rect of placed.flatMap(other => spotsBeside(other, box, gap))) {
+      if (placed.some(other => overlap(rect, other, gap))) continue;
+      const cost = extent([...placed, rect], aspect);
+      const distance = Math.hypot(rect.x + rect.w / 2, rect.y + rect.h / 2);
+      if (!best || cost < best.cost - 0.5 || (cost < best.cost + 0.5 && distance < best.distance)) {
+        best = { rect, cost, distance };
+      }
+    }
+    placed.push(best!.rect);
+    return best!.rect;
+  });
+}
+
+/** Places for a box beside another, `gap` away: on each side, lined up with its start, middle or end. */
+function spotsBeside(other: Rect, box: Box, gap: number): Rect[] {
+  const { w, h } = box;
+  const xs = [other.x, other.x + (other.w - w) / 2, other.x + other.w - w];
+  const ys = [other.y, other.y + (other.h - h) / 2, other.y + other.h - h];
+  return [
+    ...ys.flatMap(y => [other.x - gap - w, other.x + other.w + gap].map(x => ({ x, y, w, h }))),
+    ...xs.flatMap(x => [other.y - gap - h, other.y + other.h + gap].map(y => ({ x, y, w, h }))),
+  ];
+}
+
+/** Whether two rectangles come closer than `gap`. */
+const overlap = (a: Rect, b: Rect, gap: number) =>
+  a.x < b.x + b.w + gap - 0.5 &&
+  b.x < a.x + a.w + gap - 0.5 &&
+  a.y < b.y + b.h + gap - 0.5 &&
+  b.y < a.y + a.h + gap - 0.5;
 
 /**
  * Where islands go, by their top left corner: the first at the origin, the others in columns right of it as tall as

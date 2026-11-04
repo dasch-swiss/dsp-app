@@ -18,7 +18,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
-import { arrangeIslands, ClassFamily, CytoscapeFactory, FILE_KINDS, ISLAND_PADDING, TEXTURE_TILE } from './islands';
+import {
+  arrangeIslands,
+  ClassFamily,
+  CytoscapeFactory,
+  FILE_KINDS,
+  ISLAND_PADDING,
+  LabelWidth,
+  TEXTURE_TILE,
+} from './islands';
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
@@ -59,6 +67,9 @@ const MAX_SPREAD = 2.5;
 
 /** The share of the chosen name size a model is first shown at, at least, though it then does not fit. */
 const READABLE_SHARE = 0.6;
+
+/** Size of a link's label at scale 1. */
+const LINK_FONT_SIZE = 13;
 
 /** Names are code: they are written in a monospaced font. */
 const FONT = { labels: 'Roboto, sans-serif', names: 'Roboto Mono, ui-monospace, monospace' };
@@ -238,7 +249,7 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'text-max-width': '1000px',
       'font-family': text.labels === 'names' ? FONT.names : FONT.labels,
       // Link labels close to class names in size, so a property reads as easily as the classes it joins.
-      'font-size': 13 * f,
+      'font-size': LINK_FONT_SIZE * f,
       color: COLOR.text,
       'text-rotation': text.levelLabels ? 'none' : 'autorotate',
       'text-background-color': '#F9FAFB',
@@ -711,7 +722,7 @@ export class OntologyGraphComponent {
     // Lay out at scale 1, so the scale changes how big things are drawn, not how far apart they are.
     cy.style(this._style(1));
     if (layout === 'islands') {
-      arrangeIslands(cy, this._cytoscape!, 1, this._aspect(cy));
+      arrangeIslands(cy, this._cytoscape!, 1, this._aspect(cy), this._labelWidth());
     } else {
       cy.layout(layoutOptions(layout) as never).run();
     }
@@ -737,7 +748,7 @@ export class OntologyGraphComponent {
     cy.style(this._style(this._scale));
     // Islands are laid out again with the boxes as drawn, so families and classes stay clear of each other.
     if (untracked(() => this.layout()) === 'islands' && this._cytoscape) {
-      arrangeIslands(cy, this._cytoscape, this._scale, this._aspect(cy));
+      arrangeIslands(cy, this._cytoscape, this._scale, this._aspect(cy), this._labelWidth());
     }
     this._spread(cy);
     this._fit(cy);
@@ -793,6 +804,13 @@ export class OntologyGraphComponent {
       const dy = (y - mid.y) * (fy - 1);
       for (const node of nodes) node.position({ x: node.position('x') + dx, y: node.position('y') + dy });
     }
+  }
+
+  /** How wide a link's label is drawn at scale 1, in the texts the graph writes. */
+  private _labelWidth(): LabelWidth {
+    const labels = untracked(() => this.labels());
+    const font = `${LINK_FONT_SIZE}px ${labels === 'names' ? FONT.names : FONT.labels}`;
+    return edge => textWidth(edge.data(DATA_KEY[labels]) ?? '', font);
   }
 
   /** The shape of the room the model is fitted in: its width over its height. */
