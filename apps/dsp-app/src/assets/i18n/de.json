@@ -736,8 +736,6 @@
         "browse": "Ressourcen anzeigen",
         "edit": "Klasse bearbeiten",
         "filter": "Nach dieser Klasse filtern",
-        "connections": "Verbindungen",
-        "connectionCount": "{{in}} ein · {{out}} aus",
         "more": "+{{count}} weitere",
         "noConnections": "Mit keiner anderen Klasse verknüpft"
       },

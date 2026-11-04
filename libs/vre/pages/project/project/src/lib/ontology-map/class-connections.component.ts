@@ -1,6 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /** A class linked with the class shown, once, with the properties joining them. */
@@ -38,17 +36,10 @@ interface Placed extends ClassConnection {
 @Component({
   selector: 'app-class-connections',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatTooltip, TranslatePipe],
+  imports: [TranslatePipe],
   template: `
     @let t = 'pages.ontologyMap.classPanel';
     <div class="card" data-cy="class-connections">
-      <div class="head">
-        <mat-icon>hub</mat-icon>
-        <span class="title">{{ t + '.connections' | translate }}</span>
-        <span class="count">{{
-          t + '.connectionCount' | translate: { in: incoming().length, out: outgoing().length }
-        }}</span>
-      </div>
       <div class="map" [style.height.px]="height()">
         <svg class="lines" aria-hidden="true" viewBox="0 0 100 1" preserveAspectRatio="none" [attr.height]="height()">
           @for (line of lines(); track $index) {
@@ -75,11 +66,10 @@ interface Placed extends ClassConnection {
                 data-cy="class-connection"
                 [disabled]="!place.navigable"
                 [style.background]="colors().get(place.id) ?? '#FFFFFF'"
-                [matTooltip]="place.label"
                 (click)="classSelected.emit(place.id)">
                 {{ place.label }}
               </button>
-              <span class="via" [matTooltip]="place.via">{{
+              <span class="via">{{
                 side.key === 'in' ? (t + '.via' | translate: { property: place.via }) : place.via
               }}</span>
               <span class="arrow" aria-hidden="true"></span>
@@ -92,9 +82,7 @@ interface Placed extends ClassConnection {
           }
         }
         <div class="node center" [style.top.px]="middle() - BOX / 2 - 4">
-          <span class="box" [style.background]="colors().get(classIri()) ?? '#FFFFFF'" [matTooltip]="classLabel()">{{
-            classLabel()
-          }}</span>
+          <span class="box" [style.background]="colors().get(classIri()) ?? '#FFFFFF'">{{ classLabel() }}</span>
           @if (incoming().length) {
             <span class="arrow" aria-hidden="true"></span>
           }
@@ -115,33 +103,6 @@ interface Placed extends ClassConnection {
         border-radius: 8px;
         background: $cool_gray_50;
         overflow: hidden;
-      }
-
-      .head {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        height: 40px;
-        padding: 0 12px;
-        border-bottom: 1px solid $cool_gray_200;
-        background: white;
-
-        mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-          color: $primary;
-        }
-      }
-
-      .title {
-        flex: 1;
-        font-weight: 500;
-      }
-
-      .count {
-        font-size: 12px;
-        color: $cool_gray_500;
       }
 
       .map {

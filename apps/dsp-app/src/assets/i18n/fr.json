@@ -736,8 +736,6 @@
         "browse": "Parcourir les ressources",
         "edit": "Modifier la classe",
         "filter": "Filtrer sur cette classe",
-        "connections": "Connexions",
-        "connectionCount": "{{in}} entrants · {{out}} sortants",
         "more": "+{{count}} autres",
         "noConnections": "Liée à aucune autre classe"
       },
