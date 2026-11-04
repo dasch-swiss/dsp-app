@@ -842,9 +842,7 @@
           "ArchiveRepresentation": "Archivio",
           "DDDRepresentation": "Modello 3D"
         }
-      },
-      "inheritedLinks": "Collegamenti ereditati",
-      "inheritedLinksHint": "Le sottoclassi mostrano anche i collegamenti delle loro classi madri"
+      }
     },
     "dataModels2": {
       "map": "Mappa",

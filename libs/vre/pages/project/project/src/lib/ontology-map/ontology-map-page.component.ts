@@ -82,7 +82,6 @@ const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 const LAYOUT_KEY = 'dsp-ontology-map-layout';
 const SIZE_KEY = 'dsp-ontology-map-size';
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
-const INHERITED_LINKS_KEY = 'dsp-ontology-map-inherited-links';
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
@@ -265,18 +264,6 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                         A
                       </button>
                     }
-                  </div>
-                  <div
-                    class="float inherited"
-                    [matTooltip]="m + '.inheritedLinksHint' | translate"
-                    (click)="$event.stopPropagation()">
-                    <mat-slide-toggle
-                      data-cy="ontology-map-inherited-links"
-                      [checked]="inheritedLinks()"
-                      [attr.aria-label]="m + '.inheritedLinks' | translate"
-                      (change)="setInheritedLinks($event.checked)">
-                      <span class="button-text">{{ m + '.inheritedLinks' | translate }}</span>
-                    </mat-slide-toggle>
                   </div>
                   <button
                     type="button"
@@ -533,15 +520,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
         }
       }
 
-      .inherited {
-        height: 42px;
-        padding: 0 14px 0 10px;
-        --mat-slide-toggle-label-text-size: 13px;
-        --mat-slide-toggle-label-text-weight: 500;
-        --mat-slide-toggle-label-text-color: #{$cool_gray_700};
-      }
-
-      // Beside an open panel the corner is narrower: the toggle, Labels and Export keep no text.
+      // Beside an open panel the corner is narrower: Labels and Export keep their icons only.
       .top-bar.beside-panel .button-text {
         display: none;
       }
@@ -826,15 +805,10 @@ export class OntologyMapPageComponent {
     const iri = this.selected()?.iri;
     return iri ? this._graphsByIri()?.get(iri) : undefined;
   });
-  /** Whether subclasses are drawn with the links they inherit from their superclasses; remembered in this browser. */
-  readonly inheritedLinks = signal(readStored(INHERITED_LINKS_KEY) !== 'false');
-  /**
-   * The data model as the graph draws it, with no subclass arrows: subclasses carry the links they inherit, unless
-   * inherited links are hidden.
-   */
+  /** The data model as the graph draws it: links only, with no subclass arrows and no inherited links. */
   private readonly _graphLinks = computed(() => {
     const graph = this.graph();
-    return graph ? withInheritedLinks(graph, this.inheritedLinks()) : undefined;
+    return graph ? withInheritedLinks(graph, false) : undefined;
   });
   readonly counts = computed(() => {
     const graph = this.graph();
@@ -1123,11 +1097,6 @@ export class OntologyMapPageComponent {
   setLabels(labels: GraphLabels): void {
     this.labels.set(labels);
     store(LABELS_KEY, labels);
-  }
-
-  setInheritedLinks(shown: boolean): void {
-    this.inheritedLinks.set(shown);
-    store(INHERITED_LINKS_KEY, String(shown));
   }
 
   setLevelLabels(level: boolean): void {

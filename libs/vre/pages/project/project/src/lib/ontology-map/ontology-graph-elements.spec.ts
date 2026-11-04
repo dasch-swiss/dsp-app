@@ -143,7 +143,7 @@ describe('withInheritedLinks', () => {
     expect(result.nodes.map(n => n.id)).toContain('Lonely');
   });
 
-  it('gives subclasses no links of their own when inherited links are hidden', () => {
+  it('gives subclasses no links of their own when inherited links are left out', () => {
     const hidden = withInheritedLinks(family, false);
 
     expect(hidden.edges.some(e => e.kind === 'subclass' || e.source === 'Short' || e.source === 'Clip')).toBe(false);
