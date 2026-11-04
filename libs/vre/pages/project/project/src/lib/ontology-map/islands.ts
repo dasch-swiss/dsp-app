@@ -432,7 +432,8 @@ function fittedShape(
 
 /**
  * Places each island of a single class, which has no frame, in an empty spot inside the packed islands' outline,
- * the closest to a corner, clear of every class and link; where there is none, right of the outline.
+ * the closest to a corner, clear of every class and link, and outside every island's frame, so it is not taken for
+ * one of that island's classes; where there is none, right of the outline.
  */
 function placeSingles(singles: NodeSingular[], packed: NodeSingular[], room: Room): void {
   if (!singles.length) return;
@@ -446,13 +447,16 @@ function placeSingles(singles: NodeSingular[], packed: NodeSingular[], room: Roo
       }
     : { x1: 0, y1: 0, x2: 0, y2: 0 };
   const gap = room.block;
-  // What a single must stay clear of: every class and family frame, and every link drawn straight.
-  const taken: Bounds[] = packed.flatMap(island =>
-    island
-      .descendants()
-      .toArray()
-      .filter(node => !node.isParent() || node.hasClass('family'))
-      .map(node => node.boundingBox({ includeLabels: false }))
+  // What a single must stay clear of: an island with a frame, all of it; one without, its classes and family frames;
+  // and every link drawn straight.
+  const taken: Bounds[] = packed.flatMap((island, i) =>
+    island.hasClass('alone')
+      ? island
+          .descendants()
+          .toArray()
+          .filter(node => !node.isParent() || node.hasClass('family'))
+          .map(node => node.boundingBox({ includeLabels: false }))
+      : [{ x1: boxes[i].x1, y1: boxes[i].y1, x2: boxes[i].x1 + boxes[i].w, y2: boxes[i].y1 + boxes[i].h }]
   );
   const lines = packed
     .flatMap(island => island.descendants().connectedEdges('[^labelOf]').toArray())

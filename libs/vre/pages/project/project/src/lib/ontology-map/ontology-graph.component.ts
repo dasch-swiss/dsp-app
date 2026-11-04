@@ -51,6 +51,8 @@ const COLOR = {
 
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
 const FIT_PADDING = 56;
+/** Room left above the model when it is fitted, clear of the filter bar and tools floating over the top edge. */
+const TOOLBAR_ROOM = 72;
 
 const edgeKey = (edge: DataModelGraph['edges'][number]) => `${edge.source}>${edge.property}>${edge.target}`;
 
@@ -327,20 +329,28 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       <div #islandsLegend class="islands-legend" role="region" [attr.aria-label]="i + '.legend' | translate">
         <span class="legend-title">{{ i + '.legend' | translate }}</span>
         @if (legendOpen()) {
-          <span class="divider"></span>
-          <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
-          <span class="shape"><span class="shape-box parent"></span>{{ i + '.parent' | translate }}</span>
-          <span class="shape"><span class="shape-box sub"></span>{{ i + '.subclass' | translate }}</span>
-          <span class="shape"
-            ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
-          >
-          <span class="shape">
-            <svg width="22" height="8" viewBox="0 0 28 8" aria-hidden="true">
-              <path class="legend-line" d="M 0 4 L 22 4" />
-              <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
-            </svg>
-            {{ i + '.link' | translate }}
-          </span>
+          @if (legend.shapes) {
+            <span class="divider"></span>
+            <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
+          }
+          @if (legend.families) {
+            <span class="shape"><span class="shape-box parent"></span>{{ i + '.parent' | translate }}</span>
+            <span class="shape"><span class="shape-box sub"></span>{{ i + '.subclass' | translate }}</span>
+          }
+          @if (legend.other) {
+            <span class="shape"
+              ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
+            >
+          }
+          @if (legend.link) {
+            <span class="shape">
+              <svg width="22" height="8" viewBox="0 0 28 8" aria-hidden="true">
+                <path class="legend-line" d="M 0 4 L 22 4" />
+                <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
+              </svg>
+              {{ i + '.link' | translate }}
+            </span>
+          }
           @if (legend.files.length) {
             <span class="divider"></span>
             <span class="legend-heading">{{ i + '.files' | translate }}</span>
@@ -639,11 +649,24 @@ export class OntologyGraphComponent {
   readonly legendOpen = signal(true);
   private readonly _legend = viewChild<ElementRef<HTMLElement>>('islandsLegend');
 
-  /** What the Islands view's legend lists: the kinds of file the classes shown carry. */
+  /**
+   * What the Islands view's legend lists, only what the classes shown need: parent and subclass when a subclass is
+   * shown, other data models when a class of one is, links when there are any, and the kinds of file the classes
+   * carry. None when nothing needs telling.
+   */
   readonly islandsLegend = computed(() => {
-    if (!this._islands()) return undefined;
-    const files = new Set(this.graph().nodes.map(node => node.representationClass));
-    return { files: FILE_KINDS.filter(kind => files.has(kind.representation)) };
+    const islands = this._islands();
+    if (!islands) return undefined;
+    const graph = this.graph();
+    const files = new Set(graph.nodes.map(node => node.representationClass));
+    const legend = {
+      families: graph.nodes.some(node => islands.families.get(node.id)?.sub),
+      other: graph.nodes.some(node => node.kind !== 'class'),
+      link: graph.edges.some(edge => edge.kind === 'link' && edge.source !== edge.target),
+      files: FILE_KINDS.filter(kind => files.has(kind.representation)),
+    };
+    const shapes = legend.families || legend.other || legend.link;
+    return shapes || legend.files.length ? { ...legend, shapes } : undefined;
   });
   /** Classes the user may open; other data models' classes and knora-api's are drawn but not clickable. */
   private readonly _navigable = computed(
@@ -832,11 +855,9 @@ export class OntologyGraphComponent {
     this._spread(cy);
     this._route(cy);
     this._fit(cy);
+    // Too big to fit and stay readable, it is shown from its top, below the tools, its names still readable.
     const readable = (textSize * READABLE_SHARE) / (BASE_FONT_SIZE * this._scale);
-    if (cy.zoom() < readable) {
-      cy.zoom(readable);
-      cy.center();
-    }
+    if (cy.zoom() < readable) this._show(cy, readable, 'top');
     this._revealWhenSettled();
   }
 
@@ -922,9 +943,25 @@ export class OntologyGraphComponent {
   }
 
   /** The room the model is fitted in, in screen pixels: the box less its padding and the Islands view's legend. */
-  private _room(cy: Core): { w: number; h: number } {
+  private _room(cy: Core): { x: number; y: number; w: number; h: number } {
     const legend = this._legend()?.nativeElement.offsetHeight ?? 0;
-    return { w: cy.width() - 2 * FIT_PADDING, h: cy.height() - 2 * FIT_PADDING - legend };
+    return {
+      x: FIT_PADDING,
+      y: TOOLBAR_ROOM,
+      w: cy.width() - 2 * FIT_PADDING,
+      h: cy.height() - TOOLBAR_ROOM - FIT_PADDING - legend,
+    };
+  }
+
+  /** Shows the model at `zoom`, centred in the room, or from its top when it is taller than the room. */
+  private _show(cy: Core, zoom: number, align: 'middle' | 'top'): void {
+    const room = this._room(cy);
+    const box = cy.elements().boundingBox({});
+    cy.zoom(zoom);
+    // The zoom as the graph keeps it, within its own limits.
+    const kept = cy.zoom();
+    const top = align === 'top' && box.h * kept > room.h ? room.y : room.y + (room.h - box.h * kept) / 2;
+    cy.pan({ x: room.x + (room.w - box.w * kept) / 2 - box.x1 * kept, y: top - box.y1 * kept });
   }
 
   /**
@@ -932,23 +969,11 @@ export class OntologyGraphComponent {
    * class names.
    */
   private _fit(cy: Core): void {
-    cy.fit(undefined, FIT_PADDING);
-    const legend = this._legend()?.nativeElement.offsetHeight;
-    if (legend) {
-      const box = cy.elements().boundingBox({});
-      const height = cy.height() - 2 * FIT_PADDING - legend;
-      const zoom = Math.min(cy.zoom(), height / box.h);
-      cy.zoom(zoom);
-      cy.pan({
-        x: (cy.width() - box.w * zoom) / 2 - box.x1 * zoom,
-        y: FIT_PADDING + (height - box.h * zoom) / 2 - box.y1 * zoom,
-      });
-    }
-    const zoom = GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale);
-    if (cy.zoom() > zoom) {
-      cy.zoom(zoom);
-      cy.center();
-    }
+    const room = this._room(cy);
+    const box = cy.elements().boundingBox({});
+    const largest = GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale);
+    const zoom = Math.min(largest, room.w / box.w, room.h / box.h);
+    if (Number.isFinite(zoom) && zoom > 0) this._show(cy, zoom, 'middle');
   }
 
   private _style(f: number): StylesheetJson {
@@ -991,11 +1016,11 @@ export class OntologyGraphComponent {
     const t = (key: string) => this._translate.instant(`pages.ontologyMap.${key}`);
     return {
       title: t('islands.legend'),
-      shapes: t('islands.shapes'),
-      parent: t('islands.parent'),
-      subclass: t('islands.subclass'),
-      other: t('legendDashed'),
-      link: t('islands.link'),
+      shapes: legend.shapes ? t('islands.shapes') : undefined,
+      parent: legend.families ? t('islands.parent') : undefined,
+      subclass: legend.families ? t('islands.subclass') : undefined,
+      other: legend.other ? t('legendDashed') : undefined,
+      link: legend.link ? t('islands.link') : undefined,
       files: t('islands.files'),
       fileKinds: legend.files.map(kind => ({
         label: t(`islands.fileKinds.${kind.representation}`),

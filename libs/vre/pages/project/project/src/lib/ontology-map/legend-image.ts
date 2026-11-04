@@ -1,11 +1,14 @@
-/** The texts and file icons of the graph's legend, in the current language, to draw it into an exported image. */
+/**
+ * The texts and file icons of the graph's legend, in the current language, to draw it into an exported image; an
+ * entry the graph shown does not need is left out.
+ */
 export interface LegendTexts {
   title: string;
-  shapes: string;
-  parent: string;
-  subclass: string;
-  other: string;
-  link: string;
+  shapes?: string;
+  parent?: string;
+  subclass?: string;
+  other?: string;
+  link?: string;
   files: string;
   /** Each kind of file the classes shown carry: its name, and its icon as an image URL. */
   fileKinds: { label: string; icon: string }[];
@@ -121,14 +124,14 @@ export async function withLegend(
     },
   });
   // Pieces that sit together, a mark and its name, are kept `itemGap` apart; the others `gap` apart.
+  const shown = <T>(value: string | undefined, group: (value: string) => T): T[] => (value ? [group(value)] : []);
   const groups: Piece[][] = [
     [text(legend.title, LOOK.title)],
-    [divider],
-    [text(heading(legend.shapes), LOOK.heading)],
-    [box('#D1D5DB', '#4B5563', 2), text(legend.parent, LOOK.text)],
-    [box('#E5E7EB', '#9CA3AF', 1), text(legend.subclass, LOOK.text)],
-    [box('#FFFFFF', '#9CA3AF', 1.5, true), text(legend.other, LOOK.text)],
-    [arrow, text(legend.link, LOOK.text)],
+    ...(legend.shapes ? [[divider], [text(heading(legend.shapes), LOOK.heading)]] : []),
+    ...shown(legend.parent, parent => [box('#D1D5DB', '#4B5563', 2), text(parent, LOOK.text)]),
+    ...shown(legend.subclass, subclass => [box('#E5E7EB', '#9CA3AF', 1), text(subclass, LOOK.text)]),
+    ...shown(legend.other, other => [box('#FFFFFF', '#9CA3AF', 1.5, true), text(other, LOOK.text)]),
+    ...shown(legend.link, link => [arrow, text(link, LOOK.text)]),
     ...(icons.length
       ? [
           [divider],
