@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
   signal,
   untracked,
@@ -900,6 +901,7 @@ export class OntologyMapPageComponent {
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
   readonly graphView = viewChild(OntologyGraphComponent);
+  private readonly _searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
   /** The family of every class of the data model, which the Islands view groups and colours classes by. */
   readonly families = computed(() => {
@@ -1005,6 +1007,14 @@ export class OntologyMapPageComponent {
   }
 
   constructor() {
+    // The search is ready to type in once the graph shows: its field takes the focus the first time it appears.
+    let searchFocused = false;
+    effect(() => {
+      const input = this._searchInput()?.nativeElement;
+      if (!input || searchFocused) return;
+      searchFocused = true;
+      input.focus();
+    });
     // A panel that changes class, or closes, under the pointer never reports the pointer leaving its rows.
     effect(() => {
       this.panelIri();
