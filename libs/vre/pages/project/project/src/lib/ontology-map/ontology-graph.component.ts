@@ -74,6 +74,9 @@ const MAX_SPREAD = 2.5;
 /** The share of the chosen name size a model is first shown at, at least, though it then does not fit. */
 const READABLE_SHARE = 0.6;
 
+/** How often, at most, links are routed again while a class is dragged, in ms. */
+const DRAG_ROUTE_MS = 100;
+
 /** How long no layout must follow, on load, before the graph is shown. */
 const SETTLE_MS = 150;
 
@@ -703,16 +706,40 @@ export class OntologyGraphComponent {
           if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
         cy.on('tap', 'edge.link', event => this.propertySelected.emit(event.target.data('property')));
-        // Links follow a dragged class as they will lie once it is dropped: routed round the boxes at every frame.
-        let routing = 0;
-        cy.on('drag', 'node', () => {
-          cancelAnimationFrame(routing);
-          routing = requestAnimationFrame(() => this._route(cy));
+        // Links follow a dragged class as they will lie once it is dropped: routed round the boxes, a few times a
+        // second, and once more on the drop, the same way. Only the links the drag reaches are routed again: those
+        // of the class, and those passing where it was or is, which may bend or straighten.
+        let reached = new Set<string>();
+        const reach = (node: NodeSingular) => {
+          const margin = BASE_FONT_SIZE * this._scale;
+          const at = node.boundingBox({ includeLabels: false });
+          const box = { x1: at.x1 - margin, y1: at.y1 - margin, x2: at.x2 + margin, y2: at.y2 + margin };
+          cy.edges('[^labelOf]').forEach(edge => {
+            const line = edge.boundingBox({ includeLabels: false });
+            const near = line.x2 > box.x1 && line.x1 < box.x2 && line.y2 > box.y1 && line.y1 < box.y2;
+            if (near || edge.source().same(node) || edge.target().same(node)) reached.add(edge.id());
+          });
+        };
+        let routing: ReturnType<typeof setTimeout> | undefined;
+        let routed = 0;
+        const route = () => {
+          routing = undefined;
+          routed = performance.now();
+          this._route(cy, reached);
+        };
+        cy.on('grab', 'node', event => {
+          reached = new Set();
+          reach(event.target);
         });
-        cy.on('dragfree', 'node', () => {
+        cy.on('drag', 'node', event => {
+          reach(event.target);
+          routing ??= setTimeout(route, Math.max(0, DRAG_ROUTE_MS - (performance.now() - routed)));
+        });
+        cy.on('dragfree', 'node', event => {
           this._dragged = true;
-          cancelAnimationFrame(routing);
-          this._route(cy);
+          clearTimeout(routing);
+          reach(event.target);
+          route();
         });
         // Hovering a class highlights its links; a class that opens on click shows a link's pointer.
         const container = this._canvas().nativeElement;
@@ -757,7 +784,7 @@ export class OntologyGraphComponent {
         observer.observe(this._canvas().nativeElement);
         destroyRef.onDestroy(() => {
           cancelAnimationFrame(frame);
-          cancelAnimationFrame(routing);
+          clearTimeout(routing);
           clearTimeout(this._reveal);
           observer.disconnect();
           cy.destroy();
@@ -930,10 +957,10 @@ export class OntologyGraphComponent {
       );
   }
 
-  /** Routes the links round the classes, then slides their labels clear of each other. */
-  private _route(cy: Core): void {
-    routeEdges(cy, this._scale);
-    separateLabels(cy, this._scale);
+  /** Routes the links round the classes, then slides their labels clear of each other: all, or `only` those. */
+  private _route(cy: Core, only?: ReadonlySet<string>): void {
+    routeEdges(cy, this._scale, only);
+    separateLabels(cy, this._scale, only);
   }
 
   /** The shape of the room the model is fitted in: its width over its height. */

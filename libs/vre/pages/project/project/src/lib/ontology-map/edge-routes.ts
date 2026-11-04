@@ -1,4 +1,4 @@
-import type { Core, ElementDefinition } from 'cytoscape';
+import type { Core, EdgeSingular, ElementDefinition } from 'cytoscape';
 
 /** A point on the graph. */
 export interface Point {
@@ -43,21 +43,38 @@ const STRAIGHT: Bend = { distance: 0, weight: 0.5 };
 export function bendFor(source: Point, target: Point, boxes: Rect[], clearance: number, offsets = [0]): Bend {
   const length = Math.hypot(target.x - source.x, target.y - source.y);
   if (length === 0) return STRAIGHT;
-  const grown = boxes.map(box => ({
-    x1: box.x1 - clearance,
-    y1: box.y1 - clearance,
-    x2: box.x2 + clearance,
-    y2: box.y2 + clearance,
-  }));
+  // Only the boxes a bend could reach: a curve's peak is at most half as far from the line as its control point.
+  const reach = length / 2 + Math.max(0, ...offsets.map(Math.abs)) + clearance;
+  const area = {
+    x1: Math.min(source.x, target.x) - reach,
+    y1: Math.min(source.y, target.y) - reach,
+    x2: Math.max(source.x, target.x) + reach,
+    y2: Math.max(source.y, target.y) + reach,
+  };
+  const grown = boxes
+    .map(box => ({ x1: box.x1 - clearance, y1: box.y1 - clearance, x2: box.x2 + clearance, y2: box.y2 + clearance }))
+    .filter(box => box.x2 > area.x1 && box.x1 < area.x2 && box.y2 > area.y1 && box.y1 < area.y2);
+  if (!grown.length) return STRAIGHT;
   // Along the line, and left of it as seen from the source.
   const along = { x: (target.x - source.x) / length, y: (target.y - source.y) / length };
   const normal = { x: -along.y, y: along.x };
-  const steps = Math.max(8, Math.ceil(length / Math.max(4, clearance)));
+  // Points along the curve close enough together that none of the boxes slips between two of them.
+  const smallest = Math.min(...grown.map(box => Math.min(box.x2 - box.x1, box.y2 - box.y1)));
+  const steps = Math.max(8, Math.ceil(length / Math.max(4, smallest / 2)));
   const crossed = (distance: number, weight: number, box: Rect) => {
     const control = {
       x: source.x + along.x * length * weight + normal.x * distance,
       y: source.y + along.y * length * weight + normal.y * distance,
     };
+    // A curve lies within the triangle of its ends and control point: a box clear of that is clear of it.
+    if (
+      box.x2 < Math.min(source.x, target.x, control.x) ||
+      box.x1 > Math.max(source.x, target.x, control.x) ||
+      box.y2 < Math.min(source.y, target.y, control.y) ||
+      box.y1 > Math.max(source.y, target.y, control.y)
+    ) {
+      return false;
+    }
     for (let i = 1; i < steps; i++) {
       const t = i / steps;
       const [a, b, c] = [(1 - t) ** 2, 2 * t * (1 - t), t ** 2];
@@ -115,6 +132,9 @@ export interface LabelBox {
 
 /** Whether two labels, each turned its own way, overlap, `gap` apart at least: no axis of either keeps them apart. */
 export function labelsOverlap(a: LabelBox, b: LabelBox, gap: number): boolean {
+  // Labels further apart than their half diagonals cannot touch, however turned.
+  const reach = Math.hypot(a.halfW, a.halfH) + Math.hypot(b.halfW, b.halfH) + gap;
+  if (Math.abs(a.x - b.x) > reach || Math.abs(a.y - b.y) > reach) return false;
   const axes = [a.angle, a.angle + Math.PI / 2, b.angle, b.angle + Math.PI / 2].map(t => ({
     x: Math.cos(t),
     y: Math.sin(t),
@@ -147,11 +167,13 @@ const LABEL_SLIDE = 0.35;
 
 /**
  * Slides overlapping labels apart, each along its own link, so no two labels cover each other: in rounds, each pair
- * that overlaps moves apart a little, each label as far from the middle of its link as `LABEL_SLIDE` allows.
+ * that overlaps moves apart a little, each label as far from the middle of its link as `LABEL_SLIDE` allows. With
+ * `only`, the labels of those links alone are placed again; the others stay where they are, in their way.
  */
-export function separateLabels(cy: Core, scale: number): void {
+export function separateLabels(cy: Core, scale: number, only?: ReadonlySet<string>): void {
   const copies = cy.edges('.label-only');
-  copies.data({ shiftX: 0, shiftY: 0 });
+  const movable = (edge: EdgeSingular) => !only || only.has(edge.data('labelOf'));
+  cy.batch(() => copies.filter(movable).data({ shiftX: 0, shiftY: 0 }));
   const labels = copies.toArray().flatMap(edge => {
     edge.boundingBox({ includeLabels: true });
     // Where and how big the graph draws the label, kept among its own drawing data.
@@ -160,12 +182,15 @@ export function separateLabels(cy: Core, scale: number): void {
     const [s, t] = [edge.source().position(), edge.target().position()];
     const length = Math.hypot(t.x - s.x, t.y - s.y);
     if (length === 0) return [];
+    // A label left where it is keeps its slide.
+    const [shiftX, shiftY] = [edge.data('shiftX') ?? 0, edge.data('shiftY') ?? 0];
     return [
       {
         edge,
+        moves: movable(edge),
         box: {
-          x: drawn['labelX'],
-          y: drawn['labelY'],
+          x: drawn['labelX'] + shiftX,
+          y: drawn['labelY'] + shiftY,
           halfW: drawn['labelWidth'] / 2,
           halfH: drawn['labelHeight'] / 2,
           angle: edge.style('text-rotation') === 'autorotate' ? (drawn['labelAutoAngle'] ?? 0) : 0,
@@ -177,9 +202,12 @@ export function separateLabels(cy: Core, scale: number): void {
     ];
   });
   const gap = 2 * scale;
+  // Only pairs with a label that may move: the moving ones first, so each pair comes once.
+  labels.sort((a, b) => Number(b.moves) - Number(a.moves));
+  const moving = labels.filter(label => label.moves).length;
   for (let round = 0; round < LABEL_ROUNDS; round++) {
     let moved = false;
-    for (let i = 0; i < labels.length; i++) {
+    for (let i = 0; i < moving; i++) {
       for (let j = i + 1; j < labels.length; j++) {
         const [a, b] = [labels[i], labels[j]];
         if (!labelsOverlap(a.box, b.box, gap)) continue;
@@ -190,6 +218,7 @@ export function separateLabels(cy: Core, scale: number): void {
           [a, -1],
           [b, 1],
         ] as const) {
+          if (!label.moves) continue;
           const towards = Math.sign(apart.x * label.along.x + apart.y * label.along.y) || 1;
           const next = Math.max(-label.limit, Math.min(label.limit, label.shift + sign * towards * step));
           const delta = next - label.shift;
@@ -203,9 +232,11 @@ export function separateLabels(cy: Core, scale: number): void {
     }
     if (!moved) break;
   }
-  for (const { edge, along, shift } of labels) {
-    if (shift !== 0) edge.data({ shiftX: along.x * shift, shiftY: along.y * shift });
-  }
+  cy.batch(() => {
+    for (const { edge, along, shift, moves } of labels) {
+      if (moves && shift !== 0) edge.data({ shiftX: along.x * shift, shiftY: along.y * shift });
+    }
+  });
 }
 
 /** Room on each side of a link's label, as text: an en space. */
@@ -245,9 +276,10 @@ export function withLabelsOnTop(elements: ElementDefinition[]): ElementDefinitio
 /**
  * Bends every link that would pass through a class's box round it, `scale` times as far from the boxes as at scale
  * 1; links clear of every box stay straight. Several links between the same two classes bend side by side. The copy
- * that writes a link's label (see `withLabelsOnTop`) follows the same line.
+ * that writes a link's label (see `withLabelsOnTop`) follows the same line. With `only`, those links alone, with the
+ * others between the same classes, are routed again.
  */
-export function routeEdges(cy: Core, scale: number): void {
+export function routeEdges(cy: Core, scale: number, only?: ReadonlySet<string>): void {
   const classes = cy.nodes().filter(node => !node.isParent());
   const boxes = new Map(classes.map(node => [node.id(), node.boundingBox({ includeLabels: false })]));
   const pairs = new Map<string, string[]>();
@@ -257,7 +289,9 @@ export function routeEdges(cy: Core, scale: number): void {
     const key = source < target ? `${source}\n${target}` : `${target}\n${source}`;
     pairs.set(key, [...(pairs.get(key) ?? []), edge.id()]);
   });
-  for (const ids of pairs.values()) {
+  const routed = [...pairs.values()].filter(ids => !only || ids.some(id => only.has(id)));
+  cy.batch(() => routed.forEach(ids => route(ids)));
+  function route(ids: string[]): void {
     const first = cy.getElementById(ids[0]);
     const [source, target] = [first.source(), first.target()];
     const others = [...boxes].filter(([id]) => id !== source.id() && id !== target.id()).map(([, box]) => box);
