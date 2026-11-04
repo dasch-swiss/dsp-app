@@ -114,16 +114,24 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
           }
         </div>
 
+        <!-- Kept in view at the bottom of the panel, however long the class's properties. -->
         <div class="actions">
           <button mat-flat-button color="primary" data-cy="class-panel-browse" (click)="browse.emit(classIri())">
+            <mat-icon>view_list</mat-icon>
             {{ t + '.browse' | translate }}
           </button>
-          <button mat-stroked-button data-cy="class-panel-filter" (click)="filter.emit(classIri())">
+          <span class="spacer"></span>
+          <button
+            mat-stroked-button
+            data-cy="class-panel-filter"
+            [matTooltip]="t + '.filterHint' | translate"
+            (click)="filter.emit(classIri())">
             <mat-icon>filter_alt</mat-icon>
             {{ t + '.filter' | translate }}
           </button>
           @if (canEdit()) {
             <button mat-stroked-button data-cy="class-panel-edit" (click)="edit.emit(classIri())">
+              <mat-icon>edit</mat-icon>
               {{ t + '.edit' | translate }}
             </button>
           }
@@ -344,10 +352,29 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         color: $cool_gray_600;
       }
 
+      // A footer across the panel, against its padding: pushed down when the panel is short, stuck to the bottom when
+      // it scrolls.
       .actions {
+        position: sticky;
+        bottom: -20px;
+        margin: auto -24px -20px;
+        padding: 12px 24px;
         display: flex;
+        align-items: center;
         gap: 8px;
-        padding-top: 4px;
+        background: white;
+        border-top: 1px solid $cool_gray_200;
+
+        button {
+          --mat-button-filled-container-height: 36px;
+          --mat-button-outlined-container-height: 36px;
+          flex: none;
+          white-space: nowrap;
+        }
+      }
+
+      .spacer {
+        flex: 1;
       }
     `,
   ],

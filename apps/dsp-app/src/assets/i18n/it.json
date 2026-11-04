@@ -734,10 +734,11 @@
         "via": "tramite {{property}}",
         "none": "Nessuna",
         "browse": "Sfoglia le risorse",
-        "edit": "Modifica la classe",
-        "filter": "Filtra su questa classe",
+        "edit": "Modifica",
+        "filter": "Filtra",
         "more": "+{{count}} altri",
-        "noConnections": "Non collegata ad altre classi"
+        "noConnections": "Non collegata ad altre classi",
+        "filterHint": "Mostrare nel grafo solo questa classe e le classi collegate"
       },
       "dataModel": "Modello di dati",
       "counts": "{{classes}} classi · {{links}} collegamenti",

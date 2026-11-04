@@ -828,7 +828,8 @@ export class OntologyGraphComponent {
       const cy = this._cy();
       const graph = this.graph();
       if (!cy) return;
-      const shown = `${graph.nodes.map(node => node.id).join(' ')} ${graph.edges.map(edgeKey).join(' ')}`;
+      // Labels count too, so a class renamed in the edit dialog is drawn with its new name.
+      const shown = `${graph.nodes.map(node => `${node.id}\t${node.label}`).join(' ')} ${graph.edges.map(edgeKey).join(' ')}`;
       if (shown === this._shown) return;
       this._shown = shown;
       cy.elements().remove();

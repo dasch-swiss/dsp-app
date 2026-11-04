@@ -6,8 +6,10 @@ import {
   OntologyEditorPageComponent,
   OntologyPageComponent,
   OntologyPropertiesComponent,
+  ResourceClassEditorService,
 } from '@dasch-swiss/vre/pages/ontology/ontology';
 import {
+  CLASS_EDITOR,
   CollaborationPageComponent,
   CreateProjectFormPageComponent,
   DataBrowserPageComponent,
@@ -72,6 +74,8 @@ export const routes: Routes = [
       {
         path: RouteConstants.dataModels2,
         component: DataModelsRailPageComponent,
+        // "Edit class" opens the data model editor's dialog in place.
+        providers: [{ provide: CLASS_EDITOR, useClass: ResourceClassEditorService }],
         children: [
           { path: '', pathMatch: 'full', redirectTo: RouteConstants.graph },
           { path: RouteConstants.graph, component: OntologyMapPageComponent },

@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -19,9 +19,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
+import { filter } from 'rxjs';
+import { CLASS_EDITOR } from '../ontology-map/class-editor';
 import { localNameOf } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
+import { ProjectPageService } from '../project-page.service';
 import { DataModelsRailState } from './data-models-rail-state';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 
@@ -141,6 +144,9 @@ export class DataModelClassesComponent {
   readonly state = inject(DataModelsRailState);
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
+  private readonly _classEditor = inject(CLASS_EDITOR, { optional: true });
+  private readonly _projectPage = inject(ProjectPageService);
+  private readonly _destroyRef = inject(DestroyRef);
   private readonly _params = toSignal(this._route.queryParamMap);
 
   readonly columns = ['class', 'properties', 'linksTo'];
@@ -181,7 +187,16 @@ export class DataModelClassesComponent {
   }
 
   /** Opens the class's data model in the data model editor. */
+  /** Edits the class in the data model editor's dialog, in place; without it, opens the data model editor. */
   edit(iri: string): void {
+    if (this._classEditor) {
+      // A saved class is read again with the whole project, so the list and the panel show its new texts.
+      this._classEditor
+        .edit(iri)
+        .pipe(filter(Boolean), takeUntilDestroyed(this._destroyRef))
+        .subscribe(() => this._projectPage.reloadProject());
+      return;
+    }
     const [ontologyIri] = iri.split('#');
     this._router.navigate(
       this.state.projectPath(

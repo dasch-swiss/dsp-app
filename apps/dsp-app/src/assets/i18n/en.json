@@ -734,10 +734,11 @@
         "via": "via {{property}}",
         "none": "None",
         "browse": "Browse resources",
-        "edit": "Edit class",
-        "filter": "Filter on this class",
+        "edit": "Edit",
+        "filter": "Filter",
         "more": "+{{count}} more",
-        "noConnections": "Not linked with other classes"
+        "noConnections": "Not linked with other classes",
+        "filterHint": "Show the graph with only this class and the classes it is linked with"
       },
       "dataModel": "Data model",
       "counts": "{{classes}} classes · {{links}} links",

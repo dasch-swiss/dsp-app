@@ -734,10 +734,11 @@
         "via": "über {{property}}",
         "none": "Keine",
         "browse": "Ressourcen anzeigen",
-        "edit": "Klasse bearbeiten",
-        "filter": "Nach dieser Klasse filtern",
+        "edit": "Bearbeiten",
+        "filter": "Filtern",
         "more": "+{{count}} weitere",
-        "noConnections": "Mit keiner anderen Klasse verknüpft"
+        "noConnections": "Mit keiner anderen Klasse verknüpft",
+        "filterHint": "Im Graphen nur diese Klasse und die mit ihr verknüpften Klassen zeigen"
       },
       "dataModel": "Datenmodell",
       "counts": "{{classes}} Klassen · {{links}} Verknüpfungen",

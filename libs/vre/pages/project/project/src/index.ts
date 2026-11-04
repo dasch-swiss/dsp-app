@@ -23,4 +23,5 @@ export * from './lib/data-models-rail/data-model-lists.component';
 
 // Services used by other libraries
 export * from './lib/project-page.service';
+export * from './lib/ontology-map/class-editor';
 export * from './lib/data-browser-page.service';
