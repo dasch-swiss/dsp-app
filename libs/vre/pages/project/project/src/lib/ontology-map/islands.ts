@@ -28,11 +28,14 @@ export interface FamilyTexture {
   double: boolean;
 }
 
-/** The looks, ten families each: plain, then dark stripes, white stripes, and the three again with a double border. */
+/**
+ * The looks, ten families each: plain, then white stripes, dark stripes, and plain, dark and white stripes again with a
+ * double border.
+ */
 const TEXTURES: FamilyTexture[] = [
   { double: false },
-  { stripes: 'dark', double: false },
   { stripes: 'white', double: false },
+  { stripes: 'dark', double: false },
   { double: true },
   { stripes: 'dark', double: true },
   { stripes: 'white', double: true },

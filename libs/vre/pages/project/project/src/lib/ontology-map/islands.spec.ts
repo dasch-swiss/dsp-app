@@ -54,12 +54,12 @@ describe('classFamilies', () => {
 });
 
 describe('familyTexture', () => {
-  it('keeps 10 hues plain, then dark stripes, white stripes, and the three again with a double border', () => {
+  it('keeps 10 hues plain, then white stripes, dark stripes, and again with a double border', () => {
     expect([0, 9, 10, 20, 30, 40, 50].map(familyTexture)).toEqual([
       { double: false },
       { double: false },
-      { stripes: 'dark', double: false },
       { stripes: 'white', double: false },
+      { stripes: 'dark', double: false },
       { double: true },
       { stripes: 'dark', double: true },
       { stripes: 'white', double: true },
