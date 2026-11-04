@@ -105,6 +105,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
   const nodes: ElementDefinition[] = graph.nodes.map(node => {
     const family = islands?.families.get(node.id);
     const hue = family && familyHue(family.index);
+    const texture = family && familyTexture(family.index);
     const icon = islands && hue ? fileIconImage(node.representationClass, hue.dark) : undefined;
     const label = node.kind === 'generic' && node.id === Constants.Resource ? options.anyResourceLabel : node.label;
     return {
@@ -113,7 +114,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
         id: node.id,
         ...texts(label, node.id),
         color: family ? familyColor(family) : (options.colors.get(node.id) ?? '#FFFFFF'),
-        ...(hue ? { dark: hue.dark, texture: textureImage(familyTexture(family.index), hue.dark), icon } : {}),
+        ...(hue && texture ? { dark: hue.dark, texture: textureImage(texture, hue.dark, family.sub), icon } : {}),
         ...(parents?.get(node.id) ? { parent: parents.get(node.id) } : {}),
       },
       classes: [
@@ -121,6 +122,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
         node.id === options.mainIri ? 'main' : '',
         node.id === options.selectedIri ? 'selected' : '',
         family ? (family.sub ? 'family-member sub' : 'family-member') : '',
+        texture?.double ? 'double' : '',
       ]
         .filter(Boolean)
         .join(' '),

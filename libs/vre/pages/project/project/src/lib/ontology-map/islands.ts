@@ -5,7 +5,7 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 /**
  * The Islands view: classes linked together form an island, set apart from the others; a class and its subclasses
  * form a family, kept together inside its island and drawn in one hue, the parent in full colour and its subclasses
- * lighter. Eight hues, then the same hues striped, then dotted, so up to 24 families look different.
+ * lighter. Ten hues, then the same hues in five more looks (see `TEXTURES`), so up to 60 families look different.
  */
 
 /** Per hue: the parent's fill, the subclasses' lighter fill, and a dark shade for borders, textures and icons. */
@@ -18,11 +18,25 @@ export const FAMILY_HUES: readonly { base: string; light: string; dark: string }
   { base: '#99D5CF', light: '#D2EDEA', dark: '#24766F' },
   { base: '#F1DC8A', light: '#F9EFC8', dark: '#7F6812' },
   { base: '#E9AED5', light: '#F6DBEC', dark: '#963A77' },
+  { base: '#C3CCD6', light: '#E6EAEF', dark: '#4A5868' },
+  { base: '#CFD98F', light: '#EDF1D2', dark: '#5E6B1C' },
 ];
 
-/** What is drawn over a family's hue: nothing for the first 8 families, stripes for the next 8, then dots. */
-export type FamilyTexture = 'solid' | 'stripes' | 'dots';
-const TEXTURES: FamilyTexture[] = ['solid', 'stripes', 'dots'];
+/** What is drawn over a family's hue: stripes, dark or white, and whether its boxes have a double border. */
+export interface FamilyTexture {
+  stripes?: 'dark' | 'white';
+  double: boolean;
+}
+
+/** The looks, ten families each: plain, then dark stripes, white stripes, and the three again with a double border. */
+const TEXTURES: FamilyTexture[] = [
+  { double: false },
+  { stripes: 'dark', double: false },
+  { stripes: 'white', double: false },
+  { double: true },
+  { stripes: 'dark', double: true },
+  { stripes: 'white', double: true },
+];
 
 /** A class's family: the class at its top, and how it looks. */
 export interface ClassFamily {
@@ -168,22 +182,25 @@ export function fileIconImage(representation: RepresentationClass | undefined, c
   );
 }
 
-/** Stripes or dots in a family's dark shade, as an image laid over the box; none for a plain family. */
-export function textureImage(texture: FamilyTexture, color: string): string | undefined {
-  // One tile big enough to cover any box, as the graph cannot repeat an image.
-  if (texture === 'stripes') {
-    const lines = Array.from({ length: 90 }, (_, i) => `M${i * 10 - 200} 200L${i * 10} 0`).join('');
-    return svgUri(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200"><path d="${lines}" stroke="${color}" stroke-opacity="0.32" stroke-width="3"/></svg>`
-    );
-  }
-  if (texture === 'dots') {
-    return svgUri(
-      '<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200"><defs><pattern id="d" width="10" height="10" patternUnits="userSpaceOnUse">' +
-        `<circle cx="5" cy="5" r="1.8" fill="${color}" fill-opacity="0.45"/></pattern></defs><rect width="700" height="200" fill="url(#d)"/></svg>`
-    );
-  }
-  return undefined;
+/** The stripes' image size at scale 1: one tile big enough to cover any box, as the graph cannot repeat an image. */
+export const TEXTURE_TILE = { width: 700, height: 200 };
+
+/**
+ * A family's stripes, as an image laid over the box; none for a plain family. Dark stripes are drawn in its dark
+ * shade; white ones only on the top class, as a subclass's light fill would hide them, so its stripes stay dark.
+ */
+export function textureImage(texture: FamilyTexture, color: string, sub = false): string | undefined {
+  if (!texture.stripes) return undefined;
+  const white = texture.stripes === 'white' && !sub;
+  const [step, width, opacity] = texture.stripes === 'dark' ? [20, 5, 0.55] : white ? [17, 4, 0.7] : [17, 4, 0.45];
+  const { width: w, height: h } = TEXTURE_TILE;
+  const lines = Array.from({ length: Math.ceil((w + h) / step) }, (_, i) => `M${i * step - h} ${h}L${i * step} 0`).join(
+    ''
+  );
+  return svgUri(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><path d="${lines}" stroke="${white ? '#FFFFFF' : color}" ` +
+      `stroke-opacity="${opacity}" stroke-width="${width}"/></svg>`
+  );
 }
 
 /** Room between islands, and between a column of small islands and the next, at scale 1. */

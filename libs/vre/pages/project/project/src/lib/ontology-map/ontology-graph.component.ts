@@ -18,7 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
-import { arrangeIslands, ClassFamily, CytoscapeFactory, FILE_KINDS, ISLAND_PADDING } from './islands';
+import { arrangeIslands, ClassFamily, CytoscapeFactory, FILE_KINDS, ISLAND_PADDING, TEXTURE_TILE } from './islands';
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
@@ -146,6 +146,9 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     style: { 'border-width': 2 * f, 'border-color': 'data(dark)', 'font-weight': 600 },
   },
   { selector: 'node.family-member.sub', style: { 'border-width': f, 'font-weight': 500 } },
+  // Past the first 30 families, a double border tells the next 30 apart.
+  { selector: 'node.family-member.double', style: { 'border-style': 'double', 'border-width': 5 * f } },
+  { selector: 'node.family-member.sub.double', style: { 'border-width': 3 * f } },
   // A class with a file is widened for its icon, its label moved right to make room.
   {
     selector: 'node[icon]',
@@ -162,8 +165,9 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         `${node.data('texture') ?? NO_IMAGE} ${node.data('icon') ?? NO_IMAGE}` as never,
       'background-fit': 'none none' as never,
       'background-clip': 'node none' as never,
-      'background-width': `auto ${ICON.size * f}px` as never,
-      'background-height': `auto ${ICON.size * f}px` as never,
+      // The stripes grow with the graph, so they stay as visible as its texts.
+      'background-width': `${TEXTURE_TILE.width * f}px ${ICON.size * f}px` as never,
+      'background-height': `${TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
       // From the box's left edge, about as far as from its top.
       'background-position-x': `50% ${ICON.inset * f}px` as never,
       'background-position-y': `50% 50%` as never,

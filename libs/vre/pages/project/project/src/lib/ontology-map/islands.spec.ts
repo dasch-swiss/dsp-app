@@ -54,10 +54,24 @@ describe('classFamilies', () => {
 });
 
 describe('familyTexture', () => {
-  it('keeps 8 hues plain, then stripes them, then dots them', () => {
-    expect([0, 7, 8, 15, 16].map(familyTexture)).toEqual(['solid', 'solid', 'stripes', 'stripes', 'dots']);
-    expect(textureImage('solid', '#000000')).toBeUndefined();
-    expect(textureImage('stripes', '#000000')).toMatch(/^data:image\/svg\+xml/);
+  it('keeps 10 hues plain, then dark stripes, white stripes, and the three again with a double border', () => {
+    expect([0, 9, 10, 20, 30, 40, 50].map(familyTexture)).toEqual([
+      { double: false },
+      { double: false },
+      { stripes: 'dark', double: false },
+      { stripes: 'white', double: false },
+      { double: true },
+      { stripes: 'dark', double: true },
+      { stripes: 'white', double: true },
+    ]);
+  });
+
+  it('draws white stripes on a top class only, and dark ones on its subclasses', () => {
+    const white = { stripes: 'white', double: false } as const;
+
+    expect(textureImage({ double: true }, '#000000')).toBeUndefined();
+    expect(decodeURIComponent(textureImage(white, '#000000')!)).toContain('stroke="#FFFFFF"');
+    expect(decodeURIComponent(textureImage(white, '#000000', true)!)).toContain('stroke="#000000"');
   });
 });
 
