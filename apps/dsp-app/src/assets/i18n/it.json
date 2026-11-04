@@ -710,11 +710,6 @@
       "dataModelMap": {
         "anyResource": "Qualsiasi risorsa",
         "subclassOf": "sottoclasse di",
-        "connections": "Classi collegate a questa classe",
-        "linkedFromHeading": "Collegata da",
-        "linksToHeading": "Collegata a",
-        "moreClasses": "+{{count}} altre",
-        "noLinks": "Non collegata ad altre classi",
         "legendLink": "proprietà di collegamento, punta alla classe collegata"
       }
     },

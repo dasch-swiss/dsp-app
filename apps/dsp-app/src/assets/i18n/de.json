@@ -710,11 +710,6 @@
       "dataModelMap": {
         "anyResource": "Beliebige Ressource",
         "subclassOf": "Unterklasse von",
-        "connections": "Mit dieser Klasse verknüpfte Klassen",
-        "linkedFromHeading": "Verknüpft von",
-        "linksToHeading": "Verknüpft mit",
-        "moreClasses": "+{{count}} weitere",
-        "noLinks": "Mit keiner anderen Klasse verknüpft",
         "legendLink": "Verknüpfungseigenschaft, zeigt auf die verknüpfte Klasse"
       }
     },
