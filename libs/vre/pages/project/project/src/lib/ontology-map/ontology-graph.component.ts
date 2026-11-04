@@ -662,8 +662,15 @@ export class OntologyGraphComponent {
           if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
         cy.on('tap', 'edge.link', event => this.propertySelected.emit(event.target.data('property')));
+        // Links follow a dragged class as they will lie once it is dropped: routed round the boxes at every frame.
+        let routing = 0;
+        cy.on('drag', 'node', () => {
+          cancelAnimationFrame(routing);
+          routing = requestAnimationFrame(() => routeEdges(cy, this._scale));
+        });
         cy.on('dragfree', 'node', () => {
           this._dragged = true;
+          cancelAnimationFrame(routing);
           routeEdges(cy, this._scale);
         });
         // Hovering a class highlights its links; a class that opens on click shows a link's pointer.
@@ -709,6 +716,7 @@ export class OntologyGraphComponent {
         observer.observe(this._canvas().nativeElement);
         destroyRef.onDestroy(() => {
           cancelAnimationFrame(frame);
+          cancelAnimationFrame(routing);
           clearTimeout(this._reveal);
           observer.disconnect();
           cy.destroy();
