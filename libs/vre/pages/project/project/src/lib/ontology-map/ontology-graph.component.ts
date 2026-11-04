@@ -267,50 +267,43 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     }
     @if (islandsLegend(); as legend) {
       <div #islandsLegend class="islands-legend" role="region" [attr.aria-label]="i + '.legend' | translate">
-        <div class="legend-head">
-          <span class="legend-title">{{ i + '.legend' | translate }}</span>
-          <span class="spacer"></span>
-          <button
-            type="button"
-            class="legend-toggle"
-            data-cy="islands-legend-toggle"
-            [attr.aria-expanded]="legendOpen()"
-            [attr.aria-label]="i + (legendOpen() ? '.collapse' : '.expand') | translate"
-            (click)="legendOpen.set(!legendOpen())">
-            <mat-icon>{{ legendOpen() ? 'expand_more' : 'expand_less' }}</mat-icon>
-          </button>
-        </div>
+        <span class="legend-title">{{ i + '.legend' | translate }}</span>
         @if (legendOpen()) {
-          <div class="legend-body">
-            @if (legend.files.length) {
-              <div class="legend-files">
-                <span class="legend-heading">{{ i + '.files' | translate }}</span>
-                @for (file of legend.files; track file.representation) {
-                  <span class="file"
-                    ><span class="file-icon"
-                      ><mat-icon>{{ file.icon }}</mat-icon></span
-                    >{{ i + '.fileKinds.' + file.representation | translate }}</span
-                  >
-                }
-              </div>
-            }
-            <div class="legend-shapes">
-              <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
-              <span class="shape"><span class="shape-box parent"></span>{{ i + '.parent' | translate }}</span>
-              <span class="shape"><span class="shape-box sub"></span>{{ i + '.subclass' | translate }}</span>
-              <span class="shape"
-                ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
+          <span class="divider"></span>
+          <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
+          <span class="shape"><span class="shape-box parent"></span>{{ i + '.parent' | translate }}</span>
+          <span class="shape"><span class="shape-box sub"></span>{{ i + '.subclass' | translate }}</span>
+          <span class="shape"
+            ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
+          >
+          <span class="shape">
+            <svg width="22" height="8" viewBox="0 0 28 8" aria-hidden="true">
+              <path class="legend-line" d="M 0 4 L 22 4" />
+              <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
+            </svg>
+            {{ i + '.link' | translate }}
+          </span>
+          @if (legend.files.length) {
+            <span class="divider"></span>
+            <span class="legend-heading">{{ i + '.files' | translate }}</span>
+            @for (file of legend.files; track file.representation) {
+              <span class="file"
+                ><span class="file-icon"
+                  ><mat-icon>{{ file.icon }}</mat-icon></span
+                >{{ i + '.fileKinds.' + file.representation | translate }}</span
               >
-              <span class="shape">
-                <svg width="26" height="8" viewBox="0 0 28 8" aria-hidden="true">
-                  <path class="legend-line" d="M 0 4 L 22 4" />
-                  <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
-                </svg>
-                {{ i + '.link' | translate }}
-              </span>
-            </div>
-          </div>
+            }
+          }
         }
+        <button
+          type="button"
+          class="legend-toggle"
+          data-cy="islands-legend-toggle"
+          [attr.aria-expanded]="legendOpen()"
+          [attr.aria-label]="i + (legendOpen() ? '.collapse' : '.expand') | translate"
+          (click)="legendOpen.set(!legendOpen())">
+          <mat-icon>{{ legendOpen() ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+        </button>
       </div>
     } @else {
       <div class="legend" aria-hidden="true">
@@ -389,29 +382,25 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         border-radius: 3px;
       }
 
-      // The Islands view's legend: the kinds of file shown, and the shapes.
+      // The Islands view's legend, in one row: the shapes, then the kinds of file shown.
       .islands-legend {
         position: absolute;
         left: 16px;
         bottom: 16px;
         max-width: calc(100% - 96px);
+        min-height: 44px;
         box-sizing: border-box;
-        padding: 10px 12px 12px;
+        padding: 6px 8px 6px 16px;
         display: flex;
-        flex-direction: column;
-        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 16px;
         background: white;
         border: 1px solid $cool_gray_200;
-        border-radius: 12px;
+        border-radius: 14px;
         box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
         font: 400 12.5px/1.3 var(--font-sans, Roboto, sans-serif);
         color: $cool_gray_800;
-      }
-
-      .legend-head {
-        display: flex;
-        align-items: center;
-        gap: 8px;
       }
 
       .legend-title {
@@ -420,19 +409,22 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         color: $cool_gray_900;
       }
 
-      .spacer {
-        flex: 1;
+      .divider {
+        width: 1px;
+        height: 20px;
+        background: $cool_gray_200;
       }
 
       .legend-toggle {
-        width: 26px;
-        height: 26px;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-left: -8px;
         padding: 0;
         border: 0;
-        border-radius: 13px;
+        border-radius: 14px;
         background: transparent;
         color: $cool_gray_500;
         cursor: pointer;
@@ -448,29 +440,12 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         }
       }
 
-      .legend-body {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px 24px;
-        align-items: flex-start;
-      }
-
       .legend-heading {
-        display: block;
-        padding: 0 6px 4px 0;
         font-size: 10.5px;
         font-weight: 600;
         letter-spacing: 0.06em;
         text-transform: uppercase;
         color: $cool_gray_500;
-      }
-
-      .legend-files,
-      .legend-shapes {
-        flex: none;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
       }
 
       .file,
@@ -479,11 +454,12 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         align-items: center;
         gap: 6px;
         height: 22px;
+        white-space: nowrap;
       }
 
       .file-icon {
-        width: 22px;
-        height: 22px;
+        width: 20px;
+        height: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -491,16 +467,16 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         background: $cool_gray_100;
 
         mat-icon {
-          font-size: 15px;
-          width: 15px;
-          height: 15px;
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
           color: $cool_gray_600;
         }
       }
 
       .shape-box {
-        width: 26px;
-        height: 14px;
+        width: 22px;
+        height: 12px;
         box-sizing: border-box;
         border-radius: 3px;
 
