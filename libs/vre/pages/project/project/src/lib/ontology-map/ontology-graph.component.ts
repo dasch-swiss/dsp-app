@@ -806,11 +806,16 @@ export class OntologyGraphComponent {
     }
   }
 
-  /** How wide a link's label is drawn at scale 1, in the texts the graph writes. */
+  /**
+   * How wide a link's label is drawn at scale 1: the widest of its label and its name, so the layout leaves room for
+   * either, whichever the graph writes.
+   */
   private _labelWidth(): LabelWidth {
-    const labels = untracked(() => this.labels());
-    const font = `${LINK_FONT_SIZE}px ${labels === 'names' ? FONT.names : FONT.labels}`;
-    return edge => textWidth(edge.data(DATA_KEY[labels]) ?? '', font);
+    return edge =>
+      Math.max(
+        textWidth(edge.data('label') ?? '', `${LINK_FONT_SIZE}px ${FONT.labels}`),
+        textWidth(edge.data('name') ?? '', `${LINK_FONT_SIZE}px ${FONT.names}`)
+      );
   }
 
   /** The shape of the room the model is fitted in: its width over its height. */

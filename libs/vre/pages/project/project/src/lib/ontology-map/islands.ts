@@ -243,8 +243,8 @@ interface Block {
 /** How wide a link's label is drawn at scale 1, so the link can be drawn long enough to show it. */
 export type LabelWidth = (edge: EdgeSingular) => number;
 
-/** Room left around a link's label on its line, at scale 1. */
-const LABEL_ROOM = 24;
+/** Room left around a link's label on its line, at scale 1: some line on each side, and the arrowhead. */
+const LABEL_ROOM = 48;
 
 /** An island laid out by the force layout, before it is given its shape. */
 interface LinkedIsland {
@@ -287,7 +287,7 @@ export function arrangeIslands(
     const blocks = island
       .children()
       .toArray()
-      .map(child => (child.isParent() ? familyBlock(child, room) : classBlock(child)));
+      .map(child => (child.isParent() ? familyBlock(child, room, labelWidth) : classBlock(child)));
     if (island.hasClass('unlinked')) {
       placeInRows(blocks, room);
     } else {
@@ -318,31 +318,54 @@ export function arrangeIslands(
   islands.forEach((island, i) => move(island, places[i].x - boxes[i].x1, places[i].y - boxes[i].y1));
 }
 
-/** A family's classes placed as a block: its top class, then its subclasses in rows below, by label. */
-function familyBlock(family: NodeSingular, room: Room): Block {
+/**
+ * A family's classes placed as a block: its top class, then its subclasses in rows below, by label; classes linked to
+ * each other far enough apart for their links' labels.
+ */
+function familyBlock(family: NodeSingular, room: Room, labelWidth: LabelWidth): Block {
   const classes = family.children().toArray();
   const [top, ...subs] = [...classes].sort(
     (a, b) => Number(a.hasClass('sub')) - Number(b.hasClass('sub')) || a.data('label').localeCompare(b.data('label'))
   );
   const rows: NodeSingular[][] = [[top]];
   for (let i = 0; i < subs.length; i += FAMILY_COLUMNS) rows.push(subs.slice(i, i + FAMILY_COLUMNS));
-  const widths = rows.map(row => row.reduce((sum, node) => sum + node.outerWidth(), 0) + room.block * (row.length - 1));
+  // How long a line between two classes must be for the labels of the links between them.
+  const label = (a: NodeSingular, b: NodeSingular) =>
+    Math.max(0, ...a.edgesWith(b).map(edge => (labelWidth(edge) + LABEL_ROOM) * room.scale));
+  const sum = (values: number[]) => values.reduce((total, value) => total + value, 0);
+  // In each row, the gaps between its classes, widened where two of them are linked: the nearest pairs first.
+  const gaps = rows.map(row => {
+    const gaps = row.slice(1).map(() => room.block);
+    for (let span = 1; span < row.length; span++) {
+      for (let i = 0; i + span < row.length; i++) {
+        const between = sum(row.slice(i + 1, i + span).map(node => node.outerWidth())) + sum(gaps.slice(i, i + span));
+        const missing = label(row[i], row[i + span]) - between;
+        for (let k = i; missing > 0 && k < i + span; k++) gaps[k] += missing / span;
+      }
+    }
+    return gaps;
+  });
+  // Between two rows, room for the labels of links from one to the other.
+  const rowGaps = rows
+    .slice(1)
+    .map((row, r) => Math.max(room.block, ...rows[r].flatMap(a => row.map(b => label(a, b)))));
+  const widths = rows.map((row, r) => sum(row.map(node => node.outerWidth())) + sum(gaps[r]));
   const width = Math.max(...widths);
   let y = 0;
   rows.forEach((row, r) => {
     const height = Math.max(...row.map(node => node.outerHeight()));
     let x = (width - widths[r]) / 2;
-    for (const node of row) {
+    row.forEach((node, i) => {
       node.position({ x: x + node.outerWidth() / 2, y: y + height / 2 });
-      x += node.outerWidth() + room.block;
-    }
-    y += height + room.block;
+      x += node.outerWidth() + (gaps[r][i] ?? 0);
+    });
+    y += height + (rowGaps[r] ?? 0);
   });
   return {
     id: family.id(),
     classes,
     w: width + 2 * room.side,
-    h: y - room.block + room.top + room.side,
+    h: y + room.top + room.side,
   };
 }
 
