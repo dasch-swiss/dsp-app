@@ -14,6 +14,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
@@ -68,6 +69,9 @@ const MAX_SPREAD = 2.5;
 
 /** The share of the chosen name size a model is first shown at, at least, though it then does not fit. */
 const READABLE_SHARE = 0.6;
+
+/** How long no layout must follow, on load, before the graph is shown. */
+const SETTLE_MS = 250;
 
 /** Size of a link's label at scale 1. */
 const LINK_FONT_SIZE = 13;
@@ -289,11 +293,14 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
 @Component({
   selector: 'app-ontology-graph',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, TranslatePipe],
+  imports: [MatIcon, MatProgressSpinner, TranslatePipe],
   template: `
     @let t = 'pages.dataBrowser.dataModelMap';
     @let i = 'pages.ontologyMap.islands';
-    <div #canvas class="canvas" data-cy="ontology-graph"></div>
+    <div #canvas class="canvas" data-cy="ontology-graph" [class.hidden]="!laidOut()"></div>
+    @if (!laidOut() && !failed()) {
+      <mat-progress-spinner class="laying-out" mode="indeterminate" diameter="32" />
+    }
     @if (failed()) {
       <p class="failed">{{ 'pages.ontologyMap.graphFailed' | translate }}</p>
     }
@@ -365,6 +372,18 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       .canvas {
         position: absolute;
         inset: 0;
+
+        // Laid out, measured and fitted while hidden, so it is first seen in place.
+        &.hidden {
+          visibility: hidden;
+        }
+      }
+
+      .laying-out {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
 
       .failed {
@@ -575,6 +594,9 @@ export class OntologyGraphComponent {
   private _cytoscape?: CytoscapeFactory;
   /** How much bigger than at scale 1 boxes, text and lines are drawn; see `graphScale`. */
   private _scale = 1;
+  /** Whether the graph is laid out for good and shown; see `_revealWhenSettled`. */
+  readonly laidOut = signal(false);
+  private _reveal?: ReturnType<typeof setTimeout>;
 
   private readonly _counts = computed(() => linkCounts(this.graph()));
   private readonly _islands = computed(() => {
@@ -683,6 +705,7 @@ export class OntologyGraphComponent {
         observer.observe(this._canvas().nativeElement);
         destroyRef.onDestroy(() => {
           cancelAnimationFrame(frame);
+          clearTimeout(this._reveal);
           observer.disconnect();
           cy.destroy();
         });
@@ -781,6 +804,17 @@ export class OntologyGraphComponent {
       cy.zoom(readable);
       cy.center();
     }
+    this._revealWhenSettled();
+  }
+
+  /**
+   * Shows the graph once it is laid out for good: on load it is laid out several times, as the classes arrive and the
+   * box settles, so it is shown only once no layout has followed for a moment.
+   */
+  private _revealWhenSettled(): void {
+    if (this.laidOut()) return;
+    clearTimeout(this._reveal);
+    this._reveal = setTimeout(() => this.laidOut.set(true), SETTLE_MS);
   }
 
   /**
