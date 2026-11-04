@@ -405,6 +405,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   [subclassLabel]="t + '.subclassOf' | translate"
                   [canEdit]="canEdit() ?? false"
+                  [colors]="colors()"
                   (classSelected)="openPanel($event)"
                   (closed)="openPanel(undefined)"
                   (browse)="open($event)"

@@ -735,7 +735,11 @@
         "none": "Keine",
         "browse": "Ressourcen anzeigen",
         "edit": "Klasse bearbeiten",
-        "filter": "Nach dieser Klasse filtern"
+        "filter": "Nach dieser Klasse filtern",
+        "connections": "Verbindungen",
+        "connectionCount": "{{in}} ein · {{out}} aus",
+        "more": "+{{count}} weitere",
+        "noConnections": "Mit keiner anderen Klasse verknüpft"
       },
       "dataModel": "Datenmodell",
       "counts": "{{classes}} Klassen · {{links}} Verknüpfungen",

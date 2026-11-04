@@ -8,6 +8,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/data-model-graph';
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
+import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
 import { localNameOf } from './ontology-graph-elements';
 import { typeIconOf, typeNameOf } from './property-types';
 
@@ -18,22 +19,14 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1_n]: 'oneOrMore',
 };
 
-interface Connection {
-  id: string;
-  label: string;
-  navigable: boolean;
-  /** The link properties joining it with the class, or the subclass label. */
-  via: string;
-}
-
 /**
- * The details of one class of a data model, docked beside the Ontology map: its description, its properties with
- * their types and how many values they take, and the classes it links to and is linked from.
+ * The details of one class of a data model, docked beside the Ontology map: its description, a small map of the
+ * classes it links to and is linked from, and its properties with their types and how many values they take.
  */
 @Component({
   selector: 'app-resource-class-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
+  imports: [ClassConnectionsComponent, MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.classPanel';
@@ -68,6 +61,14 @@ interface Connection {
         @if (node.description) {
           <p class="description">{{ node.description }}</p>
         }
+
+        <app-class-connections
+          [classIri]="classIri()"
+          [classLabel]="node.label"
+          [incoming]="incoming()"
+          [outgoing]="outgoing()"
+          [colors]="colors()"
+          (classSelected)="showClass($event)" />
 
         <div class="group">
           <h3>{{ t + '.properties' | translate: { count: properties().length } }}</h3>
@@ -112,31 +113,6 @@ interface Connection {
             </div>
           }
         </div>
-
-        @for (side of sides(); track side.key) {
-          <div class="group">
-            <h3>{{ t + '.' + side.key | translate }}</h3>
-            <p class="connections">
-              @for (connection of side.connections; track connection.id; let last = $last) {
-                @if (connection.navigable) {
-                  <button type="button" class="class-link" (click)="showClass(connection.id)">
-                    {{ connection.label }}
-                  </button>
-                } @else {
-                  <span class="class-name">{{ connection.label }}</span>
-                }
-                @if (connection.via) {
-                  <span class="via">{{ t + '.via' | translate: { property: connection.via } }}</span>
-                }
-                @if (!last) {
-                  <span class="separator" aria-hidden="true">·</span>
-                }
-              } @empty {
-                <span class="none">{{ t + '.none' | translate }}</span>
-              }
-            </p>
-          </div>
-        }
 
         <div class="actions">
           <button mat-flat-button color="primary" data-cy="class-panel-browse" (click)="browse.emit(classIri())">
@@ -368,20 +344,6 @@ interface Connection {
         color: $cool_gray_600;
       }
 
-      .connections {
-        margin: 0;
-      }
-
-      .via,
-      .separator {
-        margin-left: 4px;
-        color: $cool_gray_500;
-      }
-
-      .separator {
-        margin-right: 4px;
-      }
-
       .actions {
         display: flex;
         gap: 8px;
@@ -405,6 +367,8 @@ export class ResourceClassPanelComponent {
   readonly subclassLabel = input('subclass of');
   /** Whether "Edit class" is offered. */
   readonly canEdit = input(false);
+  /** A CSS background per class, for the map of its links; see `familyColors`. */
+  readonly colors = input<Map<string, string>>(new Map());
 
   /** The panel was closed. */
   readonly closed = output<void>();
@@ -430,10 +394,8 @@ export class ResourceClassPanelComponent {
     return open?.classIri === this.classIri() ? open.propertyId : undefined;
   });
 
-  readonly sides = computed(() => [
-    { key: 'linksTo', connections: this._connections('outgoing') },
-    { key: 'linkedFrom', connections: this._connections('incoming') },
-  ]);
+  readonly incoming = computed(() => this._connections('incoming'));
+  readonly outgoing = computed(() => this._connections('outgoing'));
 
   toggle(property: DataModelProperty): void {
     if (!property.description) return;
@@ -470,7 +432,7 @@ export class ResourceClassPanelComponent {
   }
 
   /** The classes on one side, each once, with the properties joining them. */
-  private _connections(direction: 'incoming' | 'outgoing'): Connection[] {
+  private _connections(direction: 'incoming' | 'outgoing'): ClassConnection[] {
     const iri = this.classIri();
     const via = new Map<string, string[]>();
     for (const edge of this.graph().edges) {

@@ -125,6 +125,7 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
             [anyResourceLabel]="t + '.anyResource' | translate"
             [subclassLabel]="t + '.subclassOf' | translate"
             [canEdit]="state.canEdit()"
+            [colors]="state.colors()"
             (classSelected)="openPanel($event)"
             (closed)="openPanel(undefined)"
             (browse)="browse($event)"
