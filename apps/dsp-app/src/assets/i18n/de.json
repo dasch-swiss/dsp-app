@@ -741,13 +741,6 @@
       "dataModel": "Datenmodell",
       "counts": "{{classes}} Klassen · {{links}} Verknüpfungen",
       "layout": "Anordnung",
-      "layouts": {
-        "tree": "Baum",
-        "circle": "Kreis",
-        "force": "Kräfte",
-        "grid": "Raster",
-        "islands": "Inseln"
-      },
       "fit": "An Bildschirm anpassen",
       "graphFailed": "Der Graph konnte nicht geladen werden.",
       "legendDashed": "anderes Datenmodell",

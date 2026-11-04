@@ -33,10 +33,8 @@ import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
   GraphLabels,
-  GraphLayout,
   graphScale,
   GraphSize,
-  layoutOptions,
   toGraphElements,
 } from './ontology-graph-elements';
 
@@ -571,8 +569,6 @@ export class OntologyGraphComponent {
   readonly graph = input.required<DataModelGraph>();
   /** IRI of the class to outline, if any. */
   readonly selectedIri = input<string | undefined>(undefined);
-  /** How the classes are arranged. */
-  readonly layout = input<GraphLayout>('circle');
   /** Colour per class, from the whole data model so a filter keeps them; see `classColors`. */
   readonly colors = input.required<Map<string, string>>();
   /** How big boxes, text and lines are drawn. */
@@ -605,7 +601,7 @@ export class OntologyGraphComponent {
   private readonly _hoveredProperty = signal<string | undefined>(undefined);
   /** Whether the user moved classes since the last layout; their places then survive a resize. */
   private _dragged = false;
-  /** The layout, classes and links last laid out, to tell a new model from the same one handed over again. */
+  /** The classes and links last laid out, to tell a new model from the same one handed over again. */
   private _shown = '';
   /** The Cytoscape factory, once loaded, for layouts run apart from the graph shown. */
   private _cytoscape?: CytoscapeFactory;
@@ -620,7 +616,7 @@ export class OntologyGraphComponent {
   private readonly _counts = computed(() => linkCounts(this.graph()));
   private readonly _islands = computed(() => {
     const families = this.families();
-    if (this.layout() !== 'islands' || !families) return undefined;
+    if (!families) return undefined;
     return { families };
   });
   private readonly _elements = computed(() =>
@@ -750,16 +746,15 @@ export class OntologyGraphComponent {
     effect(() => {
       const cy = this._cy();
       const graph = this.graph();
-      const layout = this.layout();
       if (!cy) return;
-      const shown = `${layout} ${graph.nodes.map(node => node.id).join(' ')} ${graph.edges.map(edgeKey).join(' ')}`;
+      const shown = `${graph.nodes.map(node => node.id).join(' ')} ${graph.edges.map(edgeKey).join(' ')}`;
       if (shown === this._shown) return;
       this._shown = shown;
       cy.elements().remove();
       cy.add(withLabelsOnTop(untracked(() => this._elements())));
       measureIconBoxes(cy);
       // Before the box has its size, the first size lays them out; laid out now, they would be again then.
-      if (this._sized) this._arrange(cy, layout);
+      if (this._sized) this._arrange(cy);
     });
     effect(() => {
       const cy = this._cy();
@@ -800,15 +795,11 @@ export class OntologyGraphComponent {
   }
 
   /** Lays the classes out over the whole box and fits them in it; dragged places are forgotten. */
-  private _arrange(cy: Core, layout = untracked(() => this.layout())): void {
+  private _arrange(cy: Core): void {
     if (cy.elements().empty()) return;
     // Lay out at scale 1, so the scale changes how big things are drawn, not how far apart they are.
     cy.style(this._style(1));
-    if (layout === 'islands') {
-      arrangeIslands(cy, this._cytoscape!, 1, this._aspect(cy), this._labelWidth());
-    } else {
-      cy.layout(layoutOptions(layout) as never).run();
-    }
+    arrangeIslands(cy, this._cytoscape!, 1, this._aspect(cy), this._labelWidth());
     this._dragged = false;
     this._rescale(cy);
   }
@@ -830,7 +821,7 @@ export class OntologyGraphComponent {
     }
     cy.style(this._style(this._scale));
     // Islands are laid out again with the boxes as drawn, so families and classes stay clear of each other.
-    if (untracked(() => this.layout()) === 'islands' && this._cytoscape) {
+    if (this._cytoscape) {
       arrangeIslands(cy, this._cytoscape, this._scale, this._aspect(cy), this._labelWidth(), true);
     }
     this._spread(cy);

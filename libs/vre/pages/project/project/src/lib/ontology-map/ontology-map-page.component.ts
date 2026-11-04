@@ -26,9 +26,7 @@ import { DataModelGraphService } from '../sidenav/data-model-map/data-model-grap
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
 import { classFamilies, familyColor } from './islands';
 import {
-  classColors,
   GraphLabels,
-  GraphLayout,
   GraphSize,
   linkedWith,
   localNameOf,
@@ -79,7 +77,6 @@ const sameFilter = (a: ListFilter, b: ListFilter) =>
 
 const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
-const LAYOUT_KEY = 'dsp-ontology-map-layout';
 const SIZE_KEY = 'dsp-ontology-map-size';
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
 const LABELS_KEY = 'dsp-ontology-map-labels';
@@ -95,14 +92,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
   { key: 'wholePng', icon: 'zoom_out_map' },
   { key: 'copyImage', icon: 'content_copy' },
   { key: 'copyLink', icon: 'link' },
-];
-
-const LAYOUTS: { value: GraphLayout; icon: string }[] = [
-  { value: 'circle', icon: 'radio_button_unchecked' },
-  { value: 'tree', icon: 'account_tree' },
-  { value: 'force', icon: 'bubble_chart' },
-  { value: 'grid', icon: 'grid_view' },
-  { value: 'islands', icon: 'view_quilt' },
 ];
 
 /**
@@ -139,7 +128,6 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                 class="view"
                 [graph]="graphShown() ?? graph"
                 [selectedIri]="classIri()"
-                [layout]="layout()"
                 [size]="size()"
                 [levelLabels]="levelLabels()"
                 [labels]="labels()"
@@ -237,20 +225,6 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                 <!-- How to show it, and the Export menu: top right, left of an open panel. -->
                 <div class="top-right">
                   <div class="float display" role="toolbar" [attr.aria-label]="m + '.display' | translate">
-                    @for (option of layouts; track option.value) {
-                      <button
-                        type="button"
-                        class="tool"
-                        [class.on]="layout() === option.value"
-                        [attr.aria-pressed]="layout() === option.value"
-                        [attr.data-cy]="'ontology-map-layout-' + option.value"
-                        [attr.aria-label]="m + '.layouts.' + option.value | translate"
-                        [matTooltip]="m + '.layouts.' + option.value | translate"
-                        (click)="setLayout(option.value)">
-                        <mat-icon>{{ option.icon }}</mat-icon>
-                      </button>
-                    }
-                    <span class="divider"></span>
                     @for (option of sizes; track option) {
                       <button
                         type="button"
@@ -820,12 +794,7 @@ export class OntologyMapPageComponent {
     };
   });
 
-  readonly layouts = LAYOUTS;
   readonly exportItems = EXPORT_ITEMS;
-  /** How the graph arranges the classes; remembered in this browser. */
-  readonly layout = signal<GraphLayout>(
-    LAYOUTS.find(option => option.value === readStored(LAYOUT_KEY))?.value ?? 'circle'
-  );
   readonly sizes = SIZES;
   /** How big the graph draws boxes, text and lines; remembered in this browser. */
   readonly size = signal<GraphSize>(SIZES.find(size => size === readStored(SIZE_KEY)) ?? 'normal');
@@ -842,18 +811,12 @@ export class OntologyMapPageComponent {
     return graph ? classFamilies(graph) : undefined;
   });
 
-  /**
-   * A colour per class of the data model, the same whatever the graph is filtered on: in the Islands view its
-   * family's, else its own.
-   */
+  /** A colour per class of the data model, its family's, the same whatever the graph is filtered on. */
   readonly colors = computed(() => {
-    const graph = this.graph();
-    if (!graph) return new Map<string, string>();
     const families = this.families();
-    if (this.layout() === 'islands' && families) {
-      return new Map([...families].map(([iri, family]) => [iri, familyColor(family)]));
-    }
-    return classColors(graph);
+    return families
+      ? new Map([...families].map(([iri, family]) => [iri, familyColor(family)]))
+      : new Map<string, string>();
   });
 
   /** The class filter in the URL: classes to show with the classes they are linked with, or classes to hide. */
@@ -1103,11 +1066,6 @@ export class OntologyMapPageComponent {
   setLevelLabels(level: boolean): void {
     this.levelLabels.set(level);
     store(LEVEL_LABELS_KEY, String(level));
-  }
-
-  setLayout(layout: GraphLayout): void {
-    this.layout.set(layout);
-    store(LAYOUT_KEY, layout);
   }
 
   /** Runs an Export menu item: a PNG downloaded or copied, or the link to this view copied. */

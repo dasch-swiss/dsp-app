@@ -741,13 +741,6 @@
       "dataModel": "Data model",
       "counts": "{{classes}} classes · {{links}} links",
       "layout": "Layout",
-      "layouts": {
-        "tree": "Tree",
-        "circle": "Circle",
-        "force": "Force",
-        "grid": "Grid",
-        "islands": "Islands"
-      },
       "fit": "Fit to screen",
       "graphFailed": "The graph could not be loaded.",
       "legendDashed": "other data model",

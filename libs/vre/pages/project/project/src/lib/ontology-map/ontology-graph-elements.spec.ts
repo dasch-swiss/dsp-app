@@ -5,7 +5,6 @@ import {
   classColors,
   classRows,
   graphScale,
-  layoutOptions,
   linkedWith,
   propertyRows,
   propertyUsage,
@@ -312,17 +311,6 @@ describe('classRows and propertyRows', () => {
         linkTarget: undefined,
         usedBy: ['x#Film', 'x#Person'],
       },
-    ]);
-  });
-});
-
-describe('layoutOptions', () => {
-  it('maps every layout to a Cytoscape layout', () => {
-    expect(['tree', 'circle', 'force', 'grid'].map(l => layoutOptions(l as never).name)).toEqual([
-      'breadthfirst',
-      'circle',
-      'cose',
-      'grid',
     ]);
   });
 });

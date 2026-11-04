@@ -13,12 +13,6 @@ import {
   unlinkedOf,
 } from './islands';
 
-/**
- * The layouts the graph view offers: a tree following the links, a circle, a force-directed spread, a grid, and
- * islands of linked classes with their families together; see `islands.ts`.
- */
-export type GraphLayout = 'tree' | 'circle' | 'force' | 'grid' | 'islands';
-
 /** How big class names read on screen, whatever the number of classes. */
 export type GraphSize = 'small' | 'normal' | 'large';
 
@@ -269,30 +263,6 @@ function islandNodes(graph: DataModelGraph, options: IslandElementOptions): Elem
     }
   }
   return elements;
-}
-
-/** Cytoscape layout options per layout; deterministic, so the same model always lands the same way. */
-export function layoutOptions(layout: GraphLayout): { name: string } & Record<string, unknown> {
-  switch (layout) {
-    case 'tree':
-      return { name: 'breadthfirst', directed: true, spacingFactor: 1.25, padding: 32, animate: false };
-    case 'circle':
-      return { name: 'circle', padding: 32, spacingFactor: 1.1, animate: false };
-    case 'force':
-      return {
-        name: 'cose',
-        padding: 32,
-        animate: false,
-        randomize: false,
-        idealEdgeLength: () => 140,
-        nodeRepulsion: () => 12000,
-      };
-    case 'grid':
-      return { name: 'grid', padding: 32, avoidOverlap: true, animate: false };
-    case 'islands':
-      // Laid out island by island; see `arrangeIslands`.
-      return { name: 'preset', fit: false, animate: false };
-  }
 }
 
 /**
