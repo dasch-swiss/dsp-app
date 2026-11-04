@@ -633,7 +633,8 @@
       },
       "dataClassHeader": {
         "searchLabel": "Rechercher",
-        "searchPlaceholder": "Rechercher"
+        "searchPlaceholder": "Rechercher",
+        "classDetails": "Détails de la classe"
       },
       "resultMeta": {
         "range": "{{start}} – {{end}} sur {{total}}",

@@ -50,6 +50,8 @@ export const routes: Routes = [
     path: RouteConstants.projectUuidRelative,
     component: ProjectPageComponent,
     canActivate: [ProjectPageGuard],
+    // Editing a class or a property from the Data and Data models 2 tabs opens the data model editor's dialog in place.
+    providers: [{ provide: DATA_MODEL_EDITOR, useClass: DataModelEditorService }],
     children: [
       {
         path: RouteConstants.home,
@@ -74,8 +76,6 @@ export const routes: Routes = [
       {
         path: RouteConstants.dataModels2,
         component: DataModelsRailPageComponent,
-        // Editing a class or a property opens the data model editor's dialog in place.
-        providers: [{ provide: DATA_MODEL_EDITOR, useClass: DataModelEditorService }],
         children: [
           { path: '', pathMatch: 'full', redirectTo: RouteConstants.graph },
           { path: RouteConstants.graph, component: OntologyMapPageComponent },
