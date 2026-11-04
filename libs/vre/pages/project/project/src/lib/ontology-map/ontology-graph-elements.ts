@@ -4,6 +4,7 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
   ClassFamily,
   familyColor,
+  familyTint,
   familyHue,
   familyTexture,
   fileIconImage,
@@ -131,6 +132,9 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
     };
   });
   if (parents) nodes.unshift(...islandNodes(graph, islands!));
+  // A link to or from a class in a family is drawn over the family frames, which hide the links that only pass them.
+  const inFamily = (iri: string) => !!parents?.get(iri)?.startsWith(FAMILY_PREFIX);
+  const familyLink = (edge: { source: string; target: string }) => inFamily(edge.source) || inFamily(edge.target);
   // More than a few links from one class to another are drawn as one, which says how many they are.
   const drawn = graph.edges.filter(edge => edge.source !== edge.target);
   const between = new Map<string, number>();
@@ -153,7 +157,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
             ...texts(edge.label, edge.property),
             property: edge.property,
           },
-          classes: edge.kind,
+          classes: [edge.kind, familyLink(edge) ? 'family-link' : ''].filter(Boolean).join(' '),
         },
       ];
     }
@@ -171,7 +175,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
           name: label,
           both: label,
         },
-        classes: 'links',
+        classes: ['links', familyLink(edge) ? 'family-link' : ''].filter(Boolean).join(' '),
       },
     ];
   });
@@ -189,7 +193,8 @@ function texts(label: string, iri: string): { label: string; name: string; both:
 
 const islandId = (index: number) => `island:${index}`;
 const UNLINKED_ISLAND = 'island:unlinked';
-const familyId = (island: string, root: string) => `family:${island}:${root}`;
+const FAMILY_PREFIX = 'family:';
+const familyId = (island: string, root: string) => `${FAMILY_PREFIX}${island}:${root}`;
 
 /**
  * The islands of the Islands view, each listing its classes; the unlinked classes last, as one island. A subclass
@@ -256,7 +261,7 @@ function islandNodes(graph: DataModelGraph, options: IslandElementOptions): Elem
           label: '',
           name: '',
           both: '',
-          color: hue.base,
+          tint: familyTint(hue.base),
           dark: hue.dark,
         },
         classes: 'family',

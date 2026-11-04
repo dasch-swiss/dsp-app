@@ -4,6 +4,7 @@ import {
   FAMILY_HUES,
   familyColor,
   familyTexture,
+  familyTint,
   fileIconImage,
   islandsOf,
   textureImage,
@@ -129,6 +130,18 @@ describe('toGraphElements in the Islands view', () => {
 
   it('keeps a subclass without links in the island of its family', () => {
     expect(node('Drawing').data.parent).toBe(node('Image').data.parent);
+  });
+
+  it('draws links to a class of a family over the family frames, the others under them', () => {
+    const classesOf = (source: string, target: string) =>
+      elements.find(e => e.group === 'edges' && e.data.source === source && e.data.target === target)?.classes;
+
+    expect(classesOf('Image', 'Church')).toBe('link family-link');
+    expect(classesOf('Stop', 'Tour')).toBe('link');
+  });
+
+  it('fills a family frame with a solid tint of its hue', () => {
+    expect(familyTint('#000000')).toBe('#bbbcbc');
   });
 
   it('gives a class with a file its icon, and one without none', () => {

@@ -211,25 +211,29 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'text-margin-y': -6 * f,
     },
   },
+  // A family's frame lies over the links that only pass it, hiding them in a solid tint; its classes, the links to
+  // them and every label lie over the frame, so a link to a class of the family still reaches it.
   {
     selector: 'node.family',
     style: {
       shape: 'round-rectangle',
-      'background-color': 'data(color)',
-      'background-opacity': 0.25,
+      'background-color': 'data(tint)',
       'border-width': f,
       'border-color': 'data(dark)',
       'border-opacity': 0.25,
       padding: `${12 * f}px`,
-      'text-valign': 'top',
-      'text-halign': 'center',
-      'font-family': FONT.labels,
-      'font-size': 11 * f,
-      'font-weight': 600,
-      'text-transform': 'uppercase',
-      color: 'data(dark)',
-      'text-margin-y': -3 * f,
+      'z-compound-depth': 'top',
+      'z-index-compare': 'manual',
+      'z-index': 1,
     },
+  },
+  {
+    selector: 'edge.family-link',
+    style: { 'z-compound-depth': 'top', 'z-index-compare': 'manual', 'z-index': 2 },
+  },
+  {
+    selector: 'node.family-member',
+    style: { 'z-compound-depth': 'top', 'z-index-compare': 'manual', 'z-index': 3 },
   },
   { selector: 'node.island.hovered', style: { 'background-opacity': 0.6, 'border-opacity': 1 } },
   // A lone island, or one of a single class, is only there for the layout: no frame, not even hovered, and clicks go
@@ -266,11 +270,18 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'min-zoomed-font-size': 7,
     },
   },
-  // Each link is drawn twice: its line without a label, then above every line its label on an unseen line.
+  // Each link is drawn twice: its line without a label, then above every line and family frame its label on an
+  // unseen line.
   { selector: 'edge[^labelOf]', style: { label: '' } },
   {
     selector: 'edge.label-only',
-    style: { 'line-opacity': 0, 'target-arrow-shape': 'none', 'z-index': 1 },
+    style: {
+      'line-opacity': 0,
+      'target-arrow-shape': 'none',
+      'z-compound-depth': 'top',
+      'z-index-compare': 'manual',
+      'z-index': 2,
+    },
   },
   // A label slid along its link, clear of the others; see `separateLabels`.
   {

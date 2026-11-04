@@ -55,6 +55,22 @@ export const familyHue = (index: number) => FAMILY_HUES[index % FAMILY_HUES.leng
 export const familyTexture = (index: number): FamilyTexture =>
   TEXTURES[Math.floor(index / FAMILY_HUES.length) % TEXTURES.length];
 
+/** The graph's background, which a family's frame tints. */
+const CANVAS = '#F9FAFB';
+
+/**
+ * A family frame's fill: a quarter of its hue over the graph's background, mixed into one solid colour, so the frame
+ * hides the links that pass under it.
+ */
+export function familyTint(hue: string, share = 0.25): string {
+  const channels = (hex: string) => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+  const [over, under] = [channels(hue), channels(CANVAS)];
+  return `#${over
+    .map((channel, i) => Math.round(channel * share + under[i] * (1 - share)))
+    .map(channel => channel.toString(16).padStart(2, '0'))
+    .join('')}`;
+}
+
 /** A class's fill in the Islands view: its family's hue, lighter for a subclass. */
 export const familyColor = (family: ClassFamily) =>
   family.sub ? familyHue(family.index).light : familyHue(family.index).base;
