@@ -18,9 +18,13 @@ const BOX = 30;
 const ROW = 54;
 /** Room above the boxes for the sides' titles. */
 const TOP = 26;
-/** Where the side columns end and the class's column starts, in % of the width. */
-const SIDE = 28;
-const MIDDLE = 34;
+/** The columns, in % of the width, `[left, right]`: with classes on both sides, and with classes on one side only. */
+const THREE = { in: [0, 28], center: [34, 66], out: [72, 100] } as const;
+const TWO = { side: 42, gap: 16 } as const;
+/** How far left of a box a line stops, in % of the width, for the arrowhead drawn there. */
+const ARROW_ROOM = 1.5;
+
+type Column = readonly [number, number];
 /** How far a side's box sits above the middle of its row. */
 const LIFT = 6;
 
@@ -52,14 +56,23 @@ interface Placed extends ClassConnection {
           }
         </svg>
         @if (incoming().length || outgoing().length) {
-          <span class="side-title left">{{ t + '.linkedFrom' | translate }}</span>
-          <span class="side-title right">{{ t + '.linksTo' | translate }}</span>
+          @if (columns().in; as column) {
+            <span class="side-title" [style.left.%]="column[0]">{{ t + '.linkedFrom' | translate }}</span>
+          }
+          @if (columns().out; as column) {
+            <span class="side-title" [style.right.%]="100 - column[1]">{{ t + '.linksTo' | translate }}</span>
+          }
         } @else {
           <span class="alone">{{ t + '.noConnections' | translate }}</span>
         }
         @for (side of sides(); track side.key) {
           @for (place of side.placed; track place.id) {
-            <div class="node" [class]="side.key" [style.top.px]="place.y - BOX / 2">
+            <div
+              class="node"
+              [class]="side.key"
+              [style.top.px]="place.y - BOX / 2"
+              [style.left.%]="side.column[0]"
+              [style.width.%]="side.column[1] - side.column[0]">
               <button
                 type="button"
                 class="box"
@@ -76,12 +89,20 @@ interface Placed extends ClassConnection {
             </div>
           }
           @if (side.more) {
-            <span class="more" [class]="side.key" [style.top.px]="height() - 18">{{
-              t + '.more' | translate: { count: side.more }
-            }}</span>
+            <span
+              class="more"
+              [style.top.px]="height() - 18"
+              [style.left.%]="side.column[0]"
+              [style.width.%]="side.column[1] - side.column[0]"
+              >{{ t + '.more' | translate: { count: side.more } }}</span
+            >
           }
         }
-        <div class="node center" [style.top.px]="middle() - BOX / 2 - 4">
+        <div
+          class="node center"
+          [style.top.px]="middle() - BOX / 2 - 4"
+          [style.left.%]="columns().center[0]"
+          [style.width.%]="columns().center[1] - columns().center[0]">
           <span class="box" [style.background]="colors().get(classIri()) ?? '#FFFFFF'">{{ classLabel() }}</span>
           @if (incoming().length) {
             <span class="arrow" aria-hidden="true"></span>
@@ -128,36 +149,16 @@ interface Placed extends ClassConnection {
         letter-spacing: 0.04em;
         text-transform: uppercase;
         color: $cool_gray_500;
-
-        &.left {
-          left: 0;
-        }
-
-        &.right {
-          right: 0;
-        }
       }
 
+      // Placed and sized by their column; see \`columns\`.
       .node {
         position: absolute;
-        width: ${SIDE}%;
         display: flex;
         flex-direction: column;
         align-items: stretch;
 
-        &.in {
-          left: 0;
-        }
-
-        &.out {
-          right: 0;
-        }
-
         &.center {
-          left: ${MIDDLE}%;
-          right: ${MIDDLE}%;
-          width: auto;
-
           // A long name wraps onto a second line rather than being cut.
           .box {
             height: ${BOX + 8}px;
@@ -246,18 +247,9 @@ interface Placed extends ClassConnection {
 
       .more {
         position: absolute;
-        width: ${SIDE}%;
         font-size: 11px;
         color: $cool_gray_500;
         text-align: center;
-
-        &.in {
-          left: 0;
-        }
-
-        &.out {
-          right: 0;
-        }
       }
 
       .alone {
@@ -299,15 +291,32 @@ export class ClassConnectionsComponent {
   readonly height = computed(() => TOP + this._rows() * ROW + (this._more() ? 18 : 0) + 4);
   readonly middle = computed(() => TOP + (this._rows() * ROW) / 2);
 
+  /**
+   * The columns the map has, `[left, right]` in % of the width: three with classes on both sides; with classes on one
+   * side only, the class and that side share the whole width; with none, the class alone in the middle.
+   */
+  readonly columns = computed((): { in?: Column; center: Column; out?: Column } => {
+    const hasIn = this.incoming().length > 0;
+    const hasOut = this.outgoing().length > 0;
+    if (hasIn && hasOut) return THREE;
+    const first: Column = [0, TWO.side];
+    const second: Column = [TWO.side + TWO.gap, 100];
+    if (hasIn) return { in: first, center: second };
+    if (hasOut) return { center: first, out: second };
+    return { center: THREE.center };
+  });
+
   readonly sides = computed(() =>
-    (['in', 'out'] as const).map(key => {
+    (['in', 'out'] as const).flatMap(key => {
+      const column = this.columns()[key];
+      if (!column) return [];
       const all = key === 'in' ? this.incoming() : this.outgoing();
       const shown = all.slice(0, MAX_CONNECTIONS);
       // Each side centred on the class, its rows as far apart as on the fuller side.
       // Boxes sit a little above their row's middle, leaving room for the link's name under them.
       const first = this.middle() - ((shown.length - 1) * ROW) / 2 - LIFT;
       const placed: Placed[] = shown.map((connection, i) => ({ ...connection, y: first + i * ROW }));
-      return { key, placed, more: all.length - shown.length };
+      return [{ key, column, placed, more: all.length - shown.length }];
     })
   );
 
@@ -315,10 +324,12 @@ export class ClassConnectionsComponent {
   readonly lines = computed(() => {
     const height = this.height();
     const middle = this.middle();
+    const center = this.columns().center;
     return this.sides().flatMap(side =>
       side.placed.map(place => {
-        const atSide = { x: side.key === 'in' ? SIDE : 100 - SIDE - 1.5, y: place.y / height };
-        const atClass = { x: side.key === 'in' ? MIDDLE - 1.5 : 100 - MIDDLE, y: middle / height };
+        // A link to the class ends at its arrowhead, a link from it at the other class's.
+        const atSide = { x: side.key === 'in' ? side.column[1] : side.column[0] - ARROW_ROOM, y: place.y / height };
+        const atClass = { x: side.key === 'in' ? center[0] - ARROW_ROOM : center[1], y: middle / height };
         return { x1: atSide.x, y1: atSide.y, x2: atClass.x, y2: atClass.y };
       })
     );
