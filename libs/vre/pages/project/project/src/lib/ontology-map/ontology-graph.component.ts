@@ -19,7 +19,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
-import { routeEdges, withLabelsOnTop } from './edge-routes';
+import { routeEdges, separateLabels, withLabelsOnTop } from './edge-routes';
 import {
   arrangeIslands,
   ClassFamily,
@@ -270,6 +270,11 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
   {
     selector: 'edge.label-only',
     style: { 'line-opacity': 0, 'target-arrow-shape': 'none', 'z-index': 1 },
+  },
+  // A label slid along its link, clear of the others; see `separateLabels`.
+  {
+    selector: 'edge.label-only[shiftX]',
+    style: { 'text-margin-x': 'data(shiftX)' as never, 'text-margin-y': 'data(shiftY)' as never },
   },
   // A link that would pass through a class's box bends round it; see `routeEdges`.
   {
@@ -666,12 +671,12 @@ export class OntologyGraphComponent {
         let routing = 0;
         cy.on('drag', 'node', () => {
           cancelAnimationFrame(routing);
-          routing = requestAnimationFrame(() => routeEdges(cy, this._scale));
+          routing = requestAnimationFrame(() => this._route(cy));
         });
         cy.on('dragfree', 'node', () => {
           this._dragged = true;
           cancelAnimationFrame(routing);
-          routeEdges(cy, this._scale);
+          this._route(cy);
         });
         // Hovering a class highlights its links; a class that opens on click shows a link's pointer.
         const container = this._canvas().nativeElement;
@@ -764,11 +769,14 @@ export class OntologyGraphComponent {
       sizeShown = size;
       this._rescale(cy);
     });
-    // New texts restyle in place: classes stay where they are, their boxes fitting the new texts.
+    // New texts restyle in place: classes stay where they are, their boxes fitting the new texts, and the labels clear
+    // of each other again.
     effect(() => {
       const cy = this._cy();
       const text = { levelLabels: this.levelLabels(), labels: this.labels() };
-      if (cy) cy.style(styleFor(this._scale, text));
+      if (!cy) return;
+      cy.style(styleFor(this._scale, text));
+      separateLabels(cy, this._scale);
     });
     effect(() => {
       const cy = this._cy();
@@ -814,7 +822,7 @@ export class OntologyGraphComponent {
       arrangeIslands(cy, this._cytoscape, this._scale, this._aspect(cy), this._labelWidth(), true);
     }
     this._spread(cy);
-    routeEdges(cy, this._scale);
+    this._route(cy);
     this._fit(cy);
     const readable = (textSize * READABLE_SHARE) / (BASE_FONT_SIZE * this._scale);
     if (cy.zoom() < readable) {
@@ -891,6 +899,12 @@ export class OntologyGraphComponent {
         textWidth(edge.data('label') ?? '', `${LINK_FONT_SIZE}px ${FONT.labels}`),
         textWidth(edge.data('name') ?? '', `${LINK_FONT_SIZE}px ${FONT.names}`)
       );
+  }
+
+  /** Routes the links round the classes, then slides their labels clear of each other. */
+  private _route(cy: Core): void {
+    routeEdges(cy, this._scale);
+    separateLabels(cy, this._scale);
   }
 
   /** The shape of the room the model is fitted in: its width over its height. */

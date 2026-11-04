@@ -104,6 +104,110 @@ export function bendFor(source: Point, target: Point, boxes: Rect[], clearance: 
   return { distance: best.distance, weight: best.weight };
 }
 
+/** A link's label as drawn: its middle, half its width and height, and its turn. */
+export interface LabelBox {
+  x: number;
+  y: number;
+  halfW: number;
+  halfH: number;
+  angle: number;
+}
+
+/** Whether two labels, each turned its own way, overlap, `gap` apart at least: no axis of either keeps them apart. */
+export function labelsOverlap(a: LabelBox, b: LabelBox, gap: number): boolean {
+  const axes = [a.angle, a.angle + Math.PI / 2, b.angle, b.angle + Math.PI / 2].map(t => ({
+    x: Math.cos(t),
+    y: Math.sin(t),
+  }));
+  const corners = (box: LabelBox) => {
+    const [c, s] = [Math.cos(box.angle), Math.sin(box.angle)];
+    return [
+      [-1, -1],
+      [1, -1],
+      [1, 1],
+      [-1, 1],
+    ].map(([i, j]) => ({
+      x: box.x + i * box.halfW * c - j * box.halfH * s,
+      y: box.y + i * box.halfW * s + j * box.halfH * c,
+    }));
+  };
+  const [ca, cb] = [corners(a), corners(b)];
+  return axes.every(axis => {
+    const project = (points: { x: number; y: number }[]) => points.map(p => p.x * axis.x + p.y * axis.y);
+    const [pa, pb] = [project(ca), project(cb)];
+    return Math.max(...pa) + gap > Math.min(...pb) && Math.max(...pb) + gap > Math.min(...pa);
+  });
+}
+
+/** How many rounds labels are slid apart at most. */
+const LABEL_ROUNDS = 40;
+
+/** How far a label may slide from the middle of its link, as a share of the link's length. */
+const LABEL_SLIDE = 0.35;
+
+/**
+ * Slides overlapping labels apart, each along its own link, so no two labels cover each other: in rounds, each pair
+ * that overlaps moves apart a little, each label as far from the middle of its link as `LABEL_SLIDE` allows.
+ */
+export function separateLabels(cy: Core, scale: number): void {
+  const copies = cy.edges('.label-only');
+  copies.data({ shiftX: 0, shiftY: 0 });
+  const labels = copies.toArray().flatMap(edge => {
+    edge.boundingBox({ includeLabels: true });
+    // Where and how big the graph draws the label, kept among its own drawing data.
+    const drawn = (edge as unknown as { _private: { rscratch: Record<string, number> } })._private.rscratch;
+    if (!drawn['labelWidth'] || drawn['labelX'] === undefined) return [];
+    const [s, t] = [edge.source().position(), edge.target().position()];
+    const length = Math.hypot(t.x - s.x, t.y - s.y);
+    if (length === 0) return [];
+    return [
+      {
+        edge,
+        box: {
+          x: drawn['labelX'],
+          y: drawn['labelY'],
+          halfW: drawn['labelWidth'] / 2,
+          halfH: drawn['labelHeight'] / 2,
+          angle: edge.style('text-rotation') === 'autorotate' ? (drawn['labelAutoAngle'] ?? 0) : 0,
+        },
+        along: { x: (t.x - s.x) / length, y: (t.y - s.y) / length },
+        limit: length * LABEL_SLIDE,
+        shift: 0,
+      },
+    ];
+  });
+  const gap = 2 * scale;
+  for (let round = 0; round < LABEL_ROUNDS; round++) {
+    let moved = false;
+    for (let i = 0; i < labels.length; i++) {
+      for (let j = i + 1; j < labels.length; j++) {
+        const [a, b] = [labels[i], labels[j]];
+        if (!labelsOverlap(a.box, b.box, gap)) continue;
+        // Each away from the other along its own link, by a step of the smaller label's height.
+        const step = Math.min(a.box.halfH, b.box.halfH);
+        const apart = { x: b.box.x - a.box.x, y: b.box.y - a.box.y };
+        for (const [label, sign] of [
+          [a, -1],
+          [b, 1],
+        ] as const) {
+          const towards = Math.sign(apart.x * label.along.x + apart.y * label.along.y) || 1;
+          const next = Math.max(-label.limit, Math.min(label.limit, label.shift + sign * towards * step));
+          const delta = next - label.shift;
+          if (delta === 0) continue;
+          label.shift = next;
+          label.box.x += delta * label.along.x;
+          label.box.y += delta * label.along.y;
+          moved = true;
+        }
+      }
+    }
+    if (!moved) break;
+  }
+  for (const { edge, along, shift } of labels) {
+    if (shift !== 0) edge.data({ shiftX: along.x * shift, shiftY: along.y * shift });
+  }
+}
+
 /** Room on each side of a link's label, as text: an en space. */
 const LABEL_SIDE = ' ';
 

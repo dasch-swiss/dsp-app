@@ -1,4 +1,20 @@
-import { bendFor, withLabelsOnTop } from './edge-routes';
+import { bendFor, labelsOverlap, withLabelsOnTop } from './edge-routes';
+
+describe('labelsOverlap', () => {
+  const label = (x: number, y: number, angle = 0) => ({ x, y, halfW: 40, halfH: 8, angle });
+
+  it('finds two level labels covering each other, and none side by side', () => {
+    expect(labelsOverlap(label(0, 0), label(50, 10), 2)).toBe(true);
+    expect(labelsOverlap(label(0, 0), label(0, 20), 2)).toBe(false);
+  });
+
+  it('tells turned labels apart by their own sides, not the box round them', () => {
+    // Two parallel labels along a diagonal, one beside the other: their boxes overlap, the labels do not.
+    const turn = Math.PI / 4;
+    expect(labelsOverlap(label(0, 0, turn), label(-14, 14, turn), 2)).toBe(false);
+    expect(labelsOverlap(label(0, 0, turn), label(20, 20, turn), 2)).toBe(true);
+  });
+});
 
 describe('withLabelsOnTop', () => {
   it('adds, per link, a copy that writes its label with room on its sides', () => {
