@@ -6,6 +6,7 @@ import {
   linkedWith,
   propertyRows,
   propertyUsage,
+  searchGraph,
   throughProperties,
   toGraphElements,
   withInheritedLinks,
@@ -98,6 +99,49 @@ describe('toGraphElements with many links between two classes', () => {
 
     expect(edges.map(e => e.data['label'])).toEqual(['5 links', 'Link 0', 'Link 1']);
     expect(edges[0].classes).toBe('links');
+  });
+});
+
+describe('searchGraph', () => {
+  it('finds nothing for a blank text', () => {
+    expect(searchGraph(graph, '  ')).toBeUndefined();
+  });
+
+  it('keeps a class found with its links and the classes at their other end, ignoring case', () => {
+    const search = searchGraph(graph, 'lONEL')!;
+    expect([...search.hitClasses]).toEqual(['Lonely']);
+    expect([...search.classes]).toEqual(['Lonely']);
+    expect(search.links.size).toBe(0);
+
+    const person = searchGraph(graph, 'person')!;
+    expect([...person.classes].sort()).toEqual([Constants.Resource, 'Film', 'Person'].sort());
+    expect(person.links).toEqual(
+      new Set(['Film director Person', 'Film writer Person', `Person mentions ${Constants.Resource}`])
+    );
+    expect(person.hitLinks.size).toBe(0);
+  });
+
+  it('finds links by label or property name, keeping the classes at both ends', () => {
+    const search = searchGraph(graph, 'direct')!;
+    expect(search.hitClasses.size).toBe(0);
+    expect([...search.hitLinks]).toEqual(['Film director Person']);
+    expect([...search.classes]).toEqual(['Film', 'Person']);
+  });
+
+  it('names a link found among many by the one link drawn for them', () => {
+    const many = Array.from({ length: 5 }, (_, i) => ({
+      source: 'Film',
+      target: 'Person',
+      property: `p${i}`,
+      label: i === 3 ? 'Producer' : `Link ${i}`,
+      kind: 'link' as const,
+    }));
+    expect([...searchGraph({ nodes: graph.nodes, edges: many }, 'producer')!.hitLinks]).toEqual(['Film links Person']);
+  });
+
+  it('finds nothing for a text nowhere in the graph', () => {
+    const search = searchGraph(graph, 'sculpture')!;
+    expect(search.hitClasses.size + search.hitLinks.size).toBe(0);
   });
 });
 

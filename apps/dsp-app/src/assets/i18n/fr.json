@@ -754,6 +754,12 @@
       },
       "classesChosen": "{{count}} classes",
       "propertyFilter": "Propriété",
+      "search": {
+        "placeholder": "Rechercher classes et propriétés",
+        "found": "{{count}} trouvé(s)",
+        "none": "Aucun résultat",
+        "clear": "Effacer la recherche"
+      },
       "allProperties": "Toutes les propriétés",
       "propertiesChosen": "{{count}} propriétés",
       "levelLabels": "Libellés des liens à l’horizontale",

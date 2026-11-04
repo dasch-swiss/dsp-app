@@ -16,7 +16,7 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
+import type { Core, EdgeSingular, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
 import { routeEdges, separateLabels, withLabelsOnTop } from './edge-routes';
@@ -36,6 +36,7 @@ import {
   GRAPH_TEXT_SIZE,
   GraphLabels,
   graphScale,
+  GraphSearch,
   GraphSize,
   toGraphElements,
 } from './ontology-graph-elements';
@@ -76,6 +77,9 @@ const READABLE_SHARE = 0.6;
 
 /** How often, at most, links are routed again while a class is dragged, in ms. */
 const DRAG_ROUTE_MS = 100;
+
+/** How visible classes and links away from a search stay. */
+const SEARCH_FADE = 0.18;
 
 /** How long no layout must follow, on load, before the graph is shown. */
 const SETTLE_MS = 150;
@@ -308,6 +312,21 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     selector: 'edge.highlighted, edge.same-property',
     style: { width: 2 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
   },
+  // A search: what it found is outlined or drawn bold, what lies away from it fades; see `searchGraph`.
+  {
+    selector: 'node.search-hit',
+    style: {
+      'underlay-color': COLOR.primary,
+      'underlay-opacity': 0.25,
+      'underlay-padding': 5 * f,
+      'underlay-shape': 'round-rectangle',
+    },
+  },
+  {
+    selector: 'edge.search-hit',
+    style: { width: 2.4 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
+  },
+  { selector: '.faded', style: { opacity: SEARCH_FADE } },
 ];
 
 /**
@@ -607,6 +626,8 @@ export class OntologyGraphComponent {
   readonly linksLabel = input('links');
   /** The family of every class of the data model, for the Islands view; see `classFamilies`. */
   readonly families = input<Map<string, ClassFamily> | undefined>(undefined);
+  /** A search to show: what it found stands out, what lies away from it fades. Nothing found, nothing fades. */
+  readonly search = input<GraphSearch | undefined>(undefined);
 
   /** A class of this project was clicked; emits its IRI. */
   readonly classSelected = output<string>();
@@ -851,6 +872,35 @@ export class OntologyGraphComponent {
       if (!cy) return;
       cy.nodes().removeClass('selected');
       if (selected) cy.getElementById(selected).addClass('selected');
+    });
+    // Run after the classes and links are replaced, which drops their marks, so it reads the graph too.
+    effect(() => {
+      const cy = this._cy();
+      const search = this.search();
+      this.graph();
+      if (!cy) return;
+      cy.batch(() => {
+        cy.elements().removeClass('faded search-hit');
+        if (!search || (!search.hitClasses.size && !search.hitLinks.size)) return;
+        const classes = cy.nodes().not('.island, .family');
+        classes.filter(node => search.hitClasses.has(node.id())).addClass('search-hit');
+        classes.filter(node => !search.classes.has(node.id())).addClass('faded');
+        // A label is drawn on a copy of its link; see `withLabelsOnTop`.
+        const linkOf = (edge: EdgeSingular) => (edge.data('labelOf') as string | undefined) ?? edge.id();
+        cy.edges()
+          .filter(edge => search.hitLinks.has(linkOf(edge)))
+          .addClass('search-hit');
+        cy.edges()
+          .filter(edge => !search.links.has(linkOf(edge)))
+          .addClass('faded');
+        // A family's frame fades with all its classes; faded, it would fade them twice, so its children stay as set.
+        cy.nodes('.family')
+          .filter(family => family.children().not('.faded').empty())
+          .forEach(family => {
+            family.children().removeClass('faded');
+            family.addClass('faded');
+          });
+      });
     });
   }
 

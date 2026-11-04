@@ -30,6 +30,7 @@ import {
   GraphSize,
   linkedWith,
   localNameOf,
+  searchGraph,
   throughProperties,
   withInheritedLinks,
   withoutClasses,
@@ -138,6 +139,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [covered]="panelOpen() ? panelWidth : 0"
                 [colors]="colors()"
                 [families]="families()"
+                [search]="search()"
                 [anyResourceLabel]="t + '.anyResource' | translate"
                 [linksLabel]="'pages.ontologyMap.links' | translate"
                 (classSelected)="openPanel($event)"
@@ -146,84 +148,119 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 (backgroundClicked)="(panelIri() || propertyPanelIri()) && openPanel(undefined)" />
               <!-- One bar along the top, left of an open panel; on a narrow screen its two halves wrap. -->
               <div class="top-bar" [class.beside-panel]="panelOpen()">
-                <!-- What to show: the data model and its filters, on the left. -->
-                <div class="float filters">
-                  @if (counts(); as counts) {
-                    <span class="counts">{{ m + '.counts' | translate: counts }}</span>
-                  }
-                  <span class="divider"></span>
-                  <span class="chip" [class.active]="classFilter().mode">
-                    <button
-                      type="button"
-                      class="chip-trigger"
-                      data-cy="ontology-map-class-filter"
-                      [matMenuTriggerFor]="classFilterMenu">
-                      <mat-icon>filter_list</mat-icon>
-                      {{ m + '.classFilter' | translate }}
-                      @if (classChip(); as chip) {
-                        <b>{{ chip.label ?? (m + '.' + chip.key | translate: chip.params) }}</b>
-                      } @else {
-                        <mat-icon class="drop">arrow_drop_down</mat-icon>
+                <!-- What to show, on the left: the filters, and the search beside them. -->
+                <div class="top-left">
+                  <div class="float filters">
+                    @if (counts(); as counts) {
+                      <span class="counts">{{ m + '.counts' | translate: counts }}</span>
+                    }
+                    <span class="divider"></span>
+                    <span class="chip" [class.active]="classFilter().mode">
+                      <button
+                        type="button"
+                        class="chip-trigger"
+                        data-cy="ontology-map-class-filter"
+                        [matMenuTriggerFor]="classFilterMenu">
+                        <mat-icon>filter_list</mat-icon>
+                        {{ m + '.classFilter' | translate }}
+                        @if (classChip(); as chip) {
+                          <b>{{ chip.label ?? (m + '.' + chip.key | translate: chip.params) }}</b>
+                        } @else {
+                          <mat-icon class="drop">arrow_drop_down</mat-icon>
+                        }
+                      </button>
+                      @if (classFilter().mode) {
+                        <button
+                          type="button"
+                          class="chip-clear"
+                          data-cy="ontology-map-class-reset"
+                          [attr.aria-label]="m + '.resetFilter' | translate"
+                          [matTooltip]="m + '.resetFilter' | translate"
+                          (click)="clearFilters()">
+                          <mat-icon>close</mat-icon>
+                        </button>
                       }
-                    </button>
-                    @if (classFilter().mode) {
+                    </span>
+                    <mat-menu #classFilterMenu="matMenu">
+                      <ng-template matMenuContent>
+                        <app-filter-menu
+                          [options]="classMenuOptions()"
+                          [ticked]="classTicked()"
+                          [allLabel]="m + '.allClasses' | translate"
+                          (tickedChange)="onClassesTicked($event)"
+                          (only)="setFilter($event)" />
+                      </ng-template>
+                    </mat-menu>
+                    <span class="chip" [class.active]="propertyFilter().mode">
+                      <button
+                        type="button"
+                        class="chip-trigger"
+                        data-cy="ontology-map-property-filter"
+                        [matMenuTriggerFor]="propertyFilterMenu">
+                        <mat-icon>filter_list</mat-icon>
+                        {{ m + '.propertyFilter' | translate }}
+                        @if (propertyChip(); as chip) {
+                          <b>{{ chip.label ?? (m + '.' + chip.key | translate: chip.params) }}</b>
+                        } @else {
+                          <mat-icon class="drop">arrow_drop_down</mat-icon>
+                        }
+                      </button>
+                      @if (propertyFilter().mode) {
+                        <button
+                          type="button"
+                          class="chip-clear"
+                          data-cy="ontology-map-property-reset"
+                          [attr.aria-label]="m + '.resetFilter' | translate"
+                          [matTooltip]="m + '.resetFilter' | translate"
+                          (click)="clearFilters()">
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      }
+                    </span>
+                    <mat-menu #propertyFilterMenu="matMenu">
+                      <ng-template matMenuContent>
+                        <app-filter-menu
+                          [options]="propertyMenuOptions()"
+                          [ticked]="propertyTicked()"
+                          [allLabel]="m + '.allProperties' | translate"
+                          (tickedChange)="onPropertiesTicked($event)"
+                          (only)="setPropertyFilter($event)" />
+                      </ng-template>
+                    </mat-menu>
+                  </div>
+                  <!-- Typing fades what lies away from the classes and links found; nothing found, nothing fades. -->
+                  <label class="float search" [class.active]="searchText().trim()">
+                    <mat-icon>search</mat-icon>
+                    <input
+                      #searchInput
+                      type="search"
+                      data-cy="ontology-map-search"
+                      [placeholder]="m + '.search.placeholder' | translate"
+                      [attr.aria-label]="m + '.search.placeholder' | translate"
+                      [value]="searchText()"
+                      (input)="searchText.set(searchInput.value)"
+                      (keydown.escape)="clearSearch(searchInput)" />
+                    @if (searchFound(); as found) {
+                      <span class="search-count" data-cy="ontology-map-search-count">{{
+                        m + '.search.found' | translate: { count: found }
+                      }}</span>
+                    } @else if (searchFound() === 0) {
+                      <span class="search-count none" data-cy="ontology-map-search-none" role="status">{{
+                        m + '.search.none' | translate
+                      }}</span>
+                    }
+                    @if (searchText()) {
                       <button
                         type="button"
                         class="chip-clear"
-                        data-cy="ontology-map-class-reset"
-                        [attr.aria-label]="m + '.resetFilter' | translate"
-                        [matTooltip]="m + '.resetFilter' | translate"
-                        (click)="clearFilters()">
+                        data-cy="ontology-map-search-clear"
+                        [attr.aria-label]="m + '.search.clear' | translate"
+                        [matTooltip]="m + '.search.clear' | translate"
+                        (click)="clearSearch(searchInput)">
                         <mat-icon>close</mat-icon>
                       </button>
                     }
-                  </span>
-                  <mat-menu #classFilterMenu="matMenu">
-                    <ng-template matMenuContent>
-                      <app-filter-menu
-                        [options]="classMenuOptions()"
-                        [ticked]="classTicked()"
-                        [allLabel]="m + '.allClasses' | translate"
-                        (tickedChange)="onClassesTicked($event)"
-                        (only)="setFilter($event)" />
-                    </ng-template>
-                  </mat-menu>
-                  <span class="chip" [class.active]="propertyFilter().mode">
-                    <button
-                      type="button"
-                      class="chip-trigger"
-                      data-cy="ontology-map-property-filter"
-                      [matMenuTriggerFor]="propertyFilterMenu">
-                      <mat-icon>filter_list</mat-icon>
-                      {{ m + '.propertyFilter' | translate }}
-                      @if (propertyChip(); as chip) {
-                        <b>{{ chip.label ?? (m + '.' + chip.key | translate: chip.params) }}</b>
-                      } @else {
-                        <mat-icon class="drop">arrow_drop_down</mat-icon>
-                      }
-                    </button>
-                    @if (propertyFilter().mode) {
-                      <button
-                        type="button"
-                        class="chip-clear"
-                        data-cy="ontology-map-property-reset"
-                        [attr.aria-label]="m + '.resetFilter' | translate"
-                        [matTooltip]="m + '.resetFilter' | translate"
-                        (click)="clearFilters()">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    }
-                  </span>
-                  <mat-menu #propertyFilterMenu="matMenu">
-                    <ng-template matMenuContent>
-                      <app-filter-menu
-                        [options]="propertyMenuOptions()"
-                        [ticked]="propertyTicked()"
-                        [allLabel]="m + '.allProperties' | translate"
-                        (tickedChange)="onPropertiesTicked($event)"
-                        (only)="setPropertyFilter($event)" />
-                    </ng-template>
-                  </mat-menu>
+                  </label>
                 </div>
 
                 <!-- How to show it, and the Export menu: top right, left of an open panel. -->
@@ -462,6 +499,59 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         flex-wrap: wrap;
         gap: 4px 6px;
         padding-left: 14px;
+      }
+
+      .top-left {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .search {
+        gap: 6px;
+        height: 42px;
+        box-sizing: border-box;
+        padding: 0 8px 0 12px;
+        cursor: text;
+
+        &.active,
+        &:focus-within {
+          border-color: $primary;
+        }
+
+        > mat-icon {
+          flex: none;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          color: $cool_gray_500;
+        }
+
+        input {
+          width: 200px;
+          min-width: 0;
+          border: 0;
+          outline: 0;
+          background: none;
+          font: inherit;
+          font-size: 13px;
+
+          // The browser's own clear button; ours follows the count.
+          &::-webkit-search-cancel-button {
+            display: none;
+          }
+        }
+      }
+
+      .search-count {
+        white-space: nowrap;
+        font-size: 12px;
+        color: $cool_gray_500;
+
+        &.none {
+          color: $red_700;
+        }
       }
 
       // Wrapped onto a second line, the display controls stay on the right.
@@ -890,6 +980,25 @@ export class OntologyMapPageComponent {
 
   /** A property hovered in the class panel; the graph highlights its links. */
   readonly hoveredProperty = signal<string | undefined>(undefined);
+
+  /** The text searched in the graph's classes and links. */
+  readonly searchText = signal('');
+  /** The search in the classes and links drawn; see `searchGraph`. */
+  readonly search = computed(() => {
+    const graph = this.graphShown() ?? this.graph();
+    return graph ? searchGraph(graph, this.searchText()) : undefined;
+  });
+  /** How many classes and links the search found; none without a search. */
+  readonly searchFound = computed(() => {
+    const search = this.search();
+    return search ? search.hitClasses.size + search.hitLinks.size : undefined;
+  });
+
+  clearSearch(input: HTMLInputElement): void {
+    this.searchText.set('');
+    input.value = '';
+    input.focus();
+  }
 
   constructor() {
     // A panel that changes class, or closes, under the pointer never reports the pointer leaving its rows.

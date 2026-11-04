@@ -754,6 +754,12 @@
       },
       "classesChosen": "{{count}} Klassen",
       "propertyFilter": "Eigenschaft",
+      "search": {
+        "placeholder": "Klassen und Eigenschaften suchen",
+        "found": "{{count}} gefunden",
+        "none": "Kein Treffer",
+        "clear": "Suche löschen"
+      },
       "allProperties": "Alle Eigenschaften",
       "propertiesChosen": "{{count}} Eigenschaften",
       "levelLabels": "Verknüpfungsbeschriftungen waagrecht",

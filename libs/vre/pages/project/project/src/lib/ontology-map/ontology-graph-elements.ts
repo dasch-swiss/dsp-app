@@ -1,6 +1,6 @@
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import type { ElementDefinition } from 'cytoscape';
-import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
+import { DataModelEdge, DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
   ClassFamily,
   familyColor,
@@ -112,7 +112,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
         {
           group: 'edges',
           data: {
-            id: `${edge.source} ${edge.property} ${edge.target}`,
+            id: edgeIdOf(edge, count),
             source: edge.source,
             target: edge.target,
             ...texts(edge.label, edge.property),
@@ -129,7 +129,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
       {
         group: 'edges',
         data: {
-          id: `${edge.source} links ${edge.target}`,
+          id: edgeIdOf(edge, count),
           source: edge.source,
           target: edge.target,
           label,
@@ -423,3 +423,49 @@ export function withoutProperties(graph: DataModelGraph, propertyIris: readonly 
   const hidden = new Set(propertyIris);
   return { nodes: graph.nodes, edges: graph.edges.filter(edge => !hidden.has(edge.property)) };
 }
+
+/**
+ * What a search in the graph keeps sharp: the classes and links whose label or name holds the text, and around them
+ * their context, the links of a class found and the classes at both ends of a link found. The rest fades.
+ */
+export interface GraphSearch {
+  /** Classes found, by IRI. */
+  hitClasses: Set<string>;
+  /** Links found, by the ID of the edge drawn for them; see `toGraphElements`. */
+  hitLinks: Set<string>;
+  /** Classes kept sharp: those found and the classes at the other end of their links or of the links found. */
+  classes: Set<string>;
+  /** Edges kept sharp: the links found and every link of a class found. */
+  links: Set<string>;
+}
+
+/** The search for `text` in the classes and links of the graph, ignoring case; none for a blank text. */
+export function searchGraph(graph: DataModelGraph, text: string): GraphSearch | undefined {
+  const query = text.trim().toLowerCase();
+  if (!query) return undefined;
+  const holds = (label: string, iri: string) =>
+    label.toLowerCase().includes(query) || localNameOf(iri).toLowerCase().includes(query);
+  const drawn = graph.edges.filter(edge => edge.source !== edge.target);
+  const between = new Map<string, number>();
+  for (const edge of drawn) {
+    if (edge.kind === 'link') between.set(pairOf(edge), (between.get(pairOf(edge)) ?? 0) + 1);
+  }
+  const hitClasses = new Set(graph.nodes.filter(node => holds(node.label, node.id)).map(node => node.id));
+  const search: GraphSearch = { hitClasses, hitLinks: new Set(), classes: new Set(hitClasses), links: new Set() };
+  for (const edge of drawn) {
+    const id = edgeIdOf(edge, edge.kind === 'link' ? (between.get(pairOf(edge)) ?? 0) : 0);
+    const found = edge.kind === 'link' && holds(edge.label, edge.property);
+    if (found) search.hitLinks.add(id);
+    if (found || hitClasses.has(edge.source) || hitClasses.has(edge.target)) {
+      search.links.add(id);
+      search.classes.add(edge.source).add(edge.target);
+    }
+  }
+  return search;
+}
+
+const pairOf = (edge: DataModelEdge) => `${edge.source}\n${edge.target}`;
+
+/** The ID of the edge drawn for a link, one of `count` from its class to the same other; see `MAX_PARALLEL_LINKS`. */
+const edgeIdOf = (edge: DataModelEdge, count: number) =>
+  count > MAX_PARALLEL_LINKS ? `${edge.source} links ${edge.target}` : `${edge.source} ${edge.property} ${edge.target}`;

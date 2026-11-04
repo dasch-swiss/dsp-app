@@ -754,6 +754,12 @@
       },
       "classesChosen": "{{count}} classi",
       "propertyFilter": "Proprietà",
+      "search": {
+        "placeholder": "Cerca classi e proprietà",
+        "found": "{{count}} trovati",
+        "none": "Nessun risultato",
+        "clear": "Cancella la ricerca"
+      },
       "allProperties": "Tutte le proprietà",
       "propertiesChosen": "{{count}} proprietà",
       "levelLabels": "Etichette dei collegamenti orizzontali",
