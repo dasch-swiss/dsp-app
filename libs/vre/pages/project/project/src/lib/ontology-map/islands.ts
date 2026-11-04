@@ -246,9 +246,21 @@ export type LabelWidth = (edge: EdgeSingular) => number;
 /** Room left around a link's label on its line, at scale 1: some line on each side, and the arrowhead. */
 const LABEL_ROOM = 48;
 
+/**
+ * A block linked to only one other, itself linked to several: placed round the outside of the island where its link
+ * crosses fewest others, rather than by the force layout, which would leave it wherever there is room.
+ */
+interface Satellite {
+  block: Block;
+  /** The block it is linked to. */
+  anchor: string;
+}
+
 /** An island laid out by the force layout, before it is given its shape. */
 interface LinkedIsland {
+  /** The blocks the force layout places: all but the satellites. */
   blocks: Block[];
+  satellites: Satellite[];
   centers: Map<string, { x: number; y: number }>;
   /** Per pair of linked blocks, how long a line between them must be to show its labels. */
   links: Map<string, number>;
@@ -301,8 +313,7 @@ export function arrangeIslands(
     } else {
       const stored: string[] | undefined = island.scratch(START_ORDER);
       // An order kept for other blocks, from before the classes changed, is no start for these.
-      const known =
-        stored?.length === blocks.length && blocks.every(block => stored.includes(block.id)) ? stored : undefined;
+      const known = stored?.every(id => blocks.some(block => block.id === id)) ? stored : undefined;
       const runs = spread(blocks, cytoscape, room, labelWidth, known ? 'known' : search ? 'search' : 'first', known);
       // Of the force layout's runs, the one whose links cross least, then the smallest.
       const scored = runs.map(run => {
@@ -425,25 +436,32 @@ function spread(
       }
     }
   }
-  const radius = Math.max(100, (blocks.length * 160) / (2 * Math.PI));
+  const satellites = satellitesOf(blocks, links);
+  const core = blocks.filter(block => !satellites.some(satellite => satellite.block === block));
+  const coreLinks = new Map(
+    [...links].filter(([key]) => key.split('\n').every(id => core.some(block => block.id === id)))
+  );
+  const radius = Math.max(100, (core.length * 160) / (2 * Math.PI));
   const graph = cytoscape({
     headless: true,
     styleEnabled: true,
     style: [{ selector: 'node', style: { shape: 'rectangle', width: 'data(w)', height: 'data(h)' } }],
     elements: [
-      ...blocks.map(block => ({
+      ...core.map(block => ({
         group: 'nodes',
         // At scale 1, as the force layout's distances are set for it; its result is scaled up after.
         data: { id: block.id, w: (block.w + room.block) / room.scale, h: (block.h + room.block) / room.scale },
       })),
-      ...[...links].map(([link, length]) => {
+      ...[...coreLinks].map(([link, length]) => {
         const [source, target] = link.split('\n');
         return { group: 'edges', data: { source, target, length } };
       }),
     ],
   });
-  const ids = blocks.map(block => block.id);
-  const orders = starts === 'known' && known ? [known] : starts === 'search' ? startOrders(blocks, links) : [ids];
+  const ids = core.map(block => block.id);
+  // An order kept for other blocks, from before the classes changed, is no start for these.
+  const usable = known?.length === ids.length && ids.every(id => known.includes(id)) ? known : undefined;
+  const orders = starts === 'known' && usable ? [usable] : starts === 'search' ? startOrders(core, coreLinks) : [ids];
   const runs = orders.map(order => {
     order.forEach((id, i) =>
       graph.getElementById(id).position({
@@ -465,7 +483,7 @@ function spread(
       } as never)
       .run();
     const centers = new Map(
-      blocks.map(block => {
+      core.map(block => {
         const { x, y } = graph.getElementById(block.id).position();
         return [block.id, { x: x * room.scale, y: y * room.scale }];
       })
@@ -474,7 +492,21 @@ function spread(
   });
   graph.destroy();
   const scaled = new Map([...links].map(([key, length]) => [key, length * room.scale]));
-  return runs.map(({ order, centers }) => ({ blocks, centers, links: scaled, order }));
+  return runs.map(({ order, centers }) => ({ blocks: core, satellites, centers, links: scaled, order }));
+}
+
+/** The island's satellites: each block linked to one other only, which is itself linked to several. */
+function satellitesOf(blocks: Block[], links: Map<string, number>): Satellite[] {
+  const neighbours = new Map(blocks.map(block => [block.id, new Set<string>()]));
+  for (const key of links.keys()) {
+    const [a, b] = key.split('\n');
+    neighbours.get(a)?.add(b);
+    neighbours.get(b)?.add(a);
+  }
+  return blocks.flatMap(block => {
+    const [anchor, ...others] = neighbours.get(block.id)!;
+    return anchor && !others.length && neighbours.get(anchor)!.size > 1 ? [{ block, anchor }] : [];
+  });
 }
 
 /**
@@ -563,6 +595,120 @@ function placeIsland(island: LinkedIsland, aspect: number, room: Room): void {
   for (const block of island.blocks) {
     const center = centers.get(block.id)!;
     placeBlock(block, center.x - block.w / 2, center.y - block.h / 2, room);
+  }
+  placeSatellites(island, centers, room);
+}
+
+interface Bounds {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+const rectAt = (center: { x: number; y: number }, block: Block): Bounds => ({
+  x1: center.x - block.w / 2,
+  y1: center.y - block.h / 2,
+  x2: center.x + block.w / 2,
+  y2: center.y + block.h / 2,
+});
+
+/** How many directions round the graph a satellite may be placed in. */
+const DIRECTIONS = 36;
+
+type Point = { x: number; y: number };
+
+/** Whether the segments `a`–`b` and `c`–`d` cross, not merely meet. */
+function crosses(a: Point, b: Point, c: Point, d: Point): boolean {
+  const side = (p: Point, q: Point, r: Point) => Math.sign((q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x));
+  return side(a, b, c) * side(a, b, d) < 0 && side(c, d, a) * side(c, d, b) < 0;
+}
+
+/**
+ * Places the satellites all round the outside of the island's other blocks, each in the direction where its link,
+ * from the class it is linked to, crosses the fewest other links, the shortest among those; never over a block.
+ */
+function placeSatellites(island: LinkedIsland, centers: Map<string, Point>, room: Room): void {
+  if (!island.satellites.length) return;
+  const placed = island.blocks.map(block => rectAt(centers.get(block.id)!, block));
+  const outer = {
+    x1: Math.min(...placed.map(r => r.x1)),
+    y1: Math.min(...placed.map(r => r.y1)),
+    x2: Math.max(...placed.map(r => r.x2)),
+    y2: Math.max(...placed.map(r => r.y2)),
+  };
+  const middle = { x: (outer.x1 + outer.x2) / 2, y: (outer.y1 + outer.y2) / 2 };
+  // The links between the other blocks, and those of the satellites placed so far, as straight lines.
+  const core = new Set(island.blocks.flatMap(block => block.classes.map(node => node.id())));
+  const lines = island.blocks
+    .flatMap(block => block.classes)
+    .flatMap(node => node.connectedEdges('[^labelOf]').toArray())
+    .filter(edge => core.has(edge.source().id()) && core.has(edge.target().id()))
+    .map(edge => ({
+      ends: [edge.source().id(), edge.target().id()],
+      a: edge.source().position(),
+      b: edge.target().position(),
+    }));
+  const blockOf = new Map(island.blocks.map(block => [block.id, block]));
+  for (const satellite of island.satellites) {
+    // The class it links to: the one of that family it has most links with, the top class first among equals.
+    const anchor = blockOf.get(satellite.anchor)!;
+    const linksWith = (node: NodeSingular) =>
+      satellite.block.classes.reduce((sum, own) => sum + own.edgesWith(node).filter('[^labelOf]').length, 0);
+    const by = [...anchor.classes].sort(
+      (a, b) => linksWith(b) - linksWith(a) || Number(a.hasClass('sub')) - Number(b.hasClass('sub'))
+    )[0];
+    const from = by.position();
+    // Every class of the block it is linked to that it has links with, once per link: each is a line to it.
+    const ends = anchor.classes.flatMap(node => Array.from({ length: linksWith(node) }, () => node));
+    const label = island.links.get(pairKey(satellite.block.id, satellite.anchor)) ?? 0;
+    let best: { spot: Bounds; center: Point; cost: number } | undefined;
+    for (let ring = 0; !best && ring < 6; ring++) {
+      for (let k = 0; k < DIRECTIONS; k++) {
+        const angle = (2 * Math.PI * k) / DIRECTIONS;
+        const u = { x: Math.cos(angle), y: Math.sin(angle) };
+        // Just outside the other blocks in that direction, further out ring by ring where there is no room.
+        const exit = Math.min(
+          u.x > 0 ? (outer.x2 - middle.x) / u.x : u.x < 0 ? (outer.x1 - middle.x) / u.x : Infinity,
+          u.y > 0 ? (outer.y2 - middle.y) / u.y : u.y < 0 ? (outer.y1 - middle.y) / u.y : Infinity
+        );
+        const reach = Math.min(
+          u.x !== 0 ? satellite.block.w / 2 / Math.abs(u.x) : Infinity,
+          u.y !== 0 ? satellite.block.h / 2 / Math.abs(u.y) : Infinity
+        );
+        let distance = exit + 2 * room.block + reach + ring * 4 * room.block;
+        let center = { x: middle.x + u.x * distance, y: middle.y + u.y * distance };
+        // Far enough from the class it links to for the link's label.
+        const length = Math.hypot(center.x - from.x, center.y - from.y) - reach;
+        if (length < label) {
+          distance += label - length;
+          center = { x: middle.x + u.x * distance, y: middle.y + u.y * distance };
+        }
+        const spot = rectAt(center, satellite.block);
+        const clear = placed.every(
+          other =>
+            spot.x2 + room.block <= other.x1 ||
+            other.x2 + room.block <= spot.x1 ||
+            spot.y2 + room.block <= other.y1 ||
+            other.y2 + room.block <= spot.y1
+        );
+        if (!clear) continue;
+        const crossed = ends.reduce(
+          (sum, end) =>
+            sum +
+            lines.filter(line => !line.ends.includes(end.id()) && crosses(end.position(), center, line.a, line.b))
+              .length,
+          0
+        );
+        // Each crossing outweighs any length.
+        const cost = crossed * 1e6 + Math.hypot(center.x - from.x, center.y - from.y);
+        if (!best || cost < best.cost) best = { spot, center, cost };
+      }
+    }
+    if (!best) continue;
+    placeBlock(satellite.block, best.spot.x1, best.spot.y1, room);
+    placed.push(best.spot);
+    lines.push(...ends.map(end => ({ ends: [end.id()], a: end.position(), b: best!.center })));
   }
 }
 
