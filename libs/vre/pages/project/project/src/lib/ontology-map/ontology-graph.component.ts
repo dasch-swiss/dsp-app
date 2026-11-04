@@ -18,7 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import type { Core, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
-import { routeEdges } from './edge-routes';
+import { routeEdges, withLabelsOnTop } from './edge-routes';
 import {
   arrangeIslands,
   ClassFamily,
@@ -253,12 +253,19 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'font-size': LINK_FONT_SIZE * f,
       color: COLOR.text,
       'text-rotation': text.levelLabels ? 'none' : 'autorotate',
+      // A label hides the line behind it; the room on its sides is in its text, see `withLabelsOnTop`.
       'text-background-color': '#F9FAFB',
-      'text-background-opacity': 0.9,
-      'text-background-padding': '1px',
+      'text-background-opacity': 1,
+      'text-background-padding': `${f}px`,
       // Labels give way when zoomed out, so a big model stays readable.
       'min-zoomed-font-size': 7,
     },
+  },
+  // Each link is drawn twice: its line without a label, then above every line its label on an unseen line.
+  { selector: 'edge[^labelOf]', style: { label: '' } },
+  {
+    selector: 'edge.label-only',
+    style: { 'line-opacity': 0, 'target-arrow-shape': 'none', 'z-index': 1 },
   },
   // A link that would pass through a class's box bends round it; see `routeEdges`.
   {
@@ -697,7 +704,7 @@ export class OntologyGraphComponent {
       if (shown === this._shown) return;
       this._shown = shown;
       cy.elements().remove();
-      cy.add(untracked(() => this._elements()));
+      cy.add(withLabelsOnTop(untracked(() => this._elements())));
       measureIconBoxes(cy);
       this._arrange(cy, layout);
     });

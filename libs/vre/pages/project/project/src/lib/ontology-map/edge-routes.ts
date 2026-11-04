@@ -1,4 +1,4 @@
-import type { Core } from 'cytoscape';
+import type { Core, ElementDefinition } from 'cytoscape';
 
 /** A point on the graph. */
 export interface Point {
@@ -104,15 +104,50 @@ export function bendFor(source: Point, target: Point, boxes: Rect[], clearance: 
   return { distance: best.distance, weight: best.weight };
 }
 
+/** Room on each side of a link's label, as text: an en space. */
+const LABEL_SIDE = ' ';
+
+/**
+ * The elements with each link drawn twice, so no line crosses a label: the link itself, whose label the graph does
+ * not write, and after it a copy that only writes the label, on an unseen line drawn over every link's line. The
+ * copy keeps the link's data and classes, so it is clicked and highlighted as the link; its texts get room on their
+ * sides.
+ */
+export function withLabelsOnTop(elements: ElementDefinition[]): ElementDefinition[] {
+  const sided = (text: unknown) =>
+    typeof text === 'string' && text
+      ? text
+          .split('\n')
+          .map(line => `${LABEL_SIDE}${line}${LABEL_SIDE}`)
+          .join('\n')
+      : text;
+  const labels = elements
+    .filter(element => element.group === 'edges')
+    .map(edge => ({
+      ...edge,
+      data: {
+        ...edge.data,
+        id: `${edge.data.id} label`,
+        labelOf: edge.data.id,
+        label: sided(edge.data['label']),
+        name: sided(edge.data['name']),
+        both: sided(edge.data['both']),
+      },
+      classes: `${edge.classes ?? ''} label-only`.trim(),
+    }));
+  return [...elements, ...labels];
+}
+
 /**
  * Bends every link that would pass through a class's box round it, `scale` times as far from the boxes as at scale
- * 1; links clear of every box stay straight. Several links between the same two classes bend side by side.
+ * 1; links clear of every box stay straight. Several links between the same two classes bend side by side. The copy
+ * that writes a link's label (see `withLabelsOnTop`) follows the same line.
  */
 export function routeEdges(cy: Core, scale: number): void {
   const classes = cy.nodes().filter(node => !node.isParent());
   const boxes = new Map(classes.map(node => [node.id(), node.boundingBox({ includeLabels: false })]));
   const pairs = new Map<string, string[]>();
-  cy.edges().forEach(edge => {
+  cy.edges('[^labelOf]').forEach(edge => {
     const [source, target] = [edge.source().id(), edge.target().id()];
     if (source === target) return;
     const key = source < target ? `${source}\n${target}` : `${target}\n${source}`;
@@ -126,17 +161,15 @@ export function routeEdges(cy: Core, scale: number): void {
     const bend = bendFor(source.position(), target.position(), others, CLEARANCE * scale, offsets);
     ids.forEach((id, i) => {
       const edge = cy.getElementById(id);
-      // A lone straight link is left to the graph; links side by side are all placed here, the middle one too.
-      if (ids.length === 1 && bend.distance === 0) {
-        edge.removeData('bend weight');
-        return;
-      }
+      // Every link gets its line here, a straight one too: left to the graph, it would be bundled with its copy.
       // Seen from its own source, so a link going the other way bends the other way round, its peak as far along.
       const forward = edge.source().id() === source.id();
-      edge.data({
+      const line = {
         bend: (forward ? 1 : -1) * (bend.distance + offsets[i]),
         weight: forward ? bend.weight : 1 - bend.weight,
-      });
+      };
+      edge.data(line);
+      cy.getElementById(`${id} label`).data(line);
     });
   }
 }

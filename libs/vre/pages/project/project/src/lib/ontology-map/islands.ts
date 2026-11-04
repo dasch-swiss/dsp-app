@@ -492,7 +492,7 @@ function startOrders(blocks: Block[], links: Map<string, number>): string[][] {
 function linkCrossings(island: NodeSingular): number {
   const segments = island
     .descendants()
-    .connectedEdges()
+    .connectedEdges('[^labelOf]')
     .toArray()
     .filter(edge => edge.source().id() !== edge.target().id())
     .map(edge => ({

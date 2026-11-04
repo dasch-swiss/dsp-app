@@ -1,4 +1,23 @@
-import { bendFor } from './edge-routes';
+import { bendFor, withLabelsOnTop } from './edge-routes';
+
+describe('withLabelsOnTop', () => {
+  it('adds, per link, a copy that writes its label with room on its sides', () => {
+    const elements = withLabelsOnTop([
+      { group: 'nodes', data: { id: 'A' } },
+      {
+        group: 'edges',
+        data: { id: 'A p B', source: 'A', target: 'B', label: 'Part of', both: 'Part of\npartOf' },
+        classes: 'link',
+      },
+    ]);
+
+    expect(elements.map(e => e.data.id)).toEqual(['A', 'A p B', 'A p B label']);
+    expect(elements[2].data).toEqual(
+      expect.objectContaining({ labelOf: 'A p B', label: ' Part of ', both: ' Part of \n partOf ' })
+    );
+    expect(elements[2].classes).toBe('link label-only');
+  });
+});
 
 describe('bendFor', () => {
   const source = { x: 0, y: 0 };
