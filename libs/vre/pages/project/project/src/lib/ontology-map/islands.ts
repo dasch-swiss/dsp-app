@@ -207,11 +207,11 @@ export function textureImage(texture: FamilyTexture, color: string, sub = false)
 }
 
 /** Room between islands, and between a column of small islands and the next, at scale 1. */
-const ISLAND_GAP = 48;
+const ISLAND_GAP = 24;
 /** Room between the classes of a family, and between blocks laid side by side, at scale 1. */
 const BLOCK_GAP = 28;
 /** Room inside an island's frame, at scale 1; the graph's stylesheet draws it. */
-export const ISLAND_PADDING = 28;
+export const ISLAND_PADDING = 12;
 /** Subclasses side by side under their family's top class, at most. */
 const FAMILY_COLUMNS = 3;
 /** Room a family's frame and its title take around its classes, at scale 1. */
@@ -844,13 +844,14 @@ interface Box {
 
 /** Where each island is: measured from its classes, as a frame's own box may not follow them yet, plus its frame. */
 function islandBoxes(islands: NodeSingular[], room: Room): Box[] {
-  const margin = ISLAND_PADDING * room.scale + room.top;
+  // Its padding, and round a family its frame: a little on the sides and below, its name above.
+  const [side, top] = [ISLAND_PADDING * room.scale + room.side, ISLAND_PADDING * room.scale + room.top];
   return islands.map(island => {
     const box = island
       .descendants()
       .filter(node => !node.isParent())
       .boundingBox({});
-    return { x1: box.x1 - margin, y1: box.y1 - margin, w: box.w + 2 * margin, h: box.h + 2 * margin };
+    return { x1: box.x1 - side, y1: box.y1 - top, w: box.w + 2 * side, h: box.h + top + side };
   });
 }
 
