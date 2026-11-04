@@ -78,6 +78,8 @@ const sameFilter = (a: ListFilter, b: ListFilter) =>
 const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
 const SIZE_KEY = 'dsp-ontology-map-size';
+/** How wide a class or property panel is, at most half the page; its styles say the same. */
+const PANEL_WIDTH = 440;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
@@ -132,6 +134,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [levelLabels]="levelLabels()"
                 [labels]="labels()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
+                [covered]="panelOpen() ? panelWidth : 0"
                 [colors]="colors()"
                 [families]="families()"
                 [anyResourceLabel]="t + '.anyResource' | translate"
@@ -900,6 +903,8 @@ export class OntologyMapPageComponent {
 
   /** Whether a class or property panel covers the right of the graph. */
   readonly panelOpen = computed(() => !!(this.panelIri() || this.propertyPanelIri()));
+  /** How wide an open panel is, over the right of the graph, as its styles draw it. */
+  readonly panelWidth = PANEL_WIDTH;
 
   /** The class whose panel is open. */
   readonly panelIri = computed(() => this._classFromUrl(ONTOLOGY_MAP_PARAM.panel));

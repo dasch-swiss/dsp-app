@@ -596,6 +596,11 @@ export class OntologyGraphComponent {
   readonly labels = input<GraphLabels>('labels');
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
+  /**
+   * How wide a panel lying over the right of the graph is, in px, at most half the box: classes laid out or fitted
+   * while it is open keep left of it. Opening or closing it moves nothing.
+   */
+  readonly covered = input(0);
   /** Label for knora-api's "any resource" node, in the current language. */
   readonly anyResourceLabel = input('Any resource');
   /** The word after the count on a link standing for several, as in "5 links", in the current language. */
@@ -969,13 +974,20 @@ export class OntologyGraphComponent {
     return room.h > 0 ? room.w / room.h : 16 / 9;
   }
 
-  /** The room the model is fitted in, in screen pixels: the box less its padding and the Islands view's legend. */
+  /**
+   * The room the model is fitted in, in screen pixels: the box less its padding, the tools above, the legend below
+   * and an open panel on the right.
+   */
   private _room(cy: Core): { x: number; y: number; w: number; h: number } {
     const legend = this._legend()?.nativeElement.offsetHeight ?? 0;
+    const covered = Math.min(
+      untracked(() => this.covered()),
+      cy.width() / 2
+    );
     return {
       x: FIT_PADDING,
       y: TOOLBAR_ROOM,
-      w: cy.width() - 2 * FIT_PADDING,
+      w: cy.width() - 2 * FIT_PADDING - covered,
       h: cy.height() - TOOLBAR_ROOM - FIT_PADDING - legend,
     };
   }
