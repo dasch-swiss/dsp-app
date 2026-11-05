@@ -897,7 +897,8 @@
         "editLabel": "Modifier le libellé ({{language}}) de {{class}}",
         "addLabel": "Ajouter un libellé ({{language}}) à {{class}}"
       },
-      "allLanguages": "Toutes les langues"
+      "allLanguages": "Toutes les langues",
+      "colLinkedFrom": "Lié depuis"
     }
   },
   "resourceEditor": {

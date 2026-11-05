@@ -897,7 +897,8 @@
         "editLabel": "Bezeichnung ({{language}}) von {{class}} bearbeiten",
         "addLabel": "Bezeichnung ({{language}}) zu {{class}} hinzufügen"
       },
-      "allLanguages": "Alle Sprachen"
+      "allLanguages": "Alle Sprachen",
+      "colLinkedFrom": "Verlinkt von"
     }
   },
   "resourceEditor": {

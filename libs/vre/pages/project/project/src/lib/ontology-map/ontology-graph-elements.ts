@@ -375,6 +375,8 @@ export interface ClassRow {
   propertyList: { id: string; label: string; type: string; linkTarget?: string }[];
   /** The classes it links to, each once, its superclasses' links included. */
   linksTo: string[];
+  /** The classes that link to it, each once, their superclasses' links included. */
+  linkedFrom: string[];
   /** Its superclass in the data model, for a subclass. */
   superclass?: string;
   /** How many superclasses up it is from a top class: 0 for a top class, 1 for its subclasses, and so on. */
@@ -427,6 +429,13 @@ export function classRows(graph: DataModelGraph): ClassRow[] {
         edges
           .filter(edge => edge.kind === 'link' && edge.source === node.id && edge.target !== node.id)
           .map(edge => edge.target)
+      ),
+    ],
+    linkedFrom: [
+      ...new Set(
+        edges
+          .filter(edge => edge.kind === 'link' && edge.target === node.id && edge.source !== node.id)
+          .map(edge => edge.source)
       ),
     ],
     ...(superclassOf.has(node.id) ? { superclass: superclassOf.get(node.id) } : {}),

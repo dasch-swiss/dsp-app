@@ -897,7 +897,8 @@
         "editLabel": "Modifica l'etichetta ({{language}}) di {{class}}",
         "addLabel": "Aggiungi un'etichetta ({{language}}) a {{class}}"
       },
-      "allLanguages": "Tutte le lingue"
+      "allLanguages": "Tutte le lingue",
+      "colLinkedFrom": "Collegata da"
     }
   },
   "resourceEditor": {

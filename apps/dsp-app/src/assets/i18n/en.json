@@ -897,7 +897,8 @@
         "editLabel": "Edit the {{language}} label of {{class}}",
         "addLabel": "Add a {{language}} label to {{class}}"
       },
-      "allLanguages": "All languages"
+      "allLanguages": "All languages",
+      "colLinkedFrom": "Linked from"
     }
   },
   "resourceEditor": {

@@ -360,6 +360,7 @@ describe('classRows and propertyRows', () => {
           { id: 'x#director', label: 'Director', type: 'Link', linkTarget: 'x#Person' },
         ],
         linksTo: ['x#Person'],
+        linkedFrom: [],
         depth: 0,
       },
       {
@@ -373,6 +374,7 @@ describe('classRows and propertyRows', () => {
         properties: 1,
         propertyList: [{ id: 'x#title', label: 'Title', type: 'Text' }],
         linksTo: [],
+        linkedFrom: ['x#Film'],
         depth: 0,
       },
     ]);

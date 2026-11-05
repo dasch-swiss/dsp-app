@@ -60,16 +60,24 @@ const FAMILY_TINT = 0.2;
 const DENSITY_KEY = 'dsp-data-models-classes-density';
 const WIDTHS_KEY = 'dsp-data-models-classes-widths';
 
-type Column = 'class' | 'file' | 'description' | 'properties' | 'linksTo';
+type Column = 'class' | 'file' | 'description' | 'properties' | 'linksTo' | 'linkedFrom';
 const DEFAULT_WIDTHS: Record<Column, number> = {
   class: 240,
   file: 120,
   description: 320,
   properties: 420,
   linksTo: 240,
+  linkedFrom: 240,
 };
 /** Below these, a header's name and filter button no longer fit. */
-const MIN_WIDTHS: Record<Column, number> = { class: 140, file: 90, description: 140, properties: 160, linksTo: 130 };
+const MIN_WIDTHS: Record<Column, number> = {
+  class: 140,
+  file: 90,
+  description: 140,
+  properties: 160,
+  linksTo: 130,
+  linkedFrom: 130,
+};
 
 const readWidths = (): Partial<Record<Column, number>> => {
   try {
@@ -583,6 +591,69 @@ const readDensity = (): Density => {
                 </span>
                 @if (!expanded && row.linksTo.length > maxLinks) {
                   <span class="more">+{{ row.linksTo.length - maxLinks }}</span>
+                }
+              </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="linkedFrom">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              [style.width.px]="widthOf('linkedFrom')"
+              [class.filtered]="sources().size">
+              <span class="header">
+                <span class="header-label">{{ r + '.colLinkedFrom' | translate }}</span>
+                <button
+                  type="button"
+                  class="filter"
+                  data-cy="data-model-classes-filter-linked-from"
+                  [class.on]="sources().size"
+                  [attr.aria-label]="r + '.filterOn' | translate: { column: r + '.colLinkedFrom' | translate }"
+                  [matMenuTriggerFor]="sourceMenu">
+                  <mat-icon>filter_list</mat-icon>
+                </button>
+              </span>
+              <mat-menu #sourceMenu="matMenu" xPosition="before">
+                <div
+                  class="filter-menu"
+                  (click)="$event.stopPropagation()"
+                  (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
+                  <span class="filter-head">
+                    <span class="filter-heading">{{ r + '.colLinkedFrom' | translate }}</span>
+                    <button mat-button type="button" class="filter-all" (click)="toggleAll(sources, sourceOptions())">
+                      {{ (allOn(sources(), sourceOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+                    </button>
+                  </span>
+                  @for (option of sourceOptions(); track option) {
+                    <mat-checkbox [checked]="sources().has(option)" (change)="toggle(sources, option)">{{
+                      state.labelOf(option)
+                    }}</mat-checkbox>
+                  }
+                </div>
+              </mat-menu>
+              <span
+                appColumnResize
+                data-cy="data-model-classes-resize"
+                [minWidth]="minWidths.linkedFrom"
+                [defaultWidth]="defaultWidths.linkedFrom"
+                [width]="widthOf('linkedFrom')"
+                [attr.aria-label]="r + '.resizeColumn' | translate"
+                (widthChanged)="resize('linkedFrom', $event)"
+                (widthReset)="resize('linkedFrom', undefined)"></span>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <span class="line">
+                <span class="cut">
+                  @for (source of shownLinkedFrom(row); track source) {
+                    <span class="chip" [style.background]="state.colors().get(source) ?? '#F3F4F6'">{{
+                      state.labelOf(source)
+                    }}</span>
+                  } @empty {
+                    <span class="none">—</span>
+                  }
+                </span>
+                @if (!expanded && row.linkedFrom.length > maxLinks) {
+                  <span class="more">+{{ row.linkedFrom.length - maxLinks }}</span>
                 }
               </span>
             </td>
@@ -1151,7 +1222,7 @@ export class DataModelClassesComponent {
   ];
   private readonly _params = toSignal(this._route.queryParamMap);
 
-  readonly columns = ['class', 'file', 'description', 'properties', 'linksTo'];
+  readonly columns = ['class', 'file', 'description', 'properties', 'linkedFrom', 'linksTo'];
   readonly maxProperties = MAX_PROPERTIES;
   readonly maxLinks = MAX_LINKS;
   readonly noFile = NO_FILE;
@@ -1180,6 +1251,7 @@ export class DataModelClassesComponent {
   readonly describedAs = signal('');
   readonly types = signal(new Set<string>());
   readonly targets = signal(new Set<string>());
+  readonly sources = signal(new Set<string>());
 
   /** What each filter offers: what the classes have. */
   readonly fileOptions = computed(() => {
@@ -1189,6 +1261,11 @@ export class DataModelClassesComponent {
   readonly typeOptions = computed(() =>
     [...new Set(this.state.classRows().flatMap(row => row.propertyList.map(property => property.type)))].sort((a, b) =>
       typeNameOf(a).localeCompare(typeNameOf(b))
+    )
+  );
+  readonly sourceOptions = computed(() =>
+    [...new Set(this.state.classRows().flatMap(row => row.linkedFrom))].sort((a, b) =>
+      this.state.labelOf(a).localeCompare(this.state.labelOf(b))
     )
   );
   readonly targetOptions = computed(() =>
@@ -1204,6 +1281,7 @@ export class DataModelClassesComponent {
     const describedAs = this.describedAs().trim().toLowerCase();
     const types = this.types();
     const targets = this.targets();
+    const sources = this.sources();
     return this.state
       .classRows()
       .filter(row => !query || row.label.toLowerCase().includes(query) || row.name.toLowerCase().includes(query))
@@ -1216,7 +1294,8 @@ export class DataModelClassesComponent {
           row.descriptions.some(text => text.value.toLowerCase().includes(describedAs))
       )
       .filter(row => !types.size || row.propertyList.some(property => types.has(property.type)))
-      .filter(row => !targets.size || row.linksTo.some(target => targets.has(target)));
+      .filter(row => !targets.size || row.linksTo.some(target => targets.has(target)))
+      .filter(row => !sources.size || row.linkedFrom.some(source => sources.has(source)));
   });
 
   /** Every row of a family with subclasses, main class included, in the family's tone. */
@@ -1299,6 +1378,11 @@ export class DataModelClassesComponent {
   /** The classes a row shows it links to: the first few condensed, all of them expanded. */
   shownLinks(row: ClassRow): string[] {
     return this.density() === 'expanded' ? row.linksTo : row.linksTo.slice(0, MAX_LINKS);
+  }
+
+  /** The classes a row shows it is linked from: the first few condensed, all of them expanded. */
+  shownLinkedFrom(row: ClassRow): string[] {
+    return this.density() === 'expanded' ? row.linkedFrom : row.linkedFrom.slice(0, MAX_LINKS);
   }
 
   /** Whether every option of a filter is ticked. */
