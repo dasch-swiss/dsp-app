@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "sharedGlobals": [],
+    "sharedGlobals": ["{workspaceRoot}/libs/vre/ui/styles/**/*"],
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
