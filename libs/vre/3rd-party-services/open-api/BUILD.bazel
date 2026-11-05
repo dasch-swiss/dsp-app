@@ -1,0 +1,23 @@
+load("@bazel_lib//lib:run_binary.bzl", "run_binary")
+load("//tools/openapi:openapi_files.bzl", "OPENAPI_FILES")
+
+# The generated client. The arguments restate openapitools.json's `generators.api`; change both
+# together (the file is an input so an edit to it reruns the action).
+run_binary(
+    name = "generated",
+    srcs = [
+        "dsp-api_spec.yaml",
+        "openapitools.json",
+    ],
+    outs = ["generated/" + f for f in OPENAPI_FILES],
+    args = [
+        "generate",
+        "--generator-name=typescript-angular",
+        "--input-spec=$(execpath dsp-api_spec.yaml)",
+        "--output=$(RULEDIR)/generated",
+        "--additional-properties=fileNaming=kebab-case,serviceFileSuffix=-api.service,serviceSuffix=ApiService,ngModule=false",
+    ],
+    execution_requirements = {"block-network": "1"},
+    mnemonic = "OpenApiGenerate",
+    tool = "//tools/openapi:openapi_generator",
+)
