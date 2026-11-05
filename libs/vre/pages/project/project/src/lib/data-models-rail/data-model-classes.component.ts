@@ -36,8 +36,8 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
 /** How many properties and linked classes a condensed row shows; the others are counted. */
 const MAX_PROPERTIES = 3;
 const MAX_LINKS = 2;
-/** How strongly a subclass row is tinted with its family's hue. */
-const SUBCLASS_TINT = 0.2;
+/** How strongly the rows of a family with subclasses are tinted with its hue. */
+const FAMILY_TINT = 0.2;
 const DENSITY_KEY = 'dsp-data-models-classes-density';
 /** The File filter's value for classes without file. */
 const NO_FILE = 'none';
@@ -285,7 +285,6 @@ const readDensity = (): Density => {
             </th>
             <td mat-cell *matCellDef="let row">
               <span class="line">
-                <span class="count">{{ row.properties }}</span>
                 <!-- Condensed, the chips give way to the cell's width; the count of the others stays in view. -->
                 <span class="cut">
                   @for (property of shownProperties(row); track property.id) {
@@ -612,14 +611,6 @@ const readDensity = (): Density => {
         mask-image: linear-gradient(to left, transparent, black 16px);
       }
 
-      .count {
-        flex: none;
-        margin-right: 4px;
-        font-size: 12px;
-        font-weight: 500;
-        color: $cool_gray_600;
-      }
-
       .property {
         flex: none;
         padding: 0 7px;
@@ -666,10 +657,6 @@ const readDensity = (): Density => {
 
         .line {
           align-items: flex-start;
-        }
-
-        .count {
-          line-height: 22px;
         }
 
         .cut {
@@ -737,13 +724,15 @@ export class DataModelClassesComponent {
       .filter(row => !targets.size || row.linksTo.some(target => targets.has(target)));
   });
 
-  /** A subclass's row in its family's tone, lighter than the family's colour. */
+  /** Every row of a family with subclasses, main class included, in the family's tone. */
   readonly tints = computed(() => {
     const graph = this.state.graph();
     const tints = new Map<string, string>();
     if (!graph) return tints;
-    for (const [iri, family] of classFamilies(graph)) {
-      if (family.sub) tints.set(iri, familyTint(familyHue(family.index).base, SUBCLASS_TINT));
+    const families = classFamilies(graph);
+    const withSubclasses = new Set([...families.values()].filter(family => family.sub).map(family => family.root));
+    for (const [iri, family] of families) {
+      if (withSubclasses.has(family.root)) tints.set(iri, familyTint(familyHue(family.index).base, FAMILY_TINT));
     }
     return tints;
   });
