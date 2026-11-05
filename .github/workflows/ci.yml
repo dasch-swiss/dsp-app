@@ -111,8 +111,8 @@ jobs:
 
           echo "only_workflows=$only_workflows" >> "$GITHUB_OUTPUT"
 
-          # only_pkg: every changed file is package.json or package-lock.json
-          if echo "$DIFF" | grep -qvE '^(package\.json|package-lock\.json)$'; then
+          # only_pkg: every changed file is package.json or pnpm-lock.yaml
+          if echo "$DIFF" | grep -qvE '^(package\.json|pnpm-lock\.yaml)$'; then
             echo "only_pkg=false" >> "$GITHUB_OUTPUT"
           else
             echo "only_pkg=true"  >> "$GITHUB_OUTPUT"
@@ -135,17 +135,12 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Set up pnpm and install dependencies
+        uses: ./.github/actions/setup-pnpm
       - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
+        run: pnpm run generate-openapi-module
       - name: Run linting
-        run: npx nx run-many --all --target=lint --skip-nx-cache
+        run: pnpm exec nx run-many --all --target=lint --skip-nx-cache
 
   test:
     name: DSP-APP Unit tests
@@ -164,17 +159,12 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Set up pnpm and install dependencies
+        uses: ./.github/actions/setup-pnpm
       - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
+        run: pnpm run generate-openapi-module
       - name: Run tests with coverage
-        run: npm run unit-test-coverage-ci
+        run: pnpm run unit-test-coverage-ci
         env:
           TZ: Europe/Zurich
       - name: Upload coverage reports to Codecov
@@ -213,27 +203,22 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
       - name: Cache Cypress binary
         uses: actions/cache@v6
         with:
           path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: cypress-${{ runner.os }}-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Set up pnpm and install dependencies
+        uses: ./.github/actions/setup-pnpm
       - name: Install Cypress binary
-        run: npx cypress install
+        run: pnpm exec cypress install
       - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
+        run: pnpm run generate-openapi-module
       - name: Type-check e2e specs
-        run: npx tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json
+        run: pnpm exec tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json
       - name: Start app (background)
-        run: npx nx run dsp-app:serve:production &
+        run: pnpm exec nx run dsp-app:serve:production &
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
       - name: Checkout DSP-API repo
@@ -254,7 +239,7 @@ jobs:
         run: timeout 180 bash -c 'until curl -sf http://localhost:4200 > /dev/null 2>&1; do sleep 3; done'
       - name: Run e2e tests in CI
         working-directory: apps/dsp-app
-        run: npx cypress run --browser chrome --spec "${{ matrix.specs }}"
+        run: pnpm exec cypress run --browser chrome --spec "${{ matrix.specs }}"
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         if: failure()
@@ -337,15 +322,12 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-      - name: Set up npm
+      - name: Set up pnpm and install dependencies
         if: always() && steps.check.outputs.exit_code == '1'
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        if: always() && steps.check.outputs.exit_code == '1'
-        run: npm ci --ignore-scripts
+        uses: ./.github/actions/setup-pnpm
       - name: Update OpenAPI spec
         if: always() && steps.check.outputs.exit_code == '1'
-        run: npm run update-openapi
+        run: pnpm run update-openapi
       - name: Create PR if spec changed
         if: always() && steps.check.outputs.exit_code == '1'
         run: |
@@ -445,24 +427,19 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Set up pnpm and install dependencies
+        uses: ./.github/actions/setup-pnpm
       - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
+        run: pnpm run generate-openapi-module
       - name: Build Storybook
-        run: npx nx run dsp-app:build-storybook:ci
+        run: pnpm exec nx run dsp-app:build-storybook:ci
       - name: Install Playwright browsers
-        run: npx playwright install chromium
+        run: pnpm exec playwright-core install chromium
       - name: Serve and run interaction tests
         run: |
-          npx http-server dist/storybook --port 6006 --silent &
-          npx wait-on tcp:6006 --timeout 60000
-          npx nx run dsp-app:test-storybook:ci -- --maxWorkers=2
+          pnpm exec http-server dist/storybook --port 6006 --silent &
+          pnpm exec wait-on tcp:6006 --timeout 60000
+          pnpm exec nx run dsp-app:test-storybook:ci -- --maxWorkers=2
 
   pixeleye:
     name: Pixeleye Snapshots
@@ -511,25 +488,20 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Set up pnpm and install dependencies
+        uses: ./.github/actions/setup-pnpm
       - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
+        run: pnpm run generate-openapi-module
       - name: Build Storybook
-        run: npx nx run dsp-app:build-storybook:ci
+        run: pnpm exec nx run dsp-app:build-storybook:ci
       - name: Cache Playwright browsers
-        # `npm ci --ignore-scripts` suppresses playwright's postinstall, so
+        # `pnpm install --ignore-scripts` suppresses playwright's postinstall, so
         # browsers must be installed explicitly below. Caching keeps the
         # marginal cost of this job over storybook-tests honest.
         uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
-          key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: ms-playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: ms-playwright-${{ runner.os }}-
       - name: Install Playwright browsers
         # Installed via playwright-core's own CLI rather than `npx playwright`,
@@ -541,9 +513,9 @@ jobs:
       - name: Capture and upload snapshots
         id: capture
         run: |
-          npx http-server dist/storybook --port 6006 --silent &
-          npx wait-on tcp:6006 --timeout 60000
-          npm run pixeleye:ci
+          pnpm exec http-server dist/storybook --port 6006 --silent &
+          pnpm exec wait-on tcp:6006 --timeout 60000
+          pnpm run pixeleye:ci
           echo "uploaded=true" >> "$GITHUB_OUTPUT"
         env:
           PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
@@ -569,19 +541,19 @@ jobs:
       - name: Build breakpoint Storybook
         if: steps.breakpoints-token.outputs.present == 'true'
         continue-on-error: true
-        run: npm run build-storybook:breakpoints
+        run: pnpm run build-storybook:breakpoints
       - name: Capture and upload breakpoint snapshots
         if: steps.breakpoints-token.outputs.present == 'true'
         continue-on-error: true
         run: |
-          npx http-server dist/storybook-breakpoints --port 6007 --silent &
-          npx wait-on tcp:6007 --timeout 60000
-          npm run pixeleye:breakpoints
+          pnpm exec http-server dist/storybook-breakpoints --port 6007 --silent &
+          pnpm exec wait-on tcp:6007 --timeout 60000
+          pnpm run pixeleye:breakpoints
         env:
           PIXELEYE_BREAKPOINTS_TOKEN: ${{ secrets.PIXELEYE_BREAKPOINTS_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
       # A cancelled run (a newer push to the branch) SIGKILLs the CLI before its
-      # own abort-on-signal handler runs: bash holds the signal until npm exits.
+      # own abort-on-signal handler runs: bash holds the signal until pnpm exits.
       # The build it created stays `uploading`, and pixeleye's stuck-build job
       # fails it without releasing the builds that target it (upstream bug), so
       # every later build of the branch sits in `queued-processing` forever.

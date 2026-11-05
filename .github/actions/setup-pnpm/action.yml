@@ -1,0 +1,17 @@
+name: Set up pnpm
+description: >-
+  Installs the pnpm version package.json's packageManager names, restores the pnpm store keyed on
+  pnpm-lock.yaml, and installs the dependencies from the lockfile. Lifecycle scripts are skipped:
+  a job that needs the Cypress binary or Playwright browsers installs them itself.
+runs:
+  using: composite
+  steps:
+    - name: Install pnpm from packageManager, with the store cache
+      uses: pnpm/action-setup@v6
+      with:
+        cache: true
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile --ignore-scripts
+      env:
+        NODE_OPTIONS: '--max-old-space-size=4096'

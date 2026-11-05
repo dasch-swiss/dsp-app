@@ -20,19 +20,13 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
           # Note: registry-url is NOT set here to allow OIDC authentication
 
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Set up pnpm and install dependencies
+        uses: ./.github/actions/setup-pnpm
 
       - name: Build dsp-js
-        run: npx nx build dsp-js
+        run: pnpm exec nx build dsp-js
 
       - name: Publish to NPM
         run: npx npm@11 publish dist/libs/dsp-js --access public --provenance

@@ -35,21 +35,15 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
 
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Set up pnpm and install dependencies
+        uses: ./.github/actions/setup-pnpm
 
       - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
+        run: pnpm run generate-openapi-module
 
       - name: Build Angular app (dev-server config → DEV API)
-        run: npx nx run dsp-app:build:dev-server
+        run: pnpm exec nx run dsp-app:build:dev-server
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
 
@@ -185,21 +179,15 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: 'npm'
 
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Set up pnpm and install dependencies
+        uses: ./.github/actions/setup-pnpm
 
       - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
+        run: pnpm run generate-openapi-module
 
       - name: Build Angular app (dev-server config → DEV API)
-        run: npx nx run dsp-app:build:dev-server
+        run: pnpm exec nx run dsp-app:build:dev-server
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
 
