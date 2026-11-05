@@ -46,7 +46,7 @@ export function installMutationObserverLoopGuard(win: GuardedWindow): void {
 }
 
 function captureStack(win: GuardedWindow): string {
-  const AppError = (win as unknown as { Error: ErrorConstructor }).Error;
+  const AppError = win.Error;
   const previousLimit = AppError.stackTraceLimit;
   AppError.stackTraceLimit = 20;
   const stack = new AppError().stack ?? '';

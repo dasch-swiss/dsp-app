@@ -74,7 +74,7 @@ Cypress.on('window:before:load', win => {
 // The e2e config runs Faro, as deployed environments do, against an unresolvable collector
 // (faro.invalid). Answer its requests here so they neither fail noisily nor leave the browser.
 beforeEach(() => {
-  cy.intercept({ hostname: 'faro.invalid' }, { statusCode: 202, body: {} }).as('faroCollector');
+  cy.intercept({ hostname: 'faro.invalid' }, { statusCode: 202, body: {} });
 });
 
 afterEach(() => {
