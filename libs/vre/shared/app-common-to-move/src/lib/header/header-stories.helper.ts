@@ -12,7 +12,7 @@ export const APP_CONFIG_TOKEN_STUB = {
   iiifHost: 'iiif.example.com',
   iiifPort: '',
   iiifPath: '',
-  ingestUrl: 'https://ingest.example.com',
+  ingestUrl: 'https://api.example.com/ingest',
   geonameToken: 'token',
   jsonWebToken: '',
   iriBase: 'http://rdfh.ch',
