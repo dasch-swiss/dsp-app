@@ -12,6 +12,7 @@ export { MultipleViewerService } from './lib/comparison/multiple-viewer.service'
 export * from './lib/resource-class-count.api';
 
 export { DataTableComponent } from './lib/table-view/data-table.component';
+export { ColumnResizeDirective } from './lib/table-view/column-resize.directive';
 export { buildColumnModel, imageColumn, rightsColumns } from './lib/table-view/build-column-model';
 export type { TableLayout } from './lib/table-view/table-layout.service';
 export * from './lib/table-view/table-column.model';

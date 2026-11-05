@@ -876,7 +876,10 @@
       "clearFilter": "Effacer",
       "contains": "Contient…",
       "hasPropertyOf": "A une propriété de type",
-      "subclassOf": "Sous-classe de {{class}}"
+      "subclassOf": "Sous-classe de {{class}}",
+      "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner",
+      "resizeColumn": "Redimensionner la colonne"
     }
   },
   "resourceEditor": {
