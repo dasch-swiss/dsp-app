@@ -352,6 +352,7 @@ describe('classRows and propertyRows', () => {
         name: 'Film',
         description: 'A film',
         descriptions: [],
+        labels: [],
         representation: 'MovingImageRepresentation',
         properties: 2,
         propertyList: [
@@ -367,6 +368,7 @@ describe('classRows and propertyRows', () => {
         name: 'Person',
         description: '',
         descriptions: [],
+        labels: [],
         representation: undefined,
         properties: 1,
         propertyList: [{ id: 'x#title', label: 'Title', type: 'Text' }],

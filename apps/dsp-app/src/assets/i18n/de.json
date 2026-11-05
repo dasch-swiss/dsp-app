@@ -890,8 +890,12 @@
         "save": "Speichern",
         "edit": "Beschreibung ({{language}}) von {{class}} bearbeiten",
         "add": "Beschreibung ({{language}}) zu {{class}} hinzufügen",
-        "saved": "Beschreibung von {{class}} gespeichert",
-        "notSaved": "Die Beschreibung konnte nicht gespeichert werden. Bitte erneut versuchen."
+        "saved": "{{class}} gespeichert",
+        "notSaved": "Die Änderung konnte nicht gespeichert werden. Bitte erneut versuchen.",
+        "labelTitle": "Bezeichnung von {{class}}",
+        "labelIn": "Bezeichnung auf {{language}}",
+        "editLabel": "Bezeichnung ({{language}}) von {{class}} bearbeiten",
+        "addLabel": "Bezeichnung ({{language}}) zu {{class}} hinzufügen"
       },
       "allLanguages": "Alle Sprachen"
     }

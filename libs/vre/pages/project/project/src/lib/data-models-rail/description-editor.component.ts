@@ -21,13 +21,16 @@ import { AvailableLanguageKeys, AvailableLanguages } from '@dasch-swiss/vre/core
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 
+/** The texts of a class edited in several languages. */
+export type TextKind = 'label' | 'description';
+
 /** The languages a description can have, in the order the app lists them. */
 export const DESCRIPTION_LANGUAGES: readonly string[] = AvailableLanguageKeys;
 
 const NAMES = new Map<string, string>(AvailableLanguages.map(({ language, value }) => [language, value]));
 
 /**
- * Edits a class's description in one language, with tabs to the others and a switch to show them all stacked.
+ * Edits a class's label or description in one language, with tabs to the others and a switch to show them all stacked.
  * Saves every language at once, as dsp-api takes a description.
  */
 @Component({
@@ -51,7 +54,7 @@ const NAMES = new Map<string, string>(AvailableLanguages.map(({ language, value 
       class="editor"
       role="dialog"
       data-cy="description-editor"
-      [attr.aria-label]="t + '.title' | translate: { class: classLabel() }"
+      [attr.aria-label]="t + (kind() === 'label' ? '.labelTitle' : '.title') | translate: { class: classLabel() }"
       (keydown.escape)="cancelled.emit()"
       (keydown.control.enter)="submit()"
       (keydown.meta.enter)="submit()">
@@ -89,12 +92,14 @@ const NAMES = new Map<string, string>(AvailableLanguages.map(({ language, value 
         }
       } @else {
         <mat-form-field subscriptSizing="dynamic">
-          <mat-label>{{ t + '.descriptionIn' | translate: { language: nameOf(current()) } }}</mat-label>
+          <mat-label>{{
+            t + (kind() === 'label' ? '.labelIn' : '.descriptionIn') | translate: { language: nameOf(current()) }
+          }}</mat-label>
           <textarea
             matInput
             cdkTextareaAutosize
-            cdkAutosizeMinRows="3"
-            cdkAutosizeMaxRows="10"
+            [cdkAutosizeMinRows]="kind() === 'label' ? 1 : 3"
+            [cdkAutosizeMaxRows]="kind() === 'label' ? 3 : 10"
             [attr.data-language]="current()"
             [value]="draft()[current()] ?? ''"
             (input)="write(current(), $any($event.target).value)"></textarea>
@@ -190,8 +195,10 @@ const NAMES = new Map<string, string>(AvailableLanguages.map(({ language, value 
 export class DescriptionEditorComponent {
   private readonly _host = inject(ElementRef<HTMLElement>);
 
-  /** The description, in each language it has. */
-  readonly descriptions = input.required<LanguageText[]>();
+  /** The text, in each language it has. */
+  readonly texts = input.required<LanguageText[]>();
+  /** Whether the text is the class's label or its description. */
+  readonly kind = input<TextKind>('description');
   /** The language to edit first. */
   readonly language = input.required<string>();
   readonly classLabel = input('');
@@ -206,7 +213,7 @@ export class DescriptionEditorComponent {
   readonly all = signal(false);
 
   private readonly _original = computed(() =>
-    Object.fromEntries(this.descriptions().map(({ language, value }) => [language, value]))
+    Object.fromEntries(this.texts().map(({ language, value }) => [language, value]))
   );
   readonly draft = linkedSignal<Record<string, string>>(() => ({ ...this._original() }));
 

@@ -16,8 +16,14 @@ export interface DataModelEditor {
   editClass(classIri: string): Observable<boolean>;
   /** Opens the property's dialog, for its labels and description; emits once it closes, `true` if it was saved. */
   editProperty(propertyIri: string): Observable<boolean>;
-  /** Saves the class's description, every language at once; emits `true` once saved. */
-  saveClassDescriptions(classIri: string, descriptions: LanguageText[]): Observable<boolean>;
+  /** Saves the class's labels or description, every language at once; emits `true` once saved. */
+  saveClassTexts(classIri: string, texts: ClassTexts): Observable<boolean>;
+}
+
+/** A class's labels or description, in each language it has. */
+export interface ClassTexts {
+  labels?: LanguageText[];
+  descriptions?: LanguageText[];
 }
 
 /** The data model editor, if the app provides one; without it, editing opens the data model editor page instead. */
@@ -52,12 +58,12 @@ export function injectDataModelEditing() {
     ]);
   };
   return {
-    /** Whether a description can be saved in place, without the data model editor's page. */
+    /** Whether labels and descriptions can be saved in place, without the data model editor's page. */
     canSaveInPlace: !!editor,
-    /** Saves the class's description; the project is read again once saved. Emits `true` once saved. */
-    saveClassDescriptions: (iri: string, descriptions: LanguageText[]): Observable<boolean> =>
+    /** Saves the class's labels or description; the project is read again once saved. Emits `true` once saved. */
+    saveClassTexts: (iri: string, texts: ClassTexts): Observable<boolean> =>
       editor
-        ? editor.saveClassDescriptions(iri, descriptions).pipe(
+        ? editor.saveClassTexts(iri, texts).pipe(
             tap(saved => saved && project.reloadProject()),
             map(Boolean)
           )

@@ -365,6 +365,8 @@ export interface ClassRow {
   description: string;
   /** The same description in each language it has. */
   descriptions: LanguageText[];
+  /** Its label in each language it has. */
+  labels: LanguageText[];
   /** The kind of file its resources carry; none without file. */
   representation?: RepresentationClass;
   /** How many properties it has, inherited ones included. */
@@ -407,6 +409,7 @@ export function classRows(graph: DataModelGraph): ClassRow[] {
     name: localNameOf(node.id),
     description: node.description ?? '',
     descriptions: node.descriptions ?? [],
+    labels: node.labels ?? [],
     representation:
       node.representationClass && node.representationClass !== 'WithoutRepresentation'
         ? node.representationClass

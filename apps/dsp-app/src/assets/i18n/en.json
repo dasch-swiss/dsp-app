@@ -890,8 +890,12 @@
         "save": "Save",
         "edit": "Edit the {{language}} description of {{class}}",
         "add": "Add a {{language}} description to {{class}}",
-        "saved": "Saved the description of {{class}}",
-        "notSaved": "The description could not be saved. Try again."
+        "saved": "Saved {{class}}",
+        "notSaved": "The change could not be saved. Try again.",
+        "labelTitle": "Label of {{class}}",
+        "labelIn": "Label in {{language}}",
+        "editLabel": "Edit the {{language}} label of {{class}}",
+        "addLabel": "Add a {{language}} label to {{class}}"
       },
       "allLanguages": "All languages"
     }

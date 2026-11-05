@@ -890,8 +890,12 @@
         "save": "Salva",
         "edit": "Modifica la descrizione ({{language}}) di {{class}}",
         "add": "Aggiungi una descrizione ({{language}}) a {{class}}",
-        "saved": "Descrizione di {{class}} salvata",
-        "notSaved": "Non è stato possibile salvare la descrizione. Riprova."
+        "saved": "{{class}} salvata",
+        "notSaved": "Non è stato possibile salvare la modifica. Riprova.",
+        "labelTitle": "Etichetta di {{class}}",
+        "labelIn": "Etichetta in {{language}}",
+        "editLabel": "Modifica l'etichetta ({{language}}) di {{class}}",
+        "addLabel": "Aggiungi un'etichetta ({{language}}) a {{class}}"
       },
       "allLanguages": "Tutte le lingue"
     }

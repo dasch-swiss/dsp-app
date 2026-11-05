@@ -46,7 +46,7 @@ import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelsRailState } from './data-models-rail-state';
-import { DESCRIPTION_LANGUAGES, DescriptionEditorComponent } from './description-editor.component';
+import { DESCRIPTION_LANGUAGES, DescriptionEditorComponent, TextKind } from './description-editor.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 
 /** How many properties and linked classes a condensed row shows; the others are counted. */
@@ -236,7 +236,51 @@ const readDensity = (): Density => {
               <span class="labelled" [style.padding-left.px]="row.depth * 18" [title]="row.name">
                 <span class="swatch" [style.background]="state.colors().get(row.id)"></span>
                 <span class="texts">
-                  <span class="label">{{ row.label }}</span>
+                  @for (text of textsOf(row, 'label'); track text.language) {
+                    <span
+                      #labelLine
+                      class="lang-line label-line"
+                      [class.single]="!allLanguages()"
+                      [class.active]="isEditing(row, 'label', text.language)">
+                      @if (allLanguages()) {
+                        <span class="lang">{{ text.language }}</span>
+                      }
+                      <span class="label lang-text">{{ text.value }}</span>
+                      @if (canEditTexts()) {
+                        <button
+                          mat-icon-button
+                          type="button"
+                          class="lang-edit"
+                          data-cy="data-model-classes-edit-label"
+                          [attr.aria-label]="
+                            r + '.descriptionEditor.editLabel'
+                              | translate: { language: text.language, class: row.label }
+                          "
+                          (click)="$event.stopPropagation(); editText(row, 'label', text.language, labelLine)">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                      }
+                    </span>
+                  } @empty {
+                    <span class="label">{{ row.label }}</span>
+                  }
+                  @if (canEditTexts() && missingOf(row, 'label').length) {
+                    <span #labelGaps class="lang-missing" [class.single]="!allLanguages()">
+                      @for (language of missingOf(row, 'label'); track language) {
+                        <button
+                          type="button"
+                          class="lang-add"
+                          data-cy="data-model-classes-add-label"
+                          [class.active]="isEditing(row, 'label', language)"
+                          [attr.aria-label]="
+                            r + '.descriptionEditor.addLabel' | translate: { language, class: row.label }
+                          "
+                          (click)="$event.stopPropagation(); editText(row, 'label', language, labelGaps)">
+                          + {{ language }}
+                        </button>
+                      }
+                    </span>
+                  }
                   @if (row.superclass; as superclass) {
                     <span class="subclass-of">{{
                       r + '.subclassOf' | translate: { class: state.labelOf(superclass) }
@@ -352,17 +396,17 @@ const readDensity = (): Density => {
                 (widthReset)="resize('description', undefined)"></span>
             </th>
             <td mat-cell *matCellDef="let row" class="description">
-              @for (text of textsOf(row); track text.language) {
+              @for (text of textsOf(row, 'description'); track text.language) {
                 <div
                   #line
                   class="lang-line"
                   [class.single]="!allLanguages()"
-                  [class.active]="isEditing(row, text.language)">
+                  [class.active]="isEditing(row, 'description', text.language)">
                   @if (allLanguages()) {
                     <span class="lang">{{ text.language }}</span>
                   }
                   <span class="lang-text" [title]="expanded ? '' : text.value">{{ text.value }}</span>
-                  @if (canEditDescriptions()) {
+                  @if (canEditTexts()) {
                     <button
                       mat-icon-button
                       type="button"
@@ -371,7 +415,7 @@ const readDensity = (): Density => {
                       [attr.aria-label]="
                         r + '.descriptionEditor.edit' | translate: { language: text.language, class: row.label }
                       "
-                      (click)="$event.stopPropagation(); editDescription(row, text.language, line)">
+                      (click)="$event.stopPropagation(); editText(row, 'description', text.language, line)">
                       <mat-icon>edit</mat-icon>
                     </button>
                   }
@@ -380,20 +424,20 @@ const readDensity = (): Density => {
                 @if (row.description) {
                   <!-- A description without a language: shown as it is. -->
                   <span class="lang-text" [title]="expanded ? '' : row.description">{{ row.description }}</span>
-                } @else if (!canEditDescriptions()) {
+                } @else if (!canEditTexts()) {
                   <span class="none">—</span>
                 }
               }
-              @if (canEditDescriptions() && missingOf(row).length) {
+              @if (canEditTexts() && missingOf(row, 'description').length) {
                 <div #gaps class="lang-missing" [class.single]="!allLanguages()">
-                  @for (language of missingOf(row); track language) {
+                  @for (language of missingOf(row, 'description'); track language) {
                     <button
                       type="button"
                       class="lang-add"
                       data-cy="data-model-classes-add-description"
-                      [class.active]="isEditing(row, language)"
+                      [class.active]="isEditing(row, 'description', language)"
                       [attr.aria-label]="r + '.descriptionEditor.add' | translate: { language, class: row.label }"
-                      (click)="$event.stopPropagation(); editDescription(row, language, gaps)">
+                      (click)="$event.stopPropagation(); editText(row, 'description', language, gaps)">
                       + {{ language }}
                     </button>
                   }
@@ -557,7 +601,7 @@ const readDensity = (): Density => {
       </div>
 
       @if (state.graph(); as graph) {
-        @if (editingDescription(); as editing) {
+        @if (editingText(); as editing) {
           <ng-template
             cdkConnectedOverlay
             [cdkConnectedOverlayOpen]="true"
@@ -566,15 +610,16 @@ const readDensity = (): Density => {
             cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
             [cdkConnectedOverlayOrigin]="editing.origin"
             [cdkConnectedOverlayPositions]="popoverPositions"
-            (backdropClick)="closeDescription()"
-            (detach)="closeDescription()">
+            (backdropClick)="closeText()"
+            (detach)="closeText()">
             <app-description-editor
-              [descriptions]="editing.row.descriptions"
+              [texts]="editing.kind === 'label' ? editing.row.labels : editing.row.descriptions"
+              [kind]="editing.kind"
               [language]="editing.language"
               [classLabel]="editing.row.label"
-              [saving]="savingDescription()"
-              (saved)="saveDescription(editing.row, $event)"
-              (cancelled)="closeDescription()" />
+              [saving]="savingText()"
+              (saved)="saveTexts(editing.row, editing.kind, $event)"
+              (cancelled)="closeText()" />
           </ng-template>
         }
 
@@ -963,6 +1008,18 @@ const readDensity = (): Density => {
         }
       }
 
+      .label-line {
+        grid-template-columns: 22px minmax(0, max-content) 24px;
+
+        &.single {
+          grid-template-columns: minmax(0, max-content) 24px;
+        }
+      }
+
+      .texts .lang-missing {
+        padding-top: 0;
+      }
+
       table.expanded .lang-text {
         white-space: normal;
       }
@@ -1077,10 +1134,10 @@ export class DataModelClassesComponent {
   private readonly _translate = inject(TranslateService);
   private readonly _destroyRef = inject(DestroyRef);
 
-  /** The description being edited: its class, the language it opened on, and the line it opened from. */
-  readonly editingDescription = signal<{ row: ClassRow; language: string; origin: HTMLElement } | null>(null);
-  readonly savingDescription = signal(false);
-  readonly canEditDescriptions = computed(() => this.state.canEdit() && this.editing.canSaveInPlace);
+  /** The label or description being edited: its class, the language it opened on, and the line it opened from. */
+  readonly editingText = signal<{ row: ClassRow; kind: TextKind; language: string; origin: HTMLElement } | null>(null);
+  readonly savingText = signal(false);
+  readonly canEditTexts = computed(() => this.state.canEdit() && this.editing.canSaveInPlace);
   /** Under the line it opened from, else above it. */
   readonly popoverPositions: ConnectedPosition[] = [
     { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 4 },
@@ -1311,23 +1368,28 @@ export class DataModelClassesComponent {
     this.state.openSection(RouteConstants.graph, { [ONTOLOGY_MAP_PARAM.filter]: localNameOf(iri) });
   }
 
-  /** A row's description in each language it has, in the order the app lists languages. */
-  textsOf(row: ClassRow): LanguageText[] {
+  /** A row's label or description in each language it has, in the order the app lists languages. */
+  textsOf(row: ClassRow, kind: TextKind): LanguageText[] {
     const order = (language: string) => {
       const index = DESCRIPTION_LANGUAGES.indexOf(language);
       return index < 0 ? DESCRIPTION_LANGUAGES.length : index;
     };
-    const texts = [...row.descriptions].sort((a, b) => order(a.language) - order(b.language));
+    const texts = [...this._textsOf(row, kind)].sort((a, b) => order(a.language) - order(b.language));
     if (this.allLanguages()) return texts;
     // "All languages" off: only the one the app shows, in the interface language when it has it.
-    const shown = texts.find(text => text.value === row.description) ?? texts[0];
+    const shown = texts.find(text => text.value === (kind === 'label' ? row.label : row.description)) ?? texts[0];
     return shown ? [shown] : [];
   }
 
   /** The languages to offer adding: every missing one, or with "All languages" off the interface one, if none. */
-  missingOf(row: ClassRow): string[] {
-    if (!this.allLanguages()) return row.descriptions.length ? [] : [this._interfaceLanguage()];
-    return DESCRIPTION_LANGUAGES.filter(language => !row.descriptions.some(text => text.language === language));
+  missingOf(row: ClassRow, kind: TextKind): string[] {
+    const texts = this._textsOf(row, kind);
+    if (!this.allLanguages()) return texts.length ? [] : [this._interfaceLanguage()];
+    return DESCRIPTION_LANGUAGES.filter(language => !texts.some(text => text.language === language));
+  }
+
+  private _textsOf(row: ClassRow, kind: TextKind): LanguageText[] {
+    return kind === 'label' ? row.labels : row.descriptions;
   }
 
   private _interfaceLanguage(): string {
@@ -1335,35 +1397,35 @@ export class DataModelClassesComponent {
     return DESCRIPTION_LANGUAGES.includes(current) ? current : DESCRIPTION_LANGUAGES[0];
   }
 
-  isEditing(row: ClassRow, language: string): boolean {
-    const editing = this.editingDescription();
-    return editing?.row.id === row.id && editing.language === language;
+  isEditing(row: ClassRow, kind: TextKind, language: string): boolean {
+    const editing = this.editingText();
+    return editing?.row.id === row.id && editing.kind === kind && editing.language === language;
   }
 
-  /** Opens the description editor on one language, under the line it was opened from. */
-  editDescription(row: ClassRow, language: string, origin: HTMLElement): void {
-    this.editingDescription.set({ row, language, origin });
+  /** Opens the editor of the label or description on one language, under the line it was opened from. */
+  editText(row: ClassRow, kind: TextKind, language: string, origin: HTMLElement): void {
+    this.editingText.set({ row, kind, language, origin });
   }
 
-  closeDescription(): void {
-    if (!this.savingDescription()) this.editingDescription.set(null);
+  closeText(): void {
+    if (!this.savingText()) this.editingText.set(null);
   }
 
-  saveDescription(row: ClassRow, descriptions: LanguageText[]): void {
+  saveTexts(row: ClassRow, kind: TextKind, texts: LanguageText[]): void {
     const t = 'pages.dataModels2.descriptionEditor';
-    this.savingDescription.set(true);
+    this.savingText.set(true);
     this.editing
-      .saveClassDescriptions(row.id, descriptions)
+      .saveClassTexts(row.id, kind === 'label' ? { labels: texts } : { descriptions: texts })
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
-          this.savingDescription.set(false);
-          this.editingDescription.set(null);
+          this.savingText.set(false);
+          this.editingText.set(null);
           this._notification.openSnackBar(this._translate.instant(`${t}.saved`, { class: row.label }));
         },
         error: () => {
           // The editor stays open with the text, to try again.
-          this.savingDescription.set(false);
+          this.savingText.set(false);
           this._notification.openSnackBar(this._translate.instant(`${t}.notSaved`), 'error');
         },
       });

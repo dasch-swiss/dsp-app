@@ -45,6 +45,8 @@ export interface DataModelNode {
   description?: string;
   /** The same description in each language it has; only set for classes of the mapped data model. */
   descriptions?: LanguageText[];
+  /** Its label in each language it has; only set for classes of the mapped data model. */
+  labels?: LanguageText[];
   /** The class's own properties, in their form order; only set for classes of the mapped data model. */
   propertyDetails?: DataModelProperty[];
 }
@@ -133,6 +135,9 @@ export function buildDataModelGraph(
       representationClass: resourceClass.representationClass,
       description: classDef ? textOf(classDef, 'comments', 'comment', labelOf) : '',
       descriptions: classDef ? textsOf(classDef) : [],
+      labels: (resourceClass.label ?? [])
+        .filter(text => !!text.language && !!text.value)
+        .map(({ language, value }) => ({ language: language!, value })),
       propertyDetails: own,
     });
   }

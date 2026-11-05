@@ -2,7 +2,7 @@ import { createEnvironmentInjector, EnvironmentInjector, inject, Injectable } fr
 import { MatDialog } from '@angular/material/dialog';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { DataModelEditor, LanguageText } from '@dasch-swiss/vre/pages/project/project';
+import { ClassTexts, DataModelEditor } from '@dasch-swiss/vre/pages/project/project';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { filter, finalize, map, Observable, switchMap, take } from 'rxjs';
 import { OntologyEditService } from '../services/ontology-edit.service';
@@ -74,12 +74,12 @@ export class DataModelEditorService implements DataModelEditor {
     );
   }
 
-  saveClassDescriptions(classIri: string, descriptions: LanguageText[]): Observable<boolean> {
+  saveClassTexts(classIri: string, { labels, descriptions }: ClassTexts): Observable<boolean> {
     return this._withEditing(classIri, editing =>
       editing.currentOntology$.pipe(
         filter(ontology => !!ontology?.classes[classIri]),
         take(1),
-        switchMap(() => editing.updateResourceClass$({ id: classIri, comments: descriptions })),
+        switchMap(() => editing.updateResourceClass$({ id: classIri, labels, comments: descriptions })),
         map(() => true)
       )
     );

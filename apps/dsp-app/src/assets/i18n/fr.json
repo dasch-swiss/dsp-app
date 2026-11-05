@@ -890,8 +890,12 @@
         "save": "Enregistrer",
         "edit": "Modifier la description ({{language}}) de {{class}}",
         "add": "Ajouter une description ({{language}}) à {{class}}",
-        "saved": "Description de {{class}} enregistrée",
-        "notSaved": "La description n'a pas pu être enregistrée. Réessayez."
+        "saved": "{{class}} enregistrée",
+        "notSaved": "La modification n'a pas pu être enregistrée. Réessayez.",
+        "labelTitle": "Libellé de {{class}}",
+        "labelIn": "Libellé en {{language}}",
+        "editLabel": "Modifier le libellé ({{language}}) de {{class}}",
+        "addLabel": "Ajouter un libellé ({{language}}) à {{class}}"
       },
       "allLanguages": "Toutes les langues"
     }
