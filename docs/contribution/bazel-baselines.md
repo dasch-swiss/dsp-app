@@ -256,3 +256,10 @@ styles-[hash].css	114015
 files	181
 bytes	38967597
 ```
+
+## Vendored packages
+
+`vendor/ckeditor5-custom-build-2.1.5.tgz` is `npm pack --ignore-scripts` of the `v2.1.5` tag
+(`b107287f9`) of dasch-swiss/ckeditor_custom_build: 1876083 bytes, sha256
+`5f5df5b4d3d02182a58ba864287973b23f550adf3f4e2b12b9231950c80c3020`. `pnpm-lock.yaml` records its
+integrity (`sha512-q/M3lYpY…`), so a changed tarball fails the install.

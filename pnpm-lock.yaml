@@ -87,8 +87,8 @@ importers:
         specifier: ^20.0.0
         version: 20.0.0(@angular/common@21.2.25(@angular/core@21.2.25(@angular/compiler@21.2.25)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@21.2.25(@angular/compiler@21.2.25)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2)
       ckeditor5-custom-build:
-        specifier: github:dasch-swiss/ckeditor_custom_build#v2.1.5
-        version: https://codeload.github.com/dasch-swiss/ckeditor_custom_build/tar.gz/b107287f95c12eb1a21395902b446c4af63e125c
+        specifier: file:vendor/ckeditor5-custom-build-2.1.5.tgz
+        version: file:vendor/ckeditor5-custom-build-2.1.5.tgz
       json2typescript:
         specifier: ^1.6.1
         version: 1.6.1
@@ -5923,8 +5923,8 @@ packages:
   cjs-module-lexer@2.3.0:
     resolution: {integrity: sha512-lmNyBzi6iYiqyrExTctfmjd8tInx+dHu9PBomTfH5RXS53c27JMFJgzNv5TyAnm3PgGf+MLy0+Ws41/HlVxdKQ==}
 
-  ckeditor5-custom-build@https://codeload.github.com/dasch-swiss/ckeditor_custom_build/tar.gz/b107287f95c12eb1a21395902b446c4af63e125c:
-    resolution: {tarball: https://codeload.github.com/dasch-swiss/ckeditor_custom_build/tar.gz/b107287f95c12eb1a21395902b446c4af63e125c}
+  ckeditor5-custom-build@file:vendor/ckeditor5-custom-build-2.1.5.tgz:
+    resolution: {integrity: sha512-q/M3lYpY08KvpxBpFTNzF6vmyyjsvp28w7G3BXLFGZ6RVuuzq9S1nR/n3pb9AlKLA58fyRowxLt3+iceBrnNLw==, tarball: file:vendor/ckeditor5-custom-build-2.1.5.tgz}
     version: 2.1.5
 
   clean-css@5.3.3:
@@ -18212,7 +18212,7 @@ snapshots:
 
   cjs-module-lexer@2.3.0: {}
 
-  ckeditor5-custom-build@https://codeload.github.com/dasch-swiss/ckeditor_custom_build/tar.gz/b107287f95c12eb1a21395902b446c4af63e125c: {}
+  ckeditor5-custom-build@file:vendor/ckeditor5-custom-build-2.1.5.tgz: {}
 
   clean-css@5.3.3:
     dependencies:

@@ -73,7 +73,7 @@
     "@sentry/angular": "^11.0.0",
     "angular-imask": "^7.5.0",
     "angular-split": "^20.0.0",
-    "ckeditor5-custom-build": "github:dasch-swiss/ckeditor_custom_build#v2.1.5",
+    "ckeditor5-custom-build": "file:vendor/ckeditor5-custom-build-2.1.5.tgz",
     "json2typescript": "^1.6.1",
     "jsonld": "^9.0.0",
     "jwt-decode": "^4.0.0",
