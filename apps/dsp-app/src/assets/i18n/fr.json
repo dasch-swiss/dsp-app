@@ -862,7 +862,21 @@
       "colUsedBy": "Utilisée par",
       "allTypes": "Tous",
       "noMatch": "Rien ne correspond à la recherche.",
-      "noLists": "Ce projet n’a pas encore de listes."
+      "noLists": "Ce projet n’a pas encore de listes.",
+      "colFile": "Fichier",
+      "colDescription": "Description",
+      "density": "Densité des lignes",
+      "condensed": "Condensé",
+      "expanded": "Détaillé",
+      "filterOn": "Filtrer par {{column}}",
+      "allClasses": "Toutes les classes",
+      "topClasses": "Classes principales seulement",
+      "subclasses": "Sous-classes seulement",
+      "noFile": "Sans fichier",
+      "clearFilter": "Effacer",
+      "contains": "Contient…",
+      "hasPropertyOf": "A une propriété de type",
+      "subclassOf": "Sous-classe de {{class}}"
     }
   },
   "resourceEditor": {

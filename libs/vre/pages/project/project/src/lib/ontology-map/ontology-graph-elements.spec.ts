@@ -333,10 +333,59 @@ describe('classRows and propertyRows', () => {
     edges: [{ source: 'x#Film', target: 'x#Person', property: 'x#director', label: 'Director', kind: 'link' }],
   };
 
-  it('lists each class with its name, its properties and the classes it links to', () => {
-    expect(classRows(model)).toEqual([
-      { id: 'x#Film', label: 'Film', name: 'Film', properties: 2, linksTo: ['x#Person'] },
-      { id: 'x#Person', label: 'Person', name: 'Person', properties: 1, linksTo: [] },
+  it('lists each class with its name, file, description, properties and the classes it links to', () => {
+    const withFile: DataModelGraph = {
+      ...model,
+      nodes: [
+        { ...model.nodes[0], description: 'A film', representationClass: 'MovingImageRepresentation' },
+        { ...model.nodes[1], representationClass: 'WithoutRepresentation' },
+      ],
+    };
+    expect(classRows(withFile)).toEqual([
+      {
+        id: 'x#Film',
+        label: 'Film',
+        name: 'Film',
+        description: 'A film',
+        representation: 'MovingImageRepresentation',
+        properties: 2,
+        propertyList: [
+          { id: 'x#title', label: 'Title', type: 'Text' },
+          { id: 'x#director', label: 'Director', type: 'Link', linkTarget: 'x#Person' },
+        ],
+        linksTo: ['x#Person'],
+        depth: 0,
+      },
+      {
+        id: 'x#Person',
+        label: 'Person',
+        name: 'Person',
+        description: '',
+        representation: undefined,
+        properties: 1,
+        propertyList: [{ id: 'x#title', label: 'Title', type: 'Text' }],
+        linksTo: [],
+        depth: 0,
+      },
+    ]);
+  });
+
+  it('lists subclasses under their superclass, by label, without the superclass among their links', () => {
+    const family: DataModelGraph = {
+      nodes: [
+        { id: 'x#Work', label: 'Work', kind: 'class', navigable: true },
+        { id: 'x#Book', label: 'Book', kind: 'class', navigable: true },
+        { id: 'x#Film', label: 'Film', kind: 'class', navigable: true },
+      ],
+      edges: [
+        { source: 'x#Film', target: 'x#Work', property: 'rdfs:subClassOf', label: '', kind: 'subclass' },
+        { source: 'x#Book', target: 'x#Work', property: 'rdfs:subClassOf', label: '', kind: 'subclass' },
+      ],
+    };
+    expect(classRows(family).map(row => [row.label, row.depth, row.superclass, row.linksTo])).toEqual([
+      ['Work', 0, undefined, []],
+      ['Book', 1, 'x#Work', []],
+      ['Film', 1, 'x#Work', []],
     ]);
   });
 

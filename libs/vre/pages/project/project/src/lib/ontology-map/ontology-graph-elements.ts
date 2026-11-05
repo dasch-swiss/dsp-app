@@ -1,4 +1,5 @@
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
+import { RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import type { ElementDefinition } from 'cytoscape';
 import { DataModelEdge, DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
@@ -353,27 +354,71 @@ export interface ClassRow {
   id: string;
   label: string;
   name: string;
+  /** Its description in the data model; empty without one. */
+  description: string;
+  /** The kind of file its resources carry; none without file. */
+  representation?: RepresentationClass;
   /** How many properties it has, inherited ones included. */
   properties: number;
+  /** Its properties in their form order: label, value type, and the class a link points at. */
+  propertyList: { id: string; label: string; type: string; linkTarget?: string }[];
   /** The classes it links to, each once, its superclasses' links included. */
   linksTo: string[];
+  /** Its superclass in the data model, for a subclass. */
+  superclass?: string;
+  /** How many superclasses up it is from a top class: 0 for a top class, 1 for its subclasses, and so on. */
+  depth: number;
 }
 
 /** The classes of the data model, by label, for the Classes table. */
 export function classRows(graph: DataModelGraph): ClassRow[] {
   const edges = withInheritedLinks(graph).edges;
-  return graph.nodes
-    .filter(node => node.kind === 'class')
-    .sort((a, b) => a.label.localeCompare(b.label))
-    .map(node => ({
-      id: node.id,
-      label: node.label,
-      name: localNameOf(node.id),
-      properties: node.propertyDetails?.length ?? 0,
-      linksTo: [
-        ...new Set(edges.filter(edge => edge.source === node.id && edge.target !== node.id).map(edge => edge.target)),
-      ],
-    }));
+  const classes = graph.nodes.filter(node => node.kind === 'class').sort((a, b) => a.label.localeCompare(b.label));
+  const inModel = new Set(classes.map(node => node.id));
+  const superclassOf = new Map<string, string>();
+  for (const edge of graph.edges) {
+    if (edge.kind === 'subclass' && inModel.has(edge.target) && edge.source !== edge.target) {
+      if (!superclassOf.has(edge.source)) superclassOf.set(edge.source, edge.target);
+    }
+  }
+  // Top classes by label, each followed by its subclasses, theirs after them; a cycle's classes come last.
+  const ordered: { node: (typeof classes)[number]; depth: number }[] = [];
+  const placed = new Set<string>();
+  const place = (node: (typeof classes)[number], depth: number) => {
+    if (placed.has(node.id)) return;
+    placed.add(node.id);
+    ordered.push({ node, depth });
+    classes.filter(sub => superclassOf.get(sub.id) === node.id).forEach(sub => place(sub, depth + 1));
+  };
+  classes.filter(node => !superclassOf.has(node.id)).forEach(node => place(node, 0));
+  classes.forEach(node => place(node, 0));
+  return ordered.map(({ node, depth }) => ({
+    id: node.id,
+    label: node.label,
+    name: localNameOf(node.id),
+    description: node.description ?? '',
+    representation:
+      node.representationClass && node.representationClass !== 'WithoutRepresentation'
+        ? node.representationClass
+        : undefined,
+    properties: node.propertyDetails?.length ?? 0,
+    propertyList: (node.propertyDetails ?? []).map(({ id, label, type, linkTarget }) => ({
+      id,
+      label,
+      type,
+      ...(linkTarget ? { linkTarget } : {}),
+    })),
+    // Links only: a superclass shows as "Subclass of".
+    linksTo: [
+      ...new Set(
+        edges
+          .filter(edge => edge.kind === 'link' && edge.source === node.id && edge.target !== node.id)
+          .map(edge => edge.target)
+      ),
+    ],
+    ...(superclassOf.has(node.id) ? { superclass: superclassOf.get(node.id) } : {}),
+    depth,
+  }));
 }
 
 /** One property of the data model, as the Properties table lists it. */
