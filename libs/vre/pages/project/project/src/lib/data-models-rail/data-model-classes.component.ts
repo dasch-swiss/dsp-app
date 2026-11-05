@@ -1,6 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, WritableSignal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
+import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  signal,
+  WritableSignal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
@@ -8,6 +17,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {
   MatCell,
   MatCellDef,
@@ -25,7 +35,8 @@ import { RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-ap
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ColumnResizeDirective } from '@dasch-swiss/vre/pages/data-browser';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe } from '@ngx-translate/core';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { classFamilies, familyHue, familyTint, FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow, localNameOf } from '../ontology-map/ontology-graph-elements';
@@ -33,7 +44,9 @@ import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component'
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
+import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelsRailState } from './data-models-rail-state';
+import { DESCRIPTION_LANGUAGES, DescriptionEditorComponent } from './description-editor.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 
 /** How many properties and linked classes a condensed row shows; the others are counted. */
@@ -68,6 +81,16 @@ const NO_FILE = 'none';
 type Density = 'condensed' | 'expanded';
 type Level = 'all' | 'top' | 'sub';
 
+const ALL_LANGUAGES_KEY = 'dsp-data-models-classes-all-languages';
+
+const readAllLanguages = (): boolean => {
+  try {
+    return localStorage.getItem(ALL_LANGUAGES_KEY) === 'true';
+  } catch {
+    return false;
+  }
+};
+
 const readDensity = (): Density => {
   try {
     return localStorage.getItem(DENSITY_KEY) === 'expanded' ? 'expanded' : 'condensed';
@@ -85,8 +108,11 @@ const readDensity = (): Density => {
   selector: 'app-data-model-classes',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CdkConnectedOverlay,
     ColumnResizeDirective,
+    DescriptionEditorComponent,
     MatButton,
+    MatIconButton,
     MatButtonToggle,
     MatButtonToggleGroup,
     MatCell,
@@ -105,6 +131,7 @@ const readDensity = (): Density => {
     MatPrefix,
     MatRadioButton,
     MatRadioGroup,
+    MatSlideToggle,
     MatRow,
     MatRowDef,
     MatTable,
@@ -123,6 +150,13 @@ const readDensity = (): Density => {
           'pages.ontologyMap.counts' | translate: { classes: state.classRows().length, links: state.linkCount() }
         }}</span>
         <span class="spacer"></span>
+        <mat-slide-toggle
+          class="all-languages"
+          data-cy="data-model-classes-all-languages"
+          [checked]="allLanguages()"
+          (change)="setAllLanguages($event.checked)">
+          {{ r + '.allLanguages' | translate }}
+        </mat-slide-toggle>
         <mat-button-toggle-group
           class="density"
           hideSingleSelectionIndicator
@@ -317,8 +351,54 @@ const readDensity = (): Density => {
                 (widthChanged)="resize('description', $event)"
                 (widthReset)="resize('description', undefined)"></span>
             </th>
-            <td mat-cell *matCellDef="let row" class="description" [title]="expanded ? '' : row.description">
-              {{ row.description }}
+            <td mat-cell *matCellDef="let row" class="description">
+              @for (text of textsOf(row); track text.language) {
+                <div
+                  #line
+                  class="lang-line"
+                  [class.single]="!allLanguages()"
+                  [class.active]="isEditing(row, text.language)">
+                  @if (allLanguages()) {
+                    <span class="lang">{{ text.language }}</span>
+                  }
+                  <span class="lang-text" [title]="expanded ? '' : text.value">{{ text.value }}</span>
+                  @if (canEditDescriptions()) {
+                    <button
+                      mat-icon-button
+                      type="button"
+                      class="lang-edit"
+                      data-cy="data-model-classes-edit-description"
+                      [attr.aria-label]="
+                        r + '.descriptionEditor.edit' | translate: { language: text.language, class: row.label }
+                      "
+                      (click)="$event.stopPropagation(); editDescription(row, text.language, line)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  }
+                </div>
+              } @empty {
+                @if (row.description) {
+                  <!-- A description without a language: shown as it is. -->
+                  <span class="lang-text" [title]="expanded ? '' : row.description">{{ row.description }}</span>
+                } @else if (!canEditDescriptions()) {
+                  <span class="none">—</span>
+                }
+              }
+              @if (canEditDescriptions() && missingOf(row).length) {
+                <div #gaps class="lang-missing" [class.single]="!allLanguages()">
+                  @for (language of missingOf(row); track language) {
+                    <button
+                      type="button"
+                      class="lang-add"
+                      data-cy="data-model-classes-add-description"
+                      [class.active]="isEditing(row, language)"
+                      [attr.aria-label]="r + '.descriptionEditor.add' | translate: { language, class: row.label }"
+                      (click)="$event.stopPropagation(); editDescription(row, language, gaps)">
+                      + {{ language }}
+                    </button>
+                  }
+                </div>
+              }
             </td>
           </ng-container>
           <ng-container matColumnDef="properties">
@@ -477,6 +557,27 @@ const readDensity = (): Density => {
       </div>
 
       @if (state.graph(); as graph) {
+        @if (editingDescription(); as editing) {
+          <ng-template
+            cdkConnectedOverlay
+            [cdkConnectedOverlayOpen]="true"
+            cdkConnectedOverlayHasBackdrop
+            cdkConnectedOverlayPush
+            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+            [cdkConnectedOverlayOrigin]="editing.origin"
+            [cdkConnectedOverlayPositions]="popoverPositions"
+            (backdropClick)="closeDescription()"
+            (detach)="closeDescription()">
+            <app-description-editor
+              [descriptions]="editing.row.descriptions"
+              [language]="editing.language"
+              [classLabel]="editing.row.label"
+              [saving]="savingDescription()"
+              (saved)="saveDescription(editing.row, $event)"
+              (cancelled)="closeDescription()" />
+          </ng-template>
+        }
+
         @if (panelIri(); as iri) {
           <app-resource-class-panel
             class="panel"
@@ -512,6 +613,12 @@ const readDensity = (): Density => {
     RAIL_SECTION_STYLES,
     `
       @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+      .all-languages {
+        flex: none;
+        margin-right: 12px;
+        font-size: 13px;
+      }
 
       .density {
         --mat-standard-button-toggle-height: 34px;
@@ -760,6 +867,108 @@ const readDensity = (): Density => {
         color: $cool_gray_700;
       }
 
+      // One line per language; a pencil shows on hover to edit that language.
+      .lang-line {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr) 24px;
+
+        &.single {
+          grid-template-columns: minmax(0, 1fr) 24px;
+        }
+        align-items: center;
+        gap: 4px;
+        margin: 0 -4px;
+        padding: 0 0 0 4px;
+        border-radius: 4px;
+
+        &:hover,
+        &:focus-within,
+        &.active {
+          background: rgba(0, 0, 0, 0.05);
+
+          .lang-edit {
+            opacity: 1;
+          }
+        }
+
+        &.active {
+          box-shadow: inset 0 0 0 1px $primary;
+        }
+      }
+
+      .lang {
+        font-size: 10.5px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: $cool_gray_500;
+      }
+
+      .lang-text {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .lang-edit.mat-mdc-icon-button {
+        --mat-icon-button-state-layer-size: 24px;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        opacity: 0;
+        color: $primary;
+
+        mat-icon {
+          font-size: 15px;
+          width: 15px;
+          height: 15px;
+        }
+
+        @media (hover: none) {
+          opacity: 0.6;
+        }
+      }
+
+      // The languages without a description, to add one.
+      .lang-missing {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 2px 0 0 22px;
+
+        &.single {
+          padding-left: 0;
+        }
+      }
+
+      .lang-add {
+        border: 1px dashed $cool_gray_300;
+        border-radius: 10px;
+        background: none;
+        padding: 0 7px;
+        font: inherit;
+        font-size: 10.5px;
+        line-height: 16px;
+        text-transform: uppercase;
+        color: $cool_gray_500;
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible,
+        &.active {
+          border-color: $primary;
+          color: $primary;
+        }
+      }
+
+      table.expanded .lang-text {
+        white-space: normal;
+      }
+
+      table.expanded .lang-line {
+        align-items: start;
+      }
+
       // A line of chips, cut at the cell's edge with a fade; the "+N" after them always shows.
       .line {
         display: flex;
@@ -862,6 +1071,19 @@ export class DataModelClassesComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   readonly editing = injectDataModelEditing();
+  private readonly _notification = inject(NotificationService);
+  private readonly _translate = inject(TranslateService);
+  private readonly _destroyRef = inject(DestroyRef);
+
+  /** The description being edited: its class, the language it opened on, and the line it opened from. */
+  readonly editingDescription = signal<{ row: ClassRow; language: string; origin: HTMLElement } | null>(null);
+  readonly savingDescription = signal(false);
+  readonly canEditDescriptions = computed(() => this.state.canEdit() && this.editing.canSaveInPlace);
+  /** Under the line it opened from, else above it. */
+  readonly popoverPositions: ConnectedPosition[] = [
+    { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 4 },
+    { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -4 },
+  ];
   private readonly _params = toSignal(this._route.queryParamMap);
 
   readonly columns = ['class', 'file', 'description', 'properties', 'linksTo'];
@@ -871,6 +1093,8 @@ export class DataModelClassesComponent {
 
   /** Condensed rows of one line, or expanded rows showing everything; remembered in this browser. */
   readonly density = signal<Density>(readDensity());
+  /** Every language of a description stacked, or only the one the app shows; remembered in this browser. */
+  readonly allLanguages = signal(readAllLanguages());
   readonly defaultWidths = DEFAULT_WIDTHS;
   readonly minWidths = MIN_WIDTHS;
   /** The widths the viewer dragged the columns to, remembered in this browser. */
@@ -914,7 +1138,12 @@ export class DataModelClassesComponent {
       .filter(row => !query || row.label.toLowerCase().includes(query) || row.name.toLowerCase().includes(query))
       .filter(row => level === 'all' || (level === 'sub') === !!row.superclass)
       .filter(row => !files.size || files.has(row.representation ?? NO_FILE))
-      .filter(row => !describedAs || row.description.toLowerCase().includes(describedAs))
+      .filter(
+        row =>
+          !describedAs ||
+          row.description.toLowerCase().includes(describedAs) ||
+          row.descriptions.some(text => text.value.toLowerCase().includes(describedAs))
+      )
       .filter(row => !types.size || row.propertyList.some(property => types.has(property.type)))
       .filter(row => !targets.size || row.linksTo.some(target => targets.has(target)));
   });
@@ -971,6 +1200,15 @@ export class DataModelClassesComponent {
 
   onScroll(event: Event): void {
     this.scrolled.set((event.target as HTMLElement).scrollLeft > 0);
+  }
+
+  setAllLanguages(on: boolean): void {
+    this.allLanguages.set(on);
+    try {
+      localStorage.setItem(ALL_LANGUAGES_KEY, String(on));
+    } catch {
+      // Not remembered, as in a private window; the choice still holds on this page.
+    }
   }
 
   setDensity(density: Density): void {
@@ -1069,6 +1307,64 @@ export class DataModelClassesComponent {
   /** Shows the class with the classes it is linked with, in the graph. */
   filterOn(iri: string): void {
     this.state.openSection(RouteConstants.graph, { [ONTOLOGY_MAP_PARAM.filter]: localNameOf(iri) });
+  }
+
+  /** A row's description in each language it has, in the order the app lists languages. */
+  textsOf(row: ClassRow): LanguageText[] {
+    const order = (language: string) => {
+      const index = DESCRIPTION_LANGUAGES.indexOf(language);
+      return index < 0 ? DESCRIPTION_LANGUAGES.length : index;
+    };
+    const texts = [...row.descriptions].sort((a, b) => order(a.language) - order(b.language));
+    if (this.allLanguages()) return texts;
+    // "All languages" off: only the one the app shows, in the interface language when it has it.
+    const shown = texts.find(text => text.value === row.description) ?? texts[0];
+    return shown ? [shown] : [];
+  }
+
+  /** The languages to offer adding: every missing one, or with "All languages" off the interface one, if none. */
+  missingOf(row: ClassRow): string[] {
+    if (!this.allLanguages()) return row.descriptions.length ? [] : [this._interfaceLanguage()];
+    return DESCRIPTION_LANGUAGES.filter(language => !row.descriptions.some(text => text.language === language));
+  }
+
+  private _interfaceLanguage(): string {
+    const current = this._translate.currentLang ?? '';
+    return DESCRIPTION_LANGUAGES.includes(current) ? current : DESCRIPTION_LANGUAGES[0];
+  }
+
+  isEditing(row: ClassRow, language: string): boolean {
+    const editing = this.editingDescription();
+    return editing?.row.id === row.id && editing.language === language;
+  }
+
+  /** Opens the description editor on one language, under the line it was opened from. */
+  editDescription(row: ClassRow, language: string, origin: HTMLElement): void {
+    this.editingDescription.set({ row, language, origin });
+  }
+
+  closeDescription(): void {
+    if (!this.savingDescription()) this.editingDescription.set(null);
+  }
+
+  saveDescription(row: ClassRow, descriptions: LanguageText[]): void {
+    const t = 'pages.dataModels2.descriptionEditor';
+    this.savingDescription.set(true);
+    this.editing
+      .saveClassDescriptions(row.id, descriptions)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: () => {
+          this.savingDescription.set(false);
+          this.editingDescription.set(null);
+          this._notification.openSnackBar(this._translate.instant(`${t}.saved`, { class: row.label }));
+        },
+        error: () => {
+          // The editor stays open with the text, to try again.
+          this.savingDescription.set(false);
+          this._notification.openSnackBar(this._translate.instant(`${t}.notSaved`), 'error');
+        },
+      });
   }
 
   /** Edits the class in the data model editor's dialog; see `injectDataModelEditing`. */

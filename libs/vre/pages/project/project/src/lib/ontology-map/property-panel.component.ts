@@ -8,6 +8,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { localNameOf, propertyUsage } from './ontology-graph-elements';
+import { PropertyLinkEnd, PropertyLinksComponent } from './property-links.component';
 import { typeIconOf, typeNameOf } from './property-types';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
@@ -24,7 +25,7 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 @Component({
   selector: 'app-property-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
+  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, PropertyLinksComponent, TranslatePipe],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.propertyPanel';
@@ -61,6 +62,14 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 
         @if (usage.description) {
           <p class="description">{{ usage.description }}</p>
+        }
+
+        @if (usage.pairs.length) {
+          <app-property-links
+            [links]="usage.pairs"
+            [ends]="ends()"
+            [colors]="colors()"
+            (classSelected)="classSelected.emit($event)" />
         }
 
         <div class="facts">
@@ -415,6 +424,15 @@ export class PropertyPanelComponent {
   readonly edit = output<string>();
 
   readonly usage = computed(() => propertyUsage(this.graph(), this.propertyIri()));
+
+  /** The classes at either end of the property's links, for its map. */
+  readonly ends = computed(() => {
+    const ends = new Map<string, PropertyLinkEnd>();
+    for (const { source, target } of this.usage()?.pairs ?? []) {
+      for (const id of [source, target]) ends.set(id, { id, label: this.labelOf(id), navigable: this.isNavigable(id) });
+    }
+    return ends;
+  });
 
   isNavigable(iri: string): boolean {
     return this.graph().nodes.some(node => node.id === iri && node.kind === 'class');

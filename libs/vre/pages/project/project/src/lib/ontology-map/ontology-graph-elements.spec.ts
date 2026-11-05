@@ -259,6 +259,10 @@ describe('propertyUsage', () => {
       type: 'Link',
       targets: ['Person'],
       links: 2,
+      pairs: [
+        { source: 'Film', target: 'Person' },
+        { source: 'Short', target: 'Person' },
+      ],
       users: [
         { classIri: 'Film', cardinality: Cardinality._1_n, inheritedFrom: undefined },
         { classIri: 'Short', cardinality: undefined, inheritedFrom: 'Film' },
@@ -347,6 +351,7 @@ describe('classRows and propertyRows', () => {
         label: 'Film',
         name: 'Film',
         description: 'A film',
+        descriptions: [],
         representation: 'MovingImageRepresentation',
         properties: 2,
         propertyList: [
@@ -361,6 +366,7 @@ describe('classRows and propertyRows', () => {
         label: 'Person',
         name: 'Person',
         description: '',
+        descriptions: [],
         representation: undefined,
         properties: 1,
         propertyList: [{ id: 'x#title', label: 'Title', type: 'Text' }],

@@ -24,4 +24,5 @@ export * from './lib/data-models-rail/data-model-lists.component';
 // Services used by other libraries
 export * from './lib/project-page.service';
 export * from './lib/ontology-map/data-model-editor';
+export type { LanguageText } from './lib/sidenav/data-model-map/data-model-graph';
 export * from './lib/data-browser-page.service';

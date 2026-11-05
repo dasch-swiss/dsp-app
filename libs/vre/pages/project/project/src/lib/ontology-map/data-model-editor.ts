@@ -3,8 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { filter, Observable } from 'rxjs';
+import { filter, map, Observable, of, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
+import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 
 /**
  * Edits a class or a property of a data model in place, in the data model editor's dialogs. Those dialogs belong to
@@ -15,6 +16,8 @@ export interface DataModelEditor {
   editClass(classIri: string): Observable<boolean>;
   /** Opens the property's dialog, for its labels and description; emits once it closes, `true` if it was saved. */
   editProperty(propertyIri: string): Observable<boolean>;
+  /** Saves the class's description, every language at once; emits `true` once saved. */
+  saveClassDescriptions(classIri: string, descriptions: LanguageText[]): Observable<boolean>;
 }
 
 /** The data model editor, if the app provides one; without it, editing opens the data model editor page instead. */
@@ -49,6 +52,16 @@ export function injectDataModelEditing() {
     ]);
   };
   return {
+    /** Whether a description can be saved in place, without the data model editor's page. */
+    canSaveInPlace: !!editor,
+    /** Saves the class's description; the project is read again once saved. Emits `true` once saved. */
+    saveClassDescriptions: (iri: string, descriptions: LanguageText[]): Observable<boolean> =>
+      editor
+        ? editor.saveClassDescriptions(iri, descriptions).pipe(
+            tap(saved => saved && project.reloadProject()),
+            map(Boolean)
+          )
+        : of(false),
     editClass: (iri: string) => edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i))),
     editProperty: (iri: string) => edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i))),
   };

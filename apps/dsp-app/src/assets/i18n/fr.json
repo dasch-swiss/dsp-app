@@ -772,7 +772,8 @@
         "inheritedFrom": "héritée de {{class}}",
         "filter": "Afficher seulement ces liens",
         "edit": "Modifier la propriété",
-        "type": "Type"
+        "type": "Type",
+        "from": "De"
       },
       "display": "Affichage",
       "zoom": "Zoom",
@@ -879,7 +880,20 @@
       "subclassOf": "Sous-classe de {{class}}",
       "selectAll": "Tout sélectionner",
       "deselectAll": "Tout désélectionner",
-      "resizeColumn": "Redimensionner la colonne"
+      "resizeColumn": "Redimensionner la colonne",
+      "descriptionEditor": {
+        "title": "Description de {{class}}",
+        "language": "Langue",
+        "allLanguages": "Toutes les langues",
+        "descriptionIn": "Description en {{language}}",
+        "needsOne": "Gardez au moins une langue",
+        "save": "Enregistrer",
+        "edit": "Modifier la description ({{language}}) de {{class}}",
+        "add": "Ajouter une description ({{language}}) à {{class}}",
+        "saved": "Description de {{class}} enregistrée",
+        "notSaved": "La description n'a pas pu être enregistrée. Réessayez."
+      },
+      "allLanguages": "Toutes les langues"
     }
   },
   "resourceEditor": {

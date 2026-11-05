@@ -1,7 +1,7 @@
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import type { ElementDefinition } from 'cytoscape';
-import { DataModelEdge, DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
+import { DataModelEdge, DataModelGraph, LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import {
   ClassFamily,
   familyColor,
@@ -317,6 +317,8 @@ export interface PropertyUsage {
   targets: string[];
   /** Its links between two different classes, as the graph draws them. */
   links: number;
+  /** Every link it makes, each once, subclasses' inherited ones included. */
+  pairs: { source: string; target: string }[];
   users: PropertyUser[];
 }
 
@@ -345,6 +347,11 @@ export function propertyUsage(graph: DataModelGraph, propertyIri: string): Prope
     type: detail?.type ?? 'Link',
     targets: [...new Set([...edges.map(edge => edge.target), ...(detail?.linkTarget ? [detail.linkTarget] : [])])],
     links: edges.filter(edge => edge.source !== edge.target).length,
+    pairs: [
+      ...new Map(
+        edges.map(edge => [`${edge.source} ${edge.target}`, { source: edge.source, target: edge.target }])
+      ).values(),
+    ],
     users,
   };
 }
@@ -356,6 +363,8 @@ export interface ClassRow {
   name: string;
   /** Its description in the data model; empty without one. */
   description: string;
+  /** The same description in each language it has. */
+  descriptions: LanguageText[];
   /** The kind of file its resources carry; none without file. */
   representation?: RepresentationClass;
   /** How many properties it has, inherited ones included. */
@@ -397,6 +406,7 @@ export function classRows(graph: DataModelGraph): ClassRow[] {
     label: node.label,
     name: localNameOf(node.id),
     description: node.description ?? '',
+    descriptions: node.descriptions ?? [],
     representation:
       node.representationClass && node.representationClass !== 'WithoutRepresentation'
         ? node.representationClass

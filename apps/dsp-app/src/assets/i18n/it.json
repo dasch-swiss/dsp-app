@@ -772,7 +772,8 @@
         "inheritedFrom": "ereditata da {{class}}",
         "filter": "Mostra solo questi collegamenti",
         "edit": "Modifica la proprietà",
-        "type": "Tipo"
+        "type": "Tipo",
+        "from": "Da"
       },
       "display": "Visualizzazione",
       "zoom": "Zoom",
@@ -879,7 +880,20 @@
       "subclassOf": "Sottoclasse di {{class}}",
       "selectAll": "Seleziona tutto",
       "deselectAll": "Deseleziona tutto",
-      "resizeColumn": "Ridimensiona la colonna"
+      "resizeColumn": "Ridimensiona la colonna",
+      "descriptionEditor": {
+        "title": "Descrizione di {{class}}",
+        "language": "Lingua",
+        "allLanguages": "Tutte le lingue",
+        "descriptionIn": "Descrizione in {{language}}",
+        "needsOne": "Mantieni almeno una lingua",
+        "save": "Salva",
+        "edit": "Modifica la descrizione ({{language}}) di {{class}}",
+        "add": "Aggiungi una descrizione ({{language}}) a {{class}}",
+        "saved": "Descrizione di {{class}} salvata",
+        "notSaved": "Non è stato possibile salvare la descrizione. Riprova."
+      },
+      "allLanguages": "Tutte le lingue"
     }
   },
   "resourceEditor": {

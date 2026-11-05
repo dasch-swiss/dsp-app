@@ -772,7 +772,8 @@
         "inheritedFrom": "geerbt von {{class}}",
         "filter": "Nur diese Verknüpfungen zeigen",
         "edit": "Eigenschaft bearbeiten",
-        "type": "Typ"
+        "type": "Typ",
+        "from": "Von"
       },
       "display": "Darstellung",
       "zoom": "Zoom",
@@ -879,7 +880,20 @@
       "subclassOf": "Unterklasse von {{class}}",
       "selectAll": "Alle auswählen",
       "deselectAll": "Alle abwählen",
-      "resizeColumn": "Spaltenbreite ändern"
+      "resizeColumn": "Spaltenbreite ändern",
+      "descriptionEditor": {
+        "title": "Beschreibung von {{class}}",
+        "language": "Sprache",
+        "allLanguages": "Alle Sprachen",
+        "descriptionIn": "Beschreibung auf {{language}}",
+        "needsOne": "Mindestens eine Sprache behalten",
+        "save": "Speichern",
+        "edit": "Beschreibung ({{language}}) von {{class}} bearbeiten",
+        "add": "Beschreibung ({{language}}) zu {{class}} hinzufügen",
+        "saved": "Beschreibung von {{class}} gespeichert",
+        "notSaved": "Die Beschreibung konnte nicht gespeichert werden. Bitte erneut versuchen."
+      },
+      "allLanguages": "Alle Sprachen"
     }
   },
   "resourceEditor": {
