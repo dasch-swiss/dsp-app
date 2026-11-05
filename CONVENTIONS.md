@@ -40,7 +40,7 @@ Build commands and gotchas live in [`CLAUDE.md`](CLAUDE.md), the library topolog
 - Prefer an inline `template:` over `templateUrl:` for small templates.
 - Use `@if`, `@for` (with `track` on a unique id) and `@switch`. `*ngIf`, `*ngFor` and `*ngSwitch` fail lint (`prefer-control-flow`).
 - Self-closing tags for component selectors in templates. Do not use `::ng-deep`.
-- Inline `styles:` are plain CSS: no Sass variables, `@use`, nesting or `//` comments, because the style shim scopes only the outer selector of a nested rule. A component that needs Sass uses a `.scss` file.
+- Inline `styles:` are plain CSS: no Sass variables, `@use`, nesting or `//` comments, because the style shim scopes only the outer selector of a nested rule. A component that needs Sass uses a `.scss` file; a palette colour is written as its value with the variable name in a comment (`#336790; /* $primary */`), as `REVIEW.md` asks.
 - Media queries use `bp-up` / `bp-down` from `libs/vre/ui/styles/_responsive.scss` (`@use "responsive" as *`); never hardcode pixel breakpoints. `sm` (768px) is the minimum supported width.
 - Inputs: `@Input({ required: true }) name!: T` for mandatory inputs — the `!` only there — and `@Input() name = default` for optional ones. Outputs are typed: `@Output() loaded = new EventEmitter<boolean>()`. Signal inputs and outputs (`input.required<T>()`, `input<T>(default)`, `output<T>()`) are allowed in new components.
 - Put `data-cy` attributes on interactive elements; e2e and Storybook tests select by them.
