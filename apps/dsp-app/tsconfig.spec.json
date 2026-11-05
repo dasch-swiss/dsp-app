@@ -3,7 +3,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "outDir": "../../dist/out-tsc",
-    "types": ["jest", "node"],
+    "types": ["jest", "node", "window", "ckeditor5-custom-build"],
     "isolatedModules": true
   },
   "files": ["src/test-setup.ts"],
