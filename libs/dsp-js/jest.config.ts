@@ -10,7 +10,7 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.d.ts', '!src/test-setup.ts', '!src/index.ts'],
   setupFilesAfterEnv: ['<rootDir>/test/jest-setup.ts'],
   moduleNameMapper: {
-    '^rxjs/ajax$': '<rootDir>/../../node_modules/rxjs/dist/cjs/ajax/index.js',
-    '^rxjs$': '<rootDir>/../../node_modules/rxjs/dist/cjs/index.js',
+    '^rxjs/ajax$': require.resolve('rxjs/ajax'),
+    '^rxjs$': require.resolve('rxjs'),
   },
 };
