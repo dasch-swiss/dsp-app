@@ -23,7 +23,7 @@ module.exports = {
     ],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!.*\\.mjs$|@angular|@dasch-swiss|@ckeditor|lodash-es)',
+    'node_modules/(?!\\.pnpm/|.*\\.mjs$|@angular|@dasch-swiss|@ckeditor|lodash-es)',
   ],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   snapshotSerializers: [

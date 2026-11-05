@@ -6,7 +6,7 @@ module.exports = {
   rootDir: '.',
   roots: ['<rootDir>/src'],
   coverageDirectory: '../../coverage/libs/dsp-js',
-  transformIgnorePatterns: ['node_modules/(?!@angular|@dasch-swiss|rxjs)'],
+  transformIgnorePatterns: ['node_modules/(?!\\.pnpm/|@angular|@dasch-swiss|rxjs)'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.d.ts', '!src/test-setup.ts', '!src/index.ts'],
   setupFilesAfterEnv: ['<rootDir>/test/jest-setup.ts'],
   moduleNameMapper: {

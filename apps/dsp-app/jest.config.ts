@@ -4,7 +4,7 @@ module.exports = {
   preset: '../../jest.preset.js',
   coverageDirectory: '../../coverage/apps/dsp-app',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  transformIgnorePatterns: ['node_modules/(?!@angular|@dasch-swiss|@sentry|@ngx-translate|@ckeditor)'],
+  transformIgnorePatterns: ['node_modules/(?!\\.pnpm/|@angular|@dasch-swiss|@sentry|@ngx-translate|@ckeditor)'],
   collectCoverageFrom: [
     'src/**/*.{ts,js}',
     '!src/**/*.spec.ts',
