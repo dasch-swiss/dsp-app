@@ -8,6 +8,9 @@
   "exclude": ["../**/*.spec.ts"],
   "include": [
     "../libs/**/*.stories.ts",
+    "../libs/**/stories.helpers.ts",
+    "../libs/**/*.stories.helpers.ts",
+    "../libs/**/*-stories.helper.ts",
     "../apps/**/*.stories.ts",
     "../apps/dsp-app/src/polyfills.ts",
     "../types/*.d.ts",
