@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-// eslint-disable-next-line @nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries -- story-only helpers, kept out of the barrel
 import {
   EMPTY_SEARCH_STATE,
   SEARCH_FILTER_SERVICE_STUBS,
@@ -8,7 +8,7 @@ import {
 import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries -- story-only helpers, kept out of the barrel
 export {
   CHIP_LABEL_STORY_PROVIDERS,
   EMPTY_SEARCH_STATE,
