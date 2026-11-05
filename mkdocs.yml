@@ -11,6 +11,7 @@ nav:
       - Developer Documentation: contribution/index.md
       - Docs Documentation: contribution/docs-documentation.md
       - Release Notes: contribution/release-notes.md
+      - Build Baselines: contribution/bazel-baselines.md
   - Architecture Decisions:
       - Overview: adr/index.md
       - "ADR-0001: Library taxonomy and enforced dependency direction": adr/0001-library-taxonomy-and-dependency-direction.md
