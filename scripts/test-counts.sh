@@ -2,7 +2,7 @@
 # Prints the passing Jest spec files, passing tests and skipped tests per library, one line per
 # project with a jest.config.ts, so two runs compare line by line (docs/contribution/bazel-baselines.md).
 # Runs every project through the root multi-project Jest config with the CI environment.
-# Exits non-zero when any test failed.
+# Exits non-zero when any test failed or Jest wrote no report.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
