@@ -147,6 +147,7 @@
     },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
+      "dependsOn": ["vre-open-api:generate"],
       "continuous": true,
       "options": {
         "buildTarget": "dsp-app:build"
@@ -216,6 +217,7 @@
     },
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
+      "dependsOn": ["vre-open-api:generate"],
       "options": {
         "port": 4400,
         "configDir": ".storybook",
@@ -241,6 +243,7 @@
     },
     "build-storybook": {
       "executor": "@storybook/angular:build-storybook",
+      "dependsOn": ["vre-open-api:generate"],
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "dist/storybook",

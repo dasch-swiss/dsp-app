@@ -13,7 +13,7 @@ trap 'rm -f "$REPORT" "$LOG"' EXIT
 
 # A failing test still writes the report; only a missing report means Jest itself broke.
 TZ=Europe/Zurich NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}" \
-  npx jest --config jest.config.ts --ci --json --outputFile="$REPORT" >"$LOG" 2>&1 || true
+  pnpm exec jest --config jest.config.ts --ci --json --outputFile="$REPORT" >"$LOG" 2>&1 || true
 if [ ! -s "$REPORT" ]; then
   echo "jest wrote no report; the end of its output:" >&2
   tail -n 40 "$LOG" >&2

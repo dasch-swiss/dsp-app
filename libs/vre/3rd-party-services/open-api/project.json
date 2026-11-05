@@ -10,7 +10,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "libs/vre/3rd-party-services/open-api",
-        "command": "rm -rf src/generated && npx openapi-generator-cli generate"
+        "command": "rm -rf src/generated && pnpm exec openapi-generator-cli generate"
       }
     },
     "lint": {

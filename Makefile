@@ -62,11 +62,11 @@ docker-publish: docker-publish-app ## publish all Docker images in the monorepo.
 
 .PHONY: app-build-prod
 app-build-prod: install-dependencies
-	npx nx run dsp-app:build:production
+	pnpm exec nx run dsp-app:build:production
 
 .PHONY: install-dependencies
 install-dependencies:
-	npm install
+	pnpm install --frozen-lockfile
 
 .PHONY: help
 help: ## this help
