@@ -1,13 +1,11 @@
 /**
- * Detects a MutationObserver whose callbacks keep re-triggering each other without the page ever
- * yielding to a macrotask, e.g. an observer running inside Angular's zone while change detection
- * writes to the DOM.
+ * Detects a MutationObserver whose callbacks keep re-triggering it without the page ever yielding to
+ * a macrotask, e.g. an observer running inside Angular's zone while change detection writes to the DOM.
  *
  * Such a loop blocks the main thread, which the Cypress runner shares with the app, so without this
  * guard the run hangs instead of failing. The guard disconnects the looping observer to unblock the
  * page and records it, so `assertNoMutationObserverLoop()` can fail the test.
  */
-const LOOP_KEY = '__e2eMutationObserverLoop';
 const MAX_CALLBACKS_WITHOUT_YIELDING = 1000;
 
 interface MutationObserverLoop {
@@ -15,17 +13,19 @@ interface MutationObserverLoop {
   observerCreatedAt: string;
 }
 
-type GuardedWindow = Cypress.AUTWindow & { [LOOP_KEY]?: MutationObserverLoop };
+// Kept in the spec's realm, not on the app window, so a loop is still reported after the test
+// navigates or reloads the page.
+let detectedLoop: MutationObserverLoop | undefined;
 
 /** Must run before the app's scripts load (`window:before:load`), so zone.js wraps the guarded class. */
-export function installMutationObserverLoopGuard(win: GuardedWindow): void {
+export function installMutationObserverLoopGuard(win: Cypress.AUTWindow): void {
   const NativeMutationObserver = win.MutationObserver;
-  let callbacksWithoutYielding = 0;
-  let resetScheduled = false;
 
   win.MutationObserver = class extends NativeMutationObserver {
     constructor(callback: MutationCallback) {
       const observerCreatedAt = captureStack(win);
+      let callbacksWithoutYielding = 0;
+      let resetScheduled = false;
       super((records, observer) => {
         if (!resetScheduled) {
           resetScheduled = true;
@@ -36,7 +36,7 @@ export function installMutationObserverLoopGuard(win: GuardedWindow): void {
         }
         if (++callbacksWithoutYielding > MAX_CALLBACKS_WITHOUT_YIELDING) {
           observer.disconnect();
-          win[LOOP_KEY] ??= { callbacks: callbacksWithoutYielding, observerCreatedAt };
+          detectedLoop ??= { callbacks: callbacksWithoutYielding, observerCreatedAt };
           return;
         }
         callback.call(observer, records, observer);
@@ -45,7 +45,7 @@ export function installMutationObserverLoopGuard(win: GuardedWindow): void {
   };
 }
 
-function captureStack(win: GuardedWindow): string {
+function captureStack(win: Cypress.AUTWindow): string {
   const AppError = win.Error;
   const previousLimit = AppError.stackTraceLimit;
   AppError.stackTraceLimit = 20;
@@ -54,13 +54,16 @@ function captureStack(win: GuardedWindow): string {
   return stack.split('\n').slice(1).join('\n');
 }
 
+export function resetMutationObserverLoopGuard(): void {
+  detectedLoop = undefined;
+}
+
 export function assertNoMutationObserverLoop(): void {
-  cy.window({ log: false }).then((win: GuardedWindow) => {
-    const loop = win[LOOP_KEY];
+  cy.then(() => {
     expect(
-      loop,
-      loop &&
-        `a MutationObserver fired ${loop.callbacks} times without yielding; observer created at:\n${loop.observerCreatedAt}`
+      detectedLoop,
+      detectedLoop &&
+        `a MutationObserver fired ${detectedLoop.callbacks} times without yielding; observer created at:\n${detectedLoop.observerCreatedAt}`
     ).to.be.undefined;
   });
 }

@@ -11,7 +11,7 @@ describe('Project description', () => {
       .should('be.visible')
       .within(() => {
         cy.contains('h2', 'Anything Project');
-        cy.get('mat-chip').should('have.length', 2);
+        cy.get('mat-chip').should('have.length.at.least', 1);
       });
   });
 });

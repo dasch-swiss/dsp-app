@@ -3,7 +3,11 @@ import './commands/api-commands';
 import './commands/auth-commands';
 import './commands/data-model-class-command';
 import './commands/ontology-command';
-import { assertNoMutationObserverLoop, installMutationObserverLoopGuard } from './utils/mutation-observer-loop-guard';
+import {
+  assertNoMutationObserverLoop,
+  installMutationObserverLoopGuard,
+  resetMutationObserverLoopGuard,
+} from './utils/mutation-observer-loop-guard';
 
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
 Cypress.on('uncaught:exception', err => {
@@ -74,6 +78,7 @@ Cypress.on('window:before:load', win => {
 // The e2e config runs Faro, as deployed environments do, against an unresolvable collector
 // (faro.invalid). Answer its requests here so they neither fail noisily nor leave the browser.
 beforeEach(() => {
+  resetMutationObserverLoopGuard();
   cy.intercept({ hostname: 'faro.invalid' }, { statusCode: 202, body: {} });
 });
 
