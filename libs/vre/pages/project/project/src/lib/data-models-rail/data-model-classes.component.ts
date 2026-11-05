@@ -1,11 +1,14 @@
 import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
+  ElementRef,
   inject,
   signal,
+  viewChild,
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -1154,7 +1157,13 @@ export class DataModelClassesComponent {
   readonly density = signal<Density>(readDensity());
   /** Every language of a description stacked, or only the one the app shows; remembered in this browser. */
   readonly allLanguages = signal(readAllLanguages());
+  private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
   readonly defaultWidths = DEFAULT_WIDTHS;
+
+  constructor() {
+    // Arriving on the page, typing finds a class.
+    afterNextRender(() => this._search()?.nativeElement.focus());
+  }
   readonly minWidths = MIN_WIDTHS;
   /** The widths the viewer dragged the columns to, remembered in this browser. */
   readonly widths = signal(readWidths());
