@@ -1,21 +1,24 @@
+import { of } from 'rxjs';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   EMPTY_SEARCH_STATE,
   SEARCH_FILTER_SERVICE_STUBS,
   STORY_PROVIDERS as SHARED_STORY_PROVIDERS,
-} from '@dasch-swiss/vre/pages/search/search-filters';
-import { of } from 'rxjs';
+} from '../../../search-filters/src/lib/stories.helpers';
 import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
 
+// eslint-disable-next-line @nx/enforce-module-boundaries
 export {
   CHIP_LABEL_STORY_PROVIDERS,
+  EMPTY_SEARCH_STATE,
   makeDspApiConnectionStub,
   makeListNodeLabelResolverStub,
   makeOntologyDataServiceStub,
   PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
   SAMPLE_ONTOLOGIES,
   SAMPLE_RESOURCE_CLASSES,
-} from '@dasch-swiss/vre/pages/search/search-filters';
+} from '../../../search-filters/src/lib/stories.helpers';
 
 /** Stubs the Search tab's URL service on top of the shared port stub, both backed by one quiet state object. */
 const searchUrlSyncServiceStub = {
