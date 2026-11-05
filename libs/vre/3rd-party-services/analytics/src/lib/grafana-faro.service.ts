@@ -1,6 +1,6 @@
 /// <reference types="window" />
 
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, NgZone } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 
 // Faro types are defined globally to avoid eager imports
@@ -9,6 +9,7 @@ type Faro = any;
 @Injectable({ providedIn: 'root' })
 export class GrafanaFaroService {
   private readonly _appConfig = inject(AppConfigService);
+  private readonly _ngZone = inject(NgZone);
 
   private _faroInstance?: Faro;
 
@@ -75,24 +76,27 @@ export class GrafanaFaroService {
         },
       };
 
-      // Use OTLP transport for local development with grafana/otel-lgtm
-      if (faroConfig.otlp?.logsUrl && faroConfig.otlp?.tracesUrl) {
-        this._faroInstance = initializeFaro({
-          ...baseConfig,
-          transports: [
-            new OtlpHttpTransport({
-              logsURL: faroConfig.otlp.logsUrl,
-              tracesURL: faroConfig.otlp.tracesUrl,
-            }),
-          ],
-        });
-      } else {
+      // Faro's observers, listeners and timers must stay outside Angular's zone. Inside it, an observer
+      // that reacts to DOM writes triggers change detection, which writes to the DOM, and loops forever.
+      this._faroInstance = this._ngZone.runOutsideAngular(() => {
+        // Use OTLP transport for local development with grafana/otel-lgtm
+        if (faroConfig.otlp?.logsUrl && faroConfig.otlp?.tracesUrl) {
+          return initializeFaro({
+            ...baseConfig,
+            transports: [
+              new OtlpHttpTransport({
+                logsURL: faroConfig.otlp.logsUrl,
+                tracesURL: faroConfig.otlp.tracesUrl,
+              }),
+            ],
+          });
+        }
         // Use default Faro transport for Grafana Cloud
-        this._faroInstance = initializeFaro({
+        return initializeFaro({
           ...baseConfig,
           url: faroConfig.collectorUrl,
         });
-      }
+      });
 
       // Expose Faro instance globally for error handler
       window.__FARO__ = this._faroInstance;
