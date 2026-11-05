@@ -71,7 +71,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - **CI bypasses the configured Nx target.** `apps/dsp-app` defines a working `e2e` target (`@nx/cypress:cypress`, with `devServerTarget` set for `production`, `development` and `cypress-cloud`), and `package.json` exposes it as `e2e-ci` and `e2e-ci-dev`. Nothing calls any of it. `.github/workflows/ci.yml` job `dsp-app-e2e-tests` instead backgrounds `dsp-app:serve:production`, polls port 4200 with `curl` for up to 180 seconds, then runs `npx cypress run` from `apps/dsp-app`, as a two-runner matrix (`heavy` and `rest`). See ADR-0006. `docs-only`
   - The matrix mixes two styles: `project-member`, `logged-out-user` and `performance` are globbed, while all ten `system-admin` specs are enumerated one by one. All 20 specs are covered today, but a new `system-admin` spec will not run until the matrix is edited, and nothing reports that omission. `docs-only`
   - `dsp-app-e2e-tests-status` is the required gate that aggregates the matrix. `static-analysis`
-  - **The type-check is a CI step, not a target.** `.github/workflows/ci.yml:210` runs `npx tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json` in the `dsp-app-e2e-tests` job (#3434, DEV-7251). No Nx target does, and `eslint.config.mjs:173` still excludes the directory, so the boundary rule never sees this subtree. Before that step existed, Cypress bundled the specs transpile-only, five files imported from two libraries that had been deleted, and the suite stayed green. ADR-0006 turns the step into a target. `static-analysis`
+  - **The type-check is a CI step, not a target.** `.github/workflows/ci.yml:210` runs `pnpm exec tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json` in the `dsp-app-e2e-tests` job (#3434, DEV-7251). No Nx target does, and `eslint.config.mjs:173` still excludes the directory, so the boundary rule never sees this subtree. Before that step existed, Cypress bundled the specs transpile-only, five files imported from two libraries that had been deleted, and the suite stayed green. ADR-0006 turns the step into a target. `static-analysis`
   - Do not copy its import style. It bypasses the `@dasch-swiss/*` aliases because the boundary lint is disabled here. `docs-only`
 - **Durable state**: `cypress.config.ts` carries a hardcoded JWT literal in `env.authToken`, alongside localhost URLs for api, ingest and IIIF. It is a local-stack fixture, not a credential for a deployed environment.
 - **Fingerprint**: `77d0c4c999cb`
@@ -98,7 +98,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Nx project**: `vre-open-api`
 - **Paths**: `libs/vre/3rd-party-services/open-api/**`
-- **Purpose**: The vendored DSP-API OpenAPI spec plus the generator config that produces a typed Angular client at install time. The only hand-written source is one string-literal type guard.
+- **Purpose**: The vendored DSP-API OpenAPI spec plus the generator config that produces a typed Angular client through its `generate` target (a `dependsOn` of dsp-app's build, serve and Storybook targets; CI runs it as an explicit step). The only hand-written source is one string-literal type guard.
 - **Key entities**: `AdminAPIApiService`, `APIV2ApiService`, `APIV3ApiService`, `SegmentApiService`, `StringLiteralV2`, `ProjectLicenseDto`, `ensureWithDefaultLanguage`, `StringLiteralWithLanguage`
 - **Public interface**: `export * from './generated/index'` and `export * from './lib/type-guards'`.
 - **Local-context kit**: `README.md`, `openapitools.json`, `dsp-api_spec.yaml` (head only), `src/index.ts`, `src/lib/type-guards.ts`, `.claude/skills/update-openapi-client/SKILL.md`, `scripts/check-openapi-sync.sh`
@@ -108,7 +108,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `src/generated/**` is gitignored and deleted by `rm -rf` on every generate. Edits there cannot be committed and cannot survive. `structure`
   - Never edit `dsp-api_spec.yaml` to silence `check-openapi-sync`. A red check is expected until the dsp-api change is deployed to dev. Use the `update-openapi-client` skill. `review`
   - You do not add code here. Bump the spec and regenerate. `docs-only`
-- **Durable state**: `dsp-api_spec.yaml`, currently pinned at `info.version: v39.0.0-17-g9ddad36`. Written by `npm run update-openapi` or by the CI auto-bump PR.
+- **Durable state**: `dsp-api_spec.yaml`, currently pinned at `info.version: v39.0.0-17-g9ddad36`. Written by `pnpm run update-openapi` or by the CI auto-bump PR.
 - **Fingerprint**: `bdb777e46ba6`
 
 ### vre/3rd-party-services/analytics
@@ -558,7 +558,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 ### build-tooling
 
 - **Nx project**: none
-- **Paths**: `tools/**`, `scripts/**`, `.storybook/**`, `types/**`, `@types/**`, `mocks/**`, `nx.json`, `tsconfig.base.json`, `package.json`, `package-lock.json`, `eslint.config.mjs`, `eslint.config.angular.mjs`, `jest.config.ts`, `jest.preset.js`, `.babelrc`, `.editorconfig`, `.prettierrc`, `.prettierignore`, `.nvmrc`, `.markdownlint.json`, `.remarkrc.json`, `codecov.yml`, `.kodus-readiness.yml`, `Makefile`, `vars.mk`, `.gitignore`, `libs/.gitkeep`
+- **Paths**: `tools/**`, `scripts/**`, `.storybook/**`, `types/**`, `@types/**`, `mocks/**`, `nx.json`, `tsconfig.base.json`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `vendor/**`, `eslint.config.mjs`, `eslint.config.angular.mjs`, `jest.config.ts`, `jest.preset.js`, `.babelrc`, `.editorconfig`, `.prettierrc`, `.prettierignore`, `.nvmrc`, `.markdownlint.json`, `.remarkrc.json`, `codecov.yml`, `.kodus-readiness.yml`, `Makefile`, `vars.mk`, `.gitignore`, `libs/.gitkeep`
 - **Purpose**: Build, lint, test and Storybook configuration for the whole workspace, plus ambient type declarations and test mocks.
 - **Key entities**: `depConstraints`, `merge-coverage.js`, `check-openapi-sync.sh`
 - **Public interface**: `tsconfig.base.json` `compilerOptions.paths` is the authoritative list of library aliases and the thing the boundary lint matches on.
@@ -656,7 +656,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 These are values or mechanisms that span components and would multiply-map if treated as components.
 
-- **The dual client.** Two clients reach dsp-api. Domains read through dsp-js models (`ReadProject`, `ReadResource`, `CreateResource`) require changes in `libs/dsp-js/`; regenerating the OpenAPI client does not surface a field there. Endpoints consumed through the generated client only need `npm run update-openapi` after the API is deployed to dev. If a new backend field does not arrive in the UI, determine which client the reading code uses before debugging further. The generator's `serviceSuffix` is `ApiService`, which is also the hand-written convention, so a call site does not reveal which client it is on without reading the import path.
+- **The dual client.** Two clients reach dsp-api. Domains read through dsp-js models (`ReadProject`, `ReadResource`, `CreateResource`) require changes in `libs/dsp-js/`; regenerating the OpenAPI client does not surface a field there. Endpoints consumed through the generated client only need `pnpm run update-openapi` after the API is deployed to dev. If a new backend field does not arrive in the UI, determine which client the reading code uses before debugging further. The generator's `serviceSuffix` is `ApiService`, which is also the hand-written convention, so a call site does not reveal which client it is on without reading the import path.
 
 - **The JWT.** One logical value with four physical homes: `localStorage['ACCESS_TOKEN']`, `KnoraApiConfig.jsonWebToken` on the shared config object, `UserService._user$`, and the `Authorization` header built per request by `authInterceptorFn`. Writers span `vre/core/session`, `vre/core/config`, `vre/pages/user-settings/user` and `libs/dsp-js`. dsp-js requests read the in-memory config; `HttpClient` requests read localStorage per request. The two paths can disagree.
 

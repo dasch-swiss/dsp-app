@@ -262,7 +262,7 @@ bytes	38967597
 
 ## Reference: after the switch to pnpm
 
-Commit `535bd182b` (Phase 3), darwin-arm64, Node 24.20.0 (the dev shell's `nodejs_24`), pnpm
+Measured at commit `535bd182b` (Phase 3; the later Phase 3 commits change only this document and the coverage merge script), darwin-arm64, Node 24.20.0 (the dev shell's `nodejs_24`), pnpm
 10.33.2, 2026-11-05.
 
 ### Test counts

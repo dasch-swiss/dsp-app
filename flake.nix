@@ -35,8 +35,8 @@
             # major fails `pnpm install` under engine-strict before any script runs.
             pkgs.${nodeAttr}
 
-            # pnpm on the 10 line; nixpkgs' patch can differ from packageManager's
-            # 10.33.2, which pnpm accepts within the major.
+            # pnpm on the 10 line. nixpkgs' patch differs from packageManager's
+            # 10.33.2, so pnpm downloads 10.33.2 on first use and runs that.
             pkgs.pnpm_10
 
             # agent-browser — drives the running app for `/eng:test-browser`

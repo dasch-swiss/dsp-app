@@ -6,7 +6,7 @@ import { BREAKPOINT_HEIGHT, BREAKPOINT_WIDTHS } from './.storybook/breakpoints';
 // viewport, so the widths have to be devices here rather than anything set inside a story.
 //
 // Kept apart from pixeleye.config.ts so the main baseline is untouched: it runs against a
-// Storybook built with only those stories (`npm run build-storybook:breakpoints`) and uploads
+// Storybook built with only those stories (`pnpm run build-storybook:breakpoints`) and uploads
 // to its own pixeleye project (PIXELEYE_BREAKPOINTS_TOKEN). Two builds for one commit in the
 // same project would overwrite each other.
 const desktop = (width: number): DeviceDescriptor => ({

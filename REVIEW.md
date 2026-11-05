@@ -74,5 +74,5 @@ What blocks a merge is set by the review prompt in `.github/workflows/claude.yml
 - Formatting and import order: Prettier and ESLint enforce them.
 - Translation wording in `de.json`, `fr.json` and `it.json`; key parity is still checked above.
 - Visual diffs: the `Pixeleye – dasch-swiss/dsp-app` status check owns them.
-- Generated and release-managed files: `libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml` (not the rest of that library: `src/lib/` is hand-written), `package-lock.json`, `CHANGELOG.md`, `.release-please-manifest.json`.
+- Generated and release-managed files: `libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml` (not the rest of that library: `src/lib/` is hand-written), `pnpm-lock.yaml`, `vendor/*.tgz`, `CHANGELOG.md`, `.release-please-manifest.json`.
 - PRs opened by `renovate[bot]` or `dasch-bot-app[bot]`.
