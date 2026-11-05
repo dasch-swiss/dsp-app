@@ -39,10 +39,7 @@ jobs:
       - name: Set up pnpm and install dependencies
         uses: ./.github/actions/setup-pnpm
 
-      - name: Generate OpenAPI client
-        run: pnpm run generate-openapi-module
-
-      - name: Build Angular app (dev-server config → DEV API)
+      - name: Build Angular app (dev-server config → DEV API; generates the OpenAPI client first)
         run: pnpm exec nx run dsp-app:build:dev-server
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
@@ -183,10 +180,7 @@ jobs:
       - name: Set up pnpm and install dependencies
         uses: ./.github/actions/setup-pnpm
 
-      - name: Generate OpenAPI client
-        run: pnpm run generate-openapi-module
-
-      - name: Build Angular app (dev-server config → DEV API)
+      - name: Build Angular app (dev-server config → DEV API; generates the OpenAPI client first)
         run: pnpm exec nx run dsp-app:build:dev-server
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'

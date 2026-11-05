@@ -429,9 +429,7 @@ jobs:
           node-version-file: .nvmrc
       - name: Set up pnpm and install dependencies
         uses: ./.github/actions/setup-pnpm
-      - name: Generate OpenAPI client
-        run: pnpm run generate-openapi-module
-      - name: Build Storybook
+      - name: Build Storybook (generates the OpenAPI client first)
         run: pnpm exec nx run dsp-app:build-storybook:ci
       - name: Install Playwright browsers
         run: pnpm exec playwright-core install chromium
@@ -490,9 +488,7 @@ jobs:
           node-version-file: .nvmrc
       - name: Set up pnpm and install dependencies
         uses: ./.github/actions/setup-pnpm
-      - name: Generate OpenAPI client
-        run: pnpm run generate-openapi-module
-      - name: Build Storybook
+      - name: Build Storybook (generates the OpenAPI client first)
         run: pnpm exec nx run dsp-app:build-storybook:ci
       - name: Cache Playwright browsers
         # `pnpm install --ignore-scripts` suppresses playwright's postinstall, so
@@ -504,7 +500,7 @@ jobs:
           key: ms-playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: ms-playwright-${{ runner.os }}-
       - name: Install Playwright browsers
-        # Installed via playwright-core's own CLI rather than `npx playwright`,
+        # Installed via playwright-core's own CLI rather than `playwright`'s,
         # so the browser revision matches the playwright-core that pixeleye
         # actually launches — a mismatch fails with "Executable doesn't exist".
         # chromium-headless-shell is a SEPARATE download from chromium and is
