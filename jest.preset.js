@@ -1,4 +1,3 @@
-const nxPreset = require('@nx/jest/preset').default;
 const { swcAngularJestTransformer } = require('@jscutlery/swc-angular');
 
 const [swcTransformer, swcConfig] = swcAngularJestTransformer({ useDefineForClassFields: false });
@@ -8,9 +7,14 @@ const { env: _env, ...swcConfigWithoutEnv } = swcConfig;
 const swcConfigEs5 = { ...swcConfigWithoutEnv, jsc: { ...swcConfigWithoutEnv.jsc, target: 'es5' } };
 
 module.exports = {
-  ...nxPreset,
-  coverageReporters: ['html', 'json', 'text-summary', 'lcov'],
-  coverageProvider: 'v8',
+  testEnvironment: 'jsdom',
+  // Load the CommonJS build of packages that also export a browser ESM build.
+  testEnvironmentOptions: {
+    customExportConditions: ['node', 'require', 'default'],
+  },
+  testMatch: ['**/?(*.)+(spec|test).?([mc])[jt]s?(x)'],
+  moduleFileExtensions: ['ts', 'js', 'mts', 'mjs', 'cts', 'cjs', 'html'],
+  resolver: require.resolve('./jest.resolver.js'),
   setupFiles: ['reflect-metadata'],
   transform: {
     '^.+\\.(ts|mjs|js)$': [swcTransformer, swcConfigEs5],
@@ -22,8 +26,10 @@ module.exports = {
       },
     ],
   },
+  // `.pnpm/` is pnpm's store and `.aspect_rules_js/` Bazel's: the store directory is skipped
+  // and the package's own `node_modules/<name>` segment decides.
   transformIgnorePatterns: [
-    'node_modules/(?!\\.pnpm/|.*\\.mjs$|@angular|@dasch-swiss|@ckeditor|lodash-es)',
+    'node_modules/(?!\\.pnpm/|\\.aspect_rules_js/|.*\\.mjs$|@angular|@dasch-swiss|@ckeditor|lodash-es)',
   ],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   snapshotSerializers: [

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Prints the passing Jest spec files, passing tests and skipped tests per library, one line per
 # project with a jest.config.ts, so two runs compare line by line (docs/contribution/bazel-baselines.md).
-# Runs every project through the root multi-project Jest config with the CI environment.
+# Runs every project that has a jest.config.ts, with the CI environment.
 # Exits non-zero when any test failed or Jest wrote no report.
 set -euo pipefail
 
@@ -13,7 +13,7 @@ trap 'rm -f "$REPORT" "$LOG"' EXIT
 
 # A failing test still writes the report; only a missing report means Jest itself broke.
 TZ=Europe/Zurich NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}" \
-  pnpm exec jest --config jest.config.ts --ci --json --outputFile="$REPORT" >"$LOG" 2>&1 || true
+  pnpm exec jest --projects $(git ls-files "*/jest.config.ts" | xargs -n1 dirname) --ci --json --outputFile="$REPORT" >"$LOG" 2>&1 || true
 if [ ! -s "$REPORT" ]; then
   echo "jest wrote no report; the end of its output:" >&2
   tail -n 40 "$LOG" >&2

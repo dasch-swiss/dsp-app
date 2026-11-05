@@ -2,8 +2,6 @@
 module.exports = {
   displayName: 'vre-shared-app-analytics',
   preset: '../../../../jest.preset.js',
-  coverageDirectory: '../../../../coverage/libs/vre/3rd-party-services/analytics',
   // fix: SyntaxError: Unexpected token 'export' of js-lib
   transformIgnorePatterns: ['node_modules/(?!\\.pnpm/|@angular|@dasch-swiss|@ngx|@sentry)'],
-  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/*.d.ts', '!src/test-setup.ts', '!src/index.ts'],
 };
