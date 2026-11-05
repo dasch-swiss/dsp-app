@@ -1,0 +1,13 @@
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+package(default_visibility = ["//visibility:public"])
+
+npm_link_all_packages(name = "node_modules")
+
+exports_files([
+    "package.json",
+    "pnpm-lock.yaml",
+    "tsconfig.base.json",
+    "jest.preset.js",
+    "jest.resolver.js",
+])

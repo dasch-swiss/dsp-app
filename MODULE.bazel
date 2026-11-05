@@ -1,0 +1,110 @@
+"""dsp-app: the DSP-APP Angular application, its libraries and @dasch-swiss/dsp-js.
+
+Pins are bumped by hand; no bot updates them. The JavaScript pin set is Angular CLI 21.2.x's,
+except where a dependency's own requirement moved it (noted on the line).
+"""
+
+module(name = "dsp_app")
+
+bazel_dep(name = "platforms", version = "1.1.0")
+bazel_dep(name = "rules_shell", version = "0.6.1")
+bazel_dep(name = "bazel_skylib", version = "1.9.0")
+
+# rules_sass at its pinned commit requires bazel_lib 3.7.2 and aspect_rules_js 3.5.2.
+bazel_dep(name = "bazel_lib", version = "3.7.2")
+
+# aspect_rules_lint pulls rules_go 0.42 through rules_buf; that version fails analysis on Bazel 9.
+bazel_dep(name = "rules_go", version = "0.62.0")
+bazel_dep(name = "rules_nodejs", version = "6.7.7")
+bazel_dep(name = "aspect_rules_js", version = "3.5.2")
+bazel_dep(name = "aspect_rules_ts", version = "3.8.8")
+bazel_dep(name = "aspect_rules_esbuild", version = "0.25.1")
+bazel_dep(name = "aspect_rules_jest", version = "0.26.0")
+bazel_dep(name = "aspect_rules_lint", version = "2.9.1")
+bazel_dep(name = "rules_java", version = "9.1.0")
+bazel_dep(name = "rules_oci", version = "2.3.0")
+bazel_dep(name = "tar.bzl", version = "0.10.4")
+
+# rules_angular and rules_sass have no releases. Each commit is the one an Angular repository
+# pins: Angular CLI 21.2.x for rules_angular, angular/components for rules_sass. Moving
+# rules_angular means re-deriving its patch.
+bazel_dep(name = "rules_angular")
+git_override(
+    module_name = "rules_angular",
+    commit = "88a34a4f4f10f495b051c06c2ffa8698829b9215",
+    remote = "https://github.com/angular/rules_angular.git",
+)
+
+bazel_dep(name = "rules_sass")
+git_override(
+    module_name = "rules_sass",
+    commit = "9a0a1e558364af1ff3549be86833611208c0df11",
+    remote = "https://github.com/angular/rules_sass.git",
+)
+
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
+node.toolchain(node_version = "24.22.1")
+
+pnpm = use_extension("@aspect_rules_js//npm:extensions.bzl", "pnpm")
+pnpm.pnpm(
+    name = "pnpm",
+    pnpm_version = "10.33.2",
+    pnpm_version_integrity = "sha512-qQ+vb+6rca1sblf5Tg/hoS9dzCLNdU20CulZPraj4LaxLjVAIYuzeuCDQEsfLObbKkEh6XmCm0r/lLmfSdoc+A==",
+)
+use_repo(pnpm, "pnpm")
+
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+npm.npm_translate_lock(
+    name = "npm",
+    data = [
+        "//:package.json",
+        "//:pnpm-workspace.yaml",
+    ],
+    npmrc = "//:.npmrc",
+    pnpm_lock = "//:pnpm-lock.yaml",
+)
+
+# `.md` files are excluded from npm packages by default; @angular/core ships one it reads.
+npm.npm_exclude_package_contents(
+    package = "@angular/core",
+    presets = [],
+)
+use_repo(npm, "npm")
+
+rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
+rules_ts_ext.deps(
+    ts_integrity = "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+    ts_version = "5.9.3",
+)
+use_repo(rules_ts_ext, "npm_typescript")
+
+rules_angular = use_extension("@rules_angular//setup:extensions.bzl", "rules_angular")
+rules_angular.setup(
+    angular_compiler_cli = "//:node_modules/@angular/compiler-cli",
+    typescript = "//:node_modules/typescript",
+)
+use_repo(rules_angular, "rules_angular_configurable_deps")
+
+# The OpenAPI client generator, run on Bazel's JDK (.bazelrc pins remotejdk_25).
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_file(
+    name = "openapi_generator_cli",
+    downloaded_file_path = "openapi-generator-cli.jar",
+    sha256 = "1cf0c80de12c0fdc8594289c19e414b402108ef10b8dd0bfda1953151341ab5d",
+    urls = ["https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.2.0/openapi-generator-cli-7.2.0.jar"],
+)
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+
+# nginx:1, pinned by index digest. Bump with `crane digest nginx:1`.
+oci.pull(
+    name = "nginx",
+    digest = "sha256:165ddde8751e75a1c907d24ef10d9f6deb08b57e0fe56caf67512486aff76d82",
+    image = "index.docker.io/library/nginx",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+)
+use_repo(oci, "nginx", "nginx_linux_amd64", "nginx_linux_arm64_v8")
