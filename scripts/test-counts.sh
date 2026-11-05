@@ -8,10 +8,17 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 REPORT="$(mktemp -t jest-report.XXXXXX)"
-trap 'rm -f "$REPORT"' EXIT
+LOG="$(mktemp -t jest-log.XXXXXX)"
+trap 'rm -f "$REPORT" "$LOG"' EXIT
 
+# A failing test still writes the report; only a missing report means Jest itself broke.
 TZ=Europe/Zurich NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}" \
-  npx jest --config jest.config.ts --ci --json --outputFile="$REPORT" >/dev/null 2>&1 || true
+  npx jest --config jest.config.ts --ci --json --outputFile="$REPORT" >"$LOG" 2>&1 || true
+if [ ! -s "$REPORT" ]; then
+  echo "jest wrote no report; the end of its output:" >&2
+  tail -n 40 "$LOG" >&2
+  exit 1
+fi
 
 git ls-files '*/jest.config.ts' | xargs -n1 dirname | node -e '
 const fs = require("fs");
@@ -32,7 +39,7 @@ for (const file of report.testResults) {
     counts[root].files += 1;
   }
   counts[root].tests += count("passed");
-  counts[root].skipped += count("pending") + count("skipped") + count("todo");
+  counts[root].skipped += count("pending") + count("skipped") + count("todo") + count("disabled");
 }
 console.log(["library", "spec_files_passed", "tests_passed", "tests_skipped"].join("\t"));
 const total = { files: 0, tests: 0, skipped: 0 };

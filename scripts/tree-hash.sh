@@ -5,7 +5,8 @@
 set -euo pipefail
 
 DIR="${1:?usage: $0 <dir>}"
-cd "$DIR"
+cd -- "$DIR"
+[ -n "$(find . -type f -print -quit)" ] || { echo "no files under $DIR" >&2; exit 1; }
 
 if command -v sha256sum >/dev/null; then
   SHA256=(sha256sum)
