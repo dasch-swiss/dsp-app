@@ -2,6 +2,6 @@
   "extends": "./tsconfig.json",
   "include": ["src/**/*.ts"],
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node", "window", "ckeditor5-custom-build"]
   }
 }

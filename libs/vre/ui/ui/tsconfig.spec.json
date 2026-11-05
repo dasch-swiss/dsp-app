@@ -4,7 +4,7 @@
     "outDir": "../../../../dist/out-tsc",
     "module": "preserve",
     "target": "es2016",
-    "types": ["jest", "node", "ckeditor5-custom-build"],
+    "types": ["jest", "node", "ckeditor5-custom-build", "window"],
     "moduleResolution": "bundler",
     "isolatedModules": true
   },

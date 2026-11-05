@@ -5,7 +5,7 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": ["ckeditor5-custom-build"]
+    "types": ["ckeditor5-custom-build", "window"]
   },
   "exclude": [
     "src/**/*.spec.ts",
