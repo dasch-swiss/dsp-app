@@ -1,5 +1,19 @@
 # Changelog
 
+## [14.1.2](https://github.com/dasch-swiss/dsp-app/compare/v14.1.1...v14.1.2) (2026-11-05)
+
+
+### Bug Fixes
+
+* **monitoring:** initialize Faro outside the Angular zone (DEV-7751) ([#3603](https://github.com/dasch-swiss/dsp-app/issues/3603)) ([b143d20](https://github.com/dasch-swiss/dsp-app/commit/b143d20d59eaead052b26913992d48810242997a))
+
+
+### Maintenances
+
+* **deps:** Update dependency @swc/core from 1.16.20 to 1.16.21 ([#3598](https://github.com/dasch-swiss/dsp-app/issues/3598)) ([c8cf6f7](https://github.com/dasch-swiss/dsp-app/commit/c8cf6f7057bd89da742978e4f20178df6bc9039b))
+* **deps:** Update dependency ng-mocks from 14.18.4 to 14.18.5 ([#3601](https://github.com/dasch-swiss/dsp-app/issues/3601)) ([c0a3e2d](https://github.com/dasch-swiss/dsp-app/commit/c0a3e2da46ac7563daa02a5c3f14b98b575950e8))
+* **open-api:** bump dsp-api spec v40.5.0-7-gd465883 → v40.6.0-5-g8c46d15 ([#3602](https://github.com/dasch-swiss/dsp-app/issues/3602)) ([b06d27a](https://github.com/dasch-swiss/dsp-app/commit/b06d27ac66edce1704167bde0c39a7237f0e1bcb))
+
 ## [14.1.1](https://github.com/dasch-swiss/dsp-app/compare/v14.1.0...v14.1.1) (2026-11-03)
 
 
