@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+tmp
+.angular
+.nx
+.claude
+.direnv
+bazel-bin
+bazel-out
+bazel-testlogs
+bazel-dsp-app

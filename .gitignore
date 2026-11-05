@@ -85,3 +85,7 @@ libs/vre/3rd-party-services/open-api/src/generated/
 
 # direnv
 .direnv/
+
+# Bazel
+/bazel-*
+/user.bazelrc
