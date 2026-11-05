@@ -1,10 +1,34 @@
-import nx from '@nx/eslint-plugin';
+import js from '@eslint/js';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import eslintPluginBan from 'eslint-plugin-ban';
 import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import storybook from 'eslint-plugin-storybook';
 import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+
+const tsFiles = ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'];
+const jsFiles = ['**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'];
+
+// Deviations from typescript-eslint's recommended set that every file has carried since the
+// typescript-eslint v6 migration; the blocks below override several of them for `.ts` files.
+const sharedRules = {
+  '@typescript-eslint/explicit-member-accessibility': 'off',
+  '@typescript-eslint/explicit-module-boundary-types': 'off',
+  '@typescript-eslint/explicit-function-return-type': 'off',
+  '@typescript-eslint/no-parameter-properties': 'off',
+  '@typescript-eslint/no-non-null-assertion': 'warn',
+  '@typescript-eslint/adjacent-overload-signatures': 'error',
+  '@typescript-eslint/prefer-namespace-keyword': 'error',
+  'no-empty-function': 'off',
+  '@typescript-eslint/no-empty-function': 'error',
+  '@typescript-eslint/no-inferrable-types': 'error',
+  '@typescript-eslint/no-unused-vars': 'warn',
+  '@typescript-eslint/no-empty-interface': 'error',
+  '@typescript-eslint/no-explicit-any': 'warn',
+  '@typescript-eslint/no-require-imports': 'off',
+};
 
 export default [
   {
@@ -14,9 +38,30 @@ export default [
       reportUnusedDisableDirectives: 'off',
     },
   },
-  ...nx.configs['flat/base'],
-  ...nx.configs['flat/typescript'],
-  ...nx.configs['flat/javascript'],
+  ...tseslint.config(
+    {
+      files: tsFiles,
+      extends: [js.configs.recommended, ...tseslint.configs.recommended],
+      languageOptions: {
+        parser: tseslint.parser,
+        ecmaVersion: 2020,
+        sourceType: 'module',
+        parserOptions: { tsconfigRootDir: import.meta.dirname },
+      },
+      rules: sharedRules,
+    },
+    {
+      files: jsFiles,
+      extends: [js.configs.recommended, ...tseslint.configs.recommended],
+      languageOptions: {
+        parser: tseslint.parser,
+        ecmaVersion: 2020,
+        sourceType: 'module',
+        globals: { ...globals.browser, ...globals.node },
+      },
+      rules: { ...sharedRules, '@typescript-eslint/no-var-requires': 'off' },
+    }
+  ),
   ...storybook.configs['flat/recommended'],
   {
     plugins: {
@@ -96,33 +141,18 @@ export default [
       '@typescript-eslint/no-inferrable-types': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-unused-expressions': 'off',
-      '@nx/enforce-module-boundaries': [
-        'error',
-        {
-          enforceBuildableLibDependency: true,
-          allow: [],
-          depConstraints: [
-            {
-              sourceTag: '*',
-              onlyDependOnLibsWithTags: ['*'],
-            },
-          ],
-        },
-      ],
     },
   },
   {
     // environment files import build-time resources via absolute paths (intentional)
     files: ['**/environment*.ts'],
     rules: {
-      '@nx/enforce-module-boundaries': 'off',
       'import/order': 'off',
     },
   },
   {
     files: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.js', '**/*.spec.jsx'],
     rules: {
-      '@nx/enforce-module-boundaries': 'off',
       'import/order': [
         'error',
         {

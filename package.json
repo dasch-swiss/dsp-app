@@ -135,6 +135,7 @@
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-storybook": "10.6.5",
     "eslint-plugin-unused-imports": "^4.0.0",
+    "globals": "^17.14.0",
     "http-server": "^14.1.1",
     "istanbul-lib-coverage": "^3.2.2",
     "jest": "30.5.2",

@@ -23,7 +23,6 @@ export default [
   {
     files: ['**/*.spec.ts', 'test/**/*.ts', 'src/test-setup.ts'],
     rules: {
-      '@nx/enforce-module-boundaries': 'off',
     },
     languageOptions: {
       parser: typescriptEslintParser,
