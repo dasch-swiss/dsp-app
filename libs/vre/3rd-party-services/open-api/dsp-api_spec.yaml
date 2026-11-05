@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v40.5.0-7-gd465883
+  version: v40.6.0-5-g8c46d15
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -16,11 +16,11 @@ paths:
       tags:
       - Admin API
       description: 'Returns the access decision for a given filename: what the caller
-        may receive for the original and what it may receive for the derivative. Publicly
-        accessible. The `{shortcode}` path segment is not authoritative and does not
-        affect the result - the file is identified by its filename alone (internal
-        filenames are globally-unique asset IDs); the segment is retained only for
-        URL compatibility.'
+        may receive for the original and what it may receive for the derivative. Requires
+        appropriate object access permissions. The `{shortcode}` path segment is not
+        authoritative and does not affect the result - the file is identified by its
+        filename alone (internal filenames are globally-unique asset IDs); the segment
+        is retained only for URL compatibility.'
       operationId: getAdminFilesProjectshortcodeFilename
       parameters:
       - name: projectShortcode
@@ -91,7 +91,7 @@ paths:
     get:
       tags:
       - Admin API
-      description: Return all groups. Publicly accessible.
+      description: Return all groups. Does not require authentication.
       operationId: getAdminGroups
       responses:
         '200':
@@ -188,7 +188,7 @@ paths:
       tags:
       - Admin API
       description: Create new group. Requires SystemAdmin or ProjectAdmin permissions
-        for the project.
+        for the project given by the body project.
       operationId: Create new group
       requestBody:
         content:
@@ -304,7 +304,7 @@ paths:
     get:
       tags:
       - Admin API
-      description: Return a single group identified by its IRI. Publicly accessible.
+      description: Return a single group identified by its IRI. Does not require authentication.
       operationId: getAdminGroupsGroupiri
       parameters:
       - name: groupIri
@@ -409,7 +409,7 @@ paths:
       tags:
       - Admin API
       description: Update a group's basic information. Requires SystemAdmin or ProjectAdmin
-        permissions for the group's project.
+        permissions for the project given by the path groupIri's project.
       operationId: putAdminGroupsGroupiri
       parameters:
       - name: groupIri
@@ -532,7 +532,7 @@ paths:
       tags:
       - Admin API
       description: Deletes a group by changing its status to 'false'. Requires SystemAdmin
-        or ProjectAdmin permissions for the group's project.
+        or ProjectAdmin permissions for the project given by the path groupIri's project.
       operationId: deleteAdminGroupsGroupiri
       parameters:
       - name: groupIri
@@ -641,7 +641,7 @@ paths:
       tags:
       - Admin API
       description: Return all members of a single group. Requires SystemAdmin or ProjectAdmin
-        permissions for the group's project.
+        permissions for the project given by the path groupIri's project.
       operationId: getAdminGroupsGroupiriMembers
       parameters:
       - name: groupIri
@@ -792,7 +792,7 @@ paths:
       tags:
       - Admin API
       description: Updates a group's status. Requires SystemAdmin or ProjectAdmin
-        permissions for the group's project.
+        permissions for the project given by the path groupIri's project.
       operationId: putAdminGroupsGroupiriStatus
       parameters:
       - name: groupIri
@@ -907,7 +907,8 @@ paths:
       tags:
       - Admin API
       description: Get all lists or all lists belonging to a project. Note that you
-        can provide either a project IRI or a project shortcode. Publicly accessible.
+        can provide either a project IRI or a project shortcode. Does not require
+        authentication.
       operationId: getAdminLists
       parameters:
       - name: projectIri
@@ -977,7 +978,8 @@ paths:
       tags:
       - Admin API
       description: Creates a new list by creating the root node of the list. Requires
-        SystemAdmin or ProjectAdmin permissions for the project.
+        SystemAdmin or ProjectAdmin permissions for the project given by the body
+        projectIri.
       operationId: postAdminLists
       requestBody:
         content:
@@ -1041,8 +1043,8 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns a list node, root or child, with children (if exist). Publicly
-        accessible.
+      description: Returns a list node, root or child, with children (if exist). Does
+        not require authentication.
       operationId: getAdminListsP1
       parameters:
       - name: p1
@@ -1104,7 +1106,7 @@ paths:
       tags:
       - Admin API
       description: Update a list node's properties. Requires SystemAdmin or ProjectAdmin
-        permissions for the list's project.
+        permissions for the project given by the list node.
       operationId: putAdminListsP1
       parameters:
       - name: p1
@@ -1175,7 +1177,8 @@ paths:
       tags:
       - Admin API
       description: Creates a new list node as a child of the specified list node.
-        Requires SystemAdmin or ProjectAdmin permissions for the list's project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the parent list node.
       operationId: postAdminListsP1
       parameters:
       - name: p1
@@ -1246,7 +1249,7 @@ paths:
       tags:
       - Admin API
       description: Delete a list node. Requires SystemAdmin or ProjectAdmin permissions
-        for the list's project.
+        for the project given by the list node.
       operationId: deleteAdminListsP1
       parameters:
       - name: p1
@@ -1312,7 +1315,7 @@ paths:
       tags:
       - Admin API
       description: Returns basic information about a list node, root or child, w/o
-        children (if exist). Publicly accessible.
+        children (if exist). Does not require authentication.
       operationId: getAdminListsP1Info
       parameters:
       - name: p1
@@ -1376,7 +1379,7 @@ paths:
       - Admin API
       description: '*Deprecated*. Use GET admin/lists/<listIri>/info instead. Returns
         basic information about a list node, root or child, w/o children (if exist).
-        Publicly accessible.'
+        Does not require authentication.'
       operationId: getAdminListsInfosP1
       parameters:
       - name: p1
@@ -1441,7 +1444,7 @@ paths:
       - Admin API
       description: '*Deprecated*. Use GET admin/lists/<listIri>/info instead. Returns
         basic information about a list node, root or child, w/o children (if exist).
-        Publicly accessible.'
+        Does not require authentication.'
       operationId: getAdminListsNodesP1
       parameters:
       - name: p1
@@ -1505,6 +1508,7 @@ paths:
       tags:
       - Admin API
       description: Checks if a list can be deleted (none of its nodes is used in data).
+        Does not require authentication.
       operationId: getAdminListsCandeleteP1
       parameters:
       - name: p1
@@ -1567,7 +1571,7 @@ paths:
       tags:
       - Admin API
       description: Update a list node's name. Requires SystemAdmin or ProjectAdmin
-        permissions for the list's project.
+        permissions for the project given by the list node.
       operationId: putAdminListsP1Name
       parameters:
       - name: p1
@@ -1639,7 +1643,7 @@ paths:
       tags:
       - Admin API
       description: Update a list node's labels. Requires SystemAdmin or ProjectAdmin
-        permissions for the list's project.
+        permissions for the project given by the list node.
       operationId: putAdminListsP1Labels
       parameters:
       - name: p1
@@ -1711,7 +1715,7 @@ paths:
       tags:
       - Admin API
       description: Update a list node's comments. Requires SystemAdmin or ProjectAdmin
-        permissions for the list's project.
+        permissions for the project given by the list node.
       operationId: putAdminListsP1Comments
       parameters:
       - name: p1
@@ -1783,7 +1787,7 @@ paths:
       tags:
       - Admin API
       description: Update a list node's position. Requires SystemAdmin or ProjectAdmin
-        permissions for the list's project.
+        permissions for the project given by the list node.
       operationId: putAdminListsP1Position
       parameters:
       - name: p1
@@ -1854,7 +1858,8 @@ paths:
     delete:
       tags:
       - Admin API
-      description: Delete a list node's comments. Requires authentication.
+      description: Delete a list node's comments. Requires SystemAdmin or ProjectAdmin
+        permissions for the project given by the list node.
       operationId: deleteAdminListsCommentsP1
       parameters:
       - name: p1
@@ -1997,8 +2002,8 @@ paths:
       tags:
       - Admin API
       description: 'Replace a user IRI across the entire database (admin graph + all
-        project data graphs). SystemAdmin only. Irreversible -- no undo mechanism.
-        Not idempotent: retrying after success returns 404.'
+        project data graphs). Requires SystemAdmin permissions. Irreversible -- no
+        undo mechanism. Not idempotent: retrying after success returns 404.'
       operationId: postAdminMaintenanceUsersReplace-iri
       requestBody:
         content:
@@ -2059,8 +2064,8 @@ paths:
       tags:
       - Admin API
       description: 'Re-attribute all references to a user IRI within a single project''s
-        data graph. Both user accounts remain intact. SystemAdmin only. Not idempotent:
-        retrying after success returns 404.'
+        data graph. Both user accounts remain intact. Requires SystemAdmin permissions.
+        Not idempotent: retrying after success returns 404.'
       operationId: postAdminMaintenanceProjectsProjectshortcodeReplace-user-iri
       parameters:
       - name: projectShortcode
@@ -2194,7 +2199,7 @@ paths:
       tags:
       - Admin API
       description: Get all administrative permissions for a project. Requires SystemAdmin
-        or ProjectAdmin permissions for the project.
+        or ProjectAdmin permissions for the project given by the path projectIri.
       operationId: getAdminPermissionsApProjectiri
       parameters:
       - name: projectIri
@@ -2261,7 +2266,8 @@ paths:
       tags:
       - Admin API
       description: Get all administrative permissions for a project and a group. Requires
-        SystemAdmin or ProjectAdmin permissions for the project.
+        SystemAdmin or ProjectAdmin permissions for the project given by the path
+        projectIri.
       operationId: getAdminPermissionsApProjectiriGroupiri
       parameters:
       - name: projectIri
@@ -2335,7 +2341,8 @@ paths:
       tags:
       - Admin API
       description: Get all default object access permissions for a project. Requires
-        SystemAdmin or ProjectAdmin permissions for the project.
+        SystemAdmin or ProjectAdmin permissions for the project given by the path
+        projectIri.
       operationId: getAdminPermissionsDoapProjectiri
       parameters:
       - name: projectIri
@@ -2402,7 +2409,7 @@ paths:
       tags:
       - Admin API
       description: Get all permissions for a project. Requires SystemAdmin or ProjectAdmin
-        permissions for the project.
+        permissions for the project given by the path projectIri.
       operationId: getAdminPermissionsProjectiri
       parameters:
       - name: projectIri
@@ -2978,8 +2985,8 @@ paths:
     get:
       tags:
       - Admin API
-      description: Get the available licenses for use within this project. Publicly
-        accessible.
+      description: Get the available licenses for use within this project. Does not
+        require authentication.
       operationId: getAdminProjectsShortcodeProjectshortcodeLegal-infoLicenses
       parameters:
       - name: projectShortcode
@@ -3165,7 +3172,7 @@ paths:
       tags:
       - Admin API
       description: Get a specific license by its IRI for use within this project.
-        Publicly accessible.
+        Does not require authentication.
       operationId: getAdminProjectsShortcodeProjectshortcodeLegal-infoLicensesLicenseiri
       parameters:
       - name: projectShortcode
@@ -3235,8 +3242,9 @@ paths:
     get:
       tags:
       - Admin API
-      description: Get the allowed authorships for use within this project. The user
-        must be project member, project admin or system admin.
+      description: Get the allowed authorships for use within this project. Requires
+        SystemAdmin, ProjectAdmin or ProjectMember permissions for the project given
+        by the path projectShortcode.
       operationId: getAdminProjectsShortcodeProjectshortcodeLegal-infoAuthorships
       parameters:
       - name: projectShortcode
@@ -3344,8 +3352,8 @@ paths:
     put:
       tags:
       - Admin API
-      description: Enable a license for use within this project. The user must be
-        project admin or system admin.
+      description: Enable a license for use within this project. Requires SystemAdmin
+        or ProjectAdmin permissions for the project given by the path projectShortcode.
       operationId: putAdminProjectsShortcodeProjectshortcodeLegal-infoLicensesLicenseiriEnable
       parameters:
       - name: projectShortcode
@@ -3414,8 +3422,8 @@ paths:
     put:
       tags:
       - Admin API
-      description: Disable a license for use within this project. The user must be
-        project admin or system admin.
+      description: Disable a license for use within this project. Requires SystemAdmin
+        or ProjectAdmin permissions for the project given by the path projectShortcode.
       operationId: putAdminProjectsShortcodeProjectshortcodeLegal-infoLicensesLicenseiriDisable
       parameters:
       - name: projectShortcode
@@ -3485,7 +3493,8 @@ paths:
       tags:
       - Admin API
       description: Get the allowed copyright holders for use within this project.
-        The user must be project member, project admin or system admin.
+        Requires SystemAdmin, ProjectAdmin or ProjectMember permissions for the project
+        given by the path projectShortcode.
       operationId: getAdminProjectsShortcodeProjectshortcodeLegal-infoCopyright-holders
       parameters:
       - name: projectShortcode
@@ -3664,7 +3673,8 @@ paths:
       tags:
       - Admin API
       description: Add new allowed copyright holders for use within this project.
-        The user must be a system or project admin.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path projectShortcode.
       operationId: postAdminProjectsShortcodeProjectshortcodeLegal-infoCopyright-holders
       parameters:
       - name: projectShortcode
@@ -3739,7 +3749,8 @@ paths:
       description: 'Set the resource-side (data) legal info for this project: the
         data license (Creative Commons only), the copyright holder and the default
         authorship, each applied to every resource record in the project. Returns
-        the saved values. The user must be a system or project admin.'
+        the saved values. Requires SystemAdmin or ProjectAdmin permissions for the
+        project given by the path projectShortcode.'
       operationId: putAdminProjectsShortcodeProjectshortcodeLegal-infoResource
       parameters:
       - name: projectShortcode
@@ -3823,7 +3834,7 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns all projects. Publicly accessible.
+      description: Returns all projects. Does not require authentication.
       operationId: getAdminProjects
       responses:
         '200':
@@ -3945,8 +3956,8 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns all unique keywords for all projects as a list. Publicly
-        accessible.
+      description: Returns all unique keywords for all projects as a list. Does not
+        require authentication.
       operationId: getAdminProjectsKeywords
       responses:
         '200':
@@ -4001,7 +4012,8 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns a single project identified by the IRI. Publicly accessible.
+      description: Returns a single project identified by the IRI. Does not require
+        authentication.
       operationId: getAdminProjectsIriProjectiri
       parameters:
       - name: projectIri
@@ -4064,7 +4076,7 @@ paths:
       tags:
       - Admin API
       description: Updates a project identified by the IRI. Requires SystemAdmin or
-        ProjectAdmin permissions for the project.
+        ProjectAdmin permissions for the project given by the path projectIri.
       operationId: putAdminProjectsIriProjectiri
       parameters:
       - name: projectIri
@@ -4136,8 +4148,8 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns a single project identified by the shortcode. Publicly
-        accessible.
+      description: Returns a single project identified by the shortcode. Does not
+        require authentication.
       operationId: getAdminProjectsShortcodeProjectshortcode
       parameters:
       - name: projectShortcode
@@ -4200,8 +4212,8 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns a single project identified by the shortname. Publicly
-        accessible.
+      description: Returns a single project identified by the shortname. Does not
+        require authentication.
       operationId: getAdminProjectsShortnameProjectshortname
       parameters:
       - name: projectShortname
@@ -4264,7 +4276,7 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns all keywords for a single project. Publicly accessible.
+      description: Returns all keywords for a single project. Does not require authentication.
       operationId: getAdminProjectsIriProjectiriKeywords
       parameters:
       - name: projectIri
@@ -4328,7 +4340,7 @@ paths:
       tags:
       - Admin API
       description: Returns the project's restricted view settings identified by the
-        IRI. Publicly accessible.
+        IRI. Does not require authentication.
       operationId: getAdminProjectsIriProjectiriRestrictedviewsettings
       parameters:
       - name: projectIri
@@ -4391,7 +4403,8 @@ paths:
       tags:
       - Admin API
       description: Sets the project's restricted view settings identified by the IRI.
-        Requires SystemAdmin or ProjectAdmin permissions for the project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path projectIri.
       operationId: postAdminProjectsIriProjectiriRestrictedviewsettings
       parameters:
       - name: projectIri
@@ -4476,7 +4489,7 @@ paths:
       - Admin API
       description: Removes the project's own restricted view setting, so it inherits
         the platform default !128,128 again. Requires SystemAdmin or ProjectAdmin
-        permissions for the project.
+        permissions for the project given by the path projectIri.
       operationId: deleteAdminProjectsIriProjectiriRestrictedviewsettings
       parameters:
       - name: projectIri
@@ -4543,7 +4556,7 @@ paths:
       tags:
       - Admin API
       description: Returns the project's restricted view settings identified by the
-        shortcode. Publicly accessible.
+        shortcode. Does not require authentication.
       operationId: getAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings
       parameters:
       - name: projectShortcode
@@ -4606,7 +4619,8 @@ paths:
       tags:
       - Admin API
       description: Sets the project's restricted view settings identified by the shortcode.
-        Requires SystemAdmin or ProjectAdmin permissions for the project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path projectShortcode.
       operationId: postAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings
       parameters:
       - name: projectShortcode
@@ -4691,7 +4705,7 @@ paths:
       - Admin API
       description: Removes the project's own restricted view setting, so it inherits
         the platform default !128,128 again. Requires SystemAdmin or ProjectAdmin
-        permissions for the project.
+        permissions for the project given by the path projectShortcode.
       operationId: deleteAdminProjectsShortcodeProjectshortcodeRestrictedviewsettings
       parameters:
       - name: projectShortcode
@@ -4758,7 +4772,7 @@ paths:
       tags:
       - Admin API
       description: Returns the project's restricted view settings identified by the
-        shortname. Publicly accessible.
+        shortname. Does not require authentication.
       operationId: getAdminProjectsShortnameProjectshortnameRestrictedviewsettings
       parameters:
       - name: projectShortname
@@ -4823,7 +4837,7 @@ paths:
       - Admin API
       description: Returns all ontologies, data, and configuration belonging to a
         project identified by the IRI. Requires SystemAdmin or ProjectAdmin permissions
-        for the project.
+        for the project given by the path projectIri.
       operationId: getAdminProjectsIriProjectiriAlldata
       parameters:
       - name: projectIri
@@ -4900,7 +4914,8 @@ paths:
       tags:
       - Admin API
       description: Returns all project members of a project identified by the IRI.
-        Requires SystemAdmin or ProjectAdmin permissions for the project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path projectIri.
       operationId: getAdminProjectsIriProjectiriMembers
       parameters:
       - name: projectIri
@@ -4967,7 +4982,8 @@ paths:
       tags:
       - Admin API
       description: Returns all project members of a project identified by the shortcode.
-        Requires SystemAdmin or ProjectAdmin permissions for the project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path projectShortcode.
       operationId: getAdminProjectsShortcodeProjectshortcodeMembers
       parameters:
       - name: projectShortcode
@@ -5034,7 +5050,8 @@ paths:
       tags:
       - Admin API
       description: Returns all project members of a project identified by the shortname.
-        Requires SystemAdmin or ProjectAdmin permissions for the project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path projectShortname.
       operationId: getAdminProjectsShortnameProjectshortnameMembers
       parameters:
       - name: projectShortname
@@ -5101,7 +5118,8 @@ paths:
       tags:
       - Admin API
       description: Returns all admin members of a project identified by the IRI. Requires
-        SystemAdmin or ProjectAdmin permissions for the project.
+        SystemAdmin or ProjectAdmin permissions for the project given by the path
+        projectIri.
       operationId: getAdminProjectsIriProjectiriAdmin-members
       parameters:
       - name: projectIri
@@ -5168,7 +5186,8 @@ paths:
       tags:
       - Admin API
       description: Returns all admin members of a project identified by the shortcode.
-        Requires SystemAdmin or ProjectAdmin permissions for the project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path projectShortcode.
       operationId: getAdminProjectsShortcodeProjectshortcodeAdmin-members
       parameters:
       - name: projectShortcode
@@ -5235,7 +5254,8 @@ paths:
       tags:
       - Admin API
       description: Returns all admin members of a project identified by the shortname.
-        Requires SystemAdmin or ProjectAdmin permissions for the project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path projectShortname.
       operationId: getAdminProjectsShortnameProjectshortnameAdmin-members
       parameters:
       - name: projectShortname
@@ -5379,10 +5399,10 @@ paths:
       tags:
       - Admin API
       description: 'Run a read-only SPARQL 1.1 query against the triplestore and receive
-        the store''s response unchanged. Requires SystemAdmin permissions and a bearer
-        token; HTTP basic and session cookies are not accepted. Only registered when
-        the deployment sets allow-sparql-passthrough. The query is forwarded without
-        being parsed, validated or rewritten, and the store''s status, Content-Type
+        the store''s response unchanged. Requires SystemAdmin permissions. A bearer
+        token is required; HTTP basic and session cookies are not accepted. Only registered
+        when the deployment sets allow-sparql-passthrough. The query is forwarded
+        without being parsed, validated or rewritten, and the store''s status, Content-Type
         and body are relayed verbatim - so a malformed query yields the store''s own
         error response, not this API''s error envelope. Send the query as an application/sparql-query
         body or as the query field of an application/x-www-form-urlencoded body. Guardrails
@@ -5513,7 +5533,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       responses:
         '200':
           description: ''
@@ -5577,7 +5597,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       responses:
         '200':
           description: ''
@@ -5641,7 +5661,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       responses:
         '200':
           description: ''
@@ -5830,7 +5850,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       responses:
         '200':
           description: ''
@@ -5896,7 +5916,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       responses:
         '200':
           description: ''
@@ -6091,7 +6111,7 @@ paths:
       tags:
       - Admin API
       description: Add a user to a project identified by IRI. Requires SystemAdmin
-        or ProjectAdmin permissions for the project.
+        or ProjectAdmin permissions for the project given by the path projectIri.
       operationId: postAdminUsersIriUseririProject-membershipsProjectiri
       parameters:
       - name: userIri
@@ -6100,7 +6120,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6164,7 +6184,8 @@ paths:
       tags:
       - Admin API
       description: Remove a user from a project membership identified by IRI. Requires
-        SystemAdmin or ProjectAdmin permissions for the project.
+        SystemAdmin or ProjectAdmin permissions for the project given by the path
+        projectIri.
       operationId: deleteAdminUsersIriUseririProject-membershipsProjectiri
       parameters:
       - name: userIri
@@ -6173,7 +6194,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6238,7 +6259,8 @@ paths:
       tags:
       - Admin API
       description: Add a user as an admin to a project identified by IRI. Requires
-        SystemAdmin or ProjectAdmin permissions for the project.
+        SystemAdmin or ProjectAdmin permissions for the project given by the path
+        projectIri.
       operationId: postAdminUsersIriUseririProject-admin-membershipsProjectiri
       parameters:
       - name: userIri
@@ -6247,7 +6269,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6311,7 +6333,8 @@ paths:
       tags:
       - Admin API
       description: Remove a user form an admin project membership identified by IRI.
-        Requires SystemAdmin or ProjectAdmin permissions for the project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path projectIri.
       operationId: deleteAdminUsersIriUseririProject-admin-membershipsProjectiri
       parameters:
       - name: userIri
@@ -6320,7 +6343,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6385,7 +6408,7 @@ paths:
       tags:
       - Admin API
       description: Add a user to a group identified by IRI. Requires SystemAdmin or
-        ProjectAdmin permissions for the group's project.
+        ProjectAdmin permissions for the project given by the path groupIri's project.
       operationId: postAdminUsersIriUseririGroup-membershipsGroupiri
       parameters:
       - name: userIri
@@ -6394,7 +6417,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6458,7 +6481,8 @@ paths:
       tags:
       - Admin API
       description: Remove a user form an group membership identified by IRI. Requires
-        SystemAdmin or ProjectAdmin permissions for the group's project.
+        SystemAdmin or ProjectAdmin permissions for the project given by the path
+        groupIri's project.
       operationId: deleteAdminUsersIriUseririGroup-membershipsGroupiri
       parameters:
       - name: userIri
@@ -6467,7 +6491,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6541,7 +6565,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       requestBody:
         content:
           application/json:
@@ -6614,7 +6638,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       requestBody:
         content:
           application/json:
@@ -6687,7 +6711,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       requestBody:
         content:
           application/json:
@@ -6760,7 +6784,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/AdpZDpaHRsen1LgO1yjpZA
+        example: http://rdfh.ch/users/VwJLJY0xRsCC9_UYMPJP3A
       requestBody:
         content:
           application/json:
@@ -6835,8 +6859,8 @@ paths:
         Requesting this report refreshes the project''s cached counts. Every class
         with one or more non-deleted resources is reported, including classes with
         nothing restricted (all-zero counts, non-zero `totalResources`). Takes no
-        item-type filter: resource-level counts are never filtered. The user must
-        be project admin or system admin.'
+        item-type filter: resource-level counts are never filtered. Requires SystemAdmin
+        or ProjectAdmin permissions for the project given by the path projectIri.'
       operationId: getAdminProjectsIriProjectiriView-restrictionsClasses
       parameters:
       - name: projectIri
@@ -6929,8 +6953,8 @@ paths:
         values (standoff link values are not counted) — which is a different unit
         from the resource counts in step 1 and must never be summed with them. `itemType`
         narrows to one kind of value; `All` means all value types (it does not include
-        whole resources, which step 1 already reports). The user must be project admin
-        or system admin.'
+        whole resources, which step 1 already reports). Requires SystemAdmin or ProjectAdmin
+        permissions for the project given by the path projectIri.'
       operationId: getAdminProjectsIriProjectiriView-restrictionsValues
       parameters:
       - name: projectIri
@@ -7030,8 +7054,8 @@ paths:
         file values / values / comments. Ordered by label then IRI, so paging is stable
         across requests. The restricted literals come from the cached counts, so an
         object whose permissions changed after the last refresh by `/classes` (at
-        most 60 minutes) can be missing until the next refresh. The user must be project
-        admin or system admin.
+        most 60 minutes) can be missing until the next refresh. Requires SystemAdmin
+        or ProjectAdmin permissions for the project given by the path projectIri.
       operationId: getAdminProjectsIriProjectiriView-restrictionsItems
       parameters:
       - name: projectIri
@@ -7162,7 +7186,8 @@ paths:
         it, a property only ever has values, so there is nothing step 1 could count
         that step 2 does not. Every value property is listed, including ones no resource
         uses — such a row settles at zero, which is a fact worth showing. Takes no
-        filter. The user must be project admin or system admin.'
+        filter. Requires SystemAdmin or ProjectAdmin permissions for the project given
+        by the path projectIri.'
       operationId: getAdminProjectsIriProjectiriView-restrictionsProperties
       parameters:
       - name: projectIri
@@ -7244,8 +7269,8 @@ paths:
         It is a true denominator: the counts beside it are in the same unit, so "94
         of 66,484 are hidden" is a sound statement. A value of a resource typed with
         two classes counts once for each class, so `totalValues` can exceed the number
-        of distinct values the drill-down lists. The user must be project admin or
-        system admin.'
+        of distinct values the drill-down lists. Requires SystemAdmin or ProjectAdmin
+        permissions for the project given by the path projectIri.'
       operationId: getAdminProjectsIriProjectiriView-restrictionsProperty-values
       parameters:
       - name: projectIri
@@ -7347,8 +7372,8 @@ paths:
         to the row rather than to the table. Ordered by label then IRI, so paging
         is stable across requests. The restricted literals come from the cached counts,
         so an object whose permissions changed after the last refresh by `/classes`
-        (at most 60 minutes) can be missing until the next refresh. The user must
-        be project admin or system admin.'
+        (at most 60 minutes) can be missing until the next refresh. Requires SystemAdmin
+        or ProjectAdmin permissions for the project given by the path projectIri.'
       operationId: getAdminProjectsIriProjectiriView-restrictionsProperty-items
       parameters:
       - name: projectIri
@@ -7465,6 +7490,8 @@ paths:
     get:
       tags:
       - API v2
+      description: Checks the credentials and returns whether they are valid. Does
+        not require authentication.
       operationId: getV2Authentication
       responses:
         '200':
@@ -7528,6 +7555,7 @@ paths:
     post:
       tags:
       - API v2
+      description: Logs in and returns a token. Does not require authentication.
       operationId: postV2Authentication
       requestBody:
         content:
@@ -7594,6 +7622,7 @@ paths:
     delete:
       tags:
       - API v2
+      description: Logs out by invalidating the token. Does not require authentication.
       operationId: deleteV2Authentication
       parameters:
       - name: KnoraAuthenticationMFYGSLTEMV3C4ZDBONRWQLTTO5UXG4Z2GQ2DG999
@@ -7664,7 +7693,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Returns a list (a graph with all list nodes).
+      description: Returns a list (a graph with all list nodes). Does not require
+        authentication.
       operationId: getV2ListsListiri
       parameters:
       - name: listIri
@@ -7673,7 +7703,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/ex2vg-m9Q7qKxdlBAmm9mQ
+        example: http://rdfh.ch/lists/0001/ax_EJppYR2Sj2VHsns4ztg
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7792,7 +7822,7 @@ paths:
     get:
       tags:
       - API v2
-      description: Returns a list node.
+      description: Returns a list node. Does not require authentication.
       operationId: getV2NodeListiri
       parameters:
       - name: listIri
@@ -7801,7 +7831,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/ex2vg-m9Q7qKxdlBAmm9mQ
+        example: http://rdfh.ch/lists/0001/ax_EJppYR2Sj2VHsns4ztg
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -8016,9 +8046,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Get a value of a resource. Publicly accessible. Requires appropriate
-        object access permissions on the resource. Find detailed documentation on
-        <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
+      description: Get a value of a resource. Requires appropriate object access permissions.
+        Find detailed documentation on <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
       operationId: getV2ValuesResourceiriValueuuid
       parameters:
       - name: resourceIri
@@ -8135,8 +8164,11 @@ paths:
     put:
       tags:
       - API v2
-      description: Update a value of a resource. Requires appropriate object access
-        permissions on the resource. Find detailed documentation on <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
+      description: Update a value of a resource. Requires view permission on the resource
+        and modify permission on the value, or change rights permission to change
+        its permissions; a link update also requires modify permission on the resource.
+        Requires authentication and appropriate object access permissions. Find detailed
+        documentation on <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
       operationId: putV2Values
       requestBody:
         content:
@@ -8214,8 +8246,8 @@ paths:
     post:
       tags:
       - API v2
-      description: Create a new value for a resource. Requires appropriate object
-        access permissions on the resource. Find detailed documentation on <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
+      description: Create a new value for a resource. Requires authentication and
+        appropriate object access permissions. Find detailed documentation on <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
       operationId: postV2Values
       requestBody:
         content:
@@ -8294,7 +8326,8 @@ paths:
       tags:
       - API v2
       description: Reorder values of a property on a resource. Requires modify permission
-        on the resource. Find detailed documentation on <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
+        on the resource. Requires authentication and appropriate object access permissions.
+        Find detailed documentation on <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
       operationId: putV2ValuesOrder
       requestBody:
         content:
@@ -8365,8 +8398,9 @@ paths:
     post:
       tags:
       - API v2
-      description: Mark a value as deleted. Requires appropriate object access permissions
-        on the resource. Find detailed documentation on <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
+      description: Mark a value as deleted. Requires view permission on the resource
+        and delete permission on the value. Requires authentication and appropriate
+        object access permissions. Find detailed documentation on <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/editing-values/">docs.dasch.swiss</a>.
       operationId: postV2ValuesDelete
       requestBody:
         content:
@@ -8604,8 +8638,8 @@ paths:
       tags:
       - API v2
       description: Get metadata of all resources in a project. The metadata is returned
-        with complex schema IRIs in the payload. This endpoint is only available for
-        system and project admins.
+        with complex schema IRIs in the payload. Requires SystemAdmin or ProjectAdmin
+        permissions for the project given by the path projectShortcode.
       operationId: getV2MetadataProjectsProjectshortcodeResources
       parameters:
       - name: projectShortcode
@@ -8706,8 +8740,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Check if a resource can be deleted. Publicly accessible. Requires
-        appropriate object access permissions on the resource.
+      description: Check if a resource can be deleted. Requires appropriate object
+        access permissions.
       operationId: getV2ResourcesCandelete
       parameters:
       - name: x-knora-accept-schema
@@ -8824,8 +8858,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Get a graph of resources starting from a specific resource. Publicly
-        accessible. Requires appropriate object access permissions on the resources.
+      description: Get a graph of resources starting from a specific resource. Requires
+        appropriate object access permissions.
       operationId: getV2GraphResourceiri
       parameters:
       - name: resourceIri
@@ -8962,8 +8996,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Get the IIIF manifest for a resource. Publicly accessible. Requires
-        appropriate object access permissions on the resource.
+      description: Get the IIIF manifest for a resource. Requires appropriate object
+        access permissions.
       operationId: getV2ResourcesIiifmanifestResourceiri
       parameters:
       - name: resourceIri
@@ -9080,8 +9114,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Get a preview of one or more resources. Publicly accessible. Requires
-        appropriate object access permissions on the resources.
+      description: Get a preview of one or more resources. Requires appropriate object
+        access permissions.
       operationId: getV2Resourcespreview
       parameters:
       - name: x-knora-accept-schema
@@ -9193,8 +9227,9 @@ paths:
     get:
       tags:
       - API v2
-      description: Get history events for all resources in a project. Publicly accessible.
-        Requires appropriate object access permissions.
+      description: Get history events for all resources in a project. Resources the
+        requesting user cannot view are omitted. Requires appropriate object access
+        permissions.
       operationId: getV2ResourcesProjecthistoryeventsProjectiri
       parameters:
       - name: projectIri
@@ -9311,8 +9346,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Get history events for a specific resource. Publicly accessible.
-        Requires appropriate object access permissions on the resource.
+      description: Get history events for a specific resource. Requires appropriate
+        object access permissions.
       operationId: getV2ResourcesResourcehistoryeventsResourceiri
       parameters:
       - name: resourceIri
@@ -9429,8 +9464,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Get the version history of a resource. Publicly accessible. Requires
-        appropriate object access permissions on the resource.
+      description: Get the version history of a resource. Requires appropriate object
+        access permissions.
       operationId: getV2ResourcesHistoryResourceiri
       parameters:
       - name: resourceIri
@@ -9567,8 +9602,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Search for resources by class and project. Publicly accessible.
-        Requires appropriate object access permissions on the resources.
+      description: Search for resources by class and project. Requires appropriate
+        object access permissions.
       operationId: getV2Resources
       parameters:
       - name: resourceClass
@@ -9819,7 +9854,8 @@ paths:
     post:
       tags:
       - API v2
-      description: Create a new resource. Requires appropriate object access permissions.
+      description: Create a new resource. Requires authentication and appropriate
+        object access permissions.
       operationId: postV2Resources
       parameters:
       - name: x-knora-accept-schema
@@ -9940,8 +9976,8 @@ paths:
       description: 'Fetch one or more resources by IRI, supplied as a JSON body `{"resourceIris":
         [...]}`. A POST alternative to GET /v2/resources for large IRI sets that would
         exceed URL-length limits. Between 1 and 100 IRIs may be sent per request (this
-        deployment''s configured limit; exceeding it is a 400). Publicly accessible.
-        Requires appropriate object access permissions on the resources.'
+        deployment''s configured limit; exceeding it is a 400). Requires appropriate
+        object access permissions.'
       operationId: postV2ResourcesBatch
       parameters:
       - name: x-knora-accept-schema
@@ -10069,8 +10105,7 @@ paths:
     get:
       tags:
       - API v2
-      description: Get a resource as TEI/XML. Publicly accessible. Requires appropriate
-        object access permissions on the resource.
+      description: Get a resource as TEI/XML. Requires appropriate object access permissions.
       operationId: getV2TeiResourceiri
       parameters:
       - name: resourceIri
@@ -10290,8 +10325,8 @@ paths:
     post:
       tags:
       - API v2
-      description: Mark a resource as deleted. Requires appropriate object access
-        permissions on the resource.
+      description: Mark a resource as deleted. Requires authentication and appropriate
+        object access permissions.
       operationId: postV2ResourcesDelete
       parameters:
       - name: x-knora-accept-schema
@@ -10410,7 +10445,8 @@ paths:
       tags:
       - API v2
       description: Update a resource's authorship (data side). Requires Modify object
-        access permission on the resource.
+        access permission on the resource. Requires authentication and appropriate
+        object access permissions.
       operationId: putV2ResourcesAuthorship
       parameters:
       - name: x-knora-accept-schema
@@ -10528,8 +10564,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Full-text search for resources. Publicly accessible. Requires appropriate
-        object access permissions on the resources.
+      description: Full-text search for resources. Requires appropriate object access
+        permissions.
       operationId: getV2SearchSearchterm
       parameters:
       - name: searchTerm
@@ -10828,8 +10864,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Search for resources by label. Publicly accessible. Requires appropriate
-        object access permissions on the resources.
+      description: Search for resources by label. Requires appropriate object access
+        permissions.
       operationId: getV2SearchbylabelSearchterm
       parameters:
       - name: searchTerm
@@ -11097,8 +11133,8 @@ paths:
     post:
       tags:
       - API v2
-      description: Search for resources using a Gravsearch query. Publicly accessible.
-        Requires appropriate object access permissions on the resources.
+      description: Search for resources using a Gravsearch query. Requires appropriate
+        object access permissions.
       operationId: postV2Searchextended
       parameters:
       - name: x-knora-accept-schema
@@ -11229,8 +11265,8 @@ paths:
     get:
       tags:
       - API v2
-      description: Search for resources using a Gravsearch query. Publicly accessible.
-        Requires appropriate object access permissions on the resources.
+      description: Search for resources using a Gravsearch query. Requires appropriate
+        object access permissions.
       operationId: getV2SearchextendedP1
       parameters:
       - name: p1
@@ -11624,8 +11660,7 @@ paths:
       tags:
       - API v2
       description: Search for incoming links using a Gravsearch query with an offset.
-        Publicly accessible. Requires appropriate object access permissions on the
-        resources.
+        Requires appropriate object access permissions.
       operationId: getV2SearchincominglinksResourceiri
       parameters:
       - name: resourceIri
@@ -11759,8 +11794,7 @@ paths:
       tags:
       - API v2
       description: Search for StillImageRepresentations using a Gravsearch query with
-        an offset. Publicly accessible. Requires appropriate object access permissions
-        on the resources.
+        an offset. Requires appropriate object access permissions.
       operationId: getV2SearchstillimagerepresentationsResourceiri
       parameters:
       - name: resourceIri
@@ -12020,8 +12054,7 @@ paths:
       tags:
       - API v2
       description: Search for incoming regions using a Gravsearch query with an offset.
-        Publicly accessible. Requires appropriate object access permissions on the
-        resources.
+        Requires appropriate object access permissions.
       operationId: getV2SearchincomingregionsResourceiri
       parameters:
       - name: resourceIri
@@ -12155,7 +12188,8 @@ paths:
       tags:
       - API v2
       description: Create a standoff mapping for XML to standoff conversion. Requires
-        authentication.
+        SystemAdmin or ProjectAdmin permissions for the project given by the body
+        projectIri.
       operationId: postV2Mapping
       parameters:
       - name: x-knora-accept-schema
@@ -12337,7 +12371,7 @@ paths:
     get:
       tags:
       - API v2
-      description: Get the metadata of an ontology. Publicly accessible.
+      description: Get the metadata of an ontology. Does not require authentication.
       operationId: getV2OntologiesMetadata
       parameters:
       - name: x-knora-accept-project
@@ -12451,7 +12485,7 @@ paths:
       tags:
       - API v2
       description: Change the metadata of an ontology. Requires SystemAdmin or ProjectAdmin
-        permissions for the ontology's project.
+        permissions for the project given by the ontology's project.
       operationId: putV2OntologiesMetadata
       parameters:
       - name: x-knora-accept-schema
@@ -12574,7 +12608,7 @@ paths:
         contain "knora-api"), prefix it with http://api.knora.org to get the ontology
         IRI. Otherwise, if it looks like it belongs to a project-specific API ontology,
         prefix it with routeData.appConfig.externalOntologyIriHostAndPort to get the
-        ontology IRI.
+        ontology IRI. Does not require authentication.
       operationId: getOntology
       parameters:
       - name: allLanguages
@@ -12695,7 +12729,7 @@ paths:
     get:
       tags:
       - API v2
-      description: Get all entities of an ontology. Publicly accessible.
+      description: Get all entities of an ontology. Does not require authentication.
       operationId: getV2OntologiesAllentitiesOntologyiri
       parameters:
       - name: ontologyIri
@@ -12956,7 +12990,7 @@ paths:
     get:
       tags:
       - API v2
-      description: Get a class definition by IRI. Publicly accessible.
+      description: Get a class definition by IRI. Does not require authentication.
       operationId: getV2OntologiesClassesClassiri
       parameters:
       - name: classIri
@@ -13199,7 +13233,7 @@ paths:
     get:
       tags:
       - API v2
-      description: Get a property definition by IRI. Publicly accessible.
+      description: Get a property definition by IRI. Does not require authentication.
       operationId: getV2OntologiesPropertiesPropertyiri
       parameters:
       - name: propertyIri
@@ -13325,7 +13359,7 @@ paths:
       tags:
       - API v2
       description: Delete a property from an ontology. Requires SystemAdmin or ProjectAdmin
-        permissions for the ontology's project.
+        permissions for the project given by the ontology's project.
       operationId: deleteV2OntologiesPropertiesPropertyiri
       parameters:
       - name: propertyIri
@@ -13682,7 +13716,7 @@ paths:
       tags:
       - API v2
       description: Delete the comment of a class definition. Requires SystemAdmin
-        or ProjectAdmin permissions for the ontology's project.
+        or ProjectAdmin permissions for the project given by the ontology's project.
       operationId: deleteV2OntologiesClassesCommentResourceclassiri
       parameters:
       - name: resourceClassIri
@@ -13805,7 +13839,7 @@ paths:
       tags:
       - API v2
       description: Delete a class from an ontology. Requires SystemAdmin or ProjectAdmin
-        permissions for the ontology's project.
+        permissions for the project given by the ontology's project.
       operationId: deleteV2OntologiesClassesResourceclassiri
       parameters:
       - name: resourceClassIri
@@ -13928,7 +13962,7 @@ paths:
       tags:
       - API v2
       description: Delete the comment of an ontology. Requires SystemAdmin or ProjectAdmin
-        permissions for the ontology's project.
+        permissions for the project given by the ontology's project.
       operationId: deleteV2OntologiesCommentOntologyiri
       parameters:
       - name: ontologyIri
@@ -14051,7 +14085,7 @@ paths:
       tags:
       - API v2
       description: Delete the comment of a property definition. Requires SystemAdmin
-        or ProjectAdmin permissions for the ontology's project.
+        or ProjectAdmin permissions for the project given by the ontology's project.
       operationId: deleteV2OntologiesPropertiesCommentPropertyiri
       parameters:
       - name: propertyIri
@@ -14174,7 +14208,7 @@ paths:
       tags:
       - API v2
       description: Delete an ontology. Requires SystemAdmin or ProjectAdmin permissions
-        for the ontology's project.
+        for the project given by the path ontology's project.
       operationId: deleteV2OntologiesOntologyiri
       parameters:
       - name: ontologyIri
@@ -14297,7 +14331,7 @@ paths:
       tags:
       - API v2
       description: Update cardinalities of a class. Requires SystemAdmin or ProjectAdmin
-        permissions for the ontology's project.
+        permissions for the project given by the ontology's project.
       operationId: putV2OntologiesCardinalities
       parameters:
       - name: x-knora-accept-schema
@@ -14415,7 +14449,8 @@ paths:
       tags:
       - API v2
       description: Add cardinalities to a class. Requires SystemAdmin or ProjectAdmin
-        permissions for the ontology's project. For more info check out the <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/ontology-information/#adding-cardinalities-to-a-class">documentation</a>.
+        permissions for the project given by the ontology's project. For more info
+        check out the <a href="https://docs.dasch.swiss/DSP-API/03-endpoints/api-v2/ontology-information/#adding-cardinalities-to-a-class">documentation</a>.
       operationId: postV2OntologiesCardinalities
       parameters:
       - name: x-knora-accept-schema
@@ -14533,7 +14568,7 @@ paths:
       tags:
       - API v2
       description: Delete cardinalities from a class. Requires SystemAdmin or ProjectAdmin
-        permissions for the ontology's project.
+        permissions for the project given by the ontology's project.
       operationId: patchV2OntologiesCardinalities
       parameters:
       - name: x-knora-accept-schema
@@ -14652,7 +14687,7 @@ paths:
       tags:
       - API v2
       description: Change the labels or comments of a class. Requires SystemAdmin
-        or ProjectAdmin permissions for the ontology's project.
+        or ProjectAdmin permissions for the project given by the ontology's project.
       operationId: putV2OntologiesClasses
       parameters:
       - name: x-knora-accept-schema
@@ -14770,7 +14805,7 @@ paths:
       tags:
       - API v2
       description: Create a new class. Requires SystemAdmin or ProjectAdmin permissions
-        for the ontology's project.
+        for the project given by the ontology's project.
       operationId: postV2OntologiesClasses
       parameters:
       - name: x-knora-accept-schema
@@ -15008,7 +15043,7 @@ paths:
       tags:
       - API v2
       description: Update a property's labels or comments. Requires SystemAdmin or
-        ProjectAdmin permissions for the ontology's project.
+        ProjectAdmin permissions for the project given by the ontology's project.
       operationId: putV2OntologiesProperties
       parameters:
       - name: x-knora-accept-schema
@@ -15126,7 +15161,7 @@ paths:
       tags:
       - API v2
       description: Create a new property. Requires SystemAdmin or ProjectAdmin permissions
-        for the ontology's project.
+        for the project given by the ontology's project.
       operationId: postV2OntologiesProperties
       parameters:
       - name: x-knora-accept-schema
@@ -15245,7 +15280,7 @@ paths:
       tags:
       - API v2
       description: Create a new ontology. Requires SystemAdmin or ProjectAdmin permissions
-        for the project.
+        for the project given by the body attachedToProject.
       operationId: postV2Ontologies
       parameters:
       - name: x-knora-accept-schema
@@ -15364,7 +15399,7 @@ paths:
       tags:
       - API v2
       description: Update the GUI order of properties in a class. Requires SystemAdmin
-        or ProjectAdmin permissions for the ontology's project.
+        or ProjectAdmin permissions for the project given by the ontology's project.
       operationId: putV2OntologiesGuiorder
       parameters:
       - name: x-knora-accept-schema
@@ -15483,7 +15518,7 @@ paths:
       tags:
       - API v2
       description: Update the GUI element of a property. Requires SystemAdmin or ProjectAdmin
-        permissions for the ontology's project.
+        permissions for the project given by the ontology's project.
       operationId: putV2OntologiesPropertiesGuielement
       parameters:
       - name: x-knora-accept-schema
@@ -15665,7 +15700,7 @@ paths:
       tags:
       - API v3
       description: Export resources to CSV format. Publicly accessible. Requires appropriate
-        object access permissions on the resources.
+        object access permissions.
       operationId: postV3ExportResources
       requestBody:
         content:
@@ -15839,7 +15874,6 @@ paths:
                       details:
                         id: example_id
       security:
-      - {}
       - httpAuth: []
   /v3/ontologies/{ontologyIri}/classes/{classIri}/mapping:
     put:
@@ -15848,7 +15882,8 @@ paths:
       - API v3
       description: Adds rdfs:subClassOf triples from the given class to the listed
         external IRIs. Existing external super-class mappings are not removed - use
-        DELETE first to replace them.
+        DELETE first to replace them. Requires SystemAdmin or ProjectAdmin permissions
+        for the project given by the path ontology's project.
       operationId: putV3OntologiesOntologyiriClassesClassiriMapping
       parameters:
       - name: ontologyIri
@@ -15942,7 +15977,9 @@ paths:
       - Ontology Mappings
       - API v3
       description: 'Removes a single rdfs:subClassOf triple from the given class to
-        the specified external IRI. Idempotent: deleting an absent triple is a no-op.'
+        the specified external IRI. Idempotent: deleting an absent triple is a no-op.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the path ontology''s project.'
       operationId: deleteV3OntologiesOntologyiriClassesClassiriMapping
       parameters:
       - name: ontologyIri
@@ -16038,7 +16075,8 @@ paths:
       - API v3
       description: Adds rdfs:subPropertyOf triples from the given property to the
         listed external IRIs. Existing external super-property mappings are not removed
-        - use DELETE first to replace them.
+        - use DELETE first to replace them. Requires SystemAdmin or ProjectAdmin permissions
+        for the project given by the path ontology's project.
       operationId: putV3OntologiesOntologyiriPropertiesPropertyiriMapping
       parameters:
       - name: ontologyIri
@@ -16133,7 +16171,8 @@ paths:
       - API v3
       description: 'Removes a single rdfs:subPropertyOf triple from the given property
         to the specified external IRI. Idempotent: deleting an absent triple is a
-        no-op.'
+        no-op. Requires SystemAdmin or ProjectAdmin permissions for the project given
+        by the path ontology''s project.'
       operationId: deleteV3OntologiesOntologyiriPropertiesPropertyiriMapping
       parameters:
       - name: ontologyIri
@@ -16229,7 +16268,7 @@ paths:
       description: Initiates an export of the project. The export will be performed
         asynchronously, and the response will contain an export ID that can be used
         to check the status of the export. An export can only be triggered when no
-        other export exists.
+        other export exists. Requires SystemAdmin permissions.
       operationId: postV3ProjectsProjectiriExports
       parameters:
       - name: projectIri
@@ -16327,7 +16366,8 @@ paths:
       description: 'Checks the status of an export. The response will indicate whether
         the export is still in progress, has completed successfully, or has failed.
         The `projectIri` in the path is not validated: the export is resolved by its
-        id alone and need not belong to a project that still exists.'
+        id alone and need not belong to a project that still exists. Requires SystemAdmin
+        permissions.'
       operationId: getV3ProjectsProjectiriExportsExportid
       parameters:
       - name: projectIri
@@ -16397,7 +16437,7 @@ paths:
       description: 'Deletes an export irrevocably. Only exports in state failed or
         completed can be deleted. The `projectIri` in the path is not validated: the
         export is resolved by its id alone and need not belong to a project that still
-        exists.'
+        exists. Requires SystemAdmin permissions.'
       operationId: deleteV3ProjectsProjectiriExportsExportid
       parameters:
       - name: projectIri
@@ -16485,7 +16525,8 @@ paths:
       description: 'Download an export. An export can only be downloaded when it has
         completed successfully. If it is still in progress or has failed, the response
         will be 409 Conflict. The `projectIri` in the path is not validated: the export
-        is resolved by its id alone and need not belong to a project that still exists.'
+        is resolved by its id alone and need not belong to a project that still exists.
+        Requires SystemAdmin permissions.'
       operationId: getV3ProjectsProjectiriExportsExportidDownload
       parameters:
       - name: projectIri
@@ -16597,7 +16638,7 @@ paths:
       description: Initiates an import of a project from an export zip file. The import
         will be performed asynchronously, and the response will indicate that the
         import has been accepted. An import can only be triggered when no other import
-        exists.
+        exists. Requires SystemAdmin permissions.
       operationId: postV3ProjectsProjectiriImports
       parameters:
       - name: projectIri
@@ -16675,6 +16716,7 @@ paths:
       - API v3
       description: Checks the status of an import. The response will indicate whether
         the import is still in progress, has completed successfully, or has failed.
+        Requires SystemAdmin permissions.
       operationId: getV3ProjectsProjectiriImportsImportid
       parameters:
       - name: projectIri
@@ -16743,6 +16785,7 @@ paths:
       - API v3
       description: Deletes an import. Only imports in state failed or completed can
         be deleted. If it is still in progress, the response will be 409 Conflict.
+        Requires SystemAdmin permissions.
       operationId: deleteV3ProjectsProjectiriImportsImportid
       parameters:
       - name: projectIri
@@ -16836,7 +16879,7 @@ paths:
         containing only list nodes is permitted. The project must have at least one
         ontology: an ontology-less project is rejected with 409 `project_ontologies_missing`,
         evaluated before the create-only check. An import can only be triggered when
-        no other data-graph import exists.'
+        no other data-graph import exists. Requires SystemAdmin permissions.'
       operationId: postV3ProjectsProjectiriData-imports
       parameters:
       - name: projectIri
@@ -17004,7 +17047,7 @@ paths:
       - API v3
       description: Checks the status of a data-graph import. The response will indicate
         whether the import is still in progress, has completed successfully, or has
-        failed.
+        failed. Requires SystemAdmin permissions.
       operationId: getV3ProjectsProjectiriData-importsImportid
       parameters:
       - name: projectIri
@@ -17088,6 +17131,7 @@ paths:
       - API v3
       description: Deletes a data-graph import. Only imports in state failed or completed
         can be deleted. If it is still in progress, the response will be 409 Conflict.
+        Requires SystemAdmin permissions.
       operationId: deleteV3ProjectsProjectiriData-importsImportid
       parameters:
       - name: projectIri
@@ -17188,7 +17232,7 @@ paths:
       tags:
       - FAIR
       description: The landing page of a public resource, or a 303 to a representation
-        the `Accept` header asks for.
+        the `Accept` header asks for. Does not require authentication.
       operationId: getInternalLanding-pagesResourcesShortcodeResourceid
       parameters:
       - name: shortcode
@@ -17230,7 +17274,7 @@ paths:
     head:
       tags:
       - FAIR
-      description: As the landing GET, without the body.
+      description: As the landing GET, without the body. Does not require authentication.
       operationId: headInternalLanding-pagesResourcesShortcodeResourceid
       parameters:
       - name: shortcode
@@ -17269,7 +17313,8 @@ paths:
     get:
       tags:
       - FAIR
-      description: The schema.org JSON-LD description of a public resource.
+      description: The schema.org JSON-LD description of a public resource. Does not
+        require authentication.
       operationId: getFairResourcesShortcodeResourceidMetadata.jsonld
       parameters:
       - name: shortcode
@@ -17295,7 +17340,8 @@ paths:
     get:
       tags:
       - FAIR
-      description: The DataCite JSON description of a public resource.
+      description: The DataCite JSON description of a public resource. Does not require
+        authentication.
       operationId: getFairResourcesShortcodeResourceidMetadata.datacite.json
       parameters:
       - name: shortcode
@@ -17321,7 +17367,7 @@ paths:
     get:
       tags:
       - Management API
-      description: Get version information. Publicly accessible.
+      description: Get version information. Does not require authentication.
       operationId: getVersion
       responses:
         '200':
@@ -17331,12 +17377,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v40.5.0-7-gd465883
-                buildCommit: d4658839f
+                webapi: v40.6.0-5-g8c46d15
+                buildCommit: 8c46d1548
                 buildTime: dev
                 fuseki: 6.2.0
                 scala: 3.8.4
-                sipi: v10.0.0
+                sipi: v10.0.1
                 name: version
         '400':
           description: ''
@@ -17384,7 +17430,7 @@ paths:
     get:
       tags:
       - Management API
-      description: Get health status. Publicly accessible.
+      description: Get health status. Does not require authentication.
       operationId: getHealth
       responses:
         '200':
