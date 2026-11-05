@@ -149,7 +149,8 @@ const NAMES = new Map<string, string>(AvailableLanguages.map(({ language, value 
       }
 
       .languages {
-        --mat-standard-button-toggle-height: 30px;
+        --mat-button-toggle-height: 30px;
+        --mat-button-toggle-label-text-line-height: 28px;
         font-size: 12px;
         text-transform: uppercase;
       }

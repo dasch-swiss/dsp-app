@@ -149,6 +149,16 @@ const readDensity = (): Density => {
         <span class="counts">{{
           'pages.ontologyMap.counts' | translate: { classes: state.classRows().length, links: state.linkCount() }
         }}</span>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            #search
+            matInput
+            data-cy="data-model-classes-search"
+            [placeholder]="r + '.findClass' | translate"
+            [attr.aria-label]="r + '.findClass' | translate"
+            (input)="query.set(search.value)" />
+        </mat-form-field>
         <span class="spacer"></span>
         <mat-slide-toggle
           class="all-languages"
@@ -173,16 +183,6 @@ const readDensity = (): Density => {
             {{ r + '.expanded' | translate }}
           </mat-button-toggle>
         </mat-button-toggle-group>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
-          <mat-icon matPrefix>search</mat-icon>
-          <input
-            #search
-            matInput
-            data-cy="data-model-classes-search"
-            [placeholder]="r + '.findClass' | translate"
-            [attr.aria-label]="r + '.findClass' | translate"
-            (input)="query.set(search.value)" />
-        </mat-form-field>
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
@@ -621,8 +621,10 @@ const readDensity = (): Density => {
       }
 
       .density {
-        --mat-standard-button-toggle-height: 34px;
-        --mat-standard-button-toggle-label-text-size: 13px;
+        --mat-button-toggle-height: 36px;
+        --mat-button-toggle-legacy-height: 36px;
+        --mat-button-toggle-label-text-line-height: 34px;
+        --mat-button-toggle-label-text-size: 13px;
         background: white;
 
         mat-icon {
