@@ -621,6 +621,7 @@ const readDensity = (): Density => {
               [language]="editing.language"
               [classLabel]="editing.row.label"
               [saving]="savingText()"
+              [(all)]="editorAllLanguages"
               (saved)="saveTexts(editing.row, editing.kind, $event)"
               (cancelled)="closeText()" />
           </ng-template>
@@ -1140,6 +1141,8 @@ export class DataModelClassesComponent {
   /** The label or description being edited: its class, the language it opened on, and the line it opened from. */
   readonly editingText = signal<{ row: ClassRow; kind: TextKind; language: string; origin: HTMLElement } | null>(null);
   readonly savingText = signal(false);
+  /** The editor's "All languages" switch, kept from one editor to the next. */
+  readonly editorAllLanguages = signal(false);
   readonly canEditTexts = computed(() => this.state.canEdit() && this.editing.canSaveInPlace);
   /** Under the line it opened from, else above it. */
   readonly popoverPositions: ConnectedPosition[] = [

@@ -8,8 +8,8 @@ import {
   inject,
   input,
   linkedSignal,
+  model,
   output,
-  signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
@@ -210,7 +210,8 @@ export class DescriptionEditorComponent {
 
   readonly languages = DESCRIPTION_LANGUAGES;
   readonly current = linkedSignal(() => this.language());
-  readonly all = signal(false);
+  /** Every language stacked; bound by the table, so the next editor opens the same way. */
+  readonly all = model(false);
 
   private readonly _original = computed(() =>
     Object.fromEntries(this.texts().map(({ language, value }) => [language, value]))
@@ -250,7 +251,14 @@ export class DescriptionEditorComponent {
     );
   }
 
+  /** Focuses the field of the language opened on, also among all languages; the caret at the end of its text. */
   private _focus(): void {
-    (this._host.nativeElement as HTMLElement).querySelector<HTMLTextAreaElement>('textarea')?.focus();
+    const host = this._host.nativeElement as HTMLElement;
+    const field =
+      host.querySelector<HTMLTextAreaElement>(`textarea[data-language="${this.current()}"]`) ??
+      host.querySelector<HTMLTextAreaElement>('textarea');
+    if (!field) return;
+    field.focus();
+    field.setSelectionRange(field.value.length, field.value.length);
   }
 }
