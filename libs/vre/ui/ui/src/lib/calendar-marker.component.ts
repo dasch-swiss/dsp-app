@@ -300,12 +300,12 @@ export interface CalendarFacts {
         background: none;
         color: #336790;
         cursor: pointer;
+      }
 
-        mat-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-        }
+      .calendar-marker-copy mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
       }
 
       .calendar-marker-reform-gap {

@@ -22,15 +22,15 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
         cursor: pointer;
         padding: 4px;
         border-radius: 8px;
+      }
 
-        .mat-icon {
-          height: 32px;
-          width: 32px;
-        }
+      .logo .mat-icon {
+        height: 32px;
+        width: 32px;
+      }
 
-        &:hover {
-          background-color: #e8e9eb;
-        }
+      .logo:hover {
+        background-color: #e8e9eb;
       }
     `,
   ],
