@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
@@ -22,18 +22,18 @@ function mergeCoverageFilesToJson() {
   for (const filePath of jsonFiles) {
     const targetPath = getTargetPath(filePath);
     console.log(`  Copying '${path.relative(process.cwd(), filePath)}' → '${path.relative(process.cwd(), targetPath)}'`);
-    fs.copySync(filePath, targetPath);
+    fs.copyFileSync(filePath, targetPath);
   }
 
   console.log('\n📦 Merging coverage files...');
   const mergedCoveragePath = path.join(COVERAGE_FOLDER, MERGED_COVERAGE_FILENAME);
-  executeCommand(`npx nyc merge ${TEMP_FOLDER} ${mergedCoveragePath}`);
+  executeCommand(`pnpm exec nyc merge ${TEMP_FOLDER} ${mergedCoveragePath}`);
   console.log(`✓ Merged coverage written to: ${mergedCoveragePath}`);
 }
 
 function createIstanbulReportFromJson() {
   console.log('\n📊 Generating coverage reports...');
-  const command = `npx nyc report -t ${TEMP_FOLDER} --report-dir ${COVERAGE_FOLDER} --reporter=html --reporter=lcov --reporter=text-summary --reporter=json`;
+  const command = `pnpm exec nyc report -t ${TEMP_FOLDER} --report-dir ${COVERAGE_FOLDER} --reporter=html --reporter=lcov --reporter=text-summary --reporter=json`;
   executeCommand(command);
   console.log('\n✅ Coverage reports generated successfully!');
   console.log(`   📄 HTML Report: open ${COVERAGE_FOLDER}/lcov-report/index.html`);
@@ -72,7 +72,8 @@ function getTargetPath(filePath) {
 }
 
 function clearTempFolder() {
-  fs.emptyDirSync(TEMP_FOLDER);
+  fs.rmSync(TEMP_FOLDER, { recursive: true, force: true });
+  fs.mkdirSync(TEMP_FOLDER, { recursive: true });
 }
 
 function executeCommand(command) {
