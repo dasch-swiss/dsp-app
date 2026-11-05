@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { VersionApiService, VersionResponse } from '@dasch-swiss/vre/3rd-party-services/api';
-import { AppConfigService, DspConfig } from '@dasch-swiss/vre/core/config';
+import { APP_VERSION, AppConfigService, DspConfig } from '@dasch-swiss/vre/core/config';
 import { TranslatePipe } from '@ngx-translate/core';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import packageJson from '../../../../../../../package.json';
 import { FooterComponent } from '../footer/footer.component';
 import { GridComponent, GridItem } from '../grid/grid.component';
 
@@ -20,7 +18,7 @@ export class HelpPageComponent implements OnInit {
   dsp!: DspConfig;
   releaseNotesUrl!: string;
 
-  appVersion: string = packageJson.version;
+  appVersion: string = APP_VERSION;
   apiVersion?: VersionResponse;
 
   docs: GridItem[] = [

@@ -4,12 +4,12 @@
  * The list of file replacements can be found in `angular.json`.
  */
 
-import packageJson from '../../../../package.json';
+import { APP_VERSION } from '@dasch-swiss/vre/core/config';
 
 export const environment = {
   name: 'stage-server',
   production: false,
-  version: packageJson.version,
+  version: APP_VERSION,
 };
 
 /*
