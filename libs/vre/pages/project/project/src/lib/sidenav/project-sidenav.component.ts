@@ -6,13 +6,11 @@ import { ProjectSidenavOntologiesComponent } from './project-sidenav-ontologies.
   template: ` <app-projects-sidenav-ontologies /> `,
   styles: [
     `
-      @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
-
       :host {
         display: block;
         height: 100%;
         box-sizing: border-box;
-        border-right: 1px solid $cool_gray_200;
+        border-right: 1px solid #e5e7eb; /* $cool_gray_200 */
         overflow: auto;
       }
     `,

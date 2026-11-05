@@ -33,8 +33,6 @@ import { TooltipIfTruncatedDirective } from '../tooltip-if-truncated.directive';
   `,
   styles: [
     `
-      @use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
-
       .item {
         display: flex;
         align-items: center;
@@ -49,23 +47,23 @@ import { TooltipIfTruncatedDirective } from '../tooltip-if-truncated.directive';
         cursor: pointer;
         text-align: left;
         font: 400 14px/1 var(--font-sans, Roboto, sans-serif);
-        color: $cool_gray_800;
+        color: #1f2937; /* $cool_gray_800 */
+      }
 
-        &:hover {
-          background: $cool_gray_100;
-        }
+      .item:hover {
+        background: #f3f4f6; /* $cool_gray_100 */
+      }
 
-        &:focus-visible {
-          outline: 2px solid $primary;
-          outline-offset: -2px;
-        }
+      .item:focus-visible {
+        outline: 2px solid #336790; /* $primary */
+        outline-offset: -2px;
+      }
 
-        /* The result list's selection, exactly: tint and accent bar, nothing else — so the two
-           lists side by side mark "selected" the same way. */
-        &.selected {
-          border-left-color: $primary;
-          background: $primary_100;
-        }
+      /* The result list's selection, exactly: tint and accent bar, nothing else — so the two
+         lists side by side mark "selected" the same way. */
+      .item.selected {
+        border-left-color: #336790; /* $primary */
+        background: #d6e0e8; /* $primary_100 */
       }
 
       .label {
@@ -80,7 +78,7 @@ import { TooltipIfTruncatedDirective } from '../tooltip-if-truncated.directive';
         flex: none;
         font-size: 12px;
         font-weight: 400;
-        color: $cool_gray_400;
+        color: #9ca3af; /* $cool_gray_400 */
         font-variant-numeric: tabular-nums;
       }
 
@@ -89,7 +87,7 @@ import { TooltipIfTruncatedDirective } from '../tooltip-if-truncated.directive';
         font-size: 16px;
         width: 16px;
         height: 16px;
-        color: $cool_gray_400;
+        color: #9ca3af; /* $cool_gray_400 */
       }
     `,
   ],

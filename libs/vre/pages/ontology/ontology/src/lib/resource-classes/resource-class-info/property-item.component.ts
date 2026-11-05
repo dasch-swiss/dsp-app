@@ -128,8 +128,6 @@ import { CardinalityComponent } from './cardinality-component/cardinality.compon
     </mat-menu>`,
   styles: [
     `
-      @use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
-
       .list-icon {
         color: black;
         display: flex;
@@ -173,7 +171,7 @@ import { CardinalityComponent } from './cardinality-component/cardinality.compon
       }
 
       .lower-prop-container {
-        color: $primary_700;
+        color: #336790; /* $primary_700 */
         display: flex;
         align-items: center;
         gap: 0.25rem;
