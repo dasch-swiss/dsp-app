@@ -2,6 +2,7 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "emitDecoratorMetadata": true,
+    "lib": ["ES2021", "dom", "dom.iterable"],
     "module": "preserve",
     "moduleResolution": "bundler"
   },
