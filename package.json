@@ -6,7 +6,7 @@
     "url": "https://github.com/dasch-swiss/dsp-app.git"
   },
   "engines": {
-    "node": "^22.13.0"
+    "node": "^24.20.0"
   },
   "devEngines": {
     "packageManager": {
@@ -118,7 +118,7 @@
     "@swc/helpers": "0.5.23",
     "@swc/jest": "^0.2.39",
     "@types/jest": "30.0.0",
-    "@types/node": "^22.18.11",
+    "@types/node": "^24.19.2",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
     "@typescript-eslint/utils": "^8.40.0",

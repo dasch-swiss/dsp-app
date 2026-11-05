@@ -28,12 +28,16 @@
       devShells = forEachSystem (pkgs: {
         default = pkgs.mkShell {
           packages = [
-            # Node and npm, selected by `.nvmrc`'s major. nixpkgs pins one patch
-            # per major, so the shell's patch can differ from `.nvmrc`'s exact
-            # value; package.json's `engines` is a caret range (^22.13.0), so any
-            # patch on the line satisfies it. Without this shell, a host on the
-            # next major fails `npm ci` with `notsup` before any script runs.
+            # Node, selected by `.nvmrc`'s major. nixpkgs pins one patch per
+            # major, so the shell's patch can differ from `.nvmrc`'s exact
+            # value; package.json's `engines` is a caret range (^24.20.0) whose
+            # floor is nixpkgs' nodejs_24. Without this shell, a host on another
+            # major fails `pnpm install` under engine-strict before any script runs.
             pkgs.${nodeAttr}
+
+            # pnpm on the 10 line; nixpkgs' patch can differ from packageManager's
+            # 10.33.2, which pnpm accepts within the major.
+            pkgs.pnpm_10
 
             # agent-browser — drives the running app for `/eng:test-browser`
             # (navigate, screenshot, console and network reads, axe sweeps).
@@ -41,7 +45,7 @@
           ];
 
           shellHook = ''
-            echo "dsp-app dev shell — node $(node --version) (.nvmrc: ${nvmrc}), npm $(npm --version)"
+            echo "dsp-app dev shell — node $(node --version) (.nvmrc: ${nvmrc}), pnpm $(pnpm --version)"
           '';
         };
       });
