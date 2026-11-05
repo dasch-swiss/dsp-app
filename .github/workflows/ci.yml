@@ -500,7 +500,7 @@ jobs:
           key: ms-playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: ms-playwright-${{ runner.os }}-
       - name: Install Playwright browsers
-        # Installed via playwright-core's own CLI rather than `playwright`'s,
+        # Installed via playwright-core's own CLI rather than the `playwright` CLI,
         # so the browser revision matches the playwright-core that pixeleye
         # actually launches — a mismatch fails with "Executable doesn't exist".
         # chromium-headless-shell is a SEPARATE download from chromium and is
