@@ -2,7 +2,7 @@
  * The widths that the `Pages / Breakpoints / …` stories are checked at, in Storybook's viewport
  * toolbar and in the separate pixeleye run (`pixeleye.breakpoints.config.ts`).
  *
- * Mirrors the breakpoint tokens of `apps/dsp-app/src/styles/_responsive.scss` (DEV-7536):
+ * Mirrors the breakpoint tokens of `libs/vre/ui/styles/_responsive.scss` (DEV-7536):
  * sm 768 · md 1280 · lg 1536 · xl 1920 · xxl 2560, plus 767 to show the layout just below the
  * minimum supported width.
  */

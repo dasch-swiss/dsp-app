@@ -43,7 +43,7 @@ What blocks a merge is set by the review prompt in `.github/workflows/claude.yml
 - Elements are reached through `@ViewChild` or a service, not `document.getElementById` or a CSS selector query.
 - No static `style="…"` attribute; dynamic `[style.x]` bindings for computed values are fine.
 - No new component-method call in a binding or interpolation; use a pipe, `computed()` or a field. Signal reads are not method calls.
-- Colors come from the palettes in `apps/dsp-app/src/styles/_config.scss`; no new hex or rgb value in a component's SCSS or template.
+- Colors come from the palettes in `libs/vre/ui/styles/_config.scss`; no new hex or rgb value in a component's SCSS or template.
 
 ### Tests & stories
 
