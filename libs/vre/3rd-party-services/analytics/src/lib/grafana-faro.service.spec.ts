@@ -1,3 +1,4 @@
+import { NgZone } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { GrafanaFaroService } from './grafana-faro.service';
@@ -118,6 +119,20 @@ describe('GrafanaFaroService', () => {
           },
         })
       );
+    });
+
+    it('should initialize Faro outside the Angular zone', async () => {
+      // Faro's DOM observers must not trigger change detection, or a DOM write during change
+      // detection re-triggers the observer and loops forever.
+      let initializedInAngularZone: boolean | undefined;
+      mockInitializeFaro.mockImplementation(() => {
+        initializedInAngularZone = NgZone.isInAngularZone();
+        return mockFaroInstance;
+      });
+
+      await TestBed.inject(NgZone).run(() => service.setup());
+
+      expect(initializedInAngularZone).toBe(false);
     });
 
     it('should not initialize when Faro is disabled', async () => {
