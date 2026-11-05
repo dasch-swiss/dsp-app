@@ -265,7 +265,7 @@ bytes	38967597
 Measured at commit `535bd182b` (Phase 3; the later Phase 3 commits change only this document and the coverage merge script), darwin-arm64, Node 24.20.0 (the dev shell's `nodejs_24`), pnpm
 10.33.2, 2026-11-05.
 
-### Test counts
+### Test counts after the switch
 
 Equal to the reference before the migration, line for line.
 
@@ -303,7 +303,7 @@ libs/vre/ui/ui	12	134	0
 total	202	2810	1
 ```
 
-### Bundle inventory
+### Bundle inventory after the switch
 
 Production configuration. The normalized file list equals the reference before the migration; the
 total is 0.5 percent smaller. Initial files: `main` 905191 bytes, `polyfills` 35897, `styles`
