@@ -1,0 +1,57 @@
+name: bazel-setup
+description: >
+  Install bazelisk, configure the NativeLink RBE backend and restore the Bazel
+  disk cache. Emits the flag string to append to every bazel invocation.
+
+inputs:
+  runner-endpoint:
+    description: RE-API endpoint of the NativeLink RBE backend.
+    required: true
+  ca-cert:
+    description: NativeLink server CA (PEM).
+    required: true
+  client-cert:
+    description: mTLS client cert (PEM).
+    required: true
+  client-key:
+    description: mTLS client key (PEM).
+    required: true
+
+outputs:
+  flags:
+    description: Bazel flags (RBE, disk cache, lockfile mode) for a CI bazel build or run.
+    value: ${{ steps.flags.outputs.flags }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install bazelisk
+      shell: bash
+      run: |
+        curl -fsSL --create-dirs -o "$HOME/bin/bazel" \
+          https://github.com/bazelbuild/bazelisk/releases/download/v1.27.0/bazelisk-linux-amd64
+        chmod +x "$HOME/bin/bazel"
+        echo "$HOME/bin" >> "$GITHUB_PATH"
+
+    - name: Configure RBE
+      id: rbe
+      uses: ./.github/actions/bazel-rbe
+      with:
+        runner-endpoint: ${{ inputs.runner-endpoint }}
+        ca-cert: ${{ inputs.ca-cert }}
+        client-cert: ${{ inputs.client-cert }}
+        client-key: ${{ inputs.client-key }}
+
+    - name: Bazel disk cache
+      uses: actions/cache@v5
+      with:
+        path: ~/.cache/bazel-disk
+        key: bazel-disk-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}
+        restore-keys: |
+          bazel-disk-${{ runner.os }}-
+
+    - name: Assemble the flags
+      id: flags
+      shell: bash
+      run: |
+        echo "flags=${{ steps.rbe.outputs.flags }} --disk_cache=$HOME/.cache/bazel-disk --lockfile_mode=error --remote_download_outputs=toplevel" >> "$GITHUB_OUTPUT"
