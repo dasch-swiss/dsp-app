@@ -73,6 +73,13 @@ _LIBRARY_DEPS = [
     Label("//:node_modules/tslib"),
 ]
 
+_STRICT_FLAGS = [
+    "strict",
+    "noImplicitOverride",
+    "noPropertyAccessFromIndexSignature",
+    "noImplicitReturns",
+]
+
 def _alias(label):
     # tsconfig.base.json's naming: libs/vre/ui/ui is @dasch-swiss/vre/ui/ui.
     return "@dasch-swiss/" + label.package.removeprefix("libs/")
@@ -100,7 +107,12 @@ def vre_library(
     The library's ADR-0001 type and scope come from `LIBRARIES` in visibility.bzl, which fails the
     load for a package it does not list. The generated tsconfig maps only the declared library
     `deps` to their compiled `.d.ts`, so an import of any other library fails with TS2307
-    (Decision 7 of DEV-7767, evidence in docs/contribution/bazel-baselines.md).
+    (Decision 7 of DEV-7767, evidence in docs/contribution/bazel-baselines.md). The derived
+    visibility applies only while `ENFORCE_VISIBILITY` is on; until then every library is public
+    and `extra_visibility` has no effect.
+
+    A library compiles under the strict flags below unless `LOOSE_LIBRARIES` lists it, whatever
+    its own tsconfig says.
 
     Args:
         name: the ng_project target; by convention the package's last path segment.
@@ -144,25 +156,26 @@ def vre_library(
             paths[_alias(label)] = [label.package + "/src/index.d.ts"]
 
     compiler_options = {
-        # Without it the checked-in outDir wins and ng_project silently emits nothing.
+        # Must be "."; a checked-in outDir would win and ng_project would emit nothing.
         "outDir": ".",
         "module": "preserve",
         "moduleResolution": "bundler",
         # Replaces tsconfig.base.json's source mapping, which would compile every library from source.
         "paths": paths,
     }
+    # A loose library gets the flags the Angular CLI's app program compiled it with.
+    strict = package not in LOOSE_LIBRARIES
+    compiler_options.update({flag: strict for flag in _STRICT_FLAGS})
     tsconfig = {
         "extends": "./tsconfig.lib.json",
         "compilerOptions": compiler_options,
+        "angularCompilerOptions": {
+            "strictInjectionParameters": True,
+            "strictInputAccessModifiers": True,
+            "strictTemplates": strict,
+        },
         "include": srcs,
     }
-    if package in LOOSE_LIBRARIES:
-        compiler_options["strict"] = False
-        tsconfig["angularCompilerOptions"] = {
-            "strictInjectionParameters": False,
-            "strictInputAccessModifiers": False,
-            "strictTemplates": False,
-        }
     write_file(
         name = "tsconfig_bazel_json",
         out = "tsconfig.bazel.json",
