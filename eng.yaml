@@ -6,6 +6,7 @@ defaults:
     test: just test
     lint: just lint
     gate: just ci
+    test_targeted: just test-files -- {files}
 
 overrides:
   - when: "apps/**"

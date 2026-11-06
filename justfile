@@ -3,6 +3,7 @@
 #   just build [CONFIG | TARGETS...]  the bundle in a configuration (from DEV-7767's Phase 7), or
 #                                     the named Bazel targets; no argument builds //...
 #   just test [TARGETS...]            every Bazel test target, or the named ones
+#   just test-files -- PATHS...       the Jest targets that depend on those files
 #   just lint                         ESLint: the Bazel aspect, pnpm for what it does not see
 #   just ci                           the gate: build, test, lint and the version checks
 #
@@ -40,6 +41,34 @@ build *ARGS:
 # Run the named Bazel test targets, or every test target
 test *TARGETS:
     bazel test {{ if TARGETS == "" { "//..." } else { TARGETS } }} $BAZEL_FLAGS
+
+# Run the Jest targets that depend on the given repository paths (`just test-files -- <paths>`)
+[positional-arguments]
+test-files *FILES:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    [ "${1:-}" != "--" ] || shift
+    labels=()
+    for file in "$@"; do
+      dir="$(dirname "$file")"
+      while [ "$dir" != "." ] && [ ! -f "$dir/BUILD.bazel" ]; do dir="$(dirname "$dir")"; done
+      pkg="${dir#.}"
+      labels+=("//$pkg:${file#"$pkg/"}")
+    done
+    [ "${#labels[@]}" -gt 0 ] || { echo "just test-files: no paths given" >&2; exit 1; }
+    # A path no rule reads (a README, a deleted file) is not a target; --keep_going skips it and
+    # exits 3, every other non-zero exit is a real failure.
+    status=0
+    targets="$(bazel query --keep_going "kind(jest_test, rdeps(//..., set(${labels[*]})))" $BAZEL_FLAGS 2>/dev/null)" || status=$?
+    if [ "$status" -ne 0 ] && [ "$status" -ne 3 ]; then
+      echo "just test-files: bazel query failed with exit code $status" >&2
+      exit "$status"
+    fi
+    if [ -z "$targets" ]; then
+      echo "just test-files: no Jest target depends on $*"
+      exit 0
+    fi
+    bazel test $targets $BAZEL_FLAGS
 
 # ESLint, each file under its nearest eslint.config.mjs: the Bazel aspect over every ts_project's
 # sources, pnpm over the files the aspect does not see
