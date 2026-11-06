@@ -15,7 +15,7 @@ import { AlertInfoComponent } from '../header/alert-info.component';
   imports: [AlertInfoComponent, TranslatePipe],
   template: `
     <app-alert-info>
-      <p>{{ 'resourceEditor.representations.noPermission' | translate }}</p>
+      {{ 'resourceEditor.representations.noPermission' | translate }}
     </app-alert-info>
   `,
 })
