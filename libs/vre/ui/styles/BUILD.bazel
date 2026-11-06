@@ -1,0 +1,13 @@
+load("@rules_sass//src:index.bzl", "sass_library")
+
+# The shared Sass partials; a stylesheet that does `@use 'config'`, `'mixins'` or `'responsive'`
+# lists this in its library's `sass_deps`.
+sass_library(
+    name = "styles",
+    srcs = [
+        "_config.scss",
+        "_mixins.scss",
+        "_responsive.scss",
+    ],
+    visibility = ["//visibility:public"],
+)
