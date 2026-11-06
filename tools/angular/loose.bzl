@@ -7,4 +7,5 @@ library's package to the Linear issue that removes it from this list.
 """
 
 LOOSE_LIBRARIES = {
+    "//libs/vre/resource-editor/resource-editor": "DEV-7796",
 }

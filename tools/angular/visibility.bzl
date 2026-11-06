@@ -31,6 +31,7 @@ LIBRARIES = {
     "//libs/vre/core/session": struct(type = "data-access", scope = "shared"),
     "//libs/vre/pages/search/search-filters": struct(type = "feature", scope = "shared"),
     "//libs/vre/pages/user-settings/user": struct(type = "feature", scope = "user"),
+    "//libs/vre/resource-editor/resource-editor": struct(type = "feature", scope = "shared"),
     "//libs/vre/shared/app-common": struct(type = "data-access", scope = "shared"),
     # ADR-0001 assigns no tags until the library is split; provisional until Phase 8 enforces.
     "//libs/vre/shared/app-common-to-move": struct(type = "feature", scope = "shared"),
