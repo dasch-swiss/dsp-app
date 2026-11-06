@@ -1,3 +1,5 @@
 load(":visibility.bzl", "declare_package_groups")
 
 declare_package_groups()
+
+exports_files(["rules_angular-nativelink.patch"])

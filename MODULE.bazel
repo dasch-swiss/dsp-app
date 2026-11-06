@@ -32,6 +32,9 @@ bazel_dep(name = "rules_angular")
 git_override(
     module_name = "rules_angular",
     commit = "88a34a4f4f10f495b051c06c2ffa8698829b9215",
+    patch_strip = 1,
+    # Lets the worker compile in NativeLink's work directory; the patch's header says why.
+    patches = ["//tools/angular:rules_angular-nativelink.patch"],
     remote = "https://github.com/angular/rules_angular.git",
 )
 
