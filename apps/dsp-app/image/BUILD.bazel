@@ -25,6 +25,9 @@ mtree_mutate(
     mtree = ":dist_mtree",
     package_dir = "public",
     strip_prefix = "apps/dsp-app/dist",
+    # Its gawk, compiled from source as an exec tool, does not start on the NativeLink worker
+    # ("cannot execute: required file not found").
+    tags = ["no-remote-exec"],
 )
 
 tar(
