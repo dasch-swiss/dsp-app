@@ -28,12 +28,15 @@ LIBRARIES = {
     "//libs/vre/3rd-party-services/open-api": struct(type = "data-access", scope = "shared"),
     "//libs/vre/core/config": struct(type = "data-access", scope = "shared"),
     "//libs/vre/core/error-handler": struct(type = "data-access", scope = "shared"),
+    "//libs/vre/core/session": struct(type = "data-access", scope = "shared"),
     "//libs/vre/shared/app-common": struct(type = "data-access", scope = "shared"),
     "//libs/vre/shared/app-help-page": struct(type = "feature", scope = "shared"),
     "//libs/vre/shared/app-helper-services": struct(type = "data-access", scope = "shared"),
     "//libs/vre/shared/calendar": struct(type = "util", scope = "shared"),
+    "//libs/vre/ui/date-picker": struct(type = "ui", scope = "shared"),
     "//libs/vre/ui/notification": struct(type = "util", scope = "shared"),
     "//libs/vre/ui/progress-indicator": struct(type = "ui", scope = "shared"),
+    "//libs/vre/ui/string-literal": struct(type = "ui", scope = "shared"),
     "//libs/vre/ui/ui": struct(type = "ui", scope = "shared"),
 }
 
