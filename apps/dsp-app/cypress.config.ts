@@ -1,11 +1,12 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
   projectId: 'n5b5id',
   e2e: {
-    ...nxE2EPreset(__dirname),
+    fileServerFolder: '.',
+    fixturesFolder: 'cypress/fixtures',
+    videosFolder: '../../dist/cypress/apps/dsp-app/videos',
+    chromeWebSecurity: false,
     specPattern: ['cypress/e2e/system-admin/resource.cy.ts', 'cypress/**/**/**/*.cy.ts'],
     excludeSpecPattern: ['*.spec.js', '*.spec.ts'],
     viewportHeight: 768,

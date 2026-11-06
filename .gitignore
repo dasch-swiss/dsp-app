@@ -61,7 +61,6 @@ apps/dsp-app/coverage/
 apps/dsp-app/.nyc_output/
 
 #E2E
-/.nx
 apps/dsp-app/cypress/screenshots
 apps/dsp-app/cypress/downloads
 
@@ -74,8 +73,6 @@ apps/dsp-app/cypress/downloads
 
 # OpenAPI generated files
 libs/vre/3rd-party-services/open-api/src/generated/
-.cursor/rules/nx-rules.mdc
-.github/instructions/nx.instructions.md
 
 # Claude Code
 .claude/worktrees/
