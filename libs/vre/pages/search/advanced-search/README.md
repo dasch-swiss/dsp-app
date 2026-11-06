@@ -48,4 +48,4 @@ commit `writeState({ … })`. The derivation and restore come for free.
 
 ## Running unit tests
 
-Run `nx test vre-pages-search-advanced-search` to execute the unit tests.
+Run `just test //libs/vre/pages/search/advanced-search/...` to execute the unit tests.

@@ -67,7 +67,7 @@ js_library(
 )
 
 # The published package.json: the source one plus the ES module fields the library's emit needs,
-# which the Nx build added and 12.0.1 shipped.
+# which the earlier build added and 12.0.1 shipped.
 jq(
     name = "package_json",
     srcs = ["package.json"],

@@ -5,4 +5,4 @@ It can be imported via `@dasch-swiss/vre/core/session`.
 
 ## Running unit tests
 
-Run `npx nx run app-session:test` from within the library to execute the unit tests.
+Run `just test //libs/vre/core/session/...` to execute the unit tests.
