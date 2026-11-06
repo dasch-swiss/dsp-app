@@ -94,7 +94,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       }
     </div>
   `,
-  styleUrl: './data-class-result-meta.component.scss',
+  styleUrl: './data-class-result-meta.component.css',
   imports: [MatIcon, MatIconButton, MatTooltip, TranslatePipe],
 })
 export class DataClassResultMetaComponent {

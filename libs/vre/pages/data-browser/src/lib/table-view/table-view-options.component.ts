@@ -117,7 +117,7 @@ import { ColumnPickerEntry } from './table-view-state.service';
       </div>
     </mat-menu>
   `,
-  styleUrl: './table-view-options.component.scss',
+  styleUrl: './table-view-options.component.css',
   imports: [
     MatButton,
     MatButtonToggle,

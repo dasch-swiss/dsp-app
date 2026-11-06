@@ -33,7 +33,7 @@ interface ImageSettingsState {
 
 @Component({
   selector: 'app-image-settings',
-  styleUrls: ['./image-settings.component.scss'],
+  styleUrls: ['./image-settings.component.css'],
   templateUrl: './image-settings.component.html',
   animations: [ReplaceAnimation.animation],
   imports: [

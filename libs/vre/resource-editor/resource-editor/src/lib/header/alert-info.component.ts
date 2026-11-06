@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
     <mat-icon>report_problem</mat-icon>
     <ng-content />
   </div>`,
-  styleUrls: ['./alert-info.component.scss'],
+  styleUrls: ['./alert-info.component.css'],
   imports: [MatIconModule],
 })
 export class AlertInfoComponent {}

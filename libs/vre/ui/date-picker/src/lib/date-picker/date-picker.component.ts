@@ -106,7 +106,7 @@ let nextPickerId = 0;
     TranslatePipe,
   ],
   templateUrl: './date-picker.component.html',
-  styleUrls: ['./date-picker.component.scss'],
+  styleUrls: ['./date-picker.component.css'],
 })
 export class DatePickerComponent {
   /**

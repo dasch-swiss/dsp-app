@@ -72,7 +72,7 @@ interface DateValueState {
     TranslatePipe,
   ],
   templateUrl: './date-value.component.html',
-  styleUrls: ['./date-value.component.scss'],
+  styleUrls: ['./date-value.component.css'],
   providers: [
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => DateValueComponent), multi: true },
     { provide: NG_VALIDATORS, useExisting: forwardRef(() => DateValueComponent), multi: true },

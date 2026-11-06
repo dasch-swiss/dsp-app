@@ -9,7 +9,7 @@ import { GridComponent, GridItem } from '../grid/grid.component';
 @Component({
   selector: 'app-help',
   templateUrl: './help-page.component.html',
-  styleUrls: ['./help-page.component.scss'],
+  styleUrls: ['./help-page.component.css'],
   imports: [FooterComponent, GridComponent, MatIconModule, TranslatePipe],
 })
 export class HelpPageComponent implements OnInit {

@@ -117,7 +117,7 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
       <app-progress-indicator [size]="'xsmall'" />
     }
   `,
-  styleUrls: ['./property-value-actions.scss'],
+  styleUrls: ['./property-value-actions.css'],
   styles: [
     `
       .edit-line {

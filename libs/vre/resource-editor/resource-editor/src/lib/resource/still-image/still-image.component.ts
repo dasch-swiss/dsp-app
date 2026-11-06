@@ -58,7 +58,7 @@ import { StillImageToolbarComponent } from './still-image-toolbar.component';
         }
       </div>
     }`,
-  styleUrls: ['./still-image.component.scss'],
+  styleUrls: ['./still-image.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [OsdDrawerService, OpenSeaDragonService],
   imports: [

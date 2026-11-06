@@ -13,7 +13,7 @@ import { SearchResultComponent } from './search-result.component';
     </div>
   } `,
   imports: [AsyncPipe, SearchResultComponent],
-  styleUrls: ['./fulltext-search-results-page.component.scss'],
+  styleUrls: ['./fulltext-search-results-page.component.css'],
 })
 export class FulltextSearchResultsPageComponent {
   query$ = this._route.params.pipe(map(v => v[RouteConstants.qParameter]));
