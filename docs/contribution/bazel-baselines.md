@@ -9,10 +9,10 @@ from them is a defect to explain, not a new baseline.
 | ------ | ------- |
 | Passing spec files, passing and skipped tests per library | `scripts/test-counts.sh` |
 | The same, for the Bazel test targets, after `just test` | `scripts/test-counts-bazel.sh` |
-| Bundle inventory | `pnpm exec nx build dsp-app`, then `scripts/bundle-inventory.sh dist/apps/dsp-app` |
+| Bundle inventory | `just build`, then `scripts/bundle-inventory.sh bazel-bin/apps/dsp-app/dist` (before the migration: `pnpm exec nx build dsp-app` over `dist/apps/dsp-app`) |
 | Hash of a generated tree | `scripts/tree-hash.sh <dir>` |
-| Stories | `pnpm run build-storybook`, then the `type: story` entries of `dist/storybook/index.json` |
-| Storybook interaction tests | `pnpm run test-storybook` against that build, served on its port |
+| Stories | `just storybook-build`, then the `type: story` entries of `bazel-bin/storybook/index.json` (before: `pnpm run build-storybook` over `dist/storybook`) |
+| Storybook interaction tests | `just storybook-test` (before: `pnpm run test-storybook` against that build) |
 | Cypress specs | `find apps/dsp-app/cypress -name '*.cy.ts'` |
 
 `scripts/bundle-inventory.sh` replaces the content hash in a file name with `[hash]`, so two builds
@@ -522,6 +522,125 @@ writable `PLAYWRIGHT_BROWSERS_PATH`, not the read-only Nix store path: the CLI's
 download, plus chromium-headless-shell for 1.61.1 from `playwright-core install`. The Nix
 browsers cannot be linked in: on start the CLI deletes every browser in the directory that no
 installed Playwright registered (CI run 42261938720).
+
+## End of the migration: the spike's measurements repeated
+
+The branch at Phase 10 (`afd0c1ed1`, the last source state; later commits change docs only), Node
+24.22.1, 2026-11-06, with the spike's methods so the numbers compare with the spike report
+(`dasch-specs`, `02-dsp-app-bazel-spike-report.md`, Node 22.23.4). GitHub-hosted numbers come
+from a temporary workflow, CI runs 42275203816 and 42276450027; the darwin numbers from an
+Apple-silicon Mac (10 cores, 64 GB) with no Docker container running.
+
+### Build times on a GitHub-hosted runner
+
+4 vCPU, 16 GB, no remote cache and no disk cache, `--lockfile_mode=error` on a clean clone, wall
+clock around `nix develop --command bazel` with the dev shell already built. Six samples, three per
+run.
+
+| Measure | Now | Spike | Exit criterion |
+| ------- | --- | ----- | -------------- |
+| Cold build, `//apps/dsp-app:dist` | 147, 150, 155, 158, 164, 171 s | 157-208 s | fits 45 min: yes |
+| Warm no-op, server running | 9.1-11.7 s | not separately measured | |
+| Warm no-op after `bazel shutdown` | 14.3, 15.2, 19.1, 19.1, 19.2, 19.3 s | 8.9-9.5 s | under 15 s: **missed in 5 of 6** |
+| One-line edit in `libs/vre/ui/ui` to a rebuilt bundle | 25.0, 29.1, 29.8 s (3 samples) | 25.9-26.4 s | under 2 min: yes |
+| Peak memory, whole machine, sampled every 2 s | 8.3-9.1 GB used | 6.5-6.9 GB | |
+| Sum of the 29 compile actions | 89.5-127.1 s | 129 s | |
+| esbuild, production | 16.8-19.7 s | 19.9 s | |
+
+The warm no-op after a restart is 5-10 s slower than the spike's and over its criterion in five
+of six samples; peak memory is about 2 GB higher. Neither cause is isolated; the runs use Node 24,
+not 22, and the graph has grown since the spike. With the server running the no-op stays under
+12 s.
+
+### Remote execution
+
+Run 42276450027, `just build`'s target with the CI remote flags, an empty disk cache and
+`--noremote_accept_cached`, so every action executes rather than replays:
+
+- 167.2 s wall clock. 2539 actions: 1625 spawned, **all 1625 ran remotely** (64 percent of all
+  actions; the other 914 are Bazel-internal and run nowhere). Among them 32 `TsProject` (the 29
+  compiles and 3 more), 2 `esbuild`, 57 `SassCompiler`, 387
+  `NpmPackageExtract`, 1106 `CopyFile`, the OpenAPI generator and the JDK actions.
+- The same build again with a fresh output base and no disk cache, accepting the remote cache:
+  20.7 s, 1625 remote cache hits.
+
+**NativeLink flakiness recurred.** The first attempt, run 42275203816, failed: rules_angular's
+worker library (`@@rules_angular+//src/worker:worker_lib_with_user_compiler`), forced to run
+remotely, failed with TS2307 on `../with_user_compiler/*.mjs`, the error Phase 7 saw once, and
+writing the BEP ended in `RemoteExecutionCapabilitiesException ... Connection timed out`. The
+identical rerun passed. Ordinary CI runs take that library from the remote cache, which is why it
+rarely shows.
+
+### The esbuild action, darwin
+
+`development`, a one-line inline-template edit in `resource-rights-statement.component.ts`,
+3 repetitions each; the esbuild action's duration from the profile.
+
+| Variant | Sandboxed | `--spawn_strategy=local` |
+| ------- | --------- | ------------------------ |
+| As built | 25.9, 26.1, 26.2 s | 24.0, 24.2, 24.2 s |
+| Linker plugin removed | 25.5, 25.7, 25.7 s | 20.8, 20.8, 21.3 s |
+
+- **Sandbox:** about 2 s (spike: 3.3-4.9 s).
+- **Linker:** about 3 s without the sandbox; within the noise with it (spike: about 1.5 s).
+- **What remains, neither sandbox nor linker:** 20.8-21.3 s (spike: 10.6 s). The action is about
+  10 s slower than the spike measured on the same machine, with the Docker stack down. Not
+  isolated; Node 24 and the Phase 2 and 7 changes to the inputs are the candidates.
+
+### Edit to updated page, darwin
+
+`development` configuration, 3 repetitions each, with the spike's three edits: the inline
+template of `resource-rights-statement.component.ts`, a rule added to `ck-editor.component.scss`,
+and a new `@Input` with a fresh default on `NoResultsFoundComponent`.
+
+| | Rebuild alone (`bazel build`) | Save to new content on disk under `ibazel` | Spike, `ibazel` plus reload |
+| --- | --- | --- | --- |
+| Template edit | 27.2, 27.2, 28.1 s | 30.5, 28.4, 27.3 s | 30.1-44.5 s |
+| Stylesheet edit | 28.6, 27.8, 27.6 s | 28.6, 27.6, 27.5 s | 31.5-35.2 s |
+| Public signature change | 45.0, 44.1, 46.1 s, 16 compile actions re-ran | 45.9, 44.1, 43.1 s | 35.5-40.2 s |
+
+The `ibazel` column stops when the new content is in `bazel-bin/apps/dsp-app/dist`, which
+`just serve` serves; the browser reload the spike's column includes (about 1.5 s) is not in it, and
+no browser was driven. No `ng serve` exists any more to compare with; the spike measured it at
+about 2.8 s with a reload and under 1 s with HMR. The signature change is about 8 s slower than
+the spike's, mostly the slower esbuild action above.
+
+### Initial bundle against the Phase 3 baseline
+
+`just build` (production) on darwin, `scripts/bundle-inventory.sh`:
+
+| File | Phase 3, Angular CLI | Bazel | Delta |
+| ---- | -------------------- | ----- | ----- |
+| `main` | 905191 | 896479 | -1.0% |
+| `polyfills` | 35897 | 35891 | 0.0% |
+| `styles` | 114015 | 113321 | -0.6% |
+| `scripts` | 349228 | 352735 | +1.0% |
+
+Every initial file is within 10 percent. 20 chunks: 8 preloaded by `index.html` and 12 lazy, the
+same 12 real lazy chunks as the CLI's 16, of which 4 were empty Node stubs.
+
+### CI wall clock
+
+Run 42276499432, a push of this phase changing no source, with the remote cache, against the
+`main` baseline in the plan's Success Metrics (run 41743063312):
+
+| | Now | `main` baseline |
+| --- | --- | --- |
+| Whole run | 14.3 min | 14.5 min |
+| Unit tests | 3.3 min | 8.6 min |
+| Linting | 2.6 min | 2.0 min |
+| Storybook interaction tests | 6.8 min | 7.0 min |
+| E2E heavy | 9.6 min | 8.3 min |
+| Pixeleye | 13.6 min | 14.0 min |
+
+Pixeleye still sets the wall clock. Lint and E2E heavy are slower than on `main`.
+
+### Not measured
+
+- The browser reload and an open tab's update: no browser was driven this time.
+- Peak memory on darwin: the spike's 8.2 GB was summed RSS, not repeated.
+- A source-changing CI run's `bep-test` and `exec.json`: no commit of this phase changes a source;
+  the remote-execution run above is the evidence that `TsProject` and esbuild execute remotely.
 
 ## Generated `paths`: direct-only (Decision 7)
 
