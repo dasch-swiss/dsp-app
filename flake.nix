@@ -63,12 +63,14 @@
           inherit default;
 
           # Cypress on Linux runs Chrome from here; on macOS it uses its bundled Electron.
-          e2e = default.overrideAttrs (old: {
-            packages = old.packages ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.chromium ];
+          e2e = pkgs.mkShell {
+            inputsFrom = [ default ];
+            packages = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.chromium ];
+            inherit (default) PLAYWRIGHT_BROWSERS_PATH PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS;
             shellHook = pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
               export CHROME_BIN=${pkgs.chromium}/bin/chromium
             '';
-          });
+          };
         }
       );
     };
