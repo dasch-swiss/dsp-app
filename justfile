@@ -29,6 +29,23 @@ help:
 install:
     pnpm install --frozen-lockfile
 
+# Serve a directory on 127.0.0.1:PORT with `Cache-Control: no-store`, answering unknown paths with
+# its index.html, as a deep link into the app needs
+_serve DIR PORT:
+    miniserve --interfaces 127.0.0.1 --port {{ PORT }} --index index.html --spa \
+      --header "Cache-Control:no-store" --quiet "{{ DIR }}"
+
+# Build the bundle in a configuration and serve it on http://localhost:4200, rebuilding on every
+# source change (reload the page to see it); for browsing, not for tests
+serve config="production":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    flag="--//apps/dsp-app:config={{ config }}"
+    bazel build //apps/dsp-app:dist "$flag" $BAZEL_FLAGS
+    ibazel build //apps/dsp-app:dist "$flag" $BAZEL_FLAGS &
+    trap 'kill $!' EXIT
+    just _serve "$(bazel info bazel-bin "$flag" $BAZEL_FLAGS 2>/dev/null)/apps/dsp-app/dist" 4200
+
 # Build the application bundle in a configuration (bazel-bin/apps/dsp-app/dist), the named Bazel
 # targets, or //... with no argument
 build *ARGS:

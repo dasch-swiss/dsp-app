@@ -39,6 +39,10 @@
               # one MODULE.bazel pins; `just node-version-check` compares the majors.
               pkgs.nodejs_24
 
+              # `just serve`, `storybook`, `storybook-test` and `e2e` serve the Bazel-built
+              # output with it: no-store headers and index.html for unknown paths.
+              pkgs.miniserve
+
               pkgs.uv
               pkgs.gh
               pkgs.cacert
