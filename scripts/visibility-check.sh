@@ -59,7 +59,14 @@ for seed in "${SEEDS[@]}"; do
   read -r src dst <<<"$seed"
   src_label="//$src:${src##*/}"
   dst_label="//$dst:${dst##*/}"
-  rule="$(kind "$src") -> $(kind "$dst")"
+  src_kind="$(kind "$src")"
+  dst_kind="$(kind "$dst")"
+  if [ -z "$src_kind" ] || [ -z "$dst_kind" ]; then
+    echo "visibility-check: $src or $dst has no one-line entry in LIBRARIES (tools/angular/visibility.bzl)" >&2
+    failed=1
+    continue
+  fi
+  rule="$src_kind -> $dst_kind"
   if ! path="$(bazel query "somepath(//$dst:all, //$src:all)" 2>&1)"; then
     echo "$path" >&2
     echo "visibility-check: the cycle query for $src -> $dst failed" >&2
