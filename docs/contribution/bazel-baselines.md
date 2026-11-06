@@ -550,6 +550,17 @@ compiler writes depends on which declaration files the program loaded, not on th
 `paths`, and it does not change what runs. The spike's difference did not reproduce under either
 build of the same commit; the build it came from was not kept.
 
+Jest does not read the generated `paths`: `jest.resolver.js` falls back to TypeScript's
+resolution against `tsconfig.base.json`, which lists every alias. A library's test therefore
+holds to its declared `deps` only through its runfiles, which carry the `sources` of those deps
+and nothing else. Seeded check on `core/session`, whose `error-handler` dependency no other dep
+of it carries: with `//libs/vre/core/error-handler` removed from `deps`,
+`bazel test //libs/vre/core/session:test` fails three of five suites with `Cannot find module
+'@dasch-swiss/vre/core/error-handler'` in the local darwin sandbox. The resolver follows the
+runfiles symlinks into the execroot's output tree, where a missing dependency's sources are
+absent as long as nothing copies them there; remote execution, whose inputs are the declared
+ones only, holds without that condition.
+
 ## Vendored packages
 
 `vendor/ckeditor5-custom-build-2.1.5.tgz` is `npm pack --ignore-scripts` of the `v2.1.5` tag
