@@ -317,15 +317,6 @@
       "platformAutomerge": true,
       "minimumReleaseAge": "3 days",
       "rebaseWhen": "behind-base-branch"
-    },
-    {
-      "description": "Automerge pip_requirements patch/minor updates — 3-day age guard for consistency; docs tooling only (docs/requirements.txt); matchDepTypes does not apply to this manager so an explicit rule is needed",
-      "matchManagers": ["pip_requirements"],
-      "matchUpdateTypes": ["patch", "minor"],
-      "automerge": true,
-      "platformAutomerge": true,
-      "minimumReleaseAge": "3 days",
-      "rebaseWhen": "behind-base-branch"
     }
   ]
 }
