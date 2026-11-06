@@ -1,6 +1,6 @@
 # ADR-0005: What `shared/` means, and what it does not
 
-- **Status:** Accepted (2026-09-13)
+- **Status:** Accepted (2026-09-13); references to ADR-0001's rollout updated (2026-11-06) when Bazel replaced Nx (ADR-0007)
 - **Relates to:** ADR-0001 (library taxonomy), ADR-0002 (the barrel is the public interface), ADR-0004 (cross-feature access)
 
 ## Context

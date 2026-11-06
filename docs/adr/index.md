@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-An ADR records a decision that was actually made, the context that forced it, and the alternatives that were rejected. It is not a style guide and not a plan. If a rule here is wrong, the fix is a new ADR that supersedes this one, not an edit that quietly changes history. The one exception so far: when Bazel replaced Nx, ADR-0001, 0002, 0004 and 0006 were revised in place for the new mechanism, each saying so in its status line, with the old text in the revising commits.
+An ADR records a decision that was actually made, the context that forced it, and the alternatives that were rejected. It is not a style guide and not a plan. If a rule here is wrong, the fix is a new ADR that supersedes this one, not an edit that quietly changes history. A record whose enforcement mechanism changed with the build system was revised in place instead, and says so in its status line; the old text is in the revising commits.
 
 Every rule in these records carries an **enforcement level**, using the same vocabulary as `ARCH-MAP.md` and the `dasch-ops-platform` ADRs:
 

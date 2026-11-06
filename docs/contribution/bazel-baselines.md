@@ -568,8 +568,7 @@ Run 42276450027, `just build`'s target with the CI remote flags, an empty disk c
 worker library (`@@rules_angular+//src/worker:worker_lib_with_user_compiler`), forced to run
 remotely, failed with TS2307 on `../with_user_compiler/*.mjs`, the error Phase 7 saw once, and
 writing the BEP ended in `RemoteExecutionCapabilitiesException ... Connection timed out`. The
-identical rerun passed. Ordinary CI runs take that library from the remote cache, which is why it
-rarely shows.
+identical rerun passed.
 
 ### The esbuild action, darwin
 
@@ -602,8 +601,8 @@ and a new `@Input` with a fresh default on `NoResultsFoundComponent`.
 The `ibazel` column stops when the new content is in `bazel-bin/apps/dsp-app/dist`, which
 `just serve` serves; the browser reload the spike's column includes (about 1.5 s) is not in it, and
 no browser was driven. No `ng serve` exists any more to compare with; the spike measured it at
-about 2.8 s with a reload and under 1 s with HMR. The signature change is about 8 s slower than
-the spike's, mostly the slower esbuild action above.
+about 2.8 s with a reload and under 1 s with HMR. The signature change is 3-10 s slower than the
+spike's; the esbuild action alone is about 10 s slower on the template edit.
 
 ### Initial bundle against the Phase 3 baseline
 
@@ -621,7 +620,7 @@ same 12 real lazy chunks as the CLI's 16, of which 4 were empty Node stubs.
 
 ### CI wall clock
 
-Run 42276499432, a push of this phase changing no source, with the remote cache, against the
+Run 42276499432, a push changing no source since `afd0c1ed1`, with the remote cache, against the
 `main` baseline in the plan's Success Metrics (run 41743063312):
 
 | | Now | `main` baseline |
@@ -639,7 +638,7 @@ Pixeleye still sets the wall clock. Lint and E2E heavy are slower than on `main`
 
 - The browser reload and an open tab's update: no browser was driven this time.
 - Peak memory on darwin: the spike's 8.2 GB was summed RSS, not repeated.
-- A source-changing CI run's `bep-test` and `exec.json`: no commit of this phase changes a source;
+- A source-changing CI run's `bep-test` and `exec.json`: no commit after `1993363c7` changes a source;
   the remote-execution run above is the evidence that `TsProject` and esbuild execute remotely.
 
 ## Generated `paths`: direct-only (Decision 7)
