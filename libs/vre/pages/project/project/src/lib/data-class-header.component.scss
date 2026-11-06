@@ -64,6 +64,10 @@
   flex-shrink: 0;
 }
 
+.connections {
+  margin-top: 6px;
+}
+
 .count-badge {
   // Inline, the pill sits on the text's baseline and rides below the label; as a block aligned to the
   // text's top it is centred on the same line box.
@@ -104,4 +108,8 @@
   width: 1px;
   height: 24px;
   background: #d1d5db;
+}
+
+.connections:empty {
+  display: none;
 }
