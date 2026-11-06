@@ -375,9 +375,11 @@ docker-publish-app repository=("index.docker.io/" + dsp_app_repo):
       bazel run --stamp $BAZEL_FLAGS "//apps/dsp-app/image:push_$arch" -- --repository "$repo" --tag "$tag-$arch"
     done
     crane index append -m "$repo:$tag-amd64" -m "$repo:$tag-arm64" -t "$repo:$tag"
-    # Only deploy.yml sets it, for main and v* tags; a publish from any other branch leaves :latest.
+    # Only deploy.yml sets it, for main's head and v* tags; a publish from any other branch leaves :latest.
     if [ "${DOCKER_PUBLISH_LATEST:-}" = true ]; then
       crane tag "$repo:$tag" latest
+    else
+      echo "Not tagging :latest; only deploy.yml sets DOCKER_PUBLISH_LATEST=true." >&2
     fi
 
 # Push a stamped amd64 image of a configuration's bundle and print its digest last (Cloud Run preview)

@@ -27,6 +27,7 @@ jobs:
       cancel-in-progress: false
     outputs:
       tag: ${{ steps.output_docker_image_tag.outputs.tag }}
+      current: ${{ steps.main_head.outputs.current }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -34,6 +35,18 @@ jobs:
           # A workflow_run event's github.sha is main's head when CI finished, not the commit it tested.
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 0 # gets additionally all tags which we need
+      # A rerun or a slow CI run can finish after a newer main commit's; its image is published,
+      # but it must not move :latest or DEV back.
+      - name: Check the commit is still main's head
+        id: main_head
+        if: github.event_name == 'workflow_run'
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          main=$(git ls-remote origin refs/heads/main | cut -f1)
+          [ "$main" = "$HEAD_SHA" ] && current=true || current=false
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+        shell: bash
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@v3
       - name: Output docker image tag
@@ -57,7 +70,7 @@ jobs:
       - name: Build and publish Docker image
         env:
           BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-publish.json
-          DOCKER_PUBLISH_LATEST: 'true'
+          DOCKER_PUBLISH_LATEST: ${{ github.event_name == 'push' || steps.main_head.outputs.current == 'true' }}
         run: nix develop --command just docker-publish
       - name: Upload the build event logs
         if: always()
@@ -74,7 +87,8 @@ jobs:
     # Only trigger DEV deployment for main branch (not tags)
     if: |
       github.event_name == 'workflow_run' &&
-      github.event.workflow_run.head_branch == 'main'
+      github.event.workflow_run.head_branch == 'main' &&
+      needs.publish.outputs.current == 'true'
     steps:
       - name: Trigger deployment to DEV
         env:
