@@ -115,8 +115,8 @@ export class UsersListComponent {
       });
   }
 
-  sortList(key: UserSortKey) {
-    this.sortBy = key;
+  sortList(key: string) {
+    this.sortBy = key as UserSortKey;
     this.list = SortingHelper.keySortByAlphabetical(this.list, this.sortBy);
     localStorage.setItem('sortUsersBy', key);
   }
