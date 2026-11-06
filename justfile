@@ -82,14 +82,11 @@ pixeleye run="main": install
       *) echo "just pixeleye: main or breakpoints, not {{ run }}" >&2; exit 1 ;;
     esac
     # The frozen CLI downloads Playwright 1.59.0's browsers each time it starts (Decision 15), which
-    # the read-only Nix store cannot take. The capture launches the shell's browsers, linked in.
-    browsers="${PIXELEYE_BROWSERS_PATH:-${XDG_CACHE_HOME:-$HOME/.cache}/dsp-app-pixeleye-browsers}"
-    mkdir -p "$browsers"
-    for nix_browser in "$PLAYWRIGHT_BROWSERS_PATH"/*; do
-      link="$browsers/${nix_browser##*/}"
-      [ -d "$link" ] && [ ! -L "$link" ] || ln -sfn "$nix_browser" "$link"
-    done
-    export PLAYWRIGHT_BROWSERS_PATH="$browsers"
+    # the read-only Nix store cannot take, and deletes every browser no installed Playwright
+    # registered there. The capture launches the root playwright-core's headless shell, so that
+    # Playwright installs it into the same directory.
+    export PLAYWRIGHT_BROWSERS_PATH="$HOME/.cache/dsp-app-pixeleye-browsers"
+    node node_modules/playwright-core/cli.js install chromium-headless-shell
     bazel build "//:$target" $BAZEL_FLAGS
     ! curl -s -o /dev/null "http://127.0.0.1:$port/" || { echo "port $port is already serving; stop that server first" >&2; exit 1; }
     {{ static_server }} --port "$port" "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/$target" &

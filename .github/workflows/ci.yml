@@ -594,12 +594,12 @@ jobs:
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Cache Pixeleye's browsers
-        # The frozen CLI downloads Playwright 1.59.0's browsers on every start; `just pixeleye`
-        # points it at this directory.
+        # The frozen CLI downloads Playwright 1.59.0's browsers on every start, and the headless
+        # shell the capture launches goes there too; `just pixeleye` points both at this directory.
         uses: actions/cache@v5
         with:
           path: ~/.cache/dsp-app-pixeleye-browsers
-          key: pixeleye-browsers-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'flake.lock') }}
+          key: pixeleye-browsers-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: pixeleye-browsers-${{ runner.os }}-
       - name: Capture and upload snapshots
         id: capture
