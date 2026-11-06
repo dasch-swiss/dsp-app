@@ -3,13 +3,12 @@
 [![Github](https://img.shields.io/github/v/tag/dasch-swiss/dsp-app?include_prereleases&label=Github%20tag)](https://github.com/dasch-swiss/dsp-app)
 [![Docker](https://img.shields.io/docker/v/daschswiss/dsp-app?label=Docker%20image)](https://hub.docker.com/r/daschswiss/dsp-app)
 [![CI](https://github.com/dasch-swiss/dsp-app/workflows/CI/badge.svg)](https://github.com/dasch-swiss/dsp-app/actions?query=workflow%3ACI)
-[![codecov](https://codecov.io/gh/dasch-swiss/dsp-app/branch/main/graph/badge.svg)](https://codecov.io/gh/dasch-swiss/dsp-app)
 
 DSP-APP is the user interface for the [DaSCH Service Platform](https://dasch.swiss) — a software framework for storing, sharing, and working with primary resources and data in the humanities. It connects to [DSP-API](https://github.com/dasch-swiss/dsp-api) via [DSP-JS](libs/dsp-js/) and is released under the [GNU Affero General Public License](http://www.gnu.org/licenses/agpl-3.0.en.html).
 
 This monorepo is built on:
 
-- **Nx** — See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
+- **Bazel** — Version pinned in `.bazelversion`; every command is a `just` recipe
 - **Angular** — See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
 - **Node.js** — Version pinned in `MODULE.bazel`
 
@@ -74,11 +73,6 @@ Bazel generates the client in a build action; `just openapi-generate` also copie
 `src/generated` for the IDE.
 
 See [OpenAPI Client README](https://github.com/dasch-swiss/dsp-app/blob/main/libs/vre/3rd-party-services/open-api/README.md) for full details.
-
-### IDE Plugins
-
-- [Nx Console for JetBrains](https://plugins.jetbrains.com/plugin/15101-nx-console-idea)
-- [Nx Console for VS Code](https://marketplace.visualstudio.com/items?itemName=nrwl.angular-console)
 
 ### Local Observability
 

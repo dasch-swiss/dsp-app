@@ -8,7 +8,8 @@ Build commands and gotchas live in [`CLAUDE.md`](CLAUDE.md), the library topolog
 ## Stack
 
 - Angular 21, TypeScript 5.9, RxJS, Angular Material, ngx-translate — see [`package.json`](package.json) for exact versions.
-- Nx monorepo: the app in `apps/dsp-app`, feature libraries under `libs/vre/`, the API client in `libs/dsp-js/`.
+- Bazel monorepo ([ADR 0007](docs/adr/0007-bazel-builds-the-repository.md)): the app in `apps/dsp-app`, feature libraries under `libs/vre/` (one `vre_library` package each), the API client in `libs/dsp-js/`. Every command is a `just` recipe run inside the Nix dev shell; `just help` lists them.
+- pnpm with a strict `node_modules` layout: a package a library imports must be a declared dependency.
 - Jest for unit tests, Cypress for e2e, Storybook for component interaction tests.
 - ESLint (`eslint.config.mjs`, `eslint.config.angular.mjs`) and Prettier.
 
@@ -93,7 +94,8 @@ Per-environment settings live in `apps/dsp-app/src/config/config.*.json` and rea
 
 ## Testing Conventions
 
-- Tested means: a Jest spec beside the file (`*.spec.ts`) for logic and component behaviour, and a Storybook story with a `play()` assertion for a UI component (see "Storybook Convention" in [`CLAUDE.md`](CLAUDE.md)). Cypress e2e lives in its own project ([ADR 0006](docs/adr/0006-the-e2e-suite-is-its-own-project.md)).
+- Tested means: a Jest spec beside the file (`*.spec.ts`) for logic and component behaviour, and a Storybook story with a `play()` assertion for a UI component (see "Storybook Convention" in [`CLAUDE.md`](CLAUDE.md)). Cypress e2e lives in its own project ([ADR 0006](docs/adr/0006-the-e2e-suite-is-its-own-project.md)), type-checked by `just typecheck-e2e`.
+- Each library's specs run in its Bazel `jest_test` target, on sources with the SWC preset; `just test-files -- <spec>` runs the one library's target.
 - Component specs use `TestBed.configureTestingModule()` with `imports: [TheComponent]`, `CUSTOM_ELEMENTS_SCHEMA` for child elements, `.overrideComponent()` to stub a template, and `provideTranslateService()`.
 - Type mocks as `jest.Mocked<Partial<Service>>` and provide them with `useValue`. Clear mocks in `afterEach()`.
 - Do not commit a focused test (`fdescribe`, `fit`, `.only`). Lint rejects it.
@@ -116,6 +118,14 @@ These must be clean:
 - `just test` — every Bazel test target; `just test-files -- <paths>` runs only those that depend on the paths.
 - `just build` — every library's compile under its strict flags, the type-check lint does not do, and the application bundle; `just build <config>` builds the bundle in one configuration.
 - `just storybook-test` when you changed a component that has stories: it builds Storybook with Bazel and runs the interaction tests against it. `just storybook` serves it for browsing.
+- `just typecheck-e2e` when you changed a Cypress spec or support file.
+- `just ci` runs the whole gate CI runs.
+
+## Dependency Management
+
+- No bot updates dependencies: Renovate is disabled, library updates are analysed and made by hand, security advisories still arrive as Dependabot PRs. `renovate.json`'s rules record why packages are coupled; read them before a bump.
+- Change a dependency with `pnpm` inside the dev shell and commit `package.json` with `pnpm-lock.yaml`. A pnpm change needs no `MODULE.bazel.lock` refresh.
+- Bazel modules, the `rules_angular` and `rules_sass` commit pins, `.bazelversion`, `flake.nix` and `flake.lock` are bumped by hand. After a `flake.lock` bump run `just node-version-check` and `just playwright-version-check`.
 
 ## Where to Go for Depth
 

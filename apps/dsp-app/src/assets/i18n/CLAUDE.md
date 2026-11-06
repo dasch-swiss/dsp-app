@@ -72,7 +72,7 @@ PY
 
 ## Testing Translations
 
-After making translation changes, run the parity check (see **Key Parity Verification**); it is the gate. When a browser tool is available and the app is already running (`npm run start-local`), also switch languages in the UI and check that no key shows raw (e.g. `"pages.project.legalSettings.tab"`).
+After making translation changes, run the parity check (see **Key Parity Verification**); it is the gate. When a browser tool is available and the app is already running (`just serve development`), also switch languages in the UI and check that no key shows raw (e.g. `"pages.project.legalSettings.tab"`).
 
 ## Translation Structure
 
