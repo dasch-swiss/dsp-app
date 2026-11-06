@@ -514,14 +514,14 @@ importing it raises no `ERR_PACKAGE_PATH_NOT_EXPORTED`. Pixeleye uses two Playwr
   server, which downloads Chromium, Firefox and WebKit for 1.59.0 (chromium v1217) and runs
   `installDeps`. It needs a writable browser directory.
 - `@pixeleye/cli-capture` launches the browser through the root `playwright-core`, 1.61.1
-  (chromium v1228), the `playwright-driver` version of the locked nixpkgs, so its browser can
-  come from the Nix shell.
+  (chromium v1228), the `playwright-driver` version of the locked nixpkgs.
 
 CI run 42118134666 (Node 24.22.1) captured 811 stories and 24 breakpoint stories with that
 split, the CLI downloading its own 1.59.0 browsers. Phase 9 therefore gives the Pixeleye job a
 writable `PLAYWRIGHT_BROWSERS_PATH`, not the read-only Nix store path: the CLI's own 1.59.0
-download, plus chromium-headless-shell for 1.61.1 from the Nix browsers or from
-`playwright-core install`.
+download, plus chromium-headless-shell for 1.61.1 from `playwright-core install`. The Nix
+browsers cannot be linked in: on start the CLI deletes every browser in the directory that no
+installed Playwright registered (CI run 42261938720).
 
 ## Generated `paths`: direct-only (Decision 7)
 
