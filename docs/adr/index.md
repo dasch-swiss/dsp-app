@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-An ADR records a decision that was actually made, the context that forced it, and the alternatives that were rejected. It is not a style guide and not a plan. If a rule here is wrong, the fix is a new ADR that supersedes this one, not an edit that quietly changes history.
+An ADR records a decision that was actually made, the context that forced it, and the alternatives that were rejected. It is not a style guide and not a plan. If a rule here is wrong, the fix is a new ADR that supersedes this one, not an edit that quietly changes history. The one exception so far: when Bazel replaced Nx, ADR-0001, 0002, 0004 and 0006 were revised in place for the new mechanism, each saying so in its status line, with the old text in the revising commits.
 
 Every rule in these records carries an **enforcement level**, using the same vocabulary as `ARCH-MAP.md` and the `dasch-ops-platform` ADRs:
 
@@ -36,7 +36,7 @@ ADR-0001 is the anchor: it defines the types and scopes, the dependency directio
 - **0006** keeps the end-to-end suite apart from the application it tests.
 - **0007** records the build that enforces 0001 through Bazel `visibility`.
 
-0001 is enforced with explicit exceptions; each move 0004 and 0005 describe removes one of them. 0006 depends on nothing.
+0001 is enforced with explicit exceptions; each move 0004 and 0005 describe removes one of them. 0006 depends on no other record's moves.
 
 ## Related documents
 

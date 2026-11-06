@@ -65,7 +65,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
 
    A library's compile excludes `*.stories.ts`, `*.spec.ts`, `test-setup.ts` and `stories.helpers.ts`, so an edge only a story or a spec uses never becomes an edge of the library. Several stories import across tiers that the runtime code beneath them does not touch: `ui/nested-menu` stories reach `core/config` and `shared/app-helper-services`, and `ui/string-literal` stories reach `core/session`. Stories are test fixtures: only the Storybook build compiles them, and it is no library, so visibility does not apply to it. Without this, the rules fail on libraries whose shipped code is clean.
 
-6. **Enforced, with explicit exceptions.** (**structure**)
+6. **Enforced, with explicit exceptions.** (**structure** for the rules; **review** for the exception list)
 
    The rules are enforced now, not after the blocking imports of decision 7 are cleared. Each forbidden edge the code still has is an `extra_visibility` entry on the target library's `vre_library`, with a comment naming the ADR and the Linear issue that tracks the move. A forbidden edge that is not listed fails `bazel build`; `just visibility-check`, part of `just ci`, seeds one forbidden edge per tier rule in a scratch copy and asserts that the build rejects it.
 
@@ -81,7 +81,7 @@ The composition root that makes page-to-page imports unnecessary already exists 
    | `pages/user-settings/user` | `pages/ontology/ontology`, `pages/project/project`, `pages/system/system` | ADR-0004: `AllProjectsService`, the user dialogs, `ProjectImageCoverComponent`, `MenuItem`, `existingNamesAsyncValidator` | DEV-7555 |
    | `pages/system/system` | `pages/project/project` | ADR-0004: `CreateUserDialogComponent`, `UserDescriptionComponent` | DEV-7555 |
 
-   An exception is removed in the change that moves its code, and the build then holds the edge closed.
+   An exception is removed in the change that moves its code, and the build then holds the edge closed. Nothing but review stops a new entry: an `extra_visibility` line is the path of least resistance when a build fails on visibility, and it is never the fix.
 
 7. **The known blocking imports, and the shape of each fix.** (**review**)
 
@@ -200,7 +200,7 @@ Every library carries exactly one type and one scope. `libs/dsp-js` is outside `
 
 **Positive.** A contributor can read a library's `LIBRARIES` entry and know what it may import, without reading its history. A forbidden edge fails the build, so neither a contributor nor an agent can add one by accident. Bazel rebuilds less as the graph loses its false edges. Once page libraries stop importing each other, route-level lazy loading becomes possible for the first time; today it is blocked because every page is reachable from every other, so nothing can be split out of the main bundle. The seventeen cross-page symbols get triaged rather than accumulating (ADR-0004).
 
-**Negative and costs.** Thirty-nine files had to change before the rules could hold without exceptions: six in the `ui` tier, thirty-three across page scopes. Decision 6's eleven exceptions are what remains of them. `shared/app-common-to-move` must be split first, and splitting it surfaces a design question about who owns the application header. The `LocalizationService` question is likewise unresolved. `dsp-js` keeps public visibility that will outlive this ADR, with the hole decision 8 describes.
+**Negative and costs.** Thirty-nine files had to change, by the 2026-09 count, before the rules could hold without exceptions: six in the `ui` tier, thirty-three across page scopes. Decision 6's exceptions are the part not yet changed. `shared/app-common-to-move` must be split first, and splitting it surfaces a design question about who owns the application header. The `LocalizationService` question is likewise unresolved. `dsp-js` keeps public visibility that will outlive this ADR, with the hole decision 8 describes.
 
 That cost is concentrated, not spread: the type tier is already clean under these tags, and essentially all of it is the feature-to-feature coupling ADR-0004 exists to remove. Enforcement does not wait for ADR-0004 and ADR-0005 to be carried out: each of their moves removes an exception.
 

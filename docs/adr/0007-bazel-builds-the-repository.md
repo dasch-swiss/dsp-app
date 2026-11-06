@@ -1,7 +1,7 @@
 # ADR-0007: Bazel builds the repository
 
 - **Status:** Accepted (2026-11-06)
-- **Relates to:** ADR-0001 (library taxonomy), ADR-0002 (the barrel is the public interface), ADR-0006 (the e2e suite is its own project)
+- **Relates to:** ADR-0001 (library taxonomy), ADR-0002 (the barrel is the public interface), ADR-0004 (cross-feature access), ADR-0006 (the e2e suite is its own project)
 - **Linear:** DEV-7767
 
 ## Context
@@ -26,7 +26,7 @@ Three problems followed from the difference:
 
 3. **Library boundaries are Bazel `visibility`.** (**structure**)
 
-   ADR-0001 records the rules and their eleven explicit exceptions. A forbidden edge fails `bazel build`, and `just visibility-check` proves each tier rule still rejects one.
+   ADR-0001 records the rules and their explicit exceptions. A forbidden edge fails `bazel build`, and `just visibility-check` proves each tier rule still rejects one.
 
 4. **Stories are outside the boundary graph.** (**structure**)
 

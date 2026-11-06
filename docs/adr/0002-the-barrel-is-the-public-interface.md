@@ -1,7 +1,7 @@
 # ADR-0002: The barrel is the only public interface
 
 - **Status:** Accepted (2026-09-13); mechanism revised (2026-11-06) when Bazel replaced Nx ([ADR-0007](0007-bazel-builds-the-repository.md))
-- **Relates to:** ADR-0001 (library taxonomy), ADR-0005 (what `shared/` means)
+- **Relates to:** ADR-0001 (library taxonomy), ADR-0005 (what `shared/` means), ADR-0007 (Bazel builds the repository)
 
 ## Context
 
@@ -35,7 +35,7 @@ Four files out of 403 are reachable. The surface is genuinely narrow even though
 
 1. **A library's `src/index.ts` is its entire public interface.** Nothing else in a library may be imported from outside it. (**static-analysis**, via the ESLint `no-restricted-imports` rule: `libraryBoundaryPatterns` in `eslint.config.mjs` rejects an `@dasch-swiss/*/src/*` import and a relative import that crosses a library root)
 
-2. **A suppression of the boundary rule requires a comment giving the reason.** There are three today, all in story files, and each has one. This is a review expectation, not a lint setting, because a lint rule cannot judge whether a reason is good. (**review**)
+2. **A suppression of the boundary rule requires a comment giving the reason.** There are three today, all in story files, and each has one; the help-page suppression the context describes is gone. This is a review expectation, not a lint setting, because a lint rule cannot judge whether a reason is good. (**review**)
 
 3. **New libraries use curated named exports.** `export { A, B } from './lib/x'`, not `export * from './lib/x'`. Adding a symbol to the public surface then requires editing the barrel, which puts it in the diff and in front of a reviewer. `shared/calendar` is the reference shape (ADR-0005). (**review**)
 
