@@ -126,6 +126,8 @@ def vre_library(
         test_data = [],
         test_size = None,
         test_shard_count = None,
+        testing_srcs = [],
+        testing_deps = [],
         jest_config = "jest.config.js"):
     """An Angular library: its stylesheets, its ng_project compile and its Jest target.
 
@@ -158,6 +160,10 @@ def vre_library(
         test_data: files a spec reads at run time.
         test_size: the Jest target's size, which sets its timeout.
         test_shard_count: how many shards Jest splits the specs into.
+        testing_srcs: the `<alias>/testing` entry point other libraries' specs import, compiled
+            by its own ng_project `testing` against the library's compiled output; `src/testing.ts`
+            first. Never in `srcs`, so test helpers stay out of the library.
+        testing_deps: what only the testing entry point imports.
         jest_config: the library's Jest config.
     """
     package = "//" + native.package_name()
@@ -239,9 +245,37 @@ def vre_library(
         visibility = visibility,
     )
 
+    if testing_srcs:
+        own_alias = _alias(native.package_relative_label(":" + name))
+        testing_options = dict(compiler_options)
+        testing_options["paths"] = dict(paths)
+        testing_options["paths"][own_alias] = [native.package_name() + "/src/index.d.ts"]
+        write_file(
+            name = "tsconfig_testing_json",
+            out = "tsconfig.testing.json",
+            content = [json.encode_indent(dict(tsconfig, compilerOptions = testing_options, include = testing_srcs))],
+        )
+        ts_config(
+            name = "tsconfig_testing",
+            src = ":tsconfig_testing_json",
+            deps = native.glob(["tsconfig*.json"]) + [Label("//:tsconfig_base")],
+        )
+        ng_project(
+            name = "testing",
+            srcs = testing_srcs,
+            tsconfig = ":tsconfig_testing",
+            declaration = True,
+            declaration_map = True,
+            resolve_json_module = True,
+            source_map = True,
+            transpiler = "tsc",
+            deps = [":" + name] + deps + testing_deps + _LIBRARY_DEPS,
+            visibility = visibility,
+        )
+
     js_library(
         name = "sources",
-        srcs = srcs + assets,
+        srcs = srcs + assets + testing_srcs,
         deps = [_sources(d) for d in deps],
         visibility = visibility,
     )
