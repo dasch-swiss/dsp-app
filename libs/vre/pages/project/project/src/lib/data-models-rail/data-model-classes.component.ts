@@ -1,25 +1,22 @@
-import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
+import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   ElementRef,
   inject,
   signal,
   viewChild,
   WritableSignal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {
@@ -37,10 +34,8 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ColumnResizeDirective } from '@dasch-swiss/vre/pages/data-browser';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { classFamilies, familyHue, familyTint, FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow, localNameOf } from '../ontology-map/ontology-graph-elements';
@@ -48,104 +43,58 @@ import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component'
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
-import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
+import { ClassChipsComponent } from './class-chips.component';
+import { ColumnHeaderComponent } from './column-header.component';
+import { ColumnsMenuComponent } from './columns-menu.component';
 import { DataModelsRailState } from './data-models-rail-state';
-import { DESCRIPTION_LANGUAGES, DescriptionEditorComponent, TextKind } from './description-editor.component';
+import { TextKind } from './description-editor.component';
+import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
+import { rememberedSignal } from './remembered-signal';
+import { TableColumns } from './table-columns';
+import { TABLE_STYLES } from './table-styles';
+import { TextEditing, TextEditorPopoverComponent } from './text-editor-popover.component';
 
 /** How many properties and linked classes a condensed row shows; the others are counted. */
 const MAX_PROPERTIES = 3;
 const MAX_LINKS = 2;
 /** How strongly the rows of a family with subclasses are tinted with its hue. */
 const FAMILY_TINT = 0.2;
-const DENSITY_KEY = 'dsp-data-models-classes-density';
-const WIDTHS_KEY = 'dsp-data-models-classes-widths';
-
-type Column = 'class' | 'file' | 'description' | 'properties' | 'linksTo' | 'linkedFrom';
-const DEFAULT_WIDTHS: Record<Column, number> = {
-  class: 240,
-  file: 120,
-  description: 320,
-  properties: 420,
-  linksTo: 240,
-  linkedFrom: 240,
-};
-/** Below these, a header's name and filter button no longer fit. */
-const MIN_WIDTHS: Record<Column, number> = {
-  class: 140,
-  file: 90,
-  description: 140,
-  properties: 160,
-  linksTo: 130,
-  linkedFrom: 130,
-};
-
-const readWidths = (): Partial<Record<Column, number>> => {
-  try {
-    return JSON.parse(localStorage.getItem(WIDTHS_KEY) ?? '{}');
-  } catch {
-    return {};
-  }
-};
+const STORAGE_KEY = 'dsp-data-models-classes';
 /** The File filter's value for classes without file. */
 const NO_FILE = 'none';
 
+type Column = 'class' | 'file' | 'description' | 'properties' | 'linkedFrom' | 'linksTo';
 type Density = 'condensed' | 'expanded';
 type Level = 'all' | 'top' | 'sub';
 
-const ALL_LANGUAGES_KEY = 'dsp-data-models-classes-all-languages';
-
-const readAllLanguages = (): boolean => {
-  try {
-    return localStorage.getItem(ALL_LANGUAGES_KEY) === 'true';
-  } catch {
-    return false;
-  }
-};
-
-const COLUMNS_KEY = 'dsp-data-models-classes-columns';
-const ALL_COLUMNS: Column[] = ['class', 'file', 'description', 'properties', 'linkedFrom', 'linksTo'];
-
-/** The viewer's column order and hidden columns; a column added since joins at the end, the class column stays first. */
-const readColumns = (): { order: Column[]; hidden: Column[] } => {
-  try {
-    const saved = JSON.parse(localStorage.getItem(COLUMNS_KEY) ?? '{}') as { order?: string[]; hidden?: string[] };
-    const known = (keys: string[] | undefined) =>
-      (keys ?? []).filter((key): key is Column => ALL_COLUMNS.includes(key as Column) && key !== 'class');
-    const order = known(saved.order);
-    return {
-      order: ['class', ...order, ...ALL_COLUMNS.filter(column => column !== 'class' && !order.includes(column))],
-      hidden: known(saved.hidden),
-    };
-  } catch {
-    return { order: ALL_COLUMNS, hidden: [] };
-  }
-};
-
-const readDensity = (): Density => {
-  try {
-    return localStorage.getItem(DENSITY_KEY) === 'expanded' ? 'expanded' : 'condensed';
-  } catch {
-    return 'condensed';
-  }
+/** The translation key of each column's name, under `pages.dataModels2`. */
+const COLUMN_LABELS: Record<Column, string> = {
+  class: 'pages.dataModels2.colClass',
+  file: 'pages.dataModels2.colFile',
+  description: 'pages.dataModels2.colDescription',
+  properties: 'pages.dataModels2.colProperties',
+  linkedFrom: 'pages.dataModels2.colLinkedFrom',
+  linksTo: 'pages.dataModels2.colLinksTo',
 };
 
 /**
  * Data models 2 › Classes: the data model's classes in a table, as the Data tab's table, subclasses under their
  * superclass in their family's tone. Condensed, a row is one line and what does not fit is counted; expanded, it shows
- * everything. Each column filters from its header. A clicked class opens its panel.
+ * everything. Each column filters from its header, moves by dragging it and resizes from its edge. A clicked class
+ * opens its panel; an editor edits a class's name and description in each language from its cell.
  */
 @Component({
   selector: 'app-data-model-classes',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CdkConnectedOverlay,
     CdkDrag,
     CdkDropList,
-    ColumnResizeDirective,
-    DescriptionEditorComponent,
+    ClassChipsComponent,
+    ColumnHeaderComponent,
+    ColumnsMenuComponent,
+    LanguageTextsComponent,
     MatButton,
-    MatIconButton,
     MatButtonToggle,
     MatButtonToggleGroup,
     MatCell,
@@ -159,23 +108,23 @@ const readDensity = (): Density => {
     MatHeaderRowDef,
     MatIcon,
     MatInput,
-    MatMenu,
-    MatMenuTrigger,
     MatPrefix,
     MatRadioButton,
     MatRadioGroup,
-    MatSlideToggle,
     MatRow,
     MatRowDef,
+    MatSlideToggle,
     MatTable,
     PropertyPanelComponent,
     ResourceClassPanelComponent,
+    TextEditorPopoverComponent,
     TranslatePipe,
   ],
   template: `
     @let r = 'pages.dataModels2';
     @let t = 'pages.dataBrowser.dataModelMap';
     @let expanded = density() === 'expanded';
+    @let cols = columns;
     <div class="section">
       <div class="head">
         <h2>{{ r + '.classes' | translate }}</h2>
@@ -197,7 +146,7 @@ const readDensity = (): Density => {
           class="all-languages"
           data-cy="data-model-classes-all-languages"
           [checked]="allLanguages()"
-          (change)="setAllLanguages($event.checked)">
+          (change)="allLanguages.set($event.checked)">
           {{ r + '.allLanguages' | translate }}
         </mat-slide-toggle>
         <mat-button-toggle-group
@@ -206,7 +155,7 @@ const readDensity = (): Density => {
           data-cy="data-model-classes-density"
           [attr.aria-label]="r + '.density' | translate"
           [value]="density()"
-          (change)="setDensity($event.value)">
+          (change)="density.set($event.value)">
           <mat-button-toggle value="condensed">
             <mat-icon>density_small</mat-icon>
             {{ r + '.condensed' | translate }}
@@ -216,43 +165,7 @@ const readDensity = (): Density => {
             {{ r + '.expanded' | translate }}
           </mat-button-toggle>
         </mat-button-toggle-group>
-        <button
-          mat-button
-          type="button"
-          class="view-options"
-          data-cy="data-model-classes-view-options"
-          [matMenuTriggerFor]="viewMenu">
-          <mat-icon>tune</mat-icon>
-          {{ 'pages.dataBrowser.viewOptions.title' | translate }}
-        </button>
-        <mat-menu #viewMenu="matMenu" xPosition="before">
-          <div
-            class="filter-menu"
-            (click)="$event.stopPropagation()"
-            (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
-            <span class="filter-head">
-              <span class="filter-heading">{{ 'pages.dataBrowser.viewOptions.columns' | translate }}</span>
-              <button mat-button type="button" class="filter-all" (click)="showAllColumns(!allColumnsShown())">
-                {{
-                  (allColumnsShown()
-                    ? 'pages.dataBrowser.viewOptions.hideAllShort'
-                    : 'pages.dataBrowser.viewOptions.showAllShort'
-                  ) | translate
-                }}
-              </button>
-            </span>
-            @for (column of columnOrder(); track column) {
-              @if (column !== 'class') {
-                <mat-checkbox
-                  [attr.data-cy]="'data-model-classes-show-' + column"
-                  [checked]="!hiddenColumns().has(column)"
-                  (change)="showColumn(column, $event.checked)">
-                  {{ r + '.' + columnLabels[column] | translate }}
-                </mat-checkbox>
-              }
-            }
-          </div>
-        </mat-menu>
+        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-classes" />
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
@@ -261,104 +174,50 @@ const readDensity = (): Density => {
           [dataSource]="rows()"
           data-cy="data-model-classes"
           [class.expanded]="expanded"
-          [style.width.px]="tableWidth()"
+          [style.width.px]="cols.tableWidth()"
           cdkDropList
           cdkDropListOrientation="horizontal"
           cdkDropListElementContainer="thead tr"
-          [cdkDropListSortPredicate]="canDropAt"
-          (cdkDropListDropped)="onColumnDropped($event)">
+          [cdkDropListSortPredicate]="cols.canDropAt"
+          (cdkDropListDropped)="cols.drop($event)">
           <ng-container matColumnDef="class" sticky>
             <th
               mat-header-cell
-              cdkDrag
-              [cdkDragData]="'class'"
-              cdkDragDisabled
               *matHeaderCellDef
-              [style.width.px]="widthOf('class')"
+              class="frozen"
+              cdkDrag
+              cdkDragDisabled
+              [style.width.px]="cols.widthOf('class')"
               [class.filtered]="level() !== 'all'">
-              <span class="header">
-                <span class="header-label">{{ r + '.colClass' | translate }}</span>
-                <button
-                  type="button"
-                  class="filter"
-                  data-cy="data-model-classes-filter-class"
-                  [class.on]="level() !== 'all'"
-                  [attr.aria-label]="r + '.filterOn' | translate: { column: r + '.colClass' | translate }"
-                  [matMenuTriggerFor]="levelMenu">
-                  <mat-icon>filter_list</mat-icon>
-                </button>
-              </span>
-              <mat-menu #levelMenu="matMenu">
-                <div
-                  class="filter-menu"
-                  (click)="$event.stopPropagation()"
-                  (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
-                  <mat-radio-group [value]="level()" (change)="level.set($event.value)">
-                    <mat-radio-button value="all">{{ r + '.allClasses' | translate }}</mat-radio-button>
-                    <mat-radio-button value="top">{{ r + '.topClasses' | translate }}</mat-radio-button>
-                    <mat-radio-button value="sub">{{ r + '.subclasses' | translate }}</mat-radio-button>
-                  </mat-radio-group>
-                </div>
-              </mat-menu>
-              <span
-                appColumnResize
-                data-cy="data-model-classes-resize"
-                [minWidth]="minWidths.class"
-                [defaultWidth]="defaultWidths.class"
-                [width]="widthOf('class')"
-                [attr.aria-label]="r + '.resizeColumn' | translate"
-                (widthChanged)="resize('class', $event)"
-                (widthReset)="resize('class', undefined)"></span>
+              <app-column-header
+                [columns]="cols"
+                column="class"
+                [label]="columnLabels.class"
+                [filtered]="level() !== 'all'"
+                filterCy="data-model-classes-filter-class"
+                resizeCy="data-model-classes-resize">
+                <mat-radio-group [value]="level()" (change)="level.set($event.value)">
+                  <mat-radio-button value="all">{{ r + '.allClasses' | translate }}</mat-radio-button>
+                  <mat-radio-button value="top">{{ r + '.topClasses' | translate }}</mat-radio-button>
+                  <mat-radio-button value="sub">{{ r + '.subclasses' | translate }}</mat-radio-button>
+                </mat-radio-group>
+              </app-column-header>
             </th>
-            <td mat-cell *matCellDef="let row">
+            <td mat-cell *matCellDef="let row" class="frozen">
               <span class="labelled" [style.padding-left.px]="row.depth * 18" [title]="row.name">
                 <span class="swatch" [style.background]="state.colors().get(row.id)"></span>
                 <span class="texts">
-                  @for (text of textsOf(row, 'label'); track text.language) {
-                    <span
-                      #labelLine
-                      class="lang-line label-line"
-                      [class.single]="!allLanguages()"
-                      [class.active]="isEditing(row, 'label', text.language)">
-                      @if (allLanguages()) {
-                        <span class="lang">{{ text.language }}</span>
-                      }
-                      <span class="label lang-text">{{ text.value }}</span>
-                      @if (canEditTexts()) {
-                        <button
-                          mat-icon-button
-                          type="button"
-                          class="lang-edit"
-                          data-cy="data-model-classes-edit-label"
-                          [attr.aria-label]="
-                            r + '.descriptionEditor.editLabel'
-                              | translate: { language: text.language, class: row.label }
-                          "
-                          (click)="$event.stopPropagation(); editText(row, 'label', text.language, labelLine)">
-                          <mat-icon>edit</mat-icon>
-                        </button>
-                      }
-                    </span>
-                  } @empty {
-                    <span class="label">{{ row.label }}</span>
-                  }
-                  @if (canEditTexts() && missingOf(row, 'label').length) {
-                    <span #labelGaps class="lang-missing" [class.single]="!allLanguages()">
-                      @for (language of missingOf(row, 'label'); track language) {
-                        <button
-                          type="button"
-                          class="lang-add"
-                          data-cy="data-model-classes-add-label"
-                          [class.active]="isEditing(row, 'label', language)"
-                          [attr.aria-label]="
-                            r + '.descriptionEditor.addLabel' | translate: { language, class: row.label }
-                          "
-                          (click)="$event.stopPropagation(); editText(row, 'label', language, labelGaps)">
-                          + {{ language }}
-                        </button>
-                      }
-                    </span>
-                  }
+                  <app-language-texts
+                    kind="label"
+                    cyPrefix="data-model-classes"
+                    [texts]="row.labels"
+                    [shown]="row.label"
+                    [owner]="row.label"
+                    [allLanguages]="allLanguages()"
+                    [canEdit]="canEditTexts()"
+                    [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
+                    [expanded]="expanded"
+                    (edit)="editText(row, 'label', $event)" />
                   @if (row.superclass; as superclass) {
                     <span class="subclass-of">{{
                       r + '.subclassOf' | translate: { class: state.labelOf(superclass) }
@@ -374,53 +233,32 @@ const readDensity = (): Density => {
           <ng-container matColumnDef="file">
             <th
               mat-header-cell
-              cdkDrag
-              [cdkDragData]="'file'"
-              class="movable"
               *matHeaderCellDef
-              [style.width.px]="widthOf('file')"
+              class="movable"
+              cdkDrag
+              [style.width.px]="cols.widthOf('file')"
               [class.filtered]="files().size">
-              <span class="header">
-                <span class="header-label">{{ r + '.colFile' | translate }}</span>
-                <button
-                  type="button"
-                  class="filter"
-                  data-cy="data-model-classes-filter-file"
-                  [class.on]="files().size"
-                  [attr.aria-label]="r + '.filterOn' | translate: { column: r + '.colFile' | translate }"
-                  [matMenuTriggerFor]="fileMenu">
-                  <mat-icon>filter_list</mat-icon>
-                </button>
-              </span>
-              <mat-menu #fileMenu="matMenu">
-                <div
-                  class="filter-menu"
-                  (click)="$event.stopPropagation()"
-                  (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
-                  <span class="filter-head">
-                    <span class="filter-heading">{{ r + '.colFile' | translate }}</span>
-                    <button mat-button type="button" class="filter-all" (click)="toggleAll(files, fileOptions())">
-                      {{ (allOn(files(), fileOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
-                    </button>
-                  </span>
-                  @for (option of fileOptions(); track option) {
-                    <mat-checkbox [checked]="files().has(option)" (change)="toggle(files, option)">{{
-                      option === noFile
-                        ? (r + '.noFile' | translate)
-                        : ('pages.ontologyMap.islands.fileKinds.' + option | translate)
-                    }}</mat-checkbox>
-                  }
-                </div>
-              </mat-menu>
-              <span
-                appColumnResize
-                data-cy="data-model-classes-resize"
-                [minWidth]="minWidths.file"
-                [defaultWidth]="defaultWidths.file"
-                [width]="widthOf('file')"
-                [attr.aria-label]="r + '.resizeColumn' | translate"
-                (widthChanged)="resize('file', $event)"
-                (widthReset)="resize('file', undefined)"></span>
+              <app-column-header
+                [columns]="cols"
+                column="file"
+                [label]="columnLabels.file"
+                [filtered]="!!files().size"
+                filterCy="data-model-classes-filter-file"
+                resizeCy="data-model-classes-resize">
+                <span class="filter-head">
+                  <span class="filter-heading">{{ columnLabels.file | translate }}</span>
+                  <button mat-button type="button" class="filter-all" (click)="toggleAll(files, fileOptions())">
+                    {{ (allOn(files(), fileOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+                  </button>
+                </span>
+                @for (option of fileOptions(); track option) {
+                  <mat-checkbox [checked]="files().has(option)" (change)="toggle(files, option)">{{
+                    option === noFile
+                      ? (r + '.noFile' | translate)
+                      : ('pages.ontologyMap.islands.fileKinds.' + option | translate)
+                  }}</mat-checkbox>
+                }
+              </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row">
               @if (row.representation; as representation) {
@@ -436,151 +274,73 @@ const readDensity = (): Density => {
           <ng-container matColumnDef="description">
             <th
               mat-header-cell
-              cdkDrag
-              [cdkDragData]="'description'"
-              class="movable"
               *matHeaderCellDef
-              [style.width.px]="widthOf('description')"
+              class="movable"
+              cdkDrag
+              [style.width.px]="cols.widthOf('description')"
               [class.filtered]="describedAs().trim()">
-              <span class="header">
-                <span class="header-label">{{ r + '.colDescription' | translate }}</span>
-                <button
-                  type="button"
-                  class="filter"
-                  data-cy="data-model-classes-filter-description"
-                  [class.on]="describedAs().trim()"
-                  [attr.aria-label]="r + '.filterOn' | translate: { column: r + '.colDescription' | translate }"
-                  [matMenuTriggerFor]="descriptionMenu">
-                  <mat-icon>filter_list</mat-icon>
+              <app-column-header
+                [columns]="cols"
+                column="description"
+                [label]="columnLabels.description"
+                [filtered]="!!describedAs().trim()"
+                filterCy="data-model-classes-filter-description"
+                resizeCy="data-model-classes-resize">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic" class="contains">
+                  <input
+                    #contains
+                    matInput
+                    [placeholder]="r + '.contains' | translate"
+                    [attr.aria-label]="r + '.contains' | translate"
+                    [value]="describedAs()"
+                    (input)="describedAs.set(contains.value)" />
+                </mat-form-field>
+                <button type="button" class="clear" (click)="describedAs.set('')">
+                  {{ r + '.clearFilter' | translate }}
                 </button>
-              </span>
-              <mat-menu #descriptionMenu="matMenu">
-                <div
-                  class="filter-menu"
-                  (click)="$event.stopPropagation()"
-                  (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
-                  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="contains">
-                    <input
-                      #contains
-                      matInput
-                      [placeholder]="r + '.contains' | translate"
-                      [attr.aria-label]="r + '.contains' | translate"
-                      [value]="describedAs()"
-                      (input)="describedAs.set(contains.value)" />
-                  </mat-form-field>
-                  <button type="button" class="clear" (click)="describedAs.set('')">
-                    {{ r + '.clearFilter' | translate }}
-                  </button>
-                </div>
-              </mat-menu>
-              <span
-                appColumnResize
-                data-cy="data-model-classes-resize"
-                [minWidth]="minWidths.description"
-                [defaultWidth]="defaultWidths.description"
-                [width]="widthOf('description')"
-                [attr.aria-label]="r + '.resizeColumn' | translate"
-                (widthChanged)="resize('description', $event)"
-                (widthReset)="resize('description', undefined)"></span>
+              </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row" class="description">
-              @for (text of textsOf(row, 'description'); track text.language) {
-                <div
-                  #line
-                  class="lang-line"
-                  [class.single]="!allLanguages()"
-                  [class.active]="isEditing(row, 'description', text.language)">
-                  @if (allLanguages()) {
-                    <span class="lang">{{ text.language }}</span>
-                  }
-                  <span class="lang-text" [title]="expanded ? '' : text.value">{{ text.value }}</span>
-                  @if (canEditTexts()) {
-                    <button
-                      mat-icon-button
-                      type="button"
-                      class="lang-edit"
-                      data-cy="data-model-classes-edit-description"
-                      [attr.aria-label]="
-                        r + '.descriptionEditor.edit' | translate: { language: text.language, class: row.label }
-                      "
-                      (click)="$event.stopPropagation(); editText(row, 'description', text.language, line)">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                  }
-                </div>
-              } @empty {
-                @if (row.description) {
-                  <!-- A description without a language: shown as it is. -->
-                  <span class="lang-text" [title]="expanded ? '' : row.description">{{ row.description }}</span>
-                } @else if (!canEditTexts()) {
-                  <span class="none">—</span>
-                }
-              }
-              @if (canEditTexts() && missingOf(row, 'description').length) {
-                <div #gaps class="lang-missing" [class.single]="!allLanguages()">
-                  @for (language of missingOf(row, 'description'); track language) {
-                    <button
-                      type="button"
-                      class="lang-add"
-                      data-cy="data-model-classes-add-description"
-                      [class.active]="isEditing(row, 'description', language)"
-                      [attr.aria-label]="r + '.descriptionEditor.add' | translate: { language, class: row.label }"
-                      (click)="$event.stopPropagation(); editText(row, 'description', language, gaps)">
-                      + {{ language }}
-                    </button>
-                  }
-                </div>
-              }
+              <app-language-texts
+                kind="description"
+                cyPrefix="data-model-classes"
+                [texts]="row.descriptions"
+                [shown]="row.description"
+                [owner]="row.label"
+                [allLanguages]="allLanguages()"
+                [canEdit]="canEditTexts()"
+                [activeLanguage]="textEditing.activeLanguage(row.id, 'description')"
+                [expanded]="expanded"
+                (edit)="editText(row, 'description', $event)" />
             </td>
           </ng-container>
           <ng-container matColumnDef="properties">
             <th
               mat-header-cell
-              cdkDrag
-              [cdkDragData]="'properties'"
-              class="movable"
               *matHeaderCellDef
-              [style.width.px]="widthOf('properties')"
+              class="movable"
+              cdkDrag
+              [style.width.px]="cols.widthOf('properties')"
               [class.filtered]="types().size">
-              <span class="header">
-                <span class="header-label">{{ r + '.colProperties' | translate }}</span>
-                <button
-                  type="button"
-                  class="filter"
-                  data-cy="data-model-classes-filter-properties"
-                  [class.on]="types().size"
-                  [attr.aria-label]="r + '.filterOn' | translate: { column: r + '.colProperties' | translate }"
-                  [matMenuTriggerFor]="typeMenu">
-                  <mat-icon>filter_list</mat-icon>
-                </button>
-              </span>
-              <mat-menu #typeMenu="matMenu">
-                <div
-                  class="filter-menu"
-                  (click)="$event.stopPropagation()"
-                  (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
-                  <span class="filter-head">
-                    <span class="filter-heading">{{ r + '.hasPropertyOf' | translate }}</span>
-                    <button mat-button type="button" class="filter-all" (click)="toggleAll(types, typeOptions())">
-                      {{ (allOn(types(), typeOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
-                    </button>
-                  </span>
-                  @for (option of typeOptions(); track option) {
-                    <mat-checkbox [checked]="types().has(option)" (change)="toggle(types, option)">{{
-                      typeName(option)
-                    }}</mat-checkbox>
-                  }
-                </div>
-              </mat-menu>
-              <span
-                appColumnResize
-                data-cy="data-model-classes-resize"
-                [minWidth]="minWidths.properties"
-                [defaultWidth]="defaultWidths.properties"
-                [width]="widthOf('properties')"
-                [attr.aria-label]="r + '.resizeColumn' | translate"
-                (widthChanged)="resize('properties', $event)"
-                (widthReset)="resize('properties', undefined)"></span>
+              <app-column-header
+                [columns]="cols"
+                column="properties"
+                [label]="columnLabels.properties"
+                [filtered]="!!types().size"
+                filterCy="data-model-classes-filter-properties"
+                resizeCy="data-model-classes-resize">
+                <span class="filter-head">
+                  <span class="filter-heading">{{ r + '.hasPropertyOf' | translate }}</span>
+                  <button mat-button type="button" class="filter-all" (click)="toggleAll(types, typeOptions())">
+                    {{ (allOn(types(), typeOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+                  </button>
+                </span>
+                @for (option of typeOptions(); track option) {
+                  <mat-checkbox [checked]="types().has(option)" (change)="toggle(types, option)">{{
+                    typeName(option)
+                  }}</mat-checkbox>
+                }
+              </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row">
               <span class="line">
@@ -612,142 +372,76 @@ const readDensity = (): Density => {
               </span>
             </td>
           </ng-container>
-          <ng-container matColumnDef="linksTo">
-            <th
-              mat-header-cell
-              cdkDrag
-              [cdkDragData]="'linksTo'"
-              class="movable"
-              *matHeaderCellDef
-              [style.width.px]="widthOf('linksTo')"
-              [class.filtered]="targets().size">
-              <span class="header">
-                <span class="header-label">{{ r + '.colLinksTo' | translate }}</span>
-                <button
-                  type="button"
-                  class="filter"
-                  data-cy="data-model-classes-filter-links"
-                  [class.on]="targets().size"
-                  [attr.aria-label]="r + '.filterOn' | translate: { column: r + '.colLinksTo' | translate }"
-                  [matMenuTriggerFor]="targetMenu">
-                  <mat-icon>filter_list</mat-icon>
-                </button>
-              </span>
-              <mat-menu #targetMenu="matMenu" xPosition="before">
-                <div
-                  class="filter-menu"
-                  (click)="$event.stopPropagation()"
-                  (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
-                  <span class="filter-head">
-                    <span class="filter-heading">{{ r + '.colLinksTo' | translate }}</span>
-                    <button mat-button type="button" class="filter-all" (click)="toggleAll(targets, targetOptions())">
-                      {{ (allOn(targets(), targetOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
-                    </button>
-                  </span>
-                  @for (option of targetOptions(); track option) {
-                    <mat-checkbox [checked]="targets().has(option)" (change)="toggle(targets, option)">{{
-                      state.labelOf(option)
-                    }}</mat-checkbox>
-                  }
-                </div>
-              </mat-menu>
-              <span
-                appColumnResize
-                data-cy="data-model-classes-resize"
-                [minWidth]="minWidths.linksTo"
-                [defaultWidth]="defaultWidths.linksTo"
-                [width]="widthOf('linksTo')"
-                [attr.aria-label]="r + '.resizeColumn' | translate"
-                (widthChanged)="resize('linksTo', $event)"
-                (widthReset)="resize('linksTo', undefined)"></span>
-            </th>
-            <td mat-cell *matCellDef="let row">
-              <span class="line">
-                <span class="cut">
-                  @for (target of shownLinks(row); track target) {
-                    <span class="chip" [style.background]="state.colors().get(target) ?? '#F3F4F6'">{{
-                      state.labelOf(target)
-                    }}</span>
-                  } @empty {
-                    <span class="none">—</span>
-                  }
-                </span>
-                @if (!expanded && row.linksTo.length > maxLinks) {
-                  <span class="more">+{{ row.linksTo.length - maxLinks }}</span>
-                }
-              </span>
-            </td>
-          </ng-container>
           <ng-container matColumnDef="linkedFrom">
             <th
               mat-header-cell
-              cdkDrag
-              [cdkDragData]="'linkedFrom'"
-              class="movable"
               *matHeaderCellDef
-              [style.width.px]="widthOf('linkedFrom')"
+              class="movable"
+              cdkDrag
+              [style.width.px]="cols.widthOf('linkedFrom')"
               [class.filtered]="sources().size">
-              <span class="header">
-                <span class="header-label">{{ r + '.colLinkedFrom' | translate }}</span>
-                <button
-                  type="button"
-                  class="filter"
-                  data-cy="data-model-classes-filter-linked-from"
-                  [class.on]="sources().size"
-                  [attr.aria-label]="r + '.filterOn' | translate: { column: r + '.colLinkedFrom' | translate }"
-                  [matMenuTriggerFor]="sourceMenu">
-                  <mat-icon>filter_list</mat-icon>
-                </button>
-              </span>
-              <mat-menu #sourceMenu="matMenu" xPosition="before">
-                <div
-                  class="filter-menu"
-                  (click)="$event.stopPropagation()"
-                  (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
-                  <span class="filter-head">
-                    <span class="filter-heading">{{ r + '.colLinkedFrom' | translate }}</span>
-                    <button mat-button type="button" class="filter-all" (click)="toggleAll(sources, sourceOptions())">
-                      {{ (allOn(sources(), sourceOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
-                    </button>
-                  </span>
-                  @for (option of sourceOptions(); track option) {
-                    <mat-checkbox [checked]="sources().has(option)" (change)="toggle(sources, option)">{{
-                      state.labelOf(option)
-                    }}</mat-checkbox>
-                  }
-                </div>
-              </mat-menu>
-              <span
-                appColumnResize
-                data-cy="data-model-classes-resize"
-                [minWidth]="minWidths.linkedFrom"
-                [defaultWidth]="defaultWidths.linkedFrom"
-                [width]="widthOf('linkedFrom')"
-                [attr.aria-label]="r + '.resizeColumn' | translate"
-                (widthChanged)="resize('linkedFrom', $event)"
-                (widthReset)="resize('linkedFrom', undefined)"></span>
+              <app-column-header
+                [columns]="cols"
+                column="linkedFrom"
+                [label]="columnLabels.linkedFrom"
+                [filtered]="!!sources().size"
+                menuPosition="before"
+                filterCy="data-model-classes-filter-linked-from"
+                resizeCy="data-model-classes-resize">
+                <span class="filter-head">
+                  <span class="filter-heading">{{ columnLabels.linkedFrom | translate }}</span>
+                  <button mat-button type="button" class="filter-all" (click)="toggleAll(sources, sourceOptions())">
+                    {{ (allOn(sources(), sourceOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+                  </button>
+                </span>
+                @for (option of sourceOptions(); track option) {
+                  <mat-checkbox [checked]="sources().has(option)" (change)="toggle(sources, option)">{{
+                    state.labelOf(option)
+                  }}</mat-checkbox>
+                }
+              </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row">
-              <span class="line">
-                <span class="cut">
-                  @for (source of shownLinkedFrom(row); track source) {
-                    <span class="chip" [style.background]="state.colors().get(source) ?? '#F3F4F6'">{{
-                      state.labelOf(source)
-                    }}</span>
-                  } @empty {
-                    <span class="none">—</span>
-                  }
-                </span>
-                @if (!expanded && row.linkedFrom.length > maxLinks) {
-                  <span class="more">+{{ row.linkedFrom.length - maxLinks }}</span>
-                }
-              </span>
+              <app-class-chips [iris]="row.linkedFrom" [max]="maxLinks" [expanded]="expanded" />
             </td>
           </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columns(); sticky: true"></tr>
+          <ng-container matColumnDef="linksTo">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="movable"
+              cdkDrag
+              [style.width.px]="cols.widthOf('linksTo')"
+              [class.filtered]="targets().size">
+              <app-column-header
+                [columns]="cols"
+                column="linksTo"
+                [label]="columnLabels.linksTo"
+                [filtered]="!!targets().size"
+                menuPosition="before"
+                filterCy="data-model-classes-filter-links"
+                resizeCy="data-model-classes-resize">
+                <span class="filter-head">
+                  <span class="filter-heading">{{ columnLabels.linksTo | translate }}</span>
+                  <button mat-button type="button" class="filter-all" (click)="toggleAll(targets, targetOptions())">
+                    {{ (allOn(targets(), targetOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+                  </button>
+                </span>
+                @for (option of targetOptions(); track option) {
+                  <mat-checkbox [checked]="targets().has(option)" (change)="toggle(targets, option)">{{
+                    state.labelOf(option)
+                  }}</mat-checkbox>
+                }
+              </app-column-header>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <app-class-chips [iris]="row.linksTo" [max]="maxLinks" [expanded]="expanded" />
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="cols.shown(); sticky: true"></tr>
           <tr
             mat-row
-            *matRowDef="let row; columns: columns()"
+            *matRowDef="let row; columns: cols.shown()"
             data-cy="data-model-classes-row"
             tabindex="0"
             [class.selected]="row.id === panelIri()"
@@ -760,30 +454,9 @@ const readDensity = (): Density => {
         }
       </div>
 
-      @if (state.graph(); as graph) {
-        @if (editingText(); as editing) {
-          <ng-template
-            cdkConnectedOverlay
-            [cdkConnectedOverlayOpen]="true"
-            cdkConnectedOverlayHasBackdrop
-            cdkConnectedOverlayPush
-            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-            [cdkConnectedOverlayOrigin]="editing.origin"
-            [cdkConnectedOverlayPositions]="popoverPositions"
-            (backdropClick)="closeText()"
-            (detach)="closeText()">
-            <app-description-editor
-              [texts]="editing.kind === 'label' ? editing.row.labels : editing.row.descriptions"
-              [kind]="editing.kind"
-              [language]="editing.language"
-              [classLabel]="editing.row.label"
-              [saving]="savingText()"
-              [(all)]="editorAllLanguages"
-              (saved)="saveTexts(editing.row, editing.kind, $event)"
-              (cancelled)="closeText()" />
-          </ng-template>
-        }
+      <app-text-editor-popover [editing]="textEditing" />
 
+      @if (state.graph(); as graph) {
         @if (panelIri(); as iri) {
           <app-resource-class-panel
             class="panel"
@@ -817,277 +490,12 @@ const readDensity = (): Density => {
   `,
   styles: [
     RAIL_SECTION_STYLES,
+    TABLE_STYLES,
     `
       @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
-      .all-languages {
-        flex: none;
-        margin-right: 12px;
-        font-size: 13px;
-      }
-
-      .view-options {
-        flex: none;
-        height: 36px;
-        font-size: 13px;
-      }
-
-      // A header dragged sideways moves its column; the class column stays first.
-      th.movable {
-        cursor: grab;
-      }
-
-      .cdk-drag-preview {
-        display: flex;
-        align-items: center;
-        box-sizing: border-box;
-        padding: 0 12px;
-        background: white;
-        border-radius: 4px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: $cool_gray_600;
-        cursor: grabbing;
-
-        .column-resize-handle,
-        .filter {
-          display: none;
-        }
-      }
-
-      .cdk-drag-placeholder {
-        opacity: 0.35;
-      }
-
-      .cdk-drag-animating,
-      .cdk-drop-list-dragging th.movable:not(.cdk-drag-placeholder) {
-        transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
-      }
-
-      .density {
-        --mat-button-toggle-height: 36px;
-        --mat-button-toggle-legacy-height: 36px;
-        --mat-button-toggle-label-text-line-height: 34px;
-        --mat-button-toggle-label-text-size: 13px;
-        background: white;
-
-        mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-          margin-right: 4px;
-          vertical-align: -4px;
-        }
-      }
-
-      // As the Data tab's table: fixed columns with borders, uppercase headers, one 44px line per row.
-      table {
-        table-layout: fixed;
-      }
-
-      // A fixed layout needs the table's own width: the sum of its columns, the whole box at least.
-      .table-box table {
-        min-width: 100%;
-      }
-
-      .mat-mdc-header-cell {
-        position: relative;
-
-        &:hover .column-resize-handle {
-          opacity: 1;
-        }
-      }
-
-      .column-resize-handle {
-        position: absolute;
-        top: 0;
-        right: -4px;
-        bottom: 0;
-        width: 8px;
-        z-index: 1;
-        cursor: col-resize;
-        opacity: 0;
-
-        &:hover {
-          background: rgba(51, 103, 144, 0.25);
-        }
-
-        &:focus-visible {
-          opacity: 1;
-          outline: 2px solid $primary;
-          outline-offset: -1px;
-        }
-      }
-
-      // The class column stays while the others scroll under it, in the row's own tint.
-      .mat-mdc-cell.mat-column-class {
-        background: inherit;
-      }
-
-      .mat-column-class {
-        border-right: 1px solid $cool_gray_200;
-      }
-
-      .scrolled .mat-column-class {
-        box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.18);
-      }
-
-      .mat-mdc-header-row {
-        height: 48px;
-      }
-
-      .mat-mdc-header-cell {
-        padding: 4px 6px 4px 10px;
-        background: #f9fafb;
-
-        &.filtered {
-          background: #e6edf3;
-
-          .header-label {
-            color: #234a69;
-          }
-        }
-      }
-
-      .header {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-      }
-
-      .header-label {
-        flex: 1;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font: 500 12px/16px var(--font-sans, Roboto, sans-serif);
-        letter-spacing: 0.06em;
-        color: rgba(0, 0, 0, 0.6);
-      }
-
-      // Each column's filter shows while its header is hovered or focused, or while it filters.
-      .filter {
-        flex: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        padding: 0;
-        border: 0;
-        border-radius: 3px;
-        background: transparent;
-        color: rgba(0, 0, 0, 0.45);
-        cursor: pointer;
-        visibility: hidden;
-
-        mat-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-        }
-
-        &:hover {
-          background: rgba(0, 0, 0, 0.06);
-        }
-
-        &.on {
-          visibility: visible;
-          background: #d6e0e8;
-          color: $primary;
-        }
-      }
-
-      .mat-mdc-header-cell:hover .filter,
-      .mat-mdc-header-cell:focus-within .filter,
-      .filter[aria-expanded='true'] {
-        visibility: visible;
-      }
-
-      .filter-menu {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        min-width: 200px;
-        padding: 4px 12px;
-
-        mat-radio-group {
-          display: flex;
-          flex-direction: column;
-        }
-      }
-
-      .filter-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-      }
-
-      .filter-all {
-        height: 28px;
-        padding: 0 8px;
-        font-size: 13px;
-      }
-
-      .filter-heading {
-        padding: 4px 0;
-        font-size: 12px;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
-      }
-
-      .contains {
-        width: 240px;
-        font-size: 13px;
-      }
-
-      .clear {
-        align-self: flex-end;
-        margin-top: 4px;
-        padding: 6px 8px;
-        border: 0;
-        background: none;
-        font: 500 13px var(--font-sans, Roboto, sans-serif);
-        color: $primary;
-        cursor: pointer;
-      }
-
-      .mat-mdc-cell {
-        padding: 4px 10px;
-      }
-
-      .mat-mdc-header-cell,
-      .mat-mdc-cell {
-        border-right: 1px solid #e5e7eb;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        &:last-child {
-          border-right: 0;
-        }
-      }
-
-      .mat-mdc-row {
-        height: 44px;
-      }
-
       .labelled {
         min-width: 0;
-      }
-
-      .texts {
-        min-width: 0;
-      }
-
-      .label {
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
 
       .subclass-of {
@@ -1116,121 +524,7 @@ const readDensity = (): Density => {
         color: $cool_gray_700;
       }
 
-      // One line per language; a pencil shows on hover to edit that language.
-      .lang-line {
-        display: grid;
-        grid-template-columns: 22px minmax(0, 1fr) 24px;
-
-        &.single {
-          grid-template-columns: minmax(0, 1fr) 24px;
-        }
-        align-items: center;
-        gap: 4px;
-        margin: 0 -4px;
-        padding: 0 0 0 4px;
-        border-radius: 4px;
-
-        &:hover,
-        &:focus-within,
-        &.active {
-          background: rgba(0, 0, 0, 0.05);
-
-          .lang-edit {
-            opacity: 1;
-          }
-        }
-
-        &.active {
-          box-shadow: inset 0 0 0 1px $primary;
-        }
-      }
-
-      .lang {
-        font-size: 10.5px;
-        font-weight: 500;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
-      }
-
-      .lang-text {
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .lang-edit.mat-mdc-icon-button {
-        --mat-icon-button-state-layer-size: 24px;
-        width: 24px;
-        height: 24px;
-        padding: 0;
-        opacity: 0;
-        color: $primary;
-
-        mat-icon {
-          font-size: 15px;
-          width: 15px;
-          height: 15px;
-        }
-
-        @media (hover: none) {
-          opacity: 0.6;
-        }
-      }
-
-      // The languages without a description, to add one.
-      .lang-missing {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-        padding: 2px 0 0 22px;
-
-        &.single {
-          padding-left: 0;
-        }
-      }
-
-      .lang-add {
-        border: 1px dashed $cool_gray_300;
-        border-radius: 10px;
-        background: none;
-        padding: 0 7px;
-        font: inherit;
-        font-size: 10.5px;
-        line-height: 16px;
-        text-transform: uppercase;
-        color: $cool_gray_500;
-        cursor: pointer;
-
-        &:hover,
-        &:focus-visible,
-        &.active {
-          border-color: $primary;
-          color: $primary;
-        }
-      }
-
-      .label-line {
-        grid-template-columns: 22px minmax(0, max-content) 24px;
-
-        &.single {
-          grid-template-columns: minmax(0, max-content) 24px;
-        }
-      }
-
-      .texts .lang-missing {
-        padding-top: 0;
-      }
-
-      table.expanded .lang-text {
-        white-space: normal;
-      }
-
-      table.expanded .lang-line {
-        align-items: start;
-      }
-
-      // A line of chips, cut at the cell's edge; the "+N" after them always shows.
+      // The properties on one line, cut at the cell's edge; the "+N" after them always shows.
       .line {
         display: flex;
         align-items: center;
@@ -1252,13 +546,6 @@ const readDensity = (): Density => {
         align-items: center;
         gap: 3px;
         padding: 0 7px 0 5px;
-
-        mat-icon {
-          width: 14px;
-          height: 14px;
-          font-size: 14px;
-        }
-
         border: 0;
         border-radius: 11px;
         background: $cool_gray_100;
@@ -1267,6 +554,12 @@ const readDensity = (): Density => {
         line-height: 22px;
         color: $cool_gray_700;
         cursor: pointer;
+
+        mat-icon {
+          width: 14px;
+          height: 14px;
+          font-size: 14px;
+        }
 
         &:hover,
         &.on {
@@ -1284,10 +577,6 @@ const readDensity = (): Density => {
         }
       }
 
-      .chip {
-        flex: none;
-      }
-
       .more {
         flex: none;
         padding: 0 4px;
@@ -1296,25 +585,14 @@ const readDensity = (): Density => {
         color: $primary;
       }
 
-      // Expanded, a row grows to show everything: the whole description, every property and link.
       table.expanded {
-        .mat-mdc-cell {
-          padding-top: 10px;
-          padding-bottom: 10px;
-          vertical-align: top;
-          white-space: normal;
-        }
-
-        .labelled {
+        .labelled,
+        .line {
           align-items: flex-start;
         }
 
         .swatch {
           margin-top: 3px;
-        }
-
-        .line {
-          align-items: flex-start;
         }
 
         .cut {
@@ -1329,58 +607,34 @@ export class DataModelClassesComponent {
   readonly state = inject(DataModelsRailState);
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
-  readonly editing = injectDataModelEditing();
-  private readonly _notification = inject(NotificationService);
-  private readonly _translate = inject(TranslateService);
-  private readonly _destroyRef = inject(DestroyRef);
-
-  /** The label or description being edited: its class, the language it opened on, and the line it opened from. */
-  readonly editingText = signal<{ row: ClassRow; kind: TextKind; language: string; origin: HTMLElement } | null>(null);
-  readonly savingText = signal(false);
-  /** The editor's "All languages" switch, kept from one editor to the next. */
-  readonly editorAllLanguages = signal(false);
-  readonly canEditTexts = computed(() => this.state.canEdit() && this.editing.canSaveInPlace);
-  /** Under the line it opened from, else above it. */
-  readonly popoverPositions: ConnectedPosition[] = [
-    { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 4 },
-    { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -4 },
-  ];
   private readonly _params = toSignal(this._route.queryParamMap);
+  readonly editing = injectDataModelEditing();
 
-  /** Every column in the viewer's order, and those hidden; remembered in this browser. */
-  readonly columnOrder = signal<Column[]>(readColumns().order);
-  readonly hiddenColumns = signal(new Set<Column>(readColumns().hidden));
-  /** The columns shown, in their order. */
-  readonly columns = computed(() => this.columnOrder().filter(column => !this.hiddenColumns().has(column)));
-  readonly allColumnsShown = computed(() => this.hiddenColumns().size === 0);
-  readonly columnLabels: Record<Column, string> = {
-    class: 'colClass',
-    file: 'colFile',
-    description: 'colDescription',
-    properties: 'colProperties',
-    linkedFrom: 'colLinkedFrom',
-    linksTo: 'colLinksTo',
-  };
+  readonly columns = new TableColumns<Column>({
+    storageKey: STORAGE_KEY,
+    columns: ['class', 'file', 'description', 'properties', 'linkedFrom', 'linksTo'],
+    defaultWidths: { class: 240, file: 120, description: 320, properties: 420, linkedFrom: 240, linksTo: 240 },
+    minWidths: { class: 140, file: 90, description: 140, properties: 160, linkedFrom: 130, linksTo: 130 },
+  });
+  readonly columnLabels = COLUMN_LABELS;
   readonly maxProperties = MAX_PROPERTIES;
   readonly maxLinks = MAX_LINKS;
   readonly noFile = NO_FILE;
 
   /** Condensed rows of one line, or expanded rows showing everything; remembered in this browser. */
-  readonly density = signal<Density>(readDensity());
-  /** Every language of a description stacked, or only the one the app shows; remembered in this browser. */
-  readonly allLanguages = signal(readAllLanguages());
-  private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
-  readonly defaultWidths = DEFAULT_WIDTHS;
-
-  constructor() {
-    // Arriving on the page, typing finds a class.
-    afterNextRender(() => this._search()?.nativeElement.focus());
-  }
-  readonly minWidths = MIN_WIDTHS;
-  /** The widths the viewer dragged the columns to, remembered in this browser. */
-  readonly widths = signal(readWidths());
+  readonly density = rememberedSignal<Density>(`${STORAGE_KEY}-density`, 'condensed', stored =>
+    stored === 'expanded' ? 'expanded' : 'condensed'
+  );
+  /** Every language of a name or description stacked, or only the one the app shows; remembered in this browser. */
+  readonly allLanguages = rememberedSignal(`${STORAGE_KEY}-all-languages`, false, stored => stored === 'true');
   /** Whether the table is scrolled sideways, which shadows the frozen class column. */
   readonly scrolled = signal(false);
+
+  /** The class names and descriptions edited from their cells. */
+  readonly textEditing = new TextEditing((target, texts) =>
+    this.editing.saveClassTexts(target.id, target.kind === 'label' ? { labels: texts } : { descriptions: texts })
+  );
+  readonly canEditTexts = computed(() => this.state.canEdit() && this.editing.canSaveInPlace);
 
   readonly query = signal('');
   /** The column filters; an empty set or text filters nothing. */
@@ -1401,16 +655,8 @@ export class DataModelClassesComponent {
       typeNameOf(a).localeCompare(typeNameOf(b))
     )
   );
-  readonly sourceOptions = computed(() =>
-    [...new Set(this.state.classRows().flatMap(row => row.linkedFrom))].sort((a, b) =>
-      this.state.labelOf(a).localeCompare(this.state.labelOf(b))
-    )
-  );
-  readonly targetOptions = computed(() =>
-    [...new Set(this.state.classRows().flatMap(row => row.linksTo))].sort((a, b) =>
-      this.state.labelOf(a).localeCompare(this.state.labelOf(b))
-    )
-  );
+  readonly sourceOptions = computed(() => this._byLabel(this.state.classRows().flatMap(row => row.linkedFrom)));
+  readonly targetOptions = computed(() => this._byLabel(this.state.classRows().flatMap(row => row.linksTo)));
 
   readonly rows = computed(() => {
     const query = this.query().trim().toLowerCase();
@@ -1461,105 +707,20 @@ export class DataModelClassesComponent {
     return name ? this.state.propertyRows().find(row => row.name === name)?.id : undefined;
   });
 
-  readonly tableWidth = computed(() =>
-    this.columns().reduce((sum, column) => sum + (this.widths()[column] ?? DEFAULT_WIDTHS[column]), 0)
-  );
+  private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
 
-  /** Any place but the first, which is the class column's. */
-  readonly canDropAt = (index: number): boolean => index > 0;
-
-  onColumnDropped(event: CdkDragDrop<unknown>): void {
-    if (event.previousIndex === event.currentIndex) return;
-    // CDK counts the shown header cells; the hidden columns keep their place after the one moved past.
-    const shown = [...this.columns()];
-    moveItemInArray(shown, event.previousIndex, event.currentIndex);
-    const order = [...this.columnOrder()];
-    const slots = order.map((column, index) => (this.hiddenColumns().has(column) ? -1 : index)).filter(i => i >= 0);
-    slots.forEach((slot, i) => (order[slot] = shown[i]));
-    this.columnOrder.set(order);
-    this._saveColumns();
-  }
-
-  showColumn(column: Column, shown: boolean): void {
-    this.hiddenColumns.update(hidden => {
-      const next = new Set(hidden);
-      if (shown) next.delete(column);
-      else next.add(column);
-      return next;
-    });
-    this._saveColumns();
-  }
-
-  /** Shows every column, or hides all but the class column. */
-  showAllColumns(shown: boolean): void {
-    this.hiddenColumns.set(shown ? new Set() : new Set(ALL_COLUMNS.filter(column => column !== 'class')));
-    this._saveColumns();
-  }
-
-  private _saveColumns(): void {
-    try {
-      localStorage.setItem(
-        COLUMNS_KEY,
-        JSON.stringify({ order: this.columnOrder().slice(1), hidden: [...this.hiddenColumns()] })
-      );
-    } catch {
-      // Not remembered, as in a private window; the columns still hold on this page.
-    }
-  }
-
-  widthOf(column: Column): number {
-    return this.widths()[column] ?? DEFAULT_WIDTHS[column];
-  }
-
-  /** Stores a column's dragged width, or forgets it to go back to the default. */
-  resize(column: Column, width: number | undefined): void {
-    this.widths.update(widths => {
-      const next = { ...widths, [column]: width };
-      if (width === undefined) delete next[column];
-      return next;
-    });
-    try {
-      localStorage.setItem(WIDTHS_KEY, JSON.stringify(this.widths()));
-    } catch {
-      // Not remembered, as in a private window; the width still holds on this page.
-    }
+  constructor() {
+    // Arriving on the page, typing finds a class.
+    afterNextRender(() => this._search()?.nativeElement.focus());
   }
 
   onScroll(event: Event): void {
     this.scrolled.set((event.target as HTMLElement).scrollLeft > 0);
   }
 
-  setAllLanguages(on: boolean): void {
-    this.allLanguages.set(on);
-    try {
-      localStorage.setItem(ALL_LANGUAGES_KEY, String(on));
-    } catch {
-      // Not remembered, as in a private window; the choice still holds on this page.
-    }
-  }
-
-  setDensity(density: Density): void {
-    this.density.set(density);
-    try {
-      localStorage.setItem(DENSITY_KEY, density);
-    } catch {
-      // Not remembered, as in a private window; the choice still holds on this page.
-    }
-  }
-
   /** The properties a row shows: the first few condensed, all of them expanded. */
   shownProperties(row: ClassRow): ClassRow['propertyList'] {
     return this.density() === 'expanded' ? row.propertyList : row.propertyList.slice(0, MAX_PROPERTIES);
-  }
-
-  /** The classes a row shows it links to: the first few condensed, all of them expanded. */
-  shownLinks(row: ClassRow): string[] {
-    return this.density() === 'expanded' ? row.linksTo : row.linksTo.slice(0, MAX_LINKS);
-  }
-
-  /** The classes a row shows it is linked from: the first few condensed, all of them expanded. */
-  shownLinkedFrom(row: ClassRow): string[] {
-    return this.density() === 'expanded' ? row.linkedFrom : row.linkedFrom.slice(0, MAX_LINKS);
   }
 
   /** Whether every option of a filter is ticked. */
@@ -1569,7 +730,7 @@ export class DataModelClassesComponent {
 
   /** Ticks every option of a filter, or none when they all are. */
   toggleAll(filter: WritableSignal<Set<string>>, options: string[]): void {
-    filter.set(this.allOn(filter(), options) ? this.empty() : new Set(options));
+    filter.set(this.allOn(filter(), options) ? new Set() : new Set(options));
   }
 
   /** Adds the option to a filter, or takes it out. */
@@ -1579,10 +740,6 @@ export class DataModelClassesComponent {
       if (!next.delete(option)) next.add(option);
       return next;
     });
-  }
-
-  empty(): Set<string> {
-    return new Set();
   }
 
   fileIcon(representation: RepresentationClass): string {
@@ -1597,29 +754,30 @@ export class DataModelClassesComponent {
     return typeIconOf(type);
   }
 
+  /** Opens the editor of a class's name or description, on the language asked for. */
+  editText(row: ClassRow, kind: TextKind, edit: LanguageTextEdit): void {
+    this.textEditing.open({
+      ...edit,
+      id: row.id,
+      label: row.label,
+      kind,
+      texts: kind === 'label' ? row.labels : row.descriptions,
+    });
+  }
+
   /** Opens the class's panel, or closes it; a step in the browser history. */
   openPanel(classIri: string | undefined): void {
-    this._router.navigate([], {
-      relativeTo: this._route,
-      queryParamsHandling: 'merge',
-      queryParams: {
-        ...this.state.modelParam(),
-        [ONTOLOGY_MAP_PARAM.panel]: classIri ? localNameOf(classIri) : null,
-        [ONTOLOGY_MAP_PARAM.propertyPanel]: null,
-      },
+    this._navigate({
+      [ONTOLOGY_MAP_PARAM.panel]: classIri ? localNameOf(classIri) : null,
+      [ONTOLOGY_MAP_PARAM.propertyPanel]: null,
     });
   }
 
   /** Opens the property's panel in place of the class's, or closes it; a step in the browser history. */
   openProperty(propertyIri: string | undefined): void {
-    this._router.navigate([], {
-      relativeTo: this._route,
-      queryParamsHandling: 'merge',
-      queryParams: {
-        ...this.state.modelParam(),
-        [ONTOLOGY_MAP_PARAM.panel]: null,
-        [ONTOLOGY_MAP_PARAM.propertyPanel]: propertyIri ? localNameOf(propertyIri) : null,
-      },
+    this._navigate({
+      [ONTOLOGY_MAP_PARAM.panel]: null,
+      [ONTOLOGY_MAP_PARAM.propertyPanel]: propertyIri ? localNameOf(propertyIri) : null,
     });
   }
 
@@ -1641,71 +799,20 @@ export class DataModelClassesComponent {
     this.state.openSection(RouteConstants.graph, { [ONTOLOGY_MAP_PARAM.filter]: localNameOf(iri) });
   }
 
-  /** A row's label or description in each language it has, in the order the app lists languages. */
-  textsOf(row: ClassRow, kind: TextKind): LanguageText[] {
-    const order = (language: string) => {
-      const index = DESCRIPTION_LANGUAGES.indexOf(language);
-      return index < 0 ? DESCRIPTION_LANGUAGES.length : index;
-    };
-    const texts = [...this._textsOf(row, kind)].sort((a, b) => order(a.language) - order(b.language));
-    if (this.allLanguages()) return texts;
-    // "All languages" off: only the one the app shows, in the interface language when it has it.
-    const shown = texts.find(text => text.value === (kind === 'label' ? row.label : row.description)) ?? texts[0];
-    return shown ? [shown] : [];
-  }
-
-  /** The languages to offer adding: every missing one, or with "All languages" off the interface one, if none. */
-  missingOf(row: ClassRow, kind: TextKind): string[] {
-    const texts = this._textsOf(row, kind);
-    if (!this.allLanguages()) return texts.length ? [] : [this._interfaceLanguage()];
-    return DESCRIPTION_LANGUAGES.filter(language => !texts.some(text => text.language === language));
-  }
-
-  private _textsOf(row: ClassRow, kind: TextKind): LanguageText[] {
-    return kind === 'label' ? row.labels : row.descriptions;
-  }
-
-  private _interfaceLanguage(): string {
-    const current = this._translate.currentLang ?? '';
-    return DESCRIPTION_LANGUAGES.includes(current) ? current : DESCRIPTION_LANGUAGES[0];
-  }
-
-  isEditing(row: ClassRow, kind: TextKind, language: string): boolean {
-    const editing = this.editingText();
-    return editing?.row.id === row.id && editing.kind === kind && editing.language === language;
-  }
-
-  /** Opens the editor of the label or description on one language, under the line it was opened from. */
-  editText(row: ClassRow, kind: TextKind, language: string, origin: HTMLElement): void {
-    this.editingText.set({ row, kind, language, origin });
-  }
-
-  closeText(): void {
-    if (!this.savingText()) this.editingText.set(null);
-  }
-
-  saveTexts(row: ClassRow, kind: TextKind, texts: LanguageText[]): void {
-    const t = 'pages.dataModels2.descriptionEditor';
-    this.savingText.set(true);
-    this.editing
-      .saveClassTexts(row.id, kind === 'label' ? { labels: texts } : { descriptions: texts })
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe({
-        next: () => {
-          this.savingText.set(false);
-          this.editingText.set(null);
-          this._notification.openSnackBar(this._translate.instant(`${t}.saved`, { class: row.label }));
-        },
-        error: () => {
-          // The editor stays open with the text, to try again.
-          this.savingText.set(false);
-          this._notification.openSnackBar(this._translate.instant(`${t}.notSaved`), 'error');
-        },
-      });
-  }
-
   /** Edits the class in the data model editor's dialog; see `injectDataModelEditing`. */
   edit(iri: string): void {
     this.editing.editClass(iri);
+  }
+
+  private _navigate(queryParams: Record<string, string | null>): void {
+    this._router.navigate([], {
+      relativeTo: this._route,
+      queryParamsHandling: 'merge',
+      queryParams: { ...this.state.modelParam(), ...queryParams },
+    });
+  }
+
+  private _byLabel(iris: string[]): string[] {
+    return [...new Set(iris)].sort((a, b) => this.state.labelOf(a).localeCompare(this.state.labelOf(b)));
   }
 }
