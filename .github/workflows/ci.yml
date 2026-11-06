@@ -315,8 +315,9 @@ jobs:
       needs.changes.outputs.only_workflows == 'false'
     steps:
       # Mint a short-lived GitHub App token (DaSCH Bot App) scoped to dsp-app.
-      # Used by checkout — so the `git push` below pushes AS the App, not the
-      # built-in GITHUB_TOKEN — and by `gh pr create`. Pushes made with an App
+      # Only the PR step gets it, for `git push` (as the App, not the built-in
+      # GITHUB_TOKEN) and `gh`; the checkout persists no credentials, so the
+      # build steps before it never see a token. Pushes made with an App
       # token DO trigger the `on: push` CI that produces the required checks;
       # GITHUB_TOKEN pushes are suppressed by GitHub's recursion guard, which
       # left those checks unreported and the spec-bump PRs permanently BLOCKED.
@@ -334,7 +335,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@v3
       - id: check
@@ -360,6 +361,7 @@ jobs:
             exit 0
           fi
           SPEC="libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml"
+          gh auth setup-git
           git fetch origin main
           LOCAL_VERSION=$(git show origin/main:"$SPEC" | yq '.info.version')
           REMOTE_VERSION=$(yq '.info.version' "$SPEC")
