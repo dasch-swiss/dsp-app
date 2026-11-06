@@ -163,7 +163,7 @@ def vre_library(
         # Replaces tsconfig.base.json's source mapping, which would compile every library from source.
         "paths": paths,
     }
-    # A loose library gets the flags the Angular CLI's app program compiled it with.
+    # A loose library mirrors the Angular CLI's app program, which compiles every library unstrict.
     strict = package not in LOOSE_LIBRARIES
     compiler_options.update({flag: strict for flag in _STRICT_FLAGS})
     tsconfig = {

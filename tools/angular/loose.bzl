@@ -1,6 +1,8 @@
-"""Libraries allowed to compile with their own tsconfig's `strict` flags off.
+"""Libraries compiled with the Angular CLI app program's flags instead of the strict family.
 
-A closed list: `vre_library` reads it, and no other switch turns the flags off. Each entry maps a
+A closed list: `vre_library` forces `strict`, `noImplicitOverride`,
+`noPropertyAccessFromIndexSignature`, `noImplicitReturns` and `strictTemplates` on for every other
+library, whatever its own tsconfig says, and turns them off for these. Each entry maps a
 library's package to the Linear issue that removes it from this list.
 """
 
