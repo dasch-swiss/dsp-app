@@ -50,7 +50,7 @@ jobs:
 
       - name: Build Angular app (preview configuration)
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-build.json
         run: nix develop --command just build "$PREVIEW_CONFIG"
 
       - name: Authenticate to Google Cloud
@@ -72,12 +72,20 @@ jobs:
       - name: Build and push image
         id: build
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-push.json
           REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app
         run: |
           set -euo pipefail
           digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" "$PREVIEW_CONFIG" | tail -n1)"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-preview
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
       - name: Deploy to Cloud Run
         id: deploy
@@ -193,7 +201,7 @@ jobs:
 
       - name: Build Angular app (preview configuration)
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-build.json
         run: nix develop --command just build "$PREVIEW_CONFIG"
 
       - name: Authenticate to Google Cloud
@@ -215,12 +223,20 @@ jobs:
       - name: Build and push image
         id: build
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-push.json
           REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app
         run: |
           set -euo pipefail
           digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" "$PREVIEW_CONFIG" | tail -n1)"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-preview
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
       - name: Deploy to Cloud Run
         id: deploy

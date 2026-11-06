@@ -49,8 +49,15 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Build and publish Docker image
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-publish.json
         run: nix develop --command just docker-publish
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-publish
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
   trigger-dev-deployment:
     name: Trigger deployment to DEV

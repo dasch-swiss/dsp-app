@@ -157,8 +157,15 @@ jobs:
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Run lint
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-lint.json
         run: nix develop --command just lint
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-lint
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
   test:
     name: DSP-APP Unit tests
@@ -199,7 +206,7 @@ jobs:
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Run test
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --execution_log_json_file=${{ runner.temp }}/exec.json
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-test.json --execution_log_json_file=${{ runner.temp }}/exec.json
         run: nix develop --command just test
       - name: Count actions by mnemonic and runner
         if: always()
@@ -211,6 +218,15 @@ jobs:
           jq -r '[.mnemonic, .runner, (.exitCode // 0)] | @tsv' "$RUNNER_TEMP/exec.json" | sort | uniq -c
           echo "TsProject actions by target:"
           jq -r 'select(.mnemonic == "TsProject") | [.targetLabel, .runner, (.exitCode // 0)] | @tsv' "$RUNNER_TEMP/exec.json" | sort
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-test
+          path: |
+            ${{ runner.temp }}/bep-*.json
+            ${{ runner.temp }}/exec.json
+          if-no-files-found: ignore
 
   dsp-app-e2e-tests:
     name: DSP-APP E2E tests (${{ matrix.runner }})
@@ -280,13 +296,20 @@ jobs:
         run: nix develop .#e2e --command just e2e-stack-up
       - name: Type-check e2e specs
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-e2e-typecheck.json
         run: nix develop .#e2e --command just typecheck-e2e
       - name: Run e2e tests
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-e2e.json
           SPECS: ${{ matrix.specs }}
         run: nix develop .#e2e --command just e2e "$SPECS"
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-e2e-${{ matrix.runner }}
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         if: failure()
@@ -491,12 +514,19 @@ jobs:
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Build Storybook
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-storybook-build.json
         run: nix develop --command just storybook-build
       - name: Run interaction tests
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-storybook-test.json
         run: nix develop --command just storybook-test
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-storybook
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
   pixeleye:
     name: Pixeleye Snapshots
@@ -577,7 +607,7 @@ jobs:
           nix develop --command just pixeleye
           echo "uploaded=true" >> "$GITHUB_OUTPUT"
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-pixeleye.json
           PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
       # Breakpoint run: the `Pages / Breakpoints / …` stories at every breakpoint
@@ -603,9 +633,16 @@ jobs:
         continue-on-error: true
         run: nix develop --command just pixeleye breakpoints
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-pixeleye-breakpoints.json
           PIXELEYE_BREAKPOINTS_TOKEN: ${{ secrets.PIXELEYE_BREAKPOINTS_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-pixeleye
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
       # A cancelled run (a newer push to the branch) SIGKILLs the CLI before its
       # own abort-on-signal handler runs: bash holds the signal until pnpm exits.
       # The build it created stays `uploading`, and pixeleye's stuck-build job
