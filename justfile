@@ -21,6 +21,8 @@ export BAZEL_FLAGS := env("BAZEL_FLAGS", "")
 dsp_app_repo := "daschswiss/dsp-app"
 build_tag := env("BUILD_TAG", `git describe --tag --match 'v[0-9]*' --dirty --abbrev=7 --always`)
 open_api := "libs/vre/3rd-party-services/open-api"
+# The dsp-api checkout whose Docker stack the Cypress suite runs against.
+dsp_api_dir := env("DSP_API_DIR", "../dsp-api")
 
 # Serves a directory (append `--port <port> <dir>`) with `Cache-Control: no-store`, answering
 # unknown paths with its index.html, as a deep link into the app needs.
@@ -34,8 +36,7 @@ help:
 install:
     pnpm install --frozen-lockfile
 
-# Build the bundle in a configuration and serve it on http://localhost:4200, rebuilding on every
-# source change (reload the page to see it); for browsing, not for tests
+# Serve a configuration's bundle on http://localhost:4200, rebuilt on every change (reload to see it)
 serve config="production":
     #!/usr/bin/env bash
     set -euo pipefail
@@ -45,8 +46,7 @@ serve config="production":
     trap 'kill $!' EXIT
     {{ static_server }} --port 4200 "$(bazel info bazel-bin "$flag" $BAZEL_FLAGS 2>/dev/null)/apps/dsp-app/dist"
 
-# Build Storybook (bazel-bin/storybook) and its breakpoint-stories variant
-# (bazel-bin/storybook_breakpoints); a story's type error fails here
+# Build Storybook and its breakpoint-stories variant; a story's type error fails here
 storybook-build:
     bazel build //:storybook //:storybook_breakpoints $BAZEL_FLAGS
 
@@ -59,8 +59,7 @@ storybook:
     trap 'kill $!' EXIT
     {{ static_server }} --port 4400 "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/storybook"
 
-# Run the Storybook interaction tests against the Bazel-built Storybook with the dev shell's
-# Playwright browsers
+# Run the interaction tests against the Bazel-built Storybook with the dev shell's browsers
 storybook-test: install
     #!/usr/bin/env bash
     set -euo pipefail
@@ -72,8 +71,7 @@ storybook-test: install
     # four the spike saw ChunkLoadError.
     pnpm exec test-storybook -c .storybook --url=http://127.0.0.1:6006 --index-json --ci --maxWorkers=2
 
-# Build the application bundle in a configuration (bazel-bin/apps/dsp-app/dist), the named Bazel
-# targets, or //... with no argument
+# Build the bundle in a configuration (bazel-bin/apps/dsp-app/dist), the named Bazel targets, or //...
 build *ARGS:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -193,6 +191,35 @@ ci: build test lint node-version-check playwright-version-check tsconfig-paths-c
 typecheck-e2e: install openapi-generate
     pnpm exec tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json
 
+# Start the dsp-api stack Cypress runs against from DSP_API_DIR: a fresh test database, sipi, ingest, API
+e2e-stack-up:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd "{{ dsp_api_dir }}"
+    just init-db-test
+    docker compose -f docker-compose.yml up -d sipi ingest api
+    ./modules/webapi/scripts/wait-for-api.sh
+
+# Stop the dsp-api stack
+e2e-stack-down:
+    cd "{{ dsp_api_dir }}" && docker compose -f docker-compose.yml down
+
+# Spec paths are relative to apps/dsp-app, as Cypress takes them. Chrome where CHROME_BIN is set
+# (devShells.e2e on Linux), Cypress's Electron otherwise.
+# Run Cypress specs against the production bundle on port 4200 (`just e2e-stack-up` first)
+e2e +specs: install openapi-generate
+    #!/usr/bin/env bash
+    set -euo pipefail
+    bazel build //apps/dsp-app:dist $BAZEL_FLAGS
+    {{ static_server }} --port 4200 "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/apps/dsp-app/dist" &
+    trap 'kill $!' EXIT
+    timeout 60 bash -c 'until curl -sf -o /dev/null http://127.0.0.1:4200/; do sleep 0.5; done'
+    browser=electron
+    [ -z "${CHROME_BIN:-}" ] || browser="$CHROME_BIN"
+    specs=({{ specs }})
+    cd apps/dsp-app
+    pnpm exec cypress run --browser "$browser" --spec "$(IFS=,; echo "${specs[*]}")"
+
 # Generate the OpenAPI client with Bazel and copy it to src/generated for the IDE
 openapi-generate:
     #!/usr/bin/env bash
@@ -300,14 +327,13 @@ docs-lint:
 docs-clean:
     rm -rf site/
 
-# Build the DSP-APP image for an architecture (amd64, arm64; the host's by default) and load it into
-# Docker as daschswiss/dsp-app:latest and :<build tag>
+# Load the image for an architecture (amd64, arm64; the host's by default) as :latest and :<build tag>
 docker-build-app arch="":
     bazel run $BAZEL_FLAGS //apps/dsp-app/image:load{{ if arch == "" { "" } else { "_" + arch } }}
     docker tag {{ dsp_app_repo }}:latest "{{ dsp_app_repo }}:{{ build_tag }}"
 
-# Publish the multi-arch DSP-APP image as :<build tag> and :latest, stamped (needs a registry login,
-# which crane and oci_push read from ~/.docker/config.json)
+# crane and oci_push read the registry login from ~/.docker/config.json.
+# Publish the stamped multi-arch image as :<build tag> and :latest
 docker-publish-app repository=("index.docker.io/" + dsp_app_repo):
     #!/usr/bin/env bash
     set -euo pipefail
@@ -319,8 +345,7 @@ docker-publish-app repository=("index.docker.io/" + dsp_app_repo):
     crane index append -m "$repo:$tag-amd64" -m "$repo:$tag-arm64" -t "$repo:$tag"
     crane tag "$repo:$tag" latest
 
-# Push a stamped amd64 image of a configuration's bundle as REPOSITORY:TAG and print its digest on
-# the last line, for the Cloud Run preview (needs a registry login)
+# Push a stamped amd64 image of a configuration's bundle and print its digest last (Cloud Run preview)
 docker-push-preview repository tag config="dev-server":
     bazel run --stamp $BAZEL_FLAGS "--//apps/dsp-app:config={{ config }}" //apps/dsp-app/image:push_amd64 -- --repository "{{ repository }}" --tag "{{ tag }}"
     crane digest "{{ repository }}:{{ tag }}"
@@ -332,7 +357,6 @@ docker-publish: docker-publish-app
 docker-image-tag:
     @echo {{ build_tag }}
 
-# Test the image: the bundle is served, nginx forwards landing pages to a stub dsp-api, and the
-# compose healthcheck's command passes inside the container (needs Docker)
+# Test the image: bundle served, landing pages forwarded to a stub dsp-api, compose healthcheck inside
 nginx-smoke-test: docker-build-app
     ./scripts/nginx-smoke-test.sh
