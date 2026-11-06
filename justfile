@@ -365,7 +365,7 @@ docker-build-app arch="":
     docker tag {{ dsp_app_repo }}:latest "{{ dsp_app_repo }}:{{ build_tag }}"
 
 # crane and oci_push read the registry login from ~/.docker/config.json.
-# Publish the stamped multi-arch image as :<build tag> and :latest
+# Publish the stamped multi-arch image as :<build tag>, and as :latest with DOCKER_PUBLISH_LATEST=true
 docker-publish-app repository=("index.docker.io/" + dsp_app_repo):
     #!/usr/bin/env bash
     set -euo pipefail
@@ -375,7 +375,10 @@ docker-publish-app repository=("index.docker.io/" + dsp_app_repo):
       bazel run --stamp $BAZEL_FLAGS "//apps/dsp-app/image:push_$arch" -- --repository "$repo" --tag "$tag-$arch"
     done
     crane index append -m "$repo:$tag-amd64" -m "$repo:$tag-arm64" -t "$repo:$tag"
-    crane tag "$repo:$tag" latest
+    # Only deploy.yml sets it, for main and v* tags; a publish from any other branch leaves :latest.
+    if [ "${DOCKER_PUBLISH_LATEST:-}" = true ]; then
+      crane tag "$repo:$tag" latest
+    fi
 
 # Push a stamped amd64 image of a configuration's bundle and print its digest last (Cloud Run preview)
 docker-push-preview repository tag config:

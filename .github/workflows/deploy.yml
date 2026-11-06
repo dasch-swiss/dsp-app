@@ -55,6 +55,7 @@ jobs:
       - name: Build and publish Docker image
         env:
           BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-publish.json
+          DOCKER_PUBLISH_LATEST: 'true'
         run: nix develop --command just docker-publish
       - name: Upload the build event logs
         if: always()
