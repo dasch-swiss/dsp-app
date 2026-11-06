@@ -1,0 +1,62 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@rules_angular//src/ts_project:index.bzl", "ts_project")
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_jest_test")
+
+# Plain TypeScript with no Angular, the reference `type:util` shape of ADR-0005; package.json stays
+# for the shape ADR-0005 describes.
+SRCS = glob(
+    ["src/**/*.ts"],
+    exclude = LIBRARY_EXCLUDES,
+)
+
+# tsconfig.lib.json with the output beside the sources; a checked-in `outDir` would win and emit
+# nothing.
+write_file(
+    name = "tsconfig_bazel_json",
+    out = "tsconfig.bazel.json",
+    content = [json.encode({
+        "extends": "./tsconfig.lib.json",
+        "compilerOptions": {"outDir": "."},
+    })],
+)
+
+ts_config(
+    name = "tsconfig_bazel",
+    src = ":tsconfig_bazel_json",
+    deps = [
+        "tsconfig.json",
+        "tsconfig.lib.json",
+        "//:tsconfig_base",
+    ],
+)
+
+ts_project(
+    name = "calendar",
+    srcs = SRCS,
+    declaration = True,
+    resolve_json_module = True,
+    source_map = True,
+    transpiler = "tsc",
+    tsconfig = ":tsconfig_bazel",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:ambient_types",
+        "//:node_modules/@types/node",
+        "//:node_modules/tslib",
+    ],
+)
+
+# What a dependent library's Jest target runs on (vre_library's `sources`).
+js_library(
+    name = "sources",
+    srcs = SRCS,
+    visibility = ["//visibility:public"],
+)
+
+vre_jest_test(
+    name = "test",
+    srcs = SRCS + glob(TEST_SRCS),
+    size = "small",
+)

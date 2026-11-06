@@ -7,7 +7,7 @@
   },
   "include": ["src/**/*.ts"],
   "exclude": [
-    "jest.config.ts",
+    "jest.config.js",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
     "**/*.stories.ts",

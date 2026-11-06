@@ -24,6 +24,10 @@ SCOPES = ["shared", "project", "ontology", "search", "user", "system", "app"]
 # scope are written: vre_library reads its own entry.
 LIBRARIES = {
     "//libs/vre/3rd-party-services/open-api": struct(type = "data-access", scope = "shared"),
+    "//libs/vre/core/config": struct(type = "data-access", scope = "shared"),
+    "//libs/vre/shared/calendar": struct(type = "util", scope = "shared"),
+    "//libs/vre/ui/notification": struct(type = "util", scope = "shared"),
+    "//libs/vre/ui/progress-indicator": struct(type = "ui", scope = "shared"),
 }
 
 def scope_may_depend_on(src_scope, dst_scope):
