@@ -13,6 +13,10 @@ on:
   schedule:
     - cron: '0 2 * * *'  # daily at 02:00 UTC — clean up stale previews
 
+# The bundle configuration every preview is built in: the DEV API.
+env:
+  PREVIEW_CONFIG: dev-server
+
 jobs:
   deploy-preview:
     name: Build and deploy PR preview
@@ -44,10 +48,10 @@ jobs:
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
 
-      - name: Build Angular app (dev-server config → DEV API)
+      - name: Build Angular app (preview configuration)
         env:
           BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
-        run: nix develop --command just build dev-server
+        run: nix develop --command just build "$PREVIEW_CONFIG"
 
       - name: Authenticate to Google Cloud
         id: auth
@@ -72,7 +76,7 @@ jobs:
           REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app
         run: |
           set -euo pipefail
-          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" dev-server | tail -n1)"
+          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" "$PREVIEW_CONFIG" | tail -n1)"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to Cloud Run
@@ -187,10 +191,10 @@ jobs:
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
 
-      - name: Build Angular app (dev-server config → DEV API)
+      - name: Build Angular app (preview configuration)
         env:
           BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
-        run: nix develop --command just build dev-server
+        run: nix develop --command just build "$PREVIEW_CONFIG"
 
       - name: Authenticate to Google Cloud
         id: auth
@@ -215,7 +219,7 @@ jobs:
           REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app
         run: |
           set -euo pipefail
-          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" dev-server | tail -n1)"
+          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" "$PREVIEW_CONFIG" | tail -n1)"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to Cloud Run
