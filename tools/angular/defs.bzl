@@ -1,6 +1,12 @@
 """Macros for dsp-app's Angular and TypeScript libraries."""
 
 load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@rules_angular//src/ng_project:index.bzl", "ng_project")
+load("@rules_sass//src:index.bzl", "sass_binary")
+load(":loose.bzl", "LOOSE_LIBRARIES")
+load(":visibility.bzl", "ENFORCE_VISIBILITY", "LIBRARIES", "library_visibility")
 
 # What the shared preset (jest.preset.js) loads, for every test target.
 _JEST_RUNTIME = [
@@ -59,3 +65,135 @@ def vre_jest_test(name, srcs, deps = [], data = [], config = "jest.config.js", s
         shard_count = shard_count,
         **kwargs
     )
+
+# What every library compiles against: tsconfig.base.json sets `importHelpers` and the libraries'
+# `types` name the declarations in types/.
+_LIBRARY_DEPS = [
+    Label("//:ambient_types"),
+    Label("//:node_modules/tslib"),
+]
+
+def _alias(label):
+    # tsconfig.base.json's naming: libs/vre/ui/ui is @dasch-swiss/vre/ui/ui.
+    return "@dasch-swiss/" + label.package.removeprefix("libs/")
+
+def _is_library(label):
+    return label.repo_name == "" and label.package.startswith("libs/")
+
+def _css_target(scss):
+    return "css_" + scss.removesuffix(".scss").replace("/", "_").replace("-", "_").replace(".", "_")
+
+def vre_library(
+        name,
+        srcs,
+        deps = [],
+        stylesheets = [],
+        sass_deps = [],
+        assets = [],
+        extra_visibility = [],
+        test_srcs = [],
+        test_deps = [],
+        test_data = [],
+        jest_config = "jest.config.js"):
+    """An Angular library: its stylesheets, its ng_project compile and its Jest target.
+
+    The library's ADR-0001 type and scope come from `LIBRARIES` in visibility.bzl, which fails the
+    load for a package it does not list. The generated tsconfig maps only the declared library
+    `deps` to their compiled `.d.ts`, so an import of any other library fails with TS2307
+    (Decision 7 of DEV-7767, evidence in docs/contribution/bazel-baselines.md).
+
+    Args:
+        name: the ng_project target; by convention the package's last path segment.
+        srcs: the library's TypeScript sources, listed explicitly; never a glob over a gitignored
+            directory.
+        deps: other libraries and npm packages the sources import.
+        stylesheets: `.scss` files, each compiled to the `.css` beside it that `styleUrl` names.
+        sass_deps: sass_library targets the stylesheets `@use`.
+        assets: templates and other files the compiler reads.
+        extra_visibility: packages ADR-0001 does not allow but that depend on the library today,
+            each with a comment naming the ADR and the issue that removes it.
+        test_srcs: specs and test-setup.ts; no Jest target without them.
+        test_deps: what only the specs import.
+        test_data: files a spec reads at run time.
+        jest_config: the library's Jest config.
+    """
+    package = "//" + native.package_name()
+    if package not in LIBRARIES:
+        fail("%s is not in LIBRARIES in tools/angular/visibility.bzl; add it with its ADR-0001 type and scope" % package)
+    kind = LIBRARIES[package]
+    allowed = library_visibility(kind.type, kind.scope) + extra_visibility
+    visibility = allowed if ENFORCE_VISIBILITY else ["//visibility:public"]
+
+    css = []
+    for scss in stylesheets:
+        directory, _, file = scss.rpartition("/")
+        sass_binary(
+            name = _css_target(scss),
+            src = scss,
+            output_dir = directory,
+            output_name = file.removesuffix(".scss") + ".css",
+            sourcemap = False,
+            deps = sass_deps,
+        )
+        css.append(":" + _css_target(scss))
+
+    paths = {}
+    for dep in deps:
+        label = native.package_relative_label(dep)
+        if _is_library(label):
+            paths[_alias(label)] = [label.package + "/src/index.d.ts"]
+
+    compiler_options = {
+        # Without it the checked-in outDir wins and ng_project silently emits nothing.
+        "outDir": ".",
+        "module": "preserve",
+        "moduleResolution": "bundler",
+        # Replaces tsconfig.base.json's source mapping, which would compile every library from source.
+        "paths": paths,
+    }
+    tsconfig = {
+        "extends": "./tsconfig.lib.json",
+        "compilerOptions": compiler_options,
+        "include": srcs,
+    }
+    if package in LOOSE_LIBRARIES:
+        compiler_options["strict"] = False
+        tsconfig["angularCompilerOptions"] = {
+            "strictInjectionParameters": False,
+            "strictInputAccessModifiers": False,
+            "strictTemplates": False,
+        }
+    write_file(
+        name = "tsconfig_bazel_json",
+        out = "tsconfig.bazel.json",
+        content = [json.encode_indent(tsconfig)],
+    )
+    ts_config(
+        name = "tsconfig_bazel",
+        src = ":tsconfig_bazel_json",
+        deps = native.glob(["tsconfig*.json"]) + [Label("//:tsconfig_base")],
+    )
+
+    ng_project(
+        name = name,
+        srcs = srcs,
+        assets = css + assets,
+        tsconfig = ":tsconfig_bazel",
+        declaration = True,
+        declaration_map = True,
+        resolve_json_module = True,
+        source_map = True,
+        # ngc emits the .js; a separate transpiler would skip the Angular compilation.
+        transpiler = "tsc",
+        deps = deps + _LIBRARY_DEPS,
+        visibility = visibility,
+    )
+
+    if test_srcs:
+        vre_jest_test(
+            name = "test",
+            srcs = srcs + test_srcs,
+            deps = deps + test_deps,
+            data = assets + test_data,
+            config = jest_config,
+        )

@@ -4,6 +4,10 @@
 package groups it names are declared in `tools/angular/BUILD.bazel` from `LIBRARIES`.
 """
 
+# Off until every library carries its type and scope; vre_library then applies the computed
+# visibility instead of //visibility:public.
+ENFORCE_VISIBILITY = False
+
 # Decision 2 of ADR-0001: the types a library of each type may depend on.
 TYPE_MAY_DEPEND_ON = {
     "app": ["feature", "ui", "data-access", "util"],
@@ -16,7 +20,8 @@ TYPE_MAY_DEPEND_ON = {
 SCOPES = ["shared", "project", "ontology", "search", "user", "system", "app"]
 
 # Every library package with its ADR-0001 type and scope, e.g.
-# "//libs/vre/ui/ui": struct(type = "ui", scope = "shared").
+# "//libs/vre/ui/ui": struct(type = "ui", scope = "shared"). The only place a library's type and
+# scope are written: vre_library reads its own entry.
 LIBRARIES = {
 }
 
@@ -38,9 +43,6 @@ def library_visibility(type, scope):
     """The visibility of a library: the packages whose type and scope may depend on it."""
     return [Label("//tools/angular:" + dependents_group_name(type, scope))]
 
-def _package(label):
-    return label.removeprefix("//")
-
 def declare_package_groups():
     """One group per type tier, one per scope, and one per type and scope listing its dependents.
 
@@ -50,19 +52,19 @@ def declare_package_groups():
     for type in TYPE_MAY_DEPEND_ON:
         native.package_group(
             name = "type_" + type.replace("-", "_"),
-            packages = [_package(p) for p, lib in LIBRARIES.items() if lib.type == type],
+            packages = [p for p, lib in LIBRARIES.items() if lib.type == type],
         )
     for scope in SCOPES:
         native.package_group(
             name = "scope_" + scope,
-            packages = [_package(p) for p, lib in LIBRARIES.items() if lib.scope == scope],
+            packages = [p for p, lib in LIBRARIES.items() if lib.scope == scope],
         )
     for type in TYPE_MAY_DEPEND_ON:
         for scope in SCOPES:
             native.package_group(
                 name = dependents_group_name(type, scope),
                 packages = [
-                    _package(p)
+                    p
                     for p, lib in LIBRARIES.items()
                     if type in TYPE_MAY_DEPEND_ON[lib.type] and scope_may_depend_on(lib.scope, scope)
                 ],

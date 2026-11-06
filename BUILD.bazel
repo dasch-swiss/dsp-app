@@ -16,6 +16,12 @@ ts_config(
     src = "tsconfig.base.json",
 )
 
+# The declarations the libraries' `types` name, found through tsconfig.base.json's typeRoots.
+js_library(
+    name = "ambient_types",
+    srcs = glob(["types/*.d.ts"]),
+)
+
 # The shared Jest preset and what it reads; every vre_jest_test depends on it.
 js_library(
     name = "jest_preset",
