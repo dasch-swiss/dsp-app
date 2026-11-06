@@ -65,7 +65,10 @@ export class ImageSettingsComponent implements OnInit {
 
   private _loadedState?: ImageSettingsState;
 
-  minMaxInputMask(min: number, max: number) {
+  minMaxInputMask(
+    min: number,
+    max: number
+  ): { mask: typeof IMask.MaskedNumber; min: number; max: number; autofix: boolean } {
     return {
       mask: IMask.MaskedNumber,
       min,
