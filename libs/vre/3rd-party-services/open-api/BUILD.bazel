@@ -52,7 +52,7 @@ vre_library(
         "src/lib/type-guards.spec.ts",
         "src/test-setup.ts",
     ],
-    # ADR-0001 decision 7: ui/string-literal declares its language-string shape locally (DEV-TBD-3).
+    # ADR-0001 decision 7: ui/string-literal declares its language-string shape locally (DEV-7552).
     extra_visibility = [
         "//libs/vre/ui/string-literal:__pkg__",
     ],

@@ -8,7 +8,7 @@ vre_library(
     ),
     test_size = "small",
     test_srcs = glob(TEST_SRCS),
-    # ADR-0001 decision 7: AvailableLanguage moves to a `type:util` library (DEV-TBD-3).
+    # ADR-0001 decision 7: AvailableLanguage moves to a `type:util` library (DEV-7552).
     extra_visibility = [
         "//libs/vre/ui/string-literal:__pkg__",
     ],

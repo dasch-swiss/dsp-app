@@ -17,7 +17,7 @@ vre_library(
     testing_deps = ["//:node_modules/@types/jest"],
     testing_srcs = TESTING_SRCS,
     # ADR-0001 decision 7: pickPreferredLanguageString moves to a `type:util` library and
-    # ui/string-literal stops injecting LocalizationService (DEV-TBD-3).
+    # ui/string-literal stops injecting LocalizationService (DEV-7552).
     extra_visibility = [
         "//libs/vre/ui/string-literal:__pkg__",
     ],

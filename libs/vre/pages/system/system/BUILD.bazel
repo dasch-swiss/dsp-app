@@ -12,7 +12,7 @@ vre_library(
     test_size = "small",
     test_srcs = glob(TEST_SRCS),
     # ADR-0004: CreateUserDialogComponent and UserDescriptionComponent move with the user dialogs
-    # (DEV-TBD-2).
+    # (DEV-7555).
     extra_visibility = [
         "//libs/vre/pages/project/project:__pkg__",
     ],
