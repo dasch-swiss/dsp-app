@@ -1,0 +1,3 @@
+load(":visibility.bzl", "declare_package_groups")
+
+declare_package_groups()

@@ -4,7 +4,17 @@ const [swcTransformer, swcConfig] = swcAngularJestTransformer({ useDefineForClas
 // Set jsc.target es5 so SWC emits var-style (not native class) — avoids TDZ errors in circular
 // dependency chains that were silently tolerated by TypeScript's CJS emit (direct exports assignment).
 const { env: _env, ...swcConfigWithoutEnv } = swcConfig;
-const swcConfigEs5 = { ...swcConfigWithoutEnv, jsc: { ...swcConfigWithoutEnv.jsc, target: 'es5' } };
+// SWC resolves a plugin named by package from process.cwd()/node_modules, which Bazel's runfiles do
+// not have, and writes its plugin cache beside it; pass the plugin by path and cache under TEST_TMPDIR.
+const swcExperimental = {
+  ...swcConfigWithoutEnv.jsc.experimental,
+  plugins: swcConfigWithoutEnv.jsc.experimental.plugins.map(([plugin, options]) => [require.resolve(plugin), options]),
+  ...(process.env.TEST_TMPDIR ? { cacheRoot: `${process.env.TEST_TMPDIR}/swc` } : {}),
+};
+const swcConfigEs5 = {
+  ...swcConfigWithoutEnv,
+  jsc: { ...swcConfigWithoutEnv.jsc, target: 'es5', experimental: swcExperimental },
+};
 
 module.exports = {
   testEnvironment: 'jsdom',

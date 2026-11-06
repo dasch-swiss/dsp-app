@@ -1,3 +1,5 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 
 package(default_visibility = ["//visibility:public"])
@@ -7,7 +9,19 @@ npm_link_all_packages(name = "node_modules")
 exports_files([
     "package.json",
     "pnpm-lock.yaml",
-    "tsconfig.base.json",
-    "jest.preset.js",
-    "jest.resolver.js",
 ])
+
+ts_config(
+    name = "tsconfig_base",
+    src = "tsconfig.base.json",
+)
+
+# The shared Jest preset and what it reads; every vre_jest_test depends on it.
+js_library(
+    name = "jest_preset",
+    srcs = [
+        "jest.preset.js",
+        "jest.resolver.js",
+        "tsconfig.base.json",
+    ],
+)
