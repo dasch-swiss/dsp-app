@@ -1,7 +1,7 @@
 load("@bazel_lib//lib:copy_to_bin.bzl", "copy_to_bin")
 load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
 load("@rules_sass//src:index.bzl", "sass_library")
-load("//tools/angular:defs.bzl", "vre_application")
+load("//tools/angular:defs.bzl", "TEST_SRCS", "vre_application")
 
 # The application bundle in a configuration: `just build <config>`, or
 # `bazel build //apps/dsp-app:dist --//apps/dsp-app:config=<config>`.
@@ -71,6 +71,9 @@ vre_application(
         exclude = ["src/config/build.json"],
     ),
     stylesheets = glob(["src/app/**/*.scss"]),
+    # index.html.spec.ts reads the page from disk.
+    test_data = ["src/index.html"],
+    test_srcs = glob(TEST_SRCS),
     deps = [
         "//:node_modules/@angular/common",
         "//:node_modules/@angular/core",
@@ -111,6 +114,3 @@ copy_to_bin(
     srcs = glob(["src/assets/i18n/*.json"]),
     visibility = ["//libs/vre/shared/app-help-page:__pkg__"],
 )
-
-# index.html.spec.ts reads the page from disk.
-exports_files(["src/index.html"])

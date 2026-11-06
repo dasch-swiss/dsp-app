@@ -338,7 +338,10 @@ def vre_application(
         scripts = [],
         static_files = [],
         optimized_configs = ["production"],
-        development_configs = ["development"]):
+        development_configs = ["development"],
+        test_srcs = [],
+        test_deps = [],
+        test_data = []):
     """The Angular application: its shell's ng_project, the esbuild bundle and the `name` directory.
 
     The configuration comes from the package's `config_setting`s, one per key of `environments`
@@ -361,6 +364,9 @@ def vre_application(
         optimized_configs: configurations bundled minified and without Angular's dev-mode checks.
         development_configs: configurations that resolve packages without the `production`
             export condition.
+        test_srcs: the shell's specs and test-setup.ts; no Jest target without them.
+        test_deps: what only the specs import.
+        test_data: files a spec reads at run time.
     """
     package = native.package_name()
     copy_file(
@@ -391,6 +397,19 @@ def vre_application(
         deps = deps + _LIBRARY_DEPS,
     )
     eslint_config()
+
+    js_library(
+        name = "sources",
+        srcs = srcs,
+        deps = [_sources(d) for d in deps],
+    )
+    if test_srcs:
+        vre_jest_test(
+            name = "test",
+            srcs = test_srcs,
+            deps = [":sources"] + [_sources(d) for d in test_deps],
+            data = test_data,
+        )
 
     # Every library's alias to its compiled entry point; esbuild runs in the bin directory.
     alias = {"@dasch-swiss/dsp-js": "./libs/dsp-js/src/index.js"}
