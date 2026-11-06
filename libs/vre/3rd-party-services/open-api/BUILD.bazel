@@ -1,8 +1,16 @@
 load("@bazel_lib//lib:run_binary.bzl", "run_binary")
 load("//tools/openapi:openapi_files.bzl", "OPENAPI_FILES")
 
-# The generated client. The arguments restate openapitools.json's `generators.api`; change both
-# together (the file is an input so an edit to it reruns the action).
+# openapi-generator-cli's `generate` arguments, restating openapitools.json's `generators.api`;
+# change both together (the file is an input, so an edit to it reruns the actions).
+GENERATOR_ARGS = [
+    "generate",
+    "--generator-name=typescript-angular",
+    "--input-spec=$(execpath dsp-api_spec.yaml)",
+    "--additional-properties=fileNaming=kebab-case,serviceFileSuffix=-api.service,serviceSuffix=ApiService,ngModule=false",
+]
+
+# The generated client, every file declared by name.
 run_binary(
     name = "generated",
     srcs = [
@@ -10,13 +18,22 @@ run_binary(
         "openapitools.json",
     ],
     outs = ["generated/" + f for f in OPENAPI_FILES],
-    args = [
-        "generate",
-        "--generator-name=typescript-angular",
-        "--input-spec=$(execpath dsp-api_spec.yaml)",
-        "--output=$(RULEDIR)/generated",
-        "--additional-properties=fileNaming=kebab-case,serviceFileSuffix=-api.service,serviceSuffix=ApiService,ngModule=false",
+    args = GENERATOR_ARGS + ["--output=$(RULEDIR)/generated"],
+    execution_requirements = {"block-network": "1"},
+    mnemonic = "OpenApiGenerate",
+    tool = "//tools/openapi:openapi_generator",
+)
+
+# The same generation as one directory, from which `just openapi-generate` refreshes the manifest
+# when a spec change adds or removes a file.
+run_binary(
+    name = "generated_tree",
+    srcs = [
+        "dsp-api_spec.yaml",
+        "openapitools.json",
     ],
+    out_dirs = ["generated_tree"],
+    args = GENERATOR_ARGS + ["--output=$(RULEDIR)/generated_tree"],
     execution_requirements = {"block-network": "1"},
     mnemonic = "OpenApiGenerate",
     tool = "//tools/openapi:openapi_generator",

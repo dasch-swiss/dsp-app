@@ -25,3 +25,28 @@ js_library(
         "tsconfig.base.json",
     ],
 )
+
+# The flat ESLint config and what it loads, for the lint aspect. `prettier/prettier` reads
+# .prettierrc; without it the rule reports every quote in every file.
+js_library(
+    name = "eslintrc",
+    srcs = [
+        ".prettierrc",
+        "eslint.config.angular.mjs",
+        "eslint.config.mjs",
+    ],
+    deps = [
+        ":node_modules/@eslint/js",
+        ":node_modules/@typescript-eslint/parser",
+        ":node_modules/angular-eslint",
+        ":node_modules/eslint-config-prettier",
+        ":node_modules/eslint-plugin-ban",
+        ":node_modules/eslint-plugin-import",
+        ":node_modules/eslint-plugin-prettier",
+        ":node_modules/eslint-plugin-storybook",
+        ":node_modules/eslint-plugin-unused-imports",
+        ":node_modules/globals",
+        ":node_modules/prettier",
+        ":node_modules/typescript-eslint",
+    ],
+)

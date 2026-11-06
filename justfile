@@ -1,0 +1,185 @@
+# dsp-app's task runner: CI runs `nix develop --command just <recipe>`.
+#
+#   just build [CONFIG | TARGETS...]  the bundle in a configuration (from DEV-7767's Phase 7), or
+#                                     the named Bazel targets; no argument builds //...
+#   just test [TARGETS...]            every Bazel test target, or the named ones
+#   just lint                         ESLint over every project's flat config
+#   just ci                           the gate: build, test, lint and the version checks
+#
+# An argument starting with `//` is a target list; anything else is a configuration name. Every
+# Bazel call appends $BAZEL_FLAGS, which CI sets to the remote flags plus --lockfile_mode=error;
+# no recipe takes Bazel flags positionally.
+
+set shell := ["bash", "-euo", "pipefail", "-c"]
+
+export BAZEL_FLAGS := env("BAZEL_FLAGS", "")
+
+dsp_app_repo := "daschswiss/dsp-app"
+build_tag := env("BUILD_TAG", `git describe --tag --match 'v[0-9]*' --dirty --abbrev=7 --always`)
+open_api := "libs/vre/3rd-party-services/open-api"
+
+# List the recipes
+help:
+    @just --list --unsorted
+
+# Install the npm dependencies from pnpm-lock.yaml
+install:
+    pnpm install --frozen-lockfile
+
+# Build the named Bazel targets, or //... with no argument
+build *ARGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    args=({{ ARGS }})
+    if [ "${#args[@]}" -gt 0 ] && [[ "${args[0]}" != //* ]]; then
+      echo "just build ${args[0]}: the application bundle builds with Bazel from DEV-7767's Phase 7 on; pass Bazel targets (//...) until then" >&2
+      exit 1
+    fi
+    bazel build "${args[@]:-//...}" $BAZEL_FLAGS
+
+# Run the named Bazel test targets, or every test target
+test *TARGETS:
+    bazel test {{ if TARGETS == "" { "//..." } else { TARGETS } }} $BAZEL_FLAGS
+
+# ESLint over every project's flat config, each file under its nearest eslint.config.mjs
+lint: install openapi-generate
+    pnpm exec eslint --flag v10_config_lookup_from_file $(git ls-files '*/eslint.config.mjs' | xargs -n1 dirname)
+
+# Check that `just lint` fails on a seeded violation
+lint-selftest:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    seed=libs/dsp-js/src/lint-seed.ts
+    trap 'rm -f "$seed"' EXIT
+    printf 'const unusedLocal = 1;\nexport {};\n' >"$seed"
+    if just lint; then
+      echo "lint-selftest: just lint passed on $seed, which it must reject" >&2
+      exit 1
+    fi
+    echo "lint-selftest: just lint rejected the seeded violation"
+
+# The gate CI runs
+ci: build test lint node-version-check playwright-version-check
+
+# Generate the OpenAPI client with Bazel and copy it to src/generated for the IDE
+openapi-generate:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # A spec change can add or remove generated files, so refresh the manifest the action declares.
+    bazel build //{{ open_api }}:generated_tree $BAZEL_FLAGS
+    bin="$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)"
+    tools/openapi/write_manifest.sh "$bin/{{ open_api }}/generated_tree"
+    bazel build //{{ open_api }}:generated $BAZEL_FLAGS
+    rm -rf {{ open_api }}/src/generated
+    cp -R "$bin/{{ open_api }}/generated" {{ open_api }}/src/generated
+    chmod -R u+w {{ open_api }}/src/generated
+
+# Compare the vendored dsp-api spec with the dev API's
+openapi-check:
+    ./scripts/check-openapi-sync.sh
+
+# Download the dev API's spec and regenerate the client
+openapi-update:
+    curl -fsSL -o {{ open_api }}/dsp-api_spec.yaml https://api.dev.dasch.swiss/api/docs/docs.yaml
+    just openapi-generate
+
+# Fail when the dev shell's Node and Bazel's Node differ in major version
+node-version-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    bazel_node="$(sed -n 's/^node.toolchain(node_version = "\([0-9.]*\)")$/\1/p' MODULE.bazel)"
+    shell_node="$(node --version | sed 's/^v//')"
+    if [ "${bazel_node%%.*}" != "${shell_node%%.*}" ]; then
+      echo "Node majors differ: MODULE.bazel pins $bazel_node, the dev shell has $shell_node" >&2
+      exit 1
+    fi
+    echo "Node $bazel_node (Bazel) and $shell_node (dev shell)"
+
+# Fail when package.json's Playwright pin and the dev shell's playwright-driver differ
+playwright-version-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    driver="$(nix eval --raw --inputs-from . nixpkgs#playwright-driver.version)"
+    # @pixeleye/cli-install>playwright-core is held at 1.59.0 on purpose and not compared.
+    for pkg in playwright playwright-core; do
+      pin="$(node -p "require('./package.json').pnpm.overrides['$pkg']")"
+      if [ "$pin" != "$driver" ]; then
+        echo "package.json pins $pkg $pin, the dev shell's playwright-driver is $driver" >&2
+        exit 1
+      fi
+    done
+    echo "playwright $driver"
+
+# Fail when a tsconfig.base.json alias has no Bazel package
+tsconfig-paths-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    missing=0
+    while read -r alias target; do
+      dir="${target%/src/*}"
+      if [ ! -f "$dir/BUILD.bazel" ]; then
+        echo "$alias maps to $target, but $dir has no BUILD.bazel" >&2
+        missing=1
+      fi
+    done < <(node -e 'const p = require("./tsconfig.base.json").compilerOptions.paths; for (const [a, [t]] of Object.entries(p)) console.log(a, t)')
+    exit "$missing"
+
+# Refresh MODULE.bazel.lock and pnpm-lock.yaml
+lock-update:
+    bazel mod deps --lockfile_mode=update
+    pnpm install --lockfile-only
+
+# Inject and upload Sentry source maps for a copy of a built bundle (needs SENTRY_AUTH_TOKEN)
+sentry-sourcemaps DIST:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    : "${SENTRY_AUTH_TOKEN:?SENTRY_AUTH_TOKEN is not set}"
+    copy="$(mktemp -d)"
+    trap 'rm -rf "$copy"' EXIT
+    cp -R "{{ DIST }}/." "$copy"
+    pnpm exec sentry-cli sourcemaps inject --org dasch --project javascript-angular "$copy"
+    pnpm exec sentry-cli sourcemaps upload --org dasch --project javascript-angular "$copy"
+
+# Compare the dsp-js npm package with the last published @dasch-swiss/dsp-js
+publish-dsp-js-check:
+    bazel build //libs/dsp-js:npm_package $BAZEL_FLAGS
+    ./scripts/publish-dsp-js-check.sh "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/libs/dsp-js/npm_package"
+
+# List focused or skipped tests (fdescribe, fit, .only, xit, .skip)
+find-ignored-tests:
+    @git grep -n -E '(^|[^[:alnum:]_.])((fdescribe|fit|xdescribe|xit)|(describe|it|test)\.(only|skip))\(' -- '*.spec.ts' '*.cy.ts' || echo "no focused or skipped tests"
+
+# Build the docs into site/
+docs-build:
+    mkdocs build --strict
+
+# Serve the docs for local viewing
+docs-serve:
+    mkdocs serve --strict
+
+# Lint the docs with markdownlint
+docs-lint:
+    markdownlint --config .markdownlint.json -i docs/contribution/release-notes.md -i docs/index.md --disable MD033 -- "docs/**/*.md"
+
+# Remove the built docs
+docs-clean:
+    rm -rf site/
+
+# Build the DSP-APP image and load it into Docker
+docker-build-app:
+    @echo "the image builds with rules_oci from DEV-7767's Phase 7 on" >&2; exit 1
+
+# Publish the multi-arch DSP-APP image and :latest
+docker-publish-app:
+    @echo "the image builds with rules_oci from DEV-7767's Phase 7 on" >&2; exit 1
+
+# Publish every image in the repository
+docker-publish: docker-publish-app
+
+# Print the image tag
+docker-image-tag:
+    @echo {{ build_tag }}
+
+# Test nginx's landing-page forwarding against a stub dsp-api (needs Docker)
+nginx-smoke-test:
+    @echo "the smoke test runs against the rules_oci image from DEV-7767's Phase 7 on" >&2; exit 1
