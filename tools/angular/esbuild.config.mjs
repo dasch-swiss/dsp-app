@@ -28,12 +28,65 @@ const angularLinker = {
   },
 };
 
+// Angular's emulated encapsulation writes `%COMP%` into selectors, which no CSS parser accepts.
+const COMP = /%COMP%/g;
+const COMP_STANDIN = 'NGCOMPSTANDIN';
+
+// A compiled component carries its stylesheets as the `styles` strings of its definition. The CLI
+// minifies them before compiling; an optimized bundle minifies them here, before esbuild bundles
+// the file, so the libraries compile once for every configuration.
+const minifyComponentStyles = {
+  name: 'minify-component-styles',
+  setup(build) {
+    const minify = css =>
+      build.esbuild
+        .transformSync(css.replace(COMP, COMP_STANDIN), { loader: 'css', minify: true })
+        .code.trimEnd()
+        .replaceAll(COMP_STANDIN, '%COMP%');
+    const minifyStyles = {
+      visitor: {
+        CallExpression({ node }) {
+          if (node.callee.type !== 'MemberExpression' || node.callee.property.name !== 'ɵɵdefineComponent') {
+            return;
+          }
+          const styles = node.arguments[0]?.properties?.find(p => p.key?.name === 'styles');
+          for (const element of styles?.value.elements ?? []) {
+            if (element.type === 'StringLiteral') {
+              element.value = minify(element.value);
+              element.extra = undefined;
+            }
+          }
+        },
+      },
+    };
+    build.onLoad({ filter: /\.js$/ }, async args => {
+      if (args.path.includes('/node_modules/')) {
+        return null;
+      }
+      const source = await readFile(args.path, 'utf8');
+      if (!source.includes('ɵɵdefineComponent')) {
+        return null;
+      }
+      // Babel reads the file's own source map and composes it, so the hidden maps stay exact.
+      const result = await transformAsync(source, {
+        filename: args.path,
+        compact: false,
+        sourceMaps: 'inline',
+        configFile: false,
+        babelrc: false,
+        plugins: [minifyStyles],
+      });
+      return { contents: result.code, loader: 'js' };
+    });
+  },
+};
+
 /**
  * @param {object} options
  * @param {Record<string, string>} options.alias each library's import alias to its compiled
  *   entry point, relative to the Bazel bin directory esbuild runs in
- * @param {boolean} options.optimize minify and strip Angular's dev-mode checks, as the CLI's
- *   `production` configuration does
+ * @param {boolean} options.optimize minify, component styles included, and strip Angular's
+ *   dev-mode checks, as the CLI's `production` configuration does
  * @param {boolean} options.development resolve packages without the `production` export condition
  */
 export function angularEsbuildConfig({ alias, optimize, development }) {
@@ -58,6 +111,6 @@ export function angularEsbuildConfig({ alias, optimize, development }) {
     loader: { '.json': 'json' },
     minify: optimize,
     legalComments: 'none',
-    plugins: [angularLinker],
+    plugins: optimize ? [angularLinker, minifyComponentStyles] : [angularLinker],
   };
 }
