@@ -20,6 +20,8 @@ jobs:
         uses: DeterminateSystems/determinate-nix-action@v3
 
       - name: Build dsp-js
+        env:
+          BAZEL_FLAGS: --lockfile_mode=error
         run: nix develop --command just build //libs/dsp-js:npm_package
 
       - name: Publish to NPM

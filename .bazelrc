@@ -1,7 +1,7 @@
 # Bazel configuration for dsp-app.
 
-# Strict action env keeps unrelated host variables out of the cache keys; PATH is passed so the
-# Nix dev shell's tools (git, for tools/workspace_status.sh) stay reachable.
+# Strict action env keeps unrelated host variables out of the cache keys; PATH is the one passed
+# through, so actions see the dev shell's tools, as in dsp-api.
 build --incompatible_strict_action_env
 build --action_env=PATH
 build --enable_platform_specific_config

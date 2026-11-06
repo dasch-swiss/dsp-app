@@ -139,14 +139,16 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/bazel-repo
-          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock') }}
+          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
           restore-keys: bazel-repo-${{ runner.os }}-
       - name: Restore Bazel disk cache
         uses: actions/cache@v5
         with:
           path: ~/.cache/bazel-disk/dsp-app
-          key: bazel-disk-lint-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}
-          restore-keys: bazel-disk-lint-${{ runner.os }}-
+          key: bazel-disk-lint-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
+          restore-keys: |
+            bazel-disk-lint-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-
+            bazel-disk-lint-${{ runner.os }}-
       - name: Configure RBE
         id: rbe
         uses: ./.github/actions/bazel-rbe
@@ -181,14 +183,16 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/bazel-repo
-          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock') }}
+          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
           restore-keys: bazel-repo-${{ runner.os }}-
       - name: Restore Bazel disk cache
         uses: actions/cache@v5
         with:
           path: ~/.cache/bazel-disk/dsp-app
-          key: bazel-disk-test-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}
-          restore-keys: bazel-disk-test-${{ runner.os }}-
+          key: bazel-disk-test-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
+          restore-keys: |
+            bazel-disk-test-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-
+            bazel-disk-test-${{ runner.os }}-
       - name: Configure RBE
         id: rbe
         uses: ./.github/actions/bazel-rbe
@@ -203,7 +207,12 @@ jobs:
         run: nix develop --command just test
       - name: Count actions by mnemonic and runner
         if: always()
-        run: jq -r '[.mnemonic, .runner, (.exitCode // 0)] | @tsv' "$RUNNER_TEMP/exec.json" | sort | uniq -c
+        run: |
+          if [ ! -s "$RUNNER_TEMP/exec.json" ]; then
+            echo "no execution log; Bazel stopped before running actions"
+            exit 0
+          fi
+          jq -r '[.mnemonic, .runner, (.exitCode // 0)] | @tsv' "$RUNNER_TEMP/exec.json" | sort | uniq -c
 
   dsp-app-e2e-tests:
     name: DSP-APP E2E tests (${{ matrix.runner }})
@@ -383,11 +392,14 @@ jobs:
           BOT_USER_ID=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
           git config user.name "${APP_SLUG}[bot]"
           git config user.email "${BOT_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+          MANIFEST="tools/openapi/openapi_files.bzl"
           cp "$SPEC" /tmp/updated-spec.yaml
+          cp "$MANIFEST" /tmp/updated-openapi_files.bzl
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH" origin/main
           cp /tmp/updated-spec.yaml "$SPEC"
-          git add "$SPEC"
+          cp /tmp/updated-openapi_files.bzl "$MANIFEST"
+          git add "$SPEC" "$MANIFEST"
           git commit -m "chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
           git push origin "$BRANCH"
           gh pr create \
