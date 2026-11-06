@@ -97,7 +97,7 @@ _STRICT_FLAGS = [
     "noImplicitReturns",
 ]
 
-def eslint_config(name = "eslintrc"):
+def eslint_config():
     """The package's eslint.config.mjs, one of the configs the lint aspect (tools/lint) carries.
 
     With it the files ESLint reads beside the config: package.json, without which
@@ -105,7 +105,8 @@ def eslint_config(name = "eslintrc"):
     tsconfigs a typed config names.
     """
     js_library(
-        name = name,
+        # tools/lint/linters.bzl names every package's `:eslintrc`.
+        name = "eslintrc",
         srcs = ["eslint.config.mjs"] + native.glob(["package.json", "tsconfig*.json"], allow_empty = True),
         deps = [Label("//:eslintrc")],
         # Not the library's visibility: the aspect reads every package's config.

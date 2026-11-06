@@ -112,10 +112,10 @@ Before opening a PR, read `main`'s `git log` and recent merged PRs. Use them for
 These must be clean:
 
 - `just lint` — ESLint across all projects, including the alphabetical `import/order` rule.
-- `just test` — every Bazel test target.
-- `scripts/test-counts.sh` — every project's Jest suite, including the libraries Bazel does not build yet.
-- `pnpm exec ng build dsp-app`: the type-check, since lint is not type-aware.
-- `pnpm run test-storybook`, with `pnpm run storybook` running, when you changed a component that has stories.
+- `just test` — every Bazel test target; `just test-files -- <paths>` runs only those that depend on the paths.
+- `just build` — every library's compile under its strict flags, the type-check lint does not do.
+- `scripts/test-counts.sh` — every project's Jest suite, including the application, which Bazel does not build yet.
+- `pnpm run test-storybook`, with `pnpm run storybook` running, when you changed a component that has stories. Until DEV-7767's Phase 7 builds Storybook with Bazel, the `.css` files the components' `styleUrl` names exist only in `bazel-bin`, so Storybook and `pnpm exec ng build dsp-app` do not build.
 
 ## Where to Go for Depth
 

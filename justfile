@@ -48,21 +48,35 @@ test-files *FILES:
     #!/usr/bin/env bash
     set -euo pipefail
     [ "${1:-}" != "--" ] || shift
+    [ "$#" -gt 0 ] || { echo "just test-files: no paths given" >&2; exit 1; }
     labels=()
-    for file in "$@"; do
+    for path in "$@"; do
+      file="$(realpath -m --relative-to=. "$path")"
+      case "$file" in
+        ../* | /*) echo "just test-files: $path is outside the repository" >&2; exit 1 ;;
+        # No target depends on these, but they change what the targets are: run every test.
+        *.bzl | MODULE.bazel* | .bazelrc | .bazelversion | pnpm-lock.yaml | package.json)
+          exec bazel test //... $BAZEL_FLAGS ;;
+      esac
       dir="$(dirname "$file")"
       while [ "$dir" != "." ] && [ ! -f "$dir/BUILD.bazel" ]; do dir="$(dirname "$dir")"; done
-      pkg="${dir#.}"
-      labels+=("//$pkg:${file#"$pkg/"}")
+      pkg="$([ "$dir" = "." ] || echo "$dir")"
+      if [ "$(basename "$file")" = "BUILD.bazel" ]; then
+        labels+=("//$pkg:*")
+      else
+        labels+=("//$pkg:${file#"$pkg/"}")
+      fi
     done
-    [ "${#labels[@]}" -gt 0 ] || { echo "just test-files: no paths given" >&2; exit 1; }
-    # A path no rule reads (a README, a deleted file) is not a target; --keep_going skips it and
-    # exits 3, every other non-zero exit is a real failure.
+    # A path no rule reads (a README, a deleted file) is no target; --keep_going skips it and exits
+    # 3. Any other error, a package that fails to load included, fails the recipe.
+    errors="$(mktemp)"
+    trap 'rm -f "$errors"' EXIT
     status=0
-    targets="$(bazel query --keep_going "kind(jest_test, rdeps(//..., set(${labels[*]})))" $BAZEL_FLAGS 2>/dev/null)" || status=$?
-    if [ "$status" -ne 0 ] && [ "$status" -ne 3 ]; then
+    targets="$(bazel query --keep_going "kind(jest_test, rdeps(//..., set(${labels[*]})))" $BAZEL_FLAGS 2>"$errors")" || status=$?
+    if [ "$status" -ne 0 ] && { [ "$status" -ne 3 ] || grep '^ERROR:' "$errors" | grep -qv "^ERROR: Skipping '[^']*': no such target"; }; then
+      cat "$errors" >&2
       echo "just test-files: bazel query failed with exit code $status" >&2
-      exit "$status"
+      exit 1
     fi
     if [ -z "$targets" ]; then
       echo "just test-files: no Jest target depends on $*"
@@ -80,13 +94,16 @@ lint: install openapi-generate
     bazel build --config=lint //... $BAZEL_FLAGS || status=1
     # The aspect lints only a ts_project's `srcs`; specs, stories, templates, JavaScript configs,
     # libs/dsp-js/test and apps/dsp-app stay with pnpm until a Bazel target carries them.
-    linted="$(bazel query 'labels(srcs, kind(ts_project, //...))' $BAZEL_FLAGS 2>/dev/null | sed -E 's|^//:?||; s|:|/|')"
+    linted="$(bazel query 'labels(srcs, kind(ts_project, //...))' $BAZEL_FLAGS | sed -E 's|^//:?||; s|:|/|')"
     patterns=()
     for dir in $(git ls-files '*/eslint.config.mjs' | xargs -n1 dirname); do
       patterns+=("$dir/*.ts" "$dir/*.js" "$dir/*.mjs" "$dir/*.cjs" "$dir/*.html")
     done
-    git ls-files -- "${patterns[@]}" | grep -vxFf <(printf '%s\n' "$linted") \
-      | xargs pnpm exec eslint --flag v10_config_lookup_from_file --no-warn-ignored || status=1
+    # Untracked files too, as ESLint over the directories saw them; a deleted file is skipped.
+    git ls-files --cached --others --exclude-standard -- "${patterns[@]}" \
+      | { grep -vxFf <(printf '%s\n' "$linted") || true; } \
+      | while read -r file; do [ ! -f "$file" ] || echo "$file"; done \
+      | xargs -r pnpm exec eslint --flag v10_config_lookup_from_file --no-warn-ignored || status=1
     exit "$status"
 
 # Check that `just lint` fails on a seeded violation with the rule id ESLint through pnpm reports

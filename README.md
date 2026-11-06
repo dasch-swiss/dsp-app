@@ -41,6 +41,7 @@ Most common operations for daily development:
 |---------------------------------|------------------------------------------|
 | List every recipe               | `just help`                              |
 | Run the Bazel tests             | `just test`                              |
+| Run the tests a change affects  | `just test-files -- <paths>`             |
 | Lint all projects               | `just lint`                              |
 | Run the CI gate                 | `just ci`                                |
 | Open E2E tests UI               | `pnpm run e2e-local`                     |

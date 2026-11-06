@@ -1,4 +1,4 @@
-load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "vre_library")
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
 
 vre_library(
     name = "ontology",
@@ -10,10 +10,8 @@ vre_library(
     stylesheets = glob(["src/**/*.scss"]),
     sass_deps = ["//libs/vre/ui/styles"],
     test_size = "small",
-    test_srcs = [
-        "src/lib/.gitkeep.spec.ts",
-        "src/test-setup.ts",
-    ],
+    # glob skips dot files, so the placeholder spec is named; a new spec is picked up.
+    test_srcs = glob(TEST_SRCS, allow_empty = True) + ["src/lib/.gitkeep.spec.ts"],
     deps = [
         "//:node_modules/@angular/cdk",
         "//:node_modules/@angular/common",
