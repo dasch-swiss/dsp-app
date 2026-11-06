@@ -1,4 +1,4 @@
-# app-help-page
+# @dasch-swiss/vre/shared/app-help-page
 
 ## Running unit tests
 

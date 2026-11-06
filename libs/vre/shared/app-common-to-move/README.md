@@ -1,4 +1,4 @@
-# vre-shared-app-common-to-move
+# @dasch-swiss/vre/shared/app-common-to-move
 
 ## Running unit tests
 

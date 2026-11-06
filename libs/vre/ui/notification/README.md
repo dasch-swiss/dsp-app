@@ -1,4 +1,4 @@
-# app-notification
+# @dasch-swiss/vre/ui/notification
 
 This contains the notification service that is used by the dsp-app
 

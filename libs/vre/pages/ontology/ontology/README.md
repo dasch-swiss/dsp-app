@@ -1,4 +1,4 @@
-# vre-shared-app-ontology
+# @dasch-swiss/vre/pages/ontology/ontology
 
 ## Running unit tests
 

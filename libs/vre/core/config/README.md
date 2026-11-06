@@ -1,4 +1,4 @@
-# vre-shared-app-config
+# @dasch-swiss/vre/core/config
 
 ## Running unit tests
 

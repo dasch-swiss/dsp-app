@@ -1,4 +1,4 @@
-# vre-shared-app-search
+# @dasch-swiss/vre/pages/search/search
 
 ## Running unit tests
 

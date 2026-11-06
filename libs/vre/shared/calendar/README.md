@@ -1,4 +1,4 @@
-# calendar
+# @dasch-swiss/vre/shared/calendar
 
 ## Building
 

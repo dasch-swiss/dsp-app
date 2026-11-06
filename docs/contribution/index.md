@@ -4,15 +4,21 @@ This documentation is intended for the internal DaSCH development team.
 
 ## Setting Up
 
-Install [Nix](https://nixos.org/download/), [nix-direnv](https://github.com/nix-community/nix-direnv)
-and Docker; nothing else is installed by hand. In the repository root, `direnv allow` enters the dev
-shell, which provides Bazel, `just`, pnpm, Node and Playwright's browsers. Then:
+Install [Nix](https://nixos.org/download/) with flakes enabled (the Determinate installer CI uses
+enables them), [direnv](https://direnv.net/) with its shell hook and
+[nix-direnv](https://github.com/nix-community/nix-direnv). Docker is needed only for the dsp-api stack
+the Cypress suite runs against (`just e2e-stack-up`, from a dsp-api checkout at `DSP_API_DIR`,
+`../dsp-api` by default) and for the image recipes. In the repository root, `direnv allow` enters the
+dev shell, which provides Bazel, `just`, pnpm, Node and Playwright's browsers. Then:
 
 ```shell
 just install   # the npm dependencies from pnpm-lock.yaml
-just ci        # the gate CI runs: build, tests, lint, Storybook build, the e2e type-check
+just ci        # the gate: build, tests, lint, Storybook build, e2e type-check, visibility and version checks
 just help      # every recipe
 ```
+
+CI runs `just ci` too, and the Storybook interaction tests, the Cypress suite and the docs build as
+jobs of their own. Without the CI remote cache, the first local build compiles everything.
 
 Bazel builds and tests every library and the application
 ([ADR 0007](../adr/0007-bazel-builds-the-repository.md)); the

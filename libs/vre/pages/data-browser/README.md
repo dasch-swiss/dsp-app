@@ -1,4 +1,4 @@
-# vre-shared-app-data-browser
+# @dasch-swiss/vre/pages/data-browser
 
 ## Running unit tests
 

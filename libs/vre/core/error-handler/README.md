@@ -1,4 +1,4 @@
-# vre-shared-app-error-handler
+# @dasch-swiss/vre/core/error-handler
 
 ## Running unit tests
 

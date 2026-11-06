@@ -1,4 +1,4 @@
-# vre-shared-app-analytics
+# @dasch-swiss/vre/3rd-party-services/analytics
 
 ## Running unit tests
 

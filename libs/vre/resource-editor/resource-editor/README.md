@@ -1,4 +1,4 @@
-# vre-shared-app-resource-page
+# @dasch-swiss/vre/resource-editor/resource-editor
 
 ## Running unit tests
 

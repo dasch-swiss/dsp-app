@@ -1,4 +1,4 @@
-# vre-library-vre-string-literal
+# @dasch-swiss/vre/ui/string-literal
 
 ## Running unit tests
 

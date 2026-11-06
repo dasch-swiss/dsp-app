@@ -1,4 +1,4 @@
-# vre-open-api
+# @dasch-swiss/vre/3rd-party-services/open-api
 
 ## OpenAPI Client Generation
 

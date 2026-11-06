@@ -1,4 +1,4 @@
-# vre-shared-app-progress-indicator
+# @dasch-swiss/vre/ui/progress-indicator
 
 ## Running unit tests
 

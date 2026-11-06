@@ -1,4 +1,4 @@
-# vre-advanced-search
+# @dasch-swiss/vre/pages/search/advanced-search
 
 The advanced-search chip-bar UI for DSP-APP (DEV-6576).
 

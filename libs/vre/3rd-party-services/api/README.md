@@ -1,4 +1,4 @@
-# vre-shared-app-api
+# @dasch-swiss/vre/3rd-party-services/api
 
 ## Running unit tests
 

@@ -1,4 +1,4 @@
-# vre-shared-app-ui
+# @dasch-swiss/vre/ui/ui
 
 ## Running unit tests
 

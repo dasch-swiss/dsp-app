@@ -1,4 +1,4 @@
-# vre-shared-app-date-picker
+# @dasch-swiss/vre/ui/date-picker
 
 ## Running unit tests
 

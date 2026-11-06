@@ -59,7 +59,8 @@ Layer ownership, barrel exports and cross-feature access are recorded in [`ARCH-
 - HTTP calls to DSP-API live in `libs/vre/3rd-party-services/api` as a dedicated `*ApiService`, never inline in a component or in `shared/` (precedent: `ResourceLegalV2ApiService`, `LegalInfoApiService`).
 - Per-project caching of API data goes into a helper service, not into each consuming component (precedent: `ProjectDataRightsService` in `shared/app-helper-services`).
 - Imports cross libraries only through the `@dasch-swiss/vre/*` aliases and a library's barrel `index.ts`; ESLint rejects a deep `src/` import and a relative import across a library root. Moving a file between libraries means updating both barrels.
-- A new library gets its ADR-0001 type and scope in `LIBRARIES` (`tools/angular/visibility.bzl`); its Bazel `visibility` follows from them, so a dependency the tiers forbid fails the build.
+- A new import of another library needs that library's label in the importing library's `BUILD.bazel` `deps`; without it the compile fails with TS2307. A visibility error on that label means ADR-0001 forbids the edge: change the design, never add an `extra_visibility` entry or a `tools/angular/loose.bzl` entry to make the build pass.
+- A new library is a `BUILD.bazel` calling `vre_library`, its ADR-0001 type and scope in `LIBRARIES` (`tools/angular/visibility.bzl`), its alias in `tsconfig.base.json` and a barrel `src/index.ts`; its Bazel `visibility` follows from the type and scope.
 - Know which client carries your data: dsp-js models or the generated OpenAPI client. See "Working with APIs" in [`CLAUDE.md`](CLAUDE.md).
 
 ## RxJS
@@ -124,8 +125,8 @@ These must be clean:
 ## Dependency Management
 
 - No bot updates dependencies: Renovate is disabled, library updates are analysed and made by hand, security advisories still arrive as Dependabot PRs. `renovate.json`'s rules record why packages are coupled; read them before a bump.
-- Change a dependency with `pnpm` inside the dev shell and commit `package.json` with `pnpm-lock.yaml`. A pnpm change needs no `MODULE.bazel.lock` refresh.
-- Bazel modules, the `rules_angular` and `rules_sass` commit pins, `.bazelversion`, `flake.nix` and `flake.lock` are bumped by hand. After a `flake.lock` bump run `just node-version-check` and `just playwright-version-check`.
+- Change a dependency with `pnpm` inside the dev shell and commit `package.json` with `pnpm-lock.yaml`. A pnpm change needs no `MODULE.bazel.lock` refresh; `just lock-update` is for a Bazel module bump and refreshes both.
+- Bazel modules, the `rules_angular` and `rules_sass` commit pins, `.bazelversion`, `flake.nix`, `flake.lock`, the GitHub Actions versions and the image's nginx base digest are bumped by hand; nothing proposes them. After a `flake.lock` bump run `just node-version-check` and `just playwright-version-check`.
 
 ## Where to Go for Depth
 

@@ -22,13 +22,9 @@ just install   # npm dependencies from pnpm-lock.yaml
 just test      # every Bazel test target
 ```
 
-Requires a running [DSP-API](https://github.com/dasch-swiss/dsp-api) backend. To start it locally:
-
-```shell
-# In the dsp-api repository
-make init-db-test
-make stack-without-app
-```
+Requires a running [DSP-API](https://github.com/dasch-swiss/dsp-api) backend. With a dsp-api checkout
+at `../dsp-api` (or `DSP_API_DIR`), `just e2e-stack-up` starts it with a fresh test database and
+`just e2e-stack-down` stops it.
 
 Every PR that touches `apps/dsp-app/src/` or `libs/` gets an automatic live preview deployed to Google Cloud Run — the URL is posted as a PR comment. You can also trigger a preview for any branch manually via the [PR Preview](https://github.com/dasch-swiss/dsp-app/actions/workflows/cloud-run-pr-preview.yml) workflow. To publish a Docker image directly from any branch (e.g. for a hotfix), trigger the [Publish from branch](https://github.com/dasch-swiss/dsp-app/actions/workflows/publish-from-branch.yml) workflow manually.
 

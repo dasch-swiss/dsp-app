@@ -1,4 +1,4 @@
-# vre-ui-nested-menu
+# @dasch-swiss/vre/ui/nested-menu
 
 ## Running unit tests
 

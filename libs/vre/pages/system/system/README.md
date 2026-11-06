@@ -1,4 +1,4 @@
-# vre-shared-app-system
+# @dasch-swiss/vre/pages/system/system
 
 ## Running unit tests
 
