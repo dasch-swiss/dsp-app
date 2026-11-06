@@ -39,6 +39,7 @@ Most common operations for daily development:
 | Run the tests a change affects  | `just test-files -- <paths>`             |
 | Lint all projects               | `just lint`                              |
 | Run the CI gate                 | `just ci`                                |
+| Run E2E specs (stack up first)  | `just e2e <specs>`                       |
 | Browse all component stories    | `just storybook`                         |
 | Build static Storybook          | `just storybook-build`                   |
 | Run Storybook interaction tests | `just storybook-test`                    |

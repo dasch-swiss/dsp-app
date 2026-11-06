@@ -641,7 +641,7 @@ Pixeleye still sets the wall clock. Lint and E2E heavy are slower than on `main`
 - A source-changing CI run's `bep-test` and `exec.json`: no commit after `1993363c7` changes a source;
   the remote-execution run above is the evidence that `TsProject` and esbuild execute remotely.
 
-## Generated `paths`: direct-only (Decision 7)
+## Generated `paths`: direct-only
 
 A library's generated tsconfig maps only the aliases of its declared `deps` to their compiled
 `.d.ts`. An import of a library that is not a declared dependency fails with TS2307, so no

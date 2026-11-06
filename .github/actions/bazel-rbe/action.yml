@@ -58,9 +58,10 @@ runs:
         # Remote cache (AC + CAS).
         FLAGS="--remote_cache=$RBE_RUNNER_ENDPOINT --remote_instance_name=main"
         FLAGS="$FLAGS --tls_certificate=$CERT_DIR/ca.crt --tls_client_certificate=$CERT_DIR/client.crt --tls_client_key=$CERT_DIR/client.key"
-        # Only main and release tags upload locally executed results, so a branch
-        # cannot write what main's publish reads. NativeLink stores remotely
-        # executed results itself, whatever the ref.
+        # Only main and release tags upload locally executed results; a branch
+        # still reads them. Remotely executed results are stored by NativeLink
+        # itself, whatever the ref, so a branch writes to the cache only what
+        # the worker computed.
         case "$GITHUB_REF" in
           refs/heads/main | refs/tags/v*) UPLOAD=true ;;
           *) UPLOAD=false ;;
