@@ -146,9 +146,7 @@ jobs:
         with:
           path: ~/.cache/bazel-disk/dsp-app
           key: bazel-disk-lint-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
-          restore-keys: |
-            bazel-disk-lint-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-
-            bazel-disk-lint-${{ runner.os }}-
+          restore-keys: bazel-disk-lint-${{ runner.os }}-
       - name: Configure RBE
         id: rbe
         uses: ./.github/actions/bazel-rbe
@@ -190,9 +188,7 @@ jobs:
         with:
           path: ~/.cache/bazel-disk/dsp-app
           key: bazel-disk-test-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
-          restore-keys: |
-            bazel-disk-test-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-
-            bazel-disk-test-${{ runner.os }}-
+          restore-keys: bazel-disk-test-${{ runner.os }}-
       - name: Configure RBE
         id: rbe
         uses: ./.github/actions/bazel-rbe
