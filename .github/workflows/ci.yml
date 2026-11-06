@@ -199,8 +199,11 @@ jobs:
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Run test
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --execution_log_json_file=${{ runner.temp }}/exec.json
         run: nix develop --command just test
+      - name: Count actions by mnemonic and runner
+        if: always()
+        run: jq -r '[.mnemonic, .runner, (.exitCode // 0)] | @tsv' "$RUNNER_TEMP/exec.json" | sort | uniq -c
 
   dsp-app-e2e-tests:
     name: DSP-APP E2E tests (${{ matrix.runner }})
