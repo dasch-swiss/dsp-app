@@ -52,8 +52,13 @@ lint-selftest:
     seed=libs/dsp-js/src/lint-seed.ts
     trap 'rm -f "$seed"' EXIT
     printf 'const unusedLocal = 1;\nexport {};\n' >"$seed"
-    if just lint; then
+    if output="$(just lint 2>&1)"; then
       echo "lint-selftest: just lint passed on $seed, which it must reject" >&2
+      exit 1
+    fi
+    if ! grep -q "lint-seed.ts" <<<"$output"; then
+      echo "$output" >&2
+      echo "lint-selftest: just lint failed, but not on $seed" >&2
       exit 1
     fi
     echo "lint-selftest: just lint rejected the seeded violation"
@@ -89,6 +94,7 @@ node-version-check:
     set -euo pipefail
     bazel_node="$(sed -n 's/^node.toolchain(node_version = "\([0-9.]*\)")$/\1/p' MODULE.bazel)"
     shell_node="$(node --version | sed 's/^v//')"
+    [ -n "$bazel_node" ] || { echo "no node.toolchain(node_version = ...) line in MODULE.bazel" >&2; exit 1; }
     if [ "${bazel_node%%.*}" != "${shell_node%%.*}" ]; then
       echo "Node majors differ: MODULE.bazel pins $bazel_node, the dev shell has $shell_node" >&2
       exit 1
