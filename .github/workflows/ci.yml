@@ -490,9 +490,11 @@ jobs:
   pixeleye:
     name: Pixeleye Snapshots
     needs: [changes]
-    # Held until the Bazel build covers it again (DEV-7767 Phase 9).
-    if: >-
-      false && (needs.changes.result == 'success' && needs.changes.outputs.automation_skip == 'false' && needs.changes.outputs.only_workflows == 'false' && needs.changes.outputs.bot_push == 'false')
+    if: |
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false' &&
+      needs.changes.outputs.bot_push == 'false'
     runs-on: ubuntu-latest
     # Capture only: this job uploads snapshots and never decides anything. The
     # verdict reaches the PR as the commit status `Pixeleye – dasch-swiss/dsp-app`,
@@ -528,38 +530,43 @@ jobs:
         # fail with "refusing to fetch into current branch".
         if: github.ref_name != 'main'
         run: git fetch origin main:main || echo "::warning::could not fetch main; baseline may fall back to latest build on the base branch"
-      - name: Set up Node
-        uses: actions/setup-node@v7
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+      - name: Restore Bazel repository cache
+        uses: actions/cache@v5
         with:
-          node-version-file: .nvmrc
-      - name: Set up pnpm and install dependencies
-        uses: ./.github/actions/setup-pnpm
-      - name: Build Storybook (generates the OpenAPI client first)
-        run: pnpm exec nx run dsp-app:build-storybook:ci
-      - name: Cache Playwright browsers
-        # `pnpm install --ignore-scripts` suppresses playwright's postinstall, so
-        # browsers must be installed explicitly below. Caching keeps the
-        # marginal cost of this job over storybook-tests honest.
-        uses: actions/cache@v6
+          path: ~/.cache/bazel-repo
+          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
+          restore-keys: bazel-repo-${{ runner.os }}-
+      - name: Restore Bazel disk cache
+        uses: actions/cache@v5
         with:
-          path: ~/.cache/ms-playwright
-          key: ms-playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: ms-playwright-${{ runner.os }}-
-      - name: Install Playwright browsers
-        # Installed via playwright-core's own CLI rather than the `playwright` CLI,
-        # so the browser revision matches the playwright-core that pixeleye
-        # actually launches — a mismatch fails with "Executable doesn't exist".
-        # chromium-headless-shell is a SEPARATE download from chromium and is
-        # the binary the pixeleye booth server launches.
-        run: node node_modules/playwright-core/cli.js install --with-deps chromium chromium-headless-shell
+          path: ~/.cache/bazel-disk/dsp-app
+          key: bazel-disk-pixeleye-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
+          restore-keys: bazel-disk-pixeleye-${{ runner.os }}-
+      - name: Configure RBE
+        id: rbe
+        uses: ./.github/actions/bazel-rbe
+        with:
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
+      - name: Cache Pixeleye's browsers
+        # The frozen CLI downloads Playwright 1.59.0's browsers on every start; `just pixeleye`
+        # points it at this directory.
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/dsp-app-pixeleye-browsers
+          key: pixeleye-browsers-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml', 'flake.lock') }}
+          restore-keys: pixeleye-browsers-${{ runner.os }}-
       - name: Capture and upload snapshots
         id: capture
         run: |
-          pnpm exec http-server dist/storybook --port 6006 --silent &
-          pnpm exec wait-on tcp:6006 --timeout 60000
-          pnpm run pixeleye:ci
+          nix develop --command just pixeleye
           echo "uploaded=true" >> "$GITHUB_OUTPUT"
         env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
           PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
       # Breakpoint run: the `Pages / Breakpoints / …` stories at every breakpoint
@@ -580,18 +587,12 @@ jobs:
           fi
         env:
           PIXELEYE_BREAKPOINTS_TOKEN: ${{ secrets.PIXELEYE_BREAKPOINTS_TOKEN }}
-      - name: Build breakpoint Storybook
-        if: steps.breakpoints-token.outputs.present == 'true'
-        continue-on-error: true
-        run: pnpm run build-storybook:breakpoints
       - name: Capture and upload breakpoint snapshots
         if: steps.breakpoints-token.outputs.present == 'true'
         continue-on-error: true
-        run: |
-          pnpm exec http-server dist/storybook-breakpoints --port 6007 --silent &
-          pnpm exec wait-on tcp:6007 --timeout 60000
-          pnpm run pixeleye:breakpoints
+        run: nix develop --command just pixeleye breakpoints
         env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
           PIXELEYE_BREAKPOINTS_TOKEN: ${{ secrets.PIXELEYE_BREAKPOINTS_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
       # A cancelled run (a newer push to the branch) SIGKILLs the CLI before its
@@ -630,9 +631,7 @@ jobs:
     # every merge. The required check must accept any source, not only the app.
     name: Pixeleye Status Fallback
     needs: [changes, pixeleye]
-    # Held until the Bazel build covers it again (DEV-7767 Phase 9).
-    if: >-
-      false && (always())
+    if: always()
     runs-on: ubuntu-latest
     permissions:
       statuses: write
