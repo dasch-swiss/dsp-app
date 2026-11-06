@@ -651,7 +651,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: none
 - **Boundary rules**:
   - Per-library `README.md` files are not part of this component. See Cross-cutting concerns. `docs-only`
-  - Every ADR carries an enforcement level from the same enum this map uses (`structure | static-analysis | review | docs-only`). ADR-0001 through ADR-0007 are Accepted; none is superseded. ADR-0001, 0002, 0004 and 0006 were revised in place when Bazel replaced Nx, each saying so in its status line. `docs-only`
+  - Every ADR carries an enforcement level from the same enum this map uses (`structure | static-analysis | review | docs-only`). ADR-0001 through ADR-0007 are Accepted; none is superseded. ADR-0001, 0002, 0004 and 0006 were revised in place for the Bazel build, each saying so in its status line. `docs-only`
   - A new ADR must be added to the `nav` in `mkdocs.yml` and to the table in `docs/adr/index.md`. `mkdocs build --strict` does not catch an omission from either, because an un-navigated page is an INFO, not a warning. `review`
 - **Durable state**: none.
 - **Fingerprint**: `dd27ed7efdb4`
@@ -690,7 +690,7 @@ These are values or mechanisms that span components and would multiply-map if tr
 
 - **localStorage keys.** Seven fixed keys plus one per-class family, owned by six different components: `ACCESS_TOKEN` (`vre/core/session`), `dsp_language` (`vre/shared/app-helper-services`), `SHOW_ALL_PROPERTIES` and `SHOW_ALL_COMMENTS` (`vre/resource-editor/resource-editor`), `sortProjectsBy` and `sortUsersBy` (`vre/pages/system/system`), `cookieBanner` (`dsp-app`), and `dsp.dataBrowser.tableLayout.v<N>.<classIri>` (`vre/pages/data-browser`, one key per resource class). There is no shared registry of key names and no sessionStorage anywhere.
 
-- **Per-library READMEs.** Each library's `README.md` names its test command as `just test //<package>/...`. Several titles still carry the library's former Nx project name; the package label in this map is the reliable name.
+- **Per-library READMEs.** Each library's `README.md` names its test command as `just test //<package>/...`. Several titles still carry a former project name; the package label in this map is the reliable name.
 
 ## Conventions
 
