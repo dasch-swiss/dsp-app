@@ -1,7 +1,7 @@
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, userEvent, within } from 'storybook/test';
-// Story-only helpers, kept out of the barrel.
+// eslint-disable-next-line no-restricted-imports -- story-only helpers, kept out of search-filters' barrel.
 import { STORY_PROVIDERS } from '../../../../search/search-filters/src/lib/stories.helpers';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 

@@ -11,6 +11,21 @@ import tseslint from 'typescript-eslint';
 const tsFiles = ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'];
 const jsFiles = ['**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'];
 
+// ADR-0002: a library's barrel is its whole public interface, so an import reaches another library
+// only through its `@dasch-swiss/*` alias. Every library's sources sit under its `src/`, so a
+// relative import that climbs into a `src`, `libs` or `apps` directory crosses a library root.
+// Flat config replaces a rule's options per block, so every block setting the rule repeats these.
+const libraryBoundaryPatterns = [
+  {
+    regex: '^@dasch-swiss/.+/src(/|$)',
+    message: "Import the library's barrel through its @dasch-swiss alias, not a file under src/ (ADR-0002).",
+  },
+  {
+    regex: '^\\.\\./(.*/)?(src|libs|apps)(/|$)',
+    message: "A relative import must not cross a library root; use the library's @dasch-swiss alias (ADR-0002).",
+  },
+];
+
 // Deviations from typescript-eslint's recommended set that every file has carried since the
 // typescript-eslint v6 migration; the blocks below override several of them for `.ts` files.
 const sharedRules = {
@@ -191,6 +206,12 @@ export default [
     },
   },
   {
+    files: ['**/*.ts'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: libraryBoundaryPatterns }],
+    },
+  },
+  {
     // CalendarDateService is the one home of the calendar rules applied to a KnoraDate (ARCH-MAP.md,
     // vre/ui/ui). Elsewhere, the calendar library offers only its vocabulary; a component importing
     // its arithmetic directly becomes a second owner of the era and astronomical-year mapping.
@@ -207,6 +228,7 @@ export default [
               message: 'Calendar rules on a KnoraDate belong in CalendarDateService (@dasch-swiss/vre/ui/ui).',
             },
           ],
+          patterns: libraryBoundaryPatterns,
         },
       ],
     },

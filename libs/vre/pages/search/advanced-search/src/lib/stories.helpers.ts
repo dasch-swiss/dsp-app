@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-// Story-only helpers, kept out of the barrel.
+// eslint-disable-next-line no-restricted-imports -- story-only helpers, kept out of search-filters' barrel.
 import {
   EMPTY_SEARCH_STATE,
   SEARCH_FILTER_SERVICE_STUBS,
@@ -8,7 +8,7 @@ import {
 import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
 
-// Story-only helpers, kept out of the barrel.
+// eslint-disable-next-line no-restricted-imports -- story-only helpers, kept out of search-filters' barrel.
 export {
   CHIP_LABEL_STORY_PROVIDERS,
   EMPTY_SEARCH_STATE,
