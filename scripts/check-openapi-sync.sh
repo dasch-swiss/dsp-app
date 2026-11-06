@@ -156,7 +156,7 @@ main() {
         if [ -z "$CI" ]; then
             log ""
             log "${YELLOW}To update the spec file and regenerate OpenAPI code:${NC}"
-            log "  pnpm run update-openapi"
+            log "  just openapi-update"
         fi
 
         if [ "$VERBOSE" = true ]; then

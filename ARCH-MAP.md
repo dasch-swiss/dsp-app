@@ -108,7 +108,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `src/generated/**` is gitignored and deleted by `rm -rf` on every generate. Edits there cannot be committed and cannot survive. `structure`
   - Never edit `dsp-api_spec.yaml` to silence `check-openapi-sync`. A red check is expected until the dsp-api change is deployed to dev. Use the `update-openapi-client` skill. `review`
   - You do not add code here. Bump the spec and regenerate. `docs-only`
-- **Durable state**: `dsp-api_spec.yaml`, currently pinned at `info.version: v39.0.0-17-g9ddad36`. Written by `pnpm run update-openapi` or by the CI auto-bump PR.
+- **Durable state**: `dsp-api_spec.yaml`, currently pinned at `info.version: v39.0.0-17-g9ddad36`. Written by `just openapi-update` or by the CI auto-bump PR.
 - **Fingerprint**: `bdb777e46ba6`
 
 ### vre/3rd-party-services/analytics
@@ -656,7 +656,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 These are values or mechanisms that span components and would multiply-map if treated as components.
 
-- **The dual client.** Two clients reach dsp-api. Domains read through dsp-js models (`ReadProject`, `ReadResource`, `CreateResource`) require changes in `libs/dsp-js/`; regenerating the OpenAPI client does not surface a field there. Endpoints consumed through the generated client only need `pnpm run update-openapi` after the API is deployed to dev. If a new backend field does not arrive in the UI, determine which client the reading code uses before debugging further. The generator's `serviceSuffix` is `ApiService`, which is also the hand-written convention, so a call site does not reveal which client it is on without reading the import path.
+- **The dual client.** Two clients reach dsp-api. Domains read through dsp-js models (`ReadProject`, `ReadResource`, `CreateResource`) require changes in `libs/dsp-js/`; regenerating the OpenAPI client does not surface a field there. Endpoints consumed through the generated client only need `just openapi-update` after the API is deployed to dev. If a new backend field does not arrive in the UI, determine which client the reading code uses before debugging further. The generator's `serviceSuffix` is `ApiService`, which is also the hand-written convention, so a call site does not reveal which client it is on without reading the import path.
 
 - **The JWT.** One logical value with four physical homes: `localStorage['ACCESS_TOKEN']`, `KnoraApiConfig.jsonWebToken` on the shared config object, `UserService._user$`, and the `Authorization` header built per request by `authInterceptorFn`. Writers span `vre/core/session`, `vre/core/config`, `vre/pages/user-settings/user` and `libs/dsp-js`. dsp-js requests read the in-memory config; `HttpClient` requests read localStorage per request. The two paths can disagree.
 

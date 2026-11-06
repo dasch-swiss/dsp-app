@@ -18,9 +18,6 @@
   "packageManager": "pnpm@10.33.2",
   "scripts": {
     "ng": "ng",
-    "generate-openapi-module": "cd libs/vre/3rd-party-services/open-api && rm -rf src/generated && pnpm exec openapi-generator-cli generate",
-    "check-openapi-sync": "./scripts/check-openapi-sync.sh",
-    "update-openapi": "curl -o libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml https://api.dev.dasch.swiss/api/docs/docs.yaml && pnpm run generate-openapi-module",
     "e2e-local": "cd apps/dsp-app && pnpm exec cypress open --browser chrome --e2e",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org dasch --project javascript-angular ./dist/apps/dsp-app && sentry-cli sourcemaps upload --org dasch --project javascript-angular ./dist/apps/dsp-app",
     "storybook": "ng run dsp-app:storybook",

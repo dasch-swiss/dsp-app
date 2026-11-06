@@ -94,7 +94,7 @@ Multi-language support with translation files in:
   require changes to the dsp-js models in `libs/dsp-js/` — regenerating the OpenAPI client does
   **not** surface the field there. Project data, resources, and values go through dsp-js.
 - Endpoints consumed through the **generated OpenAPI client** only need
-  `npm run update-openapi` after the API is deployed to dev.
+  `just openapi-update` after the API is deployed to dev.
 
 If a new backend field "doesn't arrive" in the UI, check which client the reading code uses
 before debugging further.

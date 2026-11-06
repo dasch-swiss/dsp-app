@@ -246,7 +246,7 @@ jobs:
       - name: Install Cypress binary
         run: pnpm exec cypress install
       - name: Generate OpenAPI client
-        run: pnpm run generate-openapi-module
+        run: nix develop --command just openapi-generate
       - name: Type-check e2e specs
         run: pnpm exec tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json
       - name: Start app (background)
