@@ -66,7 +66,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Key entities**: `projectPage`, `ontology-command`, `file-uploader`
 - **Public interface**: None.
 - **Local-context kit**: `apps/dsp-app/cypress.config.ts`, `apps/dsp-app/cypress/tsconfig.json`, `cypress/support/commands.ts`, `cypress/support/pages/project-page.ts`, `.github/workflows/ci.yml` (the `dsp-app-e2e-tests` job)
-- **Depends on**: `dsp-js` and `vre/3rd-party-services/open-api`, type-only, through their `@dasch-swiss/*` aliases (the four relative imports of `libs/dsp-js/src` became alias imports during the Bazel migration).
+- **Depends on**: none in the build graph. The specs import `dsp-js` and `vre/3rd-party-services/open-api` type-only, through their `@dasch-swiss/*` aliases; those edges are not Bazel deps, so the two entries do not list this one under Used by.
 - **Used by**: none
 - **Boundary rules**:
   - The suite is no Bazel target: Cypress, its browser and the dsp-api stack are not hermetic. `just e2e <specs>` builds `//apps/dsp-app:dist` with Bazel, serves it on port 4200, runs `pnpm exec cypress run` over the specs and stops the server; `just e2e-stack-up` brings up the stack from `DSP_API_DIR`. CI's `dsp-app-e2e-tests` job runs those recipes as a two-runner matrix (`heavy` and `rest`). See ADR-0006. `structure`
@@ -277,7 +277,6 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Durable state**: none. State lives in Material's overlay.
 - **Fingerprint**: `a6a6a5151435`
 
-
 ### vre/ui/styles
 
 - **Bazel package**: `//libs/vre/ui/styles`
@@ -294,6 +293,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - The Storybook build reads the partials as plain files through `storybook_sources` (its webpack Sass, `angular.json`'s `stylePreprocessorOptions`). A new partial is added to both. `docs-only`
 - **Durable state**: none.
 - **Fingerprint**: `89f569939de3`
+
 ### vre/shared/app-common
 
 - **Bazel package**: `//libs/vre/shared/app-common`
@@ -319,7 +319,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/session`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`
 - **Boundary rules**:
-  - Its fan-out of 9 exceeds its fan-in of 6, which is backwards for a shared library and is the diagnostic that it is not one. Shared libraries are leaves.
+  - Its fan-out of 10 (9 without the Sass library) exceeds its fan-in of 6, which is backwards for a shared library and is the diagnostic that it is not one. Shared libraries are leaves.
   - No record exists anywhere of an intended destination. The name has been unexplained since the library was created in May 2024 as the residue of an unrelated refactor. Items have left it over time, so the mechanism works; what remains is the app shell, which is hard to move because it requires deciding where the shell lives. `docs-only`
   - Do not add to it. `docs-only`
 - **Durable state**: none of its own, but `src/lib/header/language-switcher.component.ts` writes `LocalizationService.currentLanguage`, which is owned by `vre/shared/app-helper-services`. That value has three writers across three libraries.
@@ -582,8 +582,8 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Depends on**: none
 - **Used by**: every component, implicitly
 - **Boundary rules**:
-  - Adding a library means a `BUILD.bazel` calling `vre_library`, a `LIBRARIES` entry with its ADR-0001 type and scope (the load fails without one), and its alias in `tsconfig.base.json`. Nothing generates them. `structure`
-  - A library's `visibility` is derived from its type and scope, so a dependency the tiers forbid fails `bazel build`. The eleven known exceptions are `extra_visibility` entries naming ADR-0001 or ADR-0004 and DEV-7552 or DEV-7555. `just visibility-check`, in `just ci`, seeds one forbidden edge per tier rule and asserts the build rejects it. `structure`
+  - Adding a library means a `BUILD.bazel` calling `vre_library`, a `LIBRARIES` entry with its ADR-0001 type and scope, and its alias in `tsconfig.base.json`. Nothing generates them. A package missing from `LIBRARIES` fails to load (`structure`); an alias without a package, or a package without an alias, fails `just tsconfig-paths-check` in `just ci` (`static-analysis`).
+  - A library's `visibility` is derived from its type and scope, so a dependency the tiers forbid fails `bazel build` (`structure`). The exceptions are `extra_visibility` entries (ADR-0001 decision 6); nothing but review stops a new one, so never add one to make a build pass (`review`).
   - The ESLint `no-restricted-imports` rule rejects an `@dasch-swiss/*/src/*` import and a relative import across a library root (ADR-0002). It does not see a dynamic `import()`, and `apps/dsp-app/cypress/` is in its `ignores`. `static-analysis`
   - `tools/angular/loose.bzl` lists four libraries that compile without the strict TypeScript flags, each with its issue (DEV-7796 to DEV-7799). Do not add to it. `review`
   - `rules_angular` and `rules_sass` are `git_override` commit pins in `MODULE.bazel`, moved only to a commit Angular CLI or `angular/components` pins (ADR-0007). `review`
@@ -690,7 +690,7 @@ These are values or mechanisms that span components and would multiply-map if tr
 
 - **localStorage keys.** Seven fixed keys plus one per-class family, owned by six different components: `ACCESS_TOKEN` (`vre/core/session`), `dsp_language` (`vre/shared/app-helper-services`), `SHOW_ALL_PROPERTIES` and `SHOW_ALL_COMMENTS` (`vre/resource-editor/resource-editor`), `sortProjectsBy` and `sortUsersBy` (`vre/pages/system/system`), `cookieBanner` (`dsp-app`), and `dsp.dataBrowser.tableLayout.v<N>.<classIri>` (`vre/pages/data-browser`, one key per resource class). There is no shared registry of key names and no sessionStorage anywhere.
 
-- **Per-library READMEs.** Each library's `README.md` names its test command as `just test //<package>/...`. Several titles still carry a former project name; the package label in this map is the reliable name.
+- **Per-library READMEs.** Each library's `README.md` names its test command as `just test //<package>/...`. Each title is the library's path alias.
 
 ## Conventions
 
