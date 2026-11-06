@@ -24,9 +24,10 @@
         let
           default = pkgs.mkShell {
             packages = [
-              # bazelisk reads .bazelversion; exposed as `bazel` too.
+              # bazelisk reads .bazelversion. Wrapped rather than added whole: the package also
+              # ships a `sha256sum` that shadows coreutils' (scripts/tree-hash.sh).
               (pkgs.writeShellScriptBin "bazel" ''exec ${pkgs.bazelisk}/bin/bazelisk "$@"'')
-              pkgs.bazelisk
+              (pkgs.writeShellScriptBin "bazelisk" ''exec ${pkgs.bazelisk}/bin/bazelisk "$@"'')
               pkgs.bazel-watcher
               pkgs.just
 
