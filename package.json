@@ -19,7 +19,6 @@
   "scripts": {
     "ng": "ng",
     "e2e-local": "cd apps/dsp-app && pnpm exec cypress open --browser chrome --e2e",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org dasch --project javascript-angular ./dist/apps/dsp-app && sentry-cli sourcemaps upload --org dasch --project javascript-angular ./dist/apps/dsp-app",
     "test-storybook": "test-storybook -c .storybook --url=http://localhost:4400",
     "pixeleye": "pixeleye storybook http://localhost:4400",
     "pixeleye:ci": "pixeleye storybook http://localhost:6006",

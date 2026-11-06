@@ -64,11 +64,11 @@ storybook-test: install
     #!/usr/bin/env bash
     set -euo pipefail
     bazel build //:storybook $BAZEL_FLAGS
+    ! curl -s -o /dev/null http://127.0.0.1:6006/ || { echo "port 6006 is already serving; stop that server first" >&2; exit 1; }
     {{ static_server }} --port 6006 "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/storybook" &
     trap 'kill $!' EXIT
     timeout 60 bash -c 'until curl -sf -o /dev/null http://127.0.0.1:6006/index.json; do sleep 0.5; done'
-    # Two workers, as CI ran it before Bazel: in band the runner's heap grows past 4 GB, and with
-    # four the spike saw ChunkLoadError.
+    # Keep two workers: in band the runner runs out of heap, with four it hits ChunkLoadError.
     pnpm exec test-storybook -c .storybook --url=http://127.0.0.1:6006 --index-json --ci --maxWorkers=2
 
 # Build the bundle in a configuration (bazel-bin/apps/dsp-app/dist), the named Bazel targets, or //...
@@ -211,6 +211,7 @@ e2e +specs: install openapi-generate
     #!/usr/bin/env bash
     set -euo pipefail
     bazel build //apps/dsp-app:dist $BAZEL_FLAGS
+    ! curl -s -o /dev/null http://127.0.0.1:4200/ || { echo "port 4200 is already serving; stop that server first" >&2; exit 1; }
     {{ static_server }} --port 4200 "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/apps/dsp-app/dist" &
     trap 'kill $!' EXIT
     timeout 60 bash -c 'until curl -sf -o /dev/null http://127.0.0.1:4200/; do sleep 0.5; done'
@@ -346,7 +347,7 @@ docker-publish-app repository=("index.docker.io/" + dsp_app_repo):
     crane tag "$repo:$tag" latest
 
 # Push a stamped amd64 image of a configuration's bundle and print its digest last (Cloud Run preview)
-docker-push-preview repository tag config="dev-server":
+docker-push-preview repository tag config:
     bazel run --stamp $BAZEL_FLAGS "--//apps/dsp-app:config={{ config }}" //apps/dsp-app/image:push_amd64 -- --repository "{{ repository }}" --tag "{{ tag }}"
     crane digest "{{ repository }}:{{ tag }}"
 

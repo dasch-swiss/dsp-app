@@ -160,7 +160,7 @@ def _stylesheets(stylesheets, sass_deps):
         css.append(":" + _css_target(scss))
     return css
 
-def _bazel_tsconfig(name, out, extends, srcs, deps, strict, extra_paths = {}, extra_options = {}):
+def _bazel_tsconfig(name, out, extends, srcs, deps, strict, extra_paths = {}):
     """Writes a Bazel tsconfig `out` and its ts_config target `name`.
 
     `paths` maps only the declared library `deps` to their compiled `.d.ts`, so an import of any
@@ -182,7 +182,6 @@ def _bazel_tsconfig(name, out, extends, srcs, deps, strict, extra_paths = {}, ex
         "paths": paths,
     }
     compiler_options.update({flag: strict for flag in _STRICT_FLAGS})
-    compiler_options.update(extra_options)
     write_file(
         name = name + "_json",
         out = out,
@@ -352,7 +351,6 @@ def vre_application(
         development_configs = ["development"],
         storybook_data = [],
         test_srcs = [],
-        test_deps = [],
         test_data = [],
         visibility = None):
     """The Angular application: its shell's ng_project, the esbuild bundle and the `name` directory.
@@ -379,7 +377,6 @@ def vre_application(
             export condition.
         storybook_data: what else of the package the Storybook build reads.
         test_srcs: the shell's specs and test-setup.ts; no Jest target without them.
-        test_deps: what only the specs import.
         test_data: files a spec reads at run time.
         visibility: of the `name` directory.
     """
@@ -428,7 +425,7 @@ def vre_application(
         vre_jest_test(
             name = "test",
             srcs = test_srcs,
-            deps = [":sources"] + [_sources(d) for d in test_deps],
+            deps = [":sources"],
             data = test_data,
         )
 

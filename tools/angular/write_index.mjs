@@ -10,9 +10,9 @@ import { basename, extname, join } from 'node:path';
 const [inputHtml, bundleDir, styles, scripts, outDir] = process.argv.slice(2);
 
 const entry = name => {
-  const hit = readdirSync(bundleDir).find(f => f.startsWith(`${name}-`) && f.endsWith('.js'));
-  if (!hit) throw new Error(`no ${name} entry in ${bundleDir}`);
-  return hit;
+  const hits = readdirSync(bundleDir).filter(f => new RegExp(`^${name}-[A-Z0-9]+\\.js$`).test(f));
+  if (hits.length !== 1) throw new Error(`expected one ${name} entry in ${bundleDir}, found ${hits}`);
+  return hits[0];
 };
 
 // The hash the bundle inventory normalizes: eight upper-case characters.

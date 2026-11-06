@@ -5,7 +5,10 @@ on:
     types: [opened, edited, synchronize, reopened, closed]
     paths:
       - 'apps/dsp-app/src/**'
+      - 'apps/dsp-app/BUILD.bazel'
+      - 'apps/dsp-app/image/**'
       - 'libs/**'
+      - 'nginx/**'
   workflow_dispatch:
   schedule:
     - cron: '0 2 * * *'  # daily at 02:00 UTC — clean up stale previews
@@ -69,7 +72,7 @@ jobs:
           REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app
         run: |
           set -euo pipefail
-          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" | tail -n1)"
+          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" dev-server | tail -n1)"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to Cloud Run
@@ -212,7 +215,7 @@ jobs:
           REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app
         run: |
           set -euo pipefail
-          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" | tail -n1)"
+          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" dev-server | tail -n1)"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to Cloud Run

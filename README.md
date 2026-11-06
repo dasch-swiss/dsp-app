@@ -45,9 +45,9 @@ Most common operations for daily development:
 | Lint all projects               | `just lint`                              |
 | Run the CI gate                 | `just ci`                                |
 | Open E2E tests UI               | `pnpm run e2e-local`                     |
-| Browse all component stories    | `pnpm run storybook`                     |
-| Build static Storybook          | `pnpm run build-storybook`               |
-| Run Storybook interaction tests | `pnpm run test-storybook`                |
+| Browse all component stories    | `just storybook`                         |
+| Build static Storybook          | `just storybook-build`                   |
+| Run Storybook interaction tests | `just storybook-test`                    |
 
 For all available commands, see the [justfile](https://github.com/dasch-swiss/dsp-app/blob/main/justfile).
 
@@ -97,9 +97,9 @@ To stop: `docker compose -f docker-compose.observability.yml down`
 A single global [Storybook](https://storybook.js.org/) instance aggregates stories from all libraries and apps:
 
 ```shell
-pnpm run storybook           # Start dev server (http://localhost:4400)
-pnpm run build-storybook     # Build a static bundle to dist/storybook/
-pnpm run test-storybook      # Run story interaction tests (requires a running server)
+just storybook               # Serve the Bazel-built Storybook (http://localhost:4400)
+just storybook-build         # Build it to bazel-bin/storybook/
+just storybook-test          # Build, serve and run the story interaction tests
 ```
 
 Stories are auto-discovered from any `*.stories.ts` file under `libs/` or `apps/` — no registration needed when adding new stories.

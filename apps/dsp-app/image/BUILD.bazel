@@ -107,16 +107,10 @@ ARCHITECTURES = {
 
 # The host's architecture, on @platforms//cpu: on a Mac the target OS is darwin, which the pull's
 # platform alias does not select.
-[
-    alias(
-        name = name,
-        actual = select({
-            "@platforms//cpu:aarch64": ":%s_arm64" % name,
-            "@platforms//cpu:x86_64": ":%s_amd64" % name,
-        }),
-    )
-    for name in [
-        "image",
-        "load",
-    ]
-]
+alias(
+    name = "load",
+    actual = select({
+        "@platforms//cpu:aarch64": ":load_arm64",
+        "@platforms//cpu:x86_64": ":load_amd64",
+    }),
+)
