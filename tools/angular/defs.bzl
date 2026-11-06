@@ -71,7 +71,7 @@ def vre_jest_test(name, srcs, deps = [], data = [], config = "jest.config.js", s
         **kwargs
     )
 
-# A library's specs; never part of its compile (Decision 4 of DEV-7767).
+# A library's specs; never part of its compile (ADR-0007, decision 4).
 TEST_SRCS = [
     "src/**/*.spec.ts",
     "src/test-setup.ts",
@@ -164,7 +164,7 @@ def _bazel_tsconfig(name, out, extends, srcs, deps, strict, extra_paths = {}):
     """Writes a Bazel tsconfig `out` and its ts_config target `name`.
 
     `paths` maps only the declared library `deps` to their compiled `.d.ts`, so an import of any
-    other library fails with TS2307 (Decision 7 of DEV-7767).
+    other library fails with TS2307.
     """
     paths = {}
     for dep in deps:
@@ -226,8 +226,8 @@ def vre_library(
     The library's visibility is derived from its ADR-0001 type and scope in `LIBRARIES` in
     visibility.bzl, which fails the load for a package it does not list. The generated tsconfig
     maps only the declared library `deps` to their compiled `.d.ts`, so an import of any other
-    library fails with TS2307 (Decision 7 of DEV-7767, evidence in
-    docs/contribution/bazel-baselines.md); visibility then rejects a declared edge the tiers forbid.
+    library fails with TS2307 (evidence in docs/contribution/bazel-baselines.md); visibility then
+    rejects a declared edge the tiers forbid.
 
     A library compiles under the strict flags below unless `LOOSE_LIBRARIES` lists it, whatever
     its own tsconfig says.

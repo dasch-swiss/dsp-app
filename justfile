@@ -81,7 +81,7 @@ pixeleye run="main": install
       breakpoints) target=storybook_breakpoints config=pixeleye.breakpoints.config.ts port=6007 ;;
       *) echo "just pixeleye: main or breakpoints, not {{ run }}" >&2; exit 1 ;;
     esac
-    # The frozen CLI downloads Playwright 1.59.0's browsers each time it starts (Decision 15), which
+    # The frozen CLI downloads Playwright 1.59.0's browsers each time it starts, which
     # the read-only Nix store cannot take, and deletes every browser no installed Playwright
     # registered there. The capture launches the root playwright-core's headless shell, so that
     # Playwright installs it into the same directory.

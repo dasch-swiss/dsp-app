@@ -1,6 +1,6 @@
 rules_angular-nativelink.patch: let rules_angular's worker run a non-worker compile in NativeLink's
 work directory, so `ng_project` and `ts_project` (the TsProject and NgCompile actions) can execute
-remotely (Decision 11 of the DEV-7767 Bazel migration plan).
+remotely (ADR-0007, decision 6).
 
 Without it a remote action fails with
   "It's disallowed to compile outside of sandbox/or outside of a worker."
