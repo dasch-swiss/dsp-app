@@ -444,30 +444,48 @@ jobs:
   storybook-tests:
     name: Storybook Interaction Tests
     needs: [changes]
-    # Held until the Bazel build covers it again (DEV-7767 Phase 9).
-    if: >-
-      false && (needs.changes.result == 'success' && needs.changes.outputs.automation_skip == 'false' && needs.changes.outputs.only_workflows == 'false')
+    if: |
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          fetch-depth: 2
-      - name: Set up Node
-        uses: actions/setup-node@v7
+          persist-credentials: false
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+      - name: Restore Bazel repository cache
+        uses: actions/cache@v5
         with:
-          node-version-file: .nvmrc
-      - name: Set up pnpm and install dependencies
-        uses: ./.github/actions/setup-pnpm
-      - name: Build Storybook (generates the OpenAPI client first)
-        run: pnpm exec nx run dsp-app:build-storybook:ci
-      - name: Install Playwright browsers
-        run: pnpm exec playwright-core install chromium
-      - name: Serve and run interaction tests
-        run: |
-          pnpm exec http-server dist/storybook --port 6006 --silent &
-          pnpm exec wait-on tcp:6006 --timeout 60000
-          pnpm exec nx run dsp-app:test-storybook:ci -- --maxWorkers=2
+          path: ~/.cache/bazel-repo
+          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
+          restore-keys: bazel-repo-${{ runner.os }}-
+      - name: Restore Bazel disk cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/bazel-disk/dsp-app
+          key: bazel-disk-storybook-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
+          restore-keys: bazel-disk-storybook-${{ runner.os }}-
+      - name: Configure RBE
+        id: rbe
+        uses: ./.github/actions/bazel-rbe
+        with:
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
+      - name: Build Storybook
+        env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+        run: nix develop --command just storybook-build
+      - name: Run interaction tests
+        env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+        run: nix develop --command just storybook-test
 
   pixeleye:
     name: Pixeleye Snapshots
