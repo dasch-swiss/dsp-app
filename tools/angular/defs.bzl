@@ -11,7 +11,7 @@ load("@rules_angular//src/ng_project:index.bzl", "ng_project")
 load("@rules_sass//src:index.bzl", "sass_binary")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load(":loose.bzl", "LOOSE_LIBRARIES")
-load(":visibility.bzl", "ENFORCE_VISIBILITY", "LIBRARIES", "library_visibility")
+load(":visibility.bzl", "LIBRARIES", "package_visibility")
 
 # What the shared preset (jest.preset.js) loads, for every test target.
 _JEST_RUNTIME = [
@@ -224,12 +224,11 @@ def vre_library(
     its dependencies' `sources`, which a dependent library's Jest target runs on, and `eslintrc`
     (`eslint_config`).
 
-    The library's ADR-0001 type and scope come from `LIBRARIES` in visibility.bzl, which fails the
-    load for a package it does not list. The generated tsconfig maps only the declared library
-    `deps` to their compiled `.d.ts`, so an import of any other library fails with TS2307
-    (Decision 7 of DEV-7767, evidence in docs/contribution/bazel-baselines.md). The derived
-    visibility applies only while `ENFORCE_VISIBILITY` is on; until then every library is public
-    and `extra_visibility` has no effect.
+    The library's visibility is derived from its ADR-0001 type and scope in `LIBRARIES` in
+    visibility.bzl, which fails the load for a package it does not list. The generated tsconfig
+    maps only the declared library `deps` to their compiled `.d.ts`, so an import of any other
+    library fails with TS2307 (Decision 7 of DEV-7767, evidence in
+    docs/contribution/bazel-baselines.md); visibility then rejects a declared edge the tiers forbid.
 
     A library compiles under the strict flags below unless `LOOSE_LIBRARIES` lists it, whatever
     its own tsconfig says.
@@ -257,11 +256,7 @@ def vre_library(
         jest_config: the library's Jest config.
     """
     package = "//" + native.package_name()
-    if package not in LIBRARIES:
-        fail("%s is not in LIBRARIES in tools/angular/visibility.bzl; add it with its ADR-0001 type and scope" % package)
-    kind = LIBRARIES[package]
-    allowed = library_visibility(kind.type, kind.scope) + extra_visibility
-    visibility = allowed if ENFORCE_VISIBILITY else ["//visibility:public"]
+    visibility = package_visibility() + extra_visibility
 
     css = _stylesheets(stylesheets, sass_deps)
 

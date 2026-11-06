@@ -1,13 +1,9 @@
 """ADR-0001's dependency rules as Bazel visibility: who may depend on a library of a given type and scope.
 
-`vre_library` takes the visibility of a library from `library_visibility(type, scope)`. The
+A library takes its visibility from `package_visibility()`, which reads its `LIBRARIES` entry. The
 package groups it names are declared in `tools/angular/BUILD.bazel` from `LIBRARIES` and
 `APPLICATIONS`.
 """
-
-# Off until every library carries its type and scope; vre_library then applies the computed
-# visibility instead of //visibility:public.
-ENFORCE_VISIBILITY = False
 
 # Decision 2 of ADR-0001: the types a library of each type may depend on.
 TYPE_MAY_DEPEND_ON = {
@@ -41,7 +37,7 @@ LIBRARIES = {
     "//libs/vre/pages/user-settings/user": struct(type = "feature", scope = "user"),
     "//libs/vre/resource-editor/resource-editor": struct(type = "feature", scope = "shared"),
     "//libs/vre/shared/app-common": struct(type = "data-access", scope = "shared"),
-    # ADR-0001 assigns no tags until the library is split; provisional until Phase 8 enforces.
+    # ADR-0001 assigns no tags until the library is split; feature/shared keeps its importers legal.
     "//libs/vre/shared/app-common-to-move": struct(type = "feature", scope = "shared"),
     "//libs/vre/shared/app-help-page": struct(type = "feature", scope = "shared"),
     "//libs/vre/shared/app-helper-services": struct(type = "data-access", scope = "shared"),
