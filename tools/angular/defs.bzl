@@ -353,7 +353,8 @@ def vre_application(
         storybook_data = [],
         test_srcs = [],
         test_deps = [],
-        test_data = []):
+        test_data = [],
+        visibility = None):
     """The Angular application: its shell's ng_project, the esbuild bundle and the `name` directory.
 
     The configuration comes from the package's `config_setting`s, one per key of `environments`
@@ -380,6 +381,7 @@ def vre_application(
         test_srcs: the shell's specs and test-setup.ts; no Jest target without them.
         test_deps: what only the specs import.
         test_data: files a spec reads at run time.
+        visibility: of the `name` directory.
     """
     package = native.package_name()
     copy_file(
@@ -518,6 +520,7 @@ def vre_application(
             "bundle/": "",
             "index/": "",
         },
+        visibility = visibility,
     )
 
     sh_test(

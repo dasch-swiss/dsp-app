@@ -83,6 +83,7 @@ vre_application(
     # index.html.spec.ts reads the page from disk.
     test_data = ["src/index.html"],
     test_srcs = glob(TEST_SRCS),
+    visibility = ["//apps/dsp-app/image:__pkg__"],
     deps = [
         "//:node_modules/@angular/common",
         "//:node_modules/@angular/core",

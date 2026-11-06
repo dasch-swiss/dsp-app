@@ -300,9 +300,11 @@ docs-lint:
 docs-clean:
     rm -rf site/
 
-# Build the DSP-APP image and load it into Docker
-docker-build-app:
-    @echo "the image builds with rules_oci from DEV-7767's Phase 7 on" >&2; exit 1
+# Build the DSP-APP image for an architecture (amd64, arm64; the host's by default) and load it into
+# Docker as daschswiss/dsp-app:latest and :<build tag>
+docker-build-app arch="":
+    bazel run $BAZEL_FLAGS //apps/dsp-app/image:load{{ if arch == "" { "" } else { "_" + arch } }}
+    docker tag {{ dsp_app_repo }}:latest "{{ dsp_app_repo }}:{{ build_tag }}"
 
 # Publish the multi-arch DSP-APP image and :latest
 docker-publish-app:

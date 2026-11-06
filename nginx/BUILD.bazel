@@ -1,0 +1,9 @@
+# The nginx configuration the image ships (//apps/dsp-app/image).
+exports_files(
+    [
+        "default.conf.template",
+        "nginx-security-headers.conf",
+        "nginx.conf",
+    ],
+    visibility = ["//apps/dsp-app/image:__pkg__"],
+)

@@ -1,0 +1,119 @@
+load("@bazel_lib//lib:expand_template.bzl", "expand_template")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load", "oci_push")
+load("@tar.bzl", "mtree_mutate", "mtree_spec", "tar")
+
+# The DSP-APP image: nginx serving the production bundle at /public, one per architecture. Only the
+# base differs, so the bundle is built once; `--platforms` cannot pick the architecture, because
+# rules_sass registers its toolchain for exec == target only.
+
+# Only `--stamp` (the publish recipes) writes the build tag; every other build keeps this output
+# cacheable across commits.
+expand_template(
+    name = "build_json",
+    out = "build.json",
+    stamp_substitutions = {"0.0.0-unstamped": "{{STABLE_GIT_VERSION}}"},
+    template = ['{"build_tag": "0.0.0-unstamped"}'],
+)
+
+mtree_spec(
+    name = "dist_mtree",
+    srcs = ["//apps/dsp-app:dist"],
+)
+
+mtree_mutate(
+    name = "dist_mtree_public",
+    mtree = ":dist_mtree",
+    package_dir = "public",
+    strip_prefix = "apps/dsp-app/dist",
+)
+
+tar(
+    name = "dist_layer",
+    srcs = ["//apps/dsp-app:dist"],
+    mtree = ":dist_mtree_public",
+)
+
+tar(
+    name = "config_layer",
+    srcs = [
+        ":build_json",
+        "//nginx:default.conf.template",
+        "//nginx:nginx-security-headers.conf",
+        "//nginx:nginx.conf",
+    ],
+    mtree = [
+        "./etc type=dir uid=0 gid=0 mode=0755 time=0",
+        "./etc/nginx type=dir uid=0 gid=0 mode=0755 time=0",
+        "./etc/nginx/templates type=dir uid=0 gid=0 mode=0755 time=0",
+        "./etc/nginx/nginx.conf type=file uid=0 gid=0 mode=0644 time=0 content=$(execpath //nginx:nginx.conf)",
+        "./etc/nginx/security-headers.conf type=file uid=0 gid=0 mode=0644 time=0 content=$(execpath //nginx:nginx-security-headers.conf)",
+        "./etc/nginx/templates/default.conf.template type=file uid=0 gid=0 mode=0644 time=0 content=$(execpath //nginx:default.conf.template)",
+        "./public type=dir uid=0 gid=0 mode=0755 time=0",
+        "./public/config type=dir uid=0 gid=0 mode=0755 time=0",
+        "./public/config/build.json type=file uid=0 gid=0 mode=0644 time=0 content=$(execpath :build_json)",
+    ],
+)
+
+ARCHITECTURES = {
+    "amd64": "@nginx_linux_amd64",
+    "arm64": "@nginx_linux_arm64_v8",
+}
+
+[
+    oci_image(
+        name = "image_" + arch,
+        base = base,
+        cmd = [
+            "nginx",
+            "-g",
+            "daemon off;",
+        ],
+        env = {
+            # dsp-api's base URL for resource landing pages, e.g. http://api:3333; empty serves
+            # the plain app shell.
+            "DSP_API_UPSTREAM": "",
+            "NGINX_PORT": "4200",
+        },
+        exposed_ports = ["4200/tcp"],
+        tars = [
+            ":dist_layer",
+            ":config_layer",
+        ],
+    )
+    for arch, base in ARCHITECTURES.items()
+]
+
+[
+    oci_load(
+        name = "load_" + arch,
+        image = ":image_" + arch,
+        repo_tags = ["daschswiss/dsp-app:latest"],
+    )
+    for arch in ARCHITECTURES
+]
+
+# `bazel run` with `-- --repository <repo> --tag <tag>` to push elsewhere.
+[
+    oci_push(
+        name = "push_" + arch,
+        image = ":image_" + arch,
+        repository = "index.docker.io/daschswiss/dsp-app",
+    )
+    for arch in ARCHITECTURES
+]
+
+# The host's architecture, on @platforms//cpu: on a Mac the target OS is darwin, which the pull's
+# platform alias does not select.
+[
+    alias(
+        name = name,
+        actual = select({
+            "@platforms//cpu:aarch64": ":%s_arm64" % name,
+            "@platforms//cpu:x86_64": ":%s_amd64" % name,
+        }),
+    )
+    for name in [
+        "image",
+        "load",
+    ]
+]
