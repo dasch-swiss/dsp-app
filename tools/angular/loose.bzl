@@ -7,8 +7,8 @@ library's package to the Linear issue that removes it from this list.
 """
 
 LOOSE_LIBRARIES = {
-    "//libs/vre/pages/ontology/list": "pending: Linear issue created by the session",
-    "//libs/vre/pages/ontology/ontology": "pending: Linear issue created by the session",
-    "//libs/vre/pages/project/project": "pending: Linear issue created by the session",
+    "//libs/vre/pages/ontology/list": "DEV-7798",
+    "//libs/vre/pages/ontology/ontology": "DEV-7799",
+    "//libs/vre/pages/project/project": "DEV-7797",
     "//libs/vre/resource-editor/resource-editor": "DEV-7796",
 }
