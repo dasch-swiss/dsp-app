@@ -112,9 +112,10 @@ Before opening a PR, read `main`'s `git log` and recent merged PRs. Use them for
 These must be clean:
 
 - `just lint` — ESLint across all projects, including the alphabetical `import/order` rule.
-- `just test` — every Bazel test target. Libraries not yet built by Bazel run under Jest with `scripts/test-counts.sh`.
-- `just ci` — the gate CI's required jobs are built from.
-- `npm run test-storybook`, with `npm run storybook` running, when you changed a component that has stories.
+- `just test` — every Bazel test target.
+- `scripts/test-counts.sh` — every project's Jest suite, including the libraries Bazel does not build yet.
+- `pnpm exec ng build dsp-app`: the type-check, since lint is not type-aware.
+- `pnpm run test-storybook`, with `pnpm run storybook` running, when you changed a component that has stories.
 
 ## Where to Go for Depth
 

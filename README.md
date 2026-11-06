@@ -15,11 +15,12 @@ This monorepo is built on:
 
 ## Quick Start
 
-Activate the Node.js version pinned in [.nvmrc](.nvmrc) — for example `nvm use`, `fnm use`, or `n auto` — before running `npm install`.
+Enter the Nix dev shell from the repository root (`nix develop`, or automatically through direnv); it
+provides Bazel, just, pnpm and Node. Then:
 
 ```shell
-npm install
-npm run start-local   # app runs at http://localhost:4200
+just install   # npm dependencies from pnpm-lock.yaml
+just test      # every Bazel test target
 ```
 
 Requires a running [DSP-API](https://github.com/dasch-swiss/dsp-api) backend. To start it locally:
@@ -47,9 +48,6 @@ Most common operations for daily development:
 | Build static Storybook          | `pnpm run build-storybook`               |
 | Run Storybook interaction tests | `pnpm run test-storybook`                |
 
-The application build and its dev server move to Bazel during the DEV-7767 migration; until then
-the repository builds `dsp-js` and the generated OpenAPI client with Bazel.
-
 For all available commands, see the [justfile](https://github.com/dasch-swiss/dsp-app/blob/main/justfile).
 
 ## Developer Guide
@@ -66,12 +64,13 @@ Library path aliases are defined in [tsconfig.base.json](https://github.com/dasc
 The TypeScript client for DSP-API is auto-generated from the OpenAPI spec:
 
 ```shell
-npm run check-openapi-sync      # Check if the generated client is up to date
-npm run update-openapi           # Update spec and regenerate client
-npm run generate-openapi-module # Regenerate from the local spec only
+just openapi-check     # Check if the vendored spec matches the dev API's
+just openapi-update    # Update the spec and regenerate the client
+just openapi-generate  # Regenerate from the local spec only
 ```
 
-The client is also regenerated automatically as part of `npm install` (via `postinstall`), so it stays in sync after dependency updates.
+Bazel generates the client in a build action; `just openapi-generate` also copies it to the gitignored
+`src/generated` for the IDE.
 
 See [OpenAPI Client README](https://github.com/dasch-swiss/dsp-app/blob/main/libs/vre/3rd-party-services/open-api/README.md) for full details.
 
@@ -85,7 +84,7 @@ See [OpenAPI Client README](https://github.com/dasch-swiss/dsp-app/blob/main/lib
 Run a Grafana stack alongside the app to view Faro telemetry (logs, traces, Web Vitals):
 
 ```shell
-npm run start-local-with-observability
+docker compose -f docker-compose.observability.yml up -d
 ```
 
 Grafana is available at [http://localhost:3001](http://localhost:3001) (credentials: `admin`/`admin`). Includes Loki (logs), Tempo (traces), and Mimir (metrics).
@@ -97,9 +96,9 @@ To stop: `docker compose -f docker-compose.observability.yml down`
 A single global [Storybook](https://storybook.js.org/) instance aggregates stories from all libraries and apps:
 
 ```shell
-npm run storybook           # Start dev server (http://localhost:4400)
-npm run build-storybook     # Build a static bundle to dist/storybook/
-npm run test-storybook      # Run story interaction tests (requires a running server)
+pnpm run storybook           # Start dev server (http://localhost:4400)
+pnpm run build-storybook     # Build a static bundle to dist/storybook/
+pnpm run test-storybook      # Run story interaction tests (requires a running server)
 ```
 
 Stories are auto-discovered from any `*.stories.ts` file under `libs/` or `apps/` — no registration needed when adding new stories.
