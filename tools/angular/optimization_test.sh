@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Usage: optimization_test.sh <dist dir> <optimized: true|false>
 # Fails when the bundle lacks what the Angular CLI's build gives that configuration: modulepreload
-# hints for chunks that exist, the font import only in the global stylesheet, and when optimized,
-# minified component styles and the critical CSS inlined into index.html.
+# hints for chunks that exist, the icon font face once and only in the global stylesheet, the icon
+# class scoped in the components that use `config`, and when optimized, minified component styles
+# and the critical CSS inlined into index.html.
 set -euo pipefail
 
 dist="${1:?usage: $0 <dist dir> <optimized>}"
@@ -18,9 +19,14 @@ for chunk in $preloads; do
   [ -f "$dist/$chunk" ] || fail "index.html preloads $chunk, which is not in $dist"
 done
 
-if grep -l 'fonts.googleapis' "$dist"/*.js; then
-  fail "a component style above imports the web font; it belongs in apps/dsp-app/src/styles/_font.scss only"
+if grep -l 'fonts.googleapis' "$dist"/*.js "$dist"/*.css; then
+  fail "a stylesheet above imports Google's font CSS, which blocks rendering; apps/dsp-app/src/styles/_font.scss declares the face"
 fi
+if grep -l 'fonts.gstatic' "$dist"/*.js; then
+  fail "a component style above declares the icon font face; it belongs in apps/dsp-app/src/styles/_font.scss only"
+fi
+faces="$(cat "$dist"/styles-*.css | tr -d ' \n' | grep -oE "@font-face\{font-family:['\"]?MaterialIcons['\"]?;" | wc -l | tr -d ' ')"
+[ "$faces" -eq 1 ] || fail "the global stylesheet declares the Material Icons face $faces times, not once"
 
 # libs/vre/ui/styles/_material-icons.scss keeps icons at 24px in the 32 components whose styles
 # use `config` (as the CLI's build did); 4 of them carry the rule inline, so count well above that.

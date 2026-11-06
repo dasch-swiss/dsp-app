@@ -1,5 +1,12 @@
-// Here, not in the shared `config`: every component stylesheet uses that, and would repeat the request.
-@import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
+/* material-icons: the face Google's icon CSS declares, which the Angular CLI's production build
+   inlined. Written here, not imported: a stylesheet @import of fonts.googleapis.com blocks rendering
+   and the build may not fetch it. Only here: a component stylesheet would repeat it. */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v145/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+}
 
 /* roboto-300 - latin */
 @font-face {
@@ -60,13 +67,4 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
     U+FEFF, U+FFFD;
-}
-
-/* material-icons */
-@font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Material Icons'), local('MaterialIcons-Regular'),
-    url(../assets/fonts/material-icons/MaterialIcons-Regular.ttf) format('truetype');
 }
