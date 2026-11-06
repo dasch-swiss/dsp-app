@@ -306,9 +306,24 @@ docker-build-app arch="":
     bazel run $BAZEL_FLAGS //apps/dsp-app/image:load{{ if arch == "" { "" } else { "_" + arch } }}
     docker tag {{ dsp_app_repo }}:latest "{{ dsp_app_repo }}:{{ build_tag }}"
 
-# Publish the multi-arch DSP-APP image and :latest
-docker-publish-app:
-    @echo "the image builds with rules_oci from DEV-7767's Phase 7 on" >&2; exit 1
+# Publish the multi-arch DSP-APP image as :<build tag> and :latest, stamped (needs a registry login,
+# which crane and oci_push read from ~/.docker/config.json)
+docker-publish-app repository=("index.docker.io/" + dsp_app_repo):
+    #!/usr/bin/env bash
+    set -euo pipefail
+    repo="{{ repository }}"
+    tag="{{ build_tag }}"
+    for arch in amd64 arm64; do
+      bazel run --stamp $BAZEL_FLAGS "//apps/dsp-app/image:push_$arch" -- --repository "$repo" --tag "$tag-$arch"
+    done
+    crane index append -m "$repo:$tag-amd64" -m "$repo:$tag-arm64" -t "$repo:$tag"
+    crane tag "$repo:$tag" latest
+
+# Push a stamped amd64 image of a configuration's bundle as REPOSITORY:TAG and print its digest on
+# the last line, for the Cloud Run preview (needs a registry login)
+docker-push-preview repository tag config="dev-server":
+    bazel run --stamp $BAZEL_FLAGS "--//apps/dsp-app:config={{ config }}" //apps/dsp-app/image:push_amd64 -- --repository "{{ repository }}" --tag "{{ tag }}"
+    crane digest "{{ repository }}:{{ tag }}"
 
 # Publish every image in the repository
 docker-publish: docker-publish-app
