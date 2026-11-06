@@ -5,7 +5,9 @@ const config: TestRunnerConfig = {
   // only while `ngDevMode` is truthy.
   async postVisit(page) {
     if (!(await page.evaluate(() => Boolean((globalThis as { ngDevMode?: unknown }).ngDevMode)))) {
-      throw new Error('Angular runs in production mode; build //:storybook with --enable-prod-mode=false');
+      throw new Error(
+        'Angular runs in production mode: run the tests against //:storybook, not //:storybook_breakpoints'
+      );
     }
   },
 };

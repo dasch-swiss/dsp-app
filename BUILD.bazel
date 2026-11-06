@@ -75,6 +75,7 @@ js_library(
 # `storybook_breakpoints` builds only the breakpoint stories, for their own Pixeleye run.
 # `storybook` runs Angular in development mode, as `start-storybook` does, so the interaction
 # tests get its dev-only checks; `.storybook/test-runner.ts` fails a story without it.
+# `storybook_breakpoints` only feeds Pixeleye's snapshots and stays a production build, as on main.
 [
     ng_bin.ng(
         name = name,

@@ -370,7 +370,7 @@ def vre_application(
         sass_deps: sass_library targets the stylesheets and the global stylesheet `@use`.
         global_stylesheet: compiled, minified, to `styles-<hash>.css`.
         index_html: the page the entries and the stylesheet are written into.
-        scripts: plain scripts concatenated into `scripts-<hash>.js`, loaded before the entries.
+        scripts: plain scripts concatenated into `scripts-<hash>.js`, loaded before `main`.
         static_files: copied into `name` with their path below `src/`.
         optimized_configs: configurations bundled minified and without Angular's dev-mode checks,
             with the critical CSS inlined into `index.html`.
@@ -382,6 +382,10 @@ def vre_application(
         visibility: of the `name` directory.
     """
     package = native.package_name()
+    optimized = select({
+        ":" + config: [str(config in optimized_configs).lower()]
+        for config in environments
+    })
     copy_file(
         name = "environment",
         src = select({":" + config: env for config, env in environments.items()}),
@@ -506,10 +510,7 @@ def vre_application(
             package + "/minified/styles.css",
             package + "/scripts.js",
             package + "/index",
-        ] + select({
-            ":" + config: [str(config in optimized_configs).lower()]
-            for config in environments
-        }),
+        ] + optimized,
         tool = Label("//tools/angular:write_index"),
     )
 
@@ -537,9 +538,6 @@ def vre_application(
         name = "optimization_test",
         size = "small",
         srcs = [Label("//tools/angular:optimization_test.sh")],
-        args = ["$(rootpath :%s)" % name] + select({
-            ":" + config: [str(config in optimized_configs).lower()]
-            for config in environments
-        }),
+        args = ["$(rootpath :%s)" % name] + optimized,
         data = [":" + name],
     )
