@@ -20,6 +20,7 @@ nav:
       - "ADR-0004: Cross-feature access": adr/0004-cross-feature-access.md
       - "ADR-0005: What shared/ means, and what it does not": adr/0005-what-shared-means.md
       - "ADR-0006: The end-to-end suite is its own project": adr/0006-the-e2e-suite-is-its-own-project.md
+      - "ADR-0007: Bazel builds the repository": adr/0007-bazel-builds-the-repository.md
 
 plugins:
   - include-markdown

@@ -23,18 +23,20 @@ A rule recorded as `review` or `docs-only` is not a weaker rule. It is an honest
 | [0004](0004-cross-feature-access.md) | Cross-feature access | Accepted |
 | [0005](0005-what-shared-means.md) | What `shared/` means, and what it does not | Accepted |
 | [0006](0006-the-e2e-suite-is-its-own-project.md) | The end-to-end suite is its own project | Accepted |
+| [0007](0007-bazel-builds-the-repository.md) | Bazel builds the repository | Accepted |
 
-## How these six relate
+## How these seven relate
 
-ADR-0001 is the anchor: it defines the tags, the dependency direction, and the order in which they can be switched on without breaking the build. The others each take one part of it further.
+ADR-0001 is the anchor: it defines the types and scopes, the dependency direction, and the exceptions the build still allows. The others each take one part of it further.
 
 - **0002** covers what a library exposes once the direction is enforced.
 - **0003** covers what lives inside a feature and who is allowed to write it.
 - **0004** covers what a feature does when it needs something another feature has.
 - **0005** defines the destination that 0004 relies on.
-- **0006** gives the `e2e` tag in 0001 something to apply to.
+- **0006** keeps the end-to-end suite apart from the application it tests.
+- **0007** records the build that enforces 0001 through Bazel `visibility`.
 
-0004 and 0005 are on the critical path for 0001: the constraint block in 0001 cannot be switched on until the cross-feature symbols they describe have moved. 0006 is the exception. It depends on nothing and can land on its own.
+0001 is enforced with explicit exceptions; each move 0004 and 0005 describe removes one of them. 0006 depends on nothing.
 
 ## Related documents
 
