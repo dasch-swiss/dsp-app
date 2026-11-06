@@ -30,6 +30,8 @@ LIBRARIES = {
     "//libs/vre/core/error-handler": struct(type = "data-access", scope = "shared"),
     "//libs/vre/core/session": struct(type = "data-access", scope = "shared"),
     "//libs/vre/pages/data-browser": struct(type = "feature", scope = "shared"),
+    "//libs/vre/pages/project/project": struct(type = "feature", scope = "project"),
+    "//libs/vre/pages/search/search": struct(type = "feature", scope = "search"),
     "//libs/vre/pages/search/search-filters": struct(type = "feature", scope = "shared"),
     "//libs/vre/pages/system/system": struct(type = "feature", scope = "system"),
     "//libs/vre/pages/user-settings/user": struct(type = "feature", scope = "user"),
