@@ -85,7 +85,7 @@ pixeleye run="main": install
     # the read-only Nix store cannot take, and deletes every browser no installed Playwright
     # registered there. The capture launches the root playwright-core's headless shell, so that
     # Playwright installs it into the same directory.
-    export PLAYWRIGHT_BROWSERS_PATH="$HOME/.cache/dsp-app-pixeleye-browsers"
+    export PLAYWRIGHT_BROWSERS_PATH="${PIXELEYE_BROWSERS_PATH:-$HOME/.cache/dsp-app-pixeleye-browsers}"
     node node_modules/playwright-core/cli.js install chromium-headless-shell
     bazel build "//:$target" $BAZEL_FLAGS
     ! curl -s -o /dev/null "http://127.0.0.1:$port/" || { echo "port $port is already serving; stop that server first" >&2; exit 1; }

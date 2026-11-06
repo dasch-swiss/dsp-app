@@ -128,9 +128,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    # Only the E2E job runs Cypress; `just install` would download its binary everywhere.
-    env:
-      CYPRESS_INSTALL_BINARY: 0
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -236,6 +233,7 @@ jobs:
         uses: ./.github/actions/bazel-setup
         with:
           cache-key-prefix: bazel-disk-e2e-${{ matrix.runner }}
+          cypress: 'true'
           runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
@@ -449,9 +447,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    # Only the E2E job runs Cypress; `just install` would download its binary everywhere.
-    env:
-      CYPRESS_INSTALL_BINARY: 0
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -512,9 +507,8 @@ jobs:
       cancel-in-progress: false
     permissions:
       contents: read
-    # Only the E2E job runs Cypress; `just install` would download its binary everywhere.
     env:
-      CYPRESS_INSTALL_BINARY: 0
+      PIXELEYE_BROWSERS_PATH: ${{ github.workspace }}/../pixeleye-browsers
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -542,7 +536,7 @@ jobs:
         # shell the capture launches goes there too; `just pixeleye` points both at this directory.
         uses: actions/cache@v5
         with:
-          path: ~/.cache/dsp-app-pixeleye-browsers
+          path: ${{ env.PIXELEYE_BROWSERS_PATH }}
           key: pixeleye-browsers-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: pixeleye-browsers-${{ runner.os }}-
       - name: Capture and upload snapshots
@@ -669,9 +663,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    # Only the E2E job runs Cypress; `just install` would download its binary everywhere.
-    env:
-      CYPRESS_INSTALL_BINARY: 0
     steps:
       - name: Checkout
         uses: actions/checkout@v7

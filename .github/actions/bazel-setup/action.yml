@@ -20,6 +20,9 @@ inputs:
   client-key:
     description: mTLS client key (PEM).
     required: true
+  cypress:
+    description: Whether `just install` downloads the Cypress binary; only a job that runs Cypress needs it.
+    default: 'false'
 
 outputs:
   flags:
@@ -29,6 +32,10 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Skip the Cypress binary
+      if: inputs.cypress != 'true'
+      shell: bash
+      run: echo "CYPRESS_INSTALL_BINARY=0" >> "$GITHUB_ENV"
     - name: Install Nix
       uses: DeterminateSystems/determinate-nix-action@v3
     - name: Restore Bazel repository cache
