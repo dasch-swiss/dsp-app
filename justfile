@@ -317,6 +317,7 @@ docker-publish: docker-publish-app
 docker-image-tag:
     @echo {{ build_tag }}
 
-# Test nginx's landing-page forwarding against a stub dsp-api (needs Docker)
-nginx-smoke-test:
-    @echo "the smoke test runs against the rules_oci image from DEV-7767's Phase 7 on" >&2; exit 1
+# Test the image: the bundle is served, nginx forwards landing pages to a stub dsp-api, and the
+# compose healthcheck's command passes inside the container (needs Docker)
+nginx-smoke-test: docker-build-app
+    ./scripts/nginx-smoke-test.sh
