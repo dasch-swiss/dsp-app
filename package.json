@@ -20,12 +20,9 @@
     "ng": "ng",
     "e2e-local": "cd apps/dsp-app && pnpm exec cypress open --browser chrome --e2e",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org dasch --project javascript-angular ./dist/apps/dsp-app && sentry-cli sourcemaps upload --org dasch --project javascript-angular ./dist/apps/dsp-app",
-    "storybook": "ng run dsp-app:storybook",
-    "build-storybook": "ng run dsp-app:build-storybook",
     "test-storybook": "test-storybook -c .storybook --url=http://localhost:4400",
     "pixeleye": "pixeleye storybook http://localhost:4400",
     "pixeleye:ci": "pixeleye storybook http://localhost:6006",
-    "build-storybook:breakpoints": "STORYBOOK_BREAKPOINTS=true ng run dsp-app:build-storybook:ci --output-dir=dist/storybook-breakpoints",
     "pixeleye:breakpoints": "pixeleye storybook http://localhost:6007 -c pixeleye.breakpoints.config.ts"
   },
   "private": true,

@@ -21,6 +21,10 @@ dsp_app_repo := "daschswiss/dsp-app"
 build_tag := env("BUILD_TAG", `git describe --tag --match 'v[0-9]*' --dirty --abbrev=7 --always`)
 open_api := "libs/vre/3rd-party-services/open-api"
 
+# Serves a directory (append `--port <port> <dir>`) with `Cache-Control: no-store`, answering
+# unknown paths with its index.html, as a deep link into the app needs.
+static_server := "miniserve --interfaces 127.0.0.1 --index index.html --spa --header Cache-Control:no-store --quiet"
+
 # List the recipes
 help:
     @just --list --unsorted
@@ -28,12 +32,6 @@ help:
 # Install the npm dependencies from pnpm-lock.yaml
 install:
     pnpm install --frozen-lockfile
-
-# Serve a directory on 127.0.0.1:PORT with `Cache-Control: no-store`, answering unknown paths with
-# its index.html, as a deep link into the app needs
-_serve DIR PORT:
-    miniserve --interfaces 127.0.0.1 --port {{ PORT }} --index index.html --spa \
-      --header "Cache-Control:no-store" --quiet "{{ DIR }}"
 
 # Build the bundle in a configuration and serve it on http://localhost:4200, rebuilding on every
 # source change (reload the page to see it); for browsing, not for tests
@@ -44,7 +42,34 @@ serve config="production":
     bazel build //apps/dsp-app:dist "$flag" $BAZEL_FLAGS
     ibazel build //apps/dsp-app:dist "$flag" $BAZEL_FLAGS &
     trap 'kill $!' EXIT
-    just _serve "$(bazel info bazel-bin "$flag" $BAZEL_FLAGS 2>/dev/null)/apps/dsp-app/dist" 4200
+    {{ static_server }} --port 4200 "$(bazel info bazel-bin "$flag" $BAZEL_FLAGS 2>/dev/null)/apps/dsp-app/dist"
+
+# Build Storybook (bazel-bin/storybook) and its breakpoint-stories variant
+# (bazel-bin/storybook_breakpoints); a story's type error fails here
+storybook-build:
+    bazel build //:storybook //:storybook_breakpoints $BAZEL_FLAGS
+
+# Serve the Bazel-built Storybook on http://localhost:4400, rebuilding on every source change
+storybook:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    bazel build //:storybook $BAZEL_FLAGS
+    ibazel build //:storybook $BAZEL_FLAGS &
+    trap 'kill $!' EXIT
+    {{ static_server }} --port 4400 "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/storybook"
+
+# Run the Storybook interaction tests against the Bazel-built Storybook with the dev shell's
+# Playwright browsers
+storybook-test: install
+    #!/usr/bin/env bash
+    set -euo pipefail
+    bazel build //:storybook $BAZEL_FLAGS
+    {{ static_server }} --port 6006 "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/storybook" &
+    trap 'kill $!' EXIT
+    timeout 60 bash -c 'until curl -sf -o /dev/null http://127.0.0.1:6006/index.json; do sleep 0.5; done'
+    # Two workers, as CI ran it before Bazel: in band the runner's heap grows past 4 GB, and with
+    # four the spike saw ChunkLoadError.
+    pnpm exec test-storybook -c .storybook --url=http://127.0.0.1:6006 --index-json --ci --maxWorkers=2
 
 # Build the application bundle in a configuration (bazel-bin/apps/dsp-app/dist), the named Bazel
 # targets, or //... with no argument

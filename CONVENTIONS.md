@@ -114,7 +114,7 @@ These must be clean:
 - `just lint` — ESLint across all projects, including the alphabetical `import/order` rule.
 - `just test` — every Bazel test target; `just test-files -- <paths>` runs only those that depend on the paths.
 - `just build` — every library's compile under its strict flags, the type-check lint does not do, and the application bundle; `just build <config>` builds the bundle in one configuration.
-- `pnpm run test-storybook`, with `pnpm run storybook` running, when you changed a component that has stories. Until DEV-7767's Phase 7 builds Storybook with Bazel, the `.css` files the components' `styleUrl` names exist only in `bazel-bin`, so Storybook does not build.
+- `just storybook-test` when you changed a component that has stories: it builds Storybook with Bazel and runs the interaction tests against it. `just storybook` serves it for browsing.
 
 ## Where to Go for Depth
 

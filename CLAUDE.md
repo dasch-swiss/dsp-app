@@ -55,8 +55,8 @@ Read [`CONVENTIONS.md`](CONVENTIONS.md) before writing code: components, depende
 - Use `storyName` when the export name would be awkward
 - Every story must have at least one `play()` function asserting a user-visible outcome
 - `argTypes` must include a `description` for every `@Input()` and `@Output()`
-- Run Storybook locally: `npm run storybook`
-- Run interaction tests: `npm run test-storybook`
+- Run Storybook locally: `just storybook` (http://localhost:4400)
+- Run interaction tests: `just storybook-test`
 - **Stories that render a real container break when its DI changes.** Some stories mount the
   actual container component (others mock it) — adding a service injection to a container breaks
   exactly those stories, not the mocked ones. When you add a dependency to a component that

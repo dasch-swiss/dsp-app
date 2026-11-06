@@ -62,3 +62,11 @@ vre_jest_test(
 )
 
 eslint_config()
+
+# The Storybook build reads a library through this name (//:storybook); calendar has no stories or
+# stylesheets.
+alias(
+    name = "storybook_sources",
+    actual = ":sources",
+    visibility = ["//:__pkg__"],
+)

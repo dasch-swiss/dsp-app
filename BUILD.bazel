@@ -1,6 +1,8 @@
 load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@npm//:@angular/cli/package_json.bzl", ng_bin = "bin")
 load("@npm//:defs.bzl", "npm_link_all_packages")
+load("//tools/angular:visibility.bzl", "LIBRARIES")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -57,3 +59,51 @@ js_library(
         ":node_modules/typescript-eslint",
     ],
 )
+
+# Storybook's own files and what its Angular builder reads at the root.
+js_library(
+    name = "storybook_config",
+    srcs = glob([".storybook/*"]) + [
+        "angular.json",
+        "package.json",
+        "tsconfig.base.json",
+    ],
+)
+
+# `just storybook-build`: Storybook's Angular CLI webpack build over the sources copied to the
+# output tree, where the compiled `.css` sit beside the components (Decision 17 of DEV-7767).
+# `storybook_breakpoints` builds only the breakpoint stories, for their own Pixeleye run.
+[
+    ng_bin.ng(
+        name = name,
+        srcs = [
+            ":ambient_types",
+            ":node_modules",
+            ":storybook_config",
+            "//apps/dsp-app:storybook_sources",
+            "//libs/dsp-js:sources",
+            "//libs/vre/ui/styles:storybook_sources",
+        ] + [package + ":storybook_sources" for package in LIBRARIES],
+        args = [
+            "run",
+            "dsp-app:build-storybook",
+            "--output-dir=" + name,
+        ],
+        env = {
+            "CI": "1",
+            "HOME": "/tmp",
+            "NG_CLI_ANALYTICS": "false",
+            "NODE_OPTIONS": "--max-old-space-size=8192",
+            "STORYBOOK_BREAKPOINTS": breakpoints,
+            "STORYBOOK_DISABLE_TELEMETRY": "1",
+        },
+        # Without it every .d.ts is dropped from the inputs, types/window.d.ts among them.
+        include_types = True,
+        out_dirs = [name],
+        tags = ["manual"],
+    )
+    for name, breakpoints in [
+        ("storybook", "false"),
+        ("storybook_breakpoints", "true"),
+    ]
+]

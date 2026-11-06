@@ -70,6 +70,15 @@ vre_application(
         # The image's stamped layer supplies it.
         exclude = ["src/config/build.json"],
     ),
+    # angular.json's build target, which Storybook's builder reads, and the media fixtures
+    # .storybook/main.ts serves.
+    storybook_data = glob([
+        "cypress/uploads/**",
+        "src/styles/_*.scss",
+    ]) + [
+        "tsconfig.app.json",
+        "tsconfig.json",
+    ],
     stylesheets = glob(["src/app/**/*.scss"]),
     # index.html.spec.ts reads the page from disk.
     test_data = ["src/index.html"],

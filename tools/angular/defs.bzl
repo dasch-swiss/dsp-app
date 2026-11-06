@@ -77,15 +77,17 @@ TEST_SRCS = [
     "src/test-setup.ts",
 ]
 
-# What a library's `srcs` glob leaves out: the test files, a spec helper (which a library lists in
-# its `test_srcs` by name) and the stories, which Storybook compiles.
-LIBRARY_EXCLUDES = TEST_SRCS + [
-    "src/**/*.spec-helper.ts",
+# The stories and their helpers: only the Storybook build (//:storybook) compiles them.
+STORY_SRCS = [
     "src/**/*.stories.ts",
     "src/**/stories.helpers.ts",
     "src/**/*.stories.helpers.ts",
     "src/**/*-stories.helper.ts",
 ]
+
+# What a library's `srcs` glob leaves out: the test files, a spec helper (which a library lists in
+# its `test_srcs` by name) and the stories.
+LIBRARY_EXCLUDES = TEST_SRCS + STORY_SRCS + ["src/**/*.spec-helper.ts"]
 
 # What every library compiles against: tsconfig.base.json sets `importHelpers` and the libraries'
 # `types` name the declarations in types/.
@@ -316,6 +318,14 @@ def vre_library(
         visibility = visibility,
     )
 
+    # What the Storybook build reads of the library: the stories, the sources they import and the
+    # compiled `.css` the components' `styleUrl` names.
+    js_library(
+        name = "storybook_sources",
+        srcs = srcs + assets + testing_srcs + css + native.glob(STORY_SRCS, allow_empty = True),
+        visibility = ["//:__pkg__"],
+    )
+
     if test_srcs:
         vre_jest_test(
             name = "test",
@@ -340,6 +350,7 @@ def vre_application(
         static_files = [],
         optimized_configs = ["production"],
         development_configs = ["development"],
+        storybook_data = [],
         test_srcs = [],
         test_deps = [],
         test_data = []):
@@ -365,6 +376,7 @@ def vre_application(
         optimized_configs: configurations bundled minified and without Angular's dev-mode checks.
         development_configs: configurations that resolve packages without the `production`
             export condition.
+        storybook_data: what else of the package the Storybook build reads.
         test_srcs: the shell's specs and test-setup.ts; no Jest target without them.
         test_deps: what only the specs import.
         test_data: files a spec reads at run time.
@@ -403,6 +415,12 @@ def vre_application(
         name = "sources",
         srcs = srcs,
         deps = [_sources(d) for d in deps],
+    )
+
+    js_library(
+        name = "storybook_sources",
+        srcs = srcs + css + static_files + storybook_data + [":environment", global_stylesheet],
+        visibility = ["//:__pkg__"],
     )
     if test_srcs:
         vre_jest_test(
