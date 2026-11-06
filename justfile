@@ -50,13 +50,15 @@ test-files *FILES:
     [ "${1:-}" != "--" ] || shift
     [ "$#" -gt 0 ] || { echo "just test-files: no paths given" >&2; exit 1; }
     labels=()
+    everything=0
     for path in "$@"; do
+      # GNU realpath, from the dev shell.
       file="$(realpath -m --relative-to=. "$path")"
       case "$file" in
-        ../* | /*) echo "just test-files: $path is outside the repository" >&2; exit 1 ;;
+        .. | ../* | /*) echo "just test-files: $path is outside the repository" >&2; exit 1 ;;
         # No target depends on these, but they change what the targets are: run every test.
         *.bzl | MODULE.bazel* | .bazelrc | .bazelversion | pnpm-lock.yaml | package.json)
-          exec bazel test //... $BAZEL_FLAGS ;;
+          everything=1; continue ;;
       esac
       dir="$(dirname "$file")"
       while [ "$dir" != "." ] && [ ! -f "$dir/BUILD.bazel" ]; do dir="$(dirname "$dir")"; done
@@ -67,13 +69,14 @@ test-files *FILES:
         labels+=("//$pkg:${file#"$pkg/"}")
       fi
     done
+    [ "$everything" -eq 0 ] || exec bazel test //... $BAZEL_FLAGS
     # A path no rule reads (a README, a deleted file) is no target; --keep_going skips it and exits
     # 3. Any other error, a package that fails to load included, fails the recipe.
     errors="$(mktemp)"
     trap 'rm -f "$errors"' EXIT
     status=0
     targets="$(bazel query --keep_going "kind(jest_test, rdeps(//..., set(${labels[*]})))" $BAZEL_FLAGS 2>"$errors")" || status=$?
-    if [ "$status" -ne 0 ] && { [ "$status" -ne 3 ] || grep '^ERROR:' "$errors" | grep -qv "^ERROR: Skipping '[^']*': no such target"; }; then
+    if [ "$status" -ne 0 ] && { [ "$status" -ne 3 ] || awk '/^ERROR:/ && !/^ERROR: Skipping .*: no such target/ { found = 1 } END { exit !found }' "$errors"; }; then
       cat "$errors" >&2
       echo "just test-files: bazel query failed with exit code $status" >&2
       exit 1
@@ -99,7 +102,7 @@ lint: install openapi-generate
     for dir in $(git ls-files '*/eslint.config.mjs' | xargs -n1 dirname); do
       patterns+=("$dir/*.ts" "$dir/*.js" "$dir/*.mjs" "$dir/*.cjs" "$dir/*.html")
     done
-    # Untracked files too, as ESLint over the directories saw them; a deleted file is skipped.
+    # Untracked files are linted too; a tracked file deleted from the working tree is skipped.
     git ls-files --cached --others --exclude-standard -- "${patterns[@]}" \
       | { grep -vxFf <(printf '%s\n' "$linted") || true; } \
       | while read -r file; do [ ! -f "$file" ] || echo "$file"; done \
