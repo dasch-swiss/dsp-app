@@ -73,6 +73,8 @@ js_library(
 # `just storybook-build`: Storybook's Angular CLI webpack build over the sources copied to the
 # output tree, where the compiled `.css` sit beside the components (Decision 17 of DEV-7767).
 # `storybook_breakpoints` builds only the breakpoint stories, for their own Pixeleye run.
+# `storybook` runs Angular in development mode, as `start-storybook` does, so the interaction
+# tests get its dev-only checks; `.storybook/test-runner.ts` fails a story without it.
 [
     ng_bin.ng(
         name = name,
@@ -88,6 +90,7 @@ js_library(
             "run",
             "dsp-app:build-storybook",
             "--output-dir=" + name,
+            "--enable-prod-mode=" + prod_mode,
         ],
         env = {
             "CI": "1",
@@ -102,8 +105,8 @@ js_library(
         out_dirs = [name],
         tags = ["manual"],
     )
-    for name, breakpoints in [
-        ("storybook", "false"),
-        ("storybook_breakpoints", "true"),
+    for name, breakpoints, prod_mode in [
+        ("storybook", "false", "false"),
+        ("storybook_breakpoints", "true", "true"),
     ]
 ]
