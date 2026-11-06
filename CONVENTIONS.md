@@ -113,9 +113,9 @@ These must be clean:
 
 - `just lint` — ESLint across all projects, including the alphabetical `import/order` rule.
 - `just test` — every Bazel test target; `just test-files -- <paths>` runs only those that depend on the paths.
-- `just build` — every library's compile under its strict flags, the type-check lint does not do.
+- `just build` — every library's compile under its strict flags, the type-check lint does not do, and the application bundle; `just build <config>` builds the bundle in one configuration.
 - `scripts/test-counts.sh` — every project's Jest suite, including the application, which Bazel does not build yet.
-- `pnpm run test-storybook`, with `pnpm run storybook` running, when you changed a component that has stories. Until DEV-7767's Phase 7 builds Storybook with Bazel, the `.css` files the components' `styleUrl` names exist only in `bazel-bin`, so Storybook and `pnpm exec ng build dsp-app` do not build.
+- `pnpm run test-storybook`, with `pnpm run storybook` running, when you changed a component that has stories. Until DEV-7767's Phase 7 builds Storybook with Bazel, the `.css` files the components' `styleUrl` names exist only in `bazel-bin`, so Storybook does not build.
 
 ## Where to Go for Depth
 

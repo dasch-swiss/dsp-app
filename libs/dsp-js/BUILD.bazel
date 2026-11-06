@@ -47,6 +47,7 @@ ts_project(
     deps = [
         "//:node_modules/json2typescript",
         "//:node_modules/jsonld",
+        "//:node_modules/reflect-metadata",
         "//:node_modules/rxjs",
         "//:node_modules/tslib",
     ],

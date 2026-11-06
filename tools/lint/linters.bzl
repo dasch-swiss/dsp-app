@@ -7,7 +7,7 @@ eslint = lint_eslint_aspect(
     binary = Label("//tools/lint:eslint"),
     # Every package's config (tools/angular's eslint_config); ESLint picks the nearest one above
     # each file, as it does in the source tree.
-    configs = [Label("//:eslintrc"), Label("//libs/dsp-js:eslintrc")] + [
+    configs = [Label("//:eslintrc"), Label("//apps/dsp-app:eslintrc"), Label("//libs/dsp-js:eslintrc")] + [
         Label(package + ":eslintrc")
         for package in LIBRARIES
     ],

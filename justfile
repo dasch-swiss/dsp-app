@@ -1,7 +1,8 @@
 # dsp-app's task runner: CI runs `nix develop --command just <recipe>`.
 #
-#   just build [CONFIG | TARGETS...]  the bundle in a configuration (from DEV-7767's Phase 7), or
-#                                     the named Bazel targets; no argument builds //...
+#   just build [CONFIG | TARGETS...]  the bundle in a configuration (production, development,
+#                                     dev-server, ls-test-server, stage-server), or the named
+#                                     Bazel targets; no argument builds //...
 #   just test [TARGETS...]            every Bazel test target, or the named ones
 #   just test-files -- PATHS...       the Jest targets that depend on those files
 #   just lint                         ESLint: the Bazel aspect, pnpm for what it does not see
@@ -28,14 +29,15 @@ help:
 install:
     pnpm install --frozen-lockfile
 
-# Build the named Bazel targets, or //... with no argument
+# Build the application bundle in a configuration (bazel-bin/apps/dsp-app/dist), the named Bazel
+# targets, or //... with no argument
 build *ARGS:
     #!/usr/bin/env bash
     set -euo pipefail
     args=({{ ARGS }})
     if [ "${#args[@]}" -gt 0 ] && [[ "${args[0]}" != //* ]]; then
-      echo "just build ${args[0]}: the application bundle builds with Bazel from DEV-7767's Phase 7 on; pass Bazel targets (//...) until then" >&2
-      exit 1
+      [ "${#args[@]}" -eq 1 ] || { echo "just build: one configuration, or Bazel targets" >&2; exit 1; }
+      exec bazel build //apps/dsp-app:dist "--//apps/dsp-app:config=${args[0]}" $BAZEL_FLAGS
     fi
     bazel build "${args[@]:-//...}" $BAZEL_FLAGS
 

@@ -1,8 +1,11 @@
 """Macros for dsp-app's Angular and TypeScript libraries."""
 
+load("@aspect_rules_esbuild//esbuild:defs.bzl", "esbuild")
 load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
-load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@aspect_rules_js//js:defs.bzl", "js_library", "js_run_binary")
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@bazel_lib//lib:copy_file.bzl", "copy_file")
+load("@bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@rules_angular//src/ng_project:index.bzl", "ng_project")
 load("@rules_sass//src:index.bzl", "sass_binary")
@@ -129,6 +132,31 @@ def _sources(dep):
 def _css_target(scss):
     return "css_" + scss.removesuffix(".scss").replace("/", "_").replace("-", "_").replace(".", "_")
 
+def _sass_include_paths(sass_deps):
+    # A bare `@use 'config'` resolves in the package of each local sass_library.
+    return {
+        label.package: True
+        for label in [native.package_relative_label(d) for d in sass_deps]
+        if label.repo_name == ""
+    }.keys()
+
+def _stylesheets(stylesheets, sass_deps):
+    """Compiles each `.scss` to the `.css` beside it that `styleUrl` names; returns the targets."""
+    css = []
+    for scss in stylesheets:
+        directory, _, file = scss.rpartition("/")
+        sass_binary(
+            name = _css_target(scss),
+            src = scss,
+            output_dir = directory,
+            output_name = file.removesuffix(".scss") + ".css",
+            sourcemap = False,
+            include_paths = _sass_include_paths(sass_deps),
+            deps = sass_deps,
+        )
+        css.append(":" + _css_target(scss))
+    return css
+
 def _bazel_tsconfig(name, out, extends, srcs, deps, strict, extra_paths = {}, extra_options = {}):
     """Writes a Bazel tsconfig `out` and its ts_config target `name`.
 
@@ -233,24 +261,7 @@ def vre_library(
     allowed = library_visibility(kind.type, kind.scope) + extra_visibility
     visibility = allowed if ENFORCE_VISIBILITY else ["//visibility:public"]
 
-    include_paths = {
-        label.package: True
-        for label in [native.package_relative_label(d) for d in sass_deps]
-        if label.repo_name == ""
-    }
-    css = []
-    for scss in stylesheets:
-        directory, _, file = scss.rpartition("/")
-        sass_binary(
-            name = _css_target(scss),
-            src = scss,
-            output_dir = directory,
-            output_name = file.removesuffix(".scss") + ".css",
-            sourcemap = False,
-            include_paths = include_paths.keys(),
-            deps = sass_deps,
-        )
-        css.append(":" + _css_target(scss))
+    css = _stylesheets(stylesheets, sass_deps)
 
     # A loose library mirrors the Angular CLI's app program, which compiles every library unstrict.
     strict = package not in LOOSE_LIBRARIES
@@ -314,3 +325,159 @@ def vre_library(
             size = test_size,
             shard_count = test_shard_count,
         )
+
+def vre_application(
+        name,
+        srcs,
+        environments,
+        deps = [],
+        stylesheets = [],
+        sass_deps = [],
+        global_stylesheet = "src/styles.scss",
+        index_html = "src/index.html",
+        scripts = [],
+        static_files = [],
+        optimized_configs = ["production"],
+        development_configs = ["development"]):
+    """The Angular application: its shell's ng_project, the esbuild bundle and the `name` directory.
+
+    The configuration comes from the package's `config_setting`s, one per key of `environments`
+    and named after it. `name` holds what the CLI's application builder wrote: the hashed bundle,
+    `index.html`, the minified global stylesheet and the global scripts (both under hashed names),
+    and the `static_files`.
+
+    Args:
+        name: the output directory, e.g. `dist`.
+        srcs: the shell's TypeScript sources, without the environment file.
+        environments: configuration name to the environment file `src/environments/environment.ts`
+            is copied from.
+        deps: libraries and npm packages the shell imports.
+        stylesheets: the shell's component `.scss` files.
+        sass_deps: sass_library targets the stylesheets and the global stylesheet `@use`.
+        global_stylesheet: compiled, minified, to `styles-<hash>.css`.
+        index_html: the page the entries and the stylesheet are written into.
+        scripts: plain scripts concatenated into `scripts-<hash>.js`, loaded before the entries.
+        static_files: copied into `name` with their path below `src/`.
+        optimized_configs: configurations bundled minified and without Angular's dev-mode checks.
+        development_configs: configurations that resolve packages without the `production`
+            export condition.
+    """
+    package = native.package_name()
+    copy_file(
+        name = "environment",
+        src = select({":" + config: env for config, env in environments.items()}),
+        out = "src/environments/environment.ts",
+    )
+
+    css = _stylesheets(stylesheets, sass_deps)
+    _bazel_tsconfig(
+        "tsconfig_bazel",
+        "tsconfig.bazel.json",
+        "./tsconfig.app.json",
+        srcs + ["src/environments/environment.ts"],
+        deps,
+        # The Angular CLI compiled the shell unstrict, as tsconfig.json says.
+        strict = False,
+    )
+    ng_project(
+        name = "app",
+        srcs = srcs + [":environment"],
+        assets = css,
+        tsconfig = ":tsconfig_bazel",
+        declaration = False,
+        resolve_json_module = True,
+        source_map = True,
+        transpiler = "tsc",
+        deps = deps + _LIBRARY_DEPS,
+    )
+    eslint_config()
+
+    # Every library's alias to its compiled entry point; esbuild runs in the bin directory.
+    alias = {"@dasch-swiss/dsp-js": "./libs/dsp-js/src/index.js"}
+    for library in LIBRARIES:
+        label = Label(library)
+        alias[_alias(label)] = "./" + label.package + "/src/index.js"
+    up = "../" * len(package.split("/"))
+    for config in environments:
+        write_file(
+            name = "esbuild_config_" + config,
+            out = "esbuild.%s.config.mjs" % config,
+            content = [
+                "import { angularEsbuildConfig } from '%stools/angular/esbuild.config.mjs';" % up,
+                "export default angularEsbuildConfig(%s);" % json.encode({
+                    "alias": alias,
+                    "development": config in development_configs,
+                    "optimize": config in optimized_configs,
+                }),
+            ],
+        )
+    esbuild(
+        name = "bundle",
+        bundle = True,
+        config = select({":" + config: ":esbuild_config_" + config for config in environments}),
+        entry_points = ["src/polyfills.js", "src/main.js"],
+        # Packages that reference Node built-ins they never call in a browser.
+        external = ["fs", "http", "https", "url"],
+        format = "esm",
+        metafile = True,
+        output_dir = True,
+        platform = "browser",
+        # No sourceMappingURL comment: the maps are uploaded to Sentry, not served to the browser.
+        sourcemap = "external",
+        splitting = True,
+        target = "es2022",
+        deps = [
+            ":app",
+            Label("//tools/angular:esbuild_config"),
+        ],
+    )
+
+    sass_binary(
+        name = "global_styles",
+        src = global_stylesheet,
+        output_name = "styles.css",
+        include_paths = _sass_include_paths(sass_deps),
+        sourcemap = False,
+        deps = sass_deps,
+    )
+
+    # esbuild's CSS minifier is the CLI's; Sass's compressed output is about 10 percent larger.
+    esbuild(
+        name = "global_styles_min",
+        entry_point = ":global_styles",
+        output = "minified/styles.css",
+        bundle = False,
+        minify = True,
+        sourcemap = "",
+    )
+    native.genrule(
+        name = "scripts",
+        srcs = scripts,
+        outs = ["scripts.js"],
+        # In the order given, as the CLI's `scripts` option concatenates them.
+        cmd = "cat %s > $@" % " ".join(["$(execpath %s)" % s for s in scripts]),
+    )
+    js_run_binary(
+        name = "index",
+        srcs = [index_html, ":bundle", ":global_styles_min", ":scripts"],
+        out_dirs = ["index"],
+        args = [
+            package + "/" + index_html,
+            package + "/bundle",
+            package + "/minified/styles.css",
+            package + "/scripts.js",
+            package + "/index",
+        ],
+        tool = Label("//tools/angular:write_index"),
+    )
+
+    copy_to_directory(
+        name = name,
+        srcs = static_files + [":bundle", ":index"],
+        exclude_srcs_patterns = ["**/bundle_metadata.json"],
+        replace_prefixes = {
+            "src/": "",
+            "bundle/": "",
+            "index/": "",
+        },
+    )

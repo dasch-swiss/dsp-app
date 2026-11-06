@@ -1,4 +1,107 @@
 load("@bazel_lib//lib:copy_to_bin.bzl", "copy_to_bin")
+load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
+load("@rules_sass//src:index.bzl", "sass_library")
+load("//tools/angular:defs.bzl", "vre_application")
+
+# The application bundle in a configuration: `just build <config>`, or
+# `bazel build //apps/dsp-app:dist --//apps/dsp-app:config=<config>`.
+ENVIRONMENTS = {
+    "production": "src/environments/environment.prod.ts",
+    "development": "src/environments/environment.development.ts",
+    "dev-server": "src/environments/environment.dev-server.ts",
+    "ls-test-server": "src/environments/environment.ls-test-server.ts",
+    "stage-server": "src/environments/environment.stage-server.ts",
+}
+
+string_flag(
+    name = "config",
+    build_setting_default = "production",
+    values = ENVIRONMENTS.keys(),
+)
+
+[
+    config_setting(
+        name = config,
+        flag_values = {":config": config},
+    )
+    for config in ENVIRONMENTS
+]
+
+# The global stylesheet's partials, which `@use` them relative to src/styles.scss.
+sass_library(
+    name = "global_partials",
+    srcs = glob(["src/styles/_*.scss"]),
+    deps = [
+        "//libs/vre/ui/styles",
+        "//libs/vre/ui/styles:material",
+    ],
+)
+
+genrule(
+    name = "openseadragon",
+    srcs = ["//:node_modules/openseadragon/dir"],
+    outs = ["openseadragon.min.js"],
+    cmd = "cp $(execpath //:node_modules/openseadragon/dir)/build/openseadragon/openseadragon.min.js $@",
+)
+
+vre_application(
+    name = "dist",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = [
+            "src/**/*.spec.ts",
+            "src/environments/**",
+            "src/test-setup.ts",
+            "src/test.config.ts",
+        ],
+    ),
+    environments = ENVIRONMENTS,
+    sass_deps = [
+        ":global_partials",
+        "//libs/vre/ui/styles",
+        "//libs/vre/ui/styles:material",
+    ],
+    scripts = [":openseadragon"],
+    static_files = ["src/favicon.ico"] + glob(
+        [
+            "src/assets/**",
+            "src/config/*.json",
+        ],
+        # The image's stamped layer supplies it.
+        exclude = ["src/config/build.json"],
+    ),
+    stylesheets = glob(["src/app/**/*.scss"]),
+    deps = [
+        "//:node_modules/@angular/common",
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/material",
+        "//:node_modules/@angular/platform-browser",
+        "//:node_modules/@angular/router",
+        "//:node_modules/@ngx-translate/core",
+        "//:node_modules/@ngx-translate/http-loader",
+        "//:node_modules/@sentry/angular",
+        "//:node_modules/@types/node",
+        "//:node_modules/rxjs",
+        "//:node_modules/zone.js",
+        "//libs/dsp-js",
+        "//libs/vre/3rd-party-services/analytics",
+        "//libs/vre/3rd-party-services/open-api",
+        "//libs/vre/core/config",
+        "//libs/vre/core/error-handler",
+        "//libs/vre/core/session",
+        "//libs/vre/pages/ontology/list",
+        "//libs/vre/pages/ontology/ontology",
+        "//libs/vre/pages/project/project",
+        "//libs/vre/pages/search/advanced-search",
+        "//libs/vre/pages/search/search",
+        "//libs/vre/pages/system/system",
+        "//libs/vre/pages/user-settings/user",
+        "//libs/vre/resource-editor/resource-editor",
+        "//libs/vre/shared/app-help-page",
+        "//libs/vre/shared/app-helper-services",
+        "//libs/vre/ui/ui",
+    ],
+)
 
 # The translations, which app-help-page's specs read from disk (src/lib/i18n.spec-helper.ts): an
 # import would make the library depend on the application. In the output tree, because a test
