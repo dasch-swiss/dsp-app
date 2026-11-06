@@ -64,7 +64,7 @@ lint-selftest:
     echo "lint-selftest: just lint rejected the seeded violation"
 
 # The gate CI runs
-ci: build test lint node-version-check playwright-version-check
+ci: build test lint node-version-check playwright-version-check tsconfig-paths-check
 
 # Generate the OpenAPI client with Bazel and copy it to src/generated for the IDE
 openapi-generate:
