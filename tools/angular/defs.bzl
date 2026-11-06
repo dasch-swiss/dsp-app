@@ -1,6 +1,7 @@
 """Macros for dsp-app's Angular and TypeScript libraries."""
 
 load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@rules_angular//src/ng_project:index.bzl", "ng_project")
@@ -87,6 +88,12 @@ def _alias(label):
 def _is_library(label):
     return label.repo_name == "" and label.package.startswith("libs/")
 
+def _sources(dep):
+    # Jest compiles a library's dependencies from their sources, so a test needs theirs, not the
+    # compiled output.
+    label = native.package_relative_label(dep)
+    return label.same_package_label("sources") if _is_library(label) else label
+
 def _css_target(scss):
     return "css_" + scss.removesuffix(".scss").replace("/", "_").replace("-", "_").replace(".", "_")
 
@@ -104,6 +111,9 @@ def vre_library(
         jest_config = "jest.config.js"):
     """An Angular library: its stylesheets, its ng_project compile and its Jest target.
 
+    Besides the `name` target the package gets `sources`, the library's sources and templates with
+    its dependencies' `sources`, which a dependent library's Jest target runs on.
+
     The library's ADR-0001 type and scope come from `LIBRARIES` in visibility.bzl, which fails the
     load for a package it does not list. The generated tsconfig maps only the declared library
     `deps` to their compiled `.d.ts`, so an import of any other library fails with TS2307
@@ -120,7 +130,8 @@ def vre_library(
             directory.
         deps: other libraries and npm packages the sources import.
         stylesheets: `.scss` files, each compiled to the `.css` beside it that `styleUrl` names.
-        sass_deps: sass_library targets the stylesheets `@use`.
+        sass_deps: sass_library targets the stylesheets `@use`; a bare `@use 'config'` resolves
+            in the package of each local one.
         assets: templates and other files the compiler reads.
         extra_visibility: packages ADR-0001 does not allow but that depend on the library today,
             each with a comment naming the ADR and the issue that removes it.
@@ -136,6 +147,11 @@ def vre_library(
     allowed = library_visibility(kind.type, kind.scope) + extra_visibility
     visibility = allowed if ENFORCE_VISIBILITY else ["//visibility:public"]
 
+    include_paths = {
+        label.package: True
+        for label in [native.package_relative_label(d) for d in sass_deps]
+        if label.repo_name == ""
+    }
     css = []
     for scss in stylesheets:
         directory, _, file = scss.rpartition("/")
@@ -145,6 +161,7 @@ def vre_library(
             output_dir = directory,
             output_name = file.removesuffix(".scss") + ".css",
             sourcemap = False,
+            include_paths = include_paths.keys(),
             deps = sass_deps,
         )
         css.append(":" + _css_target(scss))
@@ -202,11 +219,18 @@ def vre_library(
         visibility = visibility,
     )
 
+    js_library(
+        name = "sources",
+        srcs = srcs + assets,
+        deps = [_sources(d) for d in deps],
+        visibility = visibility,
+    )
+
     if test_srcs:
         vre_jest_test(
             name = "test",
-            srcs = srcs + test_srcs,
-            deps = deps + test_deps,
-            data = assets + test_data,
+            srcs = test_srcs,
+            deps = [":sources"] + [_sources(d) for d in test_deps],
+            data = test_data,
             config = jest_config,
         )
