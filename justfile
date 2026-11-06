@@ -8,8 +8,9 @@
 #   just ci                           the gate: build, test, lint and the version checks
 #
 # An argument starting with `//` is a target list; anything else is a configuration name. Every
-# Bazel call appends $BAZEL_FLAGS, which CI sets to the remote flags plus --lockfile_mode=error;
-# no recipe takes Bazel flags positionally.
+# Bazel call appends $BAZEL_FLAGS, which CI sets to the remote flags plus --lockfile_mode=error,
+# except `bazel query`, which runs no action and rejects some of the remote flags; no recipe takes
+# Bazel flags positionally.
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
@@ -75,7 +76,7 @@ test-files *FILES:
     errors="$(mktemp)"
     trap 'rm -f "$errors"' EXIT
     status=0
-    targets="$(bazel query --keep_going "kind(jest_test, rdeps(//..., set(${labels[*]})))" $BAZEL_FLAGS 2>"$errors")" || status=$?
+    targets="$(bazel query --keep_going "kind(jest_test, rdeps(//..., set(${labels[*]})))" 2>"$errors")" || status=$?
     if [ "$status" -ne 0 ] && { [ "$status" -ne 3 ] || awk '/^ERROR:/ && !/^ERROR: Skipping .*: no such target/ { found = 1 } END { exit !found }' "$errors"; }; then
       cat "$errors" >&2
       echo "just test-files: bazel query failed with exit code $status" >&2
@@ -97,7 +98,7 @@ lint: install openapi-generate
     bazel build --config=lint //... $BAZEL_FLAGS || status=1
     # The aspect lints only a ts_project's `srcs`; specs, stories, templates, JavaScript configs,
     # libs/dsp-js/test and apps/dsp-app stay with pnpm until a Bazel target carries them.
-    linted="$(bazel query 'labels(srcs, kind(ts_project, //...))' $BAZEL_FLAGS | sed -E 's|^//:?||; s|:|/|')"
+    linted="$(bazel query 'labels(srcs, kind(ts_project, //...))' | sed -E 's|^//:?||; s|:|/|')"
     patterns=()
     for dir in $(git ls-files '*/eslint.config.mjs' | xargs -n1 dirname); do
       patterns+=("$dir/*.ts" "$dir/*.js" "$dir/*.mjs" "$dir/*.cjs" "$dir/*.html")
