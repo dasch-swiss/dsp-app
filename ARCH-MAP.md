@@ -93,7 +93,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - A new service extends `BaseApi` and is added to `src/index.ts` by hand. `docs-only`
   - `ProjectApiService`, `UserApiService` and `ListApiService` call `HttpClient` directly against admin endpoints the generated client already covers, and return dsp-js models. `LegalInfoApiService`, in the same directory, wraps the generated client instead. Both conventions live here with nothing distinguishing them. `docs-only`
 - **Durable state**: none. `BaseApi.baseUri` is computed once per service at construction.
-- **Fingerprint**: `b548272d4b4a`
+- **Fingerprint**: `3880efd718c4`
 
 ### vre/3rd-party-services/open-api
 
@@ -110,7 +110,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Never edit `dsp-api_spec.yaml` to silence `check-openapi-sync`. A red check is expected until the dsp-api change is deployed to dev. Use the `update-openapi-client` skill. `review`
   - You do not add code here. Bump the spec and regenerate. `docs-only`
 - **Durable state**: `dsp-api_spec.yaml`, currently pinned at `info.version: v39.0.0-17-g9ddad36`. Written by `just openapi-update` or by the CI auto-bump PR.
-- **Fingerprint**: `3e2533a984ae`
+- **Fingerprint**: `2c7c7cdc5ae0`
 
 ### vre/3rd-party-services/analytics
 
@@ -127,7 +127,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Every public method is try/catch wrapped so telemetry can never break the app. Keep that. `docs-only`
   - User identifiers are hashed with UUID v5 before being sent. Never send a raw user IRI. `review`
 - **Durable state**: `window.__FARO__`, a mutable global written here in `setup()` and read by `ErrorReportingService` in `vre/core/error-handler`. One writer, one cross-library reader, no DI token.
-- **Fingerprint**: `54cc578fc9bf`
+- **Fingerprint**: `f543b706516e`
 
 ### vre/core/config
 
@@ -145,7 +145,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `AppConfigService` getters hand out mutable objects. `dspApiConfig` in particular is the live JWT holder. `docs-only`
   - The advanced-search URL contract had two sources, five unread `RouteConstants` members and the live literals inside `SearchUrlSyncService`. #3433 deleted the constants (DEV-7252), so `SearchUrlSyncService` is now the single source. `docs-only`
 - **Durable state**: `AppConfigService._dspApiConfig`, the shared dsp-js `KnoraApiConfig`. Five writers across four libraries. See `vre/core/session`.
-- **Fingerprint**: `e19692082b02`
+- **Fingerprint**: `4d0518e6d2c4`
 
 ### vre/core/session
 
@@ -164,7 +164,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `localStorage['ACCESS_TOKEN']`. Intended single writer is `AccessTokenService`, called by `AuthService` on login and logout and by `AutoLoginService` when a stored token is expired.
   - The same JWT is mirrored in three places kept in sync by hand: localStorage, `KnoraApiConfig.jsonWebToken`, and `UserService._user$`. Correctness depends on an undocumented shared-object-identity invariant with no test covering it.
   - `AutoLoginService.hasCheckedCredentials$`, a root BehaviorSubject gating all three route guards.
-- **Fingerprint**: `31769da96446`
+- **Fingerprint**: `b331bf8f3f02`
 
 ### vre/core/error-handler
 
@@ -181,7 +181,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Branch ordering in `handleGenericError` is load-bearing: specific cases must precede generic ones, and the `status === 0` comment explains why. `docs-only`
   - The dense inline docblocks citing DEV ticket numbers are the documentation of record for this library. `docs-only`
 - **Durable state**: `ErrorReportingService._reportedAt`, a per-tab fingerprint-to-timestamp map implementing a 60 second dedup window. Single writer, never evicted, so it grows unbounded over a long session.
-- **Fingerprint**: `55e3fdf9617c`
+- **Fingerprint**: `59f6942a679d`
 
 ### vre/ui/ui
 
@@ -198,7 +198,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `ResourceRightsStatementComponent`, `AuthorshipChipEditorComponent`, `AdminImageDirective` and `KnoraDatePipe` carry DSP domain knowledge and are kit members only by location. `docs-only`
   - `CalendarDateService` is the one home of the calendar rules applied to a `KnoraDate`: the viewer's reading (`convertKnoraDateTo`, spans), the editor's restating (`restateKnoraDateIn`, `restatableCalendarsFor`), an added end's preset (`nextKnoraDate`), period order (`isPeriodOutOfOrder`), the day range a value covers (`julianDayRangeOf`, via the library's `jdnRange`), the Gregorian reform's skipped days (`isSkippedByGregorianReform`, `reformGapOf`) and the advanced-search literal both ways (`format(…, 'gravsearch')`, `parseGravsearchDate`). It adapts `vre/shared/calendar` — astronomical years, eras, precision — and keeps the arithmetic there. Outside it and the calendar lib, only `CALENDAR_SYSTEMS` and `CalendarSystem` may be imported from `@dasch-swiss/vre/shared/calendar` (`no-restricted-imports` in the root `eslint.config.mjs`). `static-analysis`
 - **Durable state**: none. `DialogService` is a stateless wrapper over `MatDialog`.
-- **Fingerprint**: `2e16a56da8c2`
+- **Fingerprint**: `5f8d8c0209ad`
 
 ### vre/ui/date-picker
 
@@ -216,7 +216,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Conversions measure from the stored value until the user edits a date that came from it, so switching away and back restores it exactly. An end added beside a stored single date — entered or preset — is not such an edit. `review`
   - Nothing converts silently: a converted day is named in a hint; a day the Gregorian reform skipped (5–14 October 1582, valid in the proleptic calendar and stored as given) is marked in the grid and noted. `docs-only`
 - **Durable state**: none. The rewrite in DEV-7372 deleted the Material `DateAdapter` stack and `provideCalendarDateAdapter()`; `time-value.component.ts` supplies its own `CustomDateAdapter` at component level.
-- **Fingerprint**: `80f8300dd87b`
+- **Fingerprint**: `1c65eacf79de`
 
 ### vre/ui/string-literal
 
@@ -233,7 +233,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Never call `TranslateService.use()` here. Go through `LocalizationService`. `docs-only`
   - `StringLiteral` (dsp-js), `StringLiteralV2` (dsp-js v2), `LanguageStringDto` and `StringLiteralWithLanguage` (open-api) are four shapes of one concept, all accepted by this pipe's input union. `docs-only`
 - **Durable state**: none of its own. `MultiLanguageFormService` is component-scoped. The pipe holds per-instance memo fields.
-- **Fingerprint**: `4636f6f2fdc8`
+- **Fingerprint**: `07ea5e196e7a`
 
 ### vre/ui/progress-indicator
 
@@ -247,7 +247,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`
 - **Boundary rules**: One of two libraries in the repository with zero internal dependencies at runtime. Keep it that way. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `f2fcc1096da5`
+- **Fingerprint**: `503b57230ffa`
 
 ### vre/ui/nested-menu
 
@@ -261,7 +261,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: `vre/pages/search/search-filters`, `vre/resource-editor/resource-editor`
 - **Boundary rules**: Fully input and output driven, no injected services. Its apparent dependencies on `core/config` and `shared/app-helper-services` exist only in its Storybook file. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `97c355d7d21b`
+- **Fingerprint**: `afe5f625c5cb`
 
 ### vre/ui/notification
 
@@ -275,7 +275,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: `vre/core/error-handler`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`
 - **Boundary rules**: `vre/core/error-handler` depends on this library, so the dependency runs from `core` into `ui`. That inversion is why "core never imports ui" cannot be stated as a rule today. `docs-only`
 - **Durable state**: none. State lives in Material's overlay.
-- **Fingerprint**: `a6a6a5151435`
+- **Fingerprint**: `7a6c1ff15abb`
 
 ### vre/ui/styles
 
@@ -306,7 +306,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: `vre/core/session`, `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search-filters`, `vre/pages/system/system`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/ui`
 - **Boundary rules**: `dsp-resource.ts`, `generateProperty.ts`, `generate-dsp-resource.ts`, `property-info-values.interface.ts`, `user-permissions.ts` and `list-gui-attributes.ts` are resource-editor and ontology domain models, not generic utilities. This is an early stage of the same drift that produced `app-helper-services`. `docs-only`
 - **Durable state**: none. `ResourceService.iriBase` is computed once at construction.
-- **Fingerprint**: `6f0b1ff0c5bf`
+- **Fingerprint**: `f43056673091`
 
 ### vre/shared/app-common-to-move
 
@@ -319,11 +319,11 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/session`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`
 - **Boundary rules**:
-  - Its fan-out of 10 (9 without the Sass library) exceeds its fan-in of 6, which is backwards for a shared library and is the diagnostic that it is not one. Shared libraries are leaves.
+  - It depends on more libraries than depend on it (ADR-0005 counts them), which is backwards for a shared library and is the diagnostic that it is not one. Shared libraries are leaves.
   - No record exists anywhere of an intended destination. The name has been unexplained since the library was created in May 2024 as the residue of an unrelated refactor. Items have left it over time, so the mechanism works; what remains is the app shell, which is hard to move because it requires deciding where the shell lives. `docs-only`
   - Do not add to it. `docs-only`
 - **Durable state**: none of its own, but `src/lib/header/language-switcher.component.ts` writes `LocalizationService.currentLanguage`, which is owned by `vre/shared/app-helper-services`. That value has three writers across three libraries.
-- **Fingerprint**: `78ebc4da1fe8`
+- **Fingerprint**: `8f8abe327094`
 
 ### vre/shared/app-helper-services
 
@@ -344,7 +344,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `LocalizationService._currentLanguage$` plus `localStorage['dsp_language']` plus `document.documentElement.lang`. Three writers: `LocalizationService.init()`, `LanguageSwitcherComponent` in `app-common-to-move`, and `AuthService` in `core/session`.
   - `ProjectDataRightsService`, a root-scoped cache with a reverse shortcode index. Written by its own mutation methods and externally by `ProjectPageGuard` calling `clearAll()`.
   - `ResourceResultService`, component-scoped paging state. `numberOfResults` is a plain public field written from six sites across three libraries with no change notification; `pageIndex` is a BehaviorSubject behind a method. See Cross-cutting concerns.
-- **Fingerprint**: `1a6212d7ac18`
+- **Fingerprint**: `0d09ebf0fdab`
 
 ### vre/shared/app-help-page
 
@@ -358,7 +358,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: `dsp-app`, `vre/pages/user-settings/user`
 - **Boundary rules**: The version panel reads the application version from `APP_VERSION` (`vre/core/config`) and the API version through `VersionApiService` (`vre/3rd-party-services/api`). Its specs read the application's translation files from disk through `//apps/dsp-app:i18n`, a test-data target; importing them would make the library depend on the application. `structure`
 - **Durable state**: none.
-- **Fingerprint**: `3800d8b21696`
+- **Fingerprint**: `e728cc3e106c`
 
 ### vre/shared/calendar
 
@@ -379,7 +379,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `isPeriodOutOfOrder` is the one place a period's order is decided: the first day the start covers against the last day the end covers, as dsp-api checks, so an imprecise end may contain the start (15.03.1850 – 03.1850) — how projects record uncertain dates. `validatePeriod` and the editor both use it. `docs-only`
   - The Gregorian calendar is proleptic, as in dsp-api: 5–14 October 1582 are valid dates. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `2781d78dcb34`
+- **Fingerprint**: `f942ae316fa1`
 
 ### vre/pages/project/project
 
@@ -402,7 +402,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `ViewRestrictionsPageService` and `ViewRestrictionsByPropertyPageService` each hold a private `Map` cache scoped to the page lifetime.
   - The Data tab's class view has two fetchers, `ResourcesListFetcherComponent` (list) and `DataTableFetcherComponent` (table), only one mounted at a time. Their query, count and paging pipeline is a deliberate copy kept in step by comments; both write `ResourceResultService.numberOfResults` and reset its page index on a query change. A fix to one belongs in the other.
   - `DataClassUrlStateService` (via `provideDataClassSearch()`) owns the class view's sort, fulltext and filter URL state; the table's sort and filter header controls write through it.
-- **Fingerprint**: `6ed362294a65`
+- **Fingerprint**: `185b75ff6b43`
 
 ### vre/pages/data-browser
 
@@ -423,7 +423,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `ProjectShortnameService`, a root-provided `Map` keyed by project IRI, `shareReplay`d and never invalidated, so a renamed project keeps its old shortname for the session. It is not exported from the barrel, so the cache is undiscoverable from outside.
   - `TableViewStateService`, root-provided, holds the current class's table columns and layout; `init()` replaces them per class and is called by `DataTableFetcherComponent`, while `TableViewOptionsComponent` (in the class header) writes visibility and row height. Not reset when the table is left. Root scope is contrary to ADR-0003 and is a known follow-up.
   - `TableLayoutService`, reached only through `TableViewStateService` and not exported from the barrel, is the single writer of `localStorage['dsp.dataBrowser.tableLayout.v<N>.<classIri>']` (one key per resource class; bump `SCHEMA_VERSION` on a breaking layout change).
-- **Fingerprint**: `f4094b7e3234`
+- **Fingerprint**: `36913325fbae`
 
 ### vre/pages/ontology/ontology
 
@@ -440,7 +440,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `OntologyPageComponent` owns the DI scope through `providers: [OntologyPageService, OntologyEditService]`. `structure`
   - A "cardinality" is the class-to-property binding with its count, which is dsp-api's meaning of the term; the dsp-js `Cardinality` enum is only the count. Two code comments in this library complain about the overlap. See CONTEXT.md. `docs-only`
 - **Durable state**: `OntologyEditService`, component-scoped, roughly 670 lines, holding `_currentOntology`, `_currentOntologyInfo`, `_projectOntologiesSubject`, `_listsInProjectSubject`, `_isTransacting` and `_canDeletePropertyMap`. Two of those are `take(1)` snapshots of parent state (DEV-7130), so a controlled vocabulary created in `vre/pages/ontology/list` is stale here until re-navigation. `latestChangedItem` is a public BehaviorSubject written both by the service and by `property-item.component.ts`.
-- **Fingerprint**: `08f7c52100e6`
+- **Fingerprint**: `6480aa13df77`
 
 ### vre/pages/ontology/list
 
@@ -457,7 +457,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `src/lib/list-page.component.ts` constructs a list IRI by string interpolation rather than through a helper. `docs-only`
   - This library has no unit tests and no stories. Its only coverage is the Cypress suite (`lists.cy.ts`, `list-management.cy.ts`), which runs in CI but is not type-checked. `docs-only`
 - **Durable state**: `ListItemService`, component-scoped, holding `_projectInfos` and a bare public `onUpdate$` Subject that any of its three injectors can push to. An event bus with no ownership.
-- **Fingerprint**: `26d25c46a6ce`
+- **Fingerprint**: `e41289f0b72f`
 
 ### vre/pages/search/advanced-search
 
@@ -510,7 +510,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Full-text search here is a different mechanism from the full-text field inside advanced search. This library calls `doFulltextSearch` with no Gravsearch involved. See CONTEXT.md. `docs-only`
   - The project `search` route redirects to advanced search, which orphaned this library's project-search components. #3437 deleted them along with `SearchParamsService` and `GravsearchSearchParams`. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `17ad8d1dddc0`
+- **Fingerprint**: `6a3d3a1e100b`
 
 ### vre/pages/system/system
 
@@ -527,7 +527,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `ProjectsComponent` is routed from both this library's routes and `/my-profile/projects`, forking on an `@Input()`. A component spanning two libraries' routes is why neither has a clean boundary. `docs-only`
   - Every `Title.setTitle()` call here is hardcoded English that never passed through `en.json`, so it is invisible to translation. `docs-only`
 - **Durable state**: `localStorage['sortProjectsBy']` written by `projects-list.component.ts`, and `localStorage['sortUsersBy']` written by `users-list.component.ts`. Both are raw string keys rather than constants, and `sortUsersBy` is cast unchecked to `UserSortKey`.
-- **Fingerprint**: `5cc7ab59300d`
+- **Fingerprint**: `1eb887003780`
 
 ### vre/pages/user-settings/user
 
@@ -543,7 +543,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - This library used to hold the sole provider of `DspApiConnectionToken`, so the root injector could not boot without a page library. #3436 moved it to `vre/core/session`, where `apps/dsp-app/src/app/app.config.ts:56` now registers it. `docs-only`
   - This library has no unit tests at all. `docs-only`
 - **Durable state**: none of its own; `AllProjectsService` caches the project list for the session.
-- **Fingerprint**: `0793399009d5`
+- **Fingerprint**: `94fe69fd3e13`
 
 ### vre/resource-editor/resource-editor
 
@@ -569,7 +569,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `RegionService._regionsSubject`, three write paths, where `filterToRegion` destructively narrows the same subject that pagination is still filling.
   - `ResourceFetcherService._resourceSubject`, whose `reload()` is called from eleven sites. Every mutation in the library funnels through a full refetch. This is the library's implicit change-propagation mechanism and it is undocumented.
   - `PropertiesDisplayService`, the only persistent state here, backed by `localStorage['SHOW_ALL_PROPERTIES']` and `['SHOW_ALL_COMMENTS']`. Twelve instances share the persisted value but not the live BehaviorSubject, so toggling in one does not propagate to another. The class has no `@Injectable()` decorator and works only because it has no constructor dependencies.
-- **Fingerprint**: `4577975a674f`
+- **Fingerprint**: `595f95a5774c`
 
 ### build-tooling
 
@@ -582,7 +582,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Depends on**: none
 - **Used by**: every component, implicitly
 - **Boundary rules**:
-  - Adding a library means a `BUILD.bazel` calling `vre_library`, a `LIBRARIES` entry with its ADR-0001 type and scope, and its alias in `tsconfig.base.json`. Nothing generates them. A package missing from `LIBRARIES` fails to load (`structure`); an alias without a package, or a package without an alias, fails `just tsconfig-paths-check` in `just ci` (`static-analysis`).
+  - Adding a library means a `BUILD.bazel` calling `vre_library`, a `LIBRARIES` entry with its ADR-0001 type and scope, and its alias in `tsconfig.base.json`. Nothing generates them. A package missing from `LIBRARIES` fails to load (`structure`); an alias whose directory has no `BUILD.bazel` fails `just tsconfig-paths-check` in `just ci` (`static-analysis`); a package without an alias is caught by nothing until its first importer fails with TS2307 (`docs-only`).
   - A library's `visibility` is derived from its type and scope, so a dependency the tiers forbid fails `bazel build` (`structure`). The exceptions are `extra_visibility` entries (ADR-0001 decision 6); nothing but review stops a new one, so never add one to make a build pass (`review`).
   - The ESLint `no-restricted-imports` rule rejects an `@dasch-swiss/*/src/*` import and a relative import across a library root (ADR-0002). It does not see a dynamic `import()`, and `apps/dsp-app/cypress/` is in its `ignores`. `static-analysis`
   - `tools/angular/loose.bzl` lists four libraries that compile without the strict TypeScript flags, each with its issue (DEV-7796 to DEV-7799). Do not add to it. `review`
@@ -654,7 +654,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Every ADR carries an enforcement level from the same enum this map uses (`structure | static-analysis | review | docs-only`). ADR-0001 through ADR-0007 are Accepted; none is superseded. ADR-0001, 0002, 0004 and 0006 were revised in place for the Bazel build, each saying so in its status line. `docs-only`
   - A new ADR must be added to the `nav` in `mkdocs.yml` and to the table in `docs/adr/index.md`. `mkdocs build --strict` does not catch an omission from either, because an un-navigated page is an INFO, not a warning. `review`
 - **Durable state**: none.
-- **Fingerprint**: `dd27ed7efdb4`
+- **Fingerprint**: `ffaa4a837784`
 
 ### agent-context
 
