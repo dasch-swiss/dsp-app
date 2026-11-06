@@ -8,6 +8,7 @@ from them is a defect to explain, not a new baseline.
 | Number | Command |
 | ------ | ------- |
 | Passing spec files, passing and skipped tests per library | `scripts/test-counts.sh` |
+| The same, for the Bazel test targets, after `just test` | `scripts/test-counts-bazel.sh` |
 | Bundle inventory | `pnpm exec nx build dsp-app`, then `scripts/bundle-inventory.sh dist/apps/dsp-app` |
 | Hash of a generated tree | `scripts/tree-hash.sh <dir>` |
 | Stories | `pnpm run build-storybook`, then the `type: story` entries of `dist/storybook/index.json` |
