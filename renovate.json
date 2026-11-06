@@ -1,6 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "enabled": false,
   "description": [
+    "enabled: false: Renovate is switched off for this repository. Library updates that are not security relevant are analysed and made by hand. The rest of this file stays because its rules record why each package is coupled or frozen. The file also has to exist with this setting: without a config, the Renovate app would open an onboarding PR.",
     "prConcurrentLimit: 2 — allows one automated PR and one unmerged major PR to coexist. A single slot would let a major PR waiting for manual merge block the entire automated queue. rebaseWhen: behind-base-branch on automated rules makes the automated slot effectively serial (each merge triggers a rebase + CI re-run on the next), so two slots do not cause package-lock.json race conditions.",
     "schedule: before 5am on monday through friday — Renovate opens new PRs only during the midnight-to-5am window on weekdays (Europe/Zurich). platformAutomerge merges a PR the moment CI passes, so the last batch (Fri 00:00-05:00) runs CI during Friday and merges before the weekend. lockFileMaintenance keeps its own Monday schedule.",
     "rebaseWhen: conflicted (global) — major PRs sit unmerged intentionally; rebasing them on every automated merge would waste CI runs on a PR nobody is about to merge. Automated rules override this with behind-base-branch to keep the automerge chain moving.",
