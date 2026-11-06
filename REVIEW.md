@@ -15,7 +15,7 @@ What blocks a merge is set by the review prompt in `.github/workflows/claude.yml
 ### Architecture & layering
 
 - Read the Boundary rules of every `ARCH-MAP.md` component the diff touches. Most are tagged `docs-only`: review is the only check they get.
-- No feature library imports another feature library (ADR-0004 d1). Lint does not catch this yet: `depConstraints` is still `* -> *` until the ADR-0001 rollout.
+- No feature library imports another feature library (ADR-0004 d1). Bazel `visibility` rejects a declared edge the ADR-0001 tiers forbid; the edges that exist today are `extra_visibility` exceptions on the library they reach, each naming its issue.
 - Two features needing the same code: relocate it (ADR-0004 d2), or declare a port in the consumer and wire it in `apps/dsp-app` (d4). Cross-feature references are opaque ids (d5). A generated OpenAPI DTO does not become shared code because two places need a similar shape (d6).
 - Feature state is provided by the feature, not `providedIn: 'root'` (ADR-0003 d1, d3). One writer per value (d4). State that must survive navigation lives in the URL (d5).
 - A new library barrel uses curated named exports (ADR-0002 d3). A boundary-rule suppression carries a reason (d2). Removing an export from `libs/dsp-js/src/index.ts` breaks NPM consumers (d5).

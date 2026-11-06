@@ -57,7 +57,8 @@ Layer ownership, barrel exports and cross-feature access are recorded in [`ARCH-
 
 - HTTP calls to DSP-API live in `libs/vre/3rd-party-services/api` as a dedicated `*ApiService`, never inline in a component or in `shared/` (precedent: `ResourceLegalV2ApiService`, `LegalInfoApiService`).
 - Per-project caching of API data goes into a helper service, not into each consuming component (precedent: `ProjectDataRightsService` in `shared/app-helper-services`).
-- Imports cross libraries only through the `@dasch-swiss/vre/*` aliases and a library's barrel `index.ts`. Moving a file between libraries means updating both barrels.
+- Imports cross libraries only through the `@dasch-swiss/vre/*` aliases and a library's barrel `index.ts`; ESLint rejects a deep `src/` import and a relative import across a library root. Moving a file between libraries means updating both barrels.
+- A new library gets its ADR-0001 type and scope in `LIBRARIES` (`tools/angular/visibility.bzl`); its Bazel `visibility` follows from them, so a dependency the tiers forbid fails the build.
 - Know which client carries your data: dsp-js models or the generated OpenAPI client. See "Working with APIs" in [`CLAUDE.md`](CLAUDE.md).
 
 ## RxJS
