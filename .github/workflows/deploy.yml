@@ -20,6 +20,11 @@ jobs:
     if: |
       (github.event_name == 'push' && startsWith(github.ref, 'refs/tags')) ||
       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    # Two main runs publishing at once race on the multi-arch index and :latest. A pending run in
+    # the group is replaced by a newer one; tags each get their own group, so a release never is.
+    concurrency:
+      group: publish-${{ github.ref }}
+      cancel-in-progress: false
     outputs:
       tag: ${{ steps.output_docker_image_tag.outputs.tag }}
     steps:
