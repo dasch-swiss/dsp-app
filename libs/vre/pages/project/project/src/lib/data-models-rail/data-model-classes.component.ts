@@ -1,3 +1,4 @@
+import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
 import {
   afterNextRender,
@@ -102,6 +103,25 @@ const readAllLanguages = (): boolean => {
   }
 };
 
+const COLUMNS_KEY = 'dsp-data-models-classes-columns';
+const ALL_COLUMNS: Column[] = ['class', 'file', 'description', 'properties', 'linkedFrom', 'linksTo'];
+
+/** The viewer's column order and hidden columns; a column added since joins at the end, the class column stays first. */
+const readColumns = (): { order: Column[]; hidden: Column[] } => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(COLUMNS_KEY) ?? '{}') as { order?: string[]; hidden?: string[] };
+    const known = (keys: string[] | undefined) =>
+      (keys ?? []).filter((key): key is Column => ALL_COLUMNS.includes(key as Column) && key !== 'class');
+    const order = known(saved.order);
+    return {
+      order: ['class', ...order, ...ALL_COLUMNS.filter(column => column !== 'class' && !order.includes(column))],
+      hidden: known(saved.hidden),
+    };
+  } catch {
+    return { order: ALL_COLUMNS, hidden: [] };
+  }
+};
+
 const readDensity = (): Density => {
   try {
     return localStorage.getItem(DENSITY_KEY) === 'expanded' ? 'expanded' : 'condensed';
@@ -120,6 +140,8 @@ const readDensity = (): Density => {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CdkConnectedOverlay,
+    CdkDrag,
+    CdkDropList,
     ColumnResizeDirective,
     DescriptionEditorComponent,
     MatButton,
@@ -194,6 +216,43 @@ const readDensity = (): Density => {
             {{ r + '.expanded' | translate }}
           </mat-button-toggle>
         </mat-button-toggle-group>
+        <button
+          mat-button
+          type="button"
+          class="view-options"
+          data-cy="data-model-classes-view-options"
+          [matMenuTriggerFor]="viewMenu">
+          <mat-icon>tune</mat-icon>
+          {{ 'pages.dataBrowser.viewOptions.title' | translate }}
+        </button>
+        <mat-menu #viewMenu="matMenu" xPosition="before">
+          <div
+            class="filter-menu"
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
+            <span class="filter-head">
+              <span class="filter-heading">{{ 'pages.dataBrowser.viewOptions.columns' | translate }}</span>
+              <button mat-button type="button" class="filter-all" (click)="showAllColumns(!allColumnsShown())">
+                {{
+                  (allColumnsShown()
+                    ? 'pages.dataBrowser.viewOptions.hideAllShort'
+                    : 'pages.dataBrowser.viewOptions.showAllShort'
+                  ) | translate
+                }}
+              </button>
+            </span>
+            @for (column of columnOrder(); track column) {
+              @if (column !== 'class') {
+                <mat-checkbox
+                  [attr.data-cy]="'data-model-classes-show-' + column"
+                  [checked]="!hiddenColumns().has(column)"
+                  (change)="showColumn(column, $event.checked)">
+                  {{ r + '.' + columnLabels[column] | translate }}
+                </mat-checkbox>
+              }
+            }
+          </div>
+        </mat-menu>
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
@@ -202,10 +261,18 @@ const readDensity = (): Density => {
           [dataSource]="rows()"
           data-cy="data-model-classes"
           [class.expanded]="expanded"
-          [style.width.px]="tableWidth()">
+          [style.width.px]="tableWidth()"
+          cdkDropList
+          cdkDropListOrientation="horizontal"
+          cdkDropListElementContainer="thead tr"
+          [cdkDropListSortPredicate]="canDropAt"
+          (cdkDropListDropped)="onColumnDropped($event)">
           <ng-container matColumnDef="class" sticky>
             <th
               mat-header-cell
+              cdkDrag
+              [cdkDragData]="'class'"
+              cdkDragDisabled
               *matHeaderCellDef
               [style.width.px]="widthOf('class')"
               [class.filtered]="level() !== 'all'">
@@ -305,7 +372,14 @@ const readDensity = (): Density => {
             </td>
           </ng-container>
           <ng-container matColumnDef="file">
-            <th mat-header-cell *matHeaderCellDef [style.width.px]="widthOf('file')" [class.filtered]="files().size">
+            <th
+              mat-header-cell
+              cdkDrag
+              [cdkDragData]="'file'"
+              class="movable"
+              *matHeaderCellDef
+              [style.width.px]="widthOf('file')"
+              [class.filtered]="files().size">
               <span class="header">
                 <span class="header-label">{{ r + '.colFile' | translate }}</span>
                 <button
@@ -362,6 +436,9 @@ const readDensity = (): Density => {
           <ng-container matColumnDef="description">
             <th
               mat-header-cell
+              cdkDrag
+              [cdkDragData]="'description'"
+              class="movable"
               *matHeaderCellDef
               [style.width.px]="widthOf('description')"
               [class.filtered]="describedAs().trim()">
@@ -459,6 +536,9 @@ const readDensity = (): Density => {
           <ng-container matColumnDef="properties">
             <th
               mat-header-cell
+              cdkDrag
+              [cdkDragData]="'properties'"
+              class="movable"
               *matHeaderCellDef
               [style.width.px]="widthOf('properties')"
               [class.filtered]="types().size">
@@ -535,6 +615,9 @@ const readDensity = (): Density => {
           <ng-container matColumnDef="linksTo">
             <th
               mat-header-cell
+              cdkDrag
+              [cdkDragData]="'linksTo'"
+              class="movable"
               *matHeaderCellDef
               [style.width.px]="widthOf('linksTo')"
               [class.filtered]="targets().size">
@@ -598,6 +681,9 @@ const readDensity = (): Density => {
           <ng-container matColumnDef="linkedFrom">
             <th
               mat-header-cell
+              cdkDrag
+              [cdkDragData]="'linkedFrom'"
+              class="movable"
               *matHeaderCellDef
               [style.width.px]="widthOf('linkedFrom')"
               [class.filtered]="sources().size">
@@ -658,10 +744,10 @@ const readDensity = (): Density => {
               </span>
             </td>
           </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+          <tr mat-header-row *matHeaderRowDef="columns(); sticky: true"></tr>
           <tr
             mat-row
-            *matRowDef="let row; columns: columns"
+            *matRowDef="let row; columns: columns()"
             data-cy="data-model-classes-row"
             tabindex="0"
             [class.selected]="row.id === panelIri()"
@@ -738,6 +824,47 @@ const readDensity = (): Density => {
         flex: none;
         margin-right: 12px;
         font-size: 13px;
+      }
+
+      .view-options {
+        flex: none;
+        height: 36px;
+        font-size: 13px;
+      }
+
+      // A header dragged sideways moves its column; the class column stays first.
+      th.movable {
+        cursor: grab;
+      }
+
+      .cdk-drag-preview {
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        padding: 0 12px;
+        background: white;
+        border-radius: 4px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: $cool_gray_600;
+        cursor: grabbing;
+
+        .column-resize-handle,
+        .filter {
+          display: none;
+        }
+      }
+
+      .cdk-drag-placeholder {
+        opacity: 0.35;
+      }
+
+      .cdk-drag-animating,
+      .cdk-drop-list-dragging th.movable:not(.cdk-drag-placeholder) {
+        transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
       }
 
       .density {
@@ -1103,7 +1230,7 @@ const readDensity = (): Density => {
         align-items: start;
       }
 
-      // A line of chips, cut at the cell's edge with a fade; the "+N" after them always shows.
+      // A line of chips, cut at the cell's edge; the "+N" after them always shows.
       .line {
         display: flex;
         align-items: center;
@@ -1117,7 +1244,6 @@ const readDensity = (): Density => {
         display: flex;
         gap: 4px;
         overflow: hidden;
-        mask-image: linear-gradient(to left, transparent, black 16px);
       }
 
       .property {
@@ -1194,7 +1320,6 @@ const readDensity = (): Density => {
         .cut {
           flex-wrap: wrap;
           overflow: visible;
-          mask-image: none;
         }
       }
     `,
@@ -1222,7 +1347,20 @@ export class DataModelClassesComponent {
   ];
   private readonly _params = toSignal(this._route.queryParamMap);
 
-  readonly columns = ['class', 'file', 'description', 'properties', 'linkedFrom', 'linksTo'];
+  /** Every column in the viewer's order, and those hidden; remembered in this browser. */
+  readonly columnOrder = signal<Column[]>(readColumns().order);
+  readonly hiddenColumns = signal(new Set<Column>(readColumns().hidden));
+  /** The columns shown, in their order. */
+  readonly columns = computed(() => this.columnOrder().filter(column => !this.hiddenColumns().has(column)));
+  readonly allColumnsShown = computed(() => this.hiddenColumns().size === 0);
+  readonly columnLabels: Record<Column, string> = {
+    class: 'colClass',
+    file: 'colFile',
+    description: 'colDescription',
+    properties: 'colProperties',
+    linkedFrom: 'colLinkedFrom',
+    linksTo: 'colLinksTo',
+  };
   readonly maxProperties = MAX_PROPERTIES;
   readonly maxLinks = MAX_LINKS;
   readonly noFile = NO_FILE;
@@ -1324,11 +1462,50 @@ export class DataModelClassesComponent {
   });
 
   readonly tableWidth = computed(() =>
-    (Object.keys(DEFAULT_WIDTHS) as Column[]).reduce(
-      (sum, column) => sum + (this.widths()[column] ?? DEFAULT_WIDTHS[column]),
-      0
-    )
+    this.columns().reduce((sum, column) => sum + (this.widths()[column] ?? DEFAULT_WIDTHS[column]), 0)
   );
+
+  /** Any place but the first, which is the class column's. */
+  readonly canDropAt = (index: number): boolean => index > 0;
+
+  onColumnDropped(event: CdkDragDrop<unknown>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    // CDK counts the shown header cells; the hidden columns keep their place after the one moved past.
+    const shown = [...this.columns()];
+    moveItemInArray(shown, event.previousIndex, event.currentIndex);
+    const order = [...this.columnOrder()];
+    const slots = order.map((column, index) => (this.hiddenColumns().has(column) ? -1 : index)).filter(i => i >= 0);
+    slots.forEach((slot, i) => (order[slot] = shown[i]));
+    this.columnOrder.set(order);
+    this._saveColumns();
+  }
+
+  showColumn(column: Column, shown: boolean): void {
+    this.hiddenColumns.update(hidden => {
+      const next = new Set(hidden);
+      if (shown) next.delete(column);
+      else next.add(column);
+      return next;
+    });
+    this._saveColumns();
+  }
+
+  /** Shows every column, or hides all but the class column. */
+  showAllColumns(shown: boolean): void {
+    this.hiddenColumns.set(shown ? new Set() : new Set(ALL_COLUMNS.filter(column => column !== 'class')));
+    this._saveColumns();
+  }
+
+  private _saveColumns(): void {
+    try {
+      localStorage.setItem(
+        COLUMNS_KEY,
+        JSON.stringify({ order: this.columnOrder().slice(1), hidden: [...this.hiddenColumns()] })
+      );
+    } catch {
+      // Not remembered, as in a private window; the columns still hold on this page.
+    }
+  }
 
   widthOf(column: Column): number {
     return this.widths()[column] ?? DEFAULT_WIDTHS[column];
