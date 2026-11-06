@@ -38,40 +38,26 @@ Most common operations for daily development:
 
 | Task                            | Command                                  |
 |---------------------------------|------------------------------------------|
-| Start local development         | `npm run start-local`                    |
-| Start with observability        | `npm run start-local-with-observability` |
-| Run tests                       | `npm run test-local`                     |
-| Run all tests (CI mode)         | `npm run test-ci-all`                    |
-| Lint all libs w/o auto-fix      | `npm run lint-all`                       |
-| Lint all libs with auto-fix     | `npm run lint-fix-all`                   |
-| Open E2E tests UI               | `npm run e2e-local`                      |
-| Run E2E tests (headless)        | `npm run e2e-ci`                         |
-| Build for development           | `npm run build`                          |
-| Build for production            | `npm run build-prod`                     |
-| Generate test coverage          | `npm run unit-test-coverage`             |
-| Browse all component stories    | `npm run storybook`                      |
-| Build static Storybook          | `npm run build-storybook`                |
-| Run Storybook interaction tests | `npm run test-storybook`                 |
+| List every recipe               | `just help`                              |
+| Run the Bazel tests             | `just test`                              |
+| Lint all projects               | `just lint`                              |
+| Run the CI gate                 | `just ci`                                |
+| Open E2E tests UI               | `pnpm run e2e-local`                     |
+| Browse all component stories    | `pnpm run storybook`                     |
+| Build static Storybook          | `pnpm run build-storybook`               |
+| Run Storybook interaction tests | `pnpm run test-storybook`                |
 
-For all available commands, see [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json).
+The application build and its dev server move to Bazel during the DEV-7767 migration; until then
+the repository builds `dsp-js` and the generated OpenAPI client with Bazel.
+
+For all available commands, see the [justfile](https://github.com/dasch-swiss/dsp-app/blob/main/justfile).
 
 ## Developer Guide
 
 ### Working with Individual Libraries
 
-The monorepo contains multiple independently buildable libraries:
-
-```bash
-# Test, build, or lint a specific library
-nx run [library-name]:test
-nx run [library-name]:build
-nx run [library-name]:lint
-
-# Example
-nx run vre-ui-date-picker:test
-```
-
-> **Note:** To run `nx` commands, install it globally (`npm install -g nx`) or use `npx nx`.
+A library built by Bazel is tested with `just test //<package>/...`, for example
+`just test //libs/dsp-js/...`.
 
 Library path aliases are defined in [tsconfig.base.json](https://github.com/dasch-swiss/dsp-app/blob/main/tsconfig.base.json) under `paths`. Main VRE libraries use the `@dasch-swiss/vre/*` namespace.
 
