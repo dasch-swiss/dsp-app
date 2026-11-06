@@ -19,4 +19,6 @@ HEADER
   { grep -v '^$' "$OUT/.openapi-generator/FILES"; printf '%s\n' .openapi-generator/FILES .openapi-generator/VERSION; } |
     LC_ALL=C sort -u | sed 's/.*/    "&",/'
   echo "]"
-} >"$MANIFEST"
+} >"$MANIFEST.tmp"
+# A half-written manifest would stop Bazel from loading the package that could regenerate it.
+mv "$MANIFEST.tmp" "$MANIFEST"
