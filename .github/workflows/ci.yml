@@ -215,10 +215,13 @@ jobs:
   dsp-app-e2e-tests:
     name: DSP-APP E2E tests (${{ matrix.runner }})
     needs: [changes]
-    # Held until the Bazel build covers it again (DEV-7767 Phase 9).
-    if: >-
-      false && (needs.changes.result == 'success' && needs.changes.outputs.automation_skip == 'false' && needs.changes.outputs.only_workflows == 'false')
+    if: |
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       # Run all runners to completion even if one fails, so all failures are visible
       fail-fast: false
@@ -233,49 +236,57 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - name: Set up Node
-        uses: actions/setup-node@v7
         with:
-          node-version-file: .nvmrc
+          persist-credentials: false
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+      - name: Restore Bazel repository cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/bazel-repo
+          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
+          restore-keys: bazel-repo-${{ runner.os }}-
+      - name: Restore Bazel disk cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/bazel-disk/dsp-app
+          key: bazel-disk-e2e-${{ matrix.runner }}-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
+          restore-keys: bazel-disk-e2e-${{ matrix.runner }}-${{ runner.os }}-
+      - name: Configure RBE
+        id: rbe
+        uses: ./.github/actions/bazel-rbe
+        with:
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Cache Cypress binary
         uses: actions/cache@v6
         with:
           path: ~/.cache/Cypress
           key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: cypress-${{ runner.os }}-
-      - name: Set up pnpm and install dependencies
-        uses: ./.github/actions/setup-pnpm
-      - name: Install Cypress binary
-        run: pnpm exec cypress install
-      - name: Install Nix
-        uses: DeterminateSystems/determinate-nix-action@v3
-      - name: Generate OpenAPI client
-        run: nix develop --command just openapi-generate
-      - name: Type-check e2e specs
-        run: pnpm exec tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json
-      - name: Start app (background)
-        run: pnpm exec nx run dsp-app:serve:production &
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      # .bazelignore keeps this checkout out of the dsp-app workspace.
       - name: Checkout DSP-API repo
         uses: actions/checkout@v7
         with:
           repository: dasch-swiss/dsp-api
           ref: main
           path: dsp-api
-      - name: Set up just
-        uses: extractions/setup-just@v4
+          persist-credentials: false
       - name: Start API
-        run: |
-          cd dsp-api
-          just init-db-test
-          docker compose -f docker-compose.yml up -d sipi ingest api
-          ./modules/webapi/scripts/wait-for-api.sh
-      - name: Wait for app to be ready
-        run: timeout 180 bash -c 'until curl -sf http://localhost:4200 > /dev/null 2>&1; do sleep 3; done'
-      - name: Run e2e tests in CI
-        working-directory: apps/dsp-app
-        run: pnpm exec cypress run --browser chrome --spec "${{ matrix.specs }}"
+        env:
+          DSP_API_DIR: dsp-api
+        run: nix develop .#e2e --command just e2e-stack-up
+      - name: Type-check e2e specs
+        env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+        run: nix develop .#e2e --command just typecheck-e2e
+      - name: Run e2e tests
+        env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          SPECS: ${{ matrix.specs }}
+        run: nix develop .#e2e --command just e2e "$SPECS"
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         if: failure()

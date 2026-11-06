@@ -9,3 +9,5 @@ bazel-bin
 bazel-out
 bazel-testlogs
 bazel-dsp-app
+# The dsp-api checkout CI starts the Cypress stack from (ci.yml, E2E job).
+dsp-api
