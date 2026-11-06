@@ -24,6 +24,7 @@ bazel_dep(name = "aspect_rules_lint", version = "2.9.1")
 bazel_dep(name = "rules_java", version = "9.1.0")
 bazel_dep(name = "rules_oci", version = "2.3.0")
 bazel_dep(name = "tar.bzl", version = "0.10.4")
+bazel_dep(name = "jq.bzl", version = "0.6.1")
 
 # rules_angular and rules_sass have no releases. Each commit is the one an Angular repository
 # pins: Angular CLI 21.2.x for rules_angular, angular/components for rules_sass. Moving
