@@ -74,9 +74,9 @@ openapi-generate:
     cp -R "$bin/{{ open_api }}/generated" {{ open_api }}/src/generated
     chmod -R u+w {{ open_api }}/src/generated
 
-# Compare the vendored dsp-api spec with the dev API's
-openapi-check:
-    ./scripts/check-openapi-sync.sh
+# Compare the vendored dsp-api spec with the dev API's (`--verbose` shows the differences)
+openapi-check *ARGS:
+    ./scripts/check-openapi-sync.sh {{ ARGS }}
 
 # Download the dev API's spec and regenerate the client
 openapi-update:

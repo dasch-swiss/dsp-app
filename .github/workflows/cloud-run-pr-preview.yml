@@ -13,11 +13,9 @@ on:
 jobs:
   deploy-preview:
     name: Build and deploy PR preview
+    # Held until the preview builds the rules_oci image (DEV-7767 Phase 7).
     if: >-
-      github.event_name == 'pull_request' &&
-      github.event.action != 'closed' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      !startsWith(github.head_ref, 'release-please-')
+      false && (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository && !startsWith(github.head_ref, 'release-please-'))
     runs-on: ubuntu-latest
     concurrency:
       group: cloud-run-preview-pr-${{ github.event.pull_request.number }}
@@ -142,7 +140,9 @@ jobs:
     # No release-please head-ref guard here: github.head_ref is empty on
     # workflow_dispatch (only set for pull_request events), so the check would
     # be a no-op. Manual dispatch is intentionally opt-in.
-    if: github.event_name == 'workflow_dispatch'
+    # Held until the preview builds the rules_oci image (DEV-7767 Phase 7).
+    if: >-
+      false && (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     concurrency:
       group: cloud-run-preview-pr-${{ github.ref_name }}
@@ -280,9 +280,9 @@ jobs:
 
   cleanup-preview:
     name: Clean up PR close
+    # Held until the preview builds the rules_oci image (DEV-7767 Phase 7).
     if: >-
-      github.event_name == 'pull_request' &&
-      github.event.action == 'closed'
+      false && (github.event_name == 'pull_request' && github.event.action == 'closed')
     runs-on: ubuntu-latest
     env:
       SERVICE_NAME: dsp-app-pr-${{ github.event.pull_request.number }}
@@ -313,7 +313,9 @@ jobs:
 
   cleanup-stale:
     name: Clean up stale (>90 days)
-    if: github.event_name == 'schedule'
+    # Held until the preview builds the rules_oci image (DEV-7767 Phase 7).
+    if: >-
+      false && (github.event_name == 'schedule')
     runs-on: ubuntu-latest
     permissions:
       id-token: write
