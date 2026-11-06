@@ -67,6 +67,22 @@ def vre_jest_test(name, srcs, deps = [], data = [], config = "jest.config.js", s
         **kwargs
     )
 
+# A library's specs; never part of its compile (Decision 4 of DEV-7767).
+TEST_SRCS = [
+    "src/**/*.spec.ts",
+    "src/test-setup.ts",
+]
+
+# What a library's `srcs` glob leaves out: the test files, a spec helper (which a library lists in
+# its `test_srcs` by name) and the stories, which Storybook compiles.
+LIBRARY_EXCLUDES = TEST_SRCS + [
+    "src/**/*.spec-helper.ts",
+    "src/**/*.stories.ts",
+    "src/**/stories.helpers.ts",
+    "src/**/*.stories.helpers.ts",
+    "src/**/*-stories.helper.ts",
+]
+
 # What every library compiles against: tsconfig.base.json sets `importHelpers` and the libraries'
 # `types` name the declarations in types/.
 _LIBRARY_DEPS = [
@@ -108,6 +124,8 @@ def vre_library(
         test_srcs = [],
         test_deps = [],
         test_data = [],
+        test_size = None,
+        test_shard_count = None,
         jest_config = "jest.config.js"):
     """An Angular library: its stylesheets, its ng_project compile and its Jest target.
 
@@ -138,6 +156,8 @@ def vre_library(
         test_srcs: specs and test-setup.ts; no Jest target without them.
         test_deps: what only the specs import.
         test_data: files a spec reads at run time.
+        test_size: the Jest target's size, which sets its timeout.
+        test_shard_count: how many shards Jest splits the specs into.
         jest_config: the library's Jest config.
     """
     package = "//" + native.package_name()
@@ -233,4 +253,6 @@ def vre_library(
             deps = [":sources"] + [_sources(d) for d in test_deps],
             data = test_data,
             config = jest_config,
+            size = test_size,
+            shard_count = test_shard_count,
         )
