@@ -3,7 +3,10 @@ load(":visibility.bzl", "declare_package_groups")
 
 declare_package_groups()
 
-exports_files(["rules_angular-nativelink.patch"])
+exports_files([
+    "bundle_size_test.sh",
+    "rules_angular-nativelink.patch",
+])
 
 # vre_application's tools.
 js_library(

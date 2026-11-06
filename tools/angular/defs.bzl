@@ -9,6 +9,7 @@ load("@bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@rules_angular//src/ng_project:index.bzl", "ng_project")
 load("@rules_sass//src:index.bzl", "sass_binary")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load(":loose.bzl", "LOOSE_LIBRARIES")
 load(":visibility.bzl", "ENFORCE_VISIBILITY", "LIBRARIES", "library_visibility")
 
@@ -499,4 +500,12 @@ def vre_application(
             "bundle/": "",
             "index/": "",
         },
+    )
+
+    sh_test(
+        name = "bundle_size_test",
+        size = "small",
+        srcs = [Label("//tools/angular:bundle_size_test.sh")],
+        args = ["$(rootpath :%s)" % name],
+        data = [":" + name],
     )
