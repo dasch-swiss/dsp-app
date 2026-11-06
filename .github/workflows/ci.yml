@@ -209,6 +209,8 @@ jobs:
             exit 0
           fi
           jq -r '[.mnemonic, .runner, (.exitCode // 0)] | @tsv' "$RUNNER_TEMP/exec.json" | sort | uniq -c
+          echo "TsProject actions by target:"
+          jq -r 'select(.mnemonic == "TsProject") | [.targetLabel, .runner, (.exitCode // 0)] | @tsv' "$RUNNER_TEMP/exec.json" | sort
 
   dsp-app-e2e-tests:
     name: DSP-APP E2E tests (${{ matrix.runner }})
@@ -245,6 +247,8 @@ jobs:
         uses: ./.github/actions/setup-pnpm
       - name: Install Cypress binary
         run: pnpm exec cypress install
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
       - name: Generate OpenAPI client
         run: nix develop --command just openapi-generate
       - name: Type-check e2e specs

@@ -28,7 +28,7 @@ The main application is **DSP-APP** - a user interface for the Swiss National Da
 
 ## Essential Development Commands
 
-Standard `nx` / `npm` invocations live in `package.json` scripts. Regenerating the generated OpenAPI client has a deploy-coupling gotcha — `check-openapi-sync` compares the vendored spec against the live dev API, so a red check is *expected* until the dsp-api change is deployed to dev. **Never edit the vendored spec to silence it.** Use the `/update-openapi-client` skill for the full sequence.
+Standard commands are `just` recipes (`just --list`); the OpenAPI client has `just openapi-generate`, `just openapi-check` and `just openapi-update`. Regenerating the generated OpenAPI client has a deploy-coupling gotcha — `check-openapi-sync` compares the vendored spec against the live dev API, so a red check is *expected* until the dsp-api change is deployed to dev. **Never edit the vendored spec to silence it.** Use the `/update-openapi-client` skill for the full sequence.
 
 ## Coding Conventions
 
