@@ -128,6 +128,23 @@ import { CardinalityComponent } from './cardinality-component/cardinality.compon
     </mat-menu>`,
   styles: [
     `
+      /* As libs/vre/ui/styles/_material-icons.scss: a Sass stylesheet using config carries it. */
+      .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+      }
+
       .list-icon {
         color: black;
         display: flex;

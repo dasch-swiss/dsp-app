@@ -22,6 +22,12 @@ if grep -l 'fonts.googleapis' "$dist"/*.js; then
   fail "a component style above imports the web font; it belongs in apps/dsp-app/src/styles/_font.scss only"
 fi
 
+# libs/vre/ui/styles/_material-icons.scss keeps icons at 24px in the 32 components whose styles
+# use `config` (as the CLI's build did); 4 of them carry the rule inline, so count well above that.
+scoped="$(cat "$dist"/*.js | grep -oF 'material-icons[_ngcontent-%COMP%]' | wc -l | tr -d ' ')"
+[ "$scoped" -ge 20 ] \
+  || fail "$scoped component styles scope .material-icons; _config.scss must use _material-icons.scss"
+
 if [ "$optimized" = true ]; then
   grep -q '<style>' "$index" || fail "index.html has no inlined critical CSS"
   grep -q 'media="print"' "$index" || fail "the stylesheet still blocks rendering"

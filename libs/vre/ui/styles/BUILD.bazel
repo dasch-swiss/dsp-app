@@ -7,6 +7,7 @@ sass_library(
     name = "styles",
     srcs = [
         "_config.scss",
+        "_material-icons.scss",
         "_mixins.scss",
         "_responsive.scss",
     ],
