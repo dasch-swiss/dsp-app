@@ -11,7 +11,7 @@ This monorepo is built on:
 
 - **Nx** — See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
 - **Angular** — See [package.json](https://github.com/dasch-swiss/dsp-app/blob/main/package.json) for current version
-- **Node.js** — Version pinned in [MODULE.bazel](MODULE.bazel)
+- **Node.js** — Version pinned in `MODULE.bazel`
 
 ## Quick Start
 
