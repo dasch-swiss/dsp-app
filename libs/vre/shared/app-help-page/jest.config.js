@@ -2,4 +2,5 @@
 module.exports = {
   displayName: 'app-help-page',
   preset: '../../../../jest.preset.js',
+  rootDir: __dirname,
 };

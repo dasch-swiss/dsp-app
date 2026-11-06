@@ -23,8 +23,13 @@ SCOPES = ["shared", "project", "ontology", "search", "user", "system", "app"]
 # "//libs/vre/ui/ui": struct(type = "ui", scope = "shared"). The only place a library's type and
 # scope are written: vre_library reads its own entry.
 LIBRARIES = {
+    "//libs/vre/3rd-party-services/analytics": struct(type = "data-access", scope = "shared"),
+    "//libs/vre/3rd-party-services/api": struct(type = "data-access", scope = "shared"),
     "//libs/vre/3rd-party-services/open-api": struct(type = "data-access", scope = "shared"),
     "//libs/vre/core/config": struct(type = "data-access", scope = "shared"),
+    "//libs/vre/core/error-handler": struct(type = "data-access", scope = "shared"),
+    "//libs/vre/shared/app-common": struct(type = "data-access", scope = "shared"),
+    "//libs/vre/shared/app-help-page": struct(type = "feature", scope = "shared"),
     "//libs/vre/shared/calendar": struct(type = "util", scope = "shared"),
     "//libs/vre/ui/notification": struct(type = "util", scope = "shared"),
     "//libs/vre/ui/progress-indicator": struct(type = "ui", scope = "shared"),
