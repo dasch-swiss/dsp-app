@@ -47,6 +47,7 @@ vre_library(
         "src/index.ts",
         "src/lib/type-guards.ts",
     ] + ["src/generated/" + f for f in OPENAPI_FILES if f.endswith(".ts")],
+    test_size = "small",
     test_srcs = [
         "src/lib/type-guards.spec.ts",
         "src/test-setup.ts",

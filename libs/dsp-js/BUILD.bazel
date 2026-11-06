@@ -92,6 +92,7 @@ npm_package(
 vre_jest_test(
     name = "test",
     srcs = LIB_SRCS + SPEC_SRCS,
+    size = "small",
     data = glob(["test/**"]),
     deps = [
         "//:node_modules/@types/jest",
