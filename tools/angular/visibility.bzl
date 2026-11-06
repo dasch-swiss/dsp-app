@@ -31,6 +31,7 @@ LIBRARIES = {
     "//libs/vre/core/session": struct(type = "data-access", scope = "shared"),
     "//libs/vre/pages/data-browser": struct(type = "feature", scope = "shared"),
     "//libs/vre/pages/ontology/list": struct(type = "feature", scope = "ontology"),
+    "//libs/vre/pages/ontology/ontology": struct(type = "feature", scope = "ontology"),
     "//libs/vre/pages/project/project": struct(type = "feature", scope = "project"),
     "//libs/vre/pages/search/advanced-search": struct(type = "feature", scope = "search"),
     "//libs/vre/pages/search/search": struct(type = "feature", scope = "search"),
