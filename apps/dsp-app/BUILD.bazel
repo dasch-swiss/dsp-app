@@ -1,0 +1,10 @@
+# The translations, which app-help-page's specs read from disk (src/lib/i18n.spec-helper.ts): an
+# import would make the library depend on the application.
+filegroup(
+    name = "i18n",
+    srcs = glob(["src/assets/i18n/*.json"]),
+    visibility = ["//libs/vre/shared/app-help-page:__pkg__"],
+)
+
+# index.html.spec.ts reads the page from disk.
+exports_files(["src/index.html"])
