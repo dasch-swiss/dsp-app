@@ -6,8 +6,10 @@ import {
   OntologyEditorPageComponent,
   OntologyPageComponent,
   OntologyPropertiesComponent,
+  DataModelEditorService,
 } from '@dasch-swiss/vre/pages/ontology/ontology';
 import {
+  DATA_MODEL_EDITOR,
   CollaborationPageComponent,
   CreateProjectFormPageComponent,
   DataBrowserPageComponent,
@@ -17,6 +19,10 @@ import {
   ImageSettingsComponent,
   LegalSettingsComponent,
   OntologyMapPageComponent,
+  DataModelsRailPageComponent,
+  DataModelClassesComponent,
+  DataModelPropertiesComponent,
+  DataModelListsComponent,
   ProjectAdminGuard,
   ProjectPageComponent,
   ProjectPageGuard,
@@ -44,6 +50,8 @@ export const routes: Routes = [
     path: RouteConstants.projectUuidRelative,
     component: ProjectPageComponent,
     canActivate: [ProjectPageGuard],
+    // Editing a class or a property from the Data and Data models 2 tabs opens the data model editor's dialog in place.
+    providers: [{ provide: DATA_MODEL_EDITOR, useClass: DataModelEditorService }],
     children: [
       {
         path: RouteConstants.home,
@@ -66,8 +74,20 @@ export const routes: Routes = [
         component: DataModelsPageComponent,
       },
       {
+        path: RouteConstants.dataModels2,
+        component: DataModelsRailPageComponent,
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: RouteConstants.graph },
+          { path: RouteConstants.graph, component: OntologyMapPageComponent },
+          { path: RouteConstants.classes, component: DataModelClassesComponent },
+          { path: RouteConstants.properties, component: DataModelPropertiesComponent },
+          { path: RouteConstants.lists, component: DataModelListsComponent },
+        ],
+      },
+      // The Ontology map tab became Data models 2 › Graph; links to it, with their query, land there.
+      {
         path: RouteConstants.ontologyMap,
-        component: OntologyMapPageComponent,
+        redirectTo: `${RouteConstants.dataModels2}/${RouteConstants.graph}`,
       },
       {
         path: RouteConstants.ontologyEditorRelative,

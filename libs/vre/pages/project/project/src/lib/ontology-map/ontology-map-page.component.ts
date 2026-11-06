@@ -4,13 +4,13 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
   signal,
   untracked,
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -24,15 +24,15 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
-import { DataModelMapComponent, MapDetail } from '../sidenav/data-model-map/data-model-map.component';
+import { injectDataModelEditing } from './data-model-editor';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
+import { classFamilies, familyColors } from './islands';
 import {
-  classColors,
   GraphLabels,
-  GraphLayout,
   GraphSize,
   linkedWith,
   localNameOf,
+  searchGraph,
   throughProperties,
   withInheritedLinks,
   withoutClasses,
@@ -80,19 +80,16 @@ const sameFilter = (a: ListFilter, b: ListFilter) =>
 
 const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
-const DETAIL_KEY = 'dsp-ontology-map-detail';
-const VIEW_KEY = 'dsp-ontology-map-view';
-const LAYOUT_KEY = 'dsp-ontology-map-layout';
-const SIZE_KEY = 'dsp-ontology-map-size';
+// Renamed when the sizes moved up a step, so a size chosen before starts again from the new normal, the old large.
+const SIZE_KEY = 'dsp-ontology-map-text-size';
+/** How wide a class or property panel is, at most half the page; its styles say the same. */
+const PANEL_WIDTH = 440;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
 
 const SIZES: GraphSize[] = ['small', 'normal', 'large'];
-
-/** `map`: our own map, with summary or property cards. `graph`: the Cytoscape graph, to compare the two. */
-type OntologyMapView = 'map' | 'graph';
 
 type ExportKey = 'viewPng' | 'wholePng' | 'copyImage' | 'copyLink';
 
@@ -101,13 +98,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
   { key: 'wholePng', icon: 'zoom_out_map' },
   { key: 'copyImage', icon: 'content_copy' },
   { key: 'copyLink', icon: 'link' },
-];
-
-const LAYOUTS: { value: GraphLayout; icon: string }[] = [
-  { value: 'circle', icon: 'radio_button_unchecked' },
-  { value: 'tree', icon: 'account_tree' },
-  { value: 'force', icon: 'bubble_chart' },
-  { value: 'grid', icon: 'grid_view' },
 ];
 
 /**
@@ -119,9 +109,7 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
   selector: 'app-ontology-map-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DataModelMapComponent,
     FilterMenuComponent,
-    MatButton,
     MatIcon,
     MatMenu,
     MatMenuContent,
@@ -141,56 +129,30 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
       @if (selected(); as selected) {
         <div class="canvas">
           @if (graph(); as graph) {
-            <div class="body" [class.overlay]="view() === 'graph'">
-              @if (view() === 'graph') {
-                <app-ontology-graph
-                  class="view"
-                  [graph]="graphShown() ?? graph"
-                  [selectedIri]="classIri()"
-                  [layout]="layout()"
-                  [size]="size()"
-                  [levelLabels]="levelLabels()"
-                  [labels]="labels()"
-                  [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
-                  [colors]="colors()"
-                  [anyResourceLabel]="t + '.anyResource' | translate"
-                  (classSelected)="openPanel($event)"
-                  (classFiltered)="filterOn($event)"
-                  (propertySelected)="openPropertyPanel($event)"
-                  (backgroundClicked)="(panelIri() || propertyPanelIri()) && openPanel(undefined)" />
-              } @else {
-                <app-data-model-map
-                  class="view"
-                  [graph]="graph"
-                  [selectedIri]="classIri()"
-                  [anyResourceLabel]="t + '.anyResource' | translate"
-                  [full]="true"
-                  [detail]="detail()"
-                  (classSelected)="openPanel($event)" />
-              }
-              @if (view() === 'graph') {
-                <!-- One bar along the top, left of an open panel; on a narrow screen its two halves wrap. -->
-                <div class="top-bar" [class.beside-panel]="panelOpen()">
-                  <!-- What to show: the data model and its filters, on the left. -->
+            <div class="body">
+              <app-ontology-graph
+                class="view"
+                [graph]="graphShown() ?? graph"
+                [selectedIri]="classIri()"
+                [size]="size()"
+                [levelLabels]="levelLabels()"
+                [labels]="labels()"
+                [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
+                [covered]="panelOpen() ? panelWidth : 0"
+                [colors]="colors()"
+                [families]="families()"
+                [search]="search()"
+                [anyResourceLabel]="t + '.anyResource' | translate"
+                [linksLabel]="'pages.ontologyMap.links' | translate"
+                (classSelected)="openPanel($event)"
+                (classFiltered)="filterOn($event)"
+                (propertySelected)="openPropertyPanel($event)"
+                (backgroundClicked)="(panelIri() || propertyPanelIri()) && openPanel(undefined)" />
+              <!-- One bar along the top, left of an open panel; on a narrow screen its two halves wrap. -->
+              <div class="top-bar" [class.beside-panel]="panelOpen()">
+                <!-- What to show, on the left: the filters, and the search beside them. -->
+                <div class="top-left">
                   <div class="float filters">
-                    @if (ontologies().length > 1) {
-                      <button
-                        mat-button
-                        class="data-model"
-                        data-cy="ontology-map-data-model"
-                        [attr.aria-label]="m + '.dataModel' | translate"
-                        [matMenuTriggerFor]="dataModels">
-                        {{ selected.label }}
-                        <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
-                      </button>
-                    } @else {
-                      <span class="data-model static" data-cy="ontology-map-data-model">{{ selected.label }}</span>
-                    }
-                    <mat-menu #dataModels="matMenu">
-                      @for (ontology of ontologies(); track ontology.iri) {
-                        <button mat-menu-item (click)="show(ontology.iri)">{{ ontology.label }}</button>
-                      }
-                    </mat-menu>
                     @if (counts(); as counts) {
                       <span class="counts">{{ m + '.counts' | translate: counts }}</span>
                     }
@@ -268,178 +230,197 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
                       </ng-template>
                     </mat-menu>
                   </div>
+                  <!-- Typing fades what lies away from the classes and links found; nothing found, nothing fades. -->
+                  <label class="float search" [class.active]="searchText().trim()">
+                    <mat-icon>search</mat-icon>
+                    <input
+                      #searchInput
+                      type="search"
+                      data-cy="ontology-map-search"
+                      [placeholder]="m + '.search.placeholder' | translate"
+                      [attr.aria-label]="m + '.search.placeholder' | translate"
+                      [value]="searchText()"
+                      (input)="searchText.set(searchInput.value)"
+                      (keydown.escape)="clearSearch(searchInput)" />
+                    @if (searchFound(); as found) {
+                      <span class="search-count" data-cy="ontology-map-search-count">{{
+                        m + '.search.found' | translate: { count: found }
+                      }}</span>
+                    } @else if (searchFound() === 0) {
+                      <span class="search-count none" data-cy="ontology-map-search-none" role="status">{{
+                        m + '.search.none' | translate
+                      }}</span>
+                    }
+                    @if (searchText()) {
+                      <button
+                        type="button"
+                        class="chip-clear"
+                        data-cy="ontology-map-search-clear"
+                        [attr.aria-label]="m + '.search.clear' | translate"
+                        [matTooltip]="m + '.search.clear' | translate"
+                        (click)="clearSearch(searchInput)">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    }
+                  </label>
+                </div>
 
-                  <!-- How to show it, and the Export menu: top right, left of an open panel. -->
-                  <div class="top-right">
-                    <div class="float display" role="toolbar" [attr.aria-label]="m + '.display' | translate">
-                      @for (option of layouts; track option.value) {
-                        <button
-                          type="button"
-                          class="tool"
-                          [class.on]="layout() === option.value"
-                          [attr.aria-pressed]="layout() === option.value"
-                          [attr.data-cy]="'ontology-map-layout-' + option.value"
-                          [attr.aria-label]="m + '.layouts.' + option.value | translate"
-                          [matTooltip]="m + '.layouts.' + option.value | translate"
-                          (click)="setLayout(option.value)">
-                          <mat-icon>{{ option.icon }}</mat-icon>
-                        </button>
-                      }
-                      <span class="divider"></span>
-                      @for (option of sizes; track option) {
-                        <button
-                          type="button"
-                          class="tool size"
-                          [attr.data-size]="option"
-                          [class.on]="size() === option"
-                          [attr.aria-pressed]="size() === option"
-                          [attr.data-cy]="'ontology-map-size-' + option"
-                          [attr.aria-label]="m + '.sizes.' + option | translate"
-                          [matTooltip]="m + '.sizes.' + option | translate"
-                          (click)="setSize(option)">
-                          A
-                        </button>
-                      }
-                    </div>
-                    <button
-                      type="button"
-                      class="float export"
-                      data-cy="ontology-map-labels"
-                      [attr.aria-label]="m + '.labelsMenu.title' | translate"
-                      [matTooltip]="m + '.labelsMenu.title' | translate"
-                      [matTooltipDisabled]="!panelOpen()"
-                      [matMenuTriggerFor]="labelsMenu">
-                      <mat-icon>label</mat-icon>
-                      <span class="button-text">{{ m + '.labelsMenu.title' | translate }}</span>
-                      <mat-icon class="drop">arrow_drop_down</mat-icon>
-                    </button>
-                    <mat-menu #labelsMenu="matMenu" xPosition="before">
-                      <span class="menu-heading">{{ m + '.labelsMenu.heading' | translate }}</span>
-                      @for (option of labelOptions; track option) {
-                        @let chosen = labels() === option;
-                        <!-- Choosing keeps the menu open, to compare the three. -->
-                        <button
-                          mat-menu-item
-                          class="export-entry"
-                          role="menuitemradio"
-                          [attr.aria-checked]="chosen"
-                          [attr.data-cy]="'ontology-map-labels-' + option"
-                          (click)="$event.stopPropagation(); setLabels(option)">
-                          <mat-icon [class.chosen]="chosen">{{
-                            chosen ? 'radio_button_checked' : 'radio_button_unchecked'
-                          }}</mat-icon>
-                          <span class="export-item">
-                            <span>{{ m + '.labelsMenu.' + option | translate }}</span>
-                            <span class="export-hint" [class.mono]="option !== 'labels'">{{
-                              m + '.labelsMenu.' + option + 'Hint' | translate
-                            }}</span>
-                          </span>
-                        </button>
-                      }
-                      <hr class="menu-divider" />
-                      <div class="menu-toggle" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
-                        <mat-slide-toggle
-                          data-cy="ontology-map-level-labels"
-                          [checked]="levelLabels()"
-                          (change)="setLevelLabels($event.checked)">
-                          {{ m + '.levelLabels' | translate }}
-                        </mat-slide-toggle>
-                      </div>
-                    </mat-menu>
-                    <button
-                      type="button"
-                      class="float export"
-                      data-cy="ontology-map-export"
-                      [attr.aria-label]="m + '.export' | translate"
-                      [matTooltip]="m + '.export' | translate"
-                      [matTooltipDisabled]="!panelOpen()"
-                      [matMenuTriggerFor]="exportMenu">
-                      <mat-icon>ios_share</mat-icon>
-                      <span class="button-text">{{ m + '.export' | translate }}</span>
-                      <mat-icon class="drop">arrow_drop_down</mat-icon>
-                    </button>
-                    <mat-menu #exportMenu="matMenu" xPosition="before" class="export-menu">
-                      @for (item of exportItems; track item.key) {
-                        @if (item.key === 'copyLink') {
-                          <hr class="menu-divider" />
-                        }
-                        <button
-                          class="export-entry"
-                          mat-menu-item
-                          [attr.data-cy]="'ontology-map-export-' + item.key"
-                          (click)="export(item.key)">
-                          <mat-icon>{{ item.icon }}</mat-icon>
-                          <span class="export-item">
-                            <span>{{ m + '.exportMenu.' + item.key | translate }}</span>
-                            <span class="export-hint">{{ m + '.exportMenu.' + item.key + 'Hint' | translate }}</span>
-                          </span>
-                        </button>
-                      }
-                    </mat-menu>
+                <!-- How to show it, and the Export menu: top right, left of an open panel. -->
+                <div class="top-right">
+                  <div class="float display" role="toolbar" [attr.aria-label]="m + '.display' | translate">
+                    @for (option of sizes; track option) {
+                      <button
+                        type="button"
+                        class="tool size"
+                        [attr.data-size]="option"
+                        [class.on]="size() === option"
+                        [attr.aria-pressed]="size() === option"
+                        [attr.data-cy]="'ontology-map-size-' + option"
+                        [attr.aria-label]="m + '.sizes.' + option | translate"
+                        [matTooltip]="m + '.sizes.' + option | translate"
+                        (click)="setSize(option)">
+                        A
+                      </button>
+                    }
                   </div>
+                  <button
+                    type="button"
+                    class="float export"
+                    data-cy="ontology-map-labels"
+                    [attr.aria-label]="m + '.labelsMenu.title' | translate"
+                    [matTooltip]="m + '.labelsMenu.title' | translate"
+                    [matTooltipDisabled]="!panelOpen()"
+                    [matMenuTriggerFor]="labelsMenu">
+                    <mat-icon>label</mat-icon>
+                    <span class="button-text">{{ m + '.labelsMenu.title' | translate }}</span>
+                    <mat-icon class="drop">arrow_drop_down</mat-icon>
+                  </button>
+                  <mat-menu #labelsMenu="matMenu" xPosition="before">
+                    <span class="menu-heading">{{ m + '.labelsMenu.heading' | translate }}</span>
+                    @for (option of labelOptions; track option) {
+                      @let chosen = labels() === option;
+                      <!-- Choosing keeps the menu open, to compare the three. -->
+                      <button
+                        mat-menu-item
+                        class="export-entry"
+                        role="menuitemradio"
+                        [attr.aria-checked]="chosen"
+                        [attr.data-cy]="'ontology-map-labels-' + option"
+                        (click)="$event.stopPropagation(); setLabels(option)">
+                        <mat-icon [class.chosen]="chosen">{{
+                          chosen ? 'radio_button_checked' : 'radio_button_unchecked'
+                        }}</mat-icon>
+                        <span class="export-item">
+                          <span>{{ m + '.labelsMenu.' + option | translate }}</span>
+                          <span class="export-hint" [class.mono]="option !== 'labels'">{{
+                            m + '.labelsMenu.' + option + 'Hint' | translate
+                          }}</span>
+                        </span>
+                      </button>
+                    }
+                    <hr class="menu-divider" />
+                    <div class="menu-toggle" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                      <mat-slide-toggle
+                        data-cy="ontology-map-level-labels"
+                        [checked]="levelLabels()"
+                        (change)="setLevelLabels($event.checked)">
+                        {{ m + '.levelLabels' | translate }}
+                      </mat-slide-toggle>
+                    </div>
+                  </mat-menu>
+                  <button
+                    type="button"
+                    class="float export"
+                    data-cy="ontology-map-export"
+                    [attr.aria-label]="m + '.export' | translate"
+                    [matTooltip]="m + '.export' | translate"
+                    [matTooltipDisabled]="!panelOpen()"
+                    [matMenuTriggerFor]="exportMenu">
+                    <mat-icon>ios_share</mat-icon>
+                    <span class="button-text">{{ m + '.export' | translate }}</span>
+                    <mat-icon class="drop">arrow_drop_down</mat-icon>
+                  </button>
+                  <mat-menu #exportMenu="matMenu" xPosition="before" class="export-menu">
+                    @for (item of exportItems; track item.key) {
+                      @if (item.key === 'copyLink') {
+                        <hr class="menu-divider" />
+                      }
+                      <button
+                        class="export-entry"
+                        mat-menu-item
+                        [attr.data-cy]="'ontology-map-export-' + item.key"
+                        (click)="export(item.key)">
+                        <mat-icon>{{ item.icon }}</mat-icon>
+                        <span class="export-item">
+                          <span>{{ m + '.exportMenu.' + item.key | translate }}</span>
+                          <span class="export-hint">{{ m + '.exportMenu.' + item.key + 'Hint' | translate }}</span>
+                        </span>
+                      </button>
+                    }
+                  </mat-menu>
                 </div>
+              </div>
 
-                <!-- Zoom, bottom right. -->
-                <div
-                  class="float zoom"
-                  role="group"
-                  [attr.aria-label]="m + '.zoom' | translate"
-                  [class.beside-panel]="panelOpen()">
-                  <button
-                    type="button"
-                    class="tool"
-                    data-cy="ontology-map-zoom-in"
-                    [attr.aria-label]="m + '.zoomIn' | translate"
-                    [matTooltip]="m + '.zoomIn' | translate"
-                    matTooltipPosition="left"
-                    (click)="graphView()?.zoomBy(1.25)">
-                    <mat-icon>add</mat-icon>
-                  </button>
-                  <button
-                    type="button"
-                    class="tool"
-                    data-cy="ontology-map-zoom-out"
-                    [attr.aria-label]="m + '.zoomOut' | translate"
-                    [matTooltip]="m + '.zoomOut' | translate"
-                    matTooltipPosition="left"
-                    (click)="graphView()?.zoomBy(0.8)">
-                    <mat-icon>remove</mat-icon>
-                  </button>
-                  <span class="divider"></span>
-                  <button
-                    type="button"
-                    class="tool"
-                    data-cy="ontology-map-fit"
-                    [attr.aria-label]="m + '.fit' | translate"
-                    [matTooltip]="m + '.fit' | translate"
-                    matTooltipPosition="left"
-                    (click)="graphView()?.fit()">
-                    <mat-icon>fit_screen</mat-icon>
-                  </button>
-                </div>
-              }
+              <!-- Zoom, bottom right. -->
+              <div
+                class="float zoom"
+                role="group"
+                [attr.aria-label]="m + '.zoom' | translate"
+                [class.beside-panel]="panelOpen()">
+                <button
+                  type="button"
+                  class="tool"
+                  data-cy="ontology-map-zoom-in"
+                  [attr.aria-label]="m + '.zoomIn' | translate"
+                  [matTooltip]="m + '.zoomIn' | translate"
+                  matTooltipPosition="left"
+                  (click)="graphView()?.zoomBy(1.25)">
+                  <mat-icon>add</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  class="tool"
+                  data-cy="ontology-map-zoom-out"
+                  [attr.aria-label]="m + '.zoomOut' | translate"
+                  [matTooltip]="m + '.zoomOut' | translate"
+                  matTooltipPosition="left"
+                  (click)="graphView()?.zoomBy(0.8)">
+                  <mat-icon>remove</mat-icon>
+                </button>
+                <span class="divider"></span>
+                <button
+                  type="button"
+                  class="tool"
+                  data-cy="ontology-map-fit"
+                  [attr.aria-label]="m + '.fit' | translate"
+                  [matTooltip]="m + '.fit' | translate"
+                  matTooltipPosition="left"
+                  (click)="graphView()?.fit()">
+                  <mat-icon>fit_screen</mat-icon>
+                </button>
+              </div>
               @if (panelIri(); as openIri) {
                 <app-resource-class-panel
                   class="panel"
                   [graph]="graph"
                   [classIri]="openIri"
-                  [dataModelLabel]="selected.label"
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   [subclassLabel]="t + '.subclassOf' | translate"
                   [canEdit]="canEdit() ?? false"
+                  [colors]="colors()"
                   (classSelected)="openPanel($event)"
                   (closed)="openPanel(undefined)"
                   (browse)="open($event)"
                   (filter)="filterOn($event)"
                   (propertyHovered)="hoveredProperty.set($event)"
-                  (edit)="edit($event)" />
+                  (edit)="edit($event)"
+                  (editProperty)="editProperty($event)" />
               } @else if (propertyPanelIri(); as propertyIri) {
                 <app-property-panel
                   class="panel"
                   [graph]="graph"
                   [propertyIri]="propertyIri"
                   [colors]="colors()"
-                  [dataModelLabel]="selected.label"
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   [canEdit]="canEdit() ?? false"
                   (classSelected)="openPanel($event)"
@@ -517,9 +498,64 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
         }
       }
 
+      // The counts open the pill, so its text gets the room a button would have.
       .filters {
         flex-wrap: wrap;
         gap: 4px 6px;
+        padding-left: 14px;
+      }
+
+      .top-left {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .search {
+        gap: 6px;
+        height: 42px;
+        box-sizing: border-box;
+        padding: 0 8px 0 12px;
+        cursor: text;
+
+        &.active,
+        &:focus-within {
+          border-color: $primary;
+        }
+
+        > mat-icon {
+          flex: none;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          color: $cool_gray_500;
+        }
+
+        input {
+          width: 200px;
+          min-width: 0;
+          border: 0;
+          outline: 0;
+          background: none;
+          font: inherit;
+          font-size: 13px;
+
+          // The browser's own clear button; ours follows the count.
+          &::-webkit-search-cancel-button {
+            display: none;
+          }
+        }
+      }
+
+      .search-count {
+        white-space: nowrap;
+        font-size: 12px;
+        color: $cool_gray_500;
+
+        &.none {
+          color: $red_700;
+        }
       }
 
       // Wrapped onto a second line, the display controls stay on the right.
@@ -788,23 +824,15 @@ const LAYOUTS: { value: GraphLayout; icon: string }[] = [
         min-width: 0;
       }
 
+      // The panel floats over the graph, which keeps its size, so opening a class moves nothing.
       .panel {
-        flex: none;
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        right: 0;
+        bottom: 0;
         width: 440px;
         max-width: 50%;
-      }
-
-      // In the Graph view the panel floats over the graph, which keeps its size, so opening a class moves nothing.
-      .body.overlay {
-        position: relative;
-
-        .panel {
-          position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          z-index: 1;
-        }
       }
 
       .empty {
@@ -820,6 +848,7 @@ export class OntologyMapPageComponent {
   private readonly _clipboard = inject(Clipboard);
   private readonly _notification = inject(NotificationService);
   private readonly _translate = inject(TranslateService);
+  private readonly _editing = injectDataModelEditing();
 
   private readonly _projectOntologies = toSignal(
     combineLatest([this._graphs.projectOntologies$, inject(LocalizationService).currentLanguage$]).pipe(
@@ -832,7 +861,8 @@ export class OntologyMapPageComponent {
   );
   readonly ontologies = computed(() => this._projectOntologies() ?? []);
   readonly ontologiesLoaded = computed(() => this._projectOntologies() !== undefined);
-  readonly canEdit = toSignal(inject(ProjectPageService).hasProjectAdminRights$);
+  private readonly _projectPage = inject(ProjectPageService);
+  readonly canEdit = toSignal(this._projectPage.hasProjectAdminRights$);
 
   private readonly _graphsByIri = toSignal(this._graphs.graphs$);
   private readonly _params = toSignal(this._route.queryParamMap);
@@ -847,10 +877,10 @@ export class OntologyMapPageComponent {
     const iri = this.selected()?.iri;
     return iri ? this._graphsByIri()?.get(iri) : undefined;
   });
-  /** The graph view's data model: subclasses carry the links they inherit, with no subclass arrows. */
+  /** The data model as the graph draws it: links only, with no subclass arrows and no inherited links. */
   private readonly _graphLinks = computed(() => {
     const graph = this.graph();
-    return graph ? withInheritedLinks(graph) : undefined;
+    return graph ? withInheritedLinks(graph, false) : undefined;
   });
   readonly counts = computed(() => {
     const graph = this.graph();
@@ -861,14 +891,7 @@ export class OntologyMapPageComponent {
     };
   });
 
-  readonly layouts = LAYOUTS;
   readonly exportItems = EXPORT_ITEMS;
-  /** The Cytoscape graph; the Map view is no longer offered and is to be removed. */
-  readonly view = signal<OntologyMapView>('graph');
-  /** How the graph view arranges the classes; remembered in this browser. */
-  readonly layout = signal<GraphLayout>(
-    LAYOUTS.find(option => option.value === readStored(LAYOUT_KEY))?.value ?? 'circle'
-  );
   readonly sizes = SIZES;
   /** How big the graph draws boxes, text and lines; remembered in this browser. */
   readonly size = signal<GraphSize>(SIZES.find(size => size === readStored(SIZE_KEY)) ?? 'normal');
@@ -878,14 +901,18 @@ export class OntologyMapPageComponent {
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
   readonly graphView = viewChild(OntologyGraphComponent);
+  private readonly _searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
-  /** Whether cards show their summary or their properties; remembered in this browser. */
-  readonly detail = signal<MapDetail>(readStored(DETAIL_KEY) === 'properties' ? 'properties' : 'summary');
+  /** The family of every class of the data model, which the Islands view groups and colours classes by. */
+  readonly families = computed(() => {
+    const graph = this.graph();
+    return graph ? classFamilies(graph) : undefined;
+  });
 
-  /** A colour per class of the data model, the same whatever the graph is filtered on. */
+  /** A colour per class of the data model, its family's, the same whatever the graph is filtered on. */
   readonly colors = computed(() => {
     const graph = this.graph();
-    return graph ? classColors(graph) : new Map<string, string>();
+    return graph ? familyColors(graph) : new Map<string, string>();
   });
 
   /** The class filter in the URL: classes to show with the classes they are linked with, or classes to hide. */
@@ -944,7 +971,7 @@ export class OntologyMapPageComponent {
   readonly classChip = computed(() => this._chip(this.classFilter(), this.classOptions(), 'classesChosen'));
   readonly propertyChip = computed(() => this._chip(this.propertyFilter(), this.propertyOptions(), 'propertiesChosen'));
 
-  /** What the Graph view draws: the data model, narrowed by the class or the property filter. */
+  /** What the graph draws: the data model, narrowed by the class or the property filter. */
   readonly graphShown = computed(() => {
     const graph = this._graphLinks();
     if (!graph) return undefined;
@@ -960,7 +987,34 @@ export class OntologyMapPageComponent {
   /** A property hovered in the class panel; the graph highlights its links. */
   readonly hoveredProperty = signal<string | undefined>(undefined);
 
+  /** The text searched in the graph's classes and links. */
+  readonly searchText = signal('');
+  /** The search in the classes and links drawn; see `searchGraph`. */
+  readonly search = computed(() => {
+    const graph = this.graphShown() ?? this.graph();
+    return graph ? searchGraph(graph, this.searchText()) : undefined;
+  });
+  /** How many classes and links the search found; none without a search. */
+  readonly searchFound = computed(() => {
+    const search = this.search();
+    return search ? search.hitClasses.size + search.hitLinks.size : undefined;
+  });
+
+  clearSearch(input: HTMLInputElement): void {
+    this.searchText.set('');
+    input.value = '';
+    input.focus();
+  }
+
   constructor() {
+    // The search is ready to type in once the graph shows: its field takes the focus the first time it appears.
+    let searchFocused = false;
+    effect(() => {
+      const input = this._searchInput()?.nativeElement;
+      if (!input || searchFocused) return;
+      searchFocused = true;
+      input.focus();
+    });
     // A panel that changes class, or closes, under the pointer never reports the pointer leaving its rows.
     effect(() => {
       this.panelIri();
@@ -971,36 +1025,20 @@ export class OntologyMapPageComponent {
 
   /** Whether a class or property panel covers the right of the graph. */
   readonly panelOpen = computed(() => !!(this.panelIri() || this.propertyPanelIri()));
+  /** How wide an open panel is, over the right of the graph, as its styles draw it. */
+  readonly panelWidth = PANEL_WIDTH;
 
   /** The class whose panel is open. */
   readonly panelIri = computed(() => this._classFromUrl(ONTOLOGY_MAP_PARAM.panel));
-  /** The link property whose panel is open, in the Graph view; none while a class panel is open. */
+  /** The link property whose panel is open; none while a class panel is open. */
   readonly propertyPanelIri = computed(() => {
     const name = this._params()?.get(ONTOLOGY_MAP_PARAM.propertyPanel);
-    if (!name || this.panelIri() || this.view() !== 'graph') return undefined;
+    if (!name || this.panelIri()) return undefined;
     return this._graphLinks()?.edges.find(edge => edge.kind === 'link' && classNameOf(edge.property) === name)
       ?.property;
   });
   /** The class the map outlines: the one whose panel is open, else the one named in the URL. */
   readonly classIri = computed(() => this.panelIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
-
-  /** Shows another data model, with no panel open and no filter. */
-  show(ontologyIri: string): void {
-    this._router.navigate([], {
-      relativeTo: this._route,
-      queryParams: { [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri) },
-    });
-  }
-
-  setDetail(detail: MapDetail): void {
-    this.detail.set(detail);
-    store(DETAIL_KEY, detail);
-  }
-
-  setView(view: OntologyMapView): void {
-    this.view.set(view);
-    store(VIEW_KEY, view);
-  }
 
   /** Opens the class's panel, or closes whichever panel is open; a step in the browser history. */
   openPanel(classIri: string | undefined): void {
@@ -1112,9 +1150,8 @@ export class OntologyMapPageComponent {
     }
   }
 
-  /** Shows the class alone with the classes it is linked with, in the Graph view. */
+  /** Shows the class alone with the classes it is linked with. */
   filterOn(classIri: string): void {
-    this.setView('graph');
     this.setFilter([classIri]);
   }
 
@@ -1154,11 +1191,6 @@ export class OntologyMapPageComponent {
   setLevelLabels(level: boolean): void {
     this.levelLabels.set(level);
     store(LEVEL_LABELS_KEY, String(level));
-  }
-
-  setLayout(layout: GraphLayout): void {
-    this.layout.set(layout);
-    store(LAYOUT_KEY, layout);
   }
 
   /** Runs an Export menu item: a PNG downloaded or copied, or the link to this view copied. */
@@ -1209,27 +1241,24 @@ export class OntologyMapPageComponent {
   /** Opens the class in the Data tab. */
   open(iri: string): void {
     const [ontologyIri, className] = iri.split('#');
-    this._router.navigate(['..', RouteConstants.data, OntologyService.getOntologyNameFromIri(ontologyIri), className], {
-      relativeTo: this._route,
-    });
-  }
-
-  /** Opens the class's data model in the data model editor. */
-  edit(iri: string): void {
-    this._openEditor(iri, RouteConstants.classes);
-  }
-
-  /** Opens the property's data model in the data model editor, on its properties. */
-  editProperty(iri: string): void {
-    this._openEditor(iri, RouteConstants.properties);
-  }
-
-  private _openEditor(iri: string, page: string): void {
-    const [ontologyIri] = iri.split('#');
     this._router.navigate(
-      ['..', RouteConstants.ontology, OntologyService.getOntologyNameFromIri(ontologyIri), RouteConstants.editor, page],
-      { relativeTo: this._route }
+      this._projectPath(RouteConstants.data, OntologyService.getOntologyNameFromIri(ontologyIri), className)
     );
+  }
+
+  /** Edits the class in the data model editor's dialog; see `injectDataModelEditing`. */
+  edit(iri: string): void {
+    this._editing.editClass(iri);
+  }
+
+  /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
+  editProperty(iri: string): void {
+    this._editing.editProperty(iri);
+  }
+
+  /** The path to a page of the project from the app's root: this page sits at different depths. */
+  private _projectPath(...segments: string[]): string[] {
+    return ['/', RouteConstants.project, this._projectPage.currentProjectUuid, ...segments];
   }
 }
 

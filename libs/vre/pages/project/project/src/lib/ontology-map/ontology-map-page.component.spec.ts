@@ -46,7 +46,7 @@ describe('OntologyMapPageComponent', () => {
         { provide: Router, useValue: { navigate } },
         { provide: ActivatedRoute, useValue: { queryParamMap: params } },
         { provide: LocalizationService, useValue: { currentLanguage$: of('en') } },
-        { provide: ProjectPageService, useValue: { hasProjectAdminRights$: of(false) } },
+        { provide: ProjectPageService, useValue: { hasProjectAdminRights$: of(false), currentProjectUuid: 'p1' } },
         {
           provide: DataModelGraphService,
           useValue: {
@@ -184,6 +184,6 @@ describe('OntologyMapPageComponent', () => {
   it('opens a clicked class in the Data tab', () => {
     component.open(`${BEOL}#Letter`);
 
-    expect(navigate).toHaveBeenCalledWith(['..', 'data', 'beol', 'Letter'], expect.anything());
+    expect(navigate).toHaveBeenCalledWith(['/', 'project', 'p1', 'data', 'beol', 'Letter']);
   });
 });

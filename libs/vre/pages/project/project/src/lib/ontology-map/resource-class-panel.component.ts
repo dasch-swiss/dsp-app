@@ -8,7 +8,9 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/data-model-graph';
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
+import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
 import { localNameOf } from './ontology-graph-elements';
+import { typeIconOf, typeNameOf } from './property-types';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1]: 'required',
@@ -17,42 +19,14 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1_n]: 'oneOrMore',
 };
 
-/** Material icon per value type; types not named here show a generic one. */
-const TYPE_ICON: Record<string, string> = {
-  Text: 'short_text',
-  Link: 'link',
-  List: 'arrow_drop_down_circle',
-  Date: 'event',
-  Time: 'schedule',
-  Uri: 'public',
-  Int: 'pin',
-  Decimal: 'pin',
-  Boolean: 'check_box',
-  Color: 'palette',
-  Geoname: 'place',
-  Interval: 'timelapse',
-  Geom: 'category',
-};
-
-/** Shown names for value types whose local name reads poorly. */
-const TYPE_NAME: Record<string, string> = { Uri: 'URI', Int: 'Integer', Geom: 'Geometry' };
-
-interface Connection {
-  id: string;
-  label: string;
-  navigable: boolean;
-  /** The link properties joining it with the class, or the subclass label. */
-  via: string;
-}
-
 /**
- * The details of one class of a data model, docked beside the Ontology map: its description, its properties with
- * their types and how many values they take, and the classes it links to and is linked from.
+ * The details of one class of a data model, docked beside the Ontology map: its description, a small map of the
+ * classes it links to and is linked from, and its properties with their types and how many values they take.
  */
 @Component({
   selector: 'app-resource-class-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
+  imports: [ClassConnectionsComponent, MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.classPanel';
@@ -73,7 +47,6 @@ interface Connection {
                 <mat-icon>content_copy</mat-icon>
               </button>
             </span>
-            <span class="subtitle">{{ t + '.subtitle' | translate: { model: dataModelLabel() } }}</span>
           </div>
           <button
             mat-icon-button
@@ -88,6 +61,14 @@ interface Connection {
         @if (node.description) {
           <p class="description">{{ node.description }}</p>
         }
+
+        <app-class-connections
+          [classIri]="classIri()"
+          [classLabel]="node.label"
+          [incoming]="incoming()"
+          [outgoing]="outgoing()"
+          [colors]="colors()"
+          (classSelected)="showClass($event)" />
 
         <div class="group">
           <h3>{{ t + '.properties' | translate: { count: properties().length } }}</h3>
@@ -125,6 +106,17 @@ interface Connection {
                     {{ typeName(property) }} · {{ t + '.' + cardinalityKey(property) | translate }}
                   </span>
                 }
+                @if (canEdit() && isEditable(property)) {
+                  <button
+                    type="button"
+                    class="edit-property"
+                    data-cy="class-panel-edit-property"
+                    [attr.aria-label]="t + '.editProperty' | translate: { property: property.label }"
+                    [matTooltip]="t + '.editProperty' | translate: { property: property.label }"
+                    (click)="editProperty.emit(property.id)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                }
               </div>
               @if (open && property.description) {
                 <p class="property-description">{{ property.description }}</p>
@@ -133,41 +125,24 @@ interface Connection {
           }
         </div>
 
-        @for (side of sides(); track side.key) {
-          <div class="group">
-            <h3>{{ t + '.' + side.key | translate }}</h3>
-            <p class="connections">
-              @for (connection of side.connections; track connection.id; let last = $last) {
-                @if (connection.navigable) {
-                  <button type="button" class="class-link" (click)="showClass(connection.id)">
-                    {{ connection.label }}
-                  </button>
-                } @else {
-                  <span class="class-name">{{ connection.label }}</span>
-                }
-                @if (connection.via) {
-                  <span class="via">{{ t + '.via' | translate: { property: connection.via } }}</span>
-                }
-                @if (!last) {
-                  <span class="separator" aria-hidden="true">·</span>
-                }
-              } @empty {
-                <span class="none">{{ t + '.none' | translate }}</span>
-              }
-            </p>
-          </div>
-        }
-
+        <!-- Kept in view at the bottom of the panel, however long the class's properties. -->
         <div class="actions">
           <button mat-flat-button color="primary" data-cy="class-panel-browse" (click)="browse.emit(classIri())">
+            <mat-icon>view_list</mat-icon>
             {{ t + '.browse' | translate }}
           </button>
-          <button mat-stroked-button data-cy="class-panel-filter" (click)="filter.emit(classIri())">
+          <span class="spacer"></span>
+          <button
+            mat-stroked-button
+            data-cy="class-panel-filter"
+            [matTooltip]="t + '.filterHint' | translate"
+            (click)="filter.emit(classIri())">
             <mat-icon>filter_alt</mat-icon>
             {{ t + '.filter' | translate }}
           </button>
           @if (canEdit()) {
             <button mat-stroked-button data-cy="class-panel-edit" (click)="edit.emit(classIri())">
+              <mat-icon>edit</mat-icon>
               {{ t + '.edit' | translate }}
             </button>
           }
@@ -259,11 +234,6 @@ interface Connection {
           width: 14px;
           height: 14px;
         }
-      }
-
-      .subtitle {
-        font-size: 12px;
-        color: $cool_gray_500;
       }
 
       .description {
@@ -385,6 +355,35 @@ interface Connection {
         }
       }
 
+      // A pencil at the end of the row, shown while the row is hovered or has focus; its room is kept, so the row's
+      // texts do not move.
+      .edit-property {
+        flex: none;
+        display: flex;
+        padding: 3px;
+        border: 0;
+        border-radius: 50%;
+        background: none;
+        color: $primary;
+        cursor: pointer;
+        visibility: hidden;
+
+        &:hover {
+          background: $primary_50;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .property:hover .edit-property,
+      .property:focus-within .edit-property {
+        visibility: visible;
+      }
+
       .property-description {
         margin: 0;
         padding-left: 24px;
@@ -393,24 +392,29 @@ interface Connection {
         color: $cool_gray_600;
       }
 
-      .connections {
-        margin: 0;
-      }
-
-      .via,
-      .separator {
-        margin-left: 4px;
-        color: $cool_gray_500;
-      }
-
-      .separator {
-        margin-right: 4px;
-      }
-
+      // A footer across the panel, against its padding: pushed down when the panel is short, stuck to the bottom when
+      // it scrolls.
       .actions {
+        position: sticky;
+        bottom: -20px;
+        margin: auto -24px -20px;
+        padding: 12px 24px;
         display: flex;
+        align-items: center;
         gap: 8px;
-        padding-top: 4px;
+        background: white;
+        border-top: 1px solid $cool_gray_200;
+
+        button {
+          --mat-button-filled-container-height: 36px;
+          --mat-button-outlined-container-height: 36px;
+          flex: none;
+          white-space: nowrap;
+        }
+      }
+
+      .spacer {
+        flex: 1;
       }
     `,
   ],
@@ -424,14 +428,14 @@ export class ResourceClassPanelComponent {
   readonly graph = input.required<DataModelGraph>();
   /** IRI of the class to describe. */
   readonly classIri = input.required<string>();
-  /** Name of the data model, for the subtitle. */
-  readonly dataModelLabel = input('');
   /** Label of the card for links that point at any resource, in the current language. */
   readonly anyResourceLabel = input('Any resource');
   /** Label of a relation between a class and its superclass or subclass. */
   readonly subclassLabel = input('subclass of');
   /** Whether "Edit class" is offered. */
   readonly canEdit = input(false);
+  /** A CSS background per class, for the map of its links; see `familyColors`. */
+  readonly colors = input<Map<string, string>>(new Map());
 
   /** The panel was closed. */
   readonly closed = output<void>();
@@ -445,6 +449,8 @@ export class ResourceClassPanelComponent {
   readonly filter = output<string>();
   /** "Edit class" was clicked; emits the class IRI. */
   readonly edit = output<string>();
+  /** A property row's pencil was clicked; emits the property IRI. */
+  readonly editProperty = output<string>();
 
   readonly node = computed(() => this.graph().nodes.find(node => node.id === this.classIri()));
   readonly properties = computed(() => this.node()?.propertyDetails ?? []);
@@ -457,10 +463,8 @@ export class ResourceClassPanelComponent {
     return open?.classIri === this.classIri() ? open.propertyId : undefined;
   });
 
-  readonly sides = computed(() => [
-    { key: 'linksTo', connections: this._connections('outgoing') },
-    { key: 'linkedFrom', connections: this._connections('incoming') },
-  ]);
+  readonly incoming = computed(() => this._connections('incoming'));
+  readonly outgoing = computed(() => this._connections('outgoing'));
 
   toggle(property: DataModelProperty): void {
     if (!property.description) return;
@@ -484,12 +488,17 @@ export class ResourceClassPanelComponent {
     return this.graph().nodes.find(node => node.id === iri)?.label ?? iri.substring(iri.lastIndexOf('#') + 1);
   }
 
+  /** Whether the property belongs to a data model, which the project can edit, rather than to knora-api. */
+  isEditable(property: DataModelProperty): boolean {
+    return !property.id.startsWith(Constants.KnoraApiV2);
+  }
+
   typeIcon(property: DataModelProperty): string {
-    return TYPE_ICON[property.type] ?? 'label';
+    return typeIconOf(property.type);
   }
 
   typeName(property: DataModelProperty): string {
-    return TYPE_NAME[property.type] ?? property.type;
+    return typeNameOf(property.type);
   }
 
   cardinalityKey(property: DataModelProperty): string {
@@ -497,7 +506,7 @@ export class ResourceClassPanelComponent {
   }
 
   /** The classes on one side, each once, with the properties joining them. */
-  private _connections(direction: 'incoming' | 'outgoing'): Connection[] {
+  private _connections(direction: 'incoming' | 'outgoing'): ClassConnection[] {
     const iri = this.classIri();
     const via = new Map<string, string[]>();
     for (const edge of this.graph().edges) {

@@ -633,7 +633,8 @@
       },
       "dataClassHeader": {
         "searchLabel": "Rechercher",
-        "searchPlaceholder": "Rechercher"
+        "searchPlaceholder": "Rechercher",
+        "classDetails": "Détails de la classe"
       },
       "resultMeta": {
         "range": "{{start}} – {{end}} sur {{total}}",
@@ -708,35 +709,8 @@
         "tableBody": "Passez à Tableau pour afficher les ressources en lignes, leurs propriétés en colonnes, et comparer les valeurs côte à côte."
       },
       "dataModelMap": {
-        "label": "Carte du modèle de données",
-        "classCount": "{{count}} classes",
-        "classCountOne": "1 classe",
-        "fullMap": "Carte complète",
-        "collapse": "Masquer la carte",
-        "expand": "Afficher la carte",
-        "youAreHere": "vous êtes ici",
-        "notLinked": "non lié",
-        "external": "autre modèle de données",
         "anyResource": "Toute ressource",
-        "summary": "{{classes}} classes, {{links}} liens",
-        "card": "{{label}}, {{count}} ressources",
-        "linksTo": "lié à {{names}}",
-        "linkedFrom": "lié depuis {{names}}",
         "subclassOf": "sous-classe de",
-        "mainClass": "classe principale du modèle de données",
-        "mainClassLinks": "est liée à {{links}} des {{others}} autres classes",
-        "fewerLinks": "Moins de liens",
-        "moreLinks": "Plus de liens",
-        "connections": "Classes liées à cette classe",
-        "linkedFromHeading": "Liée depuis",
-        "linksToHeading": "Liée à",
-        "moreClasses": "+{{count}} autres",
-        "noLinks": "Liée à aucune autre classe",
-        "properties": "{{count}} propriétés",
-        "propertiesOne": "1 propriété",
-        "links": "{{count}} liens",
-        "linksOne": "1 lien",
-        "noLinksShort": "aucun lien",
         "legendLink": "propriété de lien, pointe vers la classe liée"
       }
     },
@@ -744,7 +718,6 @@
       "dataModels": "Modèles de données",
       "noDataModels": "Ce projet n'a pas encore de modèle de données.",
       "classPanel": {
-        "subtitle": "Classe de ressource · {{model}}",
         "close": "Fermer les détails de la classe",
         "properties": "Propriétés · {{count}}",
         "noProperties": "Cette classe n'a pas de propriétés propres.",
@@ -757,24 +730,16 @@
         "via": "via {{property}}",
         "none": "Aucune",
         "browse": "Parcourir les ressources",
-        "edit": "Modifier la classe",
-        "filter": "Filtrer sur cette classe"
+        "edit": "Modifier",
+        "filter": "Filtrer",
+        "more": "+{{count}} autres",
+        "noConnections": "Liée à aucune autre classe",
+        "filterHint": "Montrer dans le graphe seulement cette classe et les classes liées",
+        "editProperty": "Modifier la propriété {{property}}"
       },
       "dataModel": "Modèle de données",
       "counts": "{{classes}} classes · {{links}} liens",
-      "detail": "Niveau de détail",
-      "summary": "Résumé",
-      "properties": "Propriétés",
-      "view": "Vue",
-      "viewMap": "Carte",
-      "viewGraph": "Graphe",
       "layout": "Disposition",
-      "layouts": {
-        "tree": "Arbre",
-        "circle": "Cercle",
-        "force": "Forces",
-        "grid": "Grille"
-      },
       "fit": "Ajuster à l'écran",
       "graphFailed": "Le graphe n'a pas pu être chargé.",
       "legendDashed": "autre modèle de données",
@@ -789,11 +754,16 @@
       },
       "classesChosen": "{{count}} classes",
       "propertyFilter": "Propriété",
+      "search": {
+        "placeholder": "Rechercher classes et propriétés",
+        "found": "{{count}} trouvé(s)",
+        "none": "Aucun résultat",
+        "clear": "Effacer la recherche"
+      },
       "allProperties": "Toutes les propriétés",
       "propertiesChosen": "{{count}} propriétés",
       "levelLabels": "Libellés des liens à l’horizontale",
       "propertyPanel": {
-        "subtitle": "Propriété de lien · {{model}}",
         "close": "Fermer les détails de la propriété",
         "pointsTo": "Pointe vers",
         "inModel": "Dans ce modèle",
@@ -801,7 +771,9 @@
         "usedBy": "Utilisée par · {{count}} classes",
         "inheritedFrom": "héritée de {{class}}",
         "filter": "Afficher seulement ces liens",
-        "edit": "Modifier la propriété"
+        "edit": "Modifier la propriété",
+        "type": "Type",
+        "from": "De"
       },
       "display": "Affichage",
       "zoom": "Zoom",
@@ -848,7 +820,85 @@
         "bothHint": "Libellé · nom"
       },
       "copyName": "Copier le nom",
-      "nameCopied": "Nom copié"
+      "nameCopied": "Nom copié",
+      "islands": {
+        "legend": "Légende",
+        "collapse": "Masquer la légende",
+        "expand": "Afficher la légende",
+        "files": "Fichiers",
+        "shapes": "Formes",
+        "parent": "Classe parente",
+        "subclass": "Sous-classe",
+        "link": "Lien",
+        "fileKinds": {
+          "StillImageRepresentation": "Image",
+          "MovingImageRepresentation": "Vidéo",
+          "AudioRepresentation": "Audio",
+          "DocumentRepresentation": "Document",
+          "TextRepresentation": "Texte",
+          "ArchiveRepresentation": "Archive",
+          "DDDRepresentation": "Modèle 3D"
+        }
+      },
+      "links": "liens"
+    },
+    "dataModels2": {
+      "map": "Carte",
+      "graph": "Vue d’ensemble",
+      "classes": "Classes",
+      "definitions": "Définitions",
+      "properties": "Propriétés",
+      "lists": "Listes",
+      "findClass": "Chercher une classe",
+      "findProperty": "Libellé ou nom",
+      "findList": "Chercher une liste",
+      "propertiesCount": "{{count}} propriétés · {{links}} liens",
+      "listsCount": "{{count}} listes de valeurs contrôlées",
+      "colClass": "Classe",
+      "colProperties": "Propriétés",
+      "colLinksTo": "Liens vers",
+      "colProperty": "Propriété",
+      "colType": "Type",
+      "colPointsTo": "Pointe vers",
+      "colUsedBy": "Utilisée par",
+      "allTypes": "Tous",
+      "noMatch": "Rien ne correspond à la recherche.",
+      "noLists": "Ce projet n’a pas encore de listes.",
+      "colFile": "Fichier",
+      "colDescription": "Description",
+      "density": "Densité des lignes",
+      "condensed": "Condensé",
+      "expanded": "Détaillé",
+      "filterOn": "Filtrer par {{column}}",
+      "allClasses": "Toutes les classes",
+      "topClasses": "Classes principales seulement",
+      "subclasses": "Sous-classes seulement",
+      "noFile": "Sans fichier",
+      "clearFilter": "Effacer",
+      "contains": "Contient…",
+      "hasPropertyOf": "A une propriété de type",
+      "subclassOf": "Sous-classe de {{class}}",
+      "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner",
+      "resizeColumn": "Redimensionner la colonne",
+      "descriptionEditor": {
+        "title": "Description de {{class}}",
+        "language": "Langue",
+        "allLanguages": "Toutes les langues",
+        "descriptionIn": "Description en {{language}}",
+        "needsOne": "Gardez au moins une langue",
+        "save": "Enregistrer",
+        "edit": "Modifier la description ({{language}}) de {{class}}",
+        "add": "Ajouter une description ({{language}}) à {{class}}",
+        "saved": "{{class}} enregistrée",
+        "notSaved": "La modification n'a pas pu être enregistrée. Réessayez.",
+        "labelTitle": "Libellé de {{class}}",
+        "labelIn": "Libellé en {{language}}",
+        "editLabel": "Modifier le libellé ({{language}}) de {{class}}",
+        "addLabel": "Ajouter un libellé ({{language}}) à {{class}}"
+      },
+      "allLanguages": "Toutes les langues",
+      "colLinkedFrom": "Lié depuis"
     }
   },
   "resourceEditor": {
@@ -1373,7 +1423,7 @@
         "data": "Données",
         "dataModels": "Modèles de données",
         "settings": "Paramètres",
-        "ontologyMap": "Carte de l’ontologie"
+        "dataModels2": "Modèles de données 2"
       }
     },
     "grid": {

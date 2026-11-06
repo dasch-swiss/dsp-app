@@ -16,7 +16,13 @@ export * from './lib/data-browser-page.component';
 export * from './lib/data-class-view.component';
 export * from './lib/data-overview.component';
 export * from './lib/ontology-map/ontology-map-page.component';
+export * from './lib/data-models-rail/data-models-rail-page.component';
+export * from './lib/data-models-rail/data-model-classes.component';
+export * from './lib/data-models-rail/data-model-properties.component';
+export * from './lib/data-models-rail/data-model-lists.component';
 
 // Services used by other libraries
 export * from './lib/project-page.service';
+export * from './lib/ontology-map/data-model-editor';
+export type { LanguageText } from './lib/sidenav/data-model-map/data-model-graph';
 export * from './lib/data-browser-page.service';

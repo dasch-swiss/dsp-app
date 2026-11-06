@@ -1,12 +1,12 @@
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
-  CLASS_COLORS,
-  classColors,
+  classRows,
   graphScale,
-  layoutOptions,
   linkedWith,
+  propertyRows,
   propertyUsage,
+  searchGraph,
   throughProperties,
   toGraphElements,
   withInheritedLinks,
@@ -30,8 +30,13 @@ const graph: DataModelGraph = {
 };
 
 describe('toGraphElements', () => {
+  const colors = new Map([
+    ['Film', '#111111'],
+    ['Lonely', '#222222'],
+    ['Person', '#333333'],
+  ]);
   const elements = toGraphElements(graph, {
-    colors: classColors(graph),
+    colors,
     mainIri: 'Film',
     selectedIri: 'Person',
     anyResourceLabel: 'Any resource',
@@ -39,7 +44,7 @@ describe('toGraphElements', () => {
   const node = (id: string) => elements.find(e => e.group === 'nodes' && e.data.id === id)!;
 
   it('draws a node per class in its own colour, styled by its main and selected state', () => {
-    expect(['Film', 'Lonely', 'Person'].map(id => node(id).data['color'])).toEqual(CLASS_COLORS.slice(0, 3));
+    expect(['Film', 'Lonely', 'Person'].map(id => node(id).data['color'])).toEqual(['#111111', '#222222', '#333333']);
     expect(node('Film').classes).toBe('main');
     expect(node('Person').classes).toBe('selected');
     expect(node('Lonely').classes).toBe('');
@@ -67,6 +72,76 @@ describe('toGraphElements', () => {
       ['Film', 'Person', 'Writer'],
       ['Person', Constants.Resource, 'Mentions'],
     ]);
+  });
+});
+
+describe('toGraphElements with many links between two classes', () => {
+  const links = (count: number, source: string, target: string) =>
+    Array.from({ length: count }, (_, i) => ({
+      source,
+      target,
+      property: `${source}${i}`,
+      label: `Link ${i}`,
+      kind: 'link' as const,
+    }));
+  const edgesOf = (edges: DataModelGraph['edges']) =>
+    toGraphElements(
+      { nodes: graph.nodes, edges },
+      { colors: new Map(), anyResourceLabel: 'Any resource', linksLabel: 'links' }
+    ).filter(e => e.group === 'edges');
+
+  it('draws up to 4 links from one class to another one by one', () => {
+    expect(edgesOf(links(4, 'Film', 'Person'))).toHaveLength(4);
+  });
+
+  it('draws more than 4 as one link saying how many, one per direction', () => {
+    const edges = edgesOf([...links(5, 'Film', 'Person'), ...links(2, 'Person', 'Film')]);
+
+    expect(edges.map(e => e.data['label'])).toEqual(['5 links', 'Link 0', 'Link 1']);
+    expect(edges[0].classes).toBe('links');
+  });
+});
+
+describe('searchGraph', () => {
+  it('finds nothing for a blank text', () => {
+    expect(searchGraph(graph, '  ')).toBeUndefined();
+  });
+
+  it('keeps a class found with its links and the classes at their other end, ignoring case', () => {
+    const search = searchGraph(graph, 'lONEL')!;
+    expect([...search.hitClasses]).toEqual(['Lonely']);
+    expect([...search.classes]).toEqual(['Lonely']);
+    expect(search.links.size).toBe(0);
+
+    const person = searchGraph(graph, 'person')!;
+    expect([...person.classes].sort()).toEqual([Constants.Resource, 'Film', 'Person'].sort());
+    expect(person.links).toEqual(
+      new Set(['Film director Person', 'Film writer Person', `Person mentions ${Constants.Resource}`])
+    );
+    expect(person.hitLinks.size).toBe(0);
+  });
+
+  it('finds links by label or property name, keeping the classes at both ends', () => {
+    const search = searchGraph(graph, 'direct')!;
+    expect(search.hitClasses.size).toBe(0);
+    expect([...search.hitLinks]).toEqual(['Film director Person']);
+    expect([...search.classes]).toEqual(['Film', 'Person']);
+  });
+
+  it('names a link found among many by the one link drawn for them', () => {
+    const many = Array.from({ length: 5 }, (_, i) => ({
+      source: 'Film',
+      target: 'Person',
+      property: `p${i}`,
+      label: i === 3 ? 'Producer' : `Link ${i}`,
+      kind: 'link' as const,
+    }));
+    expect([...searchGraph({ nodes: graph.nodes, edges: many }, 'producer')!.hitLinks]).toEqual(['Film links Person']);
+  });
+
+  it('finds nothing for a text nowhere in the graph', () => {
+    const search = searchGraph(graph, 'sculpture')!;
+    expect(search.hitClasses.size + search.hitLinks.size).toBe(0);
   });
 });
 
@@ -140,6 +215,13 @@ describe('withInheritedLinks', () => {
     expect(result.nodes.map(n => n.id)).not.toContain('Other');
     expect(result.nodes.map(n => n.id)).toContain('Lonely');
   });
+
+  it('gives subclasses no links of their own when inherited links are left out', () => {
+    const hidden = withInheritedLinks(family, false);
+
+    expect(hidden.edges.some(e => e.kind === 'subclass' || e.source === 'Short' || e.source === 'Clip')).toBe(false);
+    expect(hidden.nodes.map(n => n.id)).toContain('Short');
+  });
 });
 
 describe('propertyUsage', () => {
@@ -174,8 +256,13 @@ describe('propertyUsage', () => {
     expect(propertyUsage(family, 'director')).toEqual({
       label: 'Director',
       description: 'Who directed it',
+      type: 'Link',
       targets: ['Person'],
       links: 2,
+      pairs: [
+        { source: 'Film', target: 'Person' },
+        { source: 'Short', target: 'Person' },
+      ],
       users: [
         { classIri: 'Film', cardinality: Cardinality._1_n, inheritedFrom: undefined },
         { classIri: 'Short', cardinality: undefined, inheritedFrom: 'Film' },
@@ -217,13 +304,119 @@ describe('withoutProperties', () => {
   });
 });
 
-describe('layoutOptions', () => {
-  it('maps every layout to a Cytoscape layout', () => {
-    expect(['tree', 'circle', 'force', 'grid'].map(l => layoutOptions(l as never).name)).toEqual([
-      'breadthfirst',
-      'circle',
-      'cose',
-      'grid',
+describe('classRows and propertyRows', () => {
+  const model: DataModelGraph = {
+    nodes: [
+      {
+        id: 'x#Film',
+        label: 'Film',
+        kind: 'class',
+        navigable: true,
+        propertyDetails: [
+          { id: 'x#title', label: 'Title', description: '', type: 'Text', cardinality: Cardinality._1 },
+          {
+            id: 'x#director',
+            label: 'Director',
+            description: '',
+            type: 'Link',
+            linkTarget: 'x#Person',
+            cardinality: Cardinality._0_n,
+          },
+        ],
+      },
+      {
+        id: 'x#Person',
+        label: 'Person',
+        kind: 'class',
+        navigable: true,
+        propertyDetails: [
+          { id: 'x#title', label: 'Title', description: '', type: 'Text', cardinality: Cardinality._0_1 },
+        ],
+      },
+    ],
+    edges: [{ source: 'x#Film', target: 'x#Person', property: 'x#director', label: 'Director', kind: 'link' }],
+  };
+
+  it('lists each class with its name, file, description, properties and the classes it links to', () => {
+    const withFile: DataModelGraph = {
+      ...model,
+      nodes: [
+        { ...model.nodes[0], description: 'A film', representationClass: 'MovingImageRepresentation' },
+        { ...model.nodes[1], representationClass: 'WithoutRepresentation' },
+      ],
+    };
+    expect(classRows(withFile)).toEqual([
+      {
+        id: 'x#Film',
+        label: 'Film',
+        name: 'Film',
+        description: 'A film',
+        descriptions: [],
+        labels: [],
+        representation: 'MovingImageRepresentation',
+        properties: 2,
+        propertyList: [
+          { id: 'x#title', label: 'Title', type: 'Text' },
+          { id: 'x#director', label: 'Director', type: 'Link', linkTarget: 'x#Person' },
+        ],
+        linksTo: ['x#Person'],
+        linkedFrom: [],
+        depth: 0,
+      },
+      {
+        id: 'x#Person',
+        label: 'Person',
+        name: 'Person',
+        description: '',
+        descriptions: [],
+        labels: [],
+        representation: undefined,
+        properties: 1,
+        propertyList: [{ id: 'x#title', label: 'Title', type: 'Text' }],
+        linksTo: [],
+        linkedFrom: ['x#Film'],
+        depth: 0,
+      },
+    ]);
+  });
+
+  it('lists subclasses under their superclass, by label, without the superclass among their links', () => {
+    const family: DataModelGraph = {
+      nodes: [
+        { id: 'x#Work', label: 'Work', kind: 'class', navigable: true },
+        { id: 'x#Book', label: 'Book', kind: 'class', navigable: true },
+        { id: 'x#Film', label: 'Film', kind: 'class', navigable: true },
+      ],
+      edges: [
+        { source: 'x#Film', target: 'x#Work', property: 'rdfs:subClassOf', label: '', kind: 'subclass' },
+        { source: 'x#Book', target: 'x#Work', property: 'rdfs:subClassOf', label: '', kind: 'subclass' },
+      ],
+    };
+    expect(classRows(family).map(row => [row.label, row.depth, row.superclass, row.linksTo])).toEqual([
+      ['Work', 0, undefined, []],
+      ['Book', 1, 'x#Work', []],
+      ['Film', 1, 'x#Work', []],
+    ]);
+  });
+
+  it('lists each property once, with the classes that have it', () => {
+    expect(propertyRows(model)).toEqual([
+      {
+        id: 'x#director',
+        label: 'Director',
+        name: 'director',
+        type: 'Link',
+        linkTarget: 'x#Person',
+        usedBy: ['x#Film'],
+      },
+      {
+        id: 'x#title',
+        label: 'Title',
+        name: 'title',
+        type: 'Text',
+        linkTarget: undefined,
+        usedBy: ['x#Film', 'x#Person'],
+      },
     ]);
   });
 });
