@@ -129,6 +129,49 @@ def _sources(dep):
 def _css_target(scss):
     return "css_" + scss.removesuffix(".scss").replace("/", "_").replace("-", "_").replace(".", "_")
 
+def _bazel_tsconfig(name, out, extends, srcs, deps, strict, extra_paths = {}, extra_options = {}):
+    """Writes a Bazel tsconfig `out` and its ts_config target `name`.
+
+    `paths` maps only the declared library `deps` to their compiled `.d.ts`, so an import of any
+    other library fails with TS2307 (Decision 7 of DEV-7767).
+    """
+    paths = {}
+    for dep in deps:
+        label = native.package_relative_label(dep)
+        if _is_library(label):
+            paths[_alias(label)] = [label.package + "/src/index.d.ts"]
+    paths.update(extra_paths)
+
+    compiler_options = {
+        # Must be "."; a checked-in outDir would win and ng_project would emit nothing.
+        "outDir": ".",
+        "module": "preserve",
+        "moduleResolution": "bundler",
+        # Replaces tsconfig.base.json's source mapping, which would compile every library from source.
+        "paths": paths,
+    }
+    compiler_options.update({flag: strict for flag in _STRICT_FLAGS})
+    compiler_options.update(extra_options)
+    write_file(
+        name = name + "_json",
+        out = out,
+        content = [json.encode_indent({
+            "extends": extends,
+            "compilerOptions": compiler_options,
+            "angularCompilerOptions": {
+                "strictInjectionParameters": True,
+                "strictInputAccessModifiers": True,
+                "strictTemplates": strict,
+            },
+            "include": srcs,
+        })],
+    )
+    ts_config(
+        name = name,
+        src = ":" + name + "_json",
+        deps = native.glob(["tsconfig*.json"]) + [Label("//:tsconfig_base")],
+    )
+
 def vre_library(
         name,
         srcs,
@@ -209,43 +252,9 @@ def vre_library(
         )
         css.append(":" + _css_target(scss))
 
-    paths = {}
-    for dep in deps:
-        label = native.package_relative_label(dep)
-        if _is_library(label):
-            paths[_alias(label)] = [label.package + "/src/index.d.ts"]
-
-    compiler_options = {
-        # Must be "."; a checked-in outDir would win and ng_project would emit nothing.
-        "outDir": ".",
-        "module": "preserve",
-        "moduleResolution": "bundler",
-        # Replaces tsconfig.base.json's source mapping, which would compile every library from source.
-        "paths": paths,
-    }
     # A loose library mirrors the Angular CLI's app program, which compiles every library unstrict.
     strict = package not in LOOSE_LIBRARIES
-    compiler_options.update({flag: strict for flag in _STRICT_FLAGS})
-    tsconfig = {
-        "extends": "./tsconfig.lib.json",
-        "compilerOptions": compiler_options,
-        "angularCompilerOptions": {
-            "strictInjectionParameters": True,
-            "strictInputAccessModifiers": True,
-            "strictTemplates": strict,
-        },
-        "include": srcs,
-    }
-    write_file(
-        name = "tsconfig_bazel_json",
-        out = "tsconfig.bazel.json",
-        content = [json.encode_indent(tsconfig)],
-    )
-    ts_config(
-        name = "tsconfig_bazel",
-        src = ":tsconfig_bazel_json",
-        deps = native.glob(["tsconfig*.json"]) + [Label("//:tsconfig_base")],
-    )
+    _bazel_tsconfig("tsconfig_bazel", "tsconfig.bazel.json", "./tsconfig.lib.json", srcs, deps, strict)
 
     ng_project(
         name = name,
@@ -264,18 +273,14 @@ def vre_library(
 
     if testing_srcs:
         own_alias = _alias(native.package_relative_label(":" + name))
-        testing_options = dict(compiler_options)
-        testing_options["paths"] = dict(paths)
-        testing_options["paths"][own_alias] = [native.package_name() + "/src/index.d.ts"]
-        write_file(
-            name = "tsconfig_testing_json",
-            out = "tsconfig.testing.json",
-            content = [json.encode_indent(dict(tsconfig, compilerOptions = testing_options, include = testing_srcs))],
-        )
-        ts_config(
-            name = "tsconfig_testing",
-            src = ":tsconfig_testing_json",
-            deps = native.glob(["tsconfig*.json"]) + [Label("//:tsconfig_base")],
+        _bazel_tsconfig(
+            "tsconfig_testing",
+            "tsconfig.testing.json",
+            "./tsconfig.lib.json",
+            testing_srcs,
+            deps,
+            strict,
+            extra_paths = {own_alias: [native.package_name() + "/src/index.d.ts"]},
         )
         ng_project(
             name = "testing",
