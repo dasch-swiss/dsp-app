@@ -306,9 +306,9 @@ jobs:
     name: Check OpenAPI Spec is Up-to-Date
     needs: [changes]
     runs-on: ubuntu-latest
+    # The App token pushes and calls gh; GITHUB_TOKEN only checks out.
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
     if: |
       needs.changes.result == 'success' &&
       needs.changes.outputs.automation_skip == 'false' &&
