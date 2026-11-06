@@ -1,3 +1,6 @@
+// Here, not in the shared `config`: every component stylesheet uses that, and would repeat the request.
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
+
 /* roboto-300 - latin */
 @font-face {
   font-family: 'Roboto';
