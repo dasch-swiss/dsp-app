@@ -715,6 +715,54 @@ jobs:
             -f state=success -f context="$CONTEXT" -f description="$DESC" -f target_url="$RUN_URL" >/dev/null
           echo "Posted '${CONTEXT}': ${DESC}"
 
+  gate:
+    name: Gate (just ci)
+    needs: [changes]
+    if: |
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+      - name: Restore Bazel repository cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/bazel-repo
+          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
+          restore-keys: bazel-repo-${{ runner.os }}-
+      - name: Restore Bazel disk cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/bazel-disk/dsp-app
+          key: bazel-disk-gate-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
+          restore-keys: bazel-disk-gate-${{ runner.os }}-
+      - name: Configure RBE
+        id: rbe
+        uses: ./.github/actions/bazel-rbe
+        with:
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
+      # No build event log: these recipes call Bazel many times, and the visibility check's seeds
+      # fail on purpose, so one log would hold only the last seed's analysis.
+      - name: Run just ci
+        env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+        run: nix develop --command just ci
+      - name: Check that just lint rejects a seeded violation
+        env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+        run: nix develop --command just lint-selftest
+
   docs-build-test:
     name: Docs Build Test
     needs: [changes]
