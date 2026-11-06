@@ -2,27 +2,39 @@
 # Usage: scripts/visibility-check.sh
 # Asserts that Bazel visibility rejects one forbidden dependency per ADR-0001 tier rule. Each seed
 # adds a dependency to a real library's `deps` in a scratch copy of the working tree, never in the
-# checkout, and the analysis must fail with the visibility error for exactly that edge.
+# checkout, and the analysis must fail with the visibility error for exactly that edge, matched on
+# Bazel's message text. Feature and app libraries may depend on every type, so only the scope rule
+# has seeds for them.
 set -euo pipefail
 
 REPO="$(git rev-parse --show-toplevel)"
-# A fixed path keeps Bazel's output base, so a second run re-analyses only what changed.
-SCRATCH="${VISIBILITY_CHECK_DIR:-${TMPDIR:-/tmp}/dsp-app-visibility-check}"
+# A fixed path, not $TMPDIR (which `nix develop` sets per shell), keeps one Bazel output base for
+# every run instead of leaving a new one behind each time.
+SCRATCH="${VISIBILITY_CHECK_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/dsp-app-visibility-check}"
 
-# source library, its type/scope, forbidden dependency, its type/scope. A target must not already
-# depend on its source: the seed would then form a cycle, which fails before visibility is checked.
+# A source library and the forbidden dependency seeded into it; the rule each pair breaks is read
+# from LIBRARIES. A target must not already depend on its source: the seed would then form a
+# cycle, which fails before visibility is checked.
 SEEDS=(
-  "libs/vre/ui/progress-indicator ui/shared libs/vre/core/error-handler data-access/shared"
-  "libs/vre/ui/progress-indicator ui/shared libs/vre/shared/app-help-page feature/shared"
-  "libs/vre/core/config data-access/shared libs/vre/ui/progress-indicator ui/shared"
-  "libs/vre/3rd-party-services/analytics data-access/shared libs/vre/shared/app-help-page feature/shared"
-  "libs/vre/ui/notification util/shared libs/vre/ui/progress-indicator ui/shared"
-  "libs/vre/ui/notification util/shared libs/vre/core/config data-access/shared"
-  "libs/vre/ui/notification util/shared libs/vre/shared/app-help-page feature/shared"
-  "libs/vre/pages/search/search feature/search libs/vre/pages/system/system feature/system"
-  "libs/vre/pages/data-browser feature/shared libs/vre/pages/system/system feature/system"
+  "libs/vre/ui/progress-indicator libs/vre/core/error-handler"
+  "libs/vre/ui/progress-indicator libs/vre/shared/app-help-page"
+  "libs/vre/core/config libs/vre/ui/progress-indicator"
+  "libs/vre/3rd-party-services/analytics libs/vre/shared/app-help-page"
+  "libs/vre/ui/notification libs/vre/ui/progress-indicator"
+  "libs/vre/ui/notification libs/vre/core/config"
+  "libs/vre/ui/notification libs/vre/shared/app-help-page"
+  "libs/vre/pages/search/search libs/vre/pages/system/system"
+  "libs/vre/pages/data-browser libs/vre/pages/system/system"
 )
 
+# A library's "type/scope" from its LIBRARIES entry.
+kind() {
+  sed -nE "s|^    \"//$1\": struct\(type = \"([^\"]+)\", scope = \"([^\"]+)\"\),\$|\1/\2|p" \
+    "$REPO/tools/angular/visibility.bzl"
+}
+
+# A server left by an interrupted run would keep serving a deleted workspace.
+[ ! -d "$SCRATCH" ] || (cd -- "$SCRATCH" && bazel shutdown >/dev/null 2>&1) || true
 rm -rf -- "$SCRATCH"
 mkdir -p -- "$SCRATCH"
 (
@@ -44,11 +56,17 @@ fi
 
 failed=0
 for seed in "${SEEDS[@]}"; do
-  read -r src src_kind dst dst_kind <<<"$seed"
+  read -r src dst <<<"$seed"
   src_label="//$src:${src##*/}"
   dst_label="//$dst:${dst##*/}"
-  rule="$src_kind -> $dst_kind"
-  if [ -n "$(bazel query "somepath(//$dst:all, //$src:all)" 2>/dev/null)" ]; then
+  rule="$(kind "$src") -> $(kind "$dst")"
+  if ! path="$(bazel query "somepath(//$dst:all, //$src:all)" 2>&1)"; then
+    echo "$path" >&2
+    echo "visibility-check: the cycle query for $src -> $dst failed" >&2
+    failed=1
+    continue
+  fi
+  if grep -q '^//' <<<"$path"; then
     echo "visibility-check: $dst depends on $src, so seeding $rule would form a cycle; pick another pair" >&2
     failed=1
     continue
@@ -76,5 +94,4 @@ for seed in "${SEEDS[@]}"; do
   cp -- "$REPO/$build" "$build"
 done
 
-echo "visibility-check: feature and app libraries may depend on every type; only the scope rule binds them"
 exit "$failed"
