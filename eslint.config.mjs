@@ -14,7 +14,8 @@ const jsFiles = ['**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'];
 // ADR-0002: a library's barrel is its whole public interface, so an import reaches another library
 // only through its `@dasch-swiss/*` alias. Every library's sources sit under its `src/`, so a
 // relative import that climbs into a `src`, `libs` or `apps` directory crosses a library root.
-// Flat config replaces a rule's options per block, so every block setting the rule repeats these.
+// Flat config replaces a rule's options per block, so every block sets the rule through
+// restrictImports(), which always carries these patterns.
 const libraryBoundaryPatterns = [
   {
     regex: '^@dasch-swiss/.+/src(/|$)',
@@ -25,6 +26,7 @@ const libraryBoundaryPatterns = [
     message: "A relative import must not cross a library root; use the library's @dasch-swiss alias (ADR-0002).",
   },
 ];
+const restrictImports = (options = {}) => ['error', { ...options, patterns: libraryBoundaryPatterns }];
 
 // Deviations from typescript-eslint's recommended set that every file has carried since the
 // typescript-eslint v6 migration; the blocks below override several of them for `.ts` files.
@@ -208,7 +210,7 @@ export default [
   {
     files: ['**/*.ts'],
     rules: {
-      'no-restricted-imports': ['error', { patterns: libraryBoundaryPatterns }],
+      'no-restricted-imports': restrictImports(),
     },
   },
   {
@@ -218,19 +220,15 @@ export default [
     files: ['**/*.ts'],
     ignores: ['**/shared/calendar/**', '**/calendar-date/calendar-date.service.ts', '**/*.spec.ts', '**/*.stories.ts'],
     rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          paths: [
-            {
-              name: '@dasch-swiss/vre/shared/calendar',
-              allowImportNames: ['CALENDAR_SYSTEMS', 'CalendarSystem'],
-              message: 'Calendar rules on a KnoraDate belong in CalendarDateService (@dasch-swiss/vre/ui/ui).',
-            },
-          ],
-          patterns: libraryBoundaryPatterns,
-        },
-      ],
+      'no-restricted-imports': restrictImports({
+        paths: [
+          {
+            name: '@dasch-swiss/vre/shared/calendar',
+            allowImportNames: ['CALENDAR_SYSTEMS', 'CalendarSystem'],
+            message: 'Calendar rules on a KnoraDate belong in CalendarDateService (@dasch-swiss/vre/ui/ui).',
+          },
+        ],
+      }),
     },
   },
   eslintConfigPrettier,

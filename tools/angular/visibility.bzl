@@ -18,7 +18,7 @@ SCOPES = ["shared", "project", "ontology", "search", "user", "system", "app"]
 
 # Every library package with its ADR-0001 type and scope, e.g.
 # "//libs/vre/ui/ui": struct(type = "ui", scope = "shared"). The only place a library's type and
-# scope are written: vre_library reads its own entry.
+# scope are written: `package_visibility()` reads a library's own entry.
 LIBRARIES = {
     "//libs/vre/3rd-party-services/analytics": struct(type = "data-access", scope = "shared"),
     "//libs/vre/3rd-party-services/api": struct(type = "data-access", scope = "shared"),
@@ -70,17 +70,13 @@ def dependents_group_name(type, scope):
     _check(type, scope)
     return "dependents_%s_%s" % (type.replace("-", "_"), scope)
 
-def library_visibility(type, scope):
-    """The visibility of a library: the packages whose type and scope may depend on it."""
-    return [Label("//tools/angular:" + dependents_group_name(type, scope))]
-
 def package_visibility():
-    """The visibility of the calling package's library, from its `LIBRARIES` entry."""
+    """The calling package's library is visible to the packages whose type and scope may depend on it."""
     package = "//" + native.package_name()
     if package not in LIBRARIES:
         fail("%s is not in LIBRARIES in tools/angular/visibility.bzl; add it with its ADR-0001 type and scope" % package)
     kind = LIBRARIES[package]
-    return library_visibility(kind.type, kind.scope)
+    return [Label("//tools/angular:" + dependents_group_name(kind.type, kind.scope))]
 
 def declare_package_groups():
     """One group per type tier, one per scope, and one per type and scope listing its dependents.
