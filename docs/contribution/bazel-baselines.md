@@ -523,6 +523,33 @@ writable `PLAYWRIGHT_BROWSERS_PATH`, not the read-only Nix store path: the CLI's
 download, plus chromium-headless-shell for 1.61.1 from the Nix browsers or from
 `playwright-core install`.
 
+## Generated `paths`: direct-only (Decision 7)
+
+A library's generated tsconfig maps only the aliases of its declared `deps` to their compiled
+`.d.ts`. An import of a library that is not a declared dependency fails with TS2307, so no
+separate undeclared-import check exists.
+
+The choice rests on one comparison, run on a throwaway build of the spike's last commit
+(`0587a5737`), with every library's `paths` generated once as the transitive closure and once as
+the direct `deps` only. The three `resource-editor` components the spike reported as changed
+(`geolocation-value`, `authorship-form-field`, `create-resource-form-legal`) were compared by the
+`dependencies` array of their `ɵɵdefineComponent`, the template's directive imports:
+
+| Compile | Result for the 3 components |
+| ------- | --------------------------- |
+| Closure against direct-only, persistent worker | byte-identical `.js` |
+| Closure against direct-only, clean output base, no worker | byte-identical `.js` |
+| Bazel against the Angular CLI's program (`ngc -p apps/dsp-app/tsconfig.app.json`, same sources and compiler) | same directives in the same order; `MatFormField`, `MatLabel`, `MatHint` and `MatError` come from `@angular/material/form-field` in Bazel and from `@angular/material/input` in the CLI's |
+
+The CLI difference is the module specifier of the same class: `@angular/material/input`
+re-exports those four directives from the form-field chunk, and each component imports both
+`MatFormFieldModule` and `MatInputModule`, so either specifier names the one class. The spike's
+reported difference is the same kind: `MatOption`, re-exported by both `@angular/material/select`
+and `@angular/material/autocomplete`, named through one or the other. Which specifier the
+compiler writes depends on which declaration files the program loaded, not on the shape of
+`paths`, and it does not change what runs. The spike's difference did not reproduce under either
+build of the same commit; the build it came from was not kept.
+
 ## Vendored packages
 
 `vendor/ckeditor5-custom-build-2.1.5.tgz` is `npm pack --ignore-scripts` of the `v2.1.5` tag
