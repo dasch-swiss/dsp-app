@@ -300,6 +300,10 @@ playwright-version-check:
 visibility-check:
     scripts/visibility-check.sh
 
+# Fail when main's branch protection requires a check no ci.yml job is named (needs admin `gh`; not in CI)
+check-required-checks:
+    scripts/check-required-checks.sh
+
 # Fail when a tsconfig.base.json alias has no Bazel package
 tsconfig-paths-check:
     #!/usr/bin/env bash
