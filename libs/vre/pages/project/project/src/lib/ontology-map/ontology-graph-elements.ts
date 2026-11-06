@@ -448,6 +448,11 @@ export interface PropertyRow {
   id: string;
   label: string;
   name: string;
+  /** Its description in the data model; empty without one. */
+  description: string;
+  /** Its label and description in each language they have. */
+  labels: LanguageText[];
+  descriptions: LanguageText[];
   type: string;
   /** The class a link points at; only set for links. */
   linkTarget?: string;
@@ -465,6 +470,9 @@ export function propertyRows(graph: DataModelGraph): PropertyRow[] {
         id: property.id,
         label: property.label,
         name: localNameOf(property.id),
+        description: property.description,
+        labels: property.labels ?? [],
+        descriptions: property.descriptions ?? [],
         type: property.type,
         linkTarget: property.linkTarget,
         usedBy: [],

@@ -23,6 +23,10 @@ export interface DataModelProperty {
   id: string;
   label: string;
   description: string;
+  /** Its label in each language it has. */
+  labels?: LanguageText[];
+  /** Its description in each language it has. */
+  descriptions?: LanguageText[];
   /** The value type's local name without "Value" (`Text`, `Date`, `List`…), or `Link` for a link. */
   type: string;
   /** The class a link points at; only set for links. */
@@ -93,10 +97,14 @@ const textOf = (
 };
 
 /** A class's description in each language it has, those without a language left out. */
-const textsOf = (classDef: object): LanguageText[] =>
-  ((classDef as { comments?: StringLiteralV2[] }).comments ?? [])
+/** An entity's labels or comments in each language they have; those without a language are left out. */
+const languageTextsOf = (texts: Labels): LanguageText[] =>
+  (texts ?? [])
     .filter(text => !!text.language && !!text.value)
     .map(({ language, value }) => ({ language: language!, value }));
+
+const textsOf = (entity: object, all: 'labels' | 'comments'): LanguageText[] =>
+  languageTextsOf((entity as Partial<Record<typeof all, StringLiteralV2[]>>)[all]);
 
 /**
  * The classes of one data model and every link or subclass relation that starts or ends in it.
@@ -134,10 +142,8 @@ export function buildDataModelGraph(
       navigable: true,
       representationClass: resourceClass.representationClass,
       description: classDef ? textOf(classDef, 'comments', 'comment', labelOf) : '',
-      descriptions: classDef ? textsOf(classDef) : [],
-      labels: (resourceClass.label ?? [])
-        .filter(text => !!text.language && !!text.value)
-        .map(({ language, value }) => ({ language: language!, value })),
+      descriptions: classDef ? textsOf(classDef, 'comments') : [],
+      labels: languageTextsOf(resourceClass.label),
       propertyDetails: own,
     });
   }
@@ -214,6 +220,8 @@ function ownProperties(
             id: property.id,
             label: textOf(property, 'labels', 'label', labelOf) || localName(property.id),
             description: textOf(property, 'comments', 'comment', labelOf),
+            labels: textsOf(property, 'labels'),
+            descriptions: textsOf(property, 'comments'),
             type: property.isLinkProperty ? 'Link' : localName(objectType).replace(/Value$/, ''),
             ...(property.isLinkProperty ? { linkTarget: objectType } : {}),
             cardinality: has.cardinality,

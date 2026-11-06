@@ -17,11 +17,13 @@ export interface DataModelEditor {
   /** Opens the property's dialog, for its labels and description; emits once it closes, `true` if it was saved. */
   editProperty(propertyIri: string): Observable<boolean>;
   /** Saves the class's labels or description, every language at once; emits `true` once saved. */
-  saveClassTexts(classIri: string, texts: ClassTexts): Observable<boolean>;
+  saveClassTexts(classIri: string, texts: TextsToSave): Observable<boolean>;
+  /** Saves the property's labels or description, every language at once; emits `true` once saved. */
+  savePropertyTexts(propertyIri: string, texts: TextsToSave): Observable<boolean>;
 }
 
-/** A class's labels or description, in each language it has. */
-export interface ClassTexts {
+/** A class's or property's labels or description, in each language it has. */
+export interface TextsToSave {
   labels?: LanguageText[];
   descriptions?: LanguageText[];
 }
@@ -57,17 +59,21 @@ export function injectDataModelEditing() {
       page,
     ]);
   };
+  // A saved text is read again with the whole project, so every section shows it.
+  const reloadOnceSaved = (saved: Observable<boolean>): Observable<boolean> =>
+    saved.pipe(
+      tap(done => done && project.reloadProject()),
+      map(Boolean)
+    );
   return {
     /** Whether labels and descriptions can be saved in place, without the data model editor's page. */
     canSaveInPlace: !!editor,
-    /** Saves the class's labels or description; the project is read again once saved. Emits `true` once saved. */
-    saveClassTexts: (iri: string, texts: ClassTexts): Observable<boolean> =>
-      editor
-        ? editor.saveClassTexts(iri, texts).pipe(
-            tap(saved => saved && project.reloadProject()),
-            map(Boolean)
-          )
-        : of(false),
+    /** Saves the class's labels or description. Emits `true` once saved. */
+    saveClassTexts: (iri: string, texts: TextsToSave): Observable<boolean> =>
+      editor ? reloadOnceSaved(editor.saveClassTexts(iri, texts)) : of(false),
+    /** Saves the property's labels or description. Emits `true` once saved. */
+    savePropertyTexts: (iri: string, texts: TextsToSave): Observable<boolean> =>
+      editor ? reloadOnceSaved(editor.savePropertyTexts(iri, texts)) : of(false),
     editClass: (iri: string) => edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i))),
     editProperty: (iri: string) => edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i))),
   };

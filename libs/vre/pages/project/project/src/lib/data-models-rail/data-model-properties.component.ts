@@ -5,6 +5,7 @@ import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {
   MatCell,
   MatCellDef,
@@ -21,21 +22,29 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { TranslatePipe } from '@ngx-translate/core';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
-import { localNameOf } from '../ontology-map/ontology-graph-elements';
+import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { DataModelsRailState } from './data-models-rail-state';
+import { TextKind } from './description-editor.component';
+import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
+import { rememberedSignal } from './remembered-signal';
+import { TextEditing, TextEditorPopoverComponent } from './text-editor-popover.component';
 
 /** How many classes "Used by" names before it counts the rest. */
 const USED_BY_SHOWN = 3;
 
-/** Data models 2 › Properties: every property of the data model in a table; a clicked one opens its panel. */
+/**
+ * Data models 2 › Properties: every property of the data model in a table; a clicked one opens its panel. An editor
+ * edits a property's name and description in each language from its cell, as in the Classes table.
+ */
 @Component({
   selector: 'app-data-model-properties',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    LanguageTextsComponent,
     MatButton,
     MatCell,
     MatCellDef,
@@ -53,8 +62,10 @@ const USED_BY_SHOWN = 3;
     MatPrefix,
     MatRow,
     MatRowDef,
+    MatSlideToggle,
     MatTable,
     PropertyPanelComponent,
+    TextEditorPopoverComponent,
     TranslatePipe,
   ],
   template: `
@@ -67,6 +78,13 @@ const USED_BY_SHOWN = 3;
           r + '.propertiesCount' | translate: { count: state.propertyRows().length, links: state.linkCount() }
         }}</span>
         <span class="spacer"></span>
+        <mat-slide-toggle
+          class="all-languages"
+          data-cy="data-model-properties-all-languages"
+          [checked]="allLanguages()"
+          (change)="allLanguages.set($event.checked)">
+          {{ r + '.allLanguages' | translate }}
+        </mat-slide-toggle>
         <button mat-stroked-button class="type-filter" data-cy="data-model-properties-type" [matMenuTriggerFor]="types">
           {{ r + '.colType' | translate }}:
           <b>{{ type() ? typeName(type()!) : (r + '.allTypes' | translate) }}</b>
@@ -99,9 +117,33 @@ const USED_BY_SHOWN = 3;
             <th mat-header-cell *matHeaderCellDef>{{ r + '.colProperty' | translate }}</th>
             <td mat-cell *matCellDef="let row">
               <span class="texts">
-                <span>{{ row.label }}</span>
+                <app-language-texts
+                  kind="label"
+                  cyPrefix="data-model-properties"
+                  [texts]="row.labels"
+                  [shown]="row.label"
+                  [owner]="row.label"
+                  [allLanguages]="allLanguages()"
+                  [canEdit]="canEditTexts()"
+                  [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
+                  (edit)="editText(row, 'label', $event)" />
                 <code class="name">{{ row.name }}</code>
               </span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>{{ r + '.colDescription' | translate }}</th>
+            <td mat-cell *matCellDef="let row" class="description">
+              <app-language-texts
+                kind="description"
+                cyPrefix="data-model-properties"
+                [texts]="row.descriptions"
+                [shown]="row.description"
+                [owner]="row.label"
+                [allLanguages]="allLanguages()"
+                [canEdit]="canEditTexts()"
+                [activeLanguage]="textEditing.activeLanguage(row.id, 'description')"
+                (edit)="editText(row, 'description', $event)" />
             </td>
           </ng-container>
           <ng-container matColumnDef="type">
@@ -153,6 +195,8 @@ const USED_BY_SHOWN = 3;
         }
       </div>
 
+      <app-text-editor-popover [editing]="textEditing" />
+
       @if (state.graph(); as graph) {
         @if (panelIri(); as iri) {
           <app-property-panel
@@ -173,6 +217,25 @@ const USED_BY_SHOWN = 3;
   styles: [
     RAIL_SECTION_STYLES,
     `
+      @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+      .all-languages {
+        flex: none;
+        font-size: 13px;
+      }
+
+      // The description takes the room the other columns leave; long ones are cut on one line.
+      .mat-column-description {
+        width: 40%;
+        max-width: 0;
+        color: $cool_gray_700;
+      }
+
+      .mat-column-property {
+        max-width: 0;
+        width: 22%;
+      }
+
       .type-filter {
         --mat-button-outlined-container-height: 36px;
         background: white;
@@ -218,7 +281,18 @@ export class DataModelPropertiesComponent {
   private readonly _params = toSignal(this._route.queryParamMap);
   private readonly _editing = injectDataModelEditing();
 
-  readonly columns = ['property', 'type', 'pointsTo', 'usedBy'];
+  readonly columns = ['property', 'description', 'type', 'pointsTo', 'usedBy'];
+  /** Every language of a name or description stacked, or only the one the app shows; remembered in this browser. */
+  readonly allLanguages = rememberedSignal(
+    'dsp-data-models-properties-all-languages',
+    false,
+    stored => stored === 'true'
+  );
+  /** The property names and descriptions edited from their cells. */
+  readonly textEditing = new TextEditing((target, texts) =>
+    this._editing.savePropertyTexts(target.id, target.kind === 'label' ? { labels: texts } : { descriptions: texts })
+  );
+  readonly canEditTexts = computed(() => this.state.canEdit() && this._editing.canSaveInPlace);
   readonly usedByShown = USED_BY_SHOWN;
   readonly query = signal('');
   /** The value type shown alone, or every type. */
@@ -230,7 +304,13 @@ export class DataModelPropertiesComponent {
     return this.state
       .propertyRows()
       .filter(row => !type || row.type === type)
-      .filter(row => !query || row.label.toLowerCase().includes(query) || row.name.toLowerCase().includes(query));
+      .filter(
+        row =>
+          !query ||
+          row.label.toLowerCase().includes(query) ||
+          row.name.toLowerCase().includes(query) ||
+          row.labels.some(text => text.value.toLowerCase().includes(query))
+      );
   });
 
   /** The property whose panel is open, named in the URL like in the graph. */
@@ -245,6 +325,17 @@ export class DataModelPropertiesComponent {
 
   typeName(type: string): string {
     return typeNameOf(type);
+  }
+
+  /** Opens the editor of a property's name or description, on the language asked for. */
+  editText(row: PropertyRow, kind: TextKind, edit: LanguageTextEdit): void {
+    this.textEditing.open({
+      ...edit,
+      id: row.id,
+      label: row.label,
+      kind,
+      texts: kind === 'label' ? row.labels : row.descriptions,
+    });
   }
 
   /** Opens the property's panel, or closes it; a step in the browser history. */
