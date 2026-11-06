@@ -1,6 +1,9 @@
+load("@bazel_lib//lib:copy_to_bin.bzl", "copy_to_bin")
+
 # The translations, which app-help-page's specs read from disk (src/lib/i18n.spec-helper.ts): an
-# import would make the library depend on the application.
-filegroup(
+# import would make the library depend on the application. In the output tree, because a test
+# takes another package's files only from there.
+copy_to_bin(
     name = "i18n",
     srcs = glob(["src/assets/i18n/*.json"]),
     visibility = ["//libs/vre/shared/app-help-page:__pkg__"],
