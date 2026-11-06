@@ -30,9 +30,11 @@ LIBRARIES = {
     "//libs/vre/core/error-handler": struct(type = "data-access", scope = "shared"),
     "//libs/vre/shared/app-common": struct(type = "data-access", scope = "shared"),
     "//libs/vre/shared/app-help-page": struct(type = "feature", scope = "shared"),
+    "//libs/vre/shared/app-helper-services": struct(type = "data-access", scope = "shared"),
     "//libs/vre/shared/calendar": struct(type = "util", scope = "shared"),
     "//libs/vre/ui/notification": struct(type = "util", scope = "shared"),
     "//libs/vre/ui/progress-indicator": struct(type = "ui", scope = "shared"),
+    "//libs/vre/ui/ui": struct(type = "ui", scope = "shared"),
 }
 
 def scope_may_depend_on(src_scope, dst_scope):
