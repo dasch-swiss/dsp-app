@@ -39,7 +39,7 @@ module.exports = {
   // `.pnpm/` is pnpm's store and `.aspect_rules_js/` Bazel's: the store directory is skipped
   // and the package's own `node_modules/<name>` segment decides.
   transformIgnorePatterns: [
-    'node_modules/(?!\\.pnpm/|\\.aspect_rules_js/|.*\\.mjs$|@angular|@dasch-swiss|@ckeditor|lodash-es)',
+    'node_modules/(?!\\.pnpm/|\\.aspect_rules_js/|.*\\.mjs$|@angular|@dasch-swiss|@ckeditor|@ngx|@sentry|lodash-es|ngx-color-picker|uuid)',
   ],
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   snapshotSerializers: [
