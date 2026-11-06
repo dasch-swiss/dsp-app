@@ -83,7 +83,7 @@ import { DynamicFormsDataService } from '../../../../service/dynamic-forms-data.
             <mat-option [disabled]="true">{{ 'pages.search.advancedSearch.typeToSearch' | translate }}</mat-option>
           }
         }
-        @if (linkObjects?.length && !loading) {
+        @if (linkObjects && linkObjects.length && !loading) {
           <mat-option [disabled]="true">
             {{
               'pages.search.advancedSearch.showingResults'
