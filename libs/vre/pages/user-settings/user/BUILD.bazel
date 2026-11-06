@@ -9,6 +9,13 @@ vre_library(
     assets = glob(["src/**/*.html"]),
     stylesheets = glob(["src/**/*.scss"]),
     sass_deps = ["//libs/vre/ui/styles"],
+    # ADR-0004: AllProjectsService, the user dialogs, ProjectImageCoverComponent, MenuItem and
+    # existingNamesAsyncValidator move to `scope:shared` libraries (DEV-TBD-2).
+    extra_visibility = [
+        "//libs/vre/pages/ontology/ontology:__pkg__",
+        "//libs/vre/pages/project/project:__pkg__",
+        "//libs/vre/pages/system/system:__pkg__",
+    ],
     deps = [
         "//:node_modules/@angular/common",
         "//:node_modules/@angular/core",

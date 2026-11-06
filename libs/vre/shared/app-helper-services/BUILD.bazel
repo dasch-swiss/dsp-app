@@ -16,6 +16,11 @@ vre_library(
     test_srcs = glob(TEST_SRCS),
     testing_deps = ["//:node_modules/@types/jest"],
     testing_srcs = TESTING_SRCS,
+    # ADR-0001 decision 7: pickPreferredLanguageString moves to a `type:util` library and
+    # LocalizationService leaves ui/string-literal (DEV-TBD-3).
+    extra_visibility = [
+        "//libs/vre/ui/string-literal:__pkg__",
+    ],
     deps = [
         "//:node_modules/@angular/core",
         "//:node_modules/@angular/router",

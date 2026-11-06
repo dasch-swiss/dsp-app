@@ -12,6 +12,12 @@ vre_library(
     test_shard_count = 2,
     test_size = "medium",
     test_srcs = glob(TEST_SRCS),
+    # ADR-0004: ProjectPageService moves to a `scope:shared` data-access library (DEV-TBD-1).
+    extra_visibility = [
+        "//libs/vre/pages/ontology/list:__pkg__",
+        "//libs/vre/pages/ontology/ontology:__pkg__",
+        "//libs/vre/pages/search/advanced-search:__pkg__",
+    ],
     deps = [
         "//:node_modules/@angular/cdk",
         "//:node_modules/@angular/common",
