@@ -23,6 +23,7 @@ SCOPES = ["shared", "project", "ontology", "search", "user", "system", "app"]
 # "//libs/vre/ui/ui": struct(type = "ui", scope = "shared"). The only place a library's type and
 # scope are written: vre_library reads its own entry.
 LIBRARIES = {
+    "//libs/vre/3rd-party-services/open-api": struct(type = "data-access", scope = "shared"),
 }
 
 def scope_may_depend_on(src_scope, dst_scope):

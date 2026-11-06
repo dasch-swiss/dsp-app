@@ -74,9 +74,9 @@ openapi-generate:
     bazel build //{{ open_api }}:generated_tree $BAZEL_FLAGS
     bin="$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)"
     tools/openapi/write_manifest.sh "$bin/{{ open_api }}/generated_tree"
-    bazel build //{{ open_api }}:generated $BAZEL_FLAGS
     rm -rf {{ open_api }}/src/generated
-    cp -R "$bin/{{ open_api }}/generated" {{ open_api }}/src/generated
+    # Not :generated's directory, which also holds the library's compiled output.
+    cp -R "$bin/{{ open_api }}/generated_tree" {{ open_api }}/src/generated
     chmod -R u+w {{ open_api }}/src/generated
 
 # Compare the vendored dsp-api spec with the dev API's (`--verbose` shows the differences)
