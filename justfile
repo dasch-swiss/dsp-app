@@ -273,6 +273,10 @@ playwright-version-check:
     done
     echo "playwright $driver"
 
+# Check that Bazel visibility rejects a seeded forbidden dependency for each ADR-0001 tier rule
+visibility-check:
+    scripts/visibility-check.sh
+
 # Fail when a tsconfig.base.json alias has no Bazel package
 tsconfig-paths-check:
     #!/usr/bin/env bash
