@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.1.3](https://github.com/dasch-swiss/dsp-app/compare/v14.1.2...v14.1.3) (2026-11-06)
+
+
+### Maintenances
+
+* **deps:** disable Renovate ([#3604](https://github.com/dasch-swiss/dsp-app/issues/3604)) ([27e29e1](https://github.com/dasch-swiss/dsp-app/commit/27e29e18664fbfa7dba94ca0e502d7cd83887553))
+
 ## [14.1.2](https://github.com/dasch-swiss/dsp-app/compare/v14.1.1...v14.1.2) (2026-11-05)
 
 
