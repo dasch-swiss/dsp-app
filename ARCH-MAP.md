@@ -84,7 +84,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Purpose**: Hand-written Angular services over DSP-API REST endpoints, plus hand-written TypeScript interfaces for v2 ontology JSON-LD payloads.
 - **Key entities**: `BaseApi`, `ProjectApiService`, `UserApiService`, `ListApiService`, `LegalInfoApiService`, `ResourceLegalV2ApiService`, `ProjectIdentifier`
 - **Public interface**: Five `export *` from `src/index.ts`, one per service. `BaseApi` and the v2 payload interfaces are internal.
-- **Local-context kit**: `src/index.ts`, `src/lib/services/base-api.ts`, `src/lib/services/admin/project-api.service.ts`, `src/lib/services/admin/legal-info-api.service.ts`, `src/lib/services/v2/resource-legal-v2-api.service.ts`, `src/lib/services/v2/ontology/read-ontology.interface.ts`, `CLAUDE.md` (the dual-client rule)
+- **Local-context kit**: `src/index.ts`, `src/lib/services/base-api.ts`, `src/lib/services/admin/project-api.service.ts`, `src/lib/services/admin/legal-info-api.service.ts`, `src/lib/services/v2/resource-legal-v2-api.service.ts`, `src/lib/services/v2/ontology/read-ontology.interface.ts`, the root `CLAUDE.md` (the dual-client rule)
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/open-api`, `vre/core/config`
 - **Used by**: `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`
 - **Boundary rules**:
@@ -372,7 +372,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: `vre/pages/search/search-filters`, `vre/resource-editor/resource-editor`, `vre/ui/date-picker`, `vre/ui/ui`
 - **Boundary rules**:
   - Zero `@dasch-swiss` imports, no Angular DI, pure functions and immutable value objects. This is the reference example in the repository for how a library should be shaped. `structure`
-  - It is the only library with its own `package.json` and a real `build` target, and the only one with one spec per implementation file. `docs-only`
+  - It is the only library with one spec per implementation file, and one of three packages with their own `package.json`, with `dsp-js` and `vre/resource-editor/resource-editor`. `docs-only`
   - It knows nothing of `KnoraDate`, and must not. The layer above — `CalendarDateService` in `vre/ui/ui` — maps astronomical years to historical ones and `NONE` to `noEra` before and after calling here, so a BCE or era defect can live in either layer. `docs-only`
   - `convertCalendarResult` reports three outcomes: an exact date, a span, or a refusal. A year or month rarely maps onto a single unit of another calendar, and the Islamic calendar has no date before `ISLAMIC_EPOCH_JDN`. Returning a single date would fabricate precision or a date that does not exist. `docs-only`
   - `toJDN`/`fromJDN` must be mutual inverses, and the round-trip suite asserts it over every JDN in range rather than sampling. Two calendars have already drifted apart here — Gregorian in DEV-7264, Islamic in DEV-7372 — both because the pair was derived from two sources instead of one. `docs-only`
@@ -651,7 +651,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: none
 - **Boundary rules**:
   - Per-library `README.md` files are not part of this component. See Cross-cutting concerns. `docs-only`
-  - Every ADR carries an enforcement level from the same enum this map uses (`structure | static-analysis | review | docs-only`). ADR-0001 through ADR-0007 are Accepted; none is superseded. ADR-0001, 0002, 0004 and 0006 were revised in place for the Bazel build, each saying so in its status line. `docs-only`
+  - Every ADR carries an enforcement level from the same enum this map uses (`structure | static-analysis | review | docs-only`). ADR-0001 through ADR-0007 are Accepted; none is superseded. ADR-0001, 0002, 0004, 0005 and 0006 were revised in place for the Bazel build, each saying so in its status line. `docs-only`
   - A new ADR must be added to the `nav` in `mkdocs.yml` and to the table in `docs/adr/index.md`. `mkdocs build --strict` does not catch an omission from either, because an un-navigated page is an INFO, not a warning. `review`
 - **Durable state**: none.
 - **Fingerprint**: `ffaa4a837784`
@@ -690,7 +690,7 @@ These are values or mechanisms that span components and would multiply-map if tr
 
 - **localStorage keys.** Seven fixed keys plus one per-class family, owned by six different components: `ACCESS_TOKEN` (`vre/core/session`), `dsp_language` (`vre/shared/app-helper-services`), `SHOW_ALL_PROPERTIES` and `SHOW_ALL_COMMENTS` (`vre/resource-editor/resource-editor`), `sortProjectsBy` and `sortUsersBy` (`vre/pages/system/system`), `cookieBanner` (`dsp-app`), and `dsp.dataBrowser.tableLayout.v<N>.<classIri>` (`vre/pages/data-browser`, one key per resource class). There is no shared registry of key names and no sessionStorage anywhere.
 
-- **Per-library READMEs.** Each library's `README.md` names its test command as `just test //<package>/...`. Each title is the library's path alias.
+- **Per-library READMEs.** Every library except `vre/pages/search/search-filters` and `vre/ui/styles` has a `README.md` titled with its path alias. All but `dsp-js` and `vre/shared/app-helper-services` name the test command as `just test //<package>/...`.
 
 ## Conventions
 

@@ -17,8 +17,7 @@
   },
   "packageManager": "pnpm@10.33.2",
   "scripts": {
-    "ng": "ng",
-    "e2e-local": "cd apps/dsp-app && pnpm exec cypress open --browser chrome --e2e"
+    "ng": "ng"
   },
   "private": true,
   "dependencies": {
