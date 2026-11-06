@@ -31,6 +31,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
+          # A workflow_run event's github.sha is main's head when CI finished, not the commit it tested.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           fetch-depth: 0 # gets additionally all tags which we need
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@v3
