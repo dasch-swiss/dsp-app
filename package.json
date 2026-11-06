@@ -95,6 +95,7 @@
     "angular-eslint": "21.4.0",
     "angular-html-parser": "^10.0.0",
     "autoprefixer": "^10.4.27",
+    "beasties": "0.4.1",
     "cypress": "15.21.1",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "10.1.8",

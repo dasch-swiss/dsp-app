@@ -219,6 +219,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.27
         version: 10.6.2(postcss@8.5.32)
+      beasties:
+        specifier: 0.4.1
+        version: 0.4.1
       cypress:
         specifier: 15.21.1
         version: 15.21.1

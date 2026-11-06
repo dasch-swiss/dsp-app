@@ -5,6 +5,7 @@ declare_package_groups()
 
 exports_files([
     "bundle_size_test.sh",
+    "optimization_test.sh",
     "rules_angular-nativelink.patch",
 ])
 
@@ -21,6 +22,7 @@ js_library(
 
 js_binary(
     name = "write_index",
+    data = ["//:node_modules/beasties"],
     entry_point = "write_index.mjs",
     visibility = ["//visibility:public"],
 )

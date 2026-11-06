@@ -372,7 +372,8 @@ def vre_application(
         index_html: the page the entries and the stylesheet are written into.
         scripts: plain scripts concatenated into `scripts-<hash>.js`, loaded before the entries.
         static_files: copied into `name` with their path below `src/`.
-        optimized_configs: configurations bundled minified and without Angular's dev-mode checks.
+        optimized_configs: configurations bundled minified and without Angular's dev-mode checks,
+            with the critical CSS inlined into `index.html`.
         development_configs: configurations that resolve packages without the `production`
             export condition.
         storybook_data: what else of the package the Storybook build reads.
@@ -501,10 +502,14 @@ def vre_application(
         args = [
             package + "/" + index_html,
             package + "/bundle",
+            package + "/bundle_metadata.json",
             package + "/minified/styles.css",
             package + "/scripts.js",
             package + "/index",
-        ],
+        ] + select({
+            ":" + config: [str(config in optimized_configs).lower()]
+            for config in environments
+        }),
         tool = Label("//tools/angular:write_index"),
     )
 
@@ -525,5 +530,16 @@ def vre_application(
         size = "small",
         srcs = [Label("//tools/angular:bundle_size_test.sh")],
         args = ["$(rootpath :%s)" % name],
+        data = [":" + name],
+    )
+
+    sh_test(
+        name = "optimization_test",
+        size = "small",
+        srcs = [Label("//tools/angular:optimization_test.sh")],
+        args = ["$(rootpath :%s)" % name] + select({
+            ":" + config: [str(config in optimized_configs).lower()]
+            for config in environments
+        }),
         data = [":" + name],
     )
