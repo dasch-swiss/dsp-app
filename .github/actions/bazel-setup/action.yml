@@ -1,9 +1,13 @@
 name: bazel-setup
 description: >
-  Install bazelisk, configure the NativeLink RBE backend and restore the Bazel
-  disk cache. Emits the flag string to append to every bazel invocation.
+  Install Nix, restore the Bazel repository and disk caches, and configure the NativeLink RBE
+  backend. Emits the flags every `nix develop --command just <recipe>` step passes in BAZEL_FLAGS.
+  Runs after actions/checkout, since it reads the lock files and the local bazel-rbe action.
 
 inputs:
+  cache-key-prefix:
+    description: The disk cache's key prefix, one per job, e.g. `bazel-disk-lint`.
+    required: true
   runner-endpoint:
     description: RE-API endpoint of the NativeLink RBE backend.
     required: true
@@ -19,20 +23,26 @@ inputs:
 
 outputs:
   flags:
-    description: Bazel flags (RBE, disk cache, lockfile mode) for a CI bazel build or run.
-    value: ${{ steps.flags.outputs.flags }}
+    description: The RBE flags plus --lockfile_mode=error; the RBE part is empty without the mTLS material.
+    value: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
 
 runs:
   using: composite
   steps:
-    - name: Install bazelisk
-      shell: bash
-      run: |
-        curl -fsSL --create-dirs -o "$HOME/bin/bazel" \
-          https://github.com/bazelbuild/bazelisk/releases/download/v1.27.0/bazelisk-linux-amd64
-        chmod +x "$HOME/bin/bazel"
-        echo "$HOME/bin" >> "$GITHUB_PATH"
-
+    - name: Install Nix
+      uses: DeterminateSystems/determinate-nix-action@v3
+    - name: Restore Bazel repository cache
+      uses: actions/cache@v5
+      with:
+        path: ~/.cache/bazel-repo
+        key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
+        restore-keys: bazel-repo-${{ runner.os }}-
+    - name: Restore Bazel disk cache
+      uses: actions/cache@v5
+      with:
+        path: ~/.cache/bazel-disk/dsp-app
+        key: ${{ inputs.cache-key-prefix }}-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
+        restore-keys: ${{ inputs.cache-key-prefix }}-${{ runner.os }}-
     - name: Configure RBE
       id: rbe
       uses: ./.github/actions/bazel-rbe
@@ -41,17 +51,3 @@ runs:
         ca-cert: ${{ inputs.ca-cert }}
         client-cert: ${{ inputs.client-cert }}
         client-key: ${{ inputs.client-key }}
-
-    - name: Bazel disk cache
-      uses: actions/cache@v5
-      with:
-        path: ~/.cache/bazel-disk
-        key: bazel-disk-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}
-        restore-keys: |
-          bazel-disk-${{ runner.os }}-
-
-    - name: Assemble the flags
-      id: flags
-      shell: bash
-      run: |
-        echo "flags=${{ steps.rbe.outputs.flags }} --disk_cache=$HOME/.cache/bazel-disk --lockfile_mode=error --remote_download_outputs=toplevel" >> "$GITHUB_OUTPUT"

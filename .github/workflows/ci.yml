@@ -128,36 +128,26 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    # Only the E2E job runs Cypress; `just install` would download its binary everywhere.
+    env:
+      CYPRESS_INSTALL_BINARY: 0
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Install Nix
-        uses: DeterminateSystems/determinate-nix-action@v3
-      - name: Restore Bazel repository cache
-        uses: actions/cache@v5
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          path: ~/.cache/bazel-repo
-          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
-          restore-keys: bazel-repo-${{ runner.os }}-
-      - name: Restore Bazel disk cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/bazel-disk/dsp-app
-          key: bazel-disk-lint-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
-          restore-keys: bazel-disk-lint-${{ runner.os }}-
-      - name: Configure RBE
-        id: rbe
-        uses: ./.github/actions/bazel-rbe
-        with:
+          cache-key-prefix: bazel-disk-lint
           runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Run lint
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-lint.json
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-lint.json
         run: nix develop --command just lint
       - name: Upload the build event logs
         if: always()
@@ -182,31 +172,18 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Install Nix
-        uses: DeterminateSystems/determinate-nix-action@v3
-      - name: Restore Bazel repository cache
-        uses: actions/cache@v5
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          path: ~/.cache/bazel-repo
-          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
-          restore-keys: bazel-repo-${{ runner.os }}-
-      - name: Restore Bazel disk cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/bazel-disk/dsp-app
-          key: bazel-disk-test-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
-          restore-keys: bazel-disk-test-${{ runner.os }}-
-      - name: Configure RBE
-        id: rbe
-        uses: ./.github/actions/bazel-rbe
-        with:
+          cache-key-prefix: bazel-disk-test
           runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Run test
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-test.json --execution_log_json_file=${{ runner.temp }}/exec.json
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-test.json --execution_log_json_file=${{ runner.temp }}/exec.json
         run: nix develop --command just test
       - name: Count actions by mnemonic and runner
         if: always()
@@ -254,24 +231,11 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Install Nix
-        uses: DeterminateSystems/determinate-nix-action@v3
-      - name: Restore Bazel repository cache
-        uses: actions/cache@v5
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          path: ~/.cache/bazel-repo
-          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
-          restore-keys: bazel-repo-${{ runner.os }}-
-      - name: Restore Bazel disk cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/bazel-disk/dsp-app
-          key: bazel-disk-e2e-${{ matrix.runner }}-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
-          restore-keys: bazel-disk-e2e-${{ matrix.runner }}-${{ runner.os }}-
-      - name: Configure RBE
-        id: rbe
-        uses: ./.github/actions/bazel-rbe
-        with:
+          cache-key-prefix: bazel-disk-e2e-${{ matrix.runner }}
           runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
@@ -296,11 +260,11 @@ jobs:
         run: nix develop .#e2e --command just e2e-stack-up
       - name: Type-check e2e specs
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-e2e-typecheck.json
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-e2e-typecheck.json
         run: nix develop .#e2e --command just typecheck-e2e
       - name: Run e2e tests
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-e2e.json
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-e2e.json
           SPECS: ${{ matrix.specs }}
         run: nix develop .#e2e --command just e2e "$SPECS"
       - name: Upload the build event logs
@@ -485,40 +449,30 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    # Only the E2E job runs Cypress; `just install` would download its binary everywhere.
+    env:
+      CYPRESS_INSTALL_BINARY: 0
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Install Nix
-        uses: DeterminateSystems/determinate-nix-action@v3
-      - name: Restore Bazel repository cache
-        uses: actions/cache@v5
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          path: ~/.cache/bazel-repo
-          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
-          restore-keys: bazel-repo-${{ runner.os }}-
-      - name: Restore Bazel disk cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/bazel-disk/dsp-app
-          key: bazel-disk-storybook-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
-          restore-keys: bazel-disk-storybook-${{ runner.os }}-
-      - name: Configure RBE
-        id: rbe
-        uses: ./.github/actions/bazel-rbe
-        with:
+          cache-key-prefix: bazel-disk-storybook
           runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Build Storybook
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-storybook-build.json
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-storybook-build.json
         run: nix develop --command just storybook-build
       - name: Run interaction tests
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-storybook-test.json
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-storybook-test.json
         run: nix develop --command just storybook-test
       - name: Upload the build event logs
         if: always()
@@ -558,6 +512,9 @@ jobs:
       cancel-in-progress: false
     permissions:
       contents: read
+    # Only the E2E job runs Cypress; `just install` would download its binary everywhere.
+    env:
+      CYPRESS_INSTALL_BINARY: 0
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -571,24 +528,11 @@ jobs:
         # fail with "refusing to fetch into current branch".
         if: github.ref_name != 'main'
         run: git fetch origin main:main || echo "::warning::could not fetch main; baseline may fall back to latest build on the base branch"
-      - name: Install Nix
-        uses: DeterminateSystems/determinate-nix-action@v3
-      - name: Restore Bazel repository cache
-        uses: actions/cache@v5
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          path: ~/.cache/bazel-repo
-          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
-          restore-keys: bazel-repo-${{ runner.os }}-
-      - name: Restore Bazel disk cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/bazel-disk/dsp-app
-          key: bazel-disk-pixeleye-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
-          restore-keys: bazel-disk-pixeleye-${{ runner.os }}-
-      - name: Configure RBE
-        id: rbe
-        uses: ./.github/actions/bazel-rbe
-        with:
+          cache-key-prefix: bazel-disk-pixeleye
           runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
@@ -607,7 +551,7 @@ jobs:
           nix develop --command just pixeleye
           echo "uploaded=true" >> "$GITHUB_OUTPUT"
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-pixeleye.json
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-pixeleye.json
           PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
       # Breakpoint run: the `Pages / Breakpoints / …` stories at every breakpoint
@@ -633,7 +577,7 @@ jobs:
         continue-on-error: true
         run: nix develop --command just pixeleye breakpoints
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-pixeleye-breakpoints.json
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-pixeleye-breakpoints.json
           PIXELEYE_BREAKPOINTS_TOKEN: ${{ secrets.PIXELEYE_BREAKPOINTS_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
       - name: Upload the build event logs
@@ -725,29 +669,19 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    # Only the E2E job runs Cypress; `just install` would download its binary everywhere.
+    env:
+      CYPRESS_INSTALL_BINARY: 0
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Install Nix
-        uses: DeterminateSystems/determinate-nix-action@v3
-      - name: Restore Bazel repository cache
-        uses: actions/cache@v5
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          path: ~/.cache/bazel-repo
-          key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
-          restore-keys: bazel-repo-${{ runner.os }}-
-      - name: Restore Bazel disk cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/bazel-disk/dsp-app
-          key: bazel-disk-gate-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
-          restore-keys: bazel-disk-gate-${{ runner.os }}-
-      - name: Configure RBE
-        id: rbe
-        uses: ./.github/actions/bazel-rbe
-        with:
+          cache-key-prefix: bazel-disk-gate
           runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
@@ -756,11 +690,11 @@ jobs:
       # fail on purpose, so one log would hold only the last seed's analysis.
       - name: Run just ci
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }}
         run: nix develop --command just ci
       - name: Check that just lint rejects a seeded violation
         env:
-          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }}
         run: nix develop --command just lint-selftest
 
   docs-build-test:
