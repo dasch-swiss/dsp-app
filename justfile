@@ -3,7 +3,7 @@
 #   just build [CONFIG | TARGETS...]  the bundle in a configuration (from DEV-7767's Phase 7), or
 #                                     the named Bazel targets; no argument builds //...
 #   just test [TARGETS...]            every Bazel test target, or the named ones
-#   just lint                         ESLint over every project's flat config
+#   just lint                         ESLint: the Bazel aspect, pnpm for what it does not see
 #   just ci                           the gate: build, test, lint and the version checks
 #
 # An argument starting with `//` is a target list; anything else is a configuration name. Every
@@ -41,11 +41,26 @@ build *ARGS:
 test *TARGETS:
     bazel test {{ if TARGETS == "" { "//..." } else { TARGETS } }} $BAZEL_FLAGS
 
-# ESLint over every project's flat config, each file under its nearest eslint.config.mjs
+# ESLint, each file under its nearest eslint.config.mjs: the Bazel aspect over every ts_project's
+# sources, pnpm over the files the aspect does not see
 lint: install openapi-generate
-    pnpm exec eslint --flag v10_config_lookup_from_file $(git ls-files '*/eslint.config.mjs' | xargs -n1 dirname)
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Both halves run, so one call reports every finding.
+    status=0
+    bazel build --config=lint //... $BAZEL_FLAGS || status=1
+    # The aspect lints only a ts_project's `srcs`; specs, stories, templates, JavaScript configs,
+    # libs/dsp-js/test and apps/dsp-app stay with pnpm until a Bazel target carries them.
+    linted="$(bazel query 'labels(srcs, kind(ts_project, //...))' $BAZEL_FLAGS 2>/dev/null | sed -E 's|^//:?||; s|:|/|')"
+    patterns=()
+    for dir in $(git ls-files '*/eslint.config.mjs' | xargs -n1 dirname); do
+      patterns+=("$dir/*.ts" "$dir/*.js" "$dir/*.mjs" "$dir/*.cjs" "$dir/*.html")
+    done
+    git ls-files -- "${patterns[@]}" | grep -vxFf <(printf '%s\n' "$linted") \
+      | xargs pnpm exec eslint --flag v10_config_lookup_from_file --no-warn-ignored || status=1
+    exit "$status"
 
-# Check that `just lint` fails on a seeded violation
+# Check that `just lint` fails on a seeded violation with the rule id ESLint through pnpm reports
 lint-selftest:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -61,7 +76,20 @@ lint-selftest:
       echo "lint-selftest: just lint failed, but not on $seed" >&2
       exit 1
     fi
-    echo "lint-selftest: just lint rejected the seeded violation"
+    report="$(pnpm exec eslint --flag v10_config_lookup_from_file --format json "$seed" || true)"
+    rules="$(node -e 'for (const m of JSON.parse(process.argv[1])[0].messages) console.log(m.ruleId)' "$report")"
+    if [ -z "$rules" ]; then
+      echo "lint-selftest: ESLint through pnpm reported nothing on $seed" >&2
+      exit 1
+    fi
+    for rule in $rules; do
+      if ! grep -qF "$rule" <<<"$output"; then
+        echo "$output" >&2
+        echo "lint-selftest: ESLint through pnpm reports $rule on $seed, just lint does not" >&2
+        exit 1
+      fi
+    done
+    echo "lint-selftest: just lint rejected the seeded violation with" $rules
 
 # The gate CI runs
 ci: build test lint node-version-check playwright-version-check tsconfig-paths-check

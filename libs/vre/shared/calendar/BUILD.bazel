@@ -2,7 +2,7 @@ load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load("@rules_angular//src/ts_project:index.bzl", "ts_project")
-load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_jest_test")
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "eslint_config", "vre_jest_test")
 
 # Plain TypeScript with no Angular, the reference `type:util` shape of ADR-0005; package.json stays
 # for the shape ADR-0005 describes.
@@ -60,3 +60,5 @@ vre_jest_test(
     srcs = SRCS + glob(TEST_SRCS),
     size = "small",
 )
+
+eslint_config()

@@ -32,5 +32,12 @@ build --remote_local_fallback
 build --remote_timeout=600s
 build --remote_max_connections=200
 
+# `just lint`: the ESLint aspect over every ts_project's sources, failing on a finding and
+# reporting every package's findings, not only the first.
+build:lint --aspects=//tools/lint:linters.bzl%eslint
+build:lint --output_groups=rules_lint_human
+build:lint --@aspect_rules_lint//lint:fail_on_violation
+build:lint --keep_going
+
 # Machine-local flags; gitignored.
 try-import %workspace%/user.bazelrc

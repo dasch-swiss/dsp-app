@@ -97,6 +97,21 @@ _STRICT_FLAGS = [
     "noImplicitReturns",
 ]
 
+def eslint_config(name = "eslintrc"):
+    """The package's eslint.config.mjs, one of the configs the lint aspect (tools/lint) carries.
+
+    With it the files ESLint reads beside the config: package.json, without which
+    eslint-plugin-import's `import/order` crashes on the aspect's bin-tree copies, and the
+    tsconfigs a typed config names.
+    """
+    js_library(
+        name = name,
+        srcs = ["eslint.config.mjs"] + native.glob(["package.json", "tsconfig*.json"], allow_empty = True),
+        deps = [Label("//:eslintrc")],
+        # Not the library's visibility: the aspect reads every package's config.
+        visibility = ["//visibility:public"],
+    )
+
 def _alias(label):
     # tsconfig.base.json's naming: libs/vre/ui/ui is @dasch-swiss/vre/ui/ui.
     return "@dasch-swiss/" + label.package.removeprefix("libs/")
@@ -132,7 +147,8 @@ def vre_library(
     """An Angular library: its stylesheets, its ng_project compile and its Jest target.
 
     Besides the `name` target the package gets `sources`, the library's sources and templates with
-    its dependencies' `sources`, which a dependent library's Jest target runs on.
+    its dependencies' `sources`, which a dependent library's Jest target runs on, and `eslintrc`
+    (`eslint_config`).
 
     The library's ADR-0001 type and scope come from `LIBRARIES` in visibility.bzl, which fails the
     load for a package it does not list. The generated tsconfig maps only the declared library
@@ -272,6 +288,8 @@ def vre_library(
             deps = [":" + name] + deps + testing_deps + _LIBRARY_DEPS,
             visibility = visibility,
         )
+
+    eslint_config()
 
     js_library(
         name = "sources",
