@@ -1,7 +1,7 @@
-// Google's icon CSS for the class. Emitted wherever `config` is used, so each component stylesheet
-// that uses it scopes its own copy: inside those components an icon stays 24px where Angular
-// Material would size it smaller (a button's icon), as with the Angular CLI's build. The face is
-// declared once, in the app's `_font.scss`.
+// Google's icon class rule. Each component stylesheet that uses `config` scopes its own copy, which
+// keeps icons there at 24px over Angular Material's smaller button-icon size. Plain-CSS inline
+// styles that need it copy it verbatim (optimization_test checks the copies match). The face is
+// declared once, in apps/dsp-app/src/styles/_font.scss.
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;

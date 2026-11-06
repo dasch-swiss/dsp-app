@@ -1,6 +1,6 @@
-/* material-icons: the face Google's icon CSS declares, which the Angular CLI's production build
-   inlined. Written here, not imported: a stylesheet @import of fonts.googleapis.com blocks rendering
-   and the build may not fetch it. Only here: a component stylesheet would repeat it. */
+/* material-icons: the face fonts.googleapis.com/icon?family=Material+Icons serves a browser.
+   Declared, not @imported: that import blocks rendering, and the build may not fetch it. Only here:
+   a component stylesheet would repeat it. Storybook overrides it with the local ttf (preview.ts). */
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;

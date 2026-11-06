@@ -53,7 +53,7 @@ import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
   `,
   styles: [
     `
-      /* As libs/vre/ui/styles/_material-icons.scss: a Sass stylesheet using config carries it. */
+      /* Copy of libs/vre/ui/styles/_material-icons.scss: inline styles cannot use Sass. */
       .material-icons {
         font-family: 'Material Icons';
         font-weight: normal;

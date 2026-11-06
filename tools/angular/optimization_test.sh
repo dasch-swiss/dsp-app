@@ -25,14 +25,17 @@ fi
 if grep -l 'fonts.gstatic' "$dist"/*.js; then
   fail "a component style above declares the icon font face; it belongs in apps/dsp-app/src/styles/_font.scss only"
 fi
-faces="$(cat "$dist"/styles-*.css | tr -d ' \n' | grep -oE "@font-face\{font-family:['\"]?MaterialIcons['\"]?;" | wc -l | tr -d ' ')"
+faces="$(cat "$dist"/styles-*.css | tr -d ' \n' | { grep -oE "@font-face\{font-family:['\"]?MaterialIcons['\"]?;" || true; } | wc -l | tr -d ' ')"
 [ "$faces" -eq 1 ] || fail "the global stylesheet declares the Material Icons face $faces times, not once"
 
-# libs/vre/ui/styles/_material-icons.scss keeps icons at 24px in the 32 components whose styles
-# use `config` (as the CLI's build did); 4 of them carry the rule inline, so count well above that.
-scoped="$(cat "$dist"/*.js | grep -oF 'material-icons[_ngcontent-%COMP%]' | wc -l | tr -d ' ')"
-[ "$scoped" -ge 20 ] \
-  || fail "$scoped component styles scope .material-icons; _config.scss must use _material-icons.scss"
+# Inside the components whose Sass uses `config` (28 when written), and 3 with plain-CSS inline
+# styles that copy the rule, icons stay 24px. The bound sits well above the inline copies alone.
+owners="libs/vre/ui/styles/_config.scss must use _material-icons.scss, and the inline copies must equal it"
+scoped_rules="$(cat "$dist"/*.js | tr -d ' \n' | { grep -oE '\.material-icons\[_ngcontent-%COMP%\]\{[^}]*\}' || true; })"
+scoped="$(echo -n "$scoped_rules" | grep -c . || true)"
+[ "$scoped" -ge 20 ] || fail "$scoped component styles scope .material-icons; $owners"
+variants="$(echo "$scoped_rules" | tr "'" '"' | sed 's/;}$/}/' | sort -u | wc -l | tr -d ' ')"
+[ "$variants" -eq 1 ] || fail "the scoped .material-icons rules differ ($variants variants); $owners"
 
 if [ "$optimized" = true ]; then
   grep -q '<style>' "$index" || fail "index.html has no inlined critical CSS"

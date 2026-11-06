@@ -1,4 +1,6 @@
 @use 'sass:map';
+// Emits the icon class rule into every stylesheet that uses `config`; guarded by
+// tools/angular/optimization_test.sh.
 @use 'material-icons';
 
 // colors for text
