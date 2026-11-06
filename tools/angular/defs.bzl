@@ -216,8 +216,7 @@ def vre_library(
         test_size = None,
         test_shard_count = None,
         testing_srcs = [],
-        testing_deps = [],
-        jest_config = "jest.config.js"):
+        testing_deps = []):
     """An Angular library: its stylesheets, its ng_project compile and its Jest target.
 
     Besides the `name` target the package gets `sources`, the library's sources and templates with
@@ -253,7 +252,6 @@ def vre_library(
             by its own ng_project `testing` against the library's compiled output; `src/testing.ts`
             first. Never in `srcs`, so test helpers stay out of the library.
         testing_deps: what only the testing entry point imports.
-        jest_config: the library's Jest config.
     """
     package = "//" + native.package_name()
     visibility = package_visibility() + extra_visibility
@@ -326,7 +324,6 @@ def vre_library(
             srcs = test_srcs,
             deps = [":sources"] + [_sources(d) for d in test_deps],
             data = test_data,
-            config = jest_config,
             size = test_size,
             shard_count = test_shard_count,
         )
@@ -338,12 +335,8 @@ def vre_application(
         deps = [],
         stylesheets = [],
         sass_deps = [],
-        global_stylesheet = "src/styles.scss",
-        index_html = "src/index.html",
         scripts = [],
         static_files = [],
-        optimized_configs = ["production"],
-        development_configs = ["development"],
         storybook_data = [],
         test_srcs = [],
         test_data = [],
@@ -351,9 +344,11 @@ def vre_application(
     """The Angular application: its shell's ng_project, the esbuild bundle and the `name` directory.
 
     The configuration comes from the package's `config_setting`s, one per key of `environments`
-    and named after it. `name` holds what the CLI's application builder wrote: the hashed bundle,
-    `index.html`, the minified global stylesheet and the global scripts (both under hashed names),
-    and the `static_files`.
+    and named after it. `production` is bundled minified, without Angular's dev-mode checks and
+    with the critical CSS inlined into `index.html`; `development` resolves packages without the
+    `production` export condition. `name` holds what the CLI's application builder wrote: the
+    hashed bundle, `index.html`, the minified global stylesheet `src/styles.scss` and the global
+    scripts (both under hashed names), and the `static_files`.
 
     Args:
         name: the output directory, e.g. `dist`.
@@ -363,22 +358,18 @@ def vre_application(
         deps: libraries and npm packages the shell imports.
         stylesheets: the shell's component `.scss` files.
         sass_deps: sass_library targets the stylesheets and the global stylesheet `@use`.
-        global_stylesheet: compiled, minified, to `styles-<hash>.css`.
-        index_html: the page the entries and the stylesheet are written into.
         scripts: plain scripts concatenated into `scripts-<hash>.js`, loaded before `main`.
         static_files: copied into `name` with their path below `src/`.
-        optimized_configs: configurations bundled minified and without Angular's dev-mode checks,
-            with the critical CSS inlined into `index.html`.
-        development_configs: configurations that resolve packages without the `production`
-            export condition.
         storybook_data: what else of the package the Storybook build reads.
         test_srcs: the shell's specs and test-setup.ts; no Jest target without them.
         test_data: files a spec reads at run time.
         visibility: of the `name` directory.
     """
     package = native.package_name()
+    global_stylesheet = "src/styles.scss"
+    index_html = "src/index.html"
     optimized = select({
-        ":" + config: [str(config in optimized_configs).lower()]
+        ":" + config: [str(config == "production").lower()]
         for config in environments
     })
     copy_file(
@@ -443,8 +434,8 @@ def vre_application(
                 "import { angularEsbuildConfig } from '%stools/angular/esbuild.config.mjs';" % up,
                 "export default angularEsbuildConfig(%s);" % json.encode({
                     "alias": alias,
-                    "development": config in development_configs,
-                    "optimize": config in optimized_configs,
+                    "development": config == "development",
+                    "optimize": config == "production",
                 }),
             ],
         )
