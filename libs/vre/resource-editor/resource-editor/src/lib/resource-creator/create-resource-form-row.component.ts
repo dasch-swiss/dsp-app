@@ -28,10 +28,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         padding: var(--create-form-label-padding-block, 16px) 16px;
         margin: 0;
         color: rgb(107, 114, 128);
+      }
 
-        &.with-tooltip {
-          cursor: help;
-        }
+      .grid-h3.with-tooltip {
+        cursor: help;
       }
     `,
   ],

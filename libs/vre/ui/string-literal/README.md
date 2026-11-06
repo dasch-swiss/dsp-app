@@ -1,7 +1,5 @@
-# vre-library-vre-string-literal
-
-This library was generated with [Nx](https://nx.dev).
+# @dasch-swiss/vre/ui/string-literal
 
 ## Running unit tests
 
-Run `nx test vre-library-vre-string-literal` to execute the unit tests.
+Run `just test //libs/vre/ui/string-literal/...` to execute the unit tests.

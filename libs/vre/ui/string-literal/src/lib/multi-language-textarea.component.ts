@@ -38,12 +38,12 @@ import { MultiLanguageFormService } from './multi-language-form.service';
           [ngModel]="formService.inputValue"
           (blur)="formService.formArray.markAsTouched()"
           (ngModelChange)="formService.onInputChange($event)"
-          [disabled]="formService.selectedFormControl?.disabled ?? false"></textarea>
+          [disabled]="formService.isDisabled"></textarea>
       </mat-form-field>
       <mat-button-toggle-group matPrefix #group="matButtonToggleGroup" vertical>
         @for (lang of formService.availableLanguages; track lang; let index = $index) {
           <mat-button-toggle
-            tabIndex="-1"
+            [tabIndex]="-1"
             (click)="formService.changeLanguage(index); textInput.focus()"
             [checked]="index === formService.selectedLanguageIndex"
             [class.bold]="formService.getFormControlWithLanguage(lang) !== undefined">
@@ -55,12 +55,14 @@ import { MultiLanguageFormService } from './multi-language-form.service';
     <div class="mat-mdc-form-field-subscript-wrapper mat-mdc-form-field-bottom-align ng-tns-c1205077789-8">
       @if (formService.formArray.invalid && formService.formArray.touched) {
         <mat-error>
-          @if (formService.invalidErrors?.language) {
-            {{ 'ui.common.fields.language' | translate }} {{ formService.invalidErrors.language }}:
-            {{ formService.invalidErrors.error | humanReadableError }}
-          }
-          @if (!formService.invalidErrors?.language) {
-            {{ formService.invalidErrors.error | humanReadableError }}
+          @if (formService.invalidErrors; as errors) {
+            @if (errors.language) {
+              {{ 'ui.common.fields.language' | translate }} {{ errors.language }}:
+              {{ errors.error | humanReadableError }}
+            }
+            @if (!errors.language) {
+              {{ errors.error | humanReadableError }}
+            }
           }
         </mat-error>
       }

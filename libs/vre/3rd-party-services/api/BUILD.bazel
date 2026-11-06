@@ -1,0 +1,20 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "api",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    test_size = "small",
+    # glob skips dot files, so the placeholder spec is named; a new spec is picked up.
+    test_srcs = glob(TEST_SRCS, allow_empty = True) + ["src/lib/.gitkeep.spec.ts"],
+    deps = [
+        "//:node_modules/@angular/common",
+        "//:node_modules/@angular/core",
+        "//:node_modules/rxjs",
+        "//libs/dsp-js",
+        "//libs/vre/3rd-party-services/open-api",
+        "//libs/vre/core/config",
+    ],
+)

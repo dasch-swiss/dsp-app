@@ -67,7 +67,7 @@ const ERAS = ['CE', 'BCE'] as const;
  * The panel is taller than most rows in a property list, so near the bottom of the viewport the
  * only way to show it whole is to flip it. Leaving it below is what cut it off.
  */
-const PANEL_POSITIONS: readonly ConnectedPosition[] = [
+const PANEL_POSITIONS: ConnectedPosition[] = [
   { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 6 },
   { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -6 },
 ];
@@ -106,7 +106,7 @@ let nextPickerId = 0;
     TranslatePipe,
   ],
   templateUrl: './date-picker.component.html',
-  styleUrls: ['./date-picker.component.scss'],
+  styleUrls: ['./date-picker.component.css'],
 })
 export class DatePickerComponent {
   /**

@@ -1,4 +1,4 @@
-# vre-advanced-search
+# @dasch-swiss/vre/pages/search/advanced-search
 
 The advanced-search chip-bar UI for DSP-APP (DEV-6576).
 
@@ -48,4 +48,4 @@ commit `writeState({ … })`. The derivation and restore come for free.
 
 ## Running unit tests
 
-Run `nx test vre-pages-search-advanced-search` to execute the unit tests.
+Run `just test //libs/vre/pages/search/advanced-search/...` to execute the unit tests.

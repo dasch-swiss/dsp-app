@@ -22,23 +22,21 @@ import { FootnoteService } from '../../footnotes/footnote.service';
       .rich-text-viewer {
         overflow-wrap: break-word;
         word-break: break-word;
+      }
 
-        ::ng-deep * {
-          &:first-child {
-            margin-top: 0;
-          }
+      .rich-text-viewer ::ng-deep *:first-child {
+        margin-top: 0;
+      }
 
-          &:last-child {
-            margin-bottom: 0;
-          }
+      .rich-text-viewer ::ng-deep *:last-child {
+        margin-bottom: 0;
+      }
 
-          footnote {
-            color: #336790;
-            vertical-align: super;
-            font-size: x-small;
-            cursor: pointer;
-          }
-        }
+      .rich-text-viewer ::ng-deep * footnote {
+        color: #336790;
+        vertical-align: super;
+        font-size: x-small;
+        cursor: pointer;
       }
     `,
   ],

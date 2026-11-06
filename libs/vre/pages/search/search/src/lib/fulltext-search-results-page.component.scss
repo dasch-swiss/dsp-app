@@ -1,4 +1,4 @@
-@use "../../../../../../../apps/dsp-app/src/styles/config" as *;
+@use "config" as *;
 
 .content {
   height: calc(100vh - #{$small-header-height});

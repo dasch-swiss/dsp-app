@@ -29,7 +29,7 @@ export interface SortProp {
       }
     </mat-menu>
   `,
-  styleUrls: ['./sort-button.component.scss'],
+  styleUrls: ['./sort-button.component.css'],
   imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatButton],
 })
 export class SortButtonComponent implements OnInit {

@@ -44,26 +44,26 @@ import { ProgressSize, SIZE_TO_PXL } from './progress-indicator.type';
     `
       .app-progress-indicator.default {
         margin: 48px auto;
+      }
 
-        &.compact {
-          margin: 12px auto;
-        }
+      .app-progress-indicator.default.compact {
+        margin: 12px auto;
+      }
 
-        .loader {
-          display: block;
-          margin: 0 auto;
-        }
+      .app-progress-indicator.default .loader {
+        display: block;
+        margin: 0 auto;
+      }
 
-        svg path {
-          stroke-dasharray: 530;
-          stroke-dashoffset: 530;
-          animation: load 3s both infinite;
-        }
+      .app-progress-indicator.default svg path {
+        stroke-dasharray: 530;
+        stroke-dashoffset: 530;
+        animation: load 3s both infinite;
+      }
 
-        @keyframes load {
-          to {
-            stroke-dashoffset: 2120;
-          }
+      @keyframes load {
+        to {
+          stroke-dashoffset: 2120;
         }
       }
     `,

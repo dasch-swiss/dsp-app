@@ -1,0 +1,43 @@
+# Bazel configuration for dsp-app.
+
+# Strict action env keeps unrelated host variables out of the cache keys; PATH is the one passed
+# through, so actions see the dev shell's tools, as in dsp-api.
+build --incompatible_strict_action_env
+build --action_env=PATH
+build --enable_platform_specific_config
+
+# Node's npm extension is reproducible, so a pnpm-lock.yaml change never touches MODULE.bazel.lock;
+# CI overrides this with --lockfile_mode=error.
+common --lockfile_mode=update
+common --disk_cache=~/.cache/bazel-disk/dsp-app
+# External downloads, at a fixed path so CI can cache it keyed on MODULE.bazel.lock.
+common --repository_cache=~/.cache/bazel-repo
+
+test --test_output=errors
+test --test_env=TZ=Europe/Zurich
+test --test_env=LANG=C.UTF-8
+
+# JDK 25 for the OpenAPI generator, the runtime dsp-api builds with.
+build --java_language_version=25
+build --java_runtime_version=remotejdk_25
+build --tool_java_runtime_version=remotejdk_25
+
+build --workspace_status_command=tools/workspace_status.sh
+
+# Remote cache tuning. The endpoint and the mTLS and remote-execution flags come from the
+# `bazel-rbe` action through $BAZEL_FLAGS, since .bazelrc cannot read the environment; these
+# are no-ops without a remote.
+build --remote_download_toplevel
+build --remote_local_fallback
+build --remote_timeout=600s
+build --remote_max_connections=200
+
+# `just lint`: the ESLint aspect over every ts_project's sources, failing on a finding and
+# reporting every package's findings, not only the first.
+build:lint --aspects=//tools/lint:linters.bzl%eslint
+build:lint --output_groups=rules_lint_human
+build:lint --@aspect_rules_lint//lint:fail_on_violation
+build:lint --keep_going
+
+# Machine-local flags; gitignored.
+try-import %workspace%/user.bazelrc

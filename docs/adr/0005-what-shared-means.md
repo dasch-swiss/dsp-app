@@ -1,6 +1,6 @@
 # ADR-0005: What `shared/` means, and what it does not
 
-- **Status:** Accepted (2026-09-13)
+- **Status:** Accepted (2026-09-13); references to ADR-0001's rollout updated (2026-11-06) when Bazel replaced Nx (ADR-0007)
 - **Relates to:** ADR-0001 (library taxonomy), ADR-0002 (the barrel is the public interface), ADR-0004 (cross-feature access)
 
 ## Context
@@ -65,7 +65,7 @@ Stating it so that the ADR is falsifiable rather than aspirational.
 
 | Library | Fails | Resolution |
 | --- | --- | --- |
-| `shared/app-common-to-move` | direction | Split, see below. It cannot be retagged, and it blocks ADR-0001 step (c). |
+| `shared/app-common-to-move` | direction | Split, see below. It cannot be retagged; until it is split, `LIBRARIES` lists it as `feature`, `shared` (ADR-0001). |
 | `shared/app-helper-services` | cohesion | Split. `LocalizationService` per ADR-0001 decision 7; the ontology property-type registry into the ontology domain; `pickPreferredLanguageString` and `sorting.helper` to `type:util`; the project and rights services to `type:data-access`; `ResourceResultService` reviewed against ADR-0003. |
 | `shared/app-common` | cohesion | Split by kind: directives and animations to `type:ui`, validators, regexes and operators to `type:util`, `resource.service.ts` to `type:data-access`. Eighty-one importing files, so this is the largest of the three and should be done in slices. |
 | `ui/notification` | naming | One service file wrapping `MatSnackBar`. Tagged `type:util` per ADR-0001 decision 4. Folder renamed opportunistically. |
@@ -74,7 +74,7 @@ Stating it so that the ADR is falsifiable rather than aspirational.
 
 This one is different from the other three, because it cannot be resolved by tagging it honestly and deferring the move. Its name promised a relocation that never happened, and in the meantime five different page scopes came to depend on it across eight files. Every available tag breaks something: `scope:app` makes all eight importing files illegal, and `scope:shared` is a claim the direction test refuses, at a fan-in of six against a fan-out of nine.
 
-So it is split rather than tagged, and that split is a precondition for ADR-0001 step (c). What is actually inside it, by consumer:
+So it is split rather than tagged, and until the split it carries the provisional `feature`, `shared` in `LIBRARIES` that ADR-0001 records. What is actually inside it, by consumer:
 
 | Contents | Taken by | Destination |
 | --- | --- | --- |

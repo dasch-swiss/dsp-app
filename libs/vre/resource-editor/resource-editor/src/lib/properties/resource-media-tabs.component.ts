@@ -35,12 +35,10 @@ import { SegmentTabComponent } from './segment-tab.component';
   `,
   styles: [
     `
-      :host ::ng-deep {
-        .mat-mdc-tab-body,
-        .mat-mdc-tab-body-content {
-          height: auto !important;
-          overflow: visible !important;
-        }
+      :host ::ng-deep .mat-mdc-tab-body,
+      :host ::ng-deep .mat-mdc-tab-body-content {
+        height: auto !important;
+        overflow: visible !important;
       }
     `,
   ],

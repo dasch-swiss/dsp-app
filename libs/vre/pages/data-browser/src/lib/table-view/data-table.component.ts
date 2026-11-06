@@ -347,7 +347,7 @@ const FILLER_COLUMN_KEY = '__filler';
         [style.height.px]="scrolledUnder().height"></span>
     }
   `,
-  styleUrl: './data-table.component.scss',
+  styleUrl: './data-table.component.css',
   imports: [
     CdkScrollable,
     MatTableModule,

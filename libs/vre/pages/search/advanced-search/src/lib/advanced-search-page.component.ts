@@ -50,7 +50,7 @@ import { OrderByComponent } from './ui/order-by/order-by.component';
     padding: 16px; margin-left: 8px" />
     }
   `,
-  styleUrl: './advanced-search-page.component.scss',
+  styleUrl: './advanced-search-page.component.css',
   providers: [provideAdvancedSearch()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

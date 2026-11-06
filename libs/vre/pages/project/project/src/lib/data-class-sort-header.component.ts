@@ -58,7 +58,7 @@ interface SortOption {
       }
     </mat-menu>
   `,
-  styleUrl: './data-class-sort-header.component.scss',
+  styleUrl: './data-class-sort-header.component.css',
   imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, TranslatePipe],
   providers: [StringifyStringLiteralPipe],
 })

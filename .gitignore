@@ -61,7 +61,6 @@ apps/dsp-app/coverage/
 apps/dsp-app/.nyc_output/
 
 #E2E
-/.nx
 apps/dsp-app/cypress/screenshots
 apps/dsp-app/cypress/downloads
 
@@ -72,10 +71,11 @@ apps/dsp-app/cypress/downloads
 # secrets go in `.envrc.local`, which it sources if present.
 .envrc.local
 
+# The configuration's environment file, which Bazel writes (apps/dsp-app/BUILD.bazel)
+apps/dsp-app/src/environments/environment.ts
+
 # OpenAPI generated files
 libs/vre/3rd-party-services/open-api/src/generated/
-.cursor/rules/nx-rules.mdc
-.github/instructions/nx.instructions.md
 
 # Claude Code
 .claude/worktrees/
@@ -85,3 +85,7 @@ libs/vre/3rd-party-services/open-api/src/generated/
 
 # direnv
 .direnv/
+
+# Bazel
+/bazel-*
+/user.bazelrc

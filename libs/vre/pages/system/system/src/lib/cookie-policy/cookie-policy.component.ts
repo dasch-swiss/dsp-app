@@ -8,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-cookie-policy',
   templateUrl: './cookie-policy.component.html',
-  styleUrls: ['./cookie-policy.component.scss'],
+  styleUrls: ['./cookie-policy.component.css'],
   imports: [TranslatePipe, MatDivider, MatIcon, MatButton],
 })
 export class CookiePolicyComponent {

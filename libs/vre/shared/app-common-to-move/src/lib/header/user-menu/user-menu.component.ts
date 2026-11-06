@@ -13,7 +13,7 @@ import { LoginFormComponent } from '../login-form/login-form.component';
 @Component({
   selector: 'app-user-menu',
   templateUrl: './user-menu.component.html',
-  styleUrls: ['./user-menu.component.scss'],
+  styleUrls: ['./user-menu.component.css'],
   imports: [
     AdminImageDirective,
     AsyncPipe,

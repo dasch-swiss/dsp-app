@@ -95,19 +95,23 @@ const RESOURCE_LABEL_KEY = 'pages.dataBrowser.resourceListItem.resourceLabel';
       .item {
         padding: 0 16px;
         cursor: pointer;
-        &:hover {
-          background-color: #ebebeb;
-        }
-        /* Rows with a metadata line below the label need vertical breathing room. Advanced search
-           has no keyword yet still renders the class, so this cannot key on the keyword alone. */
-        &.search {
-          padding: 8px 16px;
-        }
       }
+
+      .item:hover {
+        background-color: #ebebeb;
+      }
+
+      /* Rows with a metadata line below the label need vertical breathing room. Advanced search
+         has no keyword yet still renders the class, so this cannot key on the keyword alone. */
+      .item.search {
+        padding: 8px 16px;
+      }
+
       .highlighted {
         border-left: 2px solid #33678f;
         background-color: #d6e0e8;
       }
+
       mat-list-item {
         border-bottom: 1px solid #ebebeb;
       }
@@ -118,6 +122,7 @@ const RESOURCE_LABEL_KEY = 'pages.dataBrowser.resourceListItem.resourceLabel';
         margin-top: 8px;
         font-size: 12px;
       }
+
       .semibold {
         font-weight: 500;
       }

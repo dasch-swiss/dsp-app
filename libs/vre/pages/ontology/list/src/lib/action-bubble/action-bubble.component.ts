@@ -75,7 +75,7 @@ import {
       transition(':leave', animate(150, style({ opacity: 0 }))),
     ]),
   ],
-  styleUrls: ['./action-bubble.component.scss'],
+  styleUrls: ['./action-bubble.component.css'],
   imports: [MatButton, MatIcon, MatTooltip],
 })
 export class ActionBubbleComponent {

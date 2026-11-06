@@ -24,7 +24,7 @@ import { OpenSeaDragonService } from './open-sea-dragon.service';
 @Component({
   selector: 'app-still-image-toolbar',
   templateUrl: './still-image-toolbar.component.html',
-  styleUrls: ['./still-image-toolbar.component.scss'],
+  styleUrls: ['./still-image-toolbar.component.css'],
   imports: [
     MatMenuTrigger,
     MatTooltip,
