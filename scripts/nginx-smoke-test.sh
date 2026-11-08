@@ -191,6 +191,9 @@ expect_status "asset" 200
 expect_body_has "asset" "<svg"
 request "$EMPTY_PORT" GET "/config/build.json"
 expect_body_has "build.json" '"build_tag"'
+request "$EMPTY_PORT" GET "/3rdpartylicenses.txt"
+expect_status "3rdpartylicenses.txt" 200
+expect_body_has "3rdpartylicenses.txt" '^Package: @angular/core$'
 
 # --- the compose healthcheck's command, inside the image, so the base must carry curl ---
 docker exec "$RUN_ID-app" sh -c 'curl -sS --fail http://127.0.0.1:${NGINX_PORT}/internal/health | grep "^healthy$"' &&

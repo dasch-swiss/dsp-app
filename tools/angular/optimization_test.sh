@@ -2,8 +2,8 @@
 # Usage: optimization_test.sh <dist dir> <optimized: true|false>
 # Fails when the bundle lacks what the Angular CLI's build gives that configuration: modulepreload
 # hints for chunks that exist, the icon font face once and only in the global stylesheet, the icon
-# class scoped in the components that use `config`, and when optimized, minified component styles
-# and the critical CSS inlined into index.html.
+# class scoped in the components that use `config`, and when optimized, minified component styles,
+# the critical CSS inlined into index.html and 3rdpartylicenses.txt.
 set -euo pipefail
 
 dist="${1:?usage: $0 <dist dir> <optimized>}"
@@ -37,7 +37,9 @@ scoped="$(echo -n "$scoped_rules" | grep -c . || true)"
 variants="$(echo "$scoped_rules" | tr "'" '"' | sed 's/;}$/}/' | sort -u | wc -l | tr -d ' ')"
 [ "$variants" -eq 1 ] || fail "the scoped .material-icons rules differ ($variants variants); $owners"
 
+licenses="$dist/3rdpartylicenses.txt"
 if [ "$optimized" = true ]; then
+  grep -q '^Package: @angular/core$' "$licenses" || fail "$licenses is missing or does not list @angular/core"
   grep -q '<style>' "$index" || fail "index.html has no inlined critical CSS"
   grep -q 'media="print"' "$index" || fail "the stylesheet still blocks rendering"
   # Minified (minify-component-styles in esbuild.config.mjs), an encapsulated selector is
@@ -46,6 +48,7 @@ if [ "$optimized" = true ]; then
     fail "the files above carry unminified component styles"
   fi
 else
+  [ ! -e "$licenses" ] || fail "an unoptimized bundle has $licenses, which only the production build writes"
   if grep -q 'media="print"' "$index"; then
     fail "an unoptimized index.html has the critical CSS inlined"
   fi

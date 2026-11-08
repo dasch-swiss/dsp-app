@@ -1,6 +1,7 @@
 // What the Angular CLI's application builder sets and raw esbuild does not. An application's
 // generated config (vre_application in defs.bzl) default-exports `angularEsbuildConfig(...)`.
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { transformAsync } from '@babel/core';
 import { needsLinking } from '@angular/compiler-cli/linker';
 import linkerPlugin from '@angular/compiler-cli/linker/babel';
@@ -81,12 +82,56 @@ const minifyComponentStyles = {
   },
 };
 
+// The CLI's extractLicenses: every npm package with bytes in the output, with its package.json
+// license and its root LICENSE file, written beside the bundle as 3rdpartylicenses.txt.
+const LICENSE_FILES = ['LICENSE', 'LICENSE.txt', 'LICENSE.md'];
+const SEPARATOR = '-'.repeat(80) + '\n';
+const thirdPartyLicenses = {
+  name: 'third-party-licenses',
+  setup(build) {
+    build.onEnd(async result => {
+      if (!result.metafile) {
+        throw new Error('third-party-licenses needs the metafile option');
+      }
+      const root = build.initialOptions.absWorkingDir ?? process.cwd();
+      const packageDirs = new Set();
+      for (const output of Object.values(result.metafile.outputs)) {
+        for (const [input, { bytesInOutput }] of Object.entries(output.inputs)) {
+          const match = bytesInOutput > 0 && input.match(/^(.*node_modules\/(?:@[^/]+\/)?[^/]+)\//);
+          if (match) {
+            packageDirs.add(match[1]);
+          }
+        }
+      }
+      const entries = new Map();
+      for (const dir of packageDirs) {
+        const pkg = JSON.parse(await readFile(resolve(root, dir, 'package.json'), 'utf8'));
+        const id = `${pkg.name}@${pkg.version}`;
+        if (entries.has(id)) {
+          continue;
+        }
+        let text = '';
+        for (const file of LICENSE_FILES) {
+          text = await readFile(resolve(root, dir, file), 'utf8').catch(() => '');
+          if (text) {
+            break;
+          }
+        }
+        entries.set(id, `Package: ${pkg.name}\nLicense: ${JSON.stringify(pkg.license, null, 2)}\n\n${text}\n`);
+      }
+      const sorted = [...entries.keys()].sort().map(id => entries.get(id) + SEPARATOR);
+      const out = resolve(root, build.initialOptions.outdir, '3rdpartylicenses.txt');
+      await writeFile(out, `\n${SEPARATOR}${sorted.join('')}`);
+    });
+  },
+};
+
 /**
  * @param {object} options
  * @param {Record<string, string>} options.alias each library's import alias to its compiled
  *   entry point, relative to the Bazel bin directory esbuild runs in
- * @param {boolean} options.optimize minify, component styles included, and strip Angular's
- *   dev-mode checks, as the CLI's `production` configuration does
+ * @param {boolean} options.optimize minify, component styles included, strip Angular's dev-mode
+ *   checks and write 3rdpartylicenses.txt, as the CLI's `production` configuration does
  * @param {boolean} options.development resolve packages without the `production` export condition
  */
 export function angularEsbuildConfig({ alias, optimize, development }) {
@@ -111,6 +156,6 @@ export function angularEsbuildConfig({ alias, optimize, development }) {
     loader: { '.json': 'json' },
     minify: optimize,
     legalComments: 'none',
-    plugins: optimize ? [angularLinker, minifyComponentStyles] : [angularLinker],
+    plugins: optimize ? [angularLinker, minifyComponentStyles, thirdPartyLicenses] : [angularLinker],
   };
 }
