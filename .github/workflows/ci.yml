@@ -382,8 +382,8 @@ jobs:
           MANIFEST="tools/openapi/openapi_files.bzl"
           cp "$SPEC" /tmp/updated-spec.yaml
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
-          # -f drops openapi-update's edits, so the PR holds only the spec and what main's generator
-          # writes after checking out origin/main.
+          # -f discards openapi-update's working-tree edits: the PR holds only the spec and main's
+          # generated manifest.
           git checkout -f -b "$BRANCH" origin/main
           cp /tmp/updated-spec.yaml "$SPEC"
           nix develop --command just openapi-generate
