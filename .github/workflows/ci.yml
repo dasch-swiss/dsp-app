@@ -19,7 +19,6 @@ jobs:
     outputs:
       automation_skip: ${{ steps.detect.outputs.automation_skip }}
       only_workflows: ${{ steps.detect.outputs.only_workflows }}
-      only_pkg: ${{ steps.detect.outputs.only_pkg }}
       bot_push: ${{ steps.detect.outputs.bot_push }}
     steps:
       - uses: actions/checkout@v7
@@ -68,7 +67,6 @@ jobs:
           # Tag and direct-main pushes: full pipeline (no path-based skip).
           if [[ "$GH_REF" == refs/tags/* ]] || [ "$GH_REF" = "refs/heads/main" ]; then
             echo "only_workflows=false" >> "$GITHUB_OUTPUT"
-            echo "only_pkg=false"       >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -79,7 +77,6 @@ jobs:
           if ! git fetch --no-tags origin main 2>/dev/null; then
             echo "::warning::could not fetch origin/main; running full pipeline"
             echo "only_workflows=false" >> "$GITHUB_OUTPUT"
-            echo "only_pkg=false"       >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -87,7 +84,6 @@ jobs:
           if [ -z "$DIFF" ]; then
             # No diff (rare for push events) — fail-safe.
             echo "only_workflows=false" >> "$GITHUB_OUTPUT"
-            echo "only_pkg=false"       >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -110,13 +106,6 @@ jobs:
           fi
 
           echo "only_workflows=$only_workflows" >> "$GITHUB_OUTPUT"
-
-          # only_pkg: every changed file is package.json or pnpm-lock.yaml
-          if echo "$DIFF" | grep -qvE '^(package\.json|pnpm-lock\.yaml)$'; then
-            echo "only_pkg=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "only_pkg=true"  >> "$GITHUB_OUTPUT"
-          fi
 
   lint:
     name: DSP-APP Linting
@@ -536,7 +525,7 @@ jobs:
       - name: Cache Pixeleye's browsers
         # The frozen CLI downloads Playwright 1.59.0's browsers on every start, and the headless
         # shell the capture launches goes there too; `just pixeleye` points both at this directory.
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ env.PIXELEYE_BROWSERS_PATH }}
           key: pixeleye-browsers-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
