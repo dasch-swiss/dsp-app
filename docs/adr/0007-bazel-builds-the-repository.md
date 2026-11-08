@@ -22,7 +22,7 @@ Three problems followed from the difference:
 
 2. **Every command is a `just` recipe, and every tool Bazel cannot provide hermetically comes from the Nix dev shell.** (**structure**)
 
-   CI runs `nix develop --command just <recipe>` and nothing else, so a developer and CI run the same commands. A fresh clone needs Nix, nix-direnv and Docker, nothing more. `just ci` is the gate. `eng.yaml` binds the recipes for the eng plugin's agents.
+   CI runs `nix develop --command just <recipe>` and nothing else, so a developer and CI run the same commands. A fresh clone needs Nix and nix-direnv; Docker only for the dsp-api stack the Cypress suite runs against and for the image recipes. `just ci` is the gate. `eng.yaml` binds the recipes for the eng plugin's agents.
 
 3. **Library boundaries are Bazel `visibility`.** (**structure**)
 
