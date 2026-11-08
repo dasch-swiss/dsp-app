@@ -108,7 +108,9 @@ header() { echo "$HEADERS" | grep -i "^$1:" | head -n1 | sed 's/^[^:]*: *//'; }
 
 expect_status() { [ "$STATUS" = "$2" ] && pass "$1: status $2" || fail "$1: status $STATUS, expected $2"; }
 expect_header() { [ "$(header "$2")" = "$3" ] && pass "$1: $2: $3" || fail "$1: $2 is '$(header "$2")', expected '$3'"; }
-expect_body_has() { echo "$BODY" | grep -q "$2" && pass "$1: body has $2" || fail "$1: body lacks $2"; }
+# A here-string, not a pipe: grep -q exits at the first match, and under pipefail the writer's
+# SIGPIPE on a large body would fail the assertion.
+expect_body_has() { grep -q -- "$2" <<<"$BODY" && pass "$1: body has $2" || fail "$1: body lacks $2"; }
 expect_security_headers() {
   [ "$(header X-Frame-Options)" = "DENY" ] && [ "$(header X-Content-Type-Options)" = "nosniff" ] &&
     pass "$1: security headers" || fail "$1: security headers missing"
@@ -180,7 +182,7 @@ stub_saw "value123" && fail "deeper path was forwarded" || pass "deeper path not
 # --- the bundle ---
 request "$EMPTY_PORT" GET "/"
 expect_status "index.html" 200
-expect_body_has "index.html" '<script type="module" src="main-'
+expect_body_has "index.html" '<script src="main-[^"]*" type="module">'
 request "$EMPTY_PORT" GET "/assets/i18n/en.json"
 expect_status "i18n file" 200
 expect_header "i18n file" Content-Type application/json
