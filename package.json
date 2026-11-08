@@ -75,7 +75,6 @@
     "@openapitools/openapi-generator-cli": "^2.31.1",
     "@pixeleye/cli-devices": "^0.4.8",
     "@schematics/angular": "21.2.29",
-    "@sentry/cli": "^3.0.0",
     "@storybook/angular": "10.6.5",
     "@storybook/test-runner": "^0.24.4",
     "@swc-node/register": "1.12.1",
@@ -137,7 +136,6 @@
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
-      "@sentry/cli",
       "@swc/core",
       "core-js-pure",
       "cypress",

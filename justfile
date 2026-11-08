@@ -323,17 +323,6 @@ lock-update:
     bazel mod deps --lockfile_mode=update
     pnpm install --lockfile-only
 
-# Inject and upload Sentry source maps for a copy of a built bundle (needs SENTRY_AUTH_TOKEN)
-sentry-sourcemaps DIST:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    : "${SENTRY_AUTH_TOKEN:?SENTRY_AUTH_TOKEN is not set}"
-    copy="$(mktemp -d)"
-    trap 'rm -rf "$copy"' EXIT
-    cp -R "{{ DIST }}/." "$copy"
-    pnpm exec sentry-cli sourcemaps inject --org dasch --project javascript-angular "$copy"
-    pnpm exec sentry-cli sourcemaps upload --org dasch --project javascript-angular "$copy"
-
 # Compare the dsp-js npm package with the last published @dasch-swiss/dsp-js
 publish-dsp-js-check:
     bazel build //libs/dsp-js:npm_package $BAZEL_FLAGS
