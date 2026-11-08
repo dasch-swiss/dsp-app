@@ -39,7 +39,7 @@ runs:
     - name: Install Nix
       uses: DeterminateSystems/determinate-nix-action@v3
     - name: Restore Bazel repository cache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.cache/bazel-repo
         key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
@@ -47,14 +47,14 @@ runs:
     # Only main saves the disk cache; a branch restores main's and never writes one of its own.
     - name: Restore and save Bazel disk cache
       if: github.ref == 'refs/heads/main'
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.cache/bazel-disk/dsp-app
         key: ${{ inputs.cache-key-prefix }}-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
         restore-keys: ${{ inputs.cache-key-prefix }}-${{ runner.os }}-
     - name: Restore Bazel disk cache
       if: github.ref != 'refs/heads/main'
-      uses: actions/cache/restore@v5
+      uses: actions/cache/restore@v6
       with:
         path: ~/.cache/bazel-disk/dsp-app
         key: ${{ inputs.cache-key-prefix }}-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
