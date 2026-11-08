@@ -46,6 +46,10 @@ jobs:
           main=$(git ls-remote origin refs/heads/main | cut -f1)
           [ "$main" = "$HEAD_SHA" ] && current=true || current=false
           echo "current=$current" >> "$GITHUB_OUTPUT"
+          # Skipping is otherwise silent: the run is green and DEV simply does not move.
+          if [ "$current" = false ]; then
+            echo "::notice::$HEAD_SHA is no longer main's head ($main): its image is published, but DEV and :latest stay put until the next green main commit."
+          fi
         shell: bash
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@v3
