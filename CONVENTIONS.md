@@ -8,7 +8,8 @@ Build commands and gotchas live in [`CLAUDE.md`](CLAUDE.md), the library topolog
 ## Stack
 
 - Angular 21, TypeScript 5.9, RxJS, Angular Material, ngx-translate — see [`package.json`](package.json) for exact versions.
-- Nx monorepo: the app in `apps/dsp-app`, feature libraries under `libs/vre/`, the API client in `libs/dsp-js/`.
+- Bazel monorepo ([ADR 0007](docs/adr/0007-bazel-builds-the-repository.md)): the app in `apps/dsp-app`, feature libraries under `libs/vre/` (one `vre_library` package each), the API client in `libs/dsp-js/`. Every command is a `just` recipe run inside the Nix dev shell; `just help` lists them.
+- pnpm with a strict `node_modules` layout: a package a library imports must be a declared dependency.
 - Jest for unit tests, Cypress for e2e, Storybook for component interaction tests.
 - ESLint (`eslint.config.mjs`, `eslint.config.angular.mjs`) and Prettier.
 
@@ -40,7 +41,8 @@ Build commands and gotchas live in [`CLAUDE.md`](CLAUDE.md), the library topolog
 - Prefer an inline `template:` over `templateUrl:` for small templates.
 - Use `@if`, `@for` (with `track` on a unique id) and `@switch`. `*ngIf`, `*ngFor` and `*ngSwitch` fail lint (`prefer-control-flow`).
 - Self-closing tags for component selectors in templates. Do not use `::ng-deep`.
-- Media queries use `bp-up` / `bp-down` from `apps/dsp-app/src/styles/_responsive.scss` (`@use "responsive" as *`); never hardcode pixel breakpoints. `sm` (768px) is the minimum supported width.
+- Inline `styles:` are plain CSS: no Sass variables, `@use`, nesting or `//` comments, because the style shim scopes only the outer selector of a nested rule. A component that needs Sass uses a `.scss` file; a palette colour is written as its value with the variable name in a comment (`#336790; /* $primary */`), as `REVIEW.md` asks.
+- Media queries use `bp-up` / `bp-down` from `libs/vre/ui/styles/_responsive.scss` (`@use "responsive" as *`); never hardcode pixel breakpoints. `sm` (768px) is the minimum supported width.
 - Inputs: `@Input({ required: true }) name!: T` for mandatory inputs — the `!` only there — and `@Input() name = default` for optional ones. Outputs are typed: `@Output() loaded = new EventEmitter<boolean>()`. Signal inputs and outputs (`input.required<T>()`, `input<T>(default)`, `output<T>()`) are allowed in new components.
 - Put `data-cy` attributes on interactive elements; e2e and Storybook tests select by them.
 
@@ -56,7 +58,9 @@ Layer ownership, barrel exports and cross-feature access are recorded in [`ARCH-
 
 - HTTP calls to DSP-API live in `libs/vre/3rd-party-services/api` as a dedicated `*ApiService`, never inline in a component or in `shared/` (precedent: `ResourceLegalV2ApiService`, `LegalInfoApiService`).
 - Per-project caching of API data goes into a helper service, not into each consuming component (precedent: `ProjectDataRightsService` in `shared/app-helper-services`).
-- Imports cross libraries only through the `@dasch-swiss/vre/*` aliases and a library's barrel `index.ts`. Moving a file between libraries means updating both barrels.
+- Imports cross libraries only through the `@dasch-swiss/vre/*` aliases and a library's barrel `index.ts`; ESLint rejects a deep `src/` import and a relative import across a library root. Moving a file between libraries means updating both barrels.
+- A new import of another library needs that library's label in the importing library's `BUILD.bazel` `deps`; without it the compile fails with TS2307. A visibility error on that label means ADR-0001 forbids the edge: change the design, never add an `extra_visibility` entry or a `tools/angular/loose.bzl` entry to make the build pass.
+- A new library is a `BUILD.bazel` calling `vre_library`, its ADR-0001 type and scope in `LIBRARIES` (`tools/angular/visibility.bzl`), its alias in `tsconfig.base.json` and a barrel `src/index.ts`; its Bazel `visibility` follows from the type and scope.
 - Know which client carries your data: dsp-js models or the generated OpenAPI client. See "Working with APIs" in [`CLAUDE.md`](CLAUDE.md).
 
 ## RxJS
@@ -91,7 +95,8 @@ Per-environment settings live in `apps/dsp-app/src/config/config.*.json` and rea
 
 ## Testing Conventions
 
-- Tested means: a Jest spec beside the file (`*.spec.ts`) for logic and component behaviour, and a Storybook story with a `play()` assertion for a UI component (see "Storybook Convention" in [`CLAUDE.md`](CLAUDE.md)). Cypress e2e lives in its own project ([ADR 0006](docs/adr/0006-the-e2e-suite-is-its-own-project.md)).
+- Tested means: a Jest spec beside the file (`*.spec.ts`) for logic and component behaviour, and a Storybook story with a `play()` assertion for a UI component (see "Storybook Convention" in [`CLAUDE.md`](CLAUDE.md)). Cypress e2e lives in its own project ([ADR 0006](docs/adr/0006-the-e2e-suite-is-its-own-project.md)), type-checked by `just typecheck-e2e`.
+- Each library's specs run in its Bazel `jest_test` target, on sources with the SWC preset; `just test-files -- <spec>` runs the one library's target.
 - Component specs use `TestBed.configureTestingModule()` with `imports: [TheComponent]`, `CUSTOM_ELEMENTS_SCHEMA` for child elements, `.overrideComponent()` to stub a template, and `provideTranslateService()`.
 - Type mocks as `jest.Mocked<Partial<Service>>` and provide them with `useValue`. Clear mocks in `afterEach()`.
 - Do not commit a focused test (`fdescribe`, `fit`, `.only`). Lint rejects it.
@@ -110,10 +115,18 @@ Before opening a PR, read `main`'s `git log` and recent merged PRs. Use them for
 
 These must be clean:
 
-- `npm run lint-all` — ESLint across all projects, including the alphabetical `import/order` rule. `npm run lint-fix-all` fixes what it can.
-- `npm run test-ci-all` — every project's Jest suite.
-- `npx nx build dsp-app`: the type-check, since lint is not type-aware.
-- `npm run test-storybook`, with `npm run storybook` running, when you changed a component that has stories.
+- `just lint` — ESLint across all projects, including the alphabetical `import/order` rule.
+- `just test` — every Bazel test target; `just test-files -- <paths>` runs only those that depend on the paths.
+- `just build` — every library's compile under its strict flags, the type-check lint does not do, and the application bundle; `just build <config>` builds the bundle in one configuration.
+- `just storybook-test` when you changed a component that has stories: it builds Storybook with Bazel and runs the interaction tests against it. `just storybook` serves it for browsing.
+- `just typecheck-e2e` when you changed a Cypress spec or support file.
+- `just ci` runs the whole gate CI runs.
+
+## Dependency Management
+
+- No bot updates dependencies: Renovate is disabled, library updates are analysed and made by hand, security advisories still arrive as Dependabot PRs. `renovate.json`'s rules record why packages are coupled; read them before a bump.
+- Change a dependency with `pnpm` inside the dev shell and commit `package.json` with `pnpm-lock.yaml`. A pnpm change needs no `MODULE.bazel.lock` refresh; `just lock-update` is for a Bazel module bump and refreshes both.
+- Bazel modules, the `rules_angular` and `rules_sass` commit pins, `.bazelversion`, `flake.nix`, `flake.lock`, the GitHub Actions versions and the image's nginx base digest are bumped by hand; Dependabot is configured for npm security advisories only. After a `flake.lock` bump run `just node-version-check` and `just playwright-version-check`.
 
 ## Where to Go for Depth
 

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { CreateOntology, CreateResourceClassPayload } from '../../../../libs/dsp-js/src';
+import { CreateOntology, CreateResourceClassPayload } from '@dasch-swiss/dsp-js';
 import ProjectPage from './pages/project-page';
 
 declare global {

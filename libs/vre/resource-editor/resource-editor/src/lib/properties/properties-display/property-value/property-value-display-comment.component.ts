@@ -13,7 +13,7 @@ import { WithBreaksPipe } from './with-breaks.pipe';
       style=" font-size: small; margin-bottom: 16px"
       [innerHTML]="comment | withBreaks"></div>
   }`,
-  styleUrls: [`./property-value-display-comment.component.scss`],
+  styleUrls: [`./property-value-display-comment.component.css`],
 })
 export class PropertyValueDisplayCommentComponent {
   @Input({ required: true }) index!: number;

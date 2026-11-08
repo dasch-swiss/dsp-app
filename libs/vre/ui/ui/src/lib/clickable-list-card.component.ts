@@ -17,10 +17,11 @@ import { MatList } from '@angular/material/list';
       app-clickable-list-card .mat-mdc-list-item {
         border-radius: 8px;
         transition: background-color 0.2s;
-        &:hover {
-          cursor: pointer;
-          background-color: rgba(0, 0, 0, 0.04);
-        }
+      }
+
+      app-clickable-list-card .mat-mdc-list-item:hover {
+        cursor: pointer;
+        background-color: rgba(0, 0, 0, 0.04);
       }
     `,
   ],

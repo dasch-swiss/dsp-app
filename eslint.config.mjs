@@ -1,10 +1,51 @@
-import nx from '@nx/eslint-plugin';
+import js from '@eslint/js';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import eslintPluginBan from 'eslint-plugin-ban';
 import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import storybook from 'eslint-plugin-storybook';
 import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+
+const tsFiles = ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'];
+const jsFiles = ['**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'];
+
+// ADR-0002: a library's barrel is its whole public interface, so an import reaches another library
+// only through its `@dasch-swiss/*` alias. Every library's sources sit under its `src/`, so a
+// relative import that climbs into a `src`, `libs` or `apps` directory crosses a library root.
+// Flat config replaces a rule's options per block, so every block sets the rule through
+// restrictImports(), which always carries these patterns.
+const libraryBoundaryPatterns = [
+  {
+    regex: '^@dasch-swiss/.+/src(/|$)',
+    message: "Import the library's barrel through its @dasch-swiss alias, not a file under src/ (ADR-0002).",
+  },
+  {
+    regex: '^\\.\\./(.*/)?(src|libs|apps)(/|$)',
+    message: "A relative import must not cross a library root; use the library's @dasch-swiss alias (ADR-0002).",
+  },
+];
+const restrictImports = (options = {}) => ['error', { ...options, patterns: libraryBoundaryPatterns }];
+
+// Deviations from typescript-eslint's recommended set that every file has carried since the
+// typescript-eslint v6 migration; the blocks below override several of them for `.ts` files.
+const sharedRules = {
+  '@typescript-eslint/explicit-member-accessibility': 'off',
+  '@typescript-eslint/explicit-module-boundary-types': 'off',
+  '@typescript-eslint/explicit-function-return-type': 'off',
+  '@typescript-eslint/no-parameter-properties': 'off',
+  '@typescript-eslint/no-non-null-assertion': 'warn',
+  '@typescript-eslint/adjacent-overload-signatures': 'error',
+  '@typescript-eslint/prefer-namespace-keyword': 'error',
+  'no-empty-function': 'off',
+  '@typescript-eslint/no-empty-function': 'error',
+  '@typescript-eslint/no-inferrable-types': 'error',
+  '@typescript-eslint/no-unused-vars': 'warn',
+  '@typescript-eslint/no-empty-interface': 'error',
+  '@typescript-eslint/no-explicit-any': 'warn',
+  '@typescript-eslint/no-require-imports': 'off',
+};
 
 export default [
   {
@@ -14,9 +55,30 @@ export default [
       reportUnusedDisableDirectives: 'off',
     },
   },
-  ...nx.configs['flat/base'],
-  ...nx.configs['flat/typescript'],
-  ...nx.configs['flat/javascript'],
+  ...tseslint.config(
+    {
+      files: tsFiles,
+      extends: [js.configs.recommended, ...tseslint.configs.recommended],
+      languageOptions: {
+        parser: tseslint.parser,
+        ecmaVersion: 2020,
+        sourceType: 'module',
+        parserOptions: { tsconfigRootDir: import.meta.dirname },
+      },
+      rules: sharedRules,
+    },
+    {
+      files: jsFiles,
+      extends: [js.configs.recommended, ...tseslint.configs.recommended],
+      languageOptions: {
+        parser: tseslint.parser,
+        ecmaVersion: 2020,
+        sourceType: 'module',
+        globals: { ...globals.browser, ...globals.node },
+      },
+      rules: { ...sharedRules, '@typescript-eslint/no-var-requires': 'off' },
+    }
+  ),
   ...storybook.configs['flat/recommended'],
   {
     plugins: {
@@ -96,33 +158,18 @@ export default [
       '@typescript-eslint/no-inferrable-types': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-unused-expressions': 'off',
-      '@nx/enforce-module-boundaries': [
-        'error',
-        {
-          enforceBuildableLibDependency: true,
-          allow: [],
-          depConstraints: [
-            {
-              sourceTag: '*',
-              onlyDependOnLibsWithTags: ['*'],
-            },
-          ],
-        },
-      ],
     },
   },
   {
     // environment files import build-time resources via absolute paths (intentional)
     files: ['**/environment*.ts'],
     rules: {
-      '@nx/enforce-module-boundaries': 'off',
       'import/order': 'off',
     },
   },
   {
     files: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.js', '**/*.spec.jsx'],
     rules: {
-      '@nx/enforce-module-boundaries': 'off',
       'import/order': [
         'error',
         {
@@ -161,24 +208,27 @@ export default [
     },
   },
   {
+    files: ['**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrictImports(),
+    },
+  },
+  {
     // CalendarDateService is the one home of the calendar rules applied to a KnoraDate (ARCH-MAP.md,
     // vre/ui/ui). Elsewhere, the calendar library offers only its vocabulary; a component importing
     // its arithmetic directly becomes a second owner of the era and astronomical-year mapping.
     files: ['**/*.ts'],
     ignores: ['**/shared/calendar/**', '**/calendar-date/calendar-date.service.ts', '**/*.spec.ts', '**/*.stories.ts'],
     rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          paths: [
-            {
-              name: '@dasch-swiss/vre/shared/calendar',
-              allowImportNames: ['CALENDAR_SYSTEMS', 'CalendarSystem'],
-              message: 'Calendar rules on a KnoraDate belong in CalendarDateService (@dasch-swiss/vre/ui/ui).',
-            },
-          ],
-        },
-      ],
+      'no-restricted-imports': restrictImports({
+        paths: [
+          {
+            name: '@dasch-swiss/vre/shared/calendar',
+            allowImportNames: ['CALENDAR_SYSTEMS', 'CalendarSystem'],
+            message: 'Calendar rules on a KnoraDate belong in CalendarDateService (@dasch-swiss/vre/ui/ui).',
+          },
+        ],
+      }),
     },
   },
   eslintConfigPrettier,

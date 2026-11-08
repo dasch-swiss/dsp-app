@@ -34,7 +34,7 @@ import { OntologyDataService } from '../../../../service/ontology-data.service';
       </mat-select>
     </mat-form-field>
   `,
-  styleUrl: '../../../../statement-builder.scss',
+  styleUrl: '../../../../statement-builder.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceValueComponent implements OnChanges {

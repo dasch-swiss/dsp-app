@@ -1,11 +1,11 @@
 # ADR-0006: The end-to-end suite is its own project
 
-- **Status:** Accepted (2026-09-13)
-- **Relates to:** ADR-0001 (library taxonomy), ADR-0002 (the barrel is the public interface)
+- **Status:** Accepted (2026-09-13); decision revised (2026-11-06) when Bazel replaced Nx ([ADR-0007](0007-bazel-builds-the-repository.md))
+- **Relates to:** ADR-0001 (library taxonomy), ADR-0002 (the barrel is the public interface), ADR-0007 (Bazel builds the repository)
 
 ## Context
 
-The Cypress suite lives at `apps/dsp-app/cypress/`: twenty spec files plus page objects, models, fixtures and support helpers. It is not an Nx project of its own. It is a directory inside the application, and an `e2e` target on that application.
+The Cypress suite lives at `apps/dsp-app/cypress/`: twenty spec files plus page objects, models, fixtures and support helpers. This section describes it as it was under Nx when the record was written. It was not an Nx project of its own. It is a directory inside the application, and an `e2e` target on that application.
 
 **Most of the Nx wiring is already there, and is better than it looks.** `apps/dsp-app/project.json` defines a working target:
 
@@ -54,47 +54,41 @@ The suite being a directory rather than a project is what made 2, 3 and 4 possib
 
 ## Decision
 
-1. **The end-to-end suite becomes its own Nx project, `dsp-app-e2e`.** (**structure**)
+The first version of this record made the suite an Nx project, `dsp-app-e2e`, with `implicitDependencies: ["dsp-app"]`, an Nx `e2e` target and a `type:e2e` tag constrained to `type:data-access` and `type:util`. Bazel replaced Nx before that move was made (ADR-0007), so none of it exists. The intent survives: the suite has its own type-check, its own run and its own import rule, each a `just` recipe or a stated review rule rather than a hand-rolled CI step.
 
-   It moves to `apps/dsp-app-e2e/`, taking `cypress.config.ts`, the `cypress/` tree and its tsconfig. `apps/dsp-app/project.json` loses its `e2e` target; the new project gains it, unchanged apart from paths. `implicitDependencies: ["dsp-app"]` records the relationship that `devServerTarget` already implies.
+1. **The suite stays at `apps/dsp-app/cypress/`, with its own tsconfig and its own recipes, and is no Bazel target.** (**structure**)
 
-2. **It is tagged `scope:app`, `type:e2e`, and `type:e2e` returns to the ADR-0001 taxonomy.** (**static-analysis**)
+   The Cypress binary, its browser and the dsp-api stack it runs against are not hermetic, so a Bazel test target would either lie about its inputs or not cache. The recipes are the suite's interface, as a project's targets would have been. Moving the directory buys nothing a recipe does not, so it does not move.
 
-   ADR-0001 omitted `e2e` because no project could carry it. This ADR creates one. The constraint block gains:
+2. **`just typecheck-e2e` type-checks the suite, and `just ci` runs it.** (**static-analysis**)
 
-   ```js
-   { sourceTag: 'type:e2e', onlyDependOnLibsWithTags: ['type:data-access', 'type:util'] },
-   ```
+   `pnpm exec tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json` after the generated client is in place. It replaces the hand-rolled CI step #3434 added, and because it is part of `just ci` it runs on every PR and on a developer's machine alike. This is what stops the rot item 4 describes.
 
-   Nothing can depend on an e2e project in return; Nx enforces that independently of tags, as it does for applications.
-
-3. **The suite may import only `type:data-access` and `type:util` libraries, through path aliases.** (**static-analysis**)
+3. **The suite may import only `dsp-js` and the generated OpenAPI client, through their path aliases.** (**review**)
 
    The specs legitimately need request and response shapes from `dsp-js` and the generated OpenAPI client to build fixtures. They do not need components, pages or UI libraries, and an end-to-end test that imports a component is testing the wrong thing.
 
-   The four remaining relative imports of `libs/dsp-js/src` become `@dasch-swiss/dsp-js` alias imports. That fixes the alias bypass, and the boundary rule keeps it fixed. The open-api imports already went through their alias and `UploadedFileResponse` is already a local declaration (#3434), so nothing else in the suite needs to move.
+   The four relative imports of `libs/dsp-js/src` are now `@dasch-swiss/dsp-js` alias imports. The tsconfig extends `tsconfig.base.json`, so every alias resolves; nothing but review keeps the suite to these two, which is a step down from the `type:e2e` constraint this record first chose.
 
-4. **CI calls the Nx target.** (**structure**)
+4. **The run is a `just` recipe, and CI calls it.** (**structure**)
 
-   The three hand-rolled steps collapse to `npx nx run dsp-app-e2e:e2e:production`. Nx starts the dev server, waits for it, runs Cypress against the spec list, and tears the server down. The matrix over spec groups stays; it is passed through as `--spec`.
+   `just e2e-stack-up` brings up the dsp-api stack from the checkout `DSP_API_DIR` names, with a fresh test database. `just e2e <specs>` builds the production bundle with Bazel, serves it on port 4200, waits for it, runs Cypress over the specs and stops the server when it exits. The `dsp-app-e2e-tests` job runs `just e2e-stack-up`, `just typecheck-e2e` and `just e2e "$SPECS"` over its matrix of spec groups. The backgrounded server, the polling loop and the hardcoded wait are gone from the workflow.
 
-   The Docker Compose steps that bring up `sipi`, `ingest` and `api` from the dsp-api repository stay exactly as they are. Nx manages this workspace's processes, not a sibling repository's backend, and this ADR does not pretend otherwise.
+5. **The suite is linted like any other code. Not yet carried out.** (**review**)
 
-5. **The project is linted and type-checked like any other.** (**static-analysis**)
-
-   `apps/dsp-app/cypress/` comes out of the `ignores` list in `eslint.config.mjs`, the new project is added to the `include` list of the `@nx/eslint/plugin` entry in `nx.json`, and its tsconfig is wired to a target that replaces the hand-rolled CI step. DEV-7251 was closed by #3434 fixing the files and adding that step; this is what stops the class of defect recurring, because the type-check and the lint exist as a consequence of the suite being a project rather than because someone remembered to add a step.
+   `apps/dsp-app/cypress/` is still in the `ignores` list of `eslint.config.mjs`, so ESLint skips it and `no-restricted-imports` does not check it. Removing that entry is the open half of this record.
 
 ## Consequences
 
-**Positive.** The rotted imports are caught by the same rule that protects every other library, so the class of bug ends rather than the instance. CI loses a backgrounded process, a polling loop and a hardcoded port. `type:e2e` becomes meaningful, and the taxonomy in ADR-0001 stops carrying an apology. The suite gains a lint target, which it has never had, and its type-check becomes a target rather than a CI step.
+**Positive.** The suite's type-check runs in the gate, so a rotted import fails the PR that causes it. CI lost a backgrounded process, a polling loop and a hardcoded port, and a developer runs the same recipes CI does.
 
-**Negative and costs.** Moving the directory rewrites every relative path inside the suite, which is a large but mechanical diff, and it will conflict with any in-flight branch touching Cypress. The `dsp-app-e2e-tests` workflow job needs rewriting, and a mistake there is invisible until the next PR that touches the app. The suite already type-checks under the #3434 CI step, so the four remaining import rewrites are mechanical.
+**Negative and costs.** The import rule in decision 3 is review, not a tool, and the suite is still unlinted. The `type:e2e` taxonomy entry ADR-0001 once anticipated does not exist.
 
-**This ADR is independently landable.** Unlike ADR-0001, which cannot switch on its constraint block until ADR-0004 and ADR-0005 are carried out, nothing here waits on the library migration. Tagging a new project is safe while `{ sourceTag: '*', onlyDependOnLibsWithTags: ['*'] }` is still in place, per ADR-0001 decision 6.
+**This record no longer waits on anything.** Decisions 1 to 4 hold today; decision 5 is one `ignores` entry and whatever ESLint then reports.
 
 ## Alternatives rejected
 
-- **Keep the suite inside `apps/dsp-app` and fix the three defects in place.** Genuinely viable, and cheaper. Remove the `ignores` entry, add a type-check target, point CI at the existing `e2e` target. It fixes all four numbered problems above without moving a single file. Rejected because the suite would still inherit the application's tags, so the boundary rule would grant it whatever the application may import, which is everything. The import restriction in decision 3 is the part that prevents recurrence, and it needs a tag of its own to express. A separate project is also the layout `nx g @nx/angular:application` produces, given this workspace's own `"e2eTestRunner": "cypress"` generator default, so it is the shape a future contributor will expect.
-- **Move the suite to its own repository.** Decouples the test cadence from the application's, and is how some teams run cross-service suites. Rejected: it would lose `affected` entirely, so every change would run every spec, and it puts a repository boundary between a UI change and the test that covers it. The suite already depends on the app's dev server.
+- **Keep the suite inside `apps/dsp-app` and fix the three defects in place.** Genuinely viable, and cheaper. Remove the `ignores` entry, add a type-check target, point CI at the existing `e2e` target. It fixes all four numbered problems above without moving a single file. Rejected at the time because the suite would inherit the application's tags, so the boundary rule would grant it whatever the application may import, which is everything. Under Bazel this is what happened after all, by the route decision 1 states: the suite stays in place, with recipes of its own.
+- **Move the suite to its own repository.** Decouples the test cadence from the application's, and is how some teams run cross-service suites. Rejected: it would lose the shared change detection, so every change would run every spec, and it puts a repository boundary between a UI change and the test that covers it. The suite already depends on the app's dev server.
 - **Ban workspace imports from the suite entirely (`onlyDependOnLibsWithTags: []`).** The strict reading, and consistent with ADR-0004's "share concepts, never shapes": the suite would declare its own request shapes rather than borrowing the client's. Rejected for now as disproportionate. It would mean hand-maintaining fixture types that already exist and drift, to remove a dependency that is type-only and points at the two most stable libraries in the workspace. Worth revisiting if the fixtures start breaking on client changes.
 - **Switch runners to Playwright while moving things anyway.** The move touches every file in the suite, so it is the cheapest moment to change tooling, and Playwright is now the Nx default for new applications. Rejected: it would conflate a structural fix with a rewrite of twenty specs and all their page objects, and the current Cypress setup has no defect that Playwright fixes. This ADR is about where the suite lives, not what it is written in.

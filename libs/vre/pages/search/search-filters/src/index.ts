@@ -4,7 +4,6 @@ export * from './lib/model';
 export * from './lib/operators.config';
 export * from './lib/providers';
 export * from './lib/search-filter-state';
-export * from './lib/stories.helpers';
 export * from './lib/testing/test-data-builders';
 export * from './lib/service/confirmed-search-state.service';
 export * from './lib/service/dynamic-forms-data.service';

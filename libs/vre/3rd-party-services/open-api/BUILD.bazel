@@ -1,0 +1,64 @@
+load("@bazel_lib//lib:run_binary.bzl", "run_binary")
+load("//tools/angular:defs.bzl", "vre_library")
+load("//tools/openapi:openapi_files.bzl", "OPENAPI_FILES")
+
+# openapi-generator-cli's `generate` arguments, restating openapitools.json's `generators.api`;
+# change both together (the file is an input, so an edit to it reruns the actions).
+GENERATOR_ARGS = [
+    "generate",
+    "--generator-name=typescript-angular",
+    "--input-spec=$(execpath dsp-api_spec.yaml)",
+    "--additional-properties=fileNaming=kebab-case,serviceFileSuffix=-api.service,serviceSuffix=ApiService,ngModule=false",
+]
+
+# The generated client, every file declared by name, where src/index.ts imports it from. The
+# gitignored copy `just openapi-generate` writes at the same source path is never listed.
+run_binary(
+    name = "generated",
+    srcs = [
+        "dsp-api_spec.yaml",
+        "openapitools.json",
+    ],
+    outs = ["src/generated/" + f for f in OPENAPI_FILES],
+    args = GENERATOR_ARGS + ["--output=$(RULEDIR)/src/generated"],
+    execution_requirements = {"block-network": "1"},
+    mnemonic = "OpenApiGenerate",
+    tool = "//tools/openapi:openapi_generator",
+)
+
+# The same generation as one directory, from which `just openapi-generate` refreshes the manifest
+# when a spec change adds or removes a file, and copies the IDE's src/generated.
+run_binary(
+    name = "generated_tree",
+    srcs = [
+        "dsp-api_spec.yaml",
+        "openapitools.json",
+    ],
+    out_dirs = ["generated_tree"],
+    args = GENERATOR_ARGS + ["--output=$(RULEDIR)/generated_tree"],
+    execution_requirements = {"block-network": "1"},
+    mnemonic = "OpenApiGenerate",
+    tool = "//tools/openapi:openapi_generator",
+)
+
+vre_library(
+    name = "open-api",
+    srcs = [
+        "src/index.ts",
+        "src/lib/type-guards.ts",
+    ] + ["src/generated/" + f for f in OPENAPI_FILES if f.endswith(".ts")],
+    test_size = "small",
+    test_srcs = [
+        "src/lib/type-guards.spec.ts",
+        "src/test-setup.ts",
+    ],
+    # ADR-0001 decision 7: ui/string-literal declares its language-string shape locally (DEV-7552).
+    extra_visibility = [
+        "//libs/vre/ui/string-literal:__pkg__",
+    ],
+    deps = [
+        "//:node_modules/@angular/common",
+        "//:node_modules/@angular/core",
+        "//:node_modules/rxjs",
+    ],
+)

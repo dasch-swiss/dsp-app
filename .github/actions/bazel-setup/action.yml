@@ -1,0 +1,69 @@
+name: bazel-setup
+description: >
+  Install Nix, restore the Bazel repository and disk caches, and configure the NativeLink RBE
+  backend. Emits the flags every `nix develop --command just <recipe>` step passes in BAZEL_FLAGS.
+  Runs after actions/checkout, since it reads the lock files and the local bazel-rbe action.
+
+inputs:
+  cache-key-prefix:
+    description: The disk cache's key prefix, one per job, e.g. `bazel-disk-lint`.
+    required: true
+  runner-endpoint:
+    description: RE-API endpoint of the NativeLink RBE backend.
+    required: true
+  ca-cert:
+    description: NativeLink server CA (PEM).
+    required: true
+  client-cert:
+    description: mTLS client cert (PEM).
+    required: true
+  client-key:
+    description: mTLS client key (PEM).
+    required: true
+  cypress:
+    description: Whether `just install` downloads the Cypress binary; only a job that runs Cypress needs it.
+    default: 'false'
+
+outputs:
+  flags:
+    description: The RBE flags plus --lockfile_mode=error; the RBE part is empty without the mTLS material.
+    value: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error
+
+runs:
+  using: composite
+  steps:
+    - name: Skip the Cypress binary
+      if: inputs.cypress != 'true'
+      shell: bash
+      run: echo "CYPRESS_INSTALL_BINARY=0" >> "$GITHUB_ENV"
+    - name: Install Nix
+      uses: DeterminateSystems/determinate-nix-action@v3
+    - name: Restore Bazel repository cache
+      uses: actions/cache@v6
+      with:
+        path: ~/.cache/bazel-repo
+        key: bazel-repo-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', 'pnpm-lock.yaml') }}
+        restore-keys: bazel-repo-${{ runner.os }}-
+    # Only main saves the disk cache; a branch restores main's and never writes one of its own.
+    - name: Restore and save Bazel disk cache
+      if: github.ref == 'refs/heads/main'
+      uses: actions/cache@v6
+      with:
+        path: ~/.cache/bazel-disk/dsp-app
+        key: ${{ inputs.cache-key-prefix }}-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
+        restore-keys: ${{ inputs.cache-key-prefix }}-${{ runner.os }}-
+    - name: Restore Bazel disk cache
+      if: github.ref != 'refs/heads/main'
+      uses: actions/cache/restore@v6
+      with:
+        path: ~/.cache/bazel-disk/dsp-app
+        key: ${{ inputs.cache-key-prefix }}-${{ runner.os }}-${{ hashFiles('MODULE.bazel', 'MODULE.bazel.lock', '.bazelrc', '.bazelversion') }}-${{ github.sha }}
+        restore-keys: ${{ inputs.cache-key-prefix }}-${{ runner.os }}-
+    - name: Configure RBE
+      id: rbe
+      uses: ./.github/actions/bazel-rbe
+      with:
+        runner-endpoint: ${{ inputs.runner-endpoint }}
+        ca-cert: ${{ inputs.ca-cert }}
+        client-cert: ${{ inputs.client-cert }}
+        client-key: ${{ inputs.client-key }}

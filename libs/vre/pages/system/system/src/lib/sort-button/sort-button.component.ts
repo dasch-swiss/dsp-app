@@ -4,8 +4,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { AppError } from '@dasch-swiss/vre/core/error-handler';
 
-export interface SortProp {
-  key: string;
+export interface SortProp<K extends string = string> {
+  key: K;
   label: string;
 }
 
@@ -29,14 +29,14 @@ export interface SortProp {
       }
     </mat-menu>
   `,
-  styleUrls: ['./sort-button.component.scss'],
+  styleUrls: ['./sort-button.component.css'],
   imports: [MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatButton],
 })
-export class SortButtonComponent implements OnInit {
-  @Input({ required: true }) sortProps!: SortProp[];
-  @Input() activeKey?: string;
+export class SortButtonComponent<K extends string = string> implements OnInit {
+  @Input({ required: true }) sortProps!: SortProp<K>[];
+  @Input() activeKey?: K;
 
-  @Output() sortKeyChange = new EventEmitter<string>();
+  @Output() sortKeyChange = new EventEmitter<K>();
 
   selectedLabel?: string;
 
@@ -44,7 +44,7 @@ export class SortButtonComponent implements OnInit {
     this.sortBy(this.activeKey ?? this.sortProps[0].key);
   }
 
-  sortBy(key: string) {
+  sortBy(key: K) {
     const newSort = this.sortProps.find(prop => prop.key === key);
     if (!newSort) {
       throw new AppError(`Sort with key "${key}" not found`);

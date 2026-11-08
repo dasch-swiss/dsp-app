@@ -29,7 +29,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <router-outlet />
     </app-centered-layout>
   `,
-  styleUrls: ['./system-page.component.scss'],
+  styleUrls: ['./system-page.component.css'],
   imports: [
     MatIcon,
     MatTabNav,

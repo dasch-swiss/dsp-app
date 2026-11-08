@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Smoke test of the resource landing-page forwarding in nginx/default.conf.template.
-# Builds the real Dockerfile with a stub app shell (no Angular build) and runs it
-# against a stub dsp-api upstream on a private Docker network.
+# Smoke test of the DSP-APP image: the bundle is served, the resource landing-page forwarding in
+# nginx/default.conf.template works against a stub dsp-api upstream on a private Docker network,
+# and the compose healthcheck's command runs inside the container.
+# Runs the image `just docker-build-app` loads; SMOKE_IMAGE names another.
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RUN_ID="nginx-smoke-$$"
-IMAGE="dsp-app-nginx-smoke:$RUN_ID"
+IMAGE="${SMOKE_IMAGE:-daschswiss/dsp-app:latest}"
 NETWORK="$RUN_ID"
 WORKDIR="$(mktemp -d)"
 FAILURES=0
@@ -14,20 +14,15 @@ FAILURES=0
 cleanup() {
   docker rm -f "$RUN_ID-stub" "$RUN_ID-app" "$RUN_ID-dead" "$RUN_ID-empty" >/dev/null 2>&1 || true
   docker network rm "$NETWORK" >/dev/null 2>&1 || true
-  docker rmi "$IMAGE" >/dev/null 2>&1 || true
   rm -rf "$WORKDIR"
 }
 trap cleanup EXIT
 
-# --- build context: real Dockerfile and nginx/, stub shell ---
-mkdir -p "$WORKDIR/context/dist/apps/dsp-app/config" "$WORKDIR/stub"
-cp "$REPO_ROOT/Dockerfile" "$WORKDIR/context/"
-cp -R "$REPO_ROOT/nginx" "$WORKDIR/context/"
-echo '<html><head></head><body>STUB-SHELL</body></html>' >"$WORKDIR/context/dist/apps/dsp-app/index.html"
-docker build -q -t "$IMAGE" "$WORKDIR/context" >/dev/null
+SHELL_MARKER="<app-root>"
 
 # --- stub dsp-api: behaviour chosen by the resource id ---
-cat >"$WORKDIR/stub/stub.py" <<'PY'
+# Passed inline, not bind-mounted: a VM-backed Docker (colima) shares only the home directory.
+STUB_PY="$(cat <<'PY'
 import sys, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -71,10 +66,11 @@ class Handler(BaseHTTPRequestHandler):
 
 ThreadingHTTPServer(("0.0.0.0", 8000), Handler).serve_forever()
 PY
+)"
 
 docker network create "$NETWORK" >/dev/null
 docker run -d --name "$RUN_ID-stub" --network "$NETWORK" --network-alias stub \
-  -v "$WORKDIR/stub:/stub:ro" python:3-alpine python -u /stub/stub.py >/dev/null
+  python:3-alpine python -u -c "$STUB_PY" >/dev/null
 
 start_app() { # name upstream
   docker run -d --name "$RUN_ID-$1" --network "$NETWORK" -e "DSP_API_UPSTREAM=$2" \
@@ -112,14 +108,16 @@ header() { echo "$HEADERS" | grep -i "^$1:" | head -n1 | sed 's/^[^:]*: *//'; }
 
 expect_status() { [ "$STATUS" = "$2" ] && pass "$1: status $2" || fail "$1: status $STATUS, expected $2"; }
 expect_header() { [ "$(header "$2")" = "$3" ] && pass "$1: $2: $3" || fail "$1: $2 is '$(header "$2")', expected '$3'"; }
-expect_body_has() { echo "$BODY" | grep -q "$2" && pass "$1: body has $2" || fail "$1: body lacks $2"; }
+# A here-string, not a pipe: grep -q exits at the first match, and under pipefail the writer's
+# SIGPIPE on a large body would fail the assertion.
+expect_body_has() { grep -q -- "$2" <<<"$BODY" && pass "$1: body has $2" || fail "$1: body lacks $2"; }
 expect_security_headers() {
   [ "$(header X-Frame-Options)" = "DENY" ] && [ "$(header X-Content-Type-Options)" = "nosniff" ] &&
     pass "$1: security headers" || fail "$1: security headers missing"
 }
 expect_shell() { # name
   expect_status "$1" 200
-  expect_body_has "$1" STUB-SHELL
+  expect_body_has "$1" "$SHELL_MARKER"
   expect_header "$1" Vary Accept
   expect_header "$1" Cache-Control no-store
   expect_security_headers "$1"
@@ -180,6 +178,26 @@ stub_saw "abc.json" && fail ".json path was forwarded" || pass ".json path not f
 
 request "$APP_PORT" GET "/resource/0803/ok200/value123"
 stub_saw "value123" && fail "deeper path was forwarded" || pass "deeper path not forwarded"
+
+# --- the bundle ---
+request "$EMPTY_PORT" GET "/"
+expect_status "index.html" 200
+expect_body_has "index.html" '<script [^>]*src="main-[^"]*\.js"'
+request "$EMPTY_PORT" GET "/assets/i18n/en.json"
+expect_status "i18n file" 200
+expect_header "i18n file" Content-Type application/json
+request "$EMPTY_PORT" GET "/assets/images/dasch-icon-black.svg"
+expect_status "asset" 200
+expect_body_has "asset" "<svg"
+request "$EMPTY_PORT" GET "/config/build.json"
+expect_body_has "build.json" '"build_tag"'
+request "$EMPTY_PORT" GET "/3rdpartylicenses.txt"
+expect_status "3rdpartylicenses.txt" 200
+expect_body_has "3rdpartylicenses.txt" '^Package: @angular/core$'
+
+# --- the compose healthcheck's command, inside the image, so the base must carry curl ---
+docker exec "$RUN_ID-app" sh -c 'curl -sS --fail http://127.0.0.1:${NGINX_PORT}/internal/health | grep "^healthy$"' &&
+  pass "healthcheck command inside the image" || fail "healthcheck command inside the image"
 
 echo
 if [ "$FAILURES" -gt 0 ]; then

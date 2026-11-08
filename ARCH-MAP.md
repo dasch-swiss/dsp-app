@@ -1,16 +1,16 @@
 ---
 dune_map: true
 schema_version: 2
-date: 2026-10-23
+date: 2026-11-06
 ---
 
 # ARCH-MAP
 
 ## Overview
 
-DSP-APP is the Angular browser client for the DaSCH Service Platform, built as an Nx monorepo: one application (`apps/dsp-app`) composed from 28 libraries, one of which (`libs/dsp-js`) is also published to NPM. That is 29 Nx projects in total. The application shell holds only bootstrap, routing and configuration; every page lives in a `libs/vre/pages/*` library, and the resource viewer/editor is its own large library. The client talks to DSP-API through two separate clients, `libs/dsp-js` (hand-written, JSON-LD, the v2 surface) and `libs/vre/3rd-party-services/open-api` (generated from a vendored spec, the admin surface); knowing which one carries a given field is the single most load-bearing fact about this codebase. Vocabulary is defined in [CONTEXT.md](CONTEXT.md), which also records where UI wording deliberately differs from code wording. Component names below are the TypeScript path aliases from `tsconfig.base.json`, because that is what import statements and the boundary lint match on; each entry also gives its Nx project name, which differs and is often surprising.
+DSP-APP is the Angular browser client for the DaSCH Service Platform, built with Bazel (ADR-0007): one application (`apps/dsp-app`) composed from 28 libraries, one of which (`libs/dsp-js`) is also published to NPM, plus the shared Sass library `libs/vre/ui/styles`. Each is one Bazel package. The application shell holds only bootstrap, routing and configuration; every page lives in a `libs/vre/pages/*` library, and the resource viewer/editor is its own large library. The client talks to DSP-API through two separate clients, `libs/dsp-js` (hand-written, JSON-LD, the v2 surface) and `libs/vre/3rd-party-services/open-api` (generated from a vendored spec, the admin surface); knowing which one carries a given field is the single most load-bearing fact about this codebase. Vocabulary is defined in [CONTEXT.md](CONTEXT.md), which also records where UI wording deliberately differs from code wording. Component names below are the TypeScript path aliases from `tsconfig.base.json`, because that is what import statements match on; each entry also gives its Bazel package label, which is what `just test`, `just build` and `visibility` name.
 
-**Depends on** and **Used by** list workspace-alias imports in runtime code. `*.spec.ts`, `*.stories.ts` and `stories.helpers.ts` are excluded, which is the basis the ADRs use, so a story-only edge appears in the Nx project graph but not here. Six exist today: `ui/string-literal`, `pages/ontology/ontology`, `pages/search/search-filters` and `pages/search/search` reach `core/session` from a story or a `stories.helpers.ts`, and `ui/nested-menu` reaches `core/config` and `shared/app-helper-services` the same way. ADR-0001 decision 5 lists them as the reason stories are exempt from the boundary rule.
+**Depends on** and **Used by** list each package's declared Bazel dependencies on other workspace packages (`deps`, not `test_deps`), which equal its alias imports in runtime code plus `vre/ui/styles` for Sass. `*.spec.ts`, `*.stories.ts` and `stories.helpers.ts` are outside a library's compile, so a story-only edge appears nowhere in the build graph. Six exist today: `ui/string-literal`, `pages/ontology/ontology`, `pages/search/search-filters` and `pages/search/search` reach `core/session` from a story or a `stories.helpers.ts`, and `ui/nested-menu` reaches `core/config` and `shared/app-helper-services` the same way. ADR-0001 decision 5 names the `ui/nested-menu` and `ui/string-literal` edges as examples of why stories are outside the boundary graph.
 
 Load this file on demand for blast-radius and boundary questions. It is not meant to be read end to end.
 
@@ -18,7 +18,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 ### dsp-js
 
-- **Nx project**: `dsp-js`
+- **Bazel package**: `//libs/dsp-js`
 - **Paths**: `libs/dsp-js/**`
 - **Purpose**: The hand-written DSP-API client covering the v2 (JSON-LD) and admin surfaces, with the domain model as decorated classes. Also published to NPM, so its public surface is a external contract, not just an internal one.
 - **Key entities**: `KnoraApiConnection`, `KnoraApiConfig`, `ReadResource`, `ReadValue`, `ReadOntology`, `ResourceClassDefinition`, `ResourcePropertyDefinition`, `IHasProperty`, `Cardinality`, `Constants`, `ListNodeV2`, `ReadProject`, `ReadUser`, `PermissionUtil`, `ResourcesConversionUtil`, `OntologyConversionUtil`, `ApiResponseError`
@@ -34,86 +34,87 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Durable state**:
   - `KnoraApiConfig.jsonWebToken`, a public mutable field on the config object shared by every endpoint. Writers: `AuthenticationEndpointV2` login and logout, plus three writers outside this library (see `vre/core/session`). Not single-writer, and the aliasing that makes it work is undocumented.
   - `GenericCache.cache`, `shareReplay` keyed observables, evicted only by `reloadItem`. `V2Endpoint.ontologyCache` and `.listNodeCache` are deprecated; production code constructs per-request `OntologyCache` instances instead, so there is effectively no cross-request ontology cache.
-- **Fingerprint**: `f235e7b403c1`
+- **Fingerprint**: `2efc358f2f96`
 
 ### dsp-app
 
-- **Nx project**: `dsp-app`
+- **Bazel package**: `//apps/dsp-app`
 - **Paths**: `apps/dsp-app/**`
   - exclude: `apps/dsp-app/cypress/**`
 - **Purpose**: The application shell and composition root: runtime config loading, bootstrap, the single routing table, interceptors, global providers, and all i18n and image assets. It holds no page components.
 - **Key entities**: `AppComponent`, `appConfig`, `routes`, `AuthGuard`, `SysAdminGuard`, `authInterceptorFn`, `iiifWithCredentialsInterceptorFn`, `I18nFallbackTranslateLoader`, `CookieBannerComponent`, `buildTagFactory`
 - **Public interface**: None. Nothing imports `@dsp-app/*`; this is a leaf consumer.
-- **Local-context kit**: `src/main.ts`, `src/app/app.config.ts`, `src/app/app.routes.ts`, `libs/vre/core/config/src/lib/app-config/app-constants.ts`, `src/assets/i18n/en.json`, `src/assets/i18n/CLAUDE.md`, `project.json`
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/analytics`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/ui`
+- **Local-context kit**: `src/main.ts`, `src/app/app.config.ts`, `src/app/app.routes.ts`, `libs/vre/core/config/src/lib/app-config/app-constants.ts`, `src/assets/i18n/en.json`, `src/assets/i18n/CLAUDE.md`, `BUILD.bazel`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/analytics`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: none
 - **Boundary rules**:
   - `src/app/app.routes.ts` is the only URL surface. `RouteConstants` in `vre/core/config` supplies the strings, and #3433 and #3437 took it from 74 members to 51 by deleting the dead ones. All 51 are now reachable, but three are referenced only from inside the class: `ontologyRelative` is composed into `ontologyEditorRelative`, and `projectParameter` and `resourceParameter` into `projectResourceRelative`. `app-constants.ts:59` warns about exactly this, so a repo-wide search for `RouteConstants.<member>` returning nothing is not evidence that the member is dead. `docs-only`
   - Config is fetched at runtime by `src/main.ts` before `bootstrapApplication`, not compiled in. `src/environments/*` only selects which `src/config/config.<name>.json` to fetch. `structure`
   - i18n keys must exist in all four of `en/de/fr/it`. Romansh is bound to English at runtime by `src/app/i18n-fallback-translate-loader.ts` and has no file (DEV-6629). See `src/assets/i18n/CLAUDE.md`. `docs-only`
   - Project cover images are keyed by project shortcode at `src/assets/images/project/width-500/{shortcode}.webp`. See that directory's `CLAUDE.md`. `docs-only`
+  - The bundle is `//apps/dsp-app:dist`, built per configuration (`just build <config>`, the `ENVIRONMENTS` dict in `BUILD.bazel`); the image is `//apps/dsp-app/image`. Its `i18n` target is visible to `vre/shared/app-help-page` as test data only, so no library compiles against the application. `structure`
 - **Durable state**:
   - `localStorage['cookieBanner']`, written by `src/app/cookie-banner.component.ts`. The only localStorage key this component owns; the others are owned by libraries.
   - `window.Sentry`, set in `src/main.ts`.
-- **Fingerprint**: `8ed31809160b`
+- **Fingerprint**: `19ca2f60b199`
 
 ### dsp-app-e2e
 
-- **Nx project**: none
+- **Bazel package**: none; `just typecheck-e2e` and `just e2e <specs>` are its interface
 - **Paths**: `apps/dsp-app/cypress/**`
 - **Purpose**: The Cypress end-to-end suite: 20 specs across `logged-out-user`, `project-member`, `system-admin` and `performance`. It is recorded as its own component rather than folded into `dsp-app` because it is built and checked by a different toolchain from everything else in the repository.
 - **Key entities**: `projectPage`, `ontology-command`, `file-uploader`
 - **Public interface**: None.
 - **Local-context kit**: `apps/dsp-app/cypress.config.ts`, `apps/dsp-app/cypress/tsconfig.json`, `cypress/support/commands.ts`, `cypress/support/pages/project-page.ts`, `.github/workflows/ci.yml` (the `dsp-app-e2e-tests` job)
-- **Depends on**: `dsp-js` only, by relative path (`../../../../libs/dsp-js/src`) in four files rather than by alias. The path resolves onto the library's barrel; what it bypasses is the `@dasch-swiss/dsp-js` alias, which is the form the boundary rule would reject. #3434 repointed the former `libs/vre/open-api/src` imports to their alias and declared `UploadedFileResponse` locally, so the two paths that named deleted libraries are gone.
+- **Depends on**: none in the build graph. The specs import `dsp-js` and `vre/3rd-party-services/open-api` type-only, through their `@dasch-swiss/*` aliases; those edges are not Bazel deps, so the two entries do not list this one under Used by.
 - **Used by**: none
 - **Boundary rules**:
-  - **CI bypasses the configured Nx target.** `apps/dsp-app` defines a working `e2e` target (`@nx/cypress:cypress`, with `devServerTarget` set for `production`, `development` and `cypress-cloud`), and `package.json` exposes it as `e2e-ci` and `e2e-ci-dev`. Nothing calls any of it. `.github/workflows/ci.yml` job `dsp-app-e2e-tests` instead backgrounds `dsp-app:serve:production`, polls port 4200 with `curl` for up to 180 seconds, then runs `npx cypress run` from `apps/dsp-app`, as a two-runner matrix (`heavy` and `rest`). See ADR-0006. `docs-only`
-  - The matrix mixes two styles: `project-member`, `logged-out-user` and `performance` are globbed, while all ten `system-admin` specs are enumerated one by one. All 20 specs are covered today, but a new `system-admin` spec will not run until the matrix is edited, and nothing reports that omission. `docs-only`
+  - The suite is no Bazel target: Cypress, its browser and the dsp-api stack are not hermetic. `just e2e <specs>` builds `//apps/dsp-app:dist` with Bazel, serves it on port 4200, runs `pnpm exec cypress run` over the specs and stops the server; `just e2e-stack-up` brings up the stack from `DSP_API_DIR`. CI's `dsp-app-e2e-tests` job runs those recipes as a two-runner matrix (`heavy` and `rest`). See ADR-0006. `structure`
+  - The matrix mixes two styles: `project-member`, `logged-out-user` and `performance` are globbed, while the `system-admin` specs are enumerated one by one. A new `system-admin` spec will not run until the matrix is edited, and nothing reports that omission. `docs-only`
   - `dsp-app-e2e-tests-status` is the required gate that aggregates the matrix. `static-analysis`
-  - **The type-check is a CI step, not a target.** `.github/workflows/ci.yml:210` runs `npx tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json` in the `dsp-app-e2e-tests` job (#3434, DEV-7251). No Nx target does, and `eslint.config.mjs:173` still excludes the directory, so the boundary rule never sees this subtree. Before that step existed, Cypress bundled the specs transpile-only, five files imported from two libraries that had been deleted, and the suite stayed green. ADR-0006 turns the step into a target. `static-analysis`
-  - Do not copy its import style. It bypasses the `@dasch-swiss/*` aliases because the boundary lint is disabled here. `docs-only`
+  - `just typecheck-e2e` (`tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json`) type-checks the suite and is part of `just ci`. Before a type-check existed, Cypress bundled the specs transpile-only, five files imported from two deleted libraries, and the suite stayed green (#3434, DEV-7251). `static-analysis`
+  - `eslint.config.mjs` still lists `apps/dsp-app/cypress/` under `ignores`, so no lint rule, the import boundary included, sees this subtree. Keep its imports to `dsp-js` and the generated client, through their aliases (ADR-0006 decision 3). `review`
 - **Durable state**: `cypress.config.ts` carries a hardcoded JWT literal in `env.authToken`, alongside localhost URLs for api, ingest and IIIF. It is a local-stack fixture, not a credential for a deployed environment.
-- **Fingerprint**: `77d0c4c999cb`
+- **Fingerprint**: `f7f6306edc93`
 
 ### vre/3rd-party-services/api
 
-- **Nx project**: `vre-shared-app-api`
+- **Bazel package**: `//libs/vre/3rd-party-services/api`
 - **Paths**: `libs/vre/3rd-party-services/api/**`
 - **Purpose**: Hand-written Angular services over DSP-API REST endpoints, plus hand-written TypeScript interfaces for v2 ontology JSON-LD payloads.
 - **Key entities**: `BaseApi`, `ProjectApiService`, `UserApiService`, `ListApiService`, `LegalInfoApiService`, `ResourceLegalV2ApiService`, `ProjectIdentifier`
 - **Public interface**: Five `export *` from `src/index.ts`, one per service. `BaseApi` and the v2 payload interfaces are internal.
-- **Local-context kit**: `src/index.ts`, `src/lib/services/base-api.ts`, `src/lib/services/admin/project-api.service.ts`, `src/lib/services/admin/legal-info-api.service.ts`, `src/lib/services/v2/resource-legal-v2-api.service.ts`, `src/lib/services/v2/ontology/read-ontology.interface.ts`, `CLAUDE.md` (the dual-client rule)
+- **Local-context kit**: `src/index.ts`, `src/lib/services/base-api.ts`, `src/lib/services/admin/project-api.service.ts`, `src/lib/services/admin/legal-info-api.service.ts`, `src/lib/services/v2/resource-legal-v2-api.service.ts`, `src/lib/services/v2/ontology/read-ontology.interface.ts`, the root `CLAUDE.md` (the dual-client rule)
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/open-api`, `vre/core/config`
-- **Used by**: `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`
+- **Used by**: `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`
 - **Boundary rules**:
   - Every service that calls DSP-API over HTTP belongs here, never inline in a component and never in `shared/`. `docs-only`
   - Requests to custom v2 endpoints must set `Content-Type: application/ld+json` explicitly. Angular's `HttpClient` defaults to `application/json`, which dsp-api rejects. Precedent: `ResourceLegalV2ApiService`. `docs-only`
   - A new service extends `BaseApi` and is added to `src/index.ts` by hand. `docs-only`
   - `ProjectApiService`, `UserApiService` and `ListApiService` call `HttpClient` directly against admin endpoints the generated client already covers, and return dsp-js models. `LegalInfoApiService`, in the same directory, wraps the generated client instead. Both conventions live here with nothing distinguishing them. `docs-only`
 - **Durable state**: none. `BaseApi.baseUri` is computed once per service at construction.
-- **Fingerprint**: `6bf77a62bb53`
+- **Fingerprint**: `3880efd718c4`
 
 ### vre/3rd-party-services/open-api
 
-- **Nx project**: `vre-open-api`
+- **Bazel package**: `//libs/vre/3rd-party-services/open-api`
 - **Paths**: `libs/vre/3rd-party-services/open-api/**`
-- **Purpose**: The vendored DSP-API OpenAPI spec plus the generator config that produces a typed Angular client at install time. The only hand-written source is one string-literal type guard.
+- **Purpose**: The vendored DSP-API OpenAPI spec plus the generator config that produces a typed Angular client in a Bazel action from a hermetic JDK: the library compiles the declared outs of `:generated`, while `:generated_tree` only feeds the manifest refresh and the copy `just openapi-generate` makes to the gitignored `src/generated` for the IDE. The only hand-written source is one string-literal type guard.
 - **Key entities**: `AdminAPIApiService`, `APIV2ApiService`, `APIV3ApiService`, `SegmentApiService`, `StringLiteralV2`, `ProjectLicenseDto`, `ensureWithDefaultLanguage`, `StringLiteralWithLanguage`
 - **Public interface**: `export * from './generated/index'` and `export * from './lib/type-guards'`.
-- **Local-context kit**: `README.md`, `openapitools.json`, `dsp-api_spec.yaml` (head only), `src/index.ts`, `src/lib/type-guards.ts`, `.claude/skills/update-openapi-client/SKILL.md`, `scripts/check-openapi-sync.sh`
+- **Local-context kit**: `README.md`, `BUILD.bazel`, `openapitools.json`, `dsp-api_spec.yaml` (head only), `src/index.ts`, `src/lib/type-guards.ts`, `.claude/skills/update-openapi-client/SKILL.md`, `tools/openapi/write_manifest.sh`
 - **Depends on**: none
 - **Used by**: `dsp-app`, `vre/3rd-party-services/api`, `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/resource-editor/resource-editor`, `vre/shared/app-helper-services`, `vre/ui/string-literal`
 - **Boundary rules**:
-  - `src/generated/**` is gitignored and deleted by `rm -rf` on every generate. Edits there cannot be committed and cannot survive. `structure`
+  - `src/generated/**` is gitignored and deleted by `rm -rf` on every `just openapi-generate`; the build never reads it, only Bazel's own output. Edits there cannot be committed and cannot survive. `structure`
   - Never edit `dsp-api_spec.yaml` to silence `check-openapi-sync`. A red check is expected until the dsp-api change is deployed to dev. Use the `update-openapi-client` skill. `review`
   - You do not add code here. Bump the spec and regenerate. `docs-only`
-- **Durable state**: `dsp-api_spec.yaml`, currently pinned at `info.version: v39.0.0-17-g9ddad36`. Written by `npm run update-openapi` or by the CI auto-bump PR.
-- **Fingerprint**: `bdb777e46ba6`
+- **Durable state**: `dsp-api_spec.yaml`, currently pinned at `info.version: v39.0.0-17-g9ddad36`. Written by `just openapi-update` or by the CI auto-bump PR.
+- **Fingerprint**: `2c7c7cdc5ae0`
 
 ### vre/3rd-party-services/analytics
 
-- **Nx project**: `vre-3rd-party-services-analytics`
+- **Bazel package**: `//libs/vre/3rd-party-services/analytics`
 - **Paths**: `libs/vre/3rd-party-services/analytics/**`
 - **Purpose**: Lazy-loads and wraps the Grafana Faro Web SDK for real-user monitoring, tracing, custom events and pseudonymised user identification.
 - **Key entities**: `GrafanaFaroService`, `setup`, `trackEvent`, `trackError`, `setUser`, `removeUser`
@@ -126,11 +127,11 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Every public method is try/catch wrapped so telemetry can never break the app. Keep that. `docs-only`
   - User identifiers are hashed with UUID v5 before being sent. Never send a raw user IRI. `review`
 - **Durable state**: `window.__FARO__`, a mutable global written here in `setup()` and read by `ErrorReportingService` in `vre/core/error-handler`. One writer, one cross-library reader, no DI token.
-- **Fingerprint**: `2d809c426a90`
+- **Fingerprint**: `f543b706516e`
 
 ### vre/core/config
 
-- **Nx project**: `vre-core-config`
+- **Bazel package**: `//libs/vre/core/config`
 - **Paths**: `libs/vre/core/config/**`
 - **Purpose**: Parses and validates the runtime config file into typed objects, and holds the application's DI tokens. In practice it also holds the routing vocabulary and a set of unrelated global constants; see the note below.
 - **Key entities**: `AppConfigService`, `AppConfigToken`, `DspApiConfigToken`, `DspApiConnectionToken`, `RouteConstants`, `ApiConstants`, `Auth`, `AvailableLanguages`, `LocalStorageLanguageKey`, `DspDialogConfig`, `buildTagFactory`
@@ -144,11 +145,11 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `AppConfigService` getters hand out mutable objects. `dspApiConfig` in particular is the live JWT holder. `docs-only`
   - The advanced-search URL contract had two sources, five unread `RouteConstants` members and the live literals inside `SearchUrlSyncService`. #3433 deleted the constants (DEV-7252), so `SearchUrlSyncService` is now the single source. `docs-only`
 - **Durable state**: `AppConfigService._dspApiConfig`, the shared dsp-js `KnoraApiConfig`. Five writers across four libraries. See `vre/core/session`.
-- **Fingerprint**: `ab9941564e0d`
+- **Fingerprint**: `4d0518e6d2c4`
 
 ### vre/core/session
 
-- **Nx project**: `vre-core-session`
+- **Bazel package**: `//libs/vre/core/session`
 - **Paths**: `libs/vre/core/session/**`
 - **Purpose**: Owns the JWT lifecycle: storage, expiry checking, login and logout orchestration, auto-login at boot, and the current-user stream.
 - **Key entities**: `AccessTokenService`, `AuthService`, `AutoLoginService`, `LocalStorageWatcherService`, `UserService`, `hasCheckedCredentials$`, `afterSuccessfulLogin$`, `isSysAdmin$`, `AuthError`
@@ -163,11 +164,11 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `localStorage['ACCESS_TOKEN']`. Intended single writer is `AccessTokenService`, called by `AuthService` on login and logout and by `AutoLoginService` when a stored token is expired.
   - The same JWT is mirrored in three places kept in sync by hand: localStorage, `KnoraApiConfig.jsonWebToken`, and `UserService._user$`. Correctness depends on an undocumented shared-object-identity invariant with no test covering it.
   - `AutoLoginService.hasCheckedCredentials$`, a root BehaviorSubject gating all three route guards.
-- **Fingerprint**: `675634644403`
+- **Fingerprint**: `b331bf8f3f02`
 
 ### vre/core/error-handler
 
-- **Nx project**: `vre-core-error-handler`
+- **Bazel package**: `//libs/vre/core/error-handler`
 - **Paths**: `libs/vre/core/error-handler/**`
 - **Purpose**: The global Angular `ErrorHandler`. Turns dsp-api, dsp-js and HTTP failures into user-facing snackbars and, separately, into Sentry and Faro telemetry.
 - **Key entities**: `AppErrorHandler`, `provideAppErrorHandler`, `ErrorReportingService`, `reasonFromErrorBody`, `declaredMessageOf`, `AppError`, `UserFeedbackError`, `JsLibParsedError`, `DEDUP_WINDOW_MS`
@@ -180,28 +181,28 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Branch ordering in `handleGenericError` is load-bearing: specific cases must precede generic ones, and the `status === 0` comment explains why. `docs-only`
   - The dense inline docblocks citing DEV ticket numbers are the documentation of record for this library. `docs-only`
 - **Durable state**: `ErrorReportingService._reportedAt`, a per-tab fingerprint-to-timestamp map implementing a 60 second dedup window. Single writer, never evicted, so it grows unbounded over a long session.
-- **Fingerprint**: `a35de16a38e8`
+- **Fingerprint**: `59f6942a679d`
 
 ### vre/ui/ui
 
-- **Nx project**: `vre-ui-ui`
+- **Bazel package**: `//libs/vre/ui/ui`
 - **Paths**: `libs/vre/ui/ui/**`
 - **Purpose**: The shared component kit: dialogs, form controls, layout primitives, pipes and directives. It also carries a tail of page-shaped and domain-specific components that do not belong in a kit.
 - **Key entities**: `DialogService`, `ConfirmDialogComponent`, `DialogHeaderComponent`, `CkEditorComponent`, `CommonInputComponent`, `ChipListInputComponent`, `TimeInputComponent`, `PagerComponent`, `KnoraDatePipe`, `HumanReadableErrorPipe`, `AdminImageDirective`, `NotAllowedPageComponent`, `NoResultsFoundPageComponent`, `ResourceRightsStatementComponent`, `CalendarMarkerComponent`, `CalendarDateService`
 - **Public interface**: 46 `export *` lines from `src/index.ts`, plus one curated named export (`CalendarMarkerComponent`).
 - **Local-context kit**: `src/index.ts`, `src/lib/dialog/dialog.service.ts`, `src/lib/dialog/confirm-dialog.component.ts`, `src/lib/common-input.component.ts`, `src/lib/pipes/formatting/knoradate.pipe.ts`, `src/lib/search-failed.component.ts`
-- **Depends on**: `dsp-js`, `vre/shared/app-common`, `vre/shared/calendar`
+- **Depends on**: `dsp-js`, `vre/shared/app-common`, `vre/shared/calendar`, `vre/ui/styles`
 - **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/search/search-filters`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/ui/date-picker`, `vre/ui/string-literal`
 - **Boundary rules**:
   - `NotAllowedPageComponent` and `NoResultsFoundPageComponent` are mounted as routes at `/403` and `/404`. Routed pages in a component kit are an exception, not a pattern to copy. `docs-only`
   - `ResourceRightsStatementComponent`, `AuthorshipChipEditorComponent`, `AdminImageDirective` and `KnoraDatePipe` carry DSP domain knowledge and are kit members only by location. `docs-only`
   - `CalendarDateService` is the one home of the calendar rules applied to a `KnoraDate`: the viewer's reading (`convertKnoraDateTo`, spans), the editor's restating (`restateKnoraDateIn`, `restatableCalendarsFor`), an added end's preset (`nextKnoraDate`), period order (`isPeriodOutOfOrder`), the day range a value covers (`julianDayRangeOf`, via the library's `jdnRange`), the Gregorian reform's skipped days (`isSkippedByGregorianReform`, `reformGapOf`) and the advanced-search literal both ways (`format(…, 'gravsearch')`, `parseGravsearchDate`). It adapts `vre/shared/calendar` — astronomical years, eras, precision — and keeps the arithmetic there. Outside it and the calendar lib, only `CALENDAR_SYSTEMS` and `CalendarSystem` may be imported from `@dasch-swiss/vre/shared/calendar` (`no-restricted-imports` in the root `eslint.config.mjs`). `static-analysis`
 - **Durable state**: none. `DialogService` is a stateless wrapper over `MatDialog`.
-- **Fingerprint**: `597af7520558`
+- **Fingerprint**: `5f8d8c0209ad`
 
 ### vre/ui/date-picker
 
-- **Nx project**: `vre-ui-date-picker`
+- **Bazel package**: `//libs/vre/ui/date-picker`
 - **Paths**: `libs/vre/ui/date-picker/**`
 - **Purpose**: The date editor: a calendar choice, a picker that picks a date in the calendar it is told, and a form control for a DSP date value — one date or a period, edited against what is stored. It orchestrates; the calendar rules it applies live in `CalendarDateService` (`vre/ui/ui`).
 - **Key entities**: `CalendarSelectorComponent`, `DatePickerComponent`, `DateValueComponent`
@@ -215,11 +216,11 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Conversions measure from the stored value until the user edits a date that came from it, so switching away and back restores it exactly. An end added beside a stored single date — entered or preset — is not such an edit. `review`
   - Nothing converts silently: a converted day is named in a hint; a day the Gregorian reform skipped (5–14 October 1582, valid in the proleptic calendar and stored as given) is marked in the grid and noted. `docs-only`
 - **Durable state**: none. The rewrite in DEV-7372 deleted the Material `DateAdapter` stack and `provideCalendarDateAdapter()`; `time-value.component.ts` supplies its own `CustomDateAdapter` at component level.
-- **Fingerprint**: `37e91221b2bb`
+- **Fingerprint**: `1c65eacf79de`
 
 ### vre/ui/string-literal
 
-- **Nx project**: `vre-library-app-string-literal`
+- **Bazel package**: `//libs/vre/ui/string-literal`
 - **Paths**: `libs/vre/ui/string-literal/**`
 - **Purpose**: Multi-language form inputs for `StringLiteral` values, and the pipe that renders one in the current UI language.
 - **Key entities**: `MultiLanguageInputComponent`, `MultiLanguageTextareaComponent`, `StringifyStringLiteralPipe`, `MultiLanguageFormService`, `MultiLanguageFormArray`, `DEFAULT_MULTILANGUAGE_FORM`
@@ -232,11 +233,11 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Never call `TranslateService.use()` here. Go through `LocalizationService`. `docs-only`
   - `StringLiteral` (dsp-js), `StringLiteralV2` (dsp-js v2), `LanguageStringDto` and `StringLiteralWithLanguage` (open-api) are four shapes of one concept, all accepted by this pipe's input union. `docs-only`
 - **Durable state**: none of its own. `MultiLanguageFormService` is component-scoped. The pipe holds per-instance memo fields.
-- **Fingerprint**: `17c24b0dd65a`
+- **Fingerprint**: `07ea5e196e7a`
 
 ### vre/ui/progress-indicator
 
-- **Nx project**: `vre-ui-progress-indicator`
+- **Bazel package**: `//libs/vre/ui/progress-indicator`
 - **Paths**: `libs/vre/ui/progress-indicator/**`
 - **Purpose**: Spinner and loading-overlay widgets, plus a directive that places a spinner inside a button.
 - **Key entities**: `AppProgressIndicatorComponent`, `ProgressIndicatorOverlayComponent`, `ProgressSpinnerComponent`, `LoadingButtonDirective`
@@ -246,11 +247,11 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`
 - **Boundary rules**: One of two libraries in the repository with zero internal dependencies at runtime. Keep it that way. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `303c762dbecb`
+- **Fingerprint**: `503b57230ffa`
 
 ### vre/ui/nested-menu
 
-- **Nx project**: `vre-ui-nested-menu`
+- **Bazel package**: `//libs/vre/ui/nested-menu`
 - **Paths**: `libs/vre/ui/nested-menu/**`
 - **Purpose**: A recursive Material menu for picking a node out of a controlled vocabulary.
 - **Key entities**: `NestedMenuComponent`, `selectMenuWithChildren`, `openSubMenu`
@@ -260,56 +261,73 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: `vre/pages/search/search-filters`, `vre/resource-editor/resource-editor`
 - **Boundary rules**: Fully input and output driven, no injected services. Its apparent dependencies on `core/config` and `shared/app-helper-services` exist only in its Storybook file. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `7869b32fe170`
+- **Fingerprint**: `afe5f625c5cb`
 
 ### vre/ui/notification
 
-- **Nx project**: `vre-ui-notification`
+- **Bazel package**: `//libs/vre/ui/notification`
 - **Paths**: `libs/vre/ui/notification/**`
 - **Purpose**: A one-method wrapper over `MatSnackBar` for success and error toasts. It contains a service, not a UI component, and sits under the `ui/` tier by name only.
 - **Key entities**: `NotificationService`, `openSnackBar`
 - **Public interface**: `NotificationService` only.
-- **Local-context kit**: `src/index.ts`, `src/lib/app-notification/app-notification.service.ts`, `project.json`
+- **Local-context kit**: `src/index.ts`, `src/lib/app-notification/app-notification.service.ts`, `BUILD.bazel`
 - **Depends on**: none
 - **Used by**: `vre/core/error-handler`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`
 - **Boundary rules**: `vre/core/error-handler` depends on this library, so the dependency runs from `core` into `ui`. That inversion is why "core never imports ui" cannot be stated as a rule today. `docs-only`
 - **Durable state**: none. State lives in Material's overlay.
-- **Fingerprint**: `86e1646abf13`
+- **Fingerprint**: `7a6c1ff15abb`
+
+### vre/ui/styles
+
+- **Bazel package**: `//libs/vre/ui/styles`
+- **Paths**: `libs/vre/ui/styles/**`
+- **Purpose**: The shared Sass partials every library stylesheet may `@use`: `config`, `mixins`, `responsive` and the Material icon face. Moved out of `apps/dsp-app/src/styles/` so no library reaches into the application for Sass.
+- **Key entities**: `_config.scss`, `_mixins.scss`, `_responsive.scss`, `_material-icons.scss`, `styles` (`sass_library`), `material` (`npm_sass_library`), `storybook_sources`
+- **Public interface**: The `:styles` target, listed in a library's `sass_deps`; `:material` for a stylesheet that does `@use '@angular/material'`.
+- **Local-context kit**: `BUILD.bazel`, `_config.scss`, `_mixins.scss`, `_responsive.scss`, `tools/angular/defs.bzl`
+- **Depends on**: none
+- **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/search/search-filters`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/ui/ui`
+- **Boundary rules**:
+  - A stylesheet's `@use 'config'`, `'mixins'` or `'responsive'` resolves only when its library lists `//libs/vre/ui/styles` in `sass_deps`; otherwise `sass_binary` fails in the sandbox. `structure`
+  - The targets are `//visibility:public` and not in `LIBRARIES`: the partials carry no code, so a tier would add nothing. `structure`
+  - The Storybook build reads the partials as plain files through `storybook_sources` (its webpack Sass, `angular.json`'s `stylePreprocessorOptions`). A new partial is added to both. `docs-only`
+- **Durable state**: none.
+- **Fingerprint**: `89f569939de3`
 
 ### vre/shared/app-common
 
-- **Nx project**: `vre-shared-app-common`
+- **Bazel package**: `//libs/vre/shared/app-common`
 - **Paths**: `libs/vre/shared/app-common/**`
 - **Purpose**: Framework-level utilities shared by everything: regex, validators, RxJS operators, IRI helpers. Roughly half of it is actually resource-editor domain model.
 - **Key entities**: `ResourceService`, `DspResource`, `DspCompoundPosition`, `CustomRegex`, `GenerateProperty`, `generateDspResource`, `UserPermissions`, `PropertyInfoValues`, `PLACEHOLDER_SENTINEL`, `fulltextSearchTermValidator`, `filterNull`, `listRootIriFromGuiAttributes`, `triggerBlobDownload`
 - **Public interface**: 17 `export *` lines from `src/index.ts`.
-- **Local-context kit**: `src/index.ts`, `src/lib/dsp-resource.ts`, `src/lib/resource.service.ts`, `src/lib/legal/placeholder-sentinel.ts`, `src/lib/form-validators/search-term.validator.ts`, `project.json`, `README.md`
+- **Local-context kit**: `src/index.ts`, `src/lib/dsp-resource.ts`, `src/lib/resource.service.ts`, `src/lib/legal/placeholder-sentinel.ts`, `src/lib/form-validators/search-term.validator.ts`, `BUILD.bazel`, `README.md`
 - **Depends on**: `dsp-js`, `vre/core/config`
 - **Used by**: `vre/core/session`, `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search-filters`, `vre/pages/system/system`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/ui`
 - **Boundary rules**: `dsp-resource.ts`, `generateProperty.ts`, `generate-dsp-resource.ts`, `property-info-values.interface.ts`, `user-permissions.ts` and `list-gui-attributes.ts` are resource-editor and ontology domain models, not generic utilities. This is an early stage of the same drift that produced `app-helper-services`. `docs-only`
 - **Durable state**: none. `ResourceService.iriBase` is computed once at construction.
-- **Fingerprint**: `3f2de9c809a6`
+- **Fingerprint**: `f43056673091`
 
 ### vre/shared/app-common-to-move
 
-- **Nx project**: `vre-shared-app-common-to-move`
+- **Bazel package**: `//libs/vre/shared/app-common-to-move`
 - **Paths**: `libs/vre/shared/app-common-to-move/**`
 - **Purpose**: The application shell chrome (the header bar and its sub-components) plus the auth and user form widgets. Despite the name it is not a staging area; it is a feature and shell library mis-filed under `shared/`.
 - **Key entities**: `HeaderComponent`, `HeaderLogoComponent`, `HeaderUserActionsComponent`, `GlobalSearchComponent`, `LanguageSwitcherComponent`, `UserMenuComponent`, `LoginFormComponent`, `PasswordFormFieldComponent`, `PasswordConfirmFormComponent`, `SearchTipsComponent`, `UserFormComponent`, `SplitPipe`
 - **Public interface**: 14 exports from `src/index.ts`.
 - **Local-context kit**: `src/index.ts`, `src/lib/header/header.component.ts`, `src/lib/header/header-user-actions.component.ts`, `src/lib/header/language-switcher.component.ts`, `src/lib/header/login-form/login-form.component.ts`, `src/lib/user-form/user-form.component.ts`, `src/lib/user-form/user-form.type.ts`
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/session`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/session`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/pages/user-settings/user`
 - **Boundary rules**:
-  - Its fan-out of 9 exceeds its fan-in of 6, which is backwards for a shared library and is the diagnostic that it is not one. Shared libraries are leaves.
+  - It depends on more libraries than depend on it (ADR-0005 counts them), which is backwards for a shared library and is the diagnostic that it is not one. Shared libraries are leaves.
   - No record exists anywhere of an intended destination. The name has been unexplained since the library was created in May 2024 as the residue of an unrelated refactor. Items have left it over time, so the mechanism works; what remains is the app shell, which is hard to move because it requires deciding where the shell lives. `docs-only`
   - Do not add to it. `docs-only`
 - **Durable state**: none of its own, but `src/lib/header/language-switcher.component.ts` writes `LocalizationService.currentLanguage`, which is owned by `vre/shared/app-helper-services`. That value has three writers across three libraries.
-- **Fingerprint**: `04f8f76f216b`
+- **Fingerprint**: `8f8abe327094`
 
 ### vre/shared/app-helper-services
 
-- **Nx project**: `app-helper-services`
+- **Bazel package**: `//libs/vre/shared/app-helper-services`
 - **Paths**: `libs/vre/shared/app-helper-services/**`
 - **Purpose**: Nominally a set of root-scoped helper services. In practice it holds four different kinds of thing: the ontology-editor property-type registry, application-wide i18n infrastructure, a stateful cache with a security contract, and page-scoped view state.
 - **Key entities**: `DefaultProperties`, `DefaultProperty`, `PropertyCategory`, `DefaultResourceClasses`, `OntologyService`, `getDefaultProperty`, `ProjectService`, `IriToUuid`, `uuidToIri`, `LocalizationService`, `ProjectDataRightsService`, `ResourceResultService`, `SortingHelper`, `pickPreferredLanguageString`
@@ -326,25 +344,25 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `LocalizationService._currentLanguage$` plus `localStorage['dsp_language']` plus `document.documentElement.lang`. Three writers: `LocalizationService.init()`, `LanguageSwitcherComponent` in `app-common-to-move`, and `AuthService` in `core/session`.
   - `ProjectDataRightsService`, a root-scoped cache with a reverse shortcode index. Written by its own mutation methods and externally by `ProjectPageGuard` calling `clearAll()`.
   - `ResourceResultService`, component-scoped paging state. `numberOfResults` is a plain public field written from six sites across three libraries with no change notification; `pageIndex` is a BehaviorSubject behind a method. See Cross-cutting concerns.
-- **Fingerprint**: `dbd95b11d870`
+- **Fingerprint**: `0d09ebf0fdab`
 
 ### vre/shared/app-help-page
 
-- **Nx project**: `vre-shared-app-help-page`
+- **Bazel package**: `//libs/vre/shared/app-help-page`
 - **Paths**: `libs/vre/shared/app-help-page/**`
 - **Purpose**: The static `/help` route: a grid of documentation and support links, an application and API version panel, and the application footer.
 - **Key entities**: `HelpPageComponent`, `FooterComponent`, `GridComponent`, `GridItem`, `releaseNotesUrl`
 - **Public interface**: Three components from `src/index.ts`.
-- **Local-context kit**: `src/index.ts`, `src/lib/help-page/help-page.component.ts`, `src/lib/help-page/help-page.component.html`, `src/lib/grid/grid.component.ts`, `src/lib/footer/footer.component.ts`, `src/lib/i18n.spec-helper.ts`, `README.md`
-- **Depends on**: `vre/core/config`
+- **Local-context kit**: `src/index.ts`, `src/lib/help-page/help-page.component.ts`, `src/lib/help-page/help-page.component.html`, `src/lib/grid/grid.component.ts`, `src/lib/footer/footer.component.ts`, `src/lib/i18n.spec-helper.ts`, `BUILD.bazel`
+- **Depends on**: `vre/3rd-party-services/api`, `vre/core/config`, `vre/ui/styles`
 - **Used by**: `dsp-app`, `vre/pages/user-settings/user`
-- **Boundary rules**: `src/lib/help-page/help-page.component.ts` carries the only `@nx/enforce-module-boundaries` suppression in the repository, for a seven-level relative import of the root `package.json`. `static-analysis`
+- **Boundary rules**: The version panel reads the application version from `APP_VERSION` (`vre/core/config`) and the API version through `VersionApiService` (`vre/3rd-party-services/api`). Its specs read the application's translation files from disk through `//apps/dsp-app:i18n`, a test-data target; importing them would make the library depend on the application. `structure`
 - **Durable state**: none.
-- **Fingerprint**: `d6e1d068037a`
+- **Fingerprint**: `e728cc3e106c`
 
 ### vre/shared/calendar
 
-- **Nx project**: `calendar`
+- **Bazel package**: `//libs/vre/shared/calendar`
 - **Paths**: `libs/vre/shared/calendar/**`
 - **Purpose**: A framework-free multi-calendar date library (Gregorian, Julian, Islamic) using the Julian Day Number as the conversion pivot, with comparison and period validation.
 - **Key entities**: `CalendarSystem`, `CALENDAR_SYSTEMS`, `Era`, `ERAS`, `DatePrecision`, `CalendarDate`, `CalendarPeriod`, `CalendarOperations`, `CalendarError`, `createDate`, `convertCalendar`, `compareDates`, `isPeriodOutOfOrder`, `validatePeriod`, `GregorianCalendar`, `JulianCalendar`, `IslamicCalendar`, `getCalendar`, `convertCalendarResult`, `ConversionResult`, `ConversionRefusalReason`, `ISLAMIC_EPOCH_JDN`
@@ -354,24 +372,24 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: `vre/pages/search/search-filters`, `vre/resource-editor/resource-editor`, `vre/ui/date-picker`, `vre/ui/ui`
 - **Boundary rules**:
   - Zero `@dasch-swiss` imports, no Angular DI, pure functions and immutable value objects. This is the reference example in the repository for how a library should be shaped. `structure`
-  - It is the only library with its own `package.json` and a real `build` target, and the only one with one spec per implementation file. `docs-only`
+  - It is the only library with one spec per implementation file, and one of three packages with their own `package.json`, with `dsp-js` and `vre/resource-editor/resource-editor`. `docs-only`
   - It knows nothing of `KnoraDate`, and must not. The layer above — `CalendarDateService` in `vre/ui/ui` — maps astronomical years to historical ones and `NONE` to `noEra` before and after calling here, so a BCE or era defect can live in either layer. `docs-only`
   - `convertCalendarResult` reports three outcomes: an exact date, a span, or a refusal. A year or month rarely maps onto a single unit of another calendar, and the Islamic calendar has no date before `ISLAMIC_EPOCH_JDN`. Returning a single date would fabricate precision or a date that does not exist. `docs-only`
   - `toJDN`/`fromJDN` must be mutual inverses, and the round-trip suite asserts it over every JDN in range rather than sampling. Two calendars have already drifted apart here — Gregorian in DEV-7264, Islamic in DEV-7372 — both because the pair was derived from two sources instead of one. `docs-only`
   - `isPeriodOutOfOrder` is the one place a period's order is decided: the first day the start covers against the last day the end covers, as dsp-api checks, so an imprecise end may contain the start (15.03.1850 – 03.1850) — how projects record uncertain dates. `validatePeriod` and the editor both use it. `docs-only`
   - The Gregorian calendar is proleptic, as in dsp-api: 5–14 October 1582 are valid dates. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `c1e6cd98e307`
+- **Fingerprint**: `f942ae316fa1`
 
 ### vre/pages/project/project
 
-- **Nx project**: `vre-pages-project-project`
+- **Bazel package**: `//libs/vre/pages/project/project`
 - **Paths**: `libs/vre/pages/project/project/**`
 - **Purpose**: The project area: the project shell and its navigation, the data browser page, collaboration and all project settings (image, legal, resource metadata, view restrictions), and the project create and edit forms.
 - **Key entities**: `ProjectPageService`, `DataBrowserPageService`, `ProjectPageGuard`, `ProjectAdminGuard`, `CollaborationPageService`, `ViewRestrictionsPageService`, `ResourceClassSidenavComponent`, `ResourcesListFetcherComponent`, `DataTableFetcherComponent`, `DataClassViewComponent`, `DataClassHeaderComponent`, `DataClassQueryService`, `DataClassUrlStateService`, `provideDataClassSearch`, `ReusableProjectFormComponent`, `LicenseCaptionsMapping`, `shortcode-exists.validator`
 - **Public interface**: 19 `export *` from `src/index.ts`, but only the routed components, two services and two guards are consumed elsewhere. In practice the outside world imports one symbol: `ProjectPageService`.
 - **Local-context kit**: `src/index.ts`, `src/lib/project-page.service.ts`, `src/lib/project-page.guard.ts`, `src/lib/data-browser-page.component.ts`, `src/lib/project-settings/view-restrictions/view-restrictions-page.service.ts`, `src/lib/stories.helpers.ts`, `apps/dsp-app/src/app/app.routes.ts`
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/data-browser`, `vre/pages/search/search-filters`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/data-browser`, `vre/pages/search/search-filters`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `dsp-app`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/search/advanced-search`
 - **Boundary rules**:
   - Page-level state is a component-provided service listed in `providers:`, not a root singleton. `docs-only`
@@ -384,20 +402,19 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `ViewRestrictionsPageService` and `ViewRestrictionsByPropertyPageService` each hold a private `Map` cache scoped to the page lifetime.
   - The Data tab's class view has two fetchers, `ResourcesListFetcherComponent` (list) and `DataTableFetcherComponent` (table), only one mounted at a time. Their query, count and paging pipeline is a deliberate copy kept in step by comments; both write `ResourceResultService.numberOfResults` and reset its page index on a query change. A fix to one belongs in the other.
   - `DataClassUrlStateService` (via `provideDataClassSearch()`) owns the class view's sort, fulltext and filter URL state; the table's sort and filter header controls write through it.
-- **Fingerprint**: `629630218b96`
+- **Fingerprint**: `185b75ff6b43`
 
 ### vre/pages/data-browser
 
-- **Nx project**: `vre-pages-ontology-data-browser`
+- **Bazel package**: `//libs/vre/pages/data-browser`
 - **Paths**: `libs/vre/pages/data-browser/**`
 - **Purpose**: The resource list, the resource table and the viewer split pane used to browse a project's data. It is a component library, not a routed page; the route and the fetchers that feed it live in `vre/pages/project/project`.
 - **Key entities**: `ResourceBrowserComponent`, `MultipleViewerService`, `MultipleViewerComponent`, `ComparisonComponent`, `ResourcesListComponent`, `ResourceListItemComponent`, `ResourceLinkDialogComponent`, `ResourceClassCountApi`, `ProjectShortnameService`, `DataTableComponent`, `TableColumn`, `buildColumnModel`, `buildRow`, `TablePropertyCellComponent`, `TableViewStateService`, `TableLayoutService`, `TableViewOptionsComponent`
 - **Public interface**: Named exports from `src/index.ts`, plus `export *` of `table-view/table-column.model.ts` (column keys and widths).
 - **Local-context kit**: `src/index.ts`, `src/lib/comparison/multiple-viewer.service.ts`, `src/lib/list-view/resources-list.component.ts`, `src/lib/table-view/data-table.component.ts`, `src/lib/table-view/table-row.model.ts`, `src/lib/table-view/table-view-state.service.ts`, `libs/vre/shared/app-helper-services/src/lib/resource-result.service.ts`
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/session`, `vre/resource-editor/resource-editor`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/session`, `vre/resource-editor/resource-editor`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`
 - **Boundary rules**:
-  - The Nx project name says `ontology` but the folder and the alias do not. Use the alias. `docs-only`
   - `ResourcesListComponent`, `ResourceListComponent` and `ResourceListItemComponent` are three near-identical names; only the first is public. `docs-only`
   - `DataTableComponent` is presentational: resources, columns and layout come in as inputs, gestures go out as outputs; it knows nothing of Gravsearch or the URL. Its cells mount the resource viewer's own property-value components, so a new service dependency of those components must be provided by `TablePropertyCellComponent` too. `review`
   - Rows are memoised per `ReadResource` object: only a resource whose object changed is rebuilt, so an editor open in one row survives a save in another. Do not rebuild every row from a computed. `review`
@@ -406,28 +423,28 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `ProjectShortnameService`, a root-provided `Map` keyed by project IRI, `shareReplay`d and never invalidated, so a renamed project keeps its old shortname for the session. It is not exported from the barrel, so the cache is undiscoverable from outside.
   - `TableViewStateService`, root-provided, holds the current class's table columns and layout; `init()` replaces them per class and is called by `DataTableFetcherComponent`, while `TableViewOptionsComponent` (in the class header) writes visibility and row height. Not reset when the table is left. Root scope is contrary to ADR-0003 and is a known follow-up.
   - `TableLayoutService`, reached only through `TableViewStateService` and not exported from the barrel, is the single writer of `localStorage['dsp.dataBrowser.tableLayout.v<N>.<classIri>']` (one key per resource class; bump `SCHEMA_VERSION` on a breaking layout change).
-- **Fingerprint**: `951a1cc70a81`
+- **Fingerprint**: `36913325fbae`
 
 ### vre/pages/ontology/ontology
 
-- **Nx project**: `vre-pages-ontology-ontology`
+- **Bazel package**: `//libs/vre/pages/ontology/ontology`
 - **Paths**: `libs/vre/pages/ontology/ontology/**`
 - **Purpose**: The data-model editor: the data-model landing page, the resource-class editor and the property editor, including cardinality and GUI-element configuration.
 - **Key entities**: `OntologyEditService`, `OntologyPageService`, `MakeOntologyFor`, `ResourceClassInfo`, `PropertyInfo`, `ClassPropertyInfo`, `PropToAdd`, `PropertyForm`, `CreatePropertyData`, `CardinalityComponent`, `GuiAttrListComponent`
 - **Public interface**: Four routed components. `OntologyEditService` is deliberately not exported; it is component-scoped.
 - **Local-context kit**: `src/index.ts`, `src/lib/ontology-page.component.ts`, `src/lib/services/ontology-edit.service.ts`, `src/lib/services/make-ontology-for.ts`, `src/lib/ontology.types.ts`, `src/lib/forms/property-form/property-form.type.ts`, `libs/vre/shared/app-helper-services/src/lib/default-data/default-properties.ts`
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/pages/ontology/list`, `vre/pages/project/project`, `vre/pages/user-settings/user`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/pages/ontology/list`, `vre/pages/project/project`, `vre/pages/user-settings/user`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `dsp-app`
 - **Boundary rules**:
   - The property-type registry is not in this library. Adding a property type touches `default-properties.ts` and `ontology.service.ts` in `vre/shared/app-helper-services`, then possibly `make-ontology-for.ts` here and a branch in `property-form.component.ts`. Four files, two libraries, no single registry. `docs-only`
   - `OntologyPageComponent` owns the DI scope through `providers: [OntologyPageService, OntologyEditService]`. `structure`
   - A "cardinality" is the class-to-property binding with its count, which is dsp-api's meaning of the term; the dsp-js `Cardinality` enum is only the count. Two code comments in this library complain about the overlap. See CONTEXT.md. `docs-only`
 - **Durable state**: `OntologyEditService`, component-scoped, roughly 670 lines, holding `_currentOntology`, `_currentOntologyInfo`, `_projectOntologiesSubject`, `_listsInProjectSubject`, `_isTransacting` and `_canDeletePropertyMap`. Two of those are `take(1)` snapshots of parent state (DEV-7130), so a controlled vocabulary created in `vre/pages/ontology/list` is stale here until re-navigation. `latestChangedItem` is a public BehaviorSubject written both by the service and by `property-item.component.ts`.
-- **Fingerprint**: `e5f069191c09`
+- **Fingerprint**: `6480aa13df77`
 
 ### vre/pages/ontology/list
 
-- **Nx project**: `vre-pages-ontology-list`
+- **Bazel package**: `//libs/vre/pages/ontology/list`
 - **Paths**: `libs/vre/pages/ontology/list/**`
 - **Purpose**: The controlled-vocabulary editor: the list page and its recursive node tree, plus the create and edit dialogs.
 - **Key entities**: `ListPageComponent`, `ListInfoFormComponent`, `ListItemComponent`, `ListItemService`, `ListItemFormComponent`, `ReusableListItemFormComponent`, `ActionBubbleComponent`
@@ -440,17 +457,17 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `src/lib/list-page.component.ts` constructs a list IRI by string interpolation rather than through a helper. `docs-only`
   - This library has no unit tests and no stories. Its only coverage is the Cypress suite (`lists.cy.ts`, `list-management.cy.ts`), which runs in CI but is not type-checked. `docs-only`
 - **Durable state**: `ListItemService`, component-scoped, holding `_projectInfos` and a bare public `onUpdate$` Subject that any of its three injectors can push to. An event bus with no ownership.
-- **Fingerprint**: `52845fb27950`
+- **Fingerprint**: `e41289f0b72f`
 
 ### vre/pages/search/advanced-search
 
-- **Nx project**: `vre-pages-search-advanced-search`
+- **Bazel package**: `//libs/vre/pages/search/advanced-search`
 - **Paths**: `libs/vre/pages/search/advanced-search/**`
 - **Purpose**: The Search tab page. It hosts the chip bar from `vre/pages/search/search-filters`, keeps the search state in the URL and runs the compiled Gravsearch query. The filter UI, statement builder and query generation live in `search-filters`; this library adds the page, the data-model and resource-class chips, ordering and the URL binding.
 - **Key entities**: `AdvancedSearchPageComponent`, `AdvancedSearchResultsComponent`, `SearchUrlSyncService`, `DerivedSearchStateService`, `DataModelChipComponent`, `ResourceClassChipComponent`, `OrderByComponent`
 - **Public interface**: `src/index.ts`: the page and results components and `provideAdvancedSearch()`. All services are internal.
 - **Local-context kit**: `src/lib/providers.ts`, `src/lib/service/search-url-sync.service.ts`, `src/lib/service/derived-search-state.service.ts`, `src/lib/advanced-search-page.component.ts`, `README.md`
-- **Depends on**: `dsp-js`, `vre/core/config`, `vre/core/error-handler`, `vre/pages/data-browser`, `vre/pages/project/project`, `vre/pages/search/search-filters`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/progress-indicator`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/core/config`, `vre/core/error-handler`, `vre/pages/data-browser`, `vre/pages/project/project`, `vre/pages/search/search-filters`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/progress-indicator`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `dsp-app`
 - **Boundary rules**:
   - `provideAdvancedSearch()` page-scopes `SearchUrlSyncService` and `DerivedSearchStateService` on top of `provideSearchFilters()`, and binds the `SearchFilterState` port to `SearchUrlSyncService` with `useExisting`. None is root-provided. `structure`
@@ -462,13 +479,13 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 ### vre/pages/search/search-filters
 
-- **Nx project**: `vre-pages-search-search-filters`
+- **Bazel package**: `//libs/vre/pages/search/search-filters`
 - **Paths**: `libs/vre/pages/search/search-filters/**`
 - **Purpose**: The filter chip bar, statement builder and Gravsearch generation, extracted from `vre/pages/search/advanced-search` so the Data tab's class view can filter with the same UI. State reaches it through the `SearchFilterState` port, which each host provides.
 - **Key entities**: `SearchFilterState`, `ConfirmedSearchStateService`, `StatementDraftStore`, `GravsearchService`, `GravsearchWriter`, `OntologyDataService`, `FilterEditorRequestService`, `AdvancedSearchBarComponent`, `FilterEditorPopoverComponent`, `StatementFieldsComponent`, `FilterParam`
 - **Public interface**: `src/index.ts`.
 - **Local-context kit**: not yet explored. This entry was added without exploration and carries no fingerprint, so `/dune:dune-map check` reports it stale until a full `update`.
-- **Depends on**: `dsp-js`, `vre/core/config`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/shared/calendar`, `vre/ui/date-picker`, `vre/ui/nested-menu`, `vre/ui/string-literal`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/core/config`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/shared/calendar`, `vre/ui/date-picker`, `vre/ui/nested-menu`, `vre/ui/string-literal`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `vre/pages/project/project`, `vre/pages/search/advanced-search`
 - **Boundary rules**:
   - Gravsearch is assembled by string concatenation of template-literal fragments in `src/lib/service/gravsearch-writer.ts` and `src/lib/service/gravsearch.service.ts`. The injection defences live in `src/lib/model.ts`, not in the writer: `escapeForGravsearchStringLiteral`, `escapeSparqlStringLiteral` and `sanitizeSparqlIri`. Values reach them from the untrusted `filters` URL parameter, so any new value path must route through an escaper. `review`
@@ -481,57 +498,56 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 ### vre/pages/search/search
 
-- **Nx project**: `vre-pages-search-search`
+- **Bazel package**: `//libs/vre/pages/search/search`
 - **Paths**: `libs/vre/pages/search/search/**`
 - **Purpose**: Full-text search results pages, plus the shared result component. It also hosts `GlobalPageComponent`, the application shell for the home, help and profile routes, which does not belong here.
 - **Key entities**: `SearchResultComponent`, `FulltextSearchResultsPageComponent`, `GlobalPageComponent`
 - **Public interface**: Three `export *` lines, of which only `FulltextSearchResultsPageComponent` and `GlobalPageComponent` are used outside the library.
 - **Local-context kit**: `src/index.ts`, `src/lib/search-result.component.ts`, `src/lib/fulltext-search-results-page.component.ts`, `src/lib/global-page.component.ts`
-- **Depends on**: `dsp-js`, `vre/core/config`, `vre/core/error-handler`, `vre/pages/data-browser`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/progress-indicator`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/core/config`, `vre/core/error-handler`, `vre/pages/data-browser`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/progress-indicator`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `dsp-app`
 - **Boundary rules**:
   - Full-text search here is a different mechanism from the full-text field inside advanced search. This library calls `doFulltextSearch` with no Gravsearch involved. See CONTEXT.md. `docs-only`
   - The project `search` route redirects to advanced search, which orphaned this library's project-search components. #3437 deleted them along with `SearchParamsService` and `GravsearchSearchParams`. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `d4daa1bc7cdf`
+- **Fingerprint**: `6a3d3a1e100b`
 
 ### vre/pages/system/system
 
-- **Nx project**: `vre-pages-system-system`
+- **Bazel package**: `//libs/vre/pages/system/system`
 - **Paths**: `libs/vre/pages/system/system/**`
 - **Purpose**: The system administration area: the `/system` shell and the all-projects and all-users lists with their dialogs. It also holds the cookie policy page and a generic sort button, neither of which is system administration.
 - **Key entities**: `SystemPageComponent`, `ProjectsComponent`, `ProjectsListComponent`, `UsersTabComponent`, `UsersTabService`, `UsersListComponent`, `CreateUserDialogComponent`, `EraseProjectDialogComponent`, `MembershipComponent`, `SortButtonComponent`, `CookiePolicyComponent`
 - **Public interface**: 14 `export *` lines from `src/index.ts`.
 - **Local-context kit**: `src/lib/system-page.component.ts`, `src/lib/projects/projects.component.ts`, `src/lib/projects/projects-list/projects-list.component.ts`, `src/lib/users/users-tab.component.ts`, `src/lib/users/users-list/users-list.component.ts`, `src/lib/users/users-list/users-list-row-menu.component.ts`, `src/index.ts`
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/user-settings/user`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/user-settings/user`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `dsp-app`, `vre/pages/project/project`
 - **Boundary rules**:
   - This library imports `AllProjectsService` from `vre/pages/user-settings/user`, a page depending on a page. The shared service lives in the library that reads like the leaf. `docs-only`
   - `ProjectsComponent` is routed from both this library's routes and `/my-profile/projects`, forking on an `@Input()`. A component spanning two libraries' routes is why neither has a clean boundary. `docs-only`
   - Every `Title.setTitle()` call here is hardcoded English that never passed through `en.json`, so it is invisible to translation. `docs-only`
 - **Durable state**: `localStorage['sortProjectsBy']` written by `projects-list.component.ts`, and `localStorage['sortUsersBy']` written by `users-list.component.ts`. Both are raw string keys rather than constants, and `sortUsersBy` is cast unchecked to `UserSortKey`.
-- **Fingerprint**: `10a6e467191a`
+- **Fingerprint**: `1eb887003780`
 
 ### vre/pages/user-settings/user
 
-- **Nx project**: `vre-pages-user-settings-user`
+- **Bazel package**: `//libs/vre/pages/user-settings/user`
 - **Paths**: `libs/vre/pages/user-settings/user/**`
-- **Purpose**: Nominally the account area. It also owns the public landing page, the application-wide `AllProjectsService`, and the root API-connection DI provider, none of which is user settings.
-- **Key entities**: `UserComponent`, `ProfileComponent`, `AccountComponent`, `apiConnectionTokenProvider`, `EditUserDialogComponent`, `EditPasswordDialogComponent`, `ProjectOverviewComponent`, `ProjectCardComponent`, `AllProjectsService`, `existingNamesValidator`
+- **Purpose**: Nominally the account area. It also owns the public landing page and the application-wide `AllProjectsService`, neither of which is user settings.
+- **Key entities**: `UserComponent`, `ProfileComponent`, `AccountComponent`, `EditUserDialogComponent`, `EditPasswordDialogComponent`, `ProjectOverviewComponent`, `ProjectCardComponent`, `AllProjectsService`, `existingNamesValidator`
 - **Public interface**: 11 `export *` lines from `src/index.ts`.
 - **Local-context kit**: `src/lib/user.component.ts`, `src/lib/account/account.component.ts`, `src/lib/profile/profile.component.ts`, `src/lib/project-overview/project-overview.component.ts`, `src/lib/project-overview/all-projects.service.ts`, `src/index.ts`
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/session`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/session`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `dsp-app`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`
 - **Boundary rules**:
   - This library used to hold the sole provider of `DspApiConnectionToken`, so the root injector could not boot without a page library. #3436 moved it to `vre/core/session`, where `apps/dsp-app/src/app/app.config.ts:56` now registers it. `docs-only`
-  - That provider bypasses `AccessTokenService` and reads raw localStorage, so it never validates the token before seeding it. `docs-only`
-  - This library has no unit tests at all. `apiConnectionTokenProvider`, the most consequential file in it, has neither a test nor a story. `docs-only`
-- **Durable state**: `localStorage['ACCESS_TOKEN']` is read once here at DI factory time and written into `appConfigService.dspApiConfig.jsonWebToken`. That field has writers in three libraries.
-- **Fingerprint**: `bb87878556a0`
+  - This library has no unit tests at all. `docs-only`
+- **Durable state**: none of its own; `AllProjectsService` caches the project list for the session.
+- **Fingerprint**: `94fe69fd3e13`
 
 ### vre/resource-editor/resource-editor
 
-- **Nx project**: `vre-resource-editor-resource-editor`
+- **Bazel package**: `//libs/vre/resource-editor/resource-editor`
 - **Paths**: `libs/vre/resource-editor/resource-editor/**`
 - **Purpose**: The resource viewer and editor: media representations, property and value display and editing, regions, segments, compound navigation and the resource creation flow. The largest library in the repository at 413 files, with only four exports.
 - **Key entities**: `ResourceFetcherService`, `ResourceDispatcherComponent`, `getResourceType`, `ResourceType`, `RegionService`, `SegmentsService`, `CompoundService`, `PropertiesDisplayService`, `PropertyValueService`, `FootnoteService`, `OsdDrawerService`, `RepresentationService`, `propertiesTypeMapping`, `fileValueMapping`, `TemplateViewerSwitcherComponent`, `TemplateEditorSwitcherComponent`
@@ -540,7 +556,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Resource-type axis: `src/lib/resource-type.ts`, `src/lib/get-resource-type.ts`, `src/lib/resource-dispatcher.component.ts`, a sibling wrapper such as `src/lib/resource/plain/resource-plain.component.ts`, `src/lib/representation/resource-fetcher.service.ts`, `src/lib/representation/region.service.ts`
   - Value-type axis: `src/lib/properties/properties-display/template-switcher/template-viewer-switcher.component.ts`, `.../template-editor-switcher.component.ts`, `.../property-value/resource-payloads-mapping.ts`, `.../property-value/property-values.component.ts`, `.../property-value/property-value.service.ts`, `src/lib/representation/resource-fetcher.service.ts`
   - Sufficiency note: for a cross-cutting change, such as a new state flow or a permission rule, no bounded set exists. `RegionService` has eight writers on selection and `ResourceFetcherService.reload()` has eleven callers, so such a change needs roughly fifteen files open. This is the strongest case in the repository for a colocated CLAUDE.md.
-- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/shared/calendar`, `vre/ui/date-picker`, `vre/ui/nested-menu`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/ui`
+- **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/shared/app-common`, `vre/shared/app-helper-services`, `vre/shared/calendar`, `vre/ui/date-picker`, `vre/ui/nested-menu`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/project/project`
 - **Boundary rules**:
   - `template-viewer-switcher.component.ts` and `template-editor-switcher.component.ts` carry thirteen mirrored cases each and must be kept in sync by hand. Nothing enforces the mirror. `docs-only`
@@ -553,31 +569,33 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - `RegionService._regionsSubject`, three write paths, where `filterToRegion` destructively narrows the same subject that pagination is still filling.
   - `ResourceFetcherService._resourceSubject`, whose `reload()` is called from eleven sites. Every mutation in the library funnels through a full refetch. This is the library's implicit change-propagation mechanism and it is undocumented.
   - `PropertiesDisplayService`, the only persistent state here, backed by `localStorage['SHOW_ALL_PROPERTIES']` and `['SHOW_ALL_COMMENTS']`. Twelve instances share the persisted value but not the live BehaviorSubject, so toggling in one does not propagate to another. The class has no `@Injectable()` decorator and works only because it has no constructor dependencies.
-- **Fingerprint**: `d4fd60583646`
+- **Fingerprint**: `595f95a5774c`
 
 ### build-tooling
 
-- **Nx project**: none
-- **Paths**: `tools/**`, `scripts/**`, `.storybook/**`, `types/**`, `@types/**`, `mocks/**`, `nx.json`, `tsconfig.base.json`, `package.json`, `package-lock.json`, `eslint.config.mjs`, `eslint.config.angular.mjs`, `jest.config.ts`, `jest.preset.js`, `.babelrc`, `.editorconfig`, `.prettierrc`, `.prettierignore`, `.nvmrc`, `.markdownlint.json`, `.remarkrc.json`, `codecov.yml`, `.kodus-readiness.yml`, `Makefile`, `vars.mk`, `.gitignore`, `libs/.gitkeep`
-- **Purpose**: Build, lint, test and Storybook configuration for the whole workspace, plus ambient type declarations and test mocks.
-- **Key entities**: `depConstraints`, `merge-coverage.js`, `check-openapi-sync.sh`
-- **Public interface**: `tsconfig.base.json` `compilerOptions.paths` is the authoritative list of library aliases and the thing the boundary lint matches on.
-- **Local-context kit**: `tsconfig.base.json`, `nx.json`, `eslint.config.mjs`, `package.json`, `.storybook/main.ts`, `jest.preset.js`
+- **Bazel package**: none
+- **Paths**: `tools/**`, `scripts/**`, `.storybook/**`, `types/**`, `mocks/**`, `nix/**`, `platforms/**`, `MODULE.bazel`, `MODULE.bazel.lock`, `BUILD.bazel`, `.bazelrc`, `.bazelversion`, `.bazelignore`, `justfile`, `flake.nix`, `flake.lock`, `.envrc`, `angular.json`, `tsconfig.base.json`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.npmrc`, `vendor/**`, `eslint.config.mjs`, `eslint.config.angular.mjs`, `jest.preset.js`, `jest.resolver.js`, `.babelrc`, `.editorconfig`, `.prettierrc`, `.prettierignore`, `.markdownlint.json`, `.remarkrc.json`, `.kodus-readiness.yml`, `.gitignore`, `pixeleye.config.ts`, `pixeleye.breakpoints.config.ts`, `pixeleye/**`, `libs/.gitkeep`
+- **Purpose**: The Bazel module, the `vre_library` and `vre_application` macros, the `just` recipes, the Nix dev shell, and the lint, test, Storybook and Pixeleye configuration for the whole workspace, plus ambient type declarations and test mocks.
+- **Key entities**: `vre_library`, `vre_application`, `vre_jest_test`, `LIBRARIES`, `APPLICATIONS`, `TYPE_MAY_DEPEND_ON`, `package_visibility`, `extra_visibility`, `LOOSE_LIBRARIES`, `visibility-check.sh`, `check-openapi-sync.sh`
+- **Public interface**: The `just` recipes (`just help`); `vre_library` in `tools/angular/defs.bzl` for a library's `BUILD.bazel`; `LIBRARIES` in `tools/angular/visibility.bzl` for its type and scope. `tsconfig.base.json` `paths` stays the list of aliases the IDE and the ESLint rules read; the build generates each library's own tsconfig.
+- **Local-context kit**: `tools/angular/defs.bzl`, `tools/angular/visibility.bzl`, `justfile`, `MODULE.bazel`, `.bazelrc`, `tsconfig.base.json`, `eslint.config.mjs`
 - **Depends on**: none
 - **Used by**: every component, implicitly
 - **Boundary rules**:
-  - Adding a library means adding its alias to `tsconfig.base.json` and creating its `project.json`. Nothing generates either. `docs-only`
-  - `@nx/enforce-module-boundaries` is configured with a single permissive constraint (`sourceTag: '*'` to `onlyDependOnLibsWithTags: ['*']`), so it enforces barrel-only imports and buildable-library dependencies but no layering. `static-analysis`
-  - The boundary lint is disabled for `**/*.spec.ts`, `**/environment*.ts` and all of `apps/dsp-app/cypress/`. It is not disabled for `**/*.stories.ts`, so stories do count toward the Nx project graph even when the runtime does not depend on the import. `static-analysis`
-  - Storybook config lives at the workspace root but its targets are declared in `apps/dsp-app/project.json`. `docs-only`
-- **Durable state**: `tsconfig.base.json` `paths`, 30 aliases: one per library, a `testing` secondary entry for `app-helper-services`, and `@dsp-app/*` for the application. Every alias points at a directory that exists.
-- **Fingerprint**: `5636cfde08cd`
+  - Adding a library means a `BUILD.bazel` calling `vre_library`, a `LIBRARIES` entry with its ADR-0001 type and scope, and its alias in `tsconfig.base.json`. Nothing generates them. A package missing from `LIBRARIES` fails to load (`structure`); an alias whose directory has no `BUILD.bazel` fails `just tsconfig-paths-check` in `just ci` (`static-analysis`); a package without an alias is caught by nothing until its first importer fails with TS2307 (`docs-only`).
+  - A library's `visibility` is derived from its type and scope, so a dependency the tiers forbid fails `bazel build` (`structure`). The exceptions are `extra_visibility` entries (ADR-0001 decision 6); nothing but review stops a new one, so never add one to make a build pass (`review`).
+  - The ESLint `no-restricted-imports` rule rejects an `@dasch-swiss/*/src/*` import and a relative import across a library root (ADR-0002). It does not see a dynamic `import()`, and `apps/dsp-app/cypress/` is in its `ignores`. `static-analysis`
+  - `tools/angular/loose.bzl` lists four libraries that compile without the strict TypeScript flags, each with its issue (DEV-7796 to DEV-7799). Do not add to it. `review`
+  - `rules_angular` and `rules_sass` are `git_override` commit pins in `MODULE.bazel`, moved only to a commit Angular CLI or `angular/components` pins (ADR-0007). `review`
+  - Every command CI runs is a `just` recipe run in `nix develop`; a tool Bazel cannot provide comes from `flake.nix`. `just node-version-check` and `just playwright-version-check` hold the Nix shell and the npm pins together. `static-analysis`
+- **Durable state**: `LIBRARIES` in `tools/angular/visibility.bzl`, the single writer of every library's type and scope. `tsconfig.base.json` `paths`: one alias per library, a `testing` secondary entry for `app-helper-services`, and `@dsp-app/*` for the application; `just tsconfig-paths-check` keeps them in step with the packages.
+- **Fingerprint**: `bd62a0082364`
 
 ### ci-release
 
-- **Nx project**: none
+- **Bazel package**: none
 - **Paths**: `.github/**`, `renovate.json`, `release-please-config.json`, `.release-please-manifest.json`, `CHANGELOG.md`
-- **Purpose**: Continuous integration workflows, dependency automation, and release automation for both the application and the published `dsp-js` package.
+- **Purpose**: Continuous integration workflows, the disabled Renovate configuration, and release automation for both the application and the published `dsp-js` package.
 - **Key entities**: `release-dsp-js.yml`, `check-openapi-sync`, `release-please`
 - **Public interface**: None.
 - **Local-context kit**: `.github/workflows/`, `release-please-config.json`, `.release-please-manifest.json`
@@ -585,43 +603,45 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Used by**: none
 - **Boundary rules**:
   - release-please owns `CHANGELOG.md` and every version field. Never hand-edit either. `review`
+  - Every job runs `nix develop --command just <recipe>`; `.github/actions/bazel-setup` sets up Nix, the Bazel caches and the NativeLink remote flags in `BAZEL_FLAGS`. `structure`
+  - Renovate is disabled (`enabled: false`); dependency updates are made by hand, and Dependabot opens security PRs only. `docs-only`
   - `dsp-js` publishes to NPM on `dsp-js-v*` tags via `.github/workflows/release-dsp-js.yml`. `docs-only`
   - `check-openapi-sync` runs on every push and opens an auto-bump PR on mismatch. A red check is expected while a dsp-api change is undeployed. `static-analysis`
   - `ci.yml` runs the Cypress suite as the `dsp-app-e2e-tests` matrix, gated by the required `dsp-app-e2e-tests-status` job. `static-analysis`
 - **Durable state**: `.release-please-manifest.json`, the released version of record.
-- **Fingerprint**: `84bdf858c3f2`
+- **Fingerprint**: `f7c7c0204b21`
 
 ### deployment
 
-- **Nx project**: none
-- **Paths**: `Dockerfile`, `.dockerignore`, `nginx/**`, `docker-compose.observability.yml`
-- **Purpose**: The production container image and the nginx configuration that serves the built application, including security headers and runtime config templating.
+- **Bazel package**: none
+- **Paths**: `nginx/**`, `docker-compose.observability.yml`
+- **Purpose**: The nginx configuration the image serves the built application with, including security headers and runtime config templating, and the local observability stack. The image itself is `//apps/dsp-app/image` (`rules_oci`), in `dsp-app`.
 - **Key entities**: `default.conf.template`, `nginx-security-headers.conf`
-- **Public interface**: The container image.
-- **Local-context kit**: `Dockerfile`, `nginx/default.conf.template`, `nginx/nginx-security-headers.conf`, `apps/dsp-app/src/config/`
+- **Public interface**: The files the image layers copy.
+- **Local-context kit**: `apps/dsp-app/image/BUILD.bazel`, `scripts/nginx-smoke-test.sh`, `nginx/default.conf.template`, `nginx/nginx-security-headers.conf`, `apps/dsp-app/src/config/`
 - **Depends on**: none
 - **Used by**: none
 - **Boundary rules**: The runtime config file that `apps/dsp-app/src/main.ts` fetches is supplied at deploy time. Changing the config schema means changing both `vre/core/config` and whatever provides `config.<env>.json`. `docs-only`
 - **Durable state**: none in the repository.
-- **Fingerprint**: `2fbd5aac5f55`
+- **Fingerprint**: `c6fab6de09ef`
 
 ### load-tests
 
-- **Nx project**: none
+- **Bazel package**: none
 - **Paths**: `k6/**`
-- **Purpose**: A self-contained k6 load-testing setup with its own justfile, Docker Compose stack and Grafana dashboard. Independent of the Nx workspace.
+- **Purpose**: A self-contained k6 load-testing setup with its own justfile, Docker Compose stack and Grafana dashboard. Independent of the Bazel workspace.
 - **Key entities**: `grafana_dashboard.json`, `justfile`
 - **Public interface**: None.
 - **Local-context kit**: `k6/README.md`, `k6/justfile`, `k6/docker-compose.yml`
 - **Depends on**: none
 - **Used by**: none
-- **Boundary rules**: Not wired into Nx or CI. Run manually via its justfile. `docs-only`
+- **Boundary rules**: Not wired into Bazel or CI. Run manually via its justfile. `docs-only`
 - **Durable state**: none.
-- **Fingerprint**: `9bdf2d6018ee`
+- **Fingerprint**: `ea237ba0fa3b`
 
 ### project-docs
 
-- **Nx project**: none
+- **Bazel package**: none
 - **Paths**: `docs/**`, `mkdocs.yml`, `README.md`, `LICENSE`
 - **Purpose**: The MkDocs documentation site, the architecture decision records in `docs/adr/`, and the repository-level readme.
 - **Key entities**: `mkdocs.yml` nav, `docs/adr/index.md`
@@ -630,25 +650,25 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Depends on**: none
 - **Used by**: none
 - **Boundary rules**:
-  - Per-library `README.md` files are not part of this component and are largely stale. See Cross-cutting concerns. `docs-only`
-  - Every ADR carries an enforcement level from the same enum this map uses (`structure | static-analysis | review | docs-only`). ADR-0001 through ADR-0006 are Accepted; none is superseded. `docs-only`
+  - Per-library `README.md` files are not part of this component. See Cross-cutting concerns. `docs-only`
+  - Every ADR carries an enforcement level from the same enum this map uses (`structure | static-analysis | review | docs-only`). ADR-0001 through ADR-0007 are Accepted; none is superseded. ADR-0001, 0002, 0004, 0005 and 0006 were revised in place for the Bazel build, each saying so in its status line. `docs-only`
   - A new ADR must be added to the `nav` in `mkdocs.yml` and to the table in `docs/adr/index.md`. `mkdocs build --strict` does not catch an omission from either, because an un-navigated page is an INFO, not a warning. `review`
 - **Durable state**: none.
-- **Fingerprint**: `none`
+- **Fingerprint**: `ffaa4a837784`
 
 ### agent-context
 
-- **Nx project**: none
-- **Paths**: `CLAUDE.md`, `CONVENTIONS.md`, `REVIEW.md`, `CONTEXT.md`, `.claude/**`
+- **Bazel package**: none
+- **Paths**: `CLAUDE.md`, `CONVENTIONS.md`, `REVIEW.md`, `CONTEXT.md`, `eng.yaml`, `.claude/**`
 - **Purpose**: The instructions, skills and architecture records that agents read.
-- **Key entities**: `update-openapi-client`, `format-project-image`
-- **Public interface**: `CLAUDE.md` is loaded automatically. `CONVENTIONS.md`, `REVIEW.md`, `ARCH-MAP.md` and `CONTEXT.md` are pull-on-demand and must not be `@`-imported; `CLAUDE.md` links `CONVENTIONS.md`, and the review job in `claude.yml` reads `REVIEW.md`.
+- **Key entities**: `update-openapi-client`, `format-project-image`, `eng.yaml`
+- **Public interface**: `CLAUDE.md` is loaded automatically. `CONVENTIONS.md`, `REVIEW.md`, `ARCH-MAP.md` and `CONTEXT.md` are pull-on-demand and must not be `@`-imported; `CLAUDE.md` links `CONVENTIONS.md`, and the review job in `claude.yml` reads `REVIEW.md`. `eng.yaml` binds the `just` recipes for the eng plugin's agents.
 - **Local-context kit**: `CLAUDE.md`, `CONVENTIONS.md`, `REVIEW.md`, `ARCH-MAP.md`, `CONTEXT.md`, `.claude/skills/`
 - **Depends on**: none
 - **Used by**: none
 - **Boundary rules**:
   - Two further `CLAUDE.md` files exist outside this component and are authoritative in their directories: `apps/dsp-app/src/assets/i18n/CLAUDE.md` and `apps/dsp-app/src/assets/images/project/CLAUDE.md`. `docs-only`
-  - No library has its own `CLAUDE.md`. Architectural decisions live in `docs/adr/` (ADR-0001 through ADR-0006) and are owned by the `project-docs` component, not this one. `docs-only`
+  - No library has its own `CLAUDE.md`. Architectural decisions live in `docs/adr/` (ADR-0001 through ADR-0007) and are owned by the `project-docs` component, not this one. `docs-only`
 - **Durable state**: none.
 - **Fingerprint**: `3ed18d0fbcae`
 
@@ -656,7 +676,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 These are values or mechanisms that span components and would multiply-map if treated as components.
 
-- **The dual client.** Two clients reach dsp-api. Domains read through dsp-js models (`ReadProject`, `ReadResource`, `CreateResource`) require changes in `libs/dsp-js/`; regenerating the OpenAPI client does not surface a field there. Endpoints consumed through the generated client only need `npm run update-openapi` after the API is deployed to dev. If a new backend field does not arrive in the UI, determine which client the reading code uses before debugging further. The generator's `serviceSuffix` is `ApiService`, which is also the hand-written convention, so a call site does not reveal which client it is on without reading the import path.
+- **The dual client.** Two clients reach dsp-api. Domains read through dsp-js models (`ReadProject`, `ReadResource`, `CreateResource`) require changes in `libs/dsp-js/`; regenerating the OpenAPI client does not surface a field there. Endpoints consumed through the generated client only need `just openapi-update` after the API is deployed to dev. If a new backend field does not arrive in the UI, determine which client the reading code uses before debugging further. The generator's `serviceSuffix` is `ApiService`, which is also the hand-written convention, so a call site does not reveal which client it is on without reading the import path.
 
 - **The JWT.** One logical value with four physical homes: `localStorage['ACCESS_TOKEN']`, `KnoraApiConfig.jsonWebToken` on the shared config object, `UserService._user$`, and the `Authorization` header built per request by `authInterceptorFn`. Writers span `vre/core/session`, `vre/core/config`, `vre/pages/user-settings/user` and `libs/dsp-js`. dsp-js requests read the in-memory config; `HttpClient` requests read localStorage per request. The two paths can disagree.
 
@@ -670,30 +690,30 @@ These are values or mechanisms that span components and would multiply-map if tr
 
 - **localStorage keys.** Seven fixed keys plus one per-class family, owned by six different components: `ACCESS_TOKEN` (`vre/core/session`), `dsp_language` (`vre/shared/app-helper-services`), `SHOW_ALL_PROPERTIES` and `SHOW_ALL_COMMENTS` (`vre/resource-editor/resource-editor`), `sortProjectsBy` and `sortUsersBy` (`vre/pages/system/system`), `cookieBanner` (`dsp-app`), and `dsp.dataBrowser.tableLayout.v<N>.<classIri>` (`vre/pages/data-browser`, one key per resource class). There is no shared registry of key names and no sessionStorage anywhere.
 
-- **Stale per-library READMEs.** 17 of the 27 library `README.md` files name an Nx project that does not exist, because libraries were renamed and the generated readmes were not, so the `nx test <name>` command in them does not resolve. The 10 that do name their project correctly are `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/3rd-party-services/analytics`, `vre/ui/nested-menu`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/shared/calendar`, and `vre/pages/search/advanced-search`. Two of those carry a stale name alongside the correct one: `analytics` (`vre-shared-app-analytics` in the title) and `advanced-search` (`vre-advanced-search` in the heading, plus two renamed classes in its body). A separate trap: `vre/3rd-party-services/api`'s readme matches its `project.json`, but that project name (`vre-shared-app-api`) is itself stale relative to the library's path. Treat a library README's project name as unreliable and read `project.json` instead.
+- **Per-library READMEs.** Every library except `vre/pages/search/search-filters` and `vre/ui/styles` has a `README.md` titled with its path alias. All but `dsp-js` and `vre/shared/app-helper-services` name the test command as `just test //<package>/...`.
 
 ## Conventions
 
 ### Module granularity
 
 - **Local-context kit budget: 7 files.** One library exceeds it honestly: `vre/resource-editor/resource-editor` needs two axis-specific kits of six, and no bounded kit at all for cross-cutting state changes. That is recorded as a sufficiency problem rather than hidden by raising the budget.
-- **One component per Nx project.** The barrel `src/index.ts` is the only seam the toolchain checks, so components are drawn at that boundary.
-- **Component names in this map are `tsconfig.base.json` path aliases**, not Nx project names. The two differ for most libraries, and several Nx names are actively misleading (`vre-pages-ontology-data-browser` for `libs/vre/pages/data-browser`, `vre-shared-app-api` for `libs/vre/3rd-party-services/api`, `vre-library-app-string-literal` for `libs/vre/ui/string-literal`). Each entry records its Nx name for `nx run`.
+- **One component per Bazel package.** The package is the unit `visibility` and the build graph see, and its barrel `src/index.ts` is the seam the import rules check, so components are drawn at that boundary.
+- **Component names in this map are `tsconfig.base.json` path aliases.** Each entry records its Bazel package label, which is the alias's path under `//libs` or `//apps`.
 
 ### Dependency direction
 
-Recorded from the observed runtime graph, not from folder names.
+ADR-0001's type and scope rules are Bazel `visibility`, derived from `LIBRARIES` in `tools/angular/visibility.bzl`.
 
 | Rule | Enforcement |
 | --- | --- |
-| No dependency cycles between libraries. Verified: the graph is a clean DAG. | `static-analysis` (Nx) |
-| No library imports `@dsp-app/*` in TypeScript. Verified clean. | `static-analysis` (Nx) |
-| Imports cross a library boundary through the `@dasch-swiss/*` alias, never a deep path. | `static-analysis` (Nx), disabled for `*.spec.ts`, `environment*.ts` and `apps/dsp-app/cypress/**` |
-| No library imports application SCSS. **Currently violated in 20 files across six libraries**, which `@use '../../../../../../../../apps/dsp-app/src/styles/config'`. Sass imports are invisible to the boundary lint. | `docs-only` |
-| The `ui/*` tier depends only on `ui/*` and `dsp-js`. **Holds at runtime for five of six libraries.** The exception is `vre/ui/string-literal`, which genuinely needs `LocalizationService`. `vre/core/error-handler` also depends on `vre/ui/notification`, inverting the tier. | `docs-only` |
-| `pages/*` libraries do not depend on each other. **Currently violated**: `project/project` to `system/system` and `user-settings/user`; `ontology/ontology` to `ontology/list`, `project/project` and `user-settings/user`; `ontology/list` to `project/project`; `system/system` to `user-settings/user`; `search/advanced-search` to `project/project`. | `docs-only` |
+| No dependency cycles between libraries. Bazel rejects a cycle in the target graph. | `structure` |
+| No library depends on the application. `//apps/dsp-app` makes only its translation files visible to a library, as `vre/shared/app-help-page`'s test data. | `structure` |
+| Imports cross a library boundary through the `@dasch-swiss/*` alias, never a deep path. ESLint `no-restricted-imports`, blind to dynamic `import()`; `apps/dsp-app/cypress/**` is ignored. | `static-analysis` |
+| No library imports application SCSS. The shared partials are `vre/ui/styles`, declared in `sass_deps`; an undeclared `@use` fails the compile. | `structure` |
+| Type tiers: `ui` depends on `ui` and `util`, `data-access` on `data-access` and `util`, `util` on `util`. **Four exceptions**, all into `ui/string-literal` or `ui/ui`: from `core/config`, `shared/app-common`, `shared/app-helper-services` and `3rd-party-services/open-api` (ADR-0001 decision 7, DEV-7552). `dsp-js` is visible to every library (ADR-0001 decision 8). | `structure` |
+| `pages/*` libraries of different scopes do not depend on each other. **Seven exceptions**: `project/project` is visible to `ontology/list`, `ontology/ontology` and `search/advanced-search`; `user-settings/user` to `ontology/ontology`, `project/project` and `system/system`; `system/system` to `project/project` (ADR-0004, DEV-7555). | `structure` |
 
-**Promotion path.** Every `docs-only` rule above could become `static-analysis` today. Nx tags already exist on four projects (`dsp-js` carries `scope:shared` and `type:data-access`; three `ui` libraries carry `type:ui`), but `depConstraints` in `eslint.config.mjs` is the permissive default, so no tag constrains anything. Populating tags on all 29 projects and writing real `depConstraints` would move the tier and page rules from hope to CI. The SCSS rule cannot be promoted this way, because no mechanism in the repository inspects Sass imports.
+Each exception is an `extra_visibility` entry on the target library with a comment naming the ADR and the issue; removing it is part of the change that moves the code. `just visibility-check` seeds one forbidden edge per tier rule and asserts the build rejects it.
 
 ### Wiring
 
@@ -708,7 +728,7 @@ Recorded from the observed runtime graph, not from folder names.
 - Tests and stories are colocated with their subject. Storybook is the de facto coverage mechanism in the UI-heavy libraries; several libraries have stories and no unit tests at all (`vre/pages/ontology/ontology`, `vre/pages/user-settings/user`), and `vre/pages/ontology/list` has neither.
 - Story titles follow `Feature Area / Component / Scenario`, export names encode acceptance criteria, and every story needs a `play()` asserting a user-visible outcome. See `CLAUDE.md`.
 - Stories that mount a real container break when that container's DI changes. When adding a dependency to a component that appears in stories, check which stories render it for real and stub the new providers there.
-- No library has a `CLAUDE.md` and there are no ADRs. Where architectural reasoning exists it is in docblocks citing DEV ticket numbers, notably in `vre/core/error-handler` and `vre/resource-editor/resource-editor`.
+- No library has a `CLAUDE.md`. Architectural decisions are in `docs/adr/`; local reasoning is in docblocks citing DEV ticket numbers, notably in `vre/core/error-handler` and `vre/resource-editor/resource-editor`.
 - `.gitkeep.spec.ts` placeholders survive in several libraries that now have real specs.
 
 ### Banned constructs

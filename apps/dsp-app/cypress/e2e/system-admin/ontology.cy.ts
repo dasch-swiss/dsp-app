@@ -1,4 +1,4 @@
-import { CreateOntology } from '../../../../../libs/dsp-js/src';
+import { CreateOntology } from '@dasch-swiss/dsp-js';
 import { faker } from '@faker-js/faker';
 import { uniqueName } from '../../support/helpers/unique-name';
 import ProjectPage from '../../support/pages/project-page';

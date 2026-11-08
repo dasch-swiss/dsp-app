@@ -11,7 +11,7 @@ import { AppConfigService } from '@dasch-swiss/vre/core/config';
       <span class="release" [ngClass]="dsp.color">{{ dsp.release }}</span>
     </span>
   }`,
-  styleUrls: ['version-badge.component.scss'],
+  styleUrls: ['version-badge.component.css'],
 })
 export class VersionBadgeComponent {
   dsp = this._appConfigService.dspConfig;

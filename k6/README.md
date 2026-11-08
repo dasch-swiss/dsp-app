@@ -205,12 +205,12 @@ just login-compare stage dev    # Compare login performance
 
 **Usage:**
 ```bash
-# Local
-npm run e2e-ci -- --spec="cypress/e2e/performance/**/*.cy.ts" --env VERSION=ngxs
+# Local, with the dsp-api stack up (`just e2e-stack-up`) and the app served (`just serve`)
+cd apps/dsp-app && pnpm exec cypress run --spec "cypress/e2e/performance/**/*.cy.ts" --env VERSION=ngxs
 
 # Remote (DEV/STAGE)
 export DSP_APP_USERNAME='username' DSP_APP_PASSWORD='password'
-cd apps/dsp-app && npx cypress run \
+cd apps/dsp-app && pnpm exec cypress run \
   --spec "cypress/e2e/performance/**/*.cy.ts" \
   --config baseUrl=https://app.dev.dasch.swiss \
   --env VERSION=dev,skipDatabaseCleanup=true,apiUrl=https://api.dev.dasch.swiss,DSP_APP_USERNAME=$DSP_APP_USERNAME,DSP_APP_PASSWORD=$DSP_APP_PASSWORD

@@ -7,15 +7,10 @@ import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { SortButtonComponent } from '../../sort-button/sort-button.component';
+import { SortButtonComponent, SortProp } from '../../sort-button/sort-button.component';
 import { CreateUserDialogComponent } from '../create-user-dialog.component';
 import { UsersTabService } from '../users-tab.service';
 import { UsersListRowComponent } from './users-list-row.component';
-
-interface SortProperty {
-  key: keyof ReadUser;
-  label: string;
-}
 
 type UserSortKey = 'familyName' | 'givenName' | 'email' | 'username';
 
@@ -70,7 +65,7 @@ export class UsersListComponent {
     },
   };
 
-  readonly sortProps: SortProperty[] = [
+  readonly sortProps: SortProp<UserSortKey>[] = [
     {
       key: 'familyName',
       label: this._ts.instant('ui.common.fields.lastName'),

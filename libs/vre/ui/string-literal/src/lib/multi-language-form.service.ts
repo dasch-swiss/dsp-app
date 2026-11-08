@@ -24,6 +24,12 @@ export class MultiLanguageFormService {
     return this.formArray.controls[index];
   }
 
+  /** Whether the selected language's control is disabled; false while that language has no control yet. */
+  get isDisabled(): boolean {
+    // findIndex gives -1 for a language without a value, so the control can be missing.
+    return this.selectedFormControl?.disabled ?? false;
+  }
+
   get selectedLanguageControl() {
     return this.selectedFormControl.controls.value;
   }

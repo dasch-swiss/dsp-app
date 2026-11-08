@@ -1,9 +1,6 @@
-# vre-shared-app-project
-
-This library was generated with [Nx](https://nx.dev).
-
+# @dasch-swiss/vre/pages/project/project
 
 ## Running unit tests
 
-Run `nx test vre-shared-app-project` to execute the unit tests.
+Run `just test //libs/vre/pages/project/project/...` to execute the unit tests.
 

@@ -73,7 +73,7 @@ const ITEM_TYPE_SLUG: Record<ValueItemType, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-view-restrictions',
   templateUrl: './view-restrictions.component.html',
-  styleUrl: './view-restrictions.component.scss',
+  styleUrl: './view-restrictions.component.css',
   // Both services are provided HERE, above the tables, so neither is destroyed when the toggle
   // unmounts its table. An Angular service provided on a component dies with it, which would clear the
   // per-row cache on every switch and make the "switch back is instant" requirement unsatisfiable.

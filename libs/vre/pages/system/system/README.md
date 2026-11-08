@@ -1,9 +1,6 @@
-# vre-shared-app-system
-
-This library was generated with [Nx](https://nx.dev).
-
+# @dasch-swiss/vre/pages/system/system
 
 ## Running unit tests
 
-Run `nx test vre-shared-app-system` to execute the unit tests.
+Run `just test //libs/vre/pages/system/system/...` to execute the unit tests.
 

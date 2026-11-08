@@ -19,7 +19,6 @@ jobs:
     outputs:
       automation_skip: ${{ steps.detect.outputs.automation_skip }}
       only_workflows: ${{ steps.detect.outputs.only_workflows }}
-      only_pkg: ${{ steps.detect.outputs.only_pkg }}
       bot_push: ${{ steps.detect.outputs.bot_push }}
     steps:
       - uses: actions/checkout@v7
@@ -68,7 +67,6 @@ jobs:
           # Tag and direct-main pushes: full pipeline (no path-based skip).
           if [[ "$GH_REF" == refs/tags/* ]] || [ "$GH_REF" = "refs/heads/main" ]; then
             echo "only_workflows=false" >> "$GITHUB_OUTPUT"
-            echo "only_pkg=false"       >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -79,7 +77,6 @@ jobs:
           if ! git fetch --no-tags origin main 2>/dev/null; then
             echo "::warning::could not fetch origin/main; running full pipeline"
             echo "only_workflows=false" >> "$GITHUB_OUTPUT"
-            echo "only_pkg=false"       >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -87,7 +84,6 @@ jobs:
           if [ -z "$DIFF" ]; then
             # No diff (rare for push events) — fail-safe.
             echo "only_workflows=false" >> "$GITHUB_OUTPUT"
-            echo "only_pkg=false"       >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -111,13 +107,6 @@ jobs:
 
           echo "only_workflows=$only_workflows" >> "$GITHUB_OUTPUT"
 
-          # only_pkg: every changed file is package.json or package-lock.json
-          if echo "$DIFF" | grep -qvE '^(package\.json|package-lock\.json)$'; then
-            echo "only_pkg=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "only_pkg=true"  >> "$GITHUB_OUTPUT"
-          fi
-
   lint:
     name: DSP-APP Linting
     needs: [changes]
@@ -126,26 +115,33 @@ jobs:
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          fetch-depth: 2
-      - name: Set up Node
-        uses: actions/setup-node@v7
+          persist-credentials: false
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
+          cache-key-prefix: bazel-disk-lint
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
+      - name: Run lint
         env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
-      - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
-      - name: Run linting
-        run: npx nx run-many --all --target=lint --skip-nx-cache
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-lint.json
+        run: nix develop --command just lint
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-lint
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
   test:
     name: DSP-APP Unit tests
@@ -155,37 +151,45 @@ jobs:
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          fetch-depth: 2
-      - name: Set up Node
-        uses: actions/setup-node@v7
+          persist-credentials: false
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
+          cache-key-prefix: bazel-disk-test
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
+      - name: Run test
         env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
-      - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
-      - name: Run tests with coverage
-        run: npm run unit-test-coverage-ci
-        env:
-          TZ: Europe/Zurich
-      - name: Upload coverage reports to Codecov
-        if: needs.changes.result == 'success' && needs.changes.outputs.only_pkg == 'false'
-        uses: codecov/codecov-action@v7
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-test.json --execution_log_json_file=${{ runner.temp }}/exec.json
+        run: nix develop --command just test
+      - name: Count actions by mnemonic and runner
+        if: always()
+        run: |
+          if [ ! -s "$RUNNER_TEMP/exec.json" ]; then
+            echo "no execution log; Bazel stopped before running actions"
+            exit 0
+          fi
+          jq -r '[.mnemonic, .runner, (.exitCode // 0)] | @tsv' "$RUNNER_TEMP/exec.json" | sort | uniq -c
+          echo "TsProject actions by target:"
+          jq -r 'select(.mnemonic == "TsProject") | [.targetLabel, .runner, (.exitCode // 0)] | @tsv' "$RUNNER_TEMP/exec.json" | sort
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: unit-test-coverage
-          fail_ci_if_error: false
+          name: bep-test
+          path: |
+            ${{ runner.temp }}/bep-*.json
+            ${{ runner.temp }}/exec.json
+          if-no-files-found: ignore
 
   dsp-app-e2e-tests:
     name: DSP-APP E2E tests (${{ matrix.runner }})
@@ -195,6 +199,8 @@ jobs:
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       # Run all runners to completion even if one fails, so all failures are visible
       fail-fast: false
@@ -209,52 +215,52 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - name: Set up Node
-        uses: actions/setup-node@v7
         with:
-          node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
+          persist-credentials: false
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
+        with:
+          cache-key-prefix: bazel-disk-e2e-${{ matrix.runner }}
+          cypress: 'true'
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Cache Cypress binary
         uses: actions/cache@v6
         with:
           path: ~/.cache/Cypress
-          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: cypress-${{ runner.os }}-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
-      - name: Install Cypress binary
-        run: npx cypress install
-      - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
-      - name: Type-check e2e specs
-        run: npx tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json
-      - name: Start app (background)
-        run: npx nx run dsp-app:serve:production &
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      # .bazelignore keeps this checkout out of the dsp-app workspace.
       - name: Checkout DSP-API repo
         uses: actions/checkout@v7
         with:
           repository: dasch-swiss/dsp-api
           ref: main
           path: dsp-api
-      - name: Set up just
-        uses: extractions/setup-just@v4
+          persist-credentials: false
       - name: Start API
-        run: |
-          cd dsp-api
-          just init-db-test
-          docker compose -f docker-compose.yml up -d sipi ingest api
-          ./modules/webapi/scripts/wait-for-api.sh
-      - name: Wait for app to be ready
-        run: timeout 180 bash -c 'until curl -sf http://localhost:4200 > /dev/null 2>&1; do sleep 3; done'
-      - name: Run e2e tests in CI
-        working-directory: apps/dsp-app
-        run: npx cypress run --browser chrome --spec "${{ matrix.specs }}"
+        env:
+          DSP_API_DIR: dsp-api
+        run: nix develop .#e2e --command just e2e-stack-up
+      - name: Type-check e2e specs
+        env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-e2e-typecheck.json
+        run: nix develop .#e2e --command just typecheck-e2e
+      - name: Run e2e tests
+        env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-e2e.json
+          SPECS: ${{ matrix.specs }}
+        run: nix develop .#e2e --command just e2e "$SPECS"
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-e2e-${{ matrix.runner }}
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         if: failure()
@@ -289,17 +295,18 @@ jobs:
     name: Check OpenAPI Spec is Up-to-Date
     needs: [changes]
     runs-on: ubuntu-latest
+    # The App token pushes and calls gh; GITHUB_TOKEN only checks out.
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
     if: |
       needs.changes.result == 'success' &&
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     steps:
       # Mint a short-lived GitHub App token (DaSCH Bot App) scoped to dsp-app.
-      # Used by checkout — so the `git push` below pushes AS the App, not the
-      # built-in GITHUB_TOKEN — and by `gh pr create`. Pushes made with an App
+      # Only the PR step gets it, for `git push` (as the App, not the built-in
+      # GITHUB_TOKEN) and `gh`; the checkout persists no credentials, so the
+      # build steps before it never see a token. Pushes made with an App
       # token DO trigger the `on: push` CI that produces the required checks;
       # GITHUB_TOKEN pushes are suppressed by GitHub's recursion guard, which
       # left those checks unreported and the spec-bump PRs permanently BLOCKED.
@@ -317,14 +324,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          token: ${{ steps.app-token.outputs.token }}
-      - name: Set up yq
-        uses: mikefarah/yq@v4
+          persist-credentials: false
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
       - id: check
         name: Run OpenAPI sync check
         run: |
           set +e
-          ./scripts/check-openapi-sync.sh --verbose
+          nix develop --command just openapi-check --verbose
           exit_code=$?
           echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
           if [ "$exit_code" -eq 2 ]; then
@@ -332,20 +339,9 @@ jobs:
             exit 0
           fi
           exit $exit_code
-      - name: Set up Node.js
-        if: always() && steps.check.outputs.exit_code == '1'
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - name: Set up npm
-        if: always() && steps.check.outputs.exit_code == '1'
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        if: always() && steps.check.outputs.exit_code == '1'
-        run: npm ci --ignore-scripts
       - name: Update OpenAPI spec
         if: always() && steps.check.outputs.exit_code == '1'
-        run: npm run update-openapi
+        run: nix develop --command just openapi-update
       - name: Create PR if spec changed
         if: always() && steps.check.outputs.exit_code == '1'
         run: |
@@ -354,6 +350,7 @@ jobs:
             exit 0
           fi
           SPEC="libs/vre/3rd-party-services/open-api/dsp-api_spec.yaml"
+          gh auth setup-git
           git fetch origin main
           LOCAL_VERSION=$(git show origin/main:"$SPEC" | yq '.info.version')
           REMOTE_VERSION=$(yq '.info.version' "$SPEC")
@@ -382,11 +379,15 @@ jobs:
           BOT_USER_ID=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
           git config user.name "${APP_SLUG}[bot]"
           git config user.email "${BOT_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+          MANIFEST="tools/openapi/openapi_files.bzl"
           cp "$SPEC" /tmp/updated-spec.yaml
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
-          git checkout -b "$BRANCH" origin/main
+          # -f discards openapi-update's working-tree edits: the PR holds only the spec and main's
+          # generated manifest.
+          git checkout -f -b "$BRANCH" origin/main
           cp /tmp/updated-spec.yaml "$SPEC"
-          git add "$SPEC"
+          nix develop --command just openapi-generate
+          git add "$SPEC" "$MANIFEST"
           git commit -m "chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
           git push origin "$BRANCH"
           gh pr create \
@@ -436,33 +437,37 @@ jobs:
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          fetch-depth: 2
-      - name: Set up Node
-        uses: actions/setup-node@v7
+          persist-credentials: false
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
-      - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
+          cache-key-prefix: bazel-disk-storybook
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
       - name: Build Storybook
-        run: npx nx run dsp-app:build-storybook:ci
-      - name: Install Playwright browsers
-        run: npx playwright install chromium
-      - name: Serve and run interaction tests
-        run: |
-          npx http-server dist/storybook --port 6006 --silent &
-          npx wait-on tcp:6006 --timeout 60000
-          npx nx run dsp-app:test-storybook:ci -- --maxWorkers=2
+        env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-storybook-build.json
+        run: nix develop --command just storybook-build
+      - name: Run interaction tests
+        env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-storybook-test.json
+        run: nix develop --command just storybook-test
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-storybook
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
   pixeleye:
     name: Pixeleye Snapshots
@@ -494,6 +499,8 @@ jobs:
       cancel-in-progress: false
     permissions:
       contents: read
+    env:
+      PIXELEYE_BROWSERS_PATH: ${{ github.workspace }}/../pixeleye-browsers
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -507,45 +514,30 @@ jobs:
         # fail with "refusing to fetch into current branch".
         if: github.ref_name != 'main'
         run: git fetch origin main:main || echo "::warning::could not fetch main; baseline may fall back to latest build on the base branch"
-      - name: Set up Node
-        uses: actions/setup-node@v7
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
         with:
-          node-version-file: .nvmrc
-          cache: 'npm'
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
-      - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
-      - name: Build Storybook
-        run: npx nx run dsp-app:build-storybook:ci
-      - name: Cache Playwright browsers
-        # `npm ci --ignore-scripts` suppresses playwright's postinstall, so
-        # browsers must be installed explicitly below. Caching keeps the
-        # marginal cost of this job over storybook-tests honest.
+          cache-key-prefix: bazel-disk-pixeleye
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
+      - name: Cache Pixeleye's browsers
+        # The frozen CLI downloads Playwright 1.59.0's browsers on every start, and the headless
+        # shell the capture launches goes there too; `just pixeleye` points both at this directory.
         uses: actions/cache@v6
         with:
-          path: ~/.cache/ms-playwright
-          key: ms-playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: ms-playwright-${{ runner.os }}-
-      - name: Install Playwright browsers
-        # Installed via playwright-core's own CLI rather than `npx playwright`,
-        # so the browser revision matches the playwright-core that pixeleye
-        # actually launches — a mismatch fails with "Executable doesn't exist".
-        # chromium-headless-shell is a SEPARATE download from chromium and is
-        # the binary the pixeleye booth server launches.
-        run: node node_modules/playwright-core/cli.js install --with-deps chromium chromium-headless-shell
+          path: ${{ env.PIXELEYE_BROWSERS_PATH }}
+          key: pixeleye-browsers-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pixeleye-browsers-${{ runner.os }}-
       - name: Capture and upload snapshots
         id: capture
         run: |
-          npx http-server dist/storybook --port 6006 --silent &
-          npx wait-on tcp:6006 --timeout 60000
-          npm run pixeleye:ci
+          nix develop --command just pixeleye
           echo "uploaded=true" >> "$GITHUB_OUTPUT"
         env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-pixeleye.json
           PIXELEYE_TOKEN: ${{ secrets.PIXELEYE_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
       # Breakpoint run: the `Pages / Breakpoints / …` stories at every breakpoint
@@ -566,22 +558,23 @@ jobs:
           fi
         env:
           PIXELEYE_BREAKPOINTS_TOKEN: ${{ secrets.PIXELEYE_BREAKPOINTS_TOKEN }}
-      - name: Build breakpoint Storybook
-        if: steps.breakpoints-token.outputs.present == 'true'
-        continue-on-error: true
-        run: npm run build-storybook:breakpoints
       - name: Capture and upload breakpoint snapshots
         if: steps.breakpoints-token.outputs.present == 'true'
         continue-on-error: true
-        run: |
-          npx http-server dist/storybook-breakpoints --port 6007 --silent &
-          npx wait-on tcp:6007 --timeout 60000
-          npm run pixeleye:breakpoints
+        run: nix develop --command just pixeleye breakpoints
         env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-pixeleye-breakpoints.json
           PIXELEYE_BREAKPOINTS_TOKEN: ${{ secrets.PIXELEYE_BREAKPOINTS_TOKEN }}
           PIXELEYE_ENDPOINT: ${{ vars.PIXELEYE_ENDPOINT }}
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-pixeleye
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
       # A cancelled run (a newer push to the branch) SIGKILLs the CLI before its
-      # own abort-on-signal handler runs: bash holds the signal until npm exits.
+      # own abort-on-signal handler runs: bash holds the signal until pnpm exits.
       # The build it created stays `uploading`, and pixeleye's stuck-build job
       # fails it without releasing the builds that target it (upstream bug), so
       # every later build of the branch sits in `queued-processing` forever.
@@ -652,6 +645,47 @@ jobs:
             -f state=success -f context="$CONTEXT" -f description="$DESC" -f target_url="$RUN_URL" >/dev/null
           echo "Posted '${CONTEXT}': ${DESC}"
 
+  gate:
+    name: Gate (just ci)
+    needs: [changes]
+    if: |
+      needs.changes.result == 'success' &&
+      needs.changes.outputs.automation_skip == 'false' &&
+      needs.changes.outputs.only_workflows == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Set up Nix, the Bazel caches and RBE
+        id: bazel
+        uses: ./.github/actions/bazel-setup
+        with:
+          cache-key-prefix: bazel-disk-gate
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
+      # No build event log: these recipes call Bazel many times, and the visibility check's seeds
+      # fail on purpose, so one log would hold only the last seed's analysis.
+      - name: Run just ci
+        env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }}
+        run: nix develop --command just ci
+      - name: Check that just lint rejects a seeded violation
+        env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }}
+        run: nix develop --command just lint-selftest
+      # The image has no HEALTHCHECK; ops-deploy's compose healthcheck runs curl inside the
+      # container, so a base digest without curl must fail here, not in production.
+      - name: Smoke-test the image
+        env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }}
+        run: nix develop --command just nginx-smoke-test
+
   docs-build-test:
     name: Docs Build Test
     needs: [changes]
@@ -660,19 +694,17 @@ jobs:
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: 3.15
-          cache: 'pip'
-      - name: Install dependencies
-        run: pip install -r docs/requirements.txt
+          persist-credentials: false
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
       - name: Lint documentation
-        run: make docs-lint
+        run: nix develop --command just docs-lint
       - name: Build documentation
-        run: make docs-build
+        run: nix develop --command just docs-build

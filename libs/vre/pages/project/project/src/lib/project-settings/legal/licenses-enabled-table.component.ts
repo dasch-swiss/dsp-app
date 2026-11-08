@@ -40,25 +40,23 @@ export interface LicenseToggleEvent {
         border: 1px solid #f2f2f2;
       }
 
-      tr {
-        &:nth-child(odd) {
-          background-color: #f2f2f2;
-        }
+      tr:nth-child(odd) {
+        background-color: #f2f2f2;
+      }
 
-        td,
-        th {
-          text-align: left;
-          padding: 8px;
-        }
+      tr td,
+      tr th {
+        text-align: left;
+        padding: 8px;
+      }
 
-        th {
-          background-color: #dedede;
-        }
+      tr th {
+        background-color: #dedede;
+      }
 
-        td:nth-of-type(2) {
-          width: 90px;
-          text-align: center;
-        }
+      tr td:nth-of-type(2) {
+        width: 90px;
+        text-align: center;
       }
     `,
   ],

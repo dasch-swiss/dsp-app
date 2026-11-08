@@ -1,0 +1,39 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "vre_library")
+
+vre_library(
+    name = "user",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    assets = glob(["src/**/*.html"]),
+    stylesheets = glob(["src/**/*.scss"]),
+    sass_deps = ["//libs/vre/ui/styles"],
+    # ADR-0004: AllProjectsService, the user dialogs, ProjectImageCoverComponent, MenuItem and
+    # existingNamesAsyncValidator move to `scope:shared` libraries (DEV-7555).
+    extra_visibility = [
+        "//libs/vre/pages/ontology/ontology:__pkg__",
+        "//libs/vre/pages/project/project:__pkg__",
+        "//libs/vre/pages/system/system:__pkg__",
+    ],
+    deps = [
+        "//:node_modules/@angular/common",
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/forms",
+        "//:node_modules/@angular/material",
+        "//:node_modules/@angular/platform-browser",
+        "//:node_modules/@angular/router",
+        "//:node_modules/@ngx-translate/core",
+        "//:node_modules/rxjs",
+        "//libs/dsp-js",
+        "//libs/vre/3rd-party-services/api",
+        "//libs/vre/core/config",
+        "//libs/vre/core/session",
+        "//libs/vre/shared/app-common-to-move",
+        "//libs/vre/shared/app-help-page",
+        "//libs/vre/shared/app-helper-services",
+        "//libs/vre/ui/notification",
+        "//libs/vre/ui/progress-indicator",
+        "//libs/vre/ui/ui",
+    ],
+)

@@ -12,7 +12,7 @@ import { TranslatePipe } from '@ngx-translate/core';
  * The small negative x-offset lines the popover's first column up with the trigger's text rather
  * than with its padding edge.
  */
-const POPOVER_POSITIONS: readonly ConnectedPosition[] = [
+const POPOVER_POSITIONS: ConnectedPosition[] = [
   { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetX: -10, offsetY: 6 },
   { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetX: -10, offsetY: -6 },
 ];
@@ -300,12 +300,12 @@ export interface CalendarFacts {
         background: none;
         color: #336790;
         cursor: pointer;
+      }
 
-        mat-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-        }
+      .calendar-marker-copy mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
       }
 
       .calendar-marker-reform-gap {

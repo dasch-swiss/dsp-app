@@ -5,19 +5,23 @@ on:
     types: [opened, edited, synchronize, reopened, closed]
     paths:
       - 'apps/dsp-app/src/**'
+      - 'apps/dsp-app/BUILD.bazel'
+      - 'apps/dsp-app/image/**'
       - 'libs/**'
+      - 'nginx/**'
   workflow_dispatch:
   schedule:
     - cron: '0 2 * * *'  # daily at 02:00 UTC — clean up stale previews
+
+# The bundle configuration every preview is built in: the DEV API.
+env:
+  PREVIEW_CONFIG: dev-server
 
 jobs:
   deploy-preview:
     name: Build and deploy PR preview
     if: >-
-      github.event_name == 'pull_request' &&
-      github.event.action != 'closed' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      !startsWith(github.head_ref, 'release-please-')
+      github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository && !startsWith(github.head_ref, 'release-please-')
     runs-on: ubuntu-latest
     concurrency:
       group: cloud-run-preview-pr-${{ github.event.pull_request.number }}
@@ -32,26 +36,22 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v7
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+
+      - name: Configure RBE
+        id: rbe
+        uses: ./.github/actions/bazel-rbe
         with:
-          node-version-file: .nvmrc
-          cache: 'npm'
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
 
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
+      - name: Build Angular app (preview configuration)
         env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
-
-      - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
-
-      - name: Build Angular app (dev-server config → DEV API)
-        run: npx nx run dsp-app:build:dev-server
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-build.json
+        run: nix develop --command just build "$PREVIEW_CONFIG"
 
       - name: Authenticate to Google Cloud
         id: auth
@@ -61,9 +61,7 @@ jobs:
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           token_format: 'access_token'
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
+      # oci_push reads the credentials it writes to ~/.docker/config.json.
       - name: Log in to Artifact Registry
         uses: docker/login-action@v4
         with:
@@ -73,14 +71,21 @@ jobs:
 
       - name: Build and push image
         id: build
-        uses: docker/build-push-action@v7
+        env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-push.json
+          REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app
+        run: |
+          set -euo pipefail
+          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" "$PREVIEW_CONFIG" | tail -n1)"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
-          context: .
-          push: true
-          tags: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app:${{ env.IMAGE_TAG }}
-          build-args: build_tag=pr-${{ github.event.pull_request.number }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          name: bep-preview
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
       - name: Deploy to Cloud Run
         id: deploy
@@ -182,26 +187,22 @@ jobs:
 
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v7
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+
+      - name: Configure RBE
+        id: rbe
+        uses: ./.github/actions/bazel-rbe
         with:
-          node-version-file: .nvmrc
-          cache: 'npm'
+          runner-endpoint: ${{ vars.REMOTEBUILD_RUNNER_ENDPOINT }}
+          ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
+          client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
+          client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
 
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --ignore-scripts
+      - name: Build Angular app (preview configuration)
         env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
-
-      - name: Generate OpenAPI client
-        run: npm run generate-openapi-module
-
-      - name: Build Angular app (dev-server config → DEV API)
-        run: npx nx run dsp-app:build:dev-server
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-build.json
+        run: nix develop --command just build "$PREVIEW_CONFIG"
 
       - name: Authenticate to Google Cloud
         id: auth
@@ -211,9 +212,7 @@ jobs:
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           token_format: 'access_token'
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
+      # oci_push reads the credentials it writes to ~/.docker/config.json.
       - name: Log in to Artifact Registry
         uses: docker/login-action@v4
         with:
@@ -223,14 +222,21 @@ jobs:
 
       - name: Build and push image
         id: build
-        uses: docker/build-push-action@v7
+        env:
+          BAZEL_FLAGS: ${{ steps.rbe.outputs.flags }} --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-push.json
+          REPOSITORY: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app
+        run: |
+          set -euo pipefail
+          digest="$(nix develop --command just docker-push-preview "$REPOSITORY" "$IMAGE_TAG" "$PREVIEW_CONFIG" | tail -n1)"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
-          context: .
-          push: true
-          tags: ${{ secrets.GCP_ARTIFACT_REGISTRY }}/dsp-app:${{ env.IMAGE_TAG }}
-          build-args: build_tag=${{ env.IMAGE_TAG }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          name: bep-preview
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
       - name: Deploy to Cloud Run
         id: deploy
@@ -298,9 +304,7 @@ jobs:
 
   cleanup-preview:
     name: Clean up PR close
-    if: >-
-      github.event_name == 'pull_request' &&
-      github.event.action == 'closed'
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     env:
       SERVICE_NAME: dsp-app-pr-${{ github.event.pull_request.number }}

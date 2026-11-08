@@ -1,0 +1,40 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "ontology",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    assets = glob(["src/**/*.html"]),
+    stylesheets = glob(["src/**/*.scss"]),
+    sass_deps = ["//libs/vre/ui/styles"],
+    test_size = "small",
+    # glob skips dot files, so the placeholder spec is named; a new spec is picked up.
+    test_srcs = glob(TEST_SRCS, allow_empty = True) + ["src/lib/.gitkeep.spec.ts"],
+    deps = [
+        "//:node_modules/@angular/cdk",
+        "//:node_modules/@angular/common",
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/forms",
+        "//:node_modules/@angular/material",
+        "//:node_modules/@angular/platform-browser",
+        "//:node_modules/@angular/router",
+        "//:node_modules/@ngx-translate/core",
+        "//:node_modules/rxjs",
+        "//libs/dsp-js",
+        "//libs/vre/3rd-party-services/api",
+        "//libs/vre/3rd-party-services/open-api",
+        "//libs/vre/core/config",
+        "//libs/vre/pages/ontology/list",
+        "//libs/vre/pages/project/project",
+        "//libs/vre/pages/user-settings/user",
+        "//libs/vre/shared/app-common",
+        "//libs/vre/shared/app-common-to-move",
+        "//libs/vre/shared/app-helper-services",
+        "//libs/vre/ui/notification",
+        "//libs/vre/ui/progress-indicator",
+        "//libs/vre/ui/string-literal",
+        "//libs/vre/ui/ui",
+    ],
+)

@@ -1,3 +1,13 @@
+/* material-icons: the face fonts.googleapis.com/icon?family=Material+Icons serves a browser.
+   Declared, not @imported: that import blocks rendering, and the build may not fetch it. Only here:
+   a component stylesheet would repeat it. Storybook overrides it with the local ttf (preview.ts). */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v145/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+}
+
 /* roboto-300 - latin */
 @font-face {
   font-family: 'Roboto';
@@ -57,13 +67,4 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
     U+FEFF, U+FFFD;
-}
-
-/* material-icons */
-@font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Material Icons'), local('MaterialIcons-Regular'),
-    url(../assets/fonts/material-icons/MaterialIcons-Regular.ttf) format('truetype');
 }

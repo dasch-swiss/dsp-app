@@ -13,7 +13,7 @@ import { ProjectPageService } from './project-page.service';
       <router-outlet />
     </div>
   `,
-  styleUrls: ['./project-page.component.scss'],
+  styleUrls: ['./project-page.component.css'],
   imports: [ProjectPageHeaderComponent, RouterOutlet],
 })
 export class ProjectPageComponent implements OnInit {
