@@ -12,7 +12,8 @@ files="$(grep -oE '<(script|link)[^>]*>' "$index" |
   grep -E '^<script|rel="(stylesheet|modulepreload)"' |
   grep -oE '(src|href)="[^"]*"' | sed -E 's/^(src|href)="(.*)"$/\2/' | sort -u)"
 for kind in 'main-*.js' 'polyfills-*.js' 'styles-*.css' 'scripts-*.js'; do
-  grep -qx "${kind//\*/.*}" <<<"$files" || { echo "index.html references no $kind" >&2; exit 1; }
+  grep -qx "${kind//\*/.*}" <<<"$files" ||
+    { echo "index.html references no $kind; the entries are vre_application's, tools/angular/defs.bzl" >&2; exit 1; }
 done
 total=0
 while read -r file; do

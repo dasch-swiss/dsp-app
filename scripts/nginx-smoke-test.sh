@@ -182,7 +182,7 @@ stub_saw "value123" && fail "deeper path was forwarded" || pass "deeper path not
 # --- the bundle ---
 request "$EMPTY_PORT" GET "/"
 expect_status "index.html" 200
-expect_body_has "index.html" '<script src="main-[^"]*" type="module">'
+expect_body_has "index.html" '<script [^>]*src="main-[^"]*\.js"'
 request "$EMPTY_PORT" GET "/assets/i18n/en.json"
 expect_status "i18n file" 200
 expect_header "i18n file" Content-Type application/json
