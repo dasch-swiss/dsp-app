@@ -678,6 +678,12 @@ jobs:
         env:
           BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }}
         run: nix develop --command just lint-selftest
+      # The image has no HEALTHCHECK; ops-deploy's compose healthcheck runs curl inside the
+      # container, so a base digest without curl must fail here, not in production.
+      - name: Smoke-test the image
+        env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }}
+        run: nix develop --command just nginx-smoke-test
 
   docs-build-test:
     name: Docs Build Test
