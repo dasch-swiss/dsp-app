@@ -83,13 +83,17 @@ const minifyComponentStyles = {
 };
 
 // The CLI's extractLicenses: every npm package with bytes in the output, with its package.json
-// license and its root LICENSE file, written beside the bundle as 3rdpartylicenses.txt.
+// license and its root LICENSE file (or the file `SEE LICENSE IN` names), written beside the bundle
+// as 3rdpartylicenses.txt.
 const LICENSE_FILES = ['LICENSE', 'LICENSE.txt', 'LICENSE.md'];
 const SEPARATOR = '-'.repeat(80) + '\n';
 const thirdPartyLicenses = {
   name: 'third-party-licenses',
   setup(build) {
     build.onEnd(async result => {
+      if (result.errors.length > 0) {
+        return;
+      }
       if (!result.metafile) {
         throw new Error('third-party-licenses needs the metafile option');
       }
@@ -97,21 +101,27 @@ const thirdPartyLicenses = {
       const packageDirs = new Set();
       for (const output of Object.values(result.metafile.outputs)) {
         for (const [input, { bytesInOutput }] of Object.entries(output.inputs)) {
-          const match = bytesInOutput > 0 && input.match(/^(.*node_modules\/(?:@[^/]+\/)?[^/]+)\//);
-          if (match) {
+          const match = input.match(/^(.*(?:^|\/)node_modules\/(?:@[^/]+\/)?[^/]+)\//);
+          if (bytesInOutput > 0 && match) {
             packageDirs.add(match[1]);
           }
         }
       }
       const entries = new Map();
       for (const dir of packageDirs) {
-        const pkg = JSON.parse(await readFile(resolve(root, dir, 'package.json'), 'utf8'));
+        const pkg = await readFile(resolve(root, dir, 'package.json'), 'utf8')
+          .then(JSON.parse)
+          .catch(error => {
+            throw new Error(`third-party-licenses: cannot read ${dir}/package.json: ${error.message}`);
+          });
         const id = `${pkg.name}@${pkg.version}`;
         if (entries.has(id)) {
           continue;
         }
+        const custom = typeof pkg.license === 'string' && pkg.license.match(/^SEE LICENSE IN (.+)$/i);
+        const files = custom ? [custom[1].trim()] : LICENSE_FILES;
         let text = '';
-        for (const file of LICENSE_FILES) {
+        for (const file of files) {
           text = await readFile(resolve(root, dir, file), 'utf8').catch(() => '');
           if (text) {
             break;
