@@ -381,11 +381,11 @@ jobs:
           git config user.email "${BOT_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
           MANIFEST="tools/openapi/openapi_files.bzl"
           cp "$SPEC" /tmp/updated-spec.yaml
-          cp "$MANIFEST" /tmp/updated-openapi_files.bzl
           BRANCH="chore/update-dsp-api-openapi-spec-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH" origin/main
           cp /tmp/updated-spec.yaml "$SPEC"
-          cp /tmp/updated-openapi_files.bzl "$MANIFEST"
+          # The manifest comes from main's generator, never from the pushed branch's.
+          nix develop --command just openapi-generate
           git add "$SPEC" "$MANIFEST"
           git commit -m "chore(open-api): bump dsp-api spec ${LOCAL_VERSION} → ${REMOTE_VERSION}"
           git push origin "$BRANCH"
