@@ -64,9 +64,6 @@ apps/dsp-app/.nyc_output/
 apps/dsp-app/cypress/screenshots
 apps/dsp-app/cypress/downloads
 
-# Sentry Config File
-.sentryclirc
-
 # `.envrc` itself is tracked and holds only `use flake`; personal env and
 # secrets go in `.envrc.local`, which it sources if present.
 .envrc.local

@@ -10,7 +10,8 @@ build --enable_platform_specific_config
 # CI overrides this with --lockfile_mode=error.
 common --lockfile_mode=update
 common --disk_cache=~/.cache/bazel-disk/dsp-app
-# Bazel trims the disk cache to this size in the background, while the server is idle.
+# Bazel trims the disk cache to this size once the server has been idle for a while (5 min by
+# default), so this bounds local disks; a CI job ends first, and its saved cache is not trimmed.
 common --experimental_disk_cache_gc_max_size=1G
 # External downloads, at a fixed path so CI can cache it keyed on MODULE.bazel.lock.
 common --repository_cache=~/.cache/bazel-repo

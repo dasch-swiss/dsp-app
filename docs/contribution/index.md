@@ -17,8 +17,9 @@ just ci        # the gate: build, tests, lint, Storybook build, e2e type-check, 
 just help      # every recipe
 ```
 
-CI runs `just ci` too, and the Storybook interaction tests, the Cypress suite and the docs build as
-jobs of their own. Without the CI remote cache, the first local build compiles everything.
+CI runs `just ci` too, followed by `just lint-selftest` and the image smoke test
+(`just nginx-smoke-test`) in the same job, and the Storybook interaction tests, the Cypress suite and
+the docs build as jobs of their own. Without the CI remote cache, the first local build compiles everything.
 
 Bazel builds and tests every library and the application
 ([ADR 0007](../adr/0007-bazel-builds-the-repository.md)); the
