@@ -641,6 +641,67 @@ Pixeleye still sets the wall clock. Lint and E2E heavy are slower than on `main`
 - A source-changing CI run's `bep-test` and `exec.json`: no commit after `1993363c7` changes a source;
   the remote-execution run above is the evidence that `TsProject` and esbuild execute remotely.
 
+## Local darwin measurements, 2026-11-08
+
+Head `92798f76b`, an Apple M1 Max (10 cores, 64 GB), Bazel 9.3.1, Node 24.20.0, no Docker
+container running, other applications open. Three samples per measure. The edits are the ones in
+the end-of-migration section, all in `libs/vre/ui/ui`: the inline template of
+`resource-rights-statement.component.ts`, a rule added to `ck-editor.component.scss`, and a new
+`@Input` with a default on `NoResultsFoundComponent`.
+
+### Build times
+
+| Measure | Samples |
+| ------- | ------- |
+| Cold build, `//apps/dsp-app:dist` | 64.5, 64.9, 63.5 s |
+| After a plain `bazel clean`, disk cache kept | 55.4, 3.8, 3.4 s |
+| Warm no-op, server running | 0.3, 0.3, 0.3 s |
+| Warm no-op after `bazel shutdown` | 5.1, 5.0, 5.0 s |
+| One-line template edit to a rebuilt bundle, production | 44.0, 19.2, 18.6 s |
+
+- **Cold:** `bazel clean --expunge`, then `bazel build //apps/dsp-app:dist --disk_cache=
+  --lockfile_mode=error`, no remote; the repository cache stayed warm, so downloads are not in the
+  numbers. All 1625 spawned actions ran locally (2539 processes, 914 of them internal); critical
+  path 43.7-45.3 s.
+- **After `bazel clean`:** the first sample had to fill the disk cache, which the cold runs
+  bypassed: 66 hits. The next two had all 1625 actions as disk cache hits.
+- **Template edit, production:** the first sample is slow, and why is not explained.
+
+### Peak memory
+
+Whole machine, active, wired and compressed pages from `vm_stat` every 2 s during each cold build.
+The peak was 4.9-5.7 GB above the level read just before the build, which was 34.8-35.6 GB with
+other applications open. That is a delta, not a total, and does not compare with the runner's
+8.3-9.1 GB used.
+
+### Edit to updated page, development
+
+| | Rebuild alone (`bazel build`) | Save to new content on disk under `ibazel` |
+| --- | --- | --- |
+| Template edit | 20.5, 17.6, 17.5 s | 18.7, 18.4, 17.9 s |
+| Stylesheet edit | 17.7, 17.0, 17.2 s | 19.1, 18.6, 18.2 s |
+| Public signature change | 33.3, 34.7, 34.6 s | 34.7, 34.5, 35.8 s |
+
+`just serve` has no live reload, so the page updates on a manual reload. That reload is now
+measured: `agent-browser` reloading the page from `miniserve` serving the development dist, after
+each `ibazel` sample, read DOMContentLoaded at 332-343 ms and load at 375-472 ms from the
+Navigation Timing entry.
+
+Against the end-of-migration `ibazel` column, all three edits are about 10 s faster: 27.3-30.5 to
+17.9-18.7 s, 27.5-28.6 to 18.2-19.1 s, 43.1-45.9 to 34.5-35.8 s. That is about the 10 s by which
+the darwin esbuild action was slower than the spike. The cause is not isolated; the source changes
+since `afd0c1ed1` and a different machine load are possible factors.
+
+The runner numbers above (cold 147-171 s, no-op after shutdown 14.3-19.3 s) come from a 4 vCPU
+runner and do not compare with this machine.
+
+### Not measured on 2026-11-08
+
+- The runner numbers, again.
+- Storybook rebuilds.
+- An open tab's update: there is no live reload.
+- Peak memory on an otherwise idle machine.
+
 ## Generated `paths`: direct-only
 
 A library's generated tsconfig maps only the aliases of its declared `deps` to their compiled
