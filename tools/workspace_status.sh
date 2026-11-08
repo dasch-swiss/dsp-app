@@ -6,5 +6,5 @@ set -euo pipefail
 cd "${BUILD_WORKSPACE_DIRECTORY:-.}"
 
 echo "STABLE_GIT_COMMIT $(git rev-parse HEAD 2>/dev/null || echo unknown)"
-# The image's build tag, as the Makefile's BUILD_TAG had it.
+# The image's build tag.
 echo "STABLE_GIT_VERSION $(git describe --tag --match 'v[0-9]*' --dirty --abbrev=7 --always 2>/dev/null || echo unknown)"

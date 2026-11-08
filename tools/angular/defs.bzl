@@ -450,7 +450,8 @@ def vre_application(
         metafile = True,
         output_dir = True,
         platform = "browser",
-        # No sourceMappingURL comment: the maps are uploaded to Sentry, not served to the browser.
+        # Hidden maps: no sourceMappingURL comment, so a browser never fetches them, but the .map
+        # files still land in dist and in the image's /public.
         sourcemap = "external",
         splitting = True,
         target = "es2022",
