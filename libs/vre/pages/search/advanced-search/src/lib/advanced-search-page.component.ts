@@ -59,10 +59,6 @@ export class AdvancedSearchPageComponent {
   // user actions.
   readonly query = toSignal(this._derivation.gravsearchQuery$, { initialValue: null });
 
-  /**
-   * The tips wait for the search bar: shown first, they were pushed down once the data model and
-   * resource class chips arrived, so the page visibly rearranged itself (DEV-7483).
-   */
   readonly ontologyLoading = toSignal(inject(OntologyDataService).ontologyLoading$, { initialValue: true });
 
   /**

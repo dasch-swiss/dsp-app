@@ -199,9 +199,7 @@ export class DataClassHeaderComponent {
     )
   );
 
-  /** The description shows two lines; the rest opens with "Show more" (DEV-7743). */
   readonly descriptionExpanded = signal(false);
-  /** Whether the collapsed description hides text, so the toggle is worth showing. */
   readonly descriptionClamped = signal(false);
   private readonly _descriptionEl = viewChild<ElementRef<HTMLElement>>('descriptionEl');
   private _descriptionObserver?: ResizeObserver;
@@ -213,7 +211,6 @@ export class DataClassHeaderComponent {
       this.descriptionClamped.set(false);
       return;
     }
-    // Measured on every resize: a narrower header clamps a description that fit before.
     this._descriptionObserver = new ResizeObserver(() => {
       if (!this.descriptionExpanded()) {
         this.descriptionClamped.set(el.scrollHeight > el.clientHeight + 1);

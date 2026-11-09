@@ -114,25 +114,21 @@ export class GlobalSearchComponent implements OnDestroy {
           offsetX: -130,
         },
       ])
-      // Pushing would keep the panel on screen once the field has scrolled away, floating it over the page.
       .withPush(false);
 
     this.overlayRef = this._overlay.create({
       positionStrategy,
       hasBackdrop: false,
-      // Follows the field as the page scrolls, and closes once the field is out of view (DEV-7516).
       scrollStrategy: this._overlay.scrollStrategies.reposition({ autoClose: true }),
       width: '570px',
     });
 
     const portal = new ComponentPortal(SearchTipsComponent);
     this.overlayRef.attach(portal);
-    // Closed by scrolling: drop the reference, so the next focus opens the tips again.
     this.overlayRef.detachments().subscribe(() => this.hideSearchTips());
   }
 
   hideSearchTips() {
-    // Cleared before disposing: disposing emits a detachment, which calls back in here.
     const overlayRef = this.overlayRef;
     this.overlayRef = null;
     overlayRef?.dispose();

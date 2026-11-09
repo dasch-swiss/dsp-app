@@ -54,7 +54,6 @@
   font-size: 14px;
   color: #4b5563;
   overflow-wrap: anywhere;
-  // Two lines, then "Show more": a long description would push the toolbar far down (DEV-7743).
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;

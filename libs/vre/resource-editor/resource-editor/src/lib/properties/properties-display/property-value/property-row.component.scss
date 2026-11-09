@@ -21,8 +21,6 @@
   display: none !important;
 }
 
-// A flex item never shrinks below its content's widest word unless told to: a long URL would otherwise push the
-// row, and the actions at its end, past the panel.
 .value {
   min-width: 0;
   overflow-wrap: anywhere;

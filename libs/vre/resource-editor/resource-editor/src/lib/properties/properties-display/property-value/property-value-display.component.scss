@@ -31,7 +31,6 @@
 
 .value {
   flex: 1;
-  // Preformatted rich text wraps like the rest of the value instead of running past the panel.
   ::ng-deep pre {
     white-space: pre-wrap;
   }

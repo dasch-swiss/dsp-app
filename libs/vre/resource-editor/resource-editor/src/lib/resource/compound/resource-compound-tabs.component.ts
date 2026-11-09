@@ -58,8 +58,6 @@ import { CompoundService } from './compound.service';
           overflow: visible !important;
         }
 
-        /* A flex item, so by default never narrower than its content: a value that cannot wrap (a long URL) would
-           widen the whole tab, and the tab wrapper's clipping would cut off every value's Edit and Delete. */
         .mat-mdc-tab-body {
           min-width: 0;
         }

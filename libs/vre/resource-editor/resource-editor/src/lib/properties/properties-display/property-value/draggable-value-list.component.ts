@@ -71,7 +71,6 @@ import { ResourceFetcherService } from '../../../representation/resource-fetcher
         display: flex;
         align-items: center;
 
-        /* The value may be wider than the row (a long URL, an image): it scrolls or wraps inside, never widens the row. */
         > * {
           min-width: 0;
         }

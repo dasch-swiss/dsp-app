@@ -13,8 +13,6 @@ import { TranslatePipe } from '@ngx-translate/core';
   </div>`,
   styles: [
     `
-      /* No width of its own on the host: with the padding a host puts around it, 100% overflowed the page,
-         which brought up scrollbars and made the Search tab jump (DEV-7483). */
       :host {
         display: block;
       }
