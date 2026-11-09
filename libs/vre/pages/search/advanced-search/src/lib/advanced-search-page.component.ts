@@ -44,10 +44,7 @@ import { OrderByComponent } from './ui/order-by/order-by.component';
         <app-advanced-search-results [query]="query()!" [showResourceClass]="resultsCanMixClasses()" />
       </div>
     } @else {
-      <app-search-tips
-        style="
-    display: flex;
-    padding: 16px; margin-left: 8px" />
+      <app-search-tips class="page-search-tips" />
     }
   `,
   styleUrl: './advanced-search-page.component.scss',

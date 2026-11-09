@@ -48,7 +48,7 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
         margin-bottom: 24px;
       }
 
-      // A long label or class name wraps instead of pushing the toolbar and the Edit button out of reach.
+      /* A long label or class name wraps instead of pushing the toolbar and the Edit button out of reach. */
       .resource-label {
         display: flex;
         justify-content: space-between;

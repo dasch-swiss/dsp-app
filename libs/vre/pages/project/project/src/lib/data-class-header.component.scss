@@ -53,9 +53,25 @@
   max-width: 720px;
   font-size: 14px;
   color: #4b5563;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  // Two lines, then "Show more": a long description would push the toolbar far down (DEV-7743).
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
+
+  &.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    overflow: visible;
+  }
+}
+
+.description-toggle {
+  align-self: flex-start;
+  margin-left: -12px;
 }
 
 .actions {
