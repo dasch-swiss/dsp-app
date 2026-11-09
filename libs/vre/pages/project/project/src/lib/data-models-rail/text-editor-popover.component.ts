@@ -33,7 +33,8 @@ export class TextEditing {
 
   readonly target = signal<TextEditTarget | null>(null);
   readonly saving = signal(false);
-  readonly allLanguages = signal(false);
+  /** Every language at once in the editor, by default; kept from one editor to the next. */
+  readonly allLanguages = signal(true);
 
   constructor(private readonly _save: SaveTexts) {}
 

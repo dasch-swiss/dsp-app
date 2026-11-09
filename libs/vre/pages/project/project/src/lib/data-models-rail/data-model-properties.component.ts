@@ -356,7 +356,8 @@ const COLUMN_LABELS: Record<Column, string> = {
               <app-class-chips
                 [iris]="row.linkTarget ? [row.linkTarget] : []"
                 [expanded]="expanded"
-                [highlight]="searchTerms()" />
+                [highlight]="searchTerms()"
+                (classSelected)="showClass($event)" />
             </td>
           </ng-container>
           <ng-container matColumnDef="usedBy">
@@ -393,7 +394,8 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [iris]="row.usedBy"
                 [max]="maxUsedBy"
                 [expanded]="expanded"
-                [highlight]="searchTerms()" />
+                [highlight]="searchTerms()"
+                (classSelected)="showClass($event)" />
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="cols.shown(); sticky: true"></tr>

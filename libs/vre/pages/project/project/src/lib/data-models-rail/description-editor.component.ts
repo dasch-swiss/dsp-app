@@ -115,6 +115,7 @@ const NAMES = new Map<string, string>(AvailableLanguages.map(({ language, value 
         </button>
         <button
           mat-flat-button
+          color="primary"
           type="button"
           data-cy="description-editor-save"
           [disabled]="saving() || !changed() || empty()"

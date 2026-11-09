@@ -142,17 +142,17 @@ export interface LanguageTextEdit {
           grid-template-columns: minmax(0, 1fr) 24px;
         }
 
+        // Only the pencil shows on hover: the text itself opens nothing.
         &:hover,
         &:focus-within,
         &.active {
-          background: rgba(0, 0, 0, 0.05);
-
           .lang-edit {
             opacity: 1;
           }
         }
 
         &.active {
+          background: rgba(0, 0, 0, 0.05);
           box-shadow: inset 0 0 0 1px $primary;
         }
       }

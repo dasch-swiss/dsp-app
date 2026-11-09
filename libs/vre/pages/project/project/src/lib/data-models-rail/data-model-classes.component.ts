@@ -465,7 +465,9 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [iris]="row.linkedFrom"
                 [max]="maxLinks"
                 [expanded]="expanded"
-                [highlight]="searchTerms()" />
+                [highlight]="searchTerms()"
+                [selected]="panelIri()"
+                (classSelected)="openPanel($event)" />
             </td>
           </ng-container>
           <ng-container matColumnDef="linksTo">
@@ -502,7 +504,9 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [iris]="row.linksTo"
                 [max]="maxLinks"
                 [expanded]="expanded"
-                [highlight]="searchTerms()" />
+                [highlight]="searchTerms()"
+                [selected]="panelIri()"
+                (classSelected)="openPanel($event)" />
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="cols.shown(); sticky: true"></tr>
