@@ -769,7 +769,9 @@
         "filterOn": "Filtrer le graphe sur {{name}}",
         "hint": "↑↓ pour se déplacer · Entrée ouvre · Maj+Entrée filtre",
         "underSearch": "Afficher sous la recherche",
-        "inPanel": "Afficher dans le panneau latéral"
+        "inPanel": "Afficher à droite",
+        "onLeft": "Afficher à gauche",
+        "placement": "Où afficher les résultats"
       },
       "allProperties": "Toutes les propriétés",
       "propertiesChosen": "{{count}} propriétés",

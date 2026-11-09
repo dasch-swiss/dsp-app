@@ -2,6 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input, linkedSignal, output } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HighlightPipe } from '../data-models-rail/highlight.pipe';
@@ -27,6 +28,9 @@ export interface PropertyResult {
 }
 
 export type SearchResult = ClassResult | PropertyResult;
+
+/** Where the search's results show. */
+export type ResultsPlacement = 'right' | 'left' | 'under';
 
 /** What the search found, each property once. */
 export interface SearchResults {
@@ -85,8 +89,18 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
 @Component({
   selector: 'app-graph-search-results',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class.floating]': 'floating()' },
-  imports: [HighlightPipe, MatIcon, MatIconButton, MatTooltip, NgTemplateOutlet, TranslatePipe],
+  host: { '[class.floating]': "placement() === 'under'", '[class.left]': "placement() === 'left'" },
+  imports: [
+    HighlightPipe,
+    MatIcon,
+    MatIconButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatTooltip,
+    NgTemplateOutlet,
+    TranslatePipe,
+  ],
   template: `
     @let s = 'pages.ontologyMap.search';
     <section class="results" data-cy="ontology-map-search-results" [attr.aria-label]="s + '.results' | translate">
@@ -96,11 +110,23 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
         <button
           mat-icon-button
           data-cy="ontology-map-search-results-placement"
-          [attr.aria-label]="s + (floating() ? '.inPanel' : '.underSearch') | translate"
-          [matTooltip]="s + (floating() ? '.inPanel' : '.underSearch') | translate"
-          (click)="placementToggled.emit()">
-          <mat-icon>{{ floating() ? 'view_sidebar' : 'vertical_align_top' }}</mat-icon>
+          [attr.aria-label]="s + '.placement' | translate"
+          [matTooltip]="s + '.placement' | translate"
+          [matMenuTriggerFor]="places">
+          <mat-icon>{{ placementIcons[placement()] }}</mat-icon>
         </button>
+        <mat-menu #places="matMenu" xPosition="before">
+          @for (place of placements; track place.key) {
+            <button
+              mat-menu-item
+              [attr.data-cy]="'ontology-map-search-results-' + place.key"
+              [disabled]="place.key === placement()"
+              (click)="placementChosen.emit(place.key)">
+              <mat-icon>{{ placementIcons[place.key] }}</mat-icon>
+              {{ s + '.' + place.label | translate }}
+            </button>
+          }
+        </mat-menu>
         <button
           mat-icon-button
           data-cy="ontology-map-search-results-close"
@@ -202,6 +228,13 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
 
       :host {
         display: block;
+      }
+
+      // On the left, the panel mirrors the right one.
+      :host(.left) .results {
+        border-left: 0;
+        border-right: 1px solid #ebebeb;
+        box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08);
       }
 
       // Under the search instead: a card the graph shows through, faintly, which lightens with the pointer away.
@@ -411,10 +444,20 @@ export class GraphSearchResultsComponent {
   readonly filtered = output<SearchResult>();
   /** The panel's close: clear the search. */
   readonly closed = output<void>();
-  /** Whether the results float under the search, rather than fill the side panel. */
-  readonly floating = input(false);
-  /** Asks to show the results in the other place. */
-  readonly placementToggled = output<void>();
+  /** Where the results show: a side panel on the right or the left, or a card under the search. */
+  readonly placement = input<ResultsPlacement>('right');
+  /** Asks to show the results in another place. */
+  readonly placementChosen = output<ResultsPlacement>();
+  readonly placements: { key: ResultsPlacement; label: string }[] = [
+    { key: 'right', label: 'inPanel' },
+    { key: 'left', label: 'onLeft' },
+    { key: 'under', label: 'underSearch' },
+  ];
+  readonly placementIcons: Record<ResultsPlacement, string> = {
+    right: 'view_sidebar',
+    left: 'vertical_split',
+    under: 'vertical_align_top',
+  };
 
   readonly count = computed(() => this.results().classes.length + this.results().properties.length);
   /** Every row in the order shown, "All results" first, for the arrow keys. */

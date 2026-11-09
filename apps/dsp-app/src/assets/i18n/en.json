@@ -769,7 +769,9 @@
         "filterOn": "Filter the graph on {{name}}",
         "hint": "↑↓ to move · Enter opens · Shift+Enter filters",
         "underSearch": "Show under the search",
-        "inPanel": "Show in the side panel"
+        "inPanel": "Show on the right",
+        "onLeft": "Show on the left",
+        "placement": "Where results show"
       },
       "allProperties": "All properties",
       "propertiesChosen": "{{count}} properties",

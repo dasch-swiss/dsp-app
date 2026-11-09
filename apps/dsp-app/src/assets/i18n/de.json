@@ -769,7 +769,9 @@
         "filterOn": "Graph nach {{name}} filtern",
         "hint": "↑↓ zum Wechseln · Enter öffnet · Umschalt+Enter filtert",
         "underSearch": "Unter der Suche anzeigen",
-        "inPanel": "Im Seitenbereich anzeigen"
+        "inPanel": "Rechts anzeigen",
+        "onLeft": "Links anzeigen",
+        "placement": "Wo die Ergebnisse erscheinen"
       },
       "allProperties": "Alle Eigenschaften",
       "propertiesChosen": "{{count}} Eigenschaften",

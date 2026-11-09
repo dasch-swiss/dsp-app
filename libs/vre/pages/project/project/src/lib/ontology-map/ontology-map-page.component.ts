@@ -27,7 +27,12 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { injectDataModelEditing } from './data-model-editor';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
-import { graphSearchResults, GraphSearchResultsComponent, SearchResult } from './graph-search-results.component';
+import {
+  graphSearchResults,
+  GraphSearchResultsComponent,
+  ResultsPlacement,
+  SearchResult,
+} from './graph-search-results.component';
 import { classFamilies, familyColors } from './islands';
 import {
   GraphLabels,
@@ -288,10 +293,10 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       [text]="searchText()"
                       [colors]="colors()"
                       [labelOf]="labelOf"
-                      [floating]="true"
+                      [placement]="'under'"
                       (opened)="openResult($event)"
                       (filtered)="filterOnResult($event, searchInput)"
-                      (placementToggled)="toggleResultsPlacement()"
+                      (placementChosen)="setResultsPlacement($event)"
                       (browsedChange)="browsed.set($event)"
                       (closed)="clearSearch(searchInput)" />
                   </ng-template>
@@ -467,10 +472,25 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [text]="searchText()"
                   [colors]="colors()"
                   [labelOf]="labelOf"
-                  [floating]="false"
+                  [placement]="'right'"
                   (opened)="openResult($event)"
                   (filtered)="filterOnResult($event, searchInput)"
-                  (placementToggled)="toggleResultsPlacement()"
+                  (placementChosen)="setResultsPlacement($event)"
+                  (browsedChange)="browsed.set($event)"
+                  (closed)="clearSearch(searchInput)" />
+              }
+              @if (searchLeftOpen()) {
+                <!-- The results on the left instead, under the top bar; a class panel can open on the right beside them. -->
+                <app-graph-search-results
+                  class="left-panel"
+                  placement="left"
+                  [results]="searchMatches()"
+                  [text]="searchText()"
+                  [colors]="colors()"
+                  [labelOf]="labelOf"
+                  (opened)="openResult($event)"
+                  (filtered)="filterOnResult($event, searchInput)"
+                  (placementChosen)="setResultsPlacement($event)"
                   (browsedChange)="browsed.set($event)"
                   (closed)="clearSearch(searchInput)" />
               }
@@ -519,6 +539,17 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         border: 1px solid $cool_gray_200;
         border-radius: 24px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      // The search's results on the left, under the top bar's filters and search.
+      .left-panel {
+        position: absolute;
+        z-index: 1;
+        top: 72px;
+        left: 0;
+        bottom: 0;
+        width: 400px;
+        max-width: 45%;
       }
 
       // The top bar lets clicks through to the graph between its two halves.
@@ -1048,21 +1079,21 @@ export class OntologyMapPageComponent {
   });
 
   /** Where the search's results show, to compare: the side panel, or a card under the search; remembered here. */
-  readonly resultsPlacement = signal<'panel' | 'dropdown'>(
-    readStored(RESULTS_PLACEMENT_KEY) === 'dropdown' ? 'dropdown' : 'panel'
+  readonly resultsPlacement = signal<ResultsPlacement>(
+    (['right', 'left', 'under'] as const).find(place => place === readStored(RESULTS_PLACEMENT_KEY)) ?? 'right'
   );
   /** Whether the search's results show, in the panel's place: while a search is typed, found or not, and no panel is open. */
   readonly searchResultsOpen = computed(
     () =>
-      this.resultsPlacement() === 'panel' &&
+      this.resultsPlacement() === 'right' &&
       this.searchFound() !== undefined &&
       !this.panelIri() &&
       !this.propertyPanelIri()
   );
   /** Whether the search's results show under it instead. */
-  readonly searchDropdownOpen = computed(
-    () => this.resultsPlacement() === 'dropdown' && this.searchFound() !== undefined
-  );
+  readonly searchDropdownOpen = computed(() => this.resultsPlacement() === 'under' && this.searchFound() !== undefined);
+  /** Whether the search's results show on the left. */
+  readonly searchLeftOpen = computed(() => this.resultsPlacement() === 'left' && this.searchFound() !== undefined);
   /**
    * The search result gone through in its list, which the graph picks out over the search's fade: a class outlined, a
    * property's links highlighted; none while none is.
@@ -1070,15 +1101,15 @@ export class OntologyMapPageComponent {
   readonly browsed = signal<SearchResult | undefined>(undefined);
   /** The browsed result while its list shows, which the graph draws in orange. */
   readonly picked = computed(() =>
-    this.searchResultsOpen() || this.searchDropdownOpen() ? this.browsed() : undefined
+    this.searchResultsOpen() || this.searchDropdownOpen() || this.searchLeftOpen() ? this.browsed() : undefined
   );
   readonly searchDropdownPositions: ConnectedPosition[] = [
     { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 6 },
   ];
 
-  toggleResultsPlacement(): void {
-    this.resultsPlacement.update(placement => (placement === 'panel' ? 'dropdown' : 'panel'));
-    store(RESULTS_PLACEMENT_KEY, this.resultsPlacement());
+  setResultsPlacement(placement: ResultsPlacement): void {
+    this.resultsPlacement.set(placement);
+    store(RESULTS_PLACEMENT_KEY, placement);
   }
   readonly searchResults = viewChild(GraphSearchResultsComponent);
 
@@ -1109,7 +1140,7 @@ export class OntologyMapPageComponent {
     if (event.defaultPrevented || target?.closest('input, textarea, [contenteditable="true"]')) return;
     if (document.querySelector('.mat-mdc-menu-panel, mat-dialog-container')) return;
     if (this.panelIri() || this.propertyPanelIri()) this.openPanel(undefined);
-    else if (this.searchResultsOpen() || this.searchDropdownOpen()) {
+    else if (this.searchResultsOpen() || this.searchDropdownOpen() || this.searchLeftOpen()) {
       const input = this._searchInput()?.nativeElement;
       if (input) this.clearSearch(input);
     }
@@ -1135,7 +1166,7 @@ export class OntologyMapPageComponent {
     effect(() => {
       const input = this._searchInput()?.nativeElement;
       const panel = !!(this.panelIri() || this.propertyPanelIri());
-      const results = this.searchResultsOpen() || this.searchDropdownOpen();
+      const results = this.searchResultsOpen() || this.searchDropdownOpen() || this.searchLeftOpen();
       if (!input) return;
       untracked(() => {
         if (panel) {
