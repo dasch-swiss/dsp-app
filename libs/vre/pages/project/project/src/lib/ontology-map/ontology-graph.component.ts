@@ -1085,7 +1085,11 @@ export class OntologyGraphComponent {
     };
   }
 
-  /** Shows the model at `zoom`, centred in the room, or from its top when it is taller than the room. */
+  /**
+   * Shows the model at `zoom`, centred in the room, or from its top when it is taller than the room. One wider than
+   * the room, even at the smallest zoom, starts at its left: what does not fit runs to the right, under where a panel
+   * opens, rather than off the left edge.
+   */
   private _show(cy: Core, zoom: number, align: 'middle' | 'top'): void {
     const room = this._room(cy);
     const box = cy.elements().boundingBox({});
@@ -1093,7 +1097,8 @@ export class OntologyGraphComponent {
     // The zoom as the graph keeps it, within its own limits.
     const kept = cy.zoom();
     const top = align === 'top' && box.h * kept > room.h ? room.y : room.y + (room.h - box.h * kept) / 2;
-    cy.pan({ x: room.x + (room.w - box.w * kept) / 2 - box.x1 * kept, y: top - box.y1 * kept });
+    const left = box.w * kept > room.w ? room.x : room.x + (room.w - box.w * kept) / 2;
+    cy.pan({ x: left - box.x1 * kept, y: top - box.y1 * kept });
   }
 
   /**

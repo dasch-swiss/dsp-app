@@ -146,7 +146,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [labels]="labels()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                 [picked]="picked()"
-                [covered]="panelOpen() ? panelWidth : 0"
+                [covered]="panelWidth"
                 [colors]="colors()"
                 [families]="families()"
                 [search]="search()"
@@ -1153,7 +1153,7 @@ export class OntologyMapPageComponent {
 
   /** Whether a class or property panel covers the right of the graph. */
   readonly panelOpen = computed(() => !!(this.panelIri() || this.propertyPanelIri() || this.searchResultsOpen()));
-  /** How wide an open panel is, over the right of the graph, as its styles draw it. */
+  /** How wide a panel is, over the right of the graph, as its styles draw it; the graph is fitted left of it, open or not. */
   readonly panelWidth = PANEL_WIDTH;
 
   /** The class whose panel is open. */
