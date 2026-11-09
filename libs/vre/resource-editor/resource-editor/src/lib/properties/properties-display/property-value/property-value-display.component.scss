@@ -31,6 +31,11 @@
 
 .value {
   flex: 1;
+  // Preformatted rich text wraps like the rest of the value instead of running past the panel.
+  ::ng-deep pre {
+    white-space: pre-wrap;
+  }
+
   // A denser host overrides the custom property instead of reaching in with ::ng-deep.
   padding: var(--property-value-padding-block, 16px) 0;
 

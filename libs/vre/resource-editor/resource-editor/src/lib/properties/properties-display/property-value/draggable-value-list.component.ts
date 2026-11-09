@@ -70,6 +70,11 @@ import { ResourceFetcherService } from '../../../representation/resource-fetcher
       .value-row {
         display: flex;
         align-items: center;
+
+        // The value may be wider than the row (a long URL, an image): it scrolls or wraps inside, never widens the row.
+        > * {
+          min-width: 0;
+        }
       }
 
       .has-multiple .value-row:not(:last-child) {

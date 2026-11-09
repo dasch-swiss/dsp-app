@@ -45,6 +45,12 @@ import { AnnotationTabComponent } from './resource/annotation/annotation-tab.com
           height: auto !important;
           overflow: visible !important;
         }
+
+        // A flex item, so by default never narrower than its content: a value that cannot wrap (a long URL) would
+        // widen the whole tab, and the tab wrapper's clipping would cut off every value's Edit and Delete.
+        .mat-mdc-tab-body {
+          min-width: 0;
+        }
       }
       .dots-container {
         margin-left: 1.5em;
