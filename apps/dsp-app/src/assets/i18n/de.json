@@ -767,7 +767,7 @@
         "subclasses": "{{count}} Unterklassen",
         "filter": "Filtern",
         "filterOn": "Graph nach {{name}} filtern",
-        "hint": "↑↓ zum Wechseln · Enter filtert nach der Zeile",
+        "hint": "↑↓ zum Wechseln · Enter öffnet · Umschalt+Enter filtert",
         "underSearch": "Unter der Suche anzeigen",
         "inPanel": "Im Seitenbereich anzeigen"
       },

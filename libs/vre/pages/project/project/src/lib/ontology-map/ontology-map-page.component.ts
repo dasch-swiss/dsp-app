@@ -252,7 +252,8 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       (input)="searchText.set(searchInput.value)"
                       (keydown.arrowdown)="$event.preventDefault(); searchResults()?.move(1)"
                       (keydown.arrowup)="$event.preventDefault(); searchResults()?.move(-1)"
-                      (keydown.enter)="searchResults()?.filterActive()"
+                      (keydown.enter)="searchResults()?.openActive()"
+                      (keydown.shift.enter)="searchResults()?.filterActive()"
                       (keydown.escape)="clearSearch(searchInput)" />
                     @if (searchFound(); as found) {
                       <span class="search-count" data-cy="ontology-map-search-count">{{

@@ -79,7 +79,8 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
 
 /**
  * The panel of what the graph's search found, where a class panel opens: the classes and properties, by kind. A row
- * opens its own panel in its place; its Filter button, or Enter on the active row, filters the graph on it.
+ * opens its own panel in its place, as Enter does on the active row; its Filter button, or Shift+Enter, filters the graph
+ * on it.
  */
 @Component({
   selector: 'app-graph-search-results',
@@ -444,6 +445,12 @@ export class GraphSearchResultsComponent {
     const count = this.rows().length;
     this.active.update(index => (index + step + count) % count);
     this.browsing.set(true);
+  }
+
+  /** Opens the active row's panel, as a click on it does; see `opened`. */
+  openActive(): void {
+    const row = this.rows()[this.active()];
+    if (row && row.kind !== 'all') this.opened.emit(row);
   }
 
   /** Filters on the active row; see `filtered`. */

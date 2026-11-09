@@ -767,7 +767,7 @@
         "subclasses": "{{count}} subclasses",
         "filter": "Filter",
         "filterOn": "Filter the graph on {{name}}",
-        "hint": "↑↓ to move · Enter filters on the row",
+        "hint": "↑↓ to move · Enter opens · Shift+Enter filters",
         "underSearch": "Show under the search",
         "inPanel": "Show in the side panel"
       },

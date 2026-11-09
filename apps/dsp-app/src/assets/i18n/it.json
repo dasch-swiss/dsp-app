@@ -767,7 +767,7 @@
         "subclasses": "{{count}} sottoclassi",
         "filter": "Filtra",
         "filterOn": "Filtra il grafo su {{name}}",
-        "hint": "↑↓ per spostarsi · Invio filtra sulla riga",
+        "hint": "↑↓ per spostarsi · Invio apre · Maiusc+Invio filtra",
         "underSearch": "Mostra sotto la ricerca",
         "inPanel": "Mostra nel pannello laterale"
       },
