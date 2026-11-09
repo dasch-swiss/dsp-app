@@ -108,6 +108,24 @@ export const TABLE_STYLES = `
     font-size: 13px;
   }
 
+  // A filter option with its icon, as the column shows it.
+  .option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: $primary;
+    }
+
+    mat-icon.no-file {
+      color: $cool_gray_400;
+    }
+  }
+
   .filter-heading {
     padding: 4px 0;
     font-size: 12px;

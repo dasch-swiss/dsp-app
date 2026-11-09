@@ -252,11 +252,17 @@ const COLUMN_LABELS: Record<Column, string> = {
                   </button>
                 </span>
                 @for (option of fileOptions(); track option) {
-                  <mat-checkbox [checked]="files().has(option)" (change)="toggle(files, option)">{{
-                    option === noFile
-                      ? (r + '.noFile' | translate)
-                      : ('pages.ontologyMap.islands.fileKinds.' + option | translate)
-                  }}</mat-checkbox>
+                  <mat-checkbox [checked]="files().has(option)" (change)="toggle(files, option)">
+                    <span class="option">
+                      @if (option === noFile) {
+                        <mat-icon class="no-file">block</mat-icon>
+                        {{ r + '.noFile' | translate }}
+                      } @else {
+                        <mat-icon>{{ fileIcon($any(option)) }}</mat-icon>
+                        {{ 'pages.ontologyMap.islands.fileKinds.' + option | translate }}
+                      }
+                    </span>
+                  </mat-checkbox>
                 }
               </app-column-header>
             </th>

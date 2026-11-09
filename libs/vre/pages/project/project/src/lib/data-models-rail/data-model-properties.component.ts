@@ -281,14 +281,17 @@ const COLUMN_LABELS: Record<Column, string> = {
                   </button>
                 </span>
                 @for (option of typeOptions(); track option) {
-                  <mat-checkbox [checked]="types().has(option)" (change)="toggle(types, option)">{{
-                    typeName(option)
-                  }}</mat-checkbox>
+                  <mat-checkbox [checked]="types().has(option)" (change)="toggle(types, option)">
+                    <span class="option">
+                      <mat-icon>{{ typeIcon(option) }}</mat-icon>
+                      {{ typeName(option) }}
+                    </span>
+                  </mat-checkbox>
                 }
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row">
-              <span class="type" [attr.data-type]="row.type">
+              <span class="type">
                 <mat-icon>{{ typeIcon(row.type) }}</mat-icon
                 >{{ typeName(row.type) }}
               </span>
@@ -412,18 +415,16 @@ const COLUMN_LABELS: Record<Column, string> = {
         color: $cool_gray_700;
       }
 
-      .type {
+      // A type, in its column and in the column's filter, all in the same tone.
+      .type,
+      .option {
         display: flex;
         align-items: center;
         gap: 4px;
         color: #4b5563;
 
-        &[data-type='Link'] {
-          color: #336790;
-        }
-
-        &[data-type='List'] {
-          color: #92400e;
+        mat-icon {
+          color: inherit;
         }
 
         mat-icon {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, input, viewChild } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { ColumnResizeDirective } from '@dasch-swiss/vre/pages/data-browser';
@@ -22,13 +22,15 @@ import { TableColumns } from './table-columns';
         [attr.data-cy]="filterCy()"
         [class.on]="filtered()"
         [attr.aria-label]="'pages.dataModels2.filterOn' | translate: { column: label() | translate }"
-        [matMenuTriggerFor]="menu">
+        [matMenuTriggerFor]="menu"
+        (menuOpened)="focusInput()">
         <mat-icon>filter_list</mat-icon>
       </button>
     </span>
     <mat-menu #menu="matMenu" [xPosition]="menuPosition()">
       <!-- The menu stays open while its options are ticked, and only Escape closes it from the keyboard. -->
       <div
+        #filterMenu
         class="filter-menu"
         (click)="$event.stopPropagation()"
         (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
@@ -165,4 +167,11 @@ export class ColumnHeaderComponent {
   readonly menuPosition = input<'before' | 'after'>('after');
   readonly filterCy = input<string>();
   readonly resizeCy = input<string>();
+
+  private readonly _filterMenu = viewChild<ElementRef<HTMLElement>>('filterMenu');
+
+  /** A filter typed in gets the focus as its menu opens, once the menu has focused itself. */
+  focusInput(): void {
+    setTimeout(() => this._filterMenu()?.nativeElement.querySelector('input')?.focus());
+  }
 }
