@@ -31,6 +31,8 @@ export interface DataModelProperty {
   type: string;
   /** The class a link points at; only set for links. */
   linkTarget?: string;
+  /** The controlled vocabulary (list) the values come from; only set for list properties. */
+  list?: string;
   cardinality: Cardinality;
 }
 
@@ -224,9 +226,16 @@ function ownProperties(
             descriptions: textsOf(property, 'comments'),
             type: property.isLinkProperty ? 'Link' : localName(objectType).replace(/Value$/, ''),
             ...(property.isLinkProperty ? { linkTarget: objectType } : {}),
+            ...listOf(property),
             cardinality: has.cardinality,
           },
         ];
       })
   );
+}
+
+/** The list a list property takes its values from, named in its `hlist` GUI attribute. */
+function listOf(property: ResourcePropertyDefinition): { list?: string } {
+  const attribute = property.guiAttributes?.find(attr => attr.startsWith('hlist='));
+  return attribute ? { list: attribute.slice('hlist='.length).replace(/[<>]/g, '') } : {};
 }

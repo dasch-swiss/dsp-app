@@ -26,6 +26,21 @@ export interface DataModelEditor {
   addExistingProperty(classIri: string, propertyIri: string): Observable<boolean>;
   /** Opens the dialog creating a property of that type for the class; emits once it closes, `true` if it may have saved. */
   addNewProperty(classIri: string, type: DefaultProperty): Observable<boolean>;
+  /** Opens the dialog adding a value to a controlled vocabulary, under `parentIri` at `position`; `true` once added. */
+  addVocabularyValue(parentIri: string, position: number): Observable<boolean>;
+  /** Opens the dialog editing a vocabulary value's labels and descriptions; `true` once saved. */
+  editVocabularyValue(value: VocabularyValue): Observable<boolean>;
+  /** Asks to confirm, then deletes a vocabulary value with every value under it; `true` once deleted. */
+  deleteVocabularyValue(value: VocabularyValue): Observable<boolean>;
+  /** Moves a vocabulary value to `position` among the values of `parentIri`; `true` once moved. */
+  moveVocabularyValue(valueIri: string, parentIri: string, position: number): Observable<boolean>;
+}
+
+/** A value of a controlled vocabulary, as the editor's dialogs take it. */
+export interface VocabularyValue {
+  id: string;
+  labels: { value: string; language?: string }[];
+  comments?: { value: string; language?: string }[];
 }
 
 /** Properties a class could be given, from one data model of the project. */
@@ -95,6 +110,16 @@ export function injectDataModelEditing() {
     /** Creates a property of that type for the class, in the data model editor's dialog, then reads the project again. */
     addNewProperty: (classIri: string, type: DefaultProperty) =>
       editor && edit(classIri, RouteConstants.classes, () => editor.addNewProperty(classIri, type)),
+    /** Whether vocabulary values can be added, edited, moved and deleted here, in the editor's dialogs. */
+    canEditVocabularies: !!editor,
+    addVocabularyValue: (parentIri: string, position: number): Observable<boolean> =>
+      editor ? editor.addVocabularyValue(parentIri, position) : of(false),
+    editVocabularyValue: (value: VocabularyValue): Observable<boolean> =>
+      editor ? editor.editVocabularyValue(value) : of(false),
+    deleteVocabularyValue: (value: VocabularyValue): Observable<boolean> =>
+      editor ? editor.deleteVocabularyValue(value) : of(false),
+    moveVocabularyValue: (valueIri: string, parentIri: string, position: number): Observable<boolean> =>
+      editor ? editor.moveVocabularyValue(valueIri, parentIri, position) : of(false),
     editClass: (iri: string) => edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i))),
     editProperty: (iri: string) => edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i))),
   };

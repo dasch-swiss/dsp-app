@@ -1,11 +1,27 @@
 import { createEnvironmentInjector, EnvironmentInjector, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import { AvailableProperties, DataModelEditor, TextsToSave } from '@dasch-swiss/vre/pages/project/project';
+import {
+  CreateListItemDialogComponent,
+  CreateListItemDialogProps,
+  EditListItemDialogComponent,
+  EditListItemDialogProps,
+} from '@dasch-swiss/vre/pages/ontology/list';
+import {
+  AvailableProperties,
+  DataModelEditor,
+  ProjectPageService,
+  TextsToSave,
+  VocabularyValue,
+} from '@dasch-swiss/vre/pages/project/project';
 import { DefaultProperty, LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { combineLatest, filter, finalize, map, Observable, switchMap, take, takeUntil } from 'rxjs';
+import { DIALOG_LARGE, DialogService } from '@dasch-swiss/vre/ui/ui';
+import { TranslateService } from '@ngx-translate/core';
+import { combineLatest, filter, finalize, map, Observable, of, switchMap, take, takeUntil } from 'rxjs';
 import { OntologyEditService } from '../services/ontology-edit.service';
 import { EditPropertyFormDialogComponent } from './property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData, EditPropertyDialogData } from './property-form/property-form.type';
@@ -25,6 +41,10 @@ export class DataModelEditorService implements DataModelEditor {
   private readonly _dialog = inject(MatDialog);
   private readonly _injector = inject(EnvironmentInjector);
   private readonly _localization = inject(LocalizationService);
+  private readonly _project = inject(ProjectPageService);
+  private readonly _listApi = inject(ListApiService);
+  private readonly _confirm = inject(DialogService);
+  private readonly _translate = inject(TranslateService);
 
   editClass(classIri: string): Observable<boolean> {
     return this._withEditing(classIri, (editing, injector) =>
@@ -172,6 +192,62 @@ export class DataModelEditorService implements DataModelEditor {
         map(() => true)
       )
     );
+  }
+
+  addVocabularyValue(parentIri: string, position: number): Observable<boolean> {
+    return this._project.currentProject$.pipe(
+      take(1),
+      switchMap(project =>
+        this._closedByClickOnly(
+          this._dialog.open<CreateListItemDialogComponent, CreateListItemDialogProps, boolean>(
+            CreateListItemDialogComponent,
+            { ...DIALOG_LARGE, data: { nodeIri: parentIri, parentIri, projectIri: project.id, position } }
+          )
+        )
+      ),
+      map(added => added === true)
+    );
+  }
+
+  editVocabularyValue(value: VocabularyValue): Observable<boolean> {
+    return this._project.currentProject$.pipe(
+      take(1),
+      switchMap(project =>
+        this._closedByClickOnly(
+          this._dialog.open<EditListItemDialogComponent, EditListItemDialogProps, boolean>(
+            EditListItemDialogComponent,
+            DspDialogConfig.dialogDrawerConfig(
+              {
+                nodeIri: value.id,
+                projectIri: project.id,
+                formData: {
+                  labels: value.labels as MultiLanguages,
+                  comments: (value.comments ?? []) as MultiLanguages,
+                },
+              },
+              true
+            )
+          )
+        )
+      ),
+      map(saved => saved === true)
+    );
+  }
+
+  deleteVocabularyValue(value: VocabularyValue): Observable<boolean> {
+    return this._confirm
+      .afterConfirmation(
+        this._translate.instant('pages.ontology.list.actionBubble.deleteNode'),
+        new StringifyStringLiteralPipe(this._localization).transform(value.labels as MultiLanguages)
+      )
+      .pipe(
+        switchMap(() => this._listApi.deleteListNode(value.id)),
+        map(() => true)
+      );
+  }
+
+  moveVocabularyValue(valueIri: string, parentIri: string, position: number): Observable<boolean> {
+    return this._listApi.repositionChildNode(valueIri, { parentNodeIri: parentIri, position }).pipe(map(() => true));
   }
 
   /**
