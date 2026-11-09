@@ -304,8 +304,16 @@ const COLUMN_LABELS: Record<Column, string> = {
             </th>
             <td mat-cell *matCellDef="let row">
               <span class="type">
-                <mat-icon>{{ typeIcon(row.type) }}</mat-icon
-                >{{ typeName(row.type) }}
+                <mat-icon>{{ typeIcon(row.type) }}</mat-icon>
+                <span>
+                  @for (part of typeName(row.type) | highlight: searchTerms(); track $index) {
+                    @if (part.match) {
+                      <mark>{{ part.text }}</mark>
+                    } @else {
+                      <span>{{ part.text }}</span>
+                    }
+                  }
+                </span>
               </span>
             </td>
           </ng-container>
@@ -345,7 +353,10 @@ const COLUMN_LABELS: Record<Column, string> = {
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row">
-              <app-class-chips [iris]="row.linkTarget ? [row.linkTarget] : []" [expanded]="expanded" />
+              <app-class-chips
+                [iris]="row.linkTarget ? [row.linkTarget] : []"
+                [expanded]="expanded"
+                [highlight]="searchTerms()" />
             </td>
           </ng-container>
           <ng-container matColumnDef="usedBy">
@@ -378,7 +389,11 @@ const COLUMN_LABELS: Record<Column, string> = {
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row">
-              <app-class-chips [iris]="row.usedBy" [max]="maxUsedBy" [expanded]="expanded" />
+              <app-class-chips
+                [iris]="row.usedBy"
+                [max]="maxUsedBy"
+                [expanded]="expanded"
+                [highlight]="searchTerms()" />
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="cols.shown(); sticky: true"></tr>
@@ -432,12 +447,6 @@ const COLUMN_LABELS: Record<Column, string> = {
 
       .description {
         color: $cool_gray_700;
-      }
-
-      mark {
-        border-radius: 2px;
-        background: #fde68a;
-        color: inherit;
       }
 
       // A type, in its column and in the column's filter, all in the same tone.
@@ -503,7 +512,8 @@ export class DataModelPropertiesComponent {
 
   /** What the search and the filters look for, marked in the names and descriptions. */
   readonly nameTerms = computed(() => [this.query(), this.namedAs()]);
-  readonly descriptionTerms = computed(() => [this.describedAs()]);
+  readonly descriptionTerms = computed(() => [this.query(), this.describedAs()]);
+  readonly searchTerms = computed(() => [this.query()]);
 
   /** What each filter offers: what the properties have. */
   readonly typeOptions = computed(() =>
@@ -525,9 +535,10 @@ export class DataModelPropertiesComponent {
     const types = this.types();
     const targets = this.targets();
     const users = this.users();
+    const shown = this.columns.shown();
     return this.state
       .propertyRows()
-      .filter(row => !query || this._isNamed(row, query))
+      .filter(row => !query || shown.some(column => this._columnHas(row, column, query)))
       .filter(row => !namedAs || this._isNamed(row, namedAs))
       .filter(
         row =>
@@ -620,6 +631,23 @@ export class DataModelPropertiesComponent {
   /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
   edit(iri: string): void {
     this._editing.editProperty(iri);
+  }
+
+  /** Whether what a column shows of a property has the searched text, in any language. */
+  private _columnHas(row: PropertyRow, column: Column, query: string): boolean {
+    const has = (text: string | undefined) => !!text && text.toLowerCase().includes(query);
+    switch (column) {
+      case 'property':
+        return this._isNamed(row, query);
+      case 'description':
+        return has(row.description) || row.descriptions.some(text => has(text.value));
+      case 'type':
+        return has(typeNameOf(row.type));
+      case 'pointsTo':
+        return !!row.linkTarget && has(this.state.labelOf(row.linkTarget));
+      case 'usedBy':
+        return row.usedBy.some(iri => has(this.state.labelOf(iri)));
+    }
   }
 
   /** Whether the property's name, or its label in any language, has the text. */

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { DataModelsRailState } from './data-models-rail-state';
+import { HighlightPipe } from './highlight.pipe';
 
 /**
  * Classes as chips in their colors on one line: condensed, the first `max` and a count of the others; expanded, every
@@ -7,11 +8,20 @@ import { DataModelsRailState } from './data-models-rail-state';
  */
 @Component({
   selector: 'app-class-chips',
+  imports: [HighlightPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <span class="cut">
       @for (iri of shown(); track iri) {
-        <span class="chip" [style.background]="state.colors().get(iri) ?? '#F3F4F6'">{{ state.labelOf(iri) }}</span>
+        <span class="chip" [style.background]="state.colors().get(iri) ?? '#F3F4F6'">
+          @for (part of state.labelOf(iri) | highlight: highlight(); track $index) {
+            @if (part.match) {
+              <mark>{{ part.text }}</mark>
+            } @else {
+              <span>{{ part.text }}</span>
+            }
+          }
+        </span>
       } @empty {
         <span class="none">—</span>
       }
@@ -70,6 +80,12 @@ import { DataModelsRailState } from './data-models-rail-state';
       .none {
         color: $cool_gray_400;
       }
+
+      mark {
+        border-radius: 2px;
+        background: #fde68a;
+        color: inherit;
+      }
     `,
   ],
 })
@@ -81,6 +97,8 @@ export class ClassChipsComponent {
   /** How many a condensed line shows. */
   readonly max = input(2);
   readonly expanded = input(false);
+  /** What a search looks for, marked in the class names. */
+  readonly highlight = input<readonly string[]>([]);
 
   readonly shown = computed(() => (this.expanded() ? this.iris() : this.iris().slice(0, this.max())));
   readonly hiddenCount = computed(() => this.iris().length - this.shown().length);

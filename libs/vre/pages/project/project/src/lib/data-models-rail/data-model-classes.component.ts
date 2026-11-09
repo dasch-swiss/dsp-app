@@ -35,7 +35,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { classFamilies, familyHue, familyTint, FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow, localNameOf } from '../ontology-map/ontology-graph-elements';
@@ -48,6 +48,7 @@ import { ColumnHeaderComponent } from './column-header.component';
 import { ColumnsMenuComponent } from './columns-menu.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { TextKind } from './description-editor.component';
+import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { rememberedSignal } from './remembered-signal';
@@ -93,6 +94,7 @@ const COLUMN_LABELS: Record<Column, string> = {
     ClassChipsComponent,
     ColumnHeaderComponent,
     ColumnsMenuComponent,
+    HighlightPipe,
     LanguageTextsComponent,
     MatButton,
     MatButtonToggle,
@@ -217,14 +219,34 @@ const COLUMN_LABELS: Record<Column, string> = {
                     [canEdit]="canEditTexts()"
                     [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
                     [expanded]="expanded"
+                    [highlight]="searchTerms()"
                     (edit)="editText(row, 'label', $event)" />
                   @if (row.superclass; as superclass) {
-                    <span class="subclass-of">{{
-                      r + '.subclassOf' | translate: { class: state.labelOf(superclass) }
-                    }}</span>
+                    <span class="subclass-of">
+                      @for (
+                        part of r + '.subclassOf'
+                          | translate: { class: state.labelOf(superclass) }
+                          | highlight: searchTerms();
+                        track $index
+                      ) {
+                        @if (part.match) {
+                          <mark>{{ part.text }}</mark>
+                        } @else {
+                          <span>{{ part.text }}</span>
+                        }
+                      }
+                    </span>
                   }
                   @if (expanded) {
-                    <code class="name">{{ row.name }}</code>
+                    <code class="name">
+                      @for (part of row.name | highlight: searchTerms(); track $index) {
+                        @if (part.match) {
+                          <mark>{{ part.text }}</mark>
+                        } @else {
+                          <span>{{ part.text }}</span>
+                        }
+                      }
+                    </code>
                   }
                 </span>
               </span>
@@ -270,7 +292,20 @@ const COLUMN_LABELS: Record<Column, string> = {
               @if (row.representation; as representation) {
                 <span class="file">
                   <mat-icon>{{ fileIcon(representation) }}</mat-icon>
-                  {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
+                  <span>
+                    @for (
+                      part of 'pages.ontologyMap.islands.fileKinds.' + representation
+                        | translate
+                        | highlight: searchTerms();
+                      track $index
+                    ) {
+                      @if (part.match) {
+                        <mark>{{ part.text }}</mark>
+                      } @else {
+                        <span>{{ part.text }}</span>
+                      }
+                    }
+                  </span>
                 </span>
               } @else {
                 <span class="none">—</span>
@@ -317,6 +352,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [canEdit]="canEditTexts()"
                 [activeLanguage]="textEditing.activeLanguage(row.id, 'description')"
                 [expanded]="expanded"
+                [highlight]="descriptionTerms()"
                 (edit)="editText(row, 'description', $event)" />
             </td>
           </ng-container>
@@ -363,9 +399,26 @@ const COLUMN_LABELS: Record<Column, string> = {
                       [title]="typeName(property.type)"
                       (keydown.enter)="$event.stopPropagation()">
                       <mat-icon>{{ typeIcon(property.type) }}</mat-icon>
-                      {{ property.label }}
+                      <span>
+                        @for (part of property.label | highlight: searchTerms(); track $index) {
+                          @if (part.match) {
+                            <mark>{{ part.text }}</mark>
+                          } @else {
+                            <span>{{ part.text }}</span>
+                          }
+                        }
+                      </span>
                       @if (property.linkTarget; as target) {
-                        → {{ state.labelOf(target) }}
+                        <span>→</span>
+                        <span>
+                          @for (part of state.labelOf(target) | highlight: searchTerms(); track $index) {
+                            @if (part.match) {
+                              <mark>{{ part.text }}</mark>
+                            } @else {
+                              <span>{{ part.text }}</span>
+                            }
+                          }
+                        </span>
                       }
                     </button>
                   }
@@ -408,7 +461,11 @@ const COLUMN_LABELS: Record<Column, string> = {
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row">
-              <app-class-chips [iris]="row.linkedFrom" [max]="maxLinks" [expanded]="expanded" />
+              <app-class-chips
+                [iris]="row.linkedFrom"
+                [max]="maxLinks"
+                [expanded]="expanded"
+                [highlight]="searchTerms()" />
             </td>
           </ng-container>
           <ng-container matColumnDef="linksTo">
@@ -441,7 +498,11 @@ const COLUMN_LABELS: Record<Column, string> = {
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row">
-              <app-class-chips [iris]="row.linksTo" [max]="maxLinks" [expanded]="expanded" />
+              <app-class-chips
+                [iris]="row.linksTo"
+                [max]="maxLinks"
+                [expanded]="expanded"
+                [highlight]="searchTerms()" />
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="cols.shown(); sticky: true"></tr>
@@ -614,6 +675,7 @@ export class DataModelClassesComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _params = toSignal(this._route.queryParamMap);
+  private readonly _translate = inject(TranslateService);
   readonly editing = injectDataModelEditing();
 
   readonly columns = new TableColumns<Column>({
@@ -651,6 +713,10 @@ export class DataModelClassesComponent {
   readonly targets = signal(new Set<string>());
   readonly sources = signal(new Set<string>());
 
+  /** What the search and the Description filter look for, marked where the table shows it. */
+  readonly searchTerms = computed(() => [this.query()]);
+  readonly descriptionTerms = computed(() => [this.query(), this.describedAs()]);
+
   /** What each filter offers: what the classes have. */
   readonly fileOptions = computed(() => {
     const present = new Set<string>(this.state.classRows().map(row => row.representation ?? NO_FILE));
@@ -672,9 +738,10 @@ export class DataModelClassesComponent {
     const types = this.types();
     const targets = this.targets();
     const sources = this.sources();
+    const shown = this.columns.shown();
     return this.state
       .classRows()
-      .filter(row => !query || row.label.toLowerCase().includes(query) || row.name.toLowerCase().includes(query))
+      .filter(row => !query || shown.some(column => this._columnHas(row, column, query)))
       .filter(row => level === 'all' || (level === 'sub') === !!row.superclass)
       .filter(row => !files.size || files.has(row.representation ?? NO_FILE))
       .filter(
@@ -816,6 +883,29 @@ export class DataModelClassesComponent {
       queryParamsHandling: 'merge',
       queryParams: { ...this.state.modelParam(), ...queryParams },
     });
+  }
+
+  /** Whether what a column shows of a class has the searched text, in any language. */
+  private _columnHas(row: ClassRow, column: Column, query: string): boolean {
+    const has = (text: string | undefined) => !!text && text.toLowerCase().includes(query);
+    const hasClass = (iri: string | undefined) => !!iri && has(this.state.labelOf(iri));
+    switch (column) {
+      case 'class':
+        return has(row.label) || has(row.name) || row.labels.some(text => has(text.value)) || hasClass(row.superclass);
+      case 'file':
+        return (
+          !!row.representation &&
+          has(this._translate.instant(`pages.ontologyMap.islands.fileKinds.${row.representation}`))
+        );
+      case 'description':
+        return has(row.description) || row.descriptions.some(text => has(text.value));
+      case 'properties':
+        return row.propertyList.some(property => has(property.label) || hasClass(property.linkTarget));
+      case 'linkedFrom':
+        return row.linkedFrom.some(hasClass);
+      case 'linksTo':
+        return row.linksTo.some(hasClass);
+    }
   }
 
   private _byLabel(iris: string[]): string[] {

@@ -170,6 +170,13 @@ export const TABLE_STYLES = `
     height: 44px;
   }
 
+  // What a search or filter matches.
+  mark {
+    border-radius: 2px;
+    background: #fde68a;
+    color: inherit;
+  }
+
   // Expanded, a row grows to show everything.
   table.expanded .mat-mdc-cell {
     padding-top: 10px;
