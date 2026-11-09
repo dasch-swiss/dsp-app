@@ -43,6 +43,7 @@ import { ColumnHeaderComponent } from './column-header.component';
 import { ColumnsMenuComponent } from './columns-menu.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { TextKind } from './description-editor.component';
+import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { rememberedSignal } from './remembered-signal';
@@ -83,6 +84,7 @@ const COLUMN_LABELS: Record<Column, string> = {
     ClassChipsComponent,
     ColumnHeaderComponent,
     ColumnsMenuComponent,
+    HighlightPipe,
     LanguageTextsComponent,
     MatButton,
     MatButtonToggle,
@@ -209,9 +211,18 @@ const COLUMN_LABELS: Record<Column, string> = {
                   [canEdit]="canEditTexts()"
                   [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
                   [expanded]="expanded"
+                  [highlight]="nameTerms()"
                   (edit)="editText(row, 'label', $event)" />
                 @if (expanded) {
-                  <code class="name">{{ row.name }}</code>
+                  <code class="name">
+                    @for (part of row.name | highlight: nameTerms(); track $index) {
+                      @if (part.match) {
+                        <mark>{{ part.text }}</mark>
+                      } @else {
+                        <span>{{ part.text }}</span>
+                      }
+                    }
+                  </code>
                 }
               </span>
             </td>
@@ -256,6 +267,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [canEdit]="canEditTexts()"
                 [activeLanguage]="textEditing.activeLanguage(row.id, 'description')"
                 [expanded]="expanded"
+                [highlight]="descriptionTerms()"
                 (edit)="editText(row, 'description', $event)" />
             </td>
           </ng-container>
@@ -415,6 +427,12 @@ const COLUMN_LABELS: Record<Column, string> = {
         color: $cool_gray_700;
       }
 
+      mark {
+        border-radius: 2px;
+        background: #fde68a;
+        color: inherit;
+      }
+
       // A type, in its column and in the column's filter, all in the same tone.
       .type,
       .option {
@@ -475,6 +493,10 @@ export class DataModelPropertiesComponent {
   readonly types = signal(new Set<string>());
   readonly targets = signal(new Set<string>());
   readonly users = signal(new Set<string>());
+
+  /** What the search and the filters look for, marked in the names and descriptions. */
+  readonly nameTerms = computed(() => [this.query(), this.namedAs()]);
+  readonly descriptionTerms = computed(() => [this.describedAs()]);
 
   /** What each filter offers: what the properties have. */
   readonly typeOptions = computed(() =>

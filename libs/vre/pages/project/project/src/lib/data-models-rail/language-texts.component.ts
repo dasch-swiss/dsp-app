@@ -4,6 +4,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import { DESCRIPTION_LANGUAGES, TextKind } from './description-editor.component';
+import { HighlightPipe } from './highlight.pipe';
 
 const orderOf = (language: string) => {
   const index = DESCRIPTION_LANGUAGES.indexOf(language);
@@ -47,7 +48,7 @@ export interface LanguageTextEdit {
 @Component({
   selector: 'app-language-texts',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatIconButton, TranslatePipe],
+  imports: [HighlightPipe, MatIcon, MatIconButton, TranslatePipe],
   host: { '[class.expanded]': 'expanded()', '[class.is-label]': "kind() === 'label'" },
   template: `
     @let t = 'pages.dataModels2.descriptionEditor';
@@ -60,7 +61,15 @@ export interface LanguageTextEdit {
         @if (allLanguages()) {
           <span class="lang">{{ text.language }}</span>
         }
-        <span class="lang-text" [title]="expanded() ? '' : text.value">{{ text.value }}</span>
+        <span class="lang-text" [title]="expanded() ? '' : text.value">
+          @for (part of text.value | highlight: highlight(); track $index) {
+            @if (part.match) {
+              <mark>{{ part.text }}</mark>
+            } @else {
+              <span>{{ part.text }}</span>
+            }
+          }
+        </span>
         @if (canEdit()) {
           <button
             mat-icon-button
@@ -78,7 +87,15 @@ export interface LanguageTextEdit {
     } @empty {
       @if (shown()) {
         <!-- A text without a language: shown as it is. -->
-        <span class="lang-text" [title]="expanded() ? '' : shown()">{{ shown() }}</span>
+        <span class="lang-text" [title]="expanded() ? '' : shown()">
+          @for (part of shown() | highlight: highlight(); track $index) {
+            @if (part.match) {
+              <mark>{{ part.text }}</mark>
+            } @else {
+              <span>{{ part.text }}</span>
+            }
+          }
+        </span>
       } @else if (!canEdit()) {
         <span class="none">—</span>
       }
@@ -238,6 +255,13 @@ export interface LanguageTextEdit {
       .none {
         color: $cool_gray_400;
       }
+
+      // What a filter or search matches.
+      mark {
+        border-radius: 2px;
+        background: #fde68a;
+        color: inherit;
+      }
     `,
   ],
 })
@@ -259,6 +283,8 @@ export class LanguageTextsComponent {
   /** Long texts wrap instead of being cut. */
   readonly expanded = input(false);
   readonly cyPrefix = input('data-model');
+  /** What a search or filter looks for, marked where the text has it. */
+  readonly highlight = input<readonly string[]>([]);
 
   readonly edit = output<LanguageTextEdit>();
 
