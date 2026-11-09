@@ -49,7 +49,8 @@ const COLOR = {
   text: '#1F2937',
   muted: '#6B7280',
   /** A class or property picked out of a search, as its results are gone through. */
-  picked: '#EA580C',
+  // A saturated magenta: no family pastel is near it, nor the app's blue, and it reads on the light canvas.
+  picked: '#C8007A',
 };
 
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
