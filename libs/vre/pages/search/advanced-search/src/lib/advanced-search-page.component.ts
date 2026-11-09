@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDivider } from '@angular/material/divider';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search-filters';
+import { AdvancedSearchBarComponent, OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
 import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { map } from 'rxjs';
 import { AdvancedSearchResultsComponent } from './advanced-search-results.component';
@@ -43,7 +43,7 @@ import { OrderByComponent } from './ui/order-by/order-by.component';
       <div class="whole-height">
         <app-advanced-search-results [query]="query()!" [showResourceClass]="resultsCanMixClasses()" />
       </div>
-    } @else {
+    } @else if (!ontologyLoading()) {
       <app-search-tips class="page-search-tips" />
     }
   `,
@@ -58,6 +58,12 @@ export class AdvancedSearchPageComponent {
   // Query is derived purely from the URL — the same pipeline serves first load, back/forward, and
   // user actions.
   readonly query = toSignal(this._derivation.gravsearchQuery$, { initialValue: null });
+
+  /**
+   * The tips wait for the search bar: shown first, they were pushed down once the data model and
+   * resource class chips arrived, so the page visibly rearranged itself (DEV-7483).
+   */
+  readonly ontologyLoading = toSignal(inject(OntologyDataService).ontologyLoading$, { initialValue: true });
 
   /**
    * A query restricted to one resource class returns rows that all share it, so showing the class on
