@@ -331,9 +331,16 @@ const COLUMN_LABELS: Record<Column, string> = {
                   </button>
                 </span>
                 @for (option of targetOptions(); track option) {
-                  <mat-checkbox [checked]="targets().has(option)" (change)="toggle(targets, option)">{{
-                    option === noTarget ? (r + '.noTarget' | translate) : state.labelOf(option)
-                  }}</mat-checkbox>
+                  <mat-checkbox [checked]="targets().has(option)" (change)="toggle(targets, option)">
+                    @if (option === noTarget) {
+                      {{ r + '.noTarget' | translate }}
+                    } @else {
+                      <!-- In the class's color, as in the column. -->
+                      <span class="chip" [style.background]="state.colors().get(option) ?? '#F3F4F6'">{{
+                        state.labelOf(option)
+                      }}</span>
+                    }
+                  </mat-checkbox>
                 }
               </app-column-header>
             </th>
