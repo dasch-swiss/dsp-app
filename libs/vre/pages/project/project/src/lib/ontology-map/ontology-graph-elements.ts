@@ -539,6 +539,32 @@ export function searchGraph(graph: DataModelGraph, text: string): GraphSearch | 
   return search;
 }
 
+/**
+ * One class or link property picked out of the graph, as a search that finds only it: a class alone, or a property's
+ * links with the classes at their ends. Everything else fades.
+ */
+export function focusGraph(graph: DataModelGraph, target: { kind: 'class' | 'property'; iri: string }): GraphSearch {
+  if (target.kind === 'class') {
+    const only = new Set([target.iri]);
+    return { hitClasses: only, hitLinks: new Set(), classes: new Set(only), links: new Set() };
+  }
+  const drawn = graph.edges.filter(edge => edge.source !== edge.target);
+  const between = new Map<string, number>();
+  for (const edge of drawn) {
+    if (edge.kind === 'link') between.set(pairOf(edge), (between.get(pairOf(edge)) ?? 0) + 1);
+  }
+  const focus: GraphSearch = { hitClasses: new Set(), hitLinks: new Set(), classes: new Set(), links: new Set() };
+  for (const edge of drawn) {
+    if (edge.kind !== 'link' || edge.property !== target.iri) continue;
+    const id = edgeIdOf(edge, between.get(pairOf(edge)) ?? 0);
+    focus.hitLinks.add(id);
+    focus.links.add(id);
+    focus.hitClasses.add(edge.source).add(edge.target);
+    focus.classes.add(edge.source).add(edge.target);
+  }
+  return focus;
+}
+
 const pairOf = (edge: DataModelEdge) => `${edge.source}\n${edge.target}`;
 
 /** The ID of the edge drawn for a link, one of `count` from its class to the same other; see `MAX_PARALLEL_LINKS`. */

@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, linkedSignal, output } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -103,7 +103,11 @@ export function graphSearchResults(
           <mat-icon>close</mat-icon>
         </button>
       </header>
-      <div class="list" role="listbox" [attr.aria-label]="s + '.results' | translate">
+      <div
+        class="list"
+        role="listbox"
+        [attr.aria-label]="s + '.results' | translate"
+        (mouseleave)="browsing.set(false)">
         @if (results().classes.length) {
           <span class="heading">{{ s + '.classes' | translate: { count: results().classes.length } }}</span>
           @for (result of results().classes; track result.iri) {
@@ -128,7 +132,7 @@ export function graphSearchResults(
         data-cy="ontology-map-search-result"
         [attr.aria-selected]="index === active()"
         [class.active]="index === active()"
-        (mouseenter)="active.set(index)"
+        (mouseenter)="browse(index)"
         (click)="opened.emit(result)">
         @if (result.kind === 'class') {
           <span class="swatch" [style.background]="colors().get(result.iri) ?? '#F3F4F6'"></span>
@@ -374,10 +378,28 @@ export class GraphSearchResultsComponent {
   /** The row the arrow keys and Enter act on; the first again once the results change. */
   readonly active = linkedSignal<SearchResult[], number>({ source: this.rows, computation: () => 0 });
 
+  /** Whether the rows are being gone through, with the pointer or the arrow keys; not once the results change. */
+  readonly browsing = linkedSignal<SearchResult[], boolean>({ source: this.rows, computation: () => false });
+  /** The row gone through, for the graph to pick out; none until a row is reached. */
+  readonly browsedChange = output<SearchResult | undefined>();
+
+  constructor() {
+    effect(() => this.browsedChange.emit(this.browsing() ? this.rows()[this.active()] : undefined));
+  }
+
+  /** The pointer reached a row. */
+  browse(index: number): void {
+    this.active.set(index);
+    this.browsing.set(true);
+  }
+
   /** Moves the active row up or down, staying within the rows. */
   move(step: number): void {
     const count = this.rows().length;
-    if (count) this.active.update(index => (index + step + count) % count);
+    if (!count) return;
+    // The first arrow goes to the first row, already active.
+    if (this.browsing()) this.active.update(index => (index + step + count) % count);
+    this.browsing.set(true);
   }
 
   /** Filters on the active row; see `filtered`. */

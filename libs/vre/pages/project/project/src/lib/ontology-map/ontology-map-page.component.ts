@@ -31,6 +31,7 @@ import { GraphSearchResultsComponent, SearchResult } from './graph-search-result
 import { classFamilies, familyColors } from './islands';
 import {
   GraphLabels,
+  focusGraph,
   GraphSize,
   linkedWith,
   localNameOf,
@@ -139,15 +140,15 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
               <app-ontology-graph
                 class="view"
                 [graph]="graphShown() ?? graph"
-                [selectedIri]="classIri()"
+                [selectedIri]="classIri() ?? browsedClass()"
                 [size]="size()"
                 [levelLabels]="levelLabels()"
                 [labels]="labels()"
-                [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
+                [highlightedProperty]="hoveredProperty() ?? propertyPanelIri() ?? browsedProperty()"
                 [covered]="panelOpen() ? panelWidth : 0"
                 [colors]="colors()"
                 [families]="families()"
-                [search]="search()"
+                [search]="browsedFocus() ?? search()"
                 [anyResourceLabel]="t + '.anyResource' | translate"
                 [linksLabel]="'pages.ontologyMap.links' | translate"
                 (classSelected)="openPanel($event)"
@@ -290,6 +291,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       (opened)="openResult($event)"
                       (filtered)="filterOnResult($event, searchInput)"
                       (placementToggled)="toggleResultsPlacement()"
+                      (browsedChange)="browsed.set($event)"
                       (closed)="clearSearch(searchInput)" />
                   </ng-template>
                 </div>
@@ -469,6 +471,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   (opened)="openResult($event)"
                   (filtered)="filterOnResult($event, searchInput)"
                   (placementToggled)="toggleResultsPlacement()"
+                  (browsedChange)="browsed.set($event)"
                   (closed)="clearSearch(searchInput)" />
               }
             </div>
@@ -1047,6 +1050,25 @@ export class OntologyMapPageComponent {
   );
   /** Whether the search's results show under it instead. */
   readonly searchDropdownOpen = computed(() => this.resultsPlacement() === 'dropdown' && !!this.searchFound());
+  /** The search result gone through in its list, which the graph picks out of the search; none while none is. */
+  readonly browsed = signal<SearchResult | undefined>(undefined);
+  private readonly _browsedShown = computed(() =>
+    this.searchResultsOpen() || this.searchDropdownOpen() ? this.browsed() : undefined
+  );
+  readonly browsedClass = computed(() => {
+    const browsed = this._browsedShown();
+    return browsed?.kind === 'class' ? browsed.iri : undefined;
+  });
+  readonly browsedProperty = computed(() => {
+    const browsed = this._browsedShown();
+    return browsed?.kind === 'property' ? browsed.iri : undefined;
+  });
+  /** The browsed class alone, or the browsed property's links and their classes; everything else fades. */
+  readonly browsedFocus = computed(() => {
+    const browsed = this._browsedShown();
+    const graph = this.graphShown() ?? this.graph();
+    return browsed && graph ? focusGraph(graph, browsed) : undefined;
+  });
   readonly searchDropdownPositions: ConnectedPosition[] = [
     { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 6 },
   ];
