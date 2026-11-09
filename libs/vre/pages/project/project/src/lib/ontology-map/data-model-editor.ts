@@ -2,7 +2,7 @@ import { DestroyRef, inject, InjectionToken } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { filter, map, Observable, of, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
@@ -20,6 +20,18 @@ export interface DataModelEditor {
   saveClassTexts(classIri: string, texts: TextsToSave): Observable<boolean>;
   /** Saves the property's labels or description, every language at once; emits `true` once saved. */
   savePropertyTexts(propertyIri: string, texts: TextsToSave): Observable<boolean>;
+  /** The project's properties the class does not have yet, by data model. */
+  availableProperties(classIri: string): Observable<AvailableProperties[]>;
+  /** Gives the class an existing property, optional and single; emits `true` once saved. */
+  addExistingProperty(classIri: string, propertyIri: string): Observable<boolean>;
+  /** Opens the dialog creating a property of that type for the class; emits once it closes, `true` if it may have saved. */
+  addNewProperty(classIri: string, type: DefaultProperty): Observable<boolean>;
+}
+
+/** Properties a class could be given, from one data model of the project. */
+export interface AvailableProperties {
+  ontologyLabel: string;
+  properties: { iri: string; label: string; icon: string; description: string }[];
 }
 
 /** A class's or property's labels or description, in each language it has. */
@@ -74,6 +86,15 @@ export function injectDataModelEditing() {
     /** Saves the property's labels or description. Emits `true` once saved. */
     savePropertyTexts: (iri: string, texts: TextsToSave): Observable<boolean> =>
       editor ? reloadOnceSaved(editor.savePropertyTexts(iri, texts)) : of(false),
+    /** The project's properties the class does not have yet; none without the editor. */
+    availableProperties: (classIri: string): Observable<AvailableProperties[]> =>
+      editor ? editor.availableProperties(classIri) : of([]),
+    /** Gives the class an existing property, then reads the project again. */
+    addExistingProperty: (classIri: string, propertyIri: string) =>
+      editor && edit(classIri, RouteConstants.classes, () => editor.addExistingProperty(classIri, propertyIri)),
+    /** Creates a property of that type for the class, in the data model editor's dialog, then reads the project again. */
+    addNewProperty: (classIri: string, type: DefaultProperty) =>
+      editor && edit(classIri, RouteConstants.classes, () => editor.addNewProperty(classIri, type)),
     editClass: (iri: string) => edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i))),
     editProperty: (iri: string) => edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i))),
   };

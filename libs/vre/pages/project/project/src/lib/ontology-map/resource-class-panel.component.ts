@@ -8,6 +8,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/data-model-graph';
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
+import { AddPropertyMenuComponent } from './add-property-menu.component';
 import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
 import { localNameOf } from './ontology-graph-elements';
 import { typeIconOf, typeNameOf } from './property-types';
@@ -26,7 +27,15 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 @Component({
   selector: 'app-resource-class-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ClassConnectionsComponent, MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
+  imports: [
+    AddPropertyMenuComponent,
+    ClassConnectionsComponent,
+    MatButton,
+    MatIcon,
+    MatIconButton,
+    MatTooltip,
+    TranslatePipe,
+  ],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.classPanel';
@@ -122,6 +131,9 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                 <p class="property-description">{{ property.description }}</p>
               }
             </div>
+          }
+          @if (canEdit()) {
+            <app-add-property-menu [classIri]="classIri()" />
           }
         </div>
 

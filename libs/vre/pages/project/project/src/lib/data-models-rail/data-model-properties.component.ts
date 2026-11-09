@@ -132,6 +132,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             (input)="query.set(search.value)" />
         </mat-form-field>
         <span class="spacer"></span>
+        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
         <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-properties" />
         <mat-button-toggle-group
           class="density"
@@ -149,7 +150,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             {{ r + '.expanded' | translate }}
           </mat-button-toggle>
         </mat-button-toggle-group>
-        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">

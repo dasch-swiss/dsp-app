@@ -147,6 +147,16 @@ const COLUMN_LABELS: Record<Column, string> = {
             (input)="query.set(search.value)" />
         </mat-form-field>
         <span class="spacer"></span>
+        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-classes">
+          <span class="view-heading">{{ r + '.display' | translate }}</span>
+          <mat-slide-toggle
+            class="view-toggle"
+            data-cy="data-model-classes-row-colors"
+            [checked]="rowColors()"
+            (change)="rowColors.set($event.checked)">
+            {{ r + '.rowColors' | translate }}
+          </mat-slide-toggle>
+        </app-columns-menu>
         <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-classes" />
         <mat-button-toggle-group
           class="density"
@@ -164,16 +174,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             {{ r + '.expanded' | translate }}
           </mat-button-toggle>
         </mat-button-toggle-group>
-        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-classes">
-          <span class="view-heading">{{ r + '.display' | translate }}</span>
-          <mat-slide-toggle
-            class="view-toggle"
-            data-cy="data-model-classes-row-colors"
-            [checked]="rowColors()"
-            (change)="rowColors.set($event.checked)">
-            {{ r + '.rowColors' | translate }}
-          </mat-slide-toggle>
-        </app-columns-menu>
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
