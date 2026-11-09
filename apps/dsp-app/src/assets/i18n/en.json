@@ -758,7 +758,16 @@
         "placeholder": "Search classes and properties",
         "found": "{{count}} found",
         "none": "No match",
-        "clear": "Clear search"
+        "clear": "Clear search",
+        "results": "Search results",
+        "classes": "Classes · {{count}}",
+        "properties": "Properties · {{count}}",
+        "subclasses": "{{count}} subclasses",
+        "filter": "Filter",
+        "filterOn": "Filter the graph on {{name}}",
+        "hint": "↑↓ to move · Enter filters on the row",
+        "underSearch": "Show under the search",
+        "inPanel": "Show in the side panel"
       },
       "allProperties": "All properties",
       "propertiesChosen": "{{count}} properties",

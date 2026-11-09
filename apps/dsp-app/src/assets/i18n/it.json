@@ -758,7 +758,16 @@
         "placeholder": "Cerca classi e proprietà",
         "found": "{{count}} trovati",
         "none": "Nessun risultato",
-        "clear": "Cancella la ricerca"
+        "clear": "Cancella la ricerca",
+        "results": "Risultati della ricerca",
+        "classes": "Classi · {{count}}",
+        "properties": "Proprietà · {{count}}",
+        "subclasses": "{{count}} sottoclassi",
+        "filter": "Filtra",
+        "filterOn": "Filtra il grafo su {{name}}",
+        "hint": "↑↓ per spostarsi · Invio filtra sulla riga",
+        "underSearch": "Mostra sotto la ricerca",
+        "inPanel": "Mostra nel pannello laterale"
       },
       "allProperties": "Tutte le proprietà",
       "propertiesChosen": "{{count}} proprietà",

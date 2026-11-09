@@ -758,7 +758,16 @@
         "placeholder": "Klassen und Eigenschaften suchen",
         "found": "{{count}} gefunden",
         "none": "Kein Treffer",
-        "clear": "Suche löschen"
+        "clear": "Suche löschen",
+        "results": "Suchergebnisse",
+        "classes": "Klassen · {{count}}",
+        "properties": "Eigenschaften · {{count}}",
+        "subclasses": "{{count}} Unterklassen",
+        "filter": "Filtern",
+        "filterOn": "Graph nach {{name}} filtern",
+        "hint": "↑↓ zum Wechseln · Enter filtert nach der Zeile",
+        "underSearch": "Unter der Suche anzeigen",
+        "inPanel": "Im Seitenbereich anzeigen"
       },
       "allProperties": "Alle Eigenschaften",
       "propertiesChosen": "{{count}} Eigenschaften",
