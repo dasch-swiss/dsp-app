@@ -120,7 +120,7 @@ export class GlobalSearchComponent implements OnDestroy {
       positionStrategy,
       hasBackdrop: false,
       scrollStrategy: this._overlay.scrollStrategies.reposition({ autoClose: true }),
-      width: '570px',
+      width: '604px',
     });
 
     const portal = new ComponentPortal(SearchTipsComponent);

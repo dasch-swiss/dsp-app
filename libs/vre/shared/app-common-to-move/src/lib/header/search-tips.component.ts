@@ -18,7 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       }
       .search-tips {
         box-sizing: border-box;
-        width: 570px;
+        width: 604px;
         max-width: 100%;
         border-radius: 5px;
         background: white;
