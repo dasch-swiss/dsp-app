@@ -902,7 +902,8 @@
         "editLabel": "Modifica l'etichetta ({{language}}) di {{class}}",
         "addLabel": "Aggiungi un'etichetta ({{language}}) a {{class}}"
       },
-      "allLanguages": "Tutte le lingue",
+      "languages": "Lingue",
+      "allLanguagesShort": "Tutte",
       "display": "Visualizzazione",
       "rowColors": "Colori delle famiglie",
       "colLinkedFrom": "Collegata da"

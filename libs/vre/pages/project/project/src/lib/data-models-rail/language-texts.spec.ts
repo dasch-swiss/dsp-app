@@ -7,31 +7,31 @@ const texts = [
 ];
 
 describe('shownTexts', () => {
-  it('lists every language in the order the app lists them', () => {
-    expect(shownTexts(texts, 'Brief', true).map(text => text.language)).toEqual(['en', 'de', 'fr']);
+  it('lists the chosen languages in the order the app lists them', () => {
+    expect(shownTexts(texts, 'Brief', ['fr', 'en', 'it']).map(text => text.language)).toEqual(['en', 'fr']);
   });
 
-  it('shows only the text the app shows with "All languages" off', () => {
-    expect(shownTexts(texts, 'Brief', false)).toEqual([{ language: 'de', value: 'Brief' }]);
+  it('shows only the text the app shows with no language chosen', () => {
+    expect(shownTexts(texts, 'Brief', null)).toEqual([{ language: 'de', value: 'Brief' }]);
   });
 
   it('falls back to the first language when the shown text has none', () => {
-    expect(shownTexts(texts, 'Something else', false)).toEqual([{ language: 'en', value: 'Letter' }]);
-    expect(shownTexts([], '', false)).toEqual([]);
+    expect(shownTexts(texts, 'Something else', null)).toEqual([{ language: 'en', value: 'Letter' }]);
+    expect(shownTexts([], '', null)).toEqual([]);
   });
 });
 
 describe('missingLanguages', () => {
-  it('offers every language without a text', () => {
-    expect(missingLanguages(texts, true, 'en')).toEqual(['it', 'rm']);
+  it('offers the chosen languages without a text', () => {
+    expect(missingLanguages(texts, ['en', 'it', 'rm'], 'en')).toEqual(['it', 'rm']);
   });
 
-  it('offers nothing with "All languages" off when there is a text', () => {
-    expect(missingLanguages(texts, false, 'en')).toEqual([]);
+  it('offers nothing with no language chosen when there is a text', () => {
+    expect(missingLanguages(texts, null, 'en')).toEqual([]);
   });
 
   it('offers the interface language for a missing text, else English', () => {
-    expect(missingLanguages([], false, 'de')).toEqual(['de']);
-    expect(missingLanguages([], false, 'xx')).toEqual(['en']);
+    expect(missingLanguages([], null, 'de')).toEqual(['de']);
+    expect(missingLanguages([], null, 'xx')).toEqual(['en']);
   });
 });

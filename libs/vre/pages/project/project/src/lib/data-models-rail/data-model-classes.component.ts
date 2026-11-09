@@ -50,6 +50,7 @@ import { DataModelsRailState } from './data-models-rail-state';
 import { TextKind } from './description-editor.component';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
+import { LanguagesMenuComponent, parseLanguages } from './languages-menu.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { rememberedSignal } from './remembered-signal';
 import { TableColumns } from './table-columns';
@@ -61,6 +62,8 @@ const MAX_PROPERTIES = 3;
 const MAX_LINKS = 2;
 /** How strongly the rows of a family with subclasses are tinted with its hue. */
 const FAMILY_TINT = 0.2;
+/** Where the languages the Data models 2 tables show in are remembered, the same for both. */
+const LANGUAGES_KEY = 'dsp-data-models-languages';
 const STORAGE_KEY = 'dsp-data-models-classes';
 /** The File filter's value for classes without file. */
 const NO_FILE = 'none';
@@ -95,6 +98,7 @@ const COLUMN_LABELS: Record<Column, string> = {
     ColumnHeaderComponent,
     ColumnsMenuComponent,
     HighlightPipe,
+    LanguagesMenuComponent,
     LanguageTextsComponent,
     MatButton,
     MatButtonToggle,
@@ -141,13 +145,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             (input)="query.set(search.value)" />
         </mat-form-field>
         <span class="spacer"></span>
-        <mat-slide-toggle
-          class="all-languages"
-          data-cy="data-model-classes-all-languages"
-          [checked]="allLanguages()"
-          (change)="allLanguages.set($event.checked)">
-          {{ r + '.allLanguages' | translate }}
-        </mat-slide-toggle>
+        <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-classes" />
         <mat-button-toggle-group
           class="density"
           hideSingleSelectionIndicator
@@ -221,7 +219,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                     [texts]="row.labels"
                     [shown]="row.label"
                     [owner]="row.label"
-                    [allLanguages]="allLanguages()"
+                    [languages]="languages()"
                     [canEdit]="canEditTexts()"
                     [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
                     [expanded]="expanded"
@@ -354,7 +352,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [texts]="row.descriptions"
                 [shown]="row.description"
                 [owner]="row.label"
-                [allLanguages]="allLanguages()"
+                [languages]="languages()"
                 [canEdit]="canEditTexts()"
                 [activeLanguage]="textEditing.activeLanguage(row.id, 'description')"
                 [expanded]="expanded"
@@ -719,8 +717,8 @@ export class DataModelClassesComponent {
   readonly density = rememberedSignal<Density>(`${STORAGE_KEY}-density`, 'condensed', stored =>
     stored === 'expanded' ? 'expanded' : 'condensed'
   );
-  /** Every language of a name or description stacked, or only the one the app shows; remembered in this browser. */
-  readonly allLanguages = rememberedSignal(`${STORAGE_KEY}-all-languages`, false, stored => stored === 'true');
+  /** The languages names and descriptions show in; none chosen follows the app language. Shared by both tables. */
+  readonly languages = rememberedSignal<string[] | null>(LANGUAGES_KEY, null, parseLanguages);
   /** Whether the rows of a family with subclasses take its tone; off at first; remembered in this browser. */
   readonly rowColors = rememberedSignal(`${STORAGE_KEY}-family-colours`, false, stored => stored === 'true');
   /** Whether the table is scrolled sideways, which shadows the frozen class column. */

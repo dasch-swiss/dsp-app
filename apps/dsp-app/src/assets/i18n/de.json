@@ -902,7 +902,8 @@
         "editLabel": "Bezeichnung ({{language}}) von {{class}} bearbeiten",
         "addLabel": "Bezeichnung ({{language}}) zu {{class}} hinzufügen"
       },
-      "allLanguages": "Alle Sprachen",
+      "languages": "Sprachen",
+      "allLanguagesShort": "Alle",
       "display": "Darstellung",
       "rowColors": "Familienfarben",
       "colLinkedFrom": "Verlinkt von"

@@ -17,7 +17,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {
   MatCell,
   MatCellDef,
@@ -45,6 +44,7 @@ import { DataModelsRailState } from './data-models-rail-state';
 import { TextKind } from './description-editor.component';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
+import { LanguagesMenuComponent, parseLanguages } from './languages-menu.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { rememberedSignal } from './remembered-signal';
 import { TableColumns } from './table-columns';
@@ -53,6 +53,8 @@ import { TextEditing, TextEditorPopoverComponent } from './text-editor-popover.c
 
 /** How many classes a condensed "Used by" shows; the others are counted. */
 const MAX_USED_BY = 3;
+/** Where the languages the Data models 2 tables show in are remembered, the same for both. */
+const LANGUAGES_KEY = 'dsp-data-models-languages';
 const STORAGE_KEY = 'dsp-data-models-properties';
 /** The Points to filter's value for properties that are not links. */
 const NO_TARGET = 'none';
@@ -85,6 +87,7 @@ const COLUMN_LABELS: Record<Column, string> = {
     ColumnHeaderComponent,
     ColumnsMenuComponent,
     HighlightPipe,
+    LanguagesMenuComponent,
     LanguageTextsComponent,
     MatButton,
     MatButtonToggle,
@@ -103,7 +106,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatPrefix,
     MatRow,
     MatRowDef,
-    MatSlideToggle,
     MatTable,
     PropertyPanelComponent,
     TextEditorPopoverComponent,
@@ -128,13 +130,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             (input)="query.set(search.value)" />
         </mat-form-field>
         <span class="spacer"></span>
-        <mat-slide-toggle
-          class="all-languages"
-          data-cy="data-model-properties-all-languages"
-          [checked]="allLanguages()"
-          (change)="allLanguages.set($event.checked)">
-          {{ r + '.allLanguages' | translate }}
-        </mat-slide-toggle>
+        <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-properties" />
         <mat-button-toggle-group
           class="density"
           hideSingleSelectionIndicator
@@ -204,7 +200,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                   [texts]="row.labels"
                   [shown]="row.label"
                   [owner]="row.label"
-                  [allLanguages]="allLanguages()"
+                  [languages]="languages()"
                   [canEdit]="canEditTexts()"
                   [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
                   [expanded]="expanded"
@@ -260,7 +256,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [texts]="row.descriptions"
                 [shown]="row.description"
                 [owner]="row.label"
-                [allLanguages]="allLanguages()"
+                [languages]="languages()"
                 [canEdit]="canEditTexts()"
                 [activeLanguage]="textEditing.activeLanguage(row.id, 'description')"
                 [expanded]="expanded"
@@ -490,8 +486,8 @@ export class DataModelPropertiesComponent {
   readonly density = rememberedSignal<Density>(`${STORAGE_KEY}-density`, 'condensed', stored =>
     stored === 'expanded' ? 'expanded' : 'condensed'
   );
-  /** Every language of a name or description stacked, or only the one the app shows; remembered in this browser. */
-  readonly allLanguages = rememberedSignal(`${STORAGE_KEY}-all-languages`, false, stored => stored === 'true');
+  /** The languages names and descriptions show in; none chosen follows the app language. Shared by both tables. */
+  readonly languages = rememberedSignal<string[] | null>(LANGUAGES_KEY, null, parseLanguages);
   /** Whether the table is scrolled sideways, which shadows the frozen property column. */
   readonly scrolled = signal(false);
 

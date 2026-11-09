@@ -1,16 +1,10 @@
 /**
  * Styles the Data models 2 tables share, as the Data tab's table: fixed, resizable and movable columns with borders, a
  * frozen first column, uppercase headers with filters, one line per row condensed, everything expanded. The toolbar's
- * "All languages" switch and density toggle too.
+ * density toggle too.
  */
 export const TABLE_STYLES = `
   @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
-
-  .all-languages {
-    flex: none;
-    margin-right: 12px;
-    font-size: 13px;
-  }
 
   .density {
     --mat-button-toggle-height: 36px;

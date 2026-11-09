@@ -12,27 +12,36 @@ const orderOf = (language: string) => {
 };
 
 /**
- * The texts a cell shows, in the order the app lists languages: every one, or with "All languages" off only the one
- * the app shows (`shown`, in the interface language when it has it), else the first.
+ * The texts a cell shows, in the order the app lists languages: those in the languages chosen, or with none chosen the
+ * one the app shows (`shown`, in the interface language when it has it), else the first.
  */
-export function shownTexts(texts: readonly LanguageText[], shown: string, allLanguages: boolean): LanguageText[] {
+export function shownTexts(
+  texts: readonly LanguageText[],
+  shown: string,
+  languages: readonly string[] | null
+): LanguageText[] {
   const sorted = [...texts].sort((a, b) => orderOf(a.language) - orderOf(b.language));
-  if (allLanguages) return sorted;
+  if (languages) return sorted.filter(text => languages.includes(text.language));
   const one = sorted.find(text => text.value === shown) ?? sorted[0];
   return one ? [one] : [];
 }
 
-/** The languages to offer adding: every missing one, or with "All languages" off the interface one, if none. */
+/**
+ * The languages to offer adding: the chosen ones without a text, or with none chosen the interface language, when
+ * there is no text at all.
+ */
 export function missingLanguages(
   texts: readonly LanguageText[],
-  allLanguages: boolean,
+  languages: readonly string[] | null,
   interfaceLanguage: string
 ): string[] {
-  if (!allLanguages) {
+  if (!languages) {
     if (texts.length) return [];
     return [DESCRIPTION_LANGUAGES.includes(interfaceLanguage) ? interfaceLanguage : DESCRIPTION_LANGUAGES[0]];
   }
-  return DESCRIPTION_LANGUAGES.filter(language => !texts.some(text => text.language === language));
+  return DESCRIPTION_LANGUAGES.filter(
+    language => languages.includes(language) && !texts.some(text => text.language === language)
+  );
 }
 
 /** A language to edit, and the line to open its editor under. */
@@ -42,8 +51,8 @@ export interface LanguageTextEdit {
 }
 
 /**
- * A name or description in a table cell, in each of its languages: one line per language with "All languages" on,
- * else the one the app shows. To an editor, a pencil on a hovered line and "+ DE" for a missing language ask to edit it.
+ * A name or description in a table cell, in the languages chosen in the table's Languages menu: one line each, labelled
+ * when there are several; with none chosen, the one the app shows. To an editor, a pencil on a hovered line and "+ DE" for a missing language ask to edit it.
  */
 @Component({
   selector: 'app-language-texts',
@@ -53,12 +62,8 @@ export interface LanguageTextEdit {
   template: `
     @let t = 'pages.dataModels2.descriptionEditor';
     @for (text of lines(); track text.language) {
-      <span
-        #line
-        class="lang-line"
-        [class.single]="!allLanguages()"
-        [class.active]="text.language === activeLanguage()">
-        @if (allLanguages()) {
+      <span #line class="lang-line" [class.single]="!labelled()" [class.active]="text.language === activeLanguage()">
+        @if (labelled()) {
           <span class="lang">{{ text.language }}</span>
         }
         <span class="lang-text" [title]="expanded() ? '' : text.value">
@@ -85,7 +90,7 @@ export interface LanguageTextEdit {
         }
       </span>
     } @empty {
-      @if (shown()) {
+      @if (!languages() && shown()) {
         <!-- A text without a language: shown as it is. -->
         <span class="lang-text" [title]="expanded() ? '' : shown()">
           @for (part of shown() | highlight: highlight(); track $index) {
@@ -101,7 +106,7 @@ export interface LanguageTextEdit {
       }
     }
     @if (canEdit() && missing().length) {
-      <span #gaps class="lang-missing" [class.single]="!allLanguages()">
+      <span #gaps class="lang-missing" [class.single]="!labelled()">
         @for (language of missing(); track language) {
           <button
             type="button"
@@ -273,7 +278,8 @@ export class LanguageTextsComponent {
   /** The text the app shows, in the interface language when it has it; shown alone with "All languages" off. */
   readonly shown = input('');
   readonly kind = input.required<TextKind>();
-  readonly allLanguages = input(false);
+  /** The languages to show, in the table's Languages menu; none follows the app language. */
+  readonly languages = input<readonly string[] | null>(null);
   /** Whether the viewer may edit the text, which shows the pencils and the missing languages. */
   readonly canEdit = input(false);
   /** The language being edited, its line outlined. */
@@ -288,8 +294,10 @@ export class LanguageTextsComponent {
 
   readonly edit = output<LanguageTextEdit>();
 
-  readonly lines = computed(() => shownTexts(this.texts(), this.shown(), this.allLanguages()));
+  readonly lines = computed(() => shownTexts(this.texts(), this.shown(), this.languages()));
+  /** Each line names its language when several are shown. */
+  readonly labelled = computed(() => (this.languages()?.length ?? 0) > 1);
   readonly missing = computed(() =>
-    missingLanguages(this.texts(), this.allLanguages(), this._translate.currentLang ?? '')
+    missingLanguages(this.texts(), this.languages(), this._translate.currentLang ?? '')
   );
 }
