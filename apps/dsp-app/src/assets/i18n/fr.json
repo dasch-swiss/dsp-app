@@ -761,17 +761,12 @@
         "clear": "Effacer la recherche",
         "results": "Résultats de recherche",
         "all": "Tous les résultats",
-        "noMatch": "Aucune classe ni propriété ne correspond à « {{text}} ».",
         "classes": "Classes · {{count}}",
         "properties": "Propriétés · {{count}}",
         "subclasses": "{{count}} sous-classes",
         "filter": "Filtrer",
         "filterOn": "Filtrer le graphe sur {{name}}",
-        "hint": "↑↓ pour se déplacer · Entrée ouvre · Maj+Entrée filtre",
-        "underSearch": "Afficher sous la recherche",
-        "inPanel": "Afficher à droite",
-        "onLeft": "Afficher à gauche",
-        "placement": "Où afficher les résultats"
+        "hint": "↑↓ pour se déplacer · Entrée ouvre · Maj+Entrée filtre"
       },
       "allProperties": "Toutes les propriétés",
       "propertiesChosen": "{{count}} propriétés",
@@ -856,6 +851,8 @@
       "links": "liens"
     },
     "dataModels2": {
+      "currentLanguage": "Langue actuelle",
+      "allLanguages": "Toutes les langues",
       "valueActions": "Actions pour {{value}}",
       "addValueInside": "Ajouter une valeur dedans",
       "addValueAfter": "Ajouter une valeur après",
@@ -869,7 +866,7 @@
       "expandRow": "Déplier",
       "collapseRow": "Replier",
       "notUsed": "Pas utilisé dans ce modèle de données",
-      "graph": "Diagramme",
+      "graph": "Vue d’ensemble",
       "classes": "Classes de ressources",
       "project": "Projet",
       "properties": "Propriétés",

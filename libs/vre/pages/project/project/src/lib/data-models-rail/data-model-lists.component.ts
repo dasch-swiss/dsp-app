@@ -20,9 +20,13 @@ import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/v
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, filter, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
+import { LanguageTextsComponent } from './language-texts.component';
+import { LanguagesMenuComponent, parseLanguages } from './languages-menu.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
+import { rememberedSignal } from './remembered-signal';
 import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabularyUses } from './vocabulary-tree';
 
 /**
@@ -36,6 +40,8 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     HighlightPipe,
+    LanguagesMenuComponent,
+    LanguageTextsComponent,
     MatButton,
     MatFormField,
     MatIcon,
@@ -64,6 +70,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
             (input)="query.set(search.value)" />
         </mat-form-field>
         <span class="spacer"></span>
+        <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-lists" />
         <button mat-button type="button" data-cy="data-model-lists-expand" (click)="toggleAll()">
           <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
           {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
@@ -107,15 +114,14 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                     @if (row.depth === 0) {
                       <mat-icon class="list-icon">format_list_bulleted</mat-icon>
                     }
-                    <span class="node-label">
-                      @for (part of row.label | highlight: [query()]; track $index) {
-                        @if (part.match) {
-                          <mark>{{ part.text }}</mark>
-                        } @else {
-                          <span>{{ part.text }}</span>
-                        }
-                      }
-                    </span>
+                    <app-language-texts
+                      class="node-label"
+                      cyPrefix="data-model-lists"
+                      [kind]="row.depth === 0 ? 'label' : 'description'"
+                      [texts]="textsOf(row.node.labels)"
+                      [shown]="row.label"
+                      [languages]="languages()"
+                      [highlight]="[query()]" />
                     @if (row.count) {
                       <span class="count">{{ row.count }}</span>
                     }
@@ -136,7 +142,12 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                 </td>
                 <td class="description">
                   @if (row.description) {
-                    {{ row.description }}
+                    <app-language-texts
+                      kind="description"
+                      cyPrefix="data-model-lists"
+                      [texts]="textsOf(row.node.comments)"
+                      [shown]="row.description"
+                      [languages]="languages()" />
                   } @else if (row.depth === 0) {
                     <span class="none">—</span>
                   }
@@ -231,7 +242,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
         }
 
         td {
-          padding: 4px 12px;
+          padding: 6px 12px;
           vertical-align: middle;
           border-bottom: 1px solid $cool_gray_100;
           border-right: 1px solid #f3f4f6;
@@ -404,6 +415,8 @@ export class DataModelListsComponent {
   private readonly _reload = signal(0);
 
   readonly query = signal('');
+  /** The languages names and descriptions show in, as in the other tables: the app's, or all. */
+  readonly languages = rememberedSignal<string[] | null>('dsp-data-models-languages', null, parseLanguages);
   /** The vocabularies and values opened, by IRI. */
   readonly expanded = signal(new Set<string>());
 
@@ -488,6 +501,11 @@ export class DataModelListsComponent {
       if (open) this.expanded.update(expanded => new Set(expanded).add(open));
       this._reload.update(count => count + 1);
     });
+  }
+
+  /** A vocabulary's or value's texts with their language, for the language lines. */
+  textsOf(texts: VocabularyNode['labels'] | undefined): LanguageText[] {
+    return (texts ?? []).filter(text => !!text.language).map(text => ({ language: text.language!, value: text.value }));
   }
 
   private _text(texts: VocabularyNode['labels'] | undefined): string {

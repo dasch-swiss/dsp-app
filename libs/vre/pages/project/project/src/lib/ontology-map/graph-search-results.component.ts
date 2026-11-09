@@ -1,9 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input, linkedSignal, output } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HighlightPipe } from '../data-models-rail/highlight.pipe';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
@@ -28,9 +25,6 @@ export interface PropertyResult {
 }
 
 export type SearchResult = ClassResult | PropertyResult;
-
-/** Where the search's results show. */
-export type ResultsPlacement = 'right' | 'left' | 'under';
 
 /** What the search found, each property once. */
 export interface SearchResults {
@@ -82,70 +76,21 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
 }
 
 /**
- * The panel of what the graph's search found, where a class panel opens: the classes and properties, by kind. A row
- * opens its own panel in its place, as Enter does on the active row; its Filter button, or Shift+Enter, filters the graph
- * on it.
+ * The card under the graph's search of what it found: the classes and properties, by kind. A row opens its panel, as
+ * Enter does on the active row; its Filter button, or Shift+Enter, filters the graph on it.
  */
 @Component({
   selector: 'app-graph-search-results',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class.floating]': "placement() === 'under'", '[class.left]': "placement() === 'left'" },
-  imports: [
-    HighlightPipe,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    MatTooltip,
-    NgTemplateOutlet,
-    TranslatePipe,
-  ],
+  imports: [HighlightPipe, MatIcon, NgTemplateOutlet, TranslatePipe],
   template: `
     @let s = 'pages.ontologyMap.search';
     <section class="results" data-cy="ontology-map-search-results" [attr.aria-label]="s + '.results' | translate">
-      <header class="header">
-        <h2>{{ s + '.results' | translate }}</h2>
-        <!-- For comparing where the results show; see the page's \`resultsPlacement\`. -->
-        <button
-          mat-icon-button
-          data-cy="ontology-map-search-results-placement"
-          [attr.aria-label]="s + '.placement' | translate"
-          [matTooltip]="s + '.placement' | translate"
-          [matMenuTriggerFor]="places">
-          <mat-icon>{{ placementIcons[placement()] }}</mat-icon>
-        </button>
-        <mat-menu #places="matMenu" xPosition="before">
-          @for (place of placements; track place.key) {
-            <button
-              mat-menu-item
-              [attr.data-cy]="'ontology-map-search-results-' + place.key"
-              [disabled]="place.key === placement()"
-              (click)="placementChosen.emit(place.key)">
-              <mat-icon>{{ placementIcons[place.key] }}</mat-icon>
-              {{ s + '.' + place.label | translate }}
-            </button>
-          }
-        </mat-menu>
-        <button
-          mat-icon-button
-          data-cy="ontology-map-search-results-close"
-          [attr.aria-label]="s + '.clear' | translate"
-          [matTooltip]="s + '.clear' | translate"
-          (click)="closed.emit()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </header>
       <div
         class="list"
         role="listbox"
         [attr.aria-label]="s + '.results' | translate"
         (mouseleave)="browsing.set(false)">
-        @if (!count()) {
-          <p class="none" role="status" data-cy="ontology-map-search-results-none">
-            {{ s + '.noMatch' | translate: { text: text().trim() } }}
-          </p>
-        }
         <div
           class="row all"
           [hidden]="!count()"
@@ -230,69 +175,18 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
         display: block;
       }
 
-      // On the left, the panel mirrors the right one.
-      :host(.left) .results {
-        border-left: 0;
-        border-right: 1px solid #ebebeb;
-        box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08);
-      }
-
-      // Under the search instead: a card the graph shows through, faintly, which lightens with the pointer away.
-      :host(.floating) {
-        .results {
-          width: 440px;
-          max-height: 460px;
-          padding: 8px 8px 6px;
-          border: 0;
-          border-radius: 10px;
-          background: rgba(255, 255, 255, 0.82);
-          backdrop-filter: blur(2px);
-          box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
-          opacity: 0.9;
-          transition: opacity 120ms;
-
-          &:hover {
-            opacity: 1;
-          }
-        }
-
-        .header {
-          padding: 0 0 2px 10px;
-
-          h2 {
-            font-size: 13px;
-            font-weight: 600;
-            line-height: 20px;
-          }
-        }
-      }
-
-      // As the class and property panels, in their place.
+      // A card under the search.
       .results {
         box-sizing: border-box;
-        height: 100%;
+        width: 440px;
+        max-height: 460px;
         display: flex;
         flex-direction: column;
-        padding: 20px 16px 12px;
+        padding: 8px 8px 6px;
+        border-radius: 10px;
         background: white;
-        border-left: 1px solid #ebebeb;
-        box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
         font: 400 13px/20px var(--font-sans, Roboto, sans-serif);
-      }
-
-      .header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 0 0 8px 8px;
-
-        h2 {
-          flex: 1;
-          margin: 0;
-          font-size: 20px;
-          font-weight: 500;
-          line-height: 28px;
-        }
       }
 
       .list {
@@ -399,11 +293,6 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
         }
       }
 
-      .none {
-        margin: 8px 10px;
-        color: $cool_gray_500;
-      }
-
       .all {
         margin-bottom: 4px;
         font-weight: 500;
@@ -442,22 +331,6 @@ export class GraphSearchResultsComponent {
   readonly opened = output<SearchResult>();
   /** A row's Filter: filter the graph on it. */
   readonly filtered = output<SearchResult>();
-  /** The panel's close: clear the search. */
-  readonly closed = output<void>();
-  /** Where the results show: a side panel on the right or the left, or a card under the search. */
-  readonly placement = input<ResultsPlacement>('right');
-  /** Asks to show the results in another place. */
-  readonly placementChosen = output<ResultsPlacement>();
-  readonly placements: { key: ResultsPlacement; label: string }[] = [
-    { key: 'right', label: 'inPanel' },
-    { key: 'left', label: 'onLeft' },
-    { key: 'under', label: 'underSearch' },
-  ];
-  readonly placementIcons: Record<ResultsPlacement, string> = {
-    right: 'view_sidebar',
-    left: 'vertical_split',
-    under: 'vertical_align_top',
-  };
 
   readonly count = computed(() => this.results().classes.length + this.results().properties.length);
   /** Every row in the order shown, "All results" first, for the arrow keys. */

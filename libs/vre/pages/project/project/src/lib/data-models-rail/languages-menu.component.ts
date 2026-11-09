@@ -1,40 +1,34 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, model } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
-import { AvailableLanguages } from '@dasch-swiss/vre/core/config';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
 import { DESCRIPTION_LANGUAGES } from './description-editor.component';
 
-const NAMES = new Map<string, string>(AvailableLanguages.map(({ language, value }) => [language, value]));
-
-/** The languages a table shows, stored as chosen; none chosen (`null`) follows the app language. */
+/** The languages a table shows, as stored: every one, or none chosen (`null`), which follows the app language. */
 export function parseLanguages(stored: string): string[] | null {
   try {
     const languages = JSON.parse(stored);
     if (!Array.isArray(languages)) return null;
-    const known = DESCRIPTION_LANGUAGES.filter(language => languages.includes(language));
-    return known.length ? known : null;
+    return DESCRIPTION_LANGUAGES.every(language => languages.includes(language)) ? [...DESCRIPTION_LANGUAGES] : null;
   } catch {
     return null;
   }
 }
 
 /**
- * The languages the names and descriptions of a table show in: one checkbox per language. By default only the app
- * language is ticked, and follows it; ticking or unticking one keeps the choice. At least one stays ticked. "Show all"
- * ticks them all; "Hide all" goes back to the app language alone.
+ * The languages the names and descriptions of a table show in: the current language, the app's (by default), or all
+ * of them, stacked and labelled.
  */
 @Component({
   selector: 'app-languages-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatCheckbox, MatIcon, MatMenu, MatMenuTrigger, TranslatePipe],
+  imports: [MatButton, MatButtonToggle, MatButtonToggleGroup, MatIcon, MatMenu, MatMenuTrigger, TranslatePipe],
   template: `
     @let r = 'pages.dataModels2';
-    @let v = 'pages.dataBrowser.viewOptions';
     <button
       mat-stroked-button
       type="button"
@@ -43,38 +37,29 @@ export function parseLanguages(stored: string): string[] | null {
       [attr.aria-label]="(r + '.languages' | translate) + ': ' + label()"
       [matMenuTriggerFor]="menu">
       <mat-icon>translate</mat-icon>
-      <b [class.codes]="!allTicked()">{{ label() }}</b>
+      <b [class.code]="!all()">{{ label() }}</b>
       <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
-      <!-- The menu stays open while languages are ticked, and only Escape closes it from the keyboard. -->
+      <!-- The menu stays open on a choice; Escape closes it. -->
       <div
         class="menu"
-        role="group"
-        [attr.aria-label]="r + '.languages' | translate"
         (click)="$event.stopPropagation()"
         (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
-        <!-- As View options' columns: a heading, and a button to show them all or go back to one. -->
-        <span class="head">
-          <span class="heading">{{ r + '.languages' | translate }}</span>
-          <button
-            mat-button
-            type="button"
-            class="all"
-            [attr.data-cy]="cyPrefix() + '-language-all'"
-            (click)="toggleAll()">
-            {{ (allTicked() ? v + '.hideAllShort' : v + '.showAllShort') | translate }}
-          </button>
-        </span>
-        @for (language of languages; track language) {
-          <mat-checkbox
-            [attr.data-cy]="cyPrefix() + '-language-' + language"
-            [checked]="ticked().includes(language)"
-            [disabled]="ticked().length === 1 && ticked().includes(language)"
-            (change)="toggle(language)">
-            {{ nameOf(language) }}
-          </mat-checkbox>
-        }
+        <span class="heading">{{ r + '.languages' | translate }}</span>
+        <mat-button-toggle-group
+          class="choice"
+          hideSingleSelectionIndicator
+          [attr.aria-label]="r + '.languages' | translate"
+          [value]="all() ? 'all' : 'current'"
+          (change)="choose($event.value)">
+          <mat-button-toggle value="current" [attr.data-cy]="cyPrefix() + '-language-current'">
+            {{ r + '.currentLanguage' | translate }}
+          </mat-button-toggle>
+          <mat-button-toggle value="all" [attr.data-cy]="cyPrefix() + '-language-all'">
+            {{ r + '.allLanguages' | translate }}
+          </mat-button-toggle>
+        </mat-button-toggle-group>
       </div>
     </mat-menu>
   `,
@@ -87,17 +72,18 @@ export function parseLanguages(stored: string): string[] | null {
 
         b {
           font-weight: 500;
-          &.codes {
+
+          &.code {
             text-transform: uppercase;
           }
         }
       }
 
-      .head {
+      .menu {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
+        flex-direction: column;
+        gap: 6px;
+        padding: 4px 12px 8px;
       }
 
       .heading {
@@ -108,17 +94,10 @@ export function parseLanguages(stored: string): string[] | null {
         color: #6b7280;
       }
 
-      .all {
-        height: 28px;
-        padding: 0 8px;
-        font-size: 13px;
-      }
-
-      .menu {
-        display: flex;
-        flex-direction: column;
-        min-width: 180px;
-        padding: 4px 12px;
+      .choice {
+        --mat-button-toggle-height: 34px;
+        --mat-button-toggle-label-text-size: 13px;
+        white-space: nowrap;
       }
     `,
   ],
@@ -126,11 +105,10 @@ export function parseLanguages(stored: string): string[] | null {
 export class LanguagesMenuComponent {
   private readonly _translate = inject(TranslateService);
 
-  /** The languages chosen; none (`null`) follows the app language. */
+  /** Every language, or none (`null`): the app's. */
   readonly chosen = model<string[] | null>(null);
   readonly cyPrefix = input('data-model');
 
-  readonly languages = DESCRIPTION_LANGUAGES;
   private readonly _appLanguage = toSignal(
     this._translate.onLangChange.pipe(
       map(change => change.lang),
@@ -143,28 +121,12 @@ export class LanguagesMenuComponent {
     const language = this._appLanguage() ?? '';
     return DESCRIPTION_LANGUAGES.includes(language) ? language : DESCRIPTION_LANGUAGES[0];
   });
-  readonly ticked = computed(() => this.chosen() ?? [this.appLanguage()]);
-  readonly allTicked = computed(() => this.ticked().length === DESCRIPTION_LANGUAGES.length);
-  readonly label = computed(() => {
-    const ticked = this.ticked();
-    return ticked.length === DESCRIPTION_LANGUAGES.length
-      ? this._translate.instant('pages.dataModels2.allLanguagesShort')
-      : ticked.join(', ');
-  });
+  readonly all = computed(() => (this.chosen()?.length ?? 0) === DESCRIPTION_LANGUAGES.length);
+  readonly label = computed(() =>
+    this.all() ? this._translate.instant('pages.dataModels2.allLanguagesShort') : this.appLanguage()
+  );
 
-  nameOf(language: string): string {
-    return NAMES.get(language) ?? language;
-  }
-
-  /** Ticks every language, or with all ticked goes back to the app language alone, which it follows again. */
-  toggleAll(): void {
-    this.chosen.set(this.allTicked() ? null : [...DESCRIPTION_LANGUAGES]);
-  }
-
-  /** Ticks or unticks a language, keeping at least one; the choice no longer follows the app language. */
-  toggle(language: string): void {
-    const ticked = this.ticked();
-    const next = ticked.includes(language) ? ticked.filter(other => other !== language) : [...ticked, language];
-    if (next.length) this.chosen.set(DESCRIPTION_LANGUAGES.filter(other => next.includes(other)));
+  choose(choice: 'current' | 'all'): void {
+    this.chosen.set(choice === 'all' ? [...DESCRIPTION_LANGUAGES] : null);
   }
 }

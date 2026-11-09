@@ -27,12 +27,7 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { injectDataModelEditing } from './data-model-editor';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
-import {
-  graphSearchResults,
-  GraphSearchResultsComponent,
-  ResultsPlacement,
-  SearchResult,
-} from './graph-search-results.component';
+import { graphSearchResults, GraphSearchResultsComponent, SearchResult } from './graph-search-results.component';
 import { classFamilies, familyColors } from './islands';
 import {
   GraphLabels,
@@ -93,7 +88,6 @@ const SIZE_KEY = 'dsp-ontology-map-text-size';
 const PANEL_WIDTH = 440;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
 const LABELS_KEY = 'dsp-ontology-map-labels';
-const RESULTS_PLACEMENT_KEY = 'dsp-ontology-map-results-placement';
 
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
 
@@ -163,8 +157,64 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 (backgroundClicked)="(panelIri() || propertyPanelIri()) && openPanel(undefined)" />
               <!-- One bar along the top, left of an open panel; on a narrow screen its two halves wrap. -->
               <div class="top-bar" [class.beside-panel]="panelOpen()">
-                <!-- What to show, on the left: the filters, and the search beside them. -->
+                <!-- What to show, on the left: the search, and the filters beside it. -->
                 <div class="top-left">
+                  <!-- Typing fades what lies away from the classes and links found; nothing found, nothing fades. -->
+                  <label
+                    class="float search"
+                    cdkOverlayOrigin
+                    #searchOrigin="cdkOverlayOrigin"
+                    [class.active]="searchText().trim()">
+                    <mat-icon>search</mat-icon>
+                    <input
+                      #searchInput
+                      type="search"
+                      data-cy="ontology-map-search"
+                      [placeholder]="m + '.search.placeholder' | translate"
+                      [attr.aria-label]="m + '.search.placeholder' | translate"
+                      [value]="searchText()"
+                      (input)="searchText.set(searchInput.value)"
+                      (keydown.arrowdown)="$event.preventDefault(); searchResults()?.move(1)"
+                      (keydown.arrowup)="$event.preventDefault(); searchResults()?.move(-1)"
+                      (keydown.enter)="searchResults()?.openActive()"
+                      (keydown.shift.enter)="searchResults()?.filterActive()"
+                      (keydown.escape)="clearSearch(searchInput)" />
+                    @if (searchFound(); as found) {
+                      <span class="search-count" data-cy="ontology-map-search-count">{{
+                        m + '.search.found' | translate: { count: found }
+                      }}</span>
+                    } @else if (searchFound() === 0) {
+                      <span class="search-count none" data-cy="ontology-map-search-none" role="status">{{
+                        m + '.search.none' | translate
+                      }}</span>
+                    }
+                    @if (searchText()) {
+                      <button
+                        type="button"
+                        class="chip-clear"
+                        data-cy="ontology-map-search-clear"
+                        [attr.aria-label]="m + '.search.clear' | translate"
+                        [matTooltip]="m + '.search.clear' | translate"
+                        (click)="clearSearch(searchInput)">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    }
+                  </label>
+                  <!-- What the search found, under it; a row opens its panel, its Filter filters the graph. -->
+                  <ng-template
+                    cdkConnectedOverlay
+                    [cdkConnectedOverlayOrigin]="searchOrigin"
+                    [cdkConnectedOverlayOpen]="searchDropdownOpen()"
+                    [cdkConnectedOverlayPositions]="searchDropdownPositions">
+                    <app-graph-search-results
+                      [results]="searchMatches()"
+                      [text]="searchText()"
+                      [colors]="colors()"
+                      [labelOf]="labelOf"
+                      (opened)="openResult($event)"
+                      (filtered)="filterOnResult($event, searchInput)"
+                      (browsedChange)="browsed.set($event)" />
+                  </ng-template>
                   <div class="float filters">
                     <span class="filters-label">{{ m + '.filters' | translate }}</span>
                     <span class="divider"></span>
@@ -241,65 +291,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       </ng-template>
                     </mat-menu>
                   </div>
-                  <!-- Typing fades what lies away from the classes and links found; nothing found, nothing fades. -->
-                  <label
-                    class="float search"
-                    cdkOverlayOrigin
-                    #searchOrigin="cdkOverlayOrigin"
-                    [class.active]="searchText().trim()">
-                    <mat-icon>search</mat-icon>
-                    <input
-                      #searchInput
-                      type="search"
-                      data-cy="ontology-map-search"
-                      [placeholder]="m + '.search.placeholder' | translate"
-                      [attr.aria-label]="m + '.search.placeholder' | translate"
-                      [value]="searchText()"
-                      (input)="searchText.set(searchInput.value)"
-                      (keydown.arrowdown)="$event.preventDefault(); searchResults()?.move(1)"
-                      (keydown.arrowup)="$event.preventDefault(); searchResults()?.move(-1)"
-                      (keydown.enter)="searchResults()?.openActive()"
-                      (keydown.shift.enter)="searchResults()?.filterActive()"
-                      (keydown.escape)="clearSearch(searchInput)" />
-                    @if (searchFound(); as found) {
-                      <span class="search-count" data-cy="ontology-map-search-count">{{
-                        m + '.search.found' | translate: { count: found }
-                      }}</span>
-                    } @else if (searchFound() === 0) {
-                      <span class="search-count none" data-cy="ontology-map-search-none" role="status">{{
-                        m + '.search.none' | translate
-                      }}</span>
-                    }
-                    @if (searchText()) {
-                      <button
-                        type="button"
-                        class="chip-clear"
-                        data-cy="ontology-map-search-clear"
-                        [attr.aria-label]="m + '.search.clear' | translate"
-                        [matTooltip]="m + '.search.clear' | translate"
-                        (click)="clearSearch(searchInput)">
-                        <mat-icon>close</mat-icon>
-                      </button>
-                    }
-                  </label>
-                  <!-- The results under the search, when placed there rather than in the side panel. -->
-                  <ng-template
-                    cdkConnectedOverlay
-                    [cdkConnectedOverlayOrigin]="searchOrigin"
-                    [cdkConnectedOverlayOpen]="searchDropdownOpen()"
-                    [cdkConnectedOverlayPositions]="searchDropdownPositions">
-                    <app-graph-search-results
-                      [results]="searchMatches()"
-                      [text]="searchText()"
-                      [colors]="colors()"
-                      [labelOf]="labelOf"
-                      [placement]="'under'"
-                      (opened)="openResult($event)"
-                      (filtered)="filterOnResult($event, searchInput)"
-                      (placementChosen)="setResultsPlacement($event)"
-                      (browsedChange)="browsed.set($event)"
-                      (closed)="clearSearch(searchInput)" />
-                  </ng-template>
                 </div>
 
                 <!-- How to show it, and the Export menu: top right, left of an open panel. -->
@@ -464,35 +455,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   (closed)="openPanel(undefined)"
                   (filter)="setPropertyFilter([$event])"
                   (edit)="editProperty($event)" />
-              } @else if (searchResultsOpen()) {
-                <!-- What the search found, by kind, where a class panel opens; a row opens its panel in its place. -->
-                <app-graph-search-results
-                  class="panel"
-                  [results]="searchMatches()"
-                  [text]="searchText()"
-                  [colors]="colors()"
-                  [labelOf]="labelOf"
-                  [placement]="'right'"
-                  (opened)="openResult($event)"
-                  (filtered)="filterOnResult($event, searchInput)"
-                  (placementChosen)="setResultsPlacement($event)"
-                  (browsedChange)="browsed.set($event)"
-                  (closed)="clearSearch(searchInput)" />
-              }
-              @if (searchLeftOpen()) {
-                <!-- The results on the left instead, under the top bar; a class panel can open on the right beside them. -->
-                <app-graph-search-results
-                  class="left-panel"
-                  placement="left"
-                  [results]="searchMatches()"
-                  [text]="searchText()"
-                  [colors]="colors()"
-                  [labelOf]="labelOf"
-                  (opened)="openResult($event)"
-                  (filtered)="filterOnResult($event, searchInput)"
-                  (placementChosen)="setResultsPlacement($event)"
-                  (browsedChange)="browsed.set($event)"
-                  (closed)="clearSearch(searchInput)" />
               }
             </div>
           }
@@ -539,17 +501,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         border: 1px solid $cool_gray_200;
         border-radius: 24px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-      }
-
-      // The search's results on the left, under the top bar's filters and search.
-      .left-panel {
-        position: absolute;
-        z-index: 1;
-        top: 72px;
-        left: 0;
-        bottom: 0;
-        width: 400px;
-        max-width: 45%;
       }
 
       // The top bar lets clicks through to the graph between its two halves.
@@ -1078,39 +1029,18 @@ export class OntologyMapPageComponent {
     return classes.length + properties.length;
   });
 
-  /** Where the search's results show, to compare: the side panel, or a card under the search; remembered here. */
-  readonly resultsPlacement = signal<ResultsPlacement>(
-    (['right', 'left', 'under'] as const).find(place => place === readStored(RESULTS_PLACEMENT_KEY)) ?? 'right'
-  );
-  /** Whether the search's results show, in the panel's place: while a search is typed, found or not, and no panel is open. */
-  readonly searchResultsOpen = computed(
-    () =>
-      this.resultsPlacement() === 'right' &&
-      this.searchFound() !== undefined &&
-      !this.panelIri() &&
-      !this.propertyPanelIri()
-  );
-  /** Whether the search's results show under it instead. */
-  readonly searchDropdownOpen = computed(() => this.resultsPlacement() === 'under' && this.searchFound() !== undefined);
-  /** Whether the search's results show on the left. */
-  readonly searchLeftOpen = computed(() => this.resultsPlacement() === 'left' && this.searchFound() !== undefined);
+  /** Whether the search's results show, under it: while a search is typed, found or not. */
+  readonly searchDropdownOpen = computed(() => this.searchFound() !== undefined);
   /**
    * The search result gone through in its list, which the graph picks out over the search's fade: a class outlined, a
    * property's links highlighted; none while none is.
    */
   readonly browsed = signal<SearchResult | undefined>(undefined);
-  /** The browsed result while its list shows, which the graph draws in orange. */
-  readonly picked = computed(() =>
-    this.searchResultsOpen() || this.searchDropdownOpen() || this.searchLeftOpen() ? this.browsed() : undefined
-  );
+  /** The browsed result while its list shows, which the graph draws in magenta. */
+  readonly picked = computed(() => (this.searchDropdownOpen() ? this.browsed() : undefined));
   readonly searchDropdownPositions: ConnectedPosition[] = [
     { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 6 },
   ];
-
-  setResultsPlacement(placement: ResultsPlacement): void {
-    this.resultsPlacement.set(placement);
-    store(RESULTS_PLACEMENT_KEY, placement);
-  }
   readonly searchResults = viewChild(GraphSearchResultsComponent);
 
   /** A class's label in the data model, else the end of its IRI. */
@@ -1140,7 +1070,7 @@ export class OntologyMapPageComponent {
     if (event.defaultPrevented || target?.closest('input, textarea, [contenteditable="true"]')) return;
     if (document.querySelector('.mat-mdc-menu-panel, mat-dialog-container')) return;
     if (this.panelIri() || this.propertyPanelIri()) this.openPanel(undefined);
-    else if (this.searchResultsOpen() || this.searchDropdownOpen() || this.searchLeftOpen()) {
+    else if (this.searchDropdownOpen()) {
       const input = this._searchInput()?.nativeElement;
       if (input) this.clearSearch(input);
     }
@@ -1166,7 +1096,7 @@ export class OntologyMapPageComponent {
     effect(() => {
       const input = this._searchInput()?.nativeElement;
       const panel = !!(this.panelIri() || this.propertyPanelIri());
-      const results = this.searchResultsOpen() || this.searchDropdownOpen() || this.searchLeftOpen();
+      const results = this.searchDropdownOpen();
       if (!input) return;
       untracked(() => {
         if (panel) {
@@ -1183,7 +1113,7 @@ export class OntologyMapPageComponent {
   }
 
   /** Whether a class or property panel covers the right of the graph. */
-  readonly panelOpen = computed(() => !!(this.panelIri() || this.propertyPanelIri() || this.searchResultsOpen()));
+  readonly panelOpen = computed(() => !!(this.panelIri() || this.propertyPanelIri()));
   /** How wide a panel is, over the right of the graph, as its styles draw it; the graph is fitted left of it, open or not. */
   readonly panelWidth = PANEL_WIDTH;
 
