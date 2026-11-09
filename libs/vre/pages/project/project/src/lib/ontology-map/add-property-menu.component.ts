@@ -89,27 +89,30 @@ import { AvailableProperties, DATA_MODEL_EDITOR, injectDataModelEditing } from '
   ],
 })
 export class AddPropertyMenuComponent {
-  private readonly _editing = injectDataModelEditing();
+  /** Whether properties can be added here, in the data model editor's dialogs. */
+  readonly canAdd = !!inject(DATA_MODEL_EDITOR, { optional: true });
+  // Only where the app provides the editor: without it, nothing here edits.
+  private readonly _editing = this.canAdd ? injectDataModelEditing() : undefined;
 
   readonly classIri = input.required<string>();
 
-  /** Whether properties can be added here, in the data model editor's dialogs. */
-  readonly canAdd = !!inject(DATA_MODEL_EDITOR, { optional: true });
   readonly categories: PropertyCategory[] = DefaultProperties.data;
 
   /** The menu was opened once: the project's properties are read then, not with every panel. */
   readonly opened = signal(false);
   readonly available = toSignal<AvailableProperties[] | undefined>(
     toObservable(this.opened).pipe(
-      switchMap(opened => (opened ? this._editing.availableProperties(this.classIri()) : of(undefined)))
+      switchMap(opened =>
+        opened && this._editing ? this._editing.availableProperties(this.classIri()) : of(undefined)
+      )
     )
   );
 
   addNew(type: DefaultProperty): void {
-    this._editing.addNewProperty(this.classIri(), type);
+    this._editing?.addNewProperty(this.classIri(), type);
   }
 
   addExisting(propertyIri: string): void {
-    this._editing.addExistingProperty(this.classIri(), propertyIri);
+    this._editing?.addExistingProperty(this.classIri(), propertyIri);
   }
 }
