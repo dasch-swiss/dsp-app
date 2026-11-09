@@ -114,8 +114,14 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
         role="listbox"
         [attr.aria-label]="s + '.results' | translate"
         (mouseleave)="browsing.set(false)">
+        @if (!count()) {
+          <p class="none" role="status" data-cy="ontology-map-search-results-none">
+            {{ s + '.noMatch' | translate: { text: text().trim() } }}
+          </p>
+        }
         <div
           class="row all"
+          [hidden]="!count()"
           role="option"
           data-cy="ontology-map-search-all"
           [attr.aria-selected]="active() === 0"
@@ -357,6 +363,11 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
         &:hover {
           border-color: $primary;
         }
+      }
+
+      .none {
+        margin: 8px 10px;
+        color: $cool_gray_500;
       }
 
       .all {

@@ -164,7 +164,16 @@ const COLUMN_LABELS: Record<Column, string> = {
             {{ r + '.expanded' | translate }}
           </mat-button-toggle>
         </mat-button-toggle-group>
-        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-classes" />
+        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-classes">
+          <span class="view-heading">{{ r + '.display' | translate }}</span>
+          <mat-slide-toggle
+            class="view-toggle"
+            data-cy="data-model-classes-row-colors"
+            [checked]="rowColors()"
+            (change)="rowColors.set($event.checked)">
+            {{ r + '.rowColors' | translate }}
+          </mat-slide-toggle>
+        </app-columns-menu>
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
@@ -513,7 +522,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             data-cy="data-model-classes-row"
             tabindex="0"
             [class.selected]="row.id === panelIri()"
-            [style.background]="row.id === panelIri() ? null : tints().get(row.id)"
+            [style.background]="row.id === panelIri() || !rowColors() ? null : tints().get(row.id)"
             (click)="openPanel(row.id)"
             (keydown.enter)="openPanel(row.id)"></tr>
         </table>
@@ -564,6 +573,22 @@ const COLUMN_LABELS: Record<Column, string> = {
 
       .labelled {
         min-width: 0;
+      }
+
+      // The table's other options, in View options under its columns.
+      .view-heading {
+        margin-top: 8px;
+        padding: 8px 0 4px;
+        border-top: 1px solid $cool_gray_200;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: $cool_gray_500;
+      }
+
+      .view-toggle {
+        padding: 4px 0 6px;
+        font-size: 13px;
       }
 
       .subclass-of {
@@ -696,6 +721,8 @@ export class DataModelClassesComponent {
   );
   /** Every language of a name or description stacked, or only the one the app shows; remembered in this browser. */
   readonly allLanguages = rememberedSignal(`${STORAGE_KEY}-all-languages`, false, stored => stored === 'true');
+  /** Whether the rows of a family with subclasses take its tone; remembered in this browser. */
+  readonly rowColors = rememberedSignal(`${STORAGE_KEY}-row-colors`, true, stored => stored !== 'false');
   /** Whether the table is scrolled sideways, which shadows the frozen class column. */
   readonly scrolled = signal(false);
 

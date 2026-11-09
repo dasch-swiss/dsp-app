@@ -48,6 +48,8 @@ const COLOR = {
   border: '#BDBFC1',
   text: '#1F2937',
   muted: '#6B7280',
+  /** A class or property picked out of a search, as its results are gone through. */
+  picked: '#EA580C',
 };
 
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
@@ -327,6 +329,29 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     style: { width: 2.4 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
   },
   { selector: '.faded', style: { opacity: SEARCH_FADE } },
+  // The search result gone through, in orange over the search's own marks; see `picked`.
+  {
+    selector: 'node.picked',
+    style: {
+      'border-width': 3 * f,
+      'border-color': COLOR.picked,
+      'underlay-color': COLOR.picked,
+      'underlay-opacity': 0.3,
+      'underlay-padding': 6 * f,
+      'underlay-shape': 'round-rectangle',
+      opacity: 1,
+    },
+  },
+  {
+    selector: 'edge.picked',
+    style: {
+      width: 3.2 * f,
+      'line-color': COLOR.picked,
+      'target-arrow-color': COLOR.picked,
+      color: COLOR.picked,
+      opacity: 1,
+    },
+  },
 ];
 
 /**
@@ -615,6 +640,8 @@ export class OntologyGraphComponent {
   readonly labels = input<GraphLabels>('labels');
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
+  /** A class, or a property's links, picked out in orange, as the search's results are gone through. */
+  readonly picked = input<{ kind: 'class' | 'property'; iri: string } | undefined>(undefined);
   /**
    * How wide a panel lying over the right of the graph is, in px, at most half the box: classes laid out or fitted
    * while it is open keep left of it. Opening or closing it moves nothing.
@@ -866,6 +893,20 @@ export class OntologyGraphComponent {
       if (!cy) return;
       cy.style(styleFor(this._scale, text));
       separateLabels(cy, this._scale);
+    });
+    effect(() => {
+      const cy = this._cy();
+      const picked = this.picked();
+      this.graph();
+      if (!cy) return;
+      cy.batch(() => {
+        cy.elements().removeClass('picked');
+        if (picked?.kind === 'class') cy.getElementById(picked.iri).addClass('picked');
+        if (picked?.kind === 'property')
+          cy.edges()
+            .filter(edge => edge.data('property') === picked.iri)
+            .addClass('picked');
+      });
     });
     effect(() => {
       const cy = this._cy();

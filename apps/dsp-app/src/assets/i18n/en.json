@@ -761,6 +761,7 @@
         "clear": "Clear search",
         "results": "Search results",
         "all": "All results",
+        "noMatch": "No class or property matches “{{text}}”.",
         "classes": "Classes · {{count}}",
         "properties": "Properties · {{count}}",
         "subclasses": "{{count}} subclasses",
@@ -906,6 +907,8 @@
         "addLabel": "Add a {{language}} label to {{class}}"
       },
       "allLanguages": "All languages",
+      "display": "Display",
+      "rowColors": "Family colours",
       "colLinkedFrom": "Linked from"
     }
   },

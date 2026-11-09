@@ -6,7 +6,10 @@ import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TableColumns } from './table-columns';
 
-/** "View options": shows or hides each column of a table but the first, as the Data tab's table does. */
+/**
+ * "View options": shows or hides each column of a table but the first, as the Data tab's table does. Other options of
+ * the table are projected under the columns.
+ */
 @Component({
   selector: 'app-columns-menu',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +45,7 @@ import { TableColumns } from './table-columns';
             {{ labels()[column] | translate }}
           </mat-checkbox>
         }
+        <ng-content />
       </div>
     </mat-menu>
   `,

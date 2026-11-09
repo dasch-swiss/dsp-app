@@ -31,7 +31,6 @@ import { graphSearchResults, GraphSearchResultsComponent, SearchResult } from '.
 import { classFamilies, familyColors } from './islands';
 import {
   GraphLabels,
-  focusGraph,
   GraphSize,
   linkedWith,
   localNameOf,
@@ -140,15 +139,16 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
               <app-ontology-graph
                 class="view"
                 [graph]="graphShown() ?? graph"
-                [selectedIri]="classIri() ?? browsedClass()"
+                [selectedIri]="classIri()"
                 [size]="size()"
                 [levelLabels]="levelLabels()"
                 [labels]="labels()"
-                [highlightedProperty]="hoveredProperty() ?? propertyPanelIri() ?? browsedProperty()"
+                [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
+                [picked]="picked()"
                 [covered]="panelOpen() ? panelWidth : 0"
                 [colors]="colors()"
                 [families]="families()"
-                [search]="browsedFocus() ?? search()"
+                [search]="search()"
                 [anyResourceLabel]="t + '.anyResource' | translate"
                 [linksLabel]="'pages.ontologyMap.links' | translate"
                 (classSelected)="openPanel($event)"
@@ -1049,31 +1049,27 @@ export class OntologyMapPageComponent {
   readonly resultsPlacement = signal<'panel' | 'dropdown'>(
     readStored(RESULTS_PLACEMENT_KEY) === 'dropdown' ? 'dropdown' : 'panel'
   );
-  /** Whether the search's results show, in the panel's place: while it finds something and no panel is open. */
+  /** Whether the search's results show, in the panel's place: while a search is typed, found or not, and no panel is open. */
   readonly searchResultsOpen = computed(
-    () => this.resultsPlacement() === 'panel' && !!this.searchFound() && !this.panelIri() && !this.propertyPanelIri()
+    () =>
+      this.resultsPlacement() === 'panel' &&
+      this.searchFound() !== undefined &&
+      !this.panelIri() &&
+      !this.propertyPanelIri()
   );
   /** Whether the search's results show under it instead. */
-  readonly searchDropdownOpen = computed(() => this.resultsPlacement() === 'dropdown' && !!this.searchFound());
-  /** The search result gone through in its list, which the graph picks out of the search; none while none is. */
+  readonly searchDropdownOpen = computed(
+    () => this.resultsPlacement() === 'dropdown' && this.searchFound() !== undefined
+  );
+  /**
+   * The search result gone through in its list, which the graph picks out over the search's fade: a class outlined, a
+   * property's links highlighted; none while none is.
+   */
   readonly browsed = signal<SearchResult | undefined>(undefined);
-  private readonly _browsedShown = computed(() =>
+  /** The browsed result while its list shows, which the graph draws in orange. */
+  readonly picked = computed(() =>
     this.searchResultsOpen() || this.searchDropdownOpen() ? this.browsed() : undefined
   );
-  readonly browsedClass = computed(() => {
-    const browsed = this._browsedShown();
-    return browsed?.kind === 'class' ? browsed.iri : undefined;
-  });
-  readonly browsedProperty = computed(() => {
-    const browsed = this._browsedShown();
-    return browsed?.kind === 'property' ? browsed.iri : undefined;
-  });
-  /** The browsed class alone, or the browsed property's links and their classes; everything else fades. */
-  readonly browsedFocus = computed(() => {
-    const browsed = this._browsedShown();
-    const graph = this.graphShown() ?? this.graph();
-    return browsed && graph ? focusGraph(graph, browsed) : undefined;
-  });
   readonly searchDropdownPositions: ConnectedPosition[] = [
     { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 6 },
   ];
