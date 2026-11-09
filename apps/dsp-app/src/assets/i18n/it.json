@@ -760,6 +760,7 @@
         "none": "Nessun risultato",
         "clear": "Cancella la ricerca",
         "results": "Risultati della ricerca",
+        "all": "Tutti i risultati",
         "classes": "Classi · {{count}}",
         "properties": "Proprietà · {{count}}",
         "subclasses": "{{count}} sottoclassi",

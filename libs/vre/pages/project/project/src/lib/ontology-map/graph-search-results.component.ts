@@ -28,15 +28,21 @@ export interface PropertyResult {
 
 export type SearchResult = ClassResult | PropertyResult;
 
+/** What the search found, each property once. */
+export interface SearchResults {
+  classes: ClassResult[];
+  properties: PropertyResult[];
+}
+
+/** The first row, which shows every result at once in the graph, as the search does. */
+const ALL = { kind: 'all' } as const;
+type Row = SearchResult | typeof ALL;
+
 /**
  * The classes and link properties of the graph whose label or name has the text, case aside, by label; each property
  * once. Subclasses are counted in `model`, which keeps its subclass edges.
  */
-export function graphSearchResults(
-  graph: DataModelGraph,
-  model: DataModelGraph,
-  text: string
-): { classes: ClassResult[]; properties: PropertyResult[] } {
+export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph, text: string): SearchResults {
   const query = text.trim().toLowerCase();
   if (!query) return { classes: [], properties: [] };
   const holds = (label: string, iri: string) =>
@@ -108,6 +114,17 @@ export function graphSearchResults(
         role="listbox"
         [attr.aria-label]="s + '.results' | translate"
         (mouseleave)="browsing.set(false)">
+        <div
+          class="row all"
+          role="option"
+          data-cy="ontology-map-search-all"
+          [attr.aria-selected]="active() === 0"
+          [class.active]="active() === 0"
+          (mouseenter)="browse(0)">
+          <mat-icon class="kind">search</mat-icon>
+          <span class="label">{{ s + '.all' | translate }}</span>
+          <span class="count">{{ count() }}</span>
+        </div>
         @if (results().classes.length) {
           <span class="heading">{{ s + '.classes' | translate: { count: results().classes.length } }}</span>
           @for (result of results().classes; track result.iri) {
@@ -342,6 +359,23 @@ export function graphSearchResults(
         }
       }
 
+      .all {
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
+
+      .count {
+        flex: none;
+        min-width: 20px;
+        padding: 0 6px;
+        border-radius: 10px;
+        background: $cool_gray_100;
+        font-size: 12px;
+        line-height: 20px;
+        text-align: center;
+        color: $cool_gray_700;
+      }
+
       .hint {
         margin-top: 4px;
         padding: 6px 10px 2px;
@@ -353,10 +387,8 @@ export function graphSearchResults(
   ],
 })
 export class GraphSearchResultsComponent {
-  /** The graph drawn, searched. */
-  readonly graph = input.required<DataModelGraph>();
-  /** The whole data model, with its subclass edges. */
-  readonly model = input.required<DataModelGraph>();
+  /** What the search found; see `graphSearchResults`. */
+  readonly results = input.required<SearchResults>();
   readonly text = input.required<string>();
   readonly colors = input<ReadonlyMap<string, string>>(new Map());
   readonly labelOf = input.required<(iri: string) => string>();
@@ -372,19 +404,22 @@ export class GraphSearchResultsComponent {
   /** Asks to show the results in the other place. */
   readonly placementToggled = output<void>();
 
-  readonly results = computed(() => graphSearchResults(this.graph(), this.model(), this.text()));
-  /** Every row in the order shown, for the arrow keys. */
-  readonly rows = computed<SearchResult[]>(() => [...this.results().classes, ...this.results().properties]);
-  /** The row the arrow keys and Enter act on; the first again once the results change. */
-  readonly active = linkedSignal<SearchResult[], number>({ source: this.rows, computation: () => 0 });
+  readonly count = computed(() => this.results().classes.length + this.results().properties.length);
+  /** Every row in the order shown, "All results" first, for the arrow keys. */
+  readonly rows = computed<Row[]>(() => [ALL, ...this.results().classes, ...this.results().properties]);
+  /** The row the arrow keys and Enter act on; "All results" again once the results change. */
+  readonly active = linkedSignal<Row[], number>({ source: this.rows, computation: () => 0 });
 
   /** Whether the rows are being gone through, with the pointer or the arrow keys; not once the results change. */
-  readonly browsing = linkedSignal<SearchResult[], boolean>({ source: this.rows, computation: () => false });
+  readonly browsing = linkedSignal<Row[], boolean>({ source: this.rows, computation: () => false });
   /** The row gone through, for the graph to pick out; none until a row is reached. */
   readonly browsedChange = output<SearchResult | undefined>();
 
   constructor() {
-    effect(() => this.browsedChange.emit(this.browsing() ? this.rows()[this.active()] : undefined));
+    effect(() => {
+      const row = this.browsing() ? this.rows()[this.active()] : undefined;
+      this.browsedChange.emit(row && row.kind !== 'all' ? row : undefined);
+    });
   }
 
   /** The pointer reached a row. */
@@ -396,15 +431,13 @@ export class GraphSearchResultsComponent {
   /** Moves the active row up or down, staying within the rows. */
   move(step: number): void {
     const count = this.rows().length;
-    if (!count) return;
-    // The first arrow goes to the first row, already active.
-    if (this.browsing()) this.active.update(index => (index + step + count) % count);
+    this.active.update(index => (index + step + count) % count);
     this.browsing.set(true);
   }
 
   /** Filters on the active row; see `filtered`. */
   filterActive(): void {
-    const result = this.rows()[this.active()];
-    if (result) this.filtered.emit(result);
+    const row = this.rows()[this.active()];
+    if (row && row.kind !== 'all') this.filtered.emit(row);
   }
 }

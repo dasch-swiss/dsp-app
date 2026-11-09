@@ -27,7 +27,7 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 import { injectDataModelEditing } from './data-model-editor';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
-import { GraphSearchResultsComponent, SearchResult } from './graph-search-results.component';
+import { graphSearchResults, GraphSearchResultsComponent, SearchResult } from './graph-search-results.component';
 import { classFamilies, familyColors } from './islands';
 import {
   GraphLabels,
@@ -282,8 +282,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                     [cdkConnectedOverlayOpen]="searchDropdownOpen()"
                     [cdkConnectedOverlayPositions]="searchDropdownPositions">
                     <app-graph-search-results
-                      [graph]="graphShown() ?? graph"
-                      [model]="graph"
+                      [results]="searchMatches()"
                       [text]="searchText()"
                       [colors]="colors()"
                       [labelOf]="labelOf"
@@ -462,8 +461,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 <!-- What the search found, by kind, where a class panel opens; a row opens its panel in its place. -->
                 <app-graph-search-results
                   class="panel"
-                  [graph]="graphShown() ?? graph"
-                  [model]="graph"
+                  [results]="searchMatches()"
                   [text]="searchText()"
                   [colors]="colors()"
                   [labelOf]="labelOf"
@@ -1034,10 +1032,17 @@ export class OntologyMapPageComponent {
     const graph = this.graphShown() ?? this.graph();
     return graph ? searchGraph(graph, this.searchText()) : undefined;
   });
-  /** How many classes and links the search found; none without a search. */
+  /** The classes and link properties the search found, each property once, as its results list them. */
+  readonly searchMatches = computed(() => {
+    const graph = this.graph();
+    const shown = this.graphShown() ?? graph;
+    return graphSearchResults(shown ?? NOTHING, graph ?? NOTHING, this.searchText());
+  });
+  /** How many classes and properties the search found, as its results count them; none without a search. */
   readonly searchFound = computed(() => {
-    const search = this.search();
-    return search ? search.hitClasses.size + search.hitLinks.size : undefined;
+    if (!this.search()) return undefined;
+    const { classes, properties } = this.searchMatches();
+    return classes.length + properties.length;
   });
 
   /** Where the search's results show, to compare: the side panel, or a card under the search; remembered here. */
