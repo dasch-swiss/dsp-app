@@ -71,7 +71,43 @@
 
 .description-toggle {
   align-self: flex-start;
-  margin-left: -12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #336790;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #336790;
+    outline-offset: 2px;
+  }
+
+  mat-icon {
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    transition: transform 150ms;
+
+    &.flipped {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .description-toggle mat-icon {
+    transition: none;
+  }
 }
 
 .actions {

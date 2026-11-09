@@ -74,7 +74,7 @@ interface CreateResourceDialogProps {
             </p>
             @if (descriptionClamped() || descriptionExpanded()) {
               <button
-                mat-button
+                type="button"
                 class="description-toggle"
                 data-cy="class-description-toggle"
                 [attr.aria-expanded]="descriptionExpanded()"
@@ -85,6 +85,7 @@ interface CreateResourceDialogProps {
                     : 'pages.dataBrowser.dataClassHeader.descriptionShowMore'
                   ) | translate
                 }}
+                <mat-icon [class.flipped]="descriptionExpanded()">expand_more</mat-icon>
               </button>
             }
           }
