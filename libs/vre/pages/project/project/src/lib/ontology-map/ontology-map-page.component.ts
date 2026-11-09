@@ -111,6 +111,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
 @Component({
   selector: 'app-ontology-map-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(document:keydown.escape)': 'closeOnEscape($event)' },
   imports: [
     CdkConnectedOverlay,
     CdkOverlayOrigin,
@@ -1099,6 +1100,21 @@ export class OntologyMapPageComponent {
     input.value = '';
   }
 
+  /**
+   * Esc closes the open panel: a class's or property's, or the search's results, which clears the search. Not while
+   * typing, where Esc has its own job, nor while a menu or dialog is open, which Esc closes first.
+   */
+  closeOnEscape(event: Event): void {
+    const target = event.target as HTMLElement | null;
+    if (event.defaultPrevented || target?.closest('input, textarea, [contenteditable="true"]')) return;
+    if (document.querySelector('.mat-mdc-menu-panel, mat-dialog-container')) return;
+    if (this.panelIri() || this.propertyPanelIri()) this.openPanel(undefined);
+    else if (this.searchResultsOpen() || this.searchDropdownOpen()) {
+      const input = this._searchInput()?.nativeElement;
+      if (input) this.clearSearch(input);
+    }
+  }
+
   clearSearch(input: HTMLInputElement): void {
     this.searchText.set('');
     input.value = '';
@@ -1113,6 +1129,19 @@ export class OntologyMapPageComponent {
       if (!input || searchFocused) return;
       searchFocused = true;
       input.focus();
+    });
+    // The search takes the focus while its results show, to type on; a class or property panel takes it away, so its
+    // own keys work and typing does not change the search behind it.
+    effect(() => {
+      const input = this._searchInput()?.nativeElement;
+      const panel = !!(this.panelIri() || this.propertyPanelIri());
+      const results = this.searchResultsOpen() || this.searchDropdownOpen();
+      if (!input) return;
+      untracked(() => {
+        if (panel) {
+          if (document.activeElement === input) input.blur();
+        } else if (results && document.activeElement !== input) input.focus();
+      });
     });
     // A panel that changes class, or closes, under the pointer never reports the pointer leaving its rows.
     effect(() => {

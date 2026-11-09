@@ -721,8 +721,8 @@ export class DataModelClassesComponent {
   );
   /** Every language of a name or description stacked, or only the one the app shows; remembered in this browser. */
   readonly allLanguages = rememberedSignal(`${STORAGE_KEY}-all-languages`, false, stored => stored === 'true');
-  /** Whether the rows of a family with subclasses take its tone; remembered in this browser. */
-  readonly rowColors = rememberedSignal(`${STORAGE_KEY}-row-colors`, true, stored => stored !== 'false');
+  /** Whether the rows of a family with subclasses take its tone; off at first; remembered in this browser. */
+  readonly rowColors = rememberedSignal(`${STORAGE_KEY}-family-colours`, false, stored => stored === 'true');
   /** Whether the table is scrolled sideways, which shadows the frozen class column. */
   readonly scrolled = signal(false);
 
