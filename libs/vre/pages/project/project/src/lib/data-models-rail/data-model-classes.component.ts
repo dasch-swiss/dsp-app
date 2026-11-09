@@ -48,6 +48,7 @@ import { ColumnHeaderComponent } from './column-header.component';
 import { ColumnsMenuComponent } from './columns-menu.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { TextKind } from './description-editor.component';
+import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
 import { LanguagesMenuComponent, parseLanguages } from './languages-menu.component';
@@ -91,6 +92,7 @@ const COLUMN_LABELS: Record<Column, string> = {
 @Component({
   selector: 'app-data-model-classes',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '(document:keydown.escape)': 'closeOnEscape($event)' },
   imports: [
     CdkDrag,
     CdkDropList,
@@ -862,6 +864,16 @@ export class DataModelClassesComponent {
       kind,
       texts: kind === 'label' ? row.labels : row.descriptions,
     });
+  }
+
+  /**
+   * Esc closes the class's or property's side panel open. Not the name or description editor, which edits: Esc never drops an edit,
+   * and leaves the panel under it open too.
+   */
+  closeOnEscape(event: Event): void {
+    if (!escapeClosesPanel(event) || this.textEditing.target()) return;
+    if (this.panelIri()) this.openPanel(undefined);
+    else if (this.propertyPanelIri()) this.openProperty(undefined);
   }
 
   /** Opens the class's panel, or closes it; a step in the browser history. */

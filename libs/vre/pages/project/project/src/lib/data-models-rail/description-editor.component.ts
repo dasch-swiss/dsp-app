@@ -52,7 +52,6 @@ const NAMES = new Map<string, string>(AvailableLanguages.map(({ language, value 
       role="dialog"
       data-cy="description-editor"
       [attr.aria-label]="t + (kind() === 'label' ? '.labelTitle' : '.title') | translate: { class: classLabel() }"
-      (keydown.escape)="cancelled.emit()"
       (keydown.control.enter)="submit()"
       (keydown.meta.enter)="submit()">
       <header class="head">

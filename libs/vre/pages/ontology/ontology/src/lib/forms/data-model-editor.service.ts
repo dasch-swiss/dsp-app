@@ -1,10 +1,10 @@
 import { createEnvironmentInjector, EnvironmentInjector, inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { TextsToSave, DataModelEditor } from '@dasch-swiss/vre/pages/project/project';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { filter, finalize, map, Observable, switchMap, take } from 'rxjs';
+import { filter, finalize, map, Observable, switchMap, take, takeUntil } from 'rxjs';
 import { OntologyEditService } from '../services/ontology-edit.service';
 import { EditPropertyFormDialogComponent } from './property-form/edit-property-form-dialog.component';
 import { EditPropertyDialogData } from './property-form/property-form.type';
@@ -31,8 +31,8 @@ export class DataModelEditorService implements DataModelEditor {
         take(1),
         switchMap(ontology => {
           const resourceClass = ontology!.classes[classIri] as ResourceClassDefinitionWithAllLanguages;
-          return this._dialog
-            .open<EditResourceClassDialogComponent, EditResourceClassDialogProps, UpdateResourceClassData>(
+          return this._closedByClickOnly(
+            this._dialog.open<EditResourceClassDialogComponent, EditResourceClassDialogProps, UpdateResourceClassData>(
               EditResourceClassDialogComponent,
               {
                 ...DspDialogConfig.mediumDialog({
@@ -42,7 +42,7 @@ export class DataModelEditorService implements DataModelEditor {
                 injector,
               }
             )
-            .afterClosed();
+          );
         })
       )
     );
@@ -66,9 +66,12 @@ export class DataModelEditorService implements DataModelEditor {
             guiAttribute: propDef.guiAttributes[0],
             objectType: propDef.objectType,
           };
-          return this._dialog
-            .open(EditPropertyFormDialogComponent, { ...DspDialogConfig.dialogDrawerConfig(data), injector })
-            .afterClosed();
+          return this._closedByClickOnly(
+            this._dialog.open(EditPropertyFormDialogComponent, {
+              ...DspDialogConfig.dialogDrawerConfig(data),
+              injector,
+            })
+          );
         })
       )
     );
@@ -94,6 +97,19 @@ export class DataModelEditorService implements DataModelEditor {
         map(() => true)
       )
     );
+  }
+
+  /**
+   * An edit dialog Esc leaves open, so the Esc that closes the Data models 2 pages' side panels never drops an edit
+   * by mistake; a click beside it still closes it. Emits once it closes.
+   */
+  private _closedByClickOnly<T, R>(ref: MatDialogRef<T, R>): Observable<R | undefined> {
+    ref.disableClose = true;
+    ref
+      .backdropClick()
+      .pipe(takeUntil(ref.afterClosed()))
+      .subscribe(() => ref.close());
+    return ref.afterClosed();
   }
 
   /** Runs `open` with an editing service on the data model of `iri`, dropped once the dialog closes. */
