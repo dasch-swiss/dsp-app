@@ -892,9 +892,6 @@
       "resizeColumn": "Resize the column",
       "descriptionEditor": {
         "title": "Description of {{class}}",
-        "language": "Language",
-        "allLanguages": "All languages",
-        "descriptionIn": "Description in {{language}}",
         "needsOne": "Keep at least one language",
         "save": "Save",
         "edit": "Edit the {{language}} description of {{class}}",
@@ -902,7 +899,6 @@
         "saved": "Saved {{class}}",
         "notSaved": "The change could not be saved. Try again.",
         "labelTitle": "Label of {{class}}",
-        "labelIn": "Label in {{language}}",
         "editLabel": "Edit the {{language}} label of {{class}}",
         "addLabel": "Add a {{language}} label to {{class}}"
       },

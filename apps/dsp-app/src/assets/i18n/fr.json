@@ -892,9 +892,6 @@
       "resizeColumn": "Redimensionner la colonne",
       "descriptionEditor": {
         "title": "Description de {{class}}",
-        "language": "Langue",
-        "allLanguages": "Toutes les langues",
-        "descriptionIn": "Description en {{language}}",
         "needsOne": "Gardez au moins une langue",
         "save": "Enregistrer",
         "edit": "Modifier la description ({{language}}) de {{class}}",
@@ -902,7 +899,6 @@
         "saved": "{{class}} enregistrée",
         "notSaved": "La modification n'a pas pu être enregistrée. Réessayez.",
         "labelTitle": "Libellé de {{class}}",
-        "labelIn": "Libellé en {{language}}",
         "editLabel": "Modifier le libellé ({{language}}) de {{class}}",
         "addLabel": "Ajouter un libellé ({{language}}) à {{class}}"
       },

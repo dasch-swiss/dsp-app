@@ -1,4 +1,3 @@
-import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -23,8 +22,8 @@ export interface TextEditTarget extends LanguageTextEdit {
 export type SaveTexts = (target: TextEditTarget, texts: LanguageText[]) => Observable<unknown>;
 
 /**
- * The editing of names and descriptions in a table, one at a time: what is open, whether it is saving, and the
- * editor's "All languages" switch, kept from one editor to the next. Create it in an injection context.
+ * The editing of names and descriptions in a table, one at a time: what is open and whether it is saving. Create it
+ * in an injection context.
  */
 export class TextEditing {
   private readonly _notification = inject(NotificationService);
@@ -33,8 +32,6 @@ export class TextEditing {
 
   readonly target = signal<TextEditTarget | null>(null);
   readonly saving = signal(false);
-  /** Every language at once in the editor, by default; kept from one editor to the next. */
-  readonly allLanguages = signal(true);
 
   constructor(private readonly _save: SaveTexts) {}
 
@@ -74,42 +71,45 @@ export class TextEditing {
   }
 }
 
-/** The editor of the name or description `editing` has open, under the line it opened from. */
+/**
+ * The editor of the name or description `editing` has open, as a side panel on the right of the table, over a class
+ * or property panel; closed, it takes no room.
+ */
 @Component({
   selector: 'app-text-editor-popover',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CdkConnectedOverlay, DescriptionEditorComponent],
+  host: { '[class.open]': '!!editing().target()' },
+  imports: [DescriptionEditorComponent],
   template: `
     @if (editing().target(); as target) {
-      <ng-template
-        cdkConnectedOverlay
-        [cdkConnectedOverlayOpen]="true"
-        cdkConnectedOverlayHasBackdrop
-        cdkConnectedOverlayPush
-        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-        [cdkConnectedOverlayOrigin]="target.origin"
-        [cdkConnectedOverlayPositions]="positions"
-        (backdropClick)="editing().close()"
-        (detach)="editing().close()">
-        <app-description-editor
-          [texts]="target.texts"
-          [kind]="target.kind"
-          [language]="target.language"
-          [classLabel]="target.label"
-          [saving]="editing().saving()"
-          [(all)]="editing().allLanguages"
-          (saved)="editing().save($event)"
-          (cancelled)="editing().close()" />
-      </ng-template>
+      <app-description-editor
+        [texts]="target.texts"
+        [kind]="target.kind"
+        [language]="target.language"
+        [classLabel]="target.label"
+        [saving]="editing().saving()"
+        (saved)="editing().save($event)"
+        (cancelled)="editing().close()" />
     }
   `,
+  styles: [
+    `
+      :host(.open) {
+        position: absolute;
+        z-index: 102;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 440px;
+        max-width: 50%;
+      }
+
+      app-description-editor {
+        height: 100%;
+      }
+    `,
+  ],
 })
 export class TextEditorPopoverComponent {
   readonly editing = input.required<TextEditing>();
-
-  /** Under the line it opened from, else above it. */
-  readonly positions: ConnectedPosition[] = [
-    { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 4 },
-    { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -4 },
-  ];
 }

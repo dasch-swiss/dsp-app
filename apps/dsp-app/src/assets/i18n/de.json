@@ -892,9 +892,6 @@
       "resizeColumn": "Spaltenbreite ändern",
       "descriptionEditor": {
         "title": "Beschreibung von {{class}}",
-        "language": "Sprache",
-        "allLanguages": "Alle Sprachen",
-        "descriptionIn": "Beschreibung auf {{language}}",
         "needsOne": "Mindestens eine Sprache behalten",
         "save": "Speichern",
         "edit": "Beschreibung ({{language}}) von {{class}} bearbeiten",
@@ -902,7 +899,6 @@
         "saved": "{{class}} gespeichert",
         "notSaved": "Die Änderung konnte nicht gespeichert werden. Bitte erneut versuchen.",
         "labelTitle": "Bezeichnung von {{class}}",
-        "labelIn": "Bezeichnung auf {{language}}",
         "editLabel": "Bezeichnung ({{language}}) von {{class}} bearbeiten",
         "addLabel": "Bezeichnung ({{language}}) zu {{class}} hinzufügen"
       },
