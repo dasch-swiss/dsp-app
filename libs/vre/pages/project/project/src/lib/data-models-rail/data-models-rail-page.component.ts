@@ -1,6 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemMeta, MatNavList } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -28,6 +29,7 @@ import { DataModelsRailState } from './data-models-rail-state';
   providers: [DataModelsRailState],
   imports: [
     MatButton,
+    MatDivider,
     MatIcon,
     MatListItem,
     MatListItemIcon,
@@ -67,13 +69,18 @@ import { DataModelsRailState } from './data-models-rail-state';
           }
         }
 
+        <!-- The picked data model's own views, under its picker. -->
         <mat-nav-list>
-          <span class="heading">{{ r + '.map' | translate }}</span>
-          @for (section of mapSections(); track section.path) {
+          @for (section of modelSections(); track section.path) {
             <ng-container [ngTemplateOutlet]="link" [ngTemplateOutletContext]="{ $implicit: section }" />
           }
-          <span class="heading">{{ r + '.definitions' | translate }}</span>
-          @for (section of definitionSections(); track section.path) {
+        </mat-nav-list>
+
+        <!-- What the project's data models share, whichever is picked. -->
+        <mat-divider class="divider" />
+        <span class="heading">{{ r + '.project' | translate }}</span>
+        <mat-nav-list>
+          @for (section of projectSections(); track section.path) {
             <ng-container [ngTemplateOutlet]="link" [ngTemplateOutletContext]="{ $implicit: section }" />
           }
         </mat-nav-list>
@@ -196,6 +203,10 @@ import { DataModelsRailState } from './data-models-rail-state';
         }
       }
 
+      .divider {
+        margin: 12px 4px 0;
+      }
+
       .heading {
         display: block;
         padding: 12px 12px 4px;
@@ -233,12 +244,14 @@ export class DataModelsRailPageComponent {
     fragment: 'ignored',
   };
 
-  readonly mapSections = computed(() => [
+  /** The views of the data model picked: its diagram, its resource classes and its properties. */
+  readonly modelSections = computed(() => [
     { path: RouteConstants.graph, icon: 'hub', count: undefined },
     { path: RouteConstants.classes, icon: 'view_list', count: this.state.classRows().length },
-  ]);
-  readonly definitionSections = computed(() => [
     { path: RouteConstants.properties, icon: 'label', count: this.state.propertyRows().length },
+  ]);
+  /** The lists belong to the project, not to a data model: every data model of the project can use them. */
+  readonly projectSections = computed(() => [
     { path: RouteConstants.lists, icon: 'format_list_bulleted', count: this.state.lists()?.length },
   ]);
 

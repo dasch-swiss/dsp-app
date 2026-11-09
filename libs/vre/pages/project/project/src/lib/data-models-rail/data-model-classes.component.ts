@@ -130,9 +130,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     <div class="section">
       <div class="head">
         <h2>{{ r + '.classes' | translate }}</h2>
-        <span class="counts">{{
-          'pages.ontologyMap.counts' | translate: { classes: state.classRows().length, links: state.linkCount() }
-        }}</span>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
           <mat-icon matPrefix>search</mat-icon>
           <input

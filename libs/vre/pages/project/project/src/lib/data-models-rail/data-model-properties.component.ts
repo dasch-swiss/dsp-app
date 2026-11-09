@@ -117,9 +117,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     <div class="section">
       <div class="head">
         <h2>{{ r + '.properties' | translate }}</h2>
-        <span class="counts">{{
-          r + '.propertiesCount' | translate: { count: state.propertyRows().length, links: state.linkCount() }
-        }}</span>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
           <mat-icon matPrefix>search</mat-icon>
           <input

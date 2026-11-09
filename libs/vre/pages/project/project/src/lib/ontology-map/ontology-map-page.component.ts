@@ -153,9 +153,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 <!-- What to show, on the left: the filters, and the search beside them. -->
                 <div class="top-left">
                   <div class="float filters">
-                    @if (counts(); as counts) {
-                      <span class="counts">{{ m + '.counts' | translate: counts }}</span>
-                    }
+                    <span class="filters-label">{{ m + '.filters' | translate }}</span>
                     <span class="divider"></span>
                     <span class="chip" [class.active]="classFilter().mode">
                       <button
@@ -498,7 +496,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         }
       }
 
-      // The counts open the pill, so its text gets the room a button would have.
+      // The "Filter" label opens the pill, so its text gets the room a button would have.
       .filters {
         flex-wrap: wrap;
         gap: 4px 6px;
@@ -688,11 +686,13 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         }
       }
 
-      .counts {
+      // As the legend's title.
+      .filters-label {
         padding-right: 6px;
         white-space: nowrap;
-        font-size: 12px;
-        color: $cool_gray_500;
+        font-size: 13px;
+        font-weight: 600;
+        color: $cool_gray_900;
       }
 
       .chip {
@@ -881,14 +881,6 @@ export class OntologyMapPageComponent {
   private readonly _graphLinks = computed(() => {
     const graph = this.graph();
     return graph ? withInheritedLinks(graph, false) : undefined;
-  });
-  readonly counts = computed(() => {
-    const graph = this.graph();
-    if (!graph) return undefined;
-    return {
-      classes: graph.nodes.filter(node => node.kind === 'class').length,
-      links: graph.edges.filter(edge => edge.kind === 'link').length,
-    };
   });
 
   readonly exportItems = EXPORT_ITEMS;
