@@ -213,7 +213,8 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                     cdkConnectedOverlay
                     [cdkConnectedOverlayOrigin]="searchOrigin"
                     [cdkConnectedOverlayOpen]="searchDropdownOpen()"
-                    [cdkConnectedOverlayPositions]="searchDropdownPositions">
+                    [cdkConnectedOverlayPositions]="searchDropdownPositions"
+                    (overlayOutsideClick)="closeListOnOutsideClick($event)">
                     <app-graph-search-results
                       [results]="searchMatches()"
                       [text]="searchText()"
@@ -1135,6 +1136,16 @@ export class OntologyMapPageComponent {
     return result.kind === 'class'
       ? { [ONTOLOGY_MAP_PARAM.panel]: classNameOf(result.iri), [ONTOLOGY_MAP_PARAM.propertyPanel]: null }
       : { [ONTOLOGY_MAP_PARAM.propertyPanel]: classNameOf(result.iri), [ONTOLOGY_MAP_PARAM.panel]: null };
+  }
+
+  /**
+   * A click outside the results list closes it, keeping the search: on the graph, a panel or anywhere else. A click in
+   * the search field itself keeps it open, as it opens it.
+   */
+  closeListOnOutsideClick(event: MouseEvent): void {
+    if ((event.target as HTMLElement | null)?.closest('.float.search')) return;
+    clearTimeout(this._previewing);
+    this.listClosed.set(true);
   }
 
   /**
