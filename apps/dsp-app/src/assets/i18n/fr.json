@@ -772,6 +772,7 @@
       "propertiesChosen": "{{count}} propriétés",
       "levelLabels": "Libellés des liens à l’horizontale",
       "islandsToggle": "Mettre en évidence et déplacer les îlots",
+      "colourTab": "Couleur de famille en onglet",
       "propertyPanel": {
         "close": "Fermer les détails de la propriété",
         "pointsTo": "Pointe vers",

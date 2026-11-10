@@ -28,6 +28,8 @@ import {
   fileIconImage,
   ISLAND_PADDING,
   LabelWidth,
+  TAB_LINE,
+  TAB_WIDTH,
   TEXTURE_TILE,
 } from './islands';
 import { LegendTexts, withLegend } from './legend-image';
@@ -115,11 +117,15 @@ function textWidth(text: string, font: string): number {
  * icon's room. The graph cannot widen a box for an icon by itself.
  */
 function measureIconBoxes(cy: Core): void {
-  cy.nodes('[icon]').forEach(node => {
+  cy.nodes('[icon], [tab]').forEach(node => {
     const weight = node.hasClass('sub') ? 500 : 600;
+    const icon = node.data('icon') ? ICON.room : 0;
     for (const key of ['labels', 'names', 'both'] as const) {
       const font = `${weight} ${BASE_FONT_SIZE}px ${key === 'names' ? FONT.names : FONT.labels}`;
-      node.data(`${key}Width`, textWidth(node.data(DATA_KEY[key]) ?? '', font) + ICON.room);
+      const text = textWidth(node.data(DATA_KEY[key]) ?? '', font);
+      node.data(`${key}Width`, text + icon);
+      // In the Colour tab look, a class with a tab is widened for it too.
+      node.data(`${key}TabWidth`, text + icon + (node.data('tab') ? TAB_WIDTH : 0));
     }
   });
 }
@@ -137,7 +143,45 @@ export interface GraphTextOptions {
   labels: GraphLabels;
   /** Whether an island shows its frame while hovered, and moves when dragged. */
   islands: boolean;
+  /** Whether a family's colour is a tab at the left of white boxes, rather than the boxes' fill. */
+  colourTab: boolean;
 }
+
+/**
+ * The Colour tab look: every class box white, with slate borders, its label always on white; every class shows its
+ * family's hue as a tab at the box's left, stronger on a top class than on its subclasses. No stripes behind a label.
+ */
+const colourTabStyle = (f: number, labels: GraphLabels): StylesheetJson => [
+  { selector: 'node.family-member', style: { 'background-color': '#FFFFFF', 'border-color': TAB_LINE } },
+  {
+    selector: 'node[icon], node[texture], node[tab]',
+    style: {
+      'background-image': (node: NodeSingular) =>
+        `${node.data('tab') ?? NO_IMAGE} ${node.data('plainIcon') ?? node.data('icon') ?? NO_IMAGE}` as never,
+      'background-fit': 'none none' as never,
+      'background-clip': 'node none' as never,
+      'background-width': `${TAB_WIDTH * f}px ${ICON.size * f}px` as never,
+      'background-height': `${TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
+      // The tab at the very left; a file icon right of it.
+      'background-position-x': ((node: NodeSingular) =>
+        `0px ${(ICON.inset + (node.data('tab') ? TAB_WIDTH : 0)) * f}px`) as never,
+      'background-position-y': `50% 50%` as never,
+    },
+  },
+  {
+    selector: 'node[tab]',
+    style: {
+      width: `mapData(${labels}TabWidth, 0, 10000, 0, ${10000 * f})`,
+      'text-margin-x': (TAB_WIDTH * f) / 2,
+    },
+  },
+  { selector: 'node[icon][tab]', style: { 'text-margin-x': ((ICON.room + TAB_WIDTH) * f) / 2 } },
+];
+
+/** The Colour tab look's family frames: grey, so the colour is only the tabs'. Drawn after the frames' own style. */
+const colourTabFrames: StylesheetJson = [
+  { selector: 'node.family', style: { 'background-color': '#EEF1F4', 'border-color': '#D5DBE2', 'border-opacity': 1 } },
+];
 
 /** The graph's stylesheet, boxes, text and lines scaled by `f`, its texts written as `text` says. */
 const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
@@ -205,6 +249,7 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'background-position-y': `50% 50%` as never,
     },
   },
+  ...(text.colourTab ? colourTabStyle(f, text.labels) : []),
   // An island's frame shows only while hovered.
   {
     selector: 'node.island',
@@ -243,6 +288,7 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'z-index': 1,
     },
   },
+  ...(text.colourTab ? colourTabFrames : []),
   {
     selector: 'edge.family-link',
     style: { 'z-compound-depth': 'top', 'z-index-compare': 'manual', 'z-index': 2 },
@@ -388,8 +434,12 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
             <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
           }
           @if (legend.families) {
-            <span class="shape"><span class="shape-box parent"></span>{{ i + '.parent' | translate }}</span>
-            <span class="shape"><span class="shape-box sub"></span>{{ i + '.subclass' | translate }}</span>
+            <span class="shape"
+              ><span class="shape-box parent" [class.tab]="colourTab()"></span>{{ i + '.parent' | translate }}</span
+            >
+            <span class="shape"
+              ><span class="shape-box sub" [class.tab]="colourTab()"></span>{{ i + '.subclass' | translate }}</span
+            >
           }
           @if (legend.other) {
             <span class="shape"
@@ -628,6 +678,19 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
           border: 1.5px dashed $cool_gray_400;
           background: white;
         }
+
+        // The Colour tab look: white boxes, the family's colour as a tab at their left.
+        &.parent.tab {
+          border: 1.5px solid $cool_gray_500;
+          border-left: 6px solid $cool_gray_600;
+          background: white;
+        }
+
+        &.sub.tab {
+          border: 1px solid $cool_gray_500;
+          border-left: 6px solid $cool_gray_300;
+          background: white;
+        }
       }
     `,
   ],
@@ -647,6 +710,8 @@ export class OntologyGraphComponent {
   readonly labels = input<GraphLabels>('labels');
   /** Whether an island shows its frame while hovered, and can be dragged, moving its classes. */
   readonly islands = input(true);
+  /** Whether a family's colour is a tab at the left of white boxes, rather than the boxes' fill; see `colourTabStyle`. */
+  readonly colourTab = input(false);
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
   /** A class, or a property's links, picked out in orange, as the search's results are gone through. */
@@ -902,7 +967,12 @@ export class OntologyGraphComponent {
     // of each other again.
     effect(() => {
       const cy = this._cy();
-      const text = { levelLabels: this.levelLabels(), labels: this.labels(), islands: this.islands() };
+      const text = {
+        levelLabels: this.levelLabels(),
+        labels: this.labels(),
+        islands: this.islands(),
+        colourTab: this.colourTab(),
+      };
       if (!cy) return;
       cy.style(styleFor(this._scale, text));
       separateLabels(cy, this._scale);
@@ -1128,7 +1198,12 @@ export class OntologyGraphComponent {
   private _style(f: number): StylesheetJson {
     return styleFor(
       f,
-      untracked(() => ({ levelLabels: this.levelLabels(), labels: this.labels(), islands: this.islands() }))
+      untracked(() => ({
+        levelLabels: this.levelLabels(),
+        labels: this.labels(),
+        islands: this.islands(),
+        colourTab: this.colourTab(),
+      }))
     );
   }
 

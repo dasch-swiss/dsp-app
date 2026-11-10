@@ -772,6 +772,7 @@
       "propertiesChosen": "{{count}} Eigenschaften",
       "levelLabels": "Verknüpfungsbeschriftungen waagrecht",
       "islandsToggle": "Inseln hervorheben und verschieben",
+      "colourTab": "Familienfarbe als Lasche",
       "propertyPanel": {
         "close": "Details der Eigenschaft schliessen",
         "pointsTo": "Verweist auf",

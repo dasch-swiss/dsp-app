@@ -10,6 +10,8 @@ import {
   familyTexture,
   fileIconImage,
   islandsOf,
+  TAB_LINE,
+  tabImage,
   textureImage,
   unlinkedOf,
 } from './islands';
@@ -80,6 +82,10 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
         ...texts(label, node.id),
         color: family ? familyColor(family) : (options.colors.get(node.id) ?? '#FFFFFF'),
         ...(hue && texture ? { dark: hue.dark, texture: textureImage(texture, hue.dark, family.sub), icon } : {}),
+        // In the Colour tab look, every class of the data model shows its family's colour as a tab.
+        ...(family ? { tab: tabImage(family) } : {}),
+        // In the Colour tab look, the colour is the tab's alone: the file icon stays slate.
+        ...(icon ? { plainIcon: fileIconImage(node.representationClass, TAB_LINE) } : {}),
         ...(parents?.get(node.id) ? { parent: parents.get(node.id) } : {}),
       },
       classes: [

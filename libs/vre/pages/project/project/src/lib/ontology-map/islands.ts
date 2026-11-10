@@ -241,6 +241,44 @@ export function textureImage(texture: FamilyTexture, color: string, sub = false)
   );
 }
 
+/** How wide a family's colour tab is at scale 1, in the Colour tab look; its box is widened for it. */
+export const TAB_WIDTH = 18;
+
+/** The Colour tab look's borders, the line closing a tab, and its file icons: one dark slate, whatever the family. */
+export const TAB_LINE = '#475569';
+
+/** Two colours mixed into one: `share` of the first over the rest of the second. */
+function mix(over: string, under: string, share: number): string {
+  const channels = (hex: string) => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+  const [a, b] = [channels(over), channels(under)];
+  return `#${a
+    .map((channel, i) => Math.round(channel * share + b[i] * (1 - share)))
+    .map(channel => channel.toString(16).padStart(2, '0'))
+    .join('')}`;
+}
+
+/**
+ * A family's colour tab, for the Colour tab look: a narrow band at the left of a white box, in the family's hue,
+ * stronger on the top class than on its subclasses; past the first ten families, with white stripes. The label stays
+ * on white, so no colour or pattern ever lies behind it. One image tall enough for any box, as the graph cannot
+ * repeat one.
+ */
+export function tabImage(family: ClassFamily): string {
+  const hue = familyHue(family.index);
+  const fill = family.sub ? hue.base : mix(hue.dark, hue.base, 0.55);
+  const { stripes } = familyTexture(family.index);
+  const h = TEXTURE_TILE.height;
+  const lines = stripes
+    ? `<path d="${Array.from({ length: Math.ceil(h / 6) + 2 }, (_, i) => `M0 ${i * 6}L${TAB_WIDTH} ${i * 6 - TAB_WIDTH}`).join('')}" ` +
+      'stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="2"/>'
+    : '';
+  return svgUri(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${TAB_WIDTH}" height="${h}">` +
+      `<rect width="${TAB_WIDTH}" height="${h}" fill="${fill}"/>${lines}` +
+      `<rect x="${TAB_WIDTH - 1}" width="1" height="${h}" fill="${TAB_LINE}"/></svg>`
+  );
+}
+
 /** Room between islands, and between a column of small islands and the next, at scale 1. */
 const ISLAND_GAP = 24;
 /** Room between the classes of a family, and between blocks laid side by side, at scale 1. */

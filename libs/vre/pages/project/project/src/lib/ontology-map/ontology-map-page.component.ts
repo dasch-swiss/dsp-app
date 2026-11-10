@@ -90,6 +90,7 @@ const PANEL_WIDTH = 440;
 const PREVIEW_DELAY_MS = 150;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
 const ISLANDS_KEY = 'dsp-ontology-map-islands';
+const COLOUR_TAB_KEY = 'dsp-ontology-map-colour-tab';
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
@@ -147,6 +148,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [levelLabels]="levelLabels()"
                 [labels]="labels()"
                 [islands]="islands()"
+                [colourTab]="colourTab()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                 [picked]="picked()"
                 [covered]="panelWidth"
@@ -365,6 +367,12 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                         [checked]="islands()"
                         (change)="setIslands($event.checked)">
                         {{ m + '.islandsToggle' | translate }}
+                      </mat-slide-toggle>
+                      <mat-slide-toggle
+                        data-cy="ontology-map-colour-tab"
+                        [checked]="colourTab()"
+                        (change)="setColourTab($event.checked)">
+                        {{ m + '.colourTab' | translate }}
                       </mat-slide-toggle>
                     </div>
                   </mat-menu>
@@ -933,6 +941,8 @@ export class OntologyMapPageComponent {
   readonly levelLabels = signal(readStored(LEVEL_LABELS_KEY) === 'true');
   /** Whether an island shows its frame on hover and can be dragged; on unless turned off. */
   readonly islands = signal(readStored(ISLANDS_KEY) !== 'false');
+  /** Whether a family's colour shows as a tab at the left of white boxes, rather than as their fill; off unless set. */
+  readonly colourTab = signal(readStored(COLOUR_TAB_KEY) === 'true');
   readonly labelOptions = LABEL_OPTIONS;
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
@@ -1361,6 +1371,11 @@ export class OntologyMapPageComponent {
   setIslands(islands: boolean): void {
     this.islands.set(islands);
     store(ISLANDS_KEY, String(islands));
+  }
+
+  setColourTab(colourTab: boolean): void {
+    this.colourTab.set(colourTab);
+    store(COLOUR_TAB_KEY, String(colourTab));
   }
 
   /** Runs an Export menu item: a PNG downloaded or copied, or the link to this view copied. */

@@ -772,6 +772,7 @@
       "propertiesChosen": "{{count}} properties",
       "levelLabels": "Horizontal link labels",
       "islandsToggle": "Highlight and move islands",
+      "colourTab": "Family colour as a tab",
       "propertyPanel": {
         "close": "Close the property details",
         "pointsTo": "Points to",
