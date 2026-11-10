@@ -41,6 +41,10 @@ import { SegmentTabComponent } from './segment-tab.component';
           height: auto !important;
           overflow: visible !important;
         }
+
+        .mat-mdc-tab-body {
+          min-width: 0;
+        }
       }
     `,
   ],

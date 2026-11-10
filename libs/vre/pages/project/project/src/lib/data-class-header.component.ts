@@ -1,5 +1,17 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
-import { Component, computed, ElementRef, Inject, inject, Input, viewChild, ViewContainerRef } from '@angular/core';
+import {
+  afterRenderEffect,
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  Inject,
+  inject,
+  Input,
+  signal,
+  viewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -53,7 +65,29 @@ interface CreateResourceDialogProps {
           </div>
           @if (classSelected.resClass.comments.length) {
             @let description = classSelected.resClass.comments | appStringifyStringLiteral;
-            <p class="class-description" [title]="description">{{ description }}</p>
+            <p
+              #descriptionEl
+              class="class-description"
+              data-cy="class-description"
+              [class.expanded]="descriptionExpanded()">
+              {{ description }}
+            </p>
+            @if (descriptionClamped() || descriptionExpanded()) {
+              <button
+                type="button"
+                class="description-toggle"
+                data-cy="class-description-toggle"
+                [attr.aria-expanded]="descriptionExpanded()"
+                (click)="descriptionExpanded.set(!descriptionExpanded())">
+                {{
+                  (descriptionExpanded()
+                    ? 'pages.dataBrowser.dataClassHeader.descriptionShowLess'
+                    : 'pages.dataBrowser.dataClassHeader.descriptionShowMore'
+                  ) | translate
+                }}
+                <mat-icon [class.flipped]="descriptionExpanded()">expand_more</mat-icon>
+              </button>
+            }
           }
         </div>
         <div class="actions">
@@ -145,6 +179,7 @@ export class DataClassHeaderComponent {
 
   @Input({ required: true }) set classSelected(value: SelectedClass) {
     this._classSelected = value;
+    this.descriptionExpanded.set(false);
     this._resClassId$.next(value.resClass.id);
   }
   get classSelected(): SelectedClass {
@@ -163,6 +198,26 @@ export class DataClassHeaderComponent {
       )
     )
   );
+
+  readonly descriptionExpanded = signal(false);
+  readonly descriptionClamped = signal(false);
+  private readonly _descriptionEl = viewChild<ElementRef<HTMLElement>>('descriptionEl');
+  private _descriptionObserver?: ResizeObserver;
+
+  private readonly _watchDescription = afterRenderEffect(() => {
+    const el = this._descriptionEl()?.nativeElement;
+    this._descriptionObserver?.disconnect();
+    if (!el) {
+      this.descriptionClamped.set(false);
+      return;
+    }
+    this._descriptionObserver = new ResizeObserver(() => {
+      if (!this.descriptionExpanded()) {
+        this.descriptionClamped.set(el.scrollHeight > el.clientHeight + 1);
+      }
+    });
+    this._descriptionObserver.observe(el);
+  });
 
   private readonly _tourSearchAnchor = viewChild('tourSearchAnchor', { read: ElementRef });
   private readonly _tourViewToggleAnchor = viewChild('tourViewToggleAnchor', { read: ElementRef });
@@ -198,7 +253,9 @@ export class DataClassHeaderComponent {
     private readonly _resClassCountApi: ResourceClassCountApi,
     private readonly _stringifyStringLiteralPipe: StringifyStringLiteralPipe,
     private readonly _dataBrowserPageService: DataBrowserPageService
-  ) {}
+  ) {
+    inject(DestroyRef).onDestroy(() => this._descriptionObserver?.disconnect());
+  }
 
   goToAddClassInstance() {
     const project = this._projectPageService.currentProject;

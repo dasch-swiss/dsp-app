@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { IriLabelPair } from '@dasch-swiss/vre/pages/search/search-filters';
+import { IriLabelPair, OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { AdvancedSearchPageComponent } from '../advanced-search-page.component';
@@ -28,6 +28,7 @@ describe('AdvancedSearchPageComponent', () => {
       imports: [AdvancedSearchPageComponent, TranslateModule.forRoot()],
       providers: [
         { provide: ProjectPageService, useValue: { currentProjectUuid: 'uuid-0001' } },
+        { provide: OntologyDataService, useValue: { ontologyLoading$: of(false) } },
         {
           provide: DerivedSearchStateService,
           useValue: {

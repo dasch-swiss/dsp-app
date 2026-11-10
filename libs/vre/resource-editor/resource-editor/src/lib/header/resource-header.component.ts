@@ -27,7 +27,7 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
       </h3>
       <app-resource-toolbar [resource]="resource.res" />
     </div>
-    <div class="resource-label" style="display: flex; justify-content: space-between">
+    <div class="resource-label">
       <h4 data-cy="resource-header-label">{{ resource.res.label }}</h4>
       @if (resourceFetcherService.userCanEdit$ | async) {
         <button
@@ -48,8 +48,20 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
         margin-bottom: 24px;
       }
 
+      .resource-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        button {
+          flex-shrink: 0;
+        }
+      }
+
       .resource-label h4 {
         display: inline-block;
+        min-width: 0;
+        overflow-wrap: anywhere;
         font-weight: 500;
         font-size: 18px;
         line-height: 22px;
@@ -70,8 +82,14 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
           cursor: help;
         }
 
+        app-resource-toolbar {
+          flex-shrink: 0;
+        }
+
         h3 {
           display: inline-block;
+          min-width: 0;
+          overflow-wrap: anywhere;
           text-transform: uppercase;
           font-size: 16px;
           font-weight: normal;

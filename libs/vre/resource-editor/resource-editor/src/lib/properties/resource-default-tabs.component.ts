@@ -26,6 +26,10 @@ import { ResourceRightsStatementContainerComponent } from './resource-rights-sta
           height: auto !important;
           overflow: visible !important;
         }
+
+        .mat-mdc-tab-body {
+          min-width: 0;
+        }
       }
     `,
   ],

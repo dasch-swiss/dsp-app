@@ -57,6 +57,10 @@ import { CompoundService } from './compound.service';
           height: auto !important;
           overflow: visible !important;
         }
+
+        .mat-mdc-tab-body {
+          min-width: 0;
+        }
       }
       .dots-container {
         margin-left: 1.5em;

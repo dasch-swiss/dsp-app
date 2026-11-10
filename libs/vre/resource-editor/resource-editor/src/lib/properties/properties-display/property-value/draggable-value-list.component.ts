@@ -70,6 +70,10 @@ import { ResourceFetcherService } from '../../../representation/resource-fetcher
       .value-row {
         display: flex;
         align-items: center;
+
+        > * {
+          min-width: 0;
+        }
       }
 
       .has-multiple .value-row:not(:last-child) {
