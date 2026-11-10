@@ -262,11 +262,6 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         color: $cool_gray_500;
       }
 
-      .property-icon[data-type='List'],
-      .type[data-type='List'] {
-        color: #92400e;
-      }
-
       .type {
         display: flex;
         align-items: center;

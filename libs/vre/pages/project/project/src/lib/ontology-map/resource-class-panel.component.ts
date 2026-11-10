@@ -326,14 +326,6 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         width: 16px;
         height: 16px;
         color: $cool_gray_500;
-
-        &[data-type='Link'] {
-          color: $primary;
-        }
-
-        &[data-type='List'] {
-          color: #92400e;
-        }
       }
 
       .property-label {
@@ -341,17 +333,26 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         min-width: 0;
       }
 
+      // Every type in the same grey: a link's class too, which still opens on a click.
       .value {
         flex: none;
         font-size: 12px;
         color: $cool_gray_500;
+      }
 
-        &[data-type='List'] {
-          color: #92400e;
+      .link {
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+
+        &:disabled {
+          cursor: default;
+          text-decoration: none;
         }
       }
 
-      .link,
       .class-link {
         color: $primary;
         cursor: pointer;
