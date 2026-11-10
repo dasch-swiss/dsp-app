@@ -95,6 +95,7 @@ const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
 const ISLANDS_KEY = 'dsp-ontology-map-islands';
 const COLOUR_TAB_KEY = 'dsp-ontology-map-colour-tab';
 const TREE_LINES_KEY = 'dsp-ontology-map-tree-lines';
+const FULL_WIDTH_KEY = 'dsp-ontology-map-full-width';
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
@@ -158,7 +159,8 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [treeLines]="treeLines()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                 [picked]="picked()"
-                [covered]="panelOpen() ? panelWidth : 0"
+                [fullWidth]="fullWidth()"
+                [covered]="panelOpen() || !fullWidth() ? panelWidth : 0"
                 [panelFocus]="panelFocus()"
                 [colors]="colors()"
                 [families]="families()"
@@ -375,6 +377,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                         { section: 'islands', key: 'islandsToggle', cy: 'islands', on: islands() },
                         { section: 'subclasses', key: 'treeLines', cy: 'tree-lines', on: treeLines() },
                         { section: 'colours', key: 'colourTab', cy: 'colour-tab', on: colourTab() },
+                        { section: 'panel', key: 'fullWidth', cy: 'full-width', on: fullWidth() },
                       ];
                       track option.key
                     ) {
@@ -980,6 +983,11 @@ export class OntologyMapPageComponent {
   readonly colourTab = signal(readStored(COLOUR_TAB_KEY) === 'true');
   /** Whether a line joins each parent to its subclasses; on unless turned off. */
   readonly treeLines = signal(readStored(TREE_LINES_KEY) !== 'false');
+  /**
+   * Whether the graph spreads over the whole width, an open panel covering its right, rather than keeping clear of
+   * where the panel opens.
+   */
+  readonly fullWidth = signal(readStored(FULL_WIDTH_KEY) === 'true');
   readonly labelOptions = LABEL_OPTIONS;
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
@@ -1479,6 +1487,9 @@ export class OntologyMapPageComponent {
     else if (key === 'treeLines') {
       this.treeLines.set(on);
       store(TREE_LINES_KEY, String(on));
+    } else if (key === 'fullWidth') {
+      this.fullWidth.set(on);
+      store(FULL_WIDTH_KEY, String(on));
     }
   }
 

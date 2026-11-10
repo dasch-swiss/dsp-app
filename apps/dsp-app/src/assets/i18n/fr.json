@@ -778,6 +778,7 @@
       "levelLabels": "Libellés des liens à l’horizontale",
       "islandsToggle": "Mettre en évidence et déplacer les îlots",
       "colourTab": "Couleur en onglet",
+      "fullWidth": "Utiliser toute la largeur",
       "treeLines": "Lignes vers les sous-classes",
       "viewMenu": {
         "textSize": "Taille du texte",
@@ -785,6 +786,8 @@
         "islands": "Îlots",
         "colours": "Couleurs",
         "subclasses": "Sous-classes",
+        "panel": "Panneau latéral",
+        "fullWidthHint": "Le panneau couvre le graphe, qui glisse pour garder sa classe visible",
         "treeLinesHint": "Une ligne de chaque classe parente vers ses sous-classes",
         "levelLabelsHint": "Plus lisibles que le long de la ligne",
         "islandsToggleHint": "Encadrer un îlot au survol, le déplacer avec ses classes",

@@ -778,6 +778,7 @@
       "levelLabels": "Verknüpfungsbeschriftungen waagrecht",
       "islandsToggle": "Inseln hervorheben und verschieben",
       "colourTab": "Farbe als Lasche",
+      "fullWidth": "Ganze Breite nutzen",
       "treeLines": "Linien zu Unterklassen",
       "viewMenu": {
         "textSize": "Textgrösse",
@@ -785,6 +786,8 @@
         "islands": "Inseln",
         "colours": "Farben",
         "subclasses": "Unterklassen",
+        "panel": "Seitenleiste",
+        "fullWidthHint": "Die Seitenleiste liegt über dem Graphen, der sich verschiebt, damit ihre Klasse sichtbar bleibt",
         "treeLinesHint": "Eine Linie von jeder Oberklasse hinunter zu ihren Unterklassen",
         "levelLabelsHint": "Leichter lesbar als entlang der Linie",
         "islandsToggleHint": "Insel beim Überfahren einrahmen, mit ihren Klassen verschieben",

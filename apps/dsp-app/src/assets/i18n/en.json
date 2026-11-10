@@ -778,6 +778,7 @@
       "levelLabels": "Horizontal link labels",
       "islandsToggle": "Highlight and move islands",
       "colourTab": "Colour as a tab",
+      "fullWidth": "Use the whole width",
       "treeLines": "Lines to subclasses",
       "viewMenu": {
         "textSize": "Text size",
@@ -785,6 +786,8 @@
         "islands": "Islands",
         "colours": "Colours",
         "subclasses": "Subclasses",
+        "panel": "Side panel",
+        "fullWidthHint": "The panel covers the graph, which slides to keep its class in view",
         "treeLinesHint": "A line from each parent class down to its subclasses",
         "levelLabelsHint": "Easier to read than along the line",
         "islandsToggleHint": "Frame an island on hover, drag it with its classes",

@@ -778,6 +778,7 @@
       "levelLabels": "Etichette dei collegamenti orizzontali",
       "islandsToggle": "Evidenzia e sposta le isole",
       "colourTab": "Colore come linguetta",
+      "fullWidth": "Usa tutta la larghezza",
       "treeLines": "Linee verso le sottoclassi",
       "viewMenu": {
         "textSize": "Dimensione del testo",
@@ -785,6 +786,8 @@
         "islands": "Isole",
         "colours": "Colori",
         "subclasses": "Sottoclassi",
+        "panel": "Pannello laterale",
+        "fullWidthHint": "Il pannello copre il grafo, che scorre per mantenere visibile la sua classe",
         "treeLinesHint": "Una linea da ogni classe madre verso le sue sottoclassi",
         "levelLabelsHint": "Più leggibili che lungo la linea",
         "islandsToggleHint": "Evidenzia un'isola al passaggio, spostala con le sue classi",

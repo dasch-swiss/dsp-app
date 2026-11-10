@@ -718,11 +718,16 @@ export class OntologyGraphComponent {
   /** A class, or a property's links, picked out in orange, as the search's results are gone through. */
   readonly picked = input<{ kind: 'class' | 'property'; iri: string } | undefined>(undefined);
   /**
-   * How wide the open panel lying over the right of the graph is, in px, at most half the box; 0 while none is open.
-   * The model is laid out and fitted over the whole box: the panel covers its right, and the graph pans sideways only
-   * to bring `panelFocus` out from under it; see `_keepInView`.
+   * How wide a panel lying over the right of the graph is, in px, at most half the box. Without `fullWidth`, the model
+   * is laid out and fitted left of it, open or not, so opening it moves nothing. With `fullWidth`, it is 0 while no
+   * panel is open; see `fullWidth`.
    */
   readonly covered = input(0);
+  /**
+   * Whether the model is laid out and fitted over the whole box: an open panel covers its right, and the graph pans
+   * sideways only to bring `panelFocus` out from under it; see `_keepInView`.
+   */
+  readonly fullWidth = input(false);
   /** What the open panel is about, a class or a link property, kept clear of the panel. */
   readonly panelFocus = input<{ kind: 'class' | 'property'; iri: string } | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
@@ -1007,6 +1012,16 @@ export class OntologyGraphComponent {
             .addClass('picked');
       });
     });
+    // Over the whole width or left of the panel's place: the classes are spread over the new room again, or, once
+    // dragged, only fitted in it.
+    let fullWidthShown = untracked(() => this.fullWidth());
+    effect(() => {
+      const cy = this._cy();
+      const fullWidth = this.fullWidth();
+      if (!cy || fullWidth === fullWidthShown) return;
+      fullWidthShown = fullWidth;
+      untracked(() => (this._dragged ? this._fit(cy) : this._arrange(cy)));
+    });
     // Opening a panel, or showing another class or link in it, pans the graph sideways only when what it is about lies
     // under it; closing it pans back. Before the graph is shown, fitting it does the same, without the motion.
     effect(() => {
@@ -1172,15 +1187,17 @@ export class OntologyGraphComponent {
   }
 
   /**
-   * The room the model is fitted in, in screen pixels: the box less its padding, the tools above and the legend below.
-   * An open panel is not taken off: it covers the model's right; see `_keepInView`.
+   * The room the model is fitted in, in screen pixels: the box less its padding, the tools above, the legend below and,
+   * without `fullWidth`, the panel's place on the right. With `fullWidth`, an open panel covers the model's right; see
+   * `_keepInView`.
    */
   private _room(cy: Core): { x: number; y: number; w: number; h: number } {
     const legend = this._legend()?.nativeElement.offsetHeight ?? 0;
+    const panel = untracked(() => this.fullWidth()) ? 0 : Math.min(untracked(() => this.covered()), cy.width() / 2);
     return {
       x: FIT_PADDING,
       y: TOOLBAR_ROOM,
-      w: cy.width() - 2 * FIT_PADDING,
+      w: cy.width() - 2 * FIT_PADDING - panel,
       h: cy.height() - TOOLBAR_ROOM - FIT_PADDING - legend,
     };
   }
@@ -1195,7 +1212,7 @@ export class OntologyGraphComponent {
     const covered = Math.min(untracked(() => this.covered()), cy.width() / 2);
     const focus = untracked(() => this.panelFocus());
     let dx = -this._panned;
-    if (covered > 0 && focus) {
+    if (untracked(() => this.fullWidth()) && covered > 0 && focus) {
       const right = cy.width() - covered - FIT_PADDING;
       const classes = cy.nodes().not('.island, .family');
       const node = focus.kind === 'class' ? classes.filter(n => n.id() === focus.iri) : undefined;
