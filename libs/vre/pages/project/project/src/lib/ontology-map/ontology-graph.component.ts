@@ -83,6 +83,8 @@ const SEARCH_FADE = 0.18;
 
 /** How long no layout must follow, on load, before the graph is shown. */
 const SETTLE_MS = 150;
+/** How long the graph takes to pan clear of a panel opening, or back as it closes. */
+const PAN_MS = 300;
 
 /** Size of a link's label at scale 1. */
 const LINK_FONT_SIZE = 13;
@@ -716,10 +718,13 @@ export class OntologyGraphComponent {
   /** A class, or a property's links, picked out in orange, as the search's results are gone through. */
   readonly picked = input<{ kind: 'class' | 'property'; iri: string } | undefined>(undefined);
   /**
-   * How wide a panel lying over the right of the graph is, in px, at most half the box: classes laid out or fitted
-   * while it is open keep left of it. Opening or closing it moves nothing.
+   * How wide the open panel lying over the right of the graph is, in px, at most half the box; 0 while none is open.
+   * The model is laid out and fitted over the whole box: the panel covers its right, and the graph pans sideways only
+   * to bring `panelFocus` out from under it; see `_keepInView`.
    */
   readonly covered = input(0);
+  /** What the open panel is about, a class or a link property, kept clear of the panel. */
+  readonly panelFocus = input<{ kind: 'class' | 'property'; iri: string } | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
   readonly anyResourceLabel = input('Any resource');
   /** The word after the count on a link standing for several, as in "5 links", in the current language. */
@@ -756,6 +761,8 @@ export class OntologyGraphComponent {
   private _reveal?: ReturnType<typeof setTimeout>;
   /** Whether the canvas's box has had its first size; see the constructor's `ResizeObserver`. */
   private _sized = false;
+  /** How far, in screen px, the graph was panned sideways to keep the panel's focus in view; undone on closing. */
+  private _panned = 0;
 
   private readonly _counts = computed(() => linkCounts(this.graph()));
   private readonly _islands = computed(() => {
@@ -1000,6 +1007,15 @@ export class OntologyGraphComponent {
             .addClass('picked');
       });
     });
+    // Opening a panel, or showing another class or link in it, pans the graph sideways only when what it is about lies
+    // under it; closing it pans back. Before the graph is shown, fitting it does the same, without the motion.
+    effect(() => {
+      const cy = this._cy();
+      this.covered();
+      this.panelFocus();
+      if (!cy || !this.laidOut()) return;
+      untracked(() => this._keepInView(cy, true));
+    });
     effect(() => {
       const cy = this._cy();
       const selected = this.selectedIri();
@@ -1069,7 +1085,7 @@ export class OntologyGraphComponent {
     }
     this._spread(cy);
     this._route(cy);
-    // The whole model, always, in the room left of the panel's place: a big one with small names, zoomed in to read.
+    // The whole model, always, over the whole box: a big one with small names, zoomed in to read.
     this._fit(cy);
     this._revealWhenSettled();
   }
@@ -1156,21 +1172,57 @@ export class OntologyGraphComponent {
   }
 
   /**
-   * The room the model is fitted in, in screen pixels: the box less its padding, the tools above, the legend below
-   * and an open panel on the right.
+   * The room the model is fitted in, in screen pixels: the box less its padding, the tools above and the legend below.
+   * An open panel is not taken off: it covers the model's right; see `_keepInView`.
    */
   private _room(cy: Core): { x: number; y: number; w: number; h: number } {
     const legend = this._legend()?.nativeElement.offsetHeight ?? 0;
-    const covered = Math.min(
-      untracked(() => this.covered()),
-      cy.width() / 2
-    );
     return {
       x: FIT_PADDING,
       y: TOOLBAR_ROOM,
-      w: cy.width() - 2 * FIT_PADDING - covered,
+      w: cy.width() - 2 * FIT_PADDING,
       h: cy.height() - TOOLBAR_ROOM - FIT_PADDING - legend,
     };
+  }
+
+  /**
+   * Pans the graph sideways, without zooming, so what the open panel is about lies left of it: a class with the
+   * classes it is linked with, or every class a link property joins. The class itself comes first, then the left edge
+   * of the rest, then its right edge. Nothing in view already, nothing moves. With no panel, the pan made for one is
+   * undone.
+   */
+  private _keepInView(cy: Core, animate: boolean): void {
+    const covered = Math.min(untracked(() => this.covered()), cy.width() / 2);
+    const focus = untracked(() => this.panelFocus());
+    let dx = -this._panned;
+    if (covered > 0 && focus) {
+      const right = cy.width() - covered - FIT_PADDING;
+      const classes = cy.nodes().not('.island, .family');
+      const node = focus.kind === 'class' ? classes.filter(n => n.id() === focus.iri) : undefined;
+      const around =
+        focus.kind === 'class'
+          ? node!.union(node!.neighborhood().nodes().not('.island, .family'))
+          : cy
+              .edges()
+              .filter(edge => edge.data('property') === focus.iri)
+              .connectedNodes()
+              .not('.island, .family');
+      if (around.empty()) return;
+      const box = around.renderedBoundingBox({});
+      dx = box.x2 > right ? right - box.x2 : 0;
+      if (box.x1 + dx < FIT_PADDING) dx = Math.min(0, FIT_PADDING - box.x1);
+      if (node?.nonempty()) {
+        const own = node.renderedBoundingBox({});
+        dx = Math.max(FIT_PADDING - own.x1, Math.min(dx, right - own.x2));
+      }
+    }
+    if (Math.abs(dx) < 1) return;
+    this._panned += dx;
+    cy.stop(true, true);
+    const pan = { x: cy.pan().x + dx, y: cy.pan().y };
+    const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (animate && !still) cy.animate({ pan }, { duration: PAN_MS, easing: 'ease-in-out-cubic' });
+    else cy.pan(pan);
   }
 
   /**
@@ -1198,7 +1250,11 @@ export class OntologyGraphComponent {
     const box = cy.elements().boundingBox({});
     const largest = GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale);
     const zoom = Math.min(largest, room.w / box.w, room.h / box.h);
-    if (Number.isFinite(zoom) && zoom > 0) this._show(cy, zoom, 'middle');
+    if (!Number.isFinite(zoom) || zoom <= 0) return;
+    cy.stop(true, false);
+    this._show(cy, zoom, 'middle');
+    this._panned = 0;
+    this._keepInView(cy, false);
   }
 
   private _style(f: number): StylesheetJson {

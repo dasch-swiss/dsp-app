@@ -158,7 +158,8 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [treeLines]="treeLines()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                 [picked]="picked()"
-                [covered]="panelWidth"
+                [covered]="panelOpen() ? panelWidth : 0"
+                [panelFocus]="panelFocus()"
                 [colors]="colors()"
                 [families]="families()"
                 [search]="search()"
@@ -1265,6 +1266,13 @@ export class OntologyMapPageComponent {
     if (!name || this.panelIri()) return undefined;
     return this._graphLinks()?.edges.find(edge => edge.kind === 'link' && classNameOf(edge.property) === name)
       ?.property;
+  });
+  /** What the open panel is about, for the graph to keep clear of the panel. */
+  readonly panelFocus = computed(() => {
+    const classIri = this.panelIri();
+    if (classIri) return { kind: 'class' as const, iri: classIri };
+    const property = this.propertyPanelIri();
+    return property ? { kind: 'property' as const, iri: property } : undefined;
   });
   /** The class the map outlines: the one whose panel is open, else the one named in the URL. */
   readonly classIri = computed(() => this.panelIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
