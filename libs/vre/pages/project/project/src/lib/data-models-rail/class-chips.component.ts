@@ -3,8 +3,9 @@ import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
 
 /**
- * Classes as chips in their colors on one line: condensed, the first `max` and a count of the others; expanded, every
- * one, wrapping. A dash when there is none. A clicked chip asks to open its class.
+ * Classes as chips on one line, each white with its colour in a tab at its left, as the Overview draws a class with
+ * "Colour as a tab": condensed, the first `max` and a count of the others; expanded, every one, wrapping. A dash when
+ * there is none. A clicked chip asks to open its class.
  */
 @Component({
   selector: 'app-class-chips',
@@ -18,16 +19,18 @@ import { HighlightPipe } from './highlight.pipe';
           class="chip"
           data-cy="class-chip"
           [class.on]="iri === selected()"
-          [style.background]="state.colors().get(iri) ?? '#F3F4F6'"
           (click)="$event.stopPropagation(); classSelected.emit(iri)"
           (keydown.enter)="$event.stopPropagation()">
-          @for (part of state.labelOf(iri) | highlight: highlight(); track $index) {
-            @if (part.match) {
-              <mark>{{ part.text }}</mark>
-            } @else {
-              <span>{{ part.text }}</span>
+          <span class="tab" aria-hidden="true" [style.background]="state.colors().get(iri) ?? '#F3F4F6'"></span>
+          <span class="label">
+            @for (part of state.labelOf(iri) | highlight: highlight(); track $index) {
+              @if (part.match) {
+                <mark>{{ part.text }}</mark>
+              } @else {
+                <span>{{ part.text }}</span>
+              }
             }
-          }
+          </span>
         </button>
       } @empty {
         <span class="none">—</span>
@@ -67,16 +70,31 @@ import { HighlightPipe } from './highlight.pipe';
         }
       }
 
+      // White, a slate border, the class's colour in a narrow tab at the left: the label always on white.
       .chip {
         flex: none;
-        padding: 0 6px;
-        border: 0;
+        display: inline-flex;
+        align-items: stretch;
+        padding: 0;
+        border: 1px solid #475569;
         border-radius: 4px;
+        overflow: hidden;
+        background: white;
         font: inherit;
         font-size: 11px;
-        line-height: 18px;
+        line-height: 16px;
         color: #1f2937;
         cursor: pointer;
+
+        .tab {
+          flex: none;
+          width: 6px;
+          border-right: 1px solid #475569;
+        }
+
+        .label {
+          padding: 0 6px;
+        }
 
         &:hover,
         &:focus-visible {

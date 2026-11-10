@@ -580,6 +580,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             [canEdit]="state.canEdit()"
             (classSelected)="openPanel($event)"
             (closed)="openProperty(undefined)"
+            (propertySelected)="openProperty($event)"
             (filter)="filterOnProperty($event)"
             (edit)="editing.editProperty($event)" />
         }

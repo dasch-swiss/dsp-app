@@ -78,7 +78,7 @@ interface Placed extends ClassConnection {
                 class="box"
                 data-cy="class-connection"
                 [disabled]="!place.navigable"
-                [style.background]="colors().get(place.id) ?? '#FFFFFF'"
+                [style.--tab]="colors().get(place.id) ?? '#FFFFFF'"
                 (click)="classSelected.emit(place.id)">
                 {{ place.label }}
               </button>
@@ -103,7 +103,7 @@ interface Placed extends ClassConnection {
           [style.top.px]="middle() - BOX / 2 - 4"
           [style.left.%]="columns().center[0]"
           [style.width.%]="columns().center[1] - columns().center[0]">
-          <span class="box" [style.background]="colors().get(classIri()) ?? '#FFFFFF'">{{ classLabel() }}</span>
+          <span class="box" [style.--tab]="colors().get(classIri()) ?? '#FFFFFF'">{{ classLabel() }}</span>
           @if (incoming().length) {
             <span class="arrow" aria-hidden="true"></span>
           }
@@ -162,7 +162,7 @@ interface Placed extends ClassConnection {
           // A long name wraps onto a second line rather than being cut.
           .box {
             height: ${BOX + 8}px;
-            padding: 0 6px;
+            padding: 0 6px 0 16px;
             display: -webkit-box;
             -webkit-box-orient: vertical;
             -webkit-line-clamp: 2;
@@ -181,7 +181,7 @@ interface Placed extends ClassConnection {
         height: ${BOX}px;
         box-sizing: border-box;
         padding: 0 8px;
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        border: 1px solid #475569;
         border-radius: 6px;
         font: inherit;
         font-size: 12px;
@@ -193,6 +193,23 @@ interface Placed extends ClassConnection {
         text-overflow: ellipsis;
         display: block;
         text-align: center;
+
+        // As the Overview draws a class with "Colour as a tab": white, a slate border, its colour in a tab at the left.
+        position: relative;
+        padding-left: 16px;
+        border-color: #475569;
+        background: white;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          width: 8px;
+          border-right: 1px solid #475569;
+          background: var(--tab, white);
+        }
       }
 
       button.box {

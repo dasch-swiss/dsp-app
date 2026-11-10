@@ -494,6 +494,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   (classSelected)="openPanel($event)"
                   (closed)="openPanel(undefined)"
                   (filter)="setPropertyFilter([$event])"
+                  (propertySelected)="openPropertyPanel($event)"
                   (edit)="editProperty($event)" />
               }
             </div>

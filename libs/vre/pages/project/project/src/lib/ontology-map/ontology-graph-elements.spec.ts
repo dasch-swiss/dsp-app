@@ -442,6 +442,9 @@ describe('classRows and propertyRows', () => {
         type: 'Link',
         linkTarget: 'x#Person',
         usedBy: ['x#Film'],
+        superProperties: [],
+        depth: 0,
+        terms: [],
       },
       {
         id: 'x#title',
@@ -453,7 +456,76 @@ describe('classRows and propertyRows', () => {
         type: 'Text',
         linkTarget: undefined,
         usedBy: ['x#Film', 'x#Person'],
+        superProperties: [],
+        depth: 0,
+        terms: [],
       },
+    ]);
+  });
+
+  it('puts each sub-property under its parent, and names the standard terms a property maps to', () => {
+    const property = (id: string, label: string, superProperties: string[]) => ({
+      id,
+      label,
+      description: '',
+      type: 'Text',
+      cardinality: Cardinality._0_1,
+      superProperties,
+    });
+    const titled: DataModelGraph = {
+      nodes: [
+        {
+          id: 'http://api.example.org/ontology/0001/x/v2#Book',
+          label: 'Book',
+          kind: 'class',
+          navigable: true,
+          propertyDetails: [
+            property('http://api.example.org/ontology/0001/x/v2#editionTitle', 'Edition title', [
+              'http://api.example.org/ontology/0001/x/v2#title',
+            ]),
+            property('http://api.example.org/ontology/0001/x/v2#title', 'Title', ['http://purl.org/dc/terms/title']),
+            property('http://api.example.org/ontology/0001/x/v2#pages', 'Pages', ['http://example.com/terms#pages']),
+          ],
+        },
+      ],
+      edges: [],
+    };
+    const rows = propertyRows(titled);
+    expect(rows.map(row => [row.label, row.depth, row.terms.map(term => term.short)])).toEqual([
+      ['Pages', 0, ['pages']],
+      ['Title', 0, ['dcterms:title']],
+      ['Edition title', 1, []],
+    ]);
+    expect(rows[1].terms[0].vocabulary).toBe('Dublin Core');
+    expect(rows[2].parent).toBe('http://api.example.org/ontology/0001/x/v2#title');
+  });
+
+  it('lists a parent no class has, marked unused, with its sub-properties under it', () => {
+    const x = 'http://api.example.org/ontology/0001/x/v2#';
+    const property = (id: string, label: string, superProperties: string[] = []) => ({
+      id: `${x}${id}`,
+      label,
+      description: '',
+      type: 'Date',
+      cardinality: Cardinality._0_1,
+      superProperties,
+    });
+    const rows = propertyRows({
+      nodes: [
+        {
+          id: `${x}Edition`,
+          label: 'Edition',
+          kind: 'class',
+          navigable: true,
+          propertyDetails: [property('editionDate', 'Edition date', [`${x}date`])],
+        },
+      ],
+      edges: [],
+      unusedProperties: [property('date', 'Date')],
+    });
+    expect(rows.map(row => [row.label, row.depth, !!row.unused, row.usedBy.length])).toEqual([
+      ['Date', 0, true, 0],
+      ['Edition date', 1, false, 1],
     ]);
   });
 });

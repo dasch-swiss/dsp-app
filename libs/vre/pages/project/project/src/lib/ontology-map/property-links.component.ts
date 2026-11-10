@@ -67,7 +67,7 @@ interface Placed extends PropertyLinkEnd {
                 class="box"
                 data-cy="property-link-class"
                 [disabled]="!place.navigable"
-                [style.background]="colors().get(place.id) ?? '#FFFFFF'"
+                [style.--tab]="colors().get(place.id) ?? '#FFFFFF'"
                 (click)="classSelected.emit(place.id)">
                 {{ place.label }}
               </button>
@@ -131,7 +131,7 @@ interface Placed extends PropertyLinkEnd {
         height: ${BOX}px;
         box-sizing: border-box;
         padding: 0 8px;
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        border: 1px solid #475569;
         border-radius: 6px;
         font: inherit;
         font-size: 12px;
@@ -153,6 +153,23 @@ interface Placed extends PropertyLinkEnd {
           cursor: default;
           border-style: dashed;
           color: $cool_gray_600;
+        }
+
+        // As the Overview draws a class with "Colour as a tab": white, a slate border, its colour in a tab at the left.
+        position: relative;
+        padding-left: 16px;
+        border-color: #475569;
+        background: white;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          width: 8px;
+          border-right: 1px solid #475569;
+          background: var(--tab, white);
         }
       }
 

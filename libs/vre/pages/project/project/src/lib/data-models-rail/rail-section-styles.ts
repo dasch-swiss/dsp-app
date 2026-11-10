@@ -136,12 +136,27 @@ export const RAIL_SECTION_STYLES = `
     gap: 4px;
   }
 
+  // A class as a chip: white, a slate border, its colour in a narrow tab at the left, as the Overview draws it.
   .chip {
-    padding: 0 6px;
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid #475569;
     border-radius: 4px;
+    overflow: hidden;
+    background: white;
     font-size: 11px;
-    line-height: 18px;
+    line-height: 16px;
     color: #1f2937;
+
+    .tab {
+      flex: none;
+      width: 6px;
+      border-right: 1px solid #475569;
+    }
+
+    .chip-label {
+      padding: 0 6px;
+    }
   }
 
   .none,

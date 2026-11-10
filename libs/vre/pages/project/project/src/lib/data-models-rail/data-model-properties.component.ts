@@ -60,7 +60,7 @@ const STORAGE_KEY = 'dsp-data-models-properties';
 /** The Points to filter's value for properties that are not links. */
 const NO_TARGET = 'none';
 
-type Column = 'property' | 'description' | 'type' | 'pointsTo' | 'usedBy';
+type Column = 'property' | 'description' | 'type' | 'pointsTo' | 'usedBy' | 'standard';
 type Density = 'condensed' | 'expanded';
 
 /** The translation key of each column's name. */
@@ -70,6 +70,7 @@ const COLUMN_LABELS: Record<Column, string> = {
   type: 'pages.dataModels2.colType',
   pointsTo: 'pages.dataModels2.colPointsTo',
   usedBy: 'pages.dataModels2.colUsedBy',
+  standard: 'pages.dataModels2.colStandard',
 };
 
 /**
@@ -134,6 +135,12 @@ const COLUMN_LABELS: Record<Column, string> = {
         <span class="spacer"></span>
         <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
         <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-properties" />
+        @if (folding() && foldable().size) {
+          <button mat-button type="button" data-cy="data-model-properties-expand" (click)="toggleAllFolds()">
+            <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+            {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
+          </button>
+        }
         <mat-button-toggle-group
           class="density"
           hideSingleSelectionIndicator
@@ -195,30 +202,47 @@ const COLUMN_LABELS: Record<Column, string> = {
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row" class="frozen" [title]="row.name">
-              <span class="texts">
-                <app-language-texts
-                  kind="label"
-                  cyPrefix="data-model-properties"
-                  [texts]="row.labels"
-                  [shown]="row.label"
-                  [owner]="row.label"
-                  [languages]="languages()"
-                  [canEdit]="canEditTexts()"
-                  [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
-                  [expanded]="expanded"
-                  [highlight]="nameTerms()"
-                  (edit)="editText(row, 'label', $event)" />
-                @if (expanded) {
-                  <code class="name">
-                    @for (part of row.name | highlight: nameTerms(); track $index) {
-                      @if (part.match) {
-                        <mark>{{ part.text }}</mark>
-                      } @else {
-                        <span>{{ part.text }}</span>
-                      }
-                    }
-                  </code>
+              <span class="labelled" [style.padding-left.px]="folding() ? row.depth * indent : 0">
+                @if (folding()) {
+                  @if (foldable().has(row.id)) {
+                    <button
+                      type="button"
+                      class="toggle"
+                      data-cy="data-model-properties-toggle"
+                      [attr.aria-expanded]="!collapsed().has(row.id)"
+                      [attr.aria-label]="(collapsed().has(row.id) ? r + '.expandRow' : r + '.collapseRow') | translate"
+                      (click)="$event.stopPropagation(); toggleFold(row.id)">
+                      <mat-icon>{{ collapsed().has(row.id) ? 'chevron_right' : 'expand_more' }}</mat-icon>
+                    </button>
+                  } @else if (foldable().size) {
+                    <span class="leaf" aria-hidden="true"></span>
+                  }
                 }
+                <span class="texts">
+                  <app-language-texts
+                    kind="label"
+                    cyPrefix="data-model-properties"
+                    [texts]="row.labels"
+                    [shown]="row.label"
+                    [owner]="row.label"
+                    [languages]="languages()"
+                    [canEdit]="canEditTexts()"
+                    [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
+                    [expanded]="expanded"
+                    [highlight]="nameTerms()"
+                    (edit)="editText(row, 'label', $event)" />
+                  @if (expanded) {
+                    <code class="name">
+                      @for (part of row.name | highlight: nameTerms(); track $index) {
+                        @if (part.match) {
+                          <mark>{{ part.text }}</mark>
+                        } @else {
+                          <span>{{ part.text }}</span>
+                        }
+                      }
+                    </code>
+                  }
+                </span>
               </span>
             </td>
           </ng-container>
@@ -339,9 +363,10 @@ const COLUMN_LABELS: Record<Column, string> = {
                       {{ r + '.noTarget' | translate }}
                     } @else {
                       <!-- In the class's color, as in the column. -->
-                      <span class="chip" [style.background]="state.colors().get(option) ?? '#F3F4F6'">{{
-                        state.labelOf(option)
-                      }}</span>
+                      <span class="chip"
+                        ><span class="tab" [style.background]="state.colors().get(option) ?? '#F3F4F6'"></span
+                        ><span class="chip-label">{{ state.labelOf(option) }}</span></span
+                      >
                     }
                   </mat-checkbox>
                 }
@@ -385,12 +410,64 @@ const COLUMN_LABELS: Record<Column, string> = {
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row">
+              @if (row.unused) {
+                <span class="none" data-cy="data-model-properties-unused">{{ r + '.notUsedByClass' | translate }}</span>
+              }
               <app-class-chips
                 [iris]="row.usedBy"
                 [max]="maxUsedBy"
                 [expanded]="expanded"
                 [highlight]="searchTerms()"
                 (classSelected)="showClass($event)" />
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="standard">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="movable"
+              cdkDrag
+              [style.width.px]="cols.widthOf('standard')"
+              [class.filtered]="standards().size">
+              <app-column-header
+                [columns]="cols"
+                column="standard"
+                [label]="columnLabels.standard"
+                [filtered]="!!standards().size"
+                menuPosition="before"
+                filterCy="data-model-properties-filter-standard"
+                resizeCy="data-model-properties-resize">
+                <span class="filter-head">
+                  <span class="filter-heading">{{ columnLabels.standard | translate }}</span>
+                  <button mat-button type="button" class="filter-all" (click)="toggleAll(standards, standardOptions())">
+                    {{ (allOn(standards(), standardOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+                  </button>
+                </span>
+                @for (option of standardOptions(); track option) {
+                  <mat-checkbox [checked]="standards().has(option)" (change)="toggle(standards, option)">{{
+                    option
+                  }}</mat-checkbox>
+                }
+              </app-column-header>
+            </th>
+            <td mat-cell *matCellDef="let row">
+              <!-- The terms of standard vocabularies the property maps to; the vocabulary's name on hover. -->
+              <span class="terms">
+                @for (term of row.terms; track term.iri) {
+                  <span class="term" data-cy="data-model-properties-term" [title]="term.vocabulary + ' · ' + term.iri">
+                    <mat-icon>public</mat-icon>
+                    @for (part of term.short | highlight: searchTerms(); track $index) {
+                      @if (part.match) {
+                        <mark>{{ part.text }}</mark>
+                      } @else {
+                        <span>{{ part.text }}</span>
+                      }
+                    }
+                  </span>
+                } @empty {
+                  <span class="none">–</span>
+                }
+              </span>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="cols.shown(); sticky: true"></tr>
@@ -421,6 +498,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             [canEdit]="state.canEdit()"
             (classSelected)="showClass($event)"
             (closed)="openPanel(undefined)"
+            (propertySelected)="openPanel($event)"
             (filter)="filterOn($event)"
             (edit)="edit($event)" />
         }
@@ -464,6 +542,68 @@ const COLUMN_LABELS: Record<Column, string> = {
           height: 16px;
         }
       }
+
+      // The tree: chevrons as in Controlled vocabularies and Resource classes.
+      .labelled {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .toggle {
+        flex: none;
+        display: flex;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 0;
+        border-radius: 4px;
+        background: none;
+        color: $cool_gray_600;
+        cursor: pointer;
+
+        &:hover {
+          background: $cool_gray_100;
+        }
+      }
+
+      .leaf {
+        flex: none;
+        width: 24px;
+      }
+
+      // A standard term, as it is commonly written.
+      .terms {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .term {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 0 7px;
+        border: 1px solid $cool_gray_300;
+        border-radius: 10px;
+        background: $cool_gray_50;
+        font-family: 'Roboto Mono', ui-monospace, monospace;
+        font-size: 11.5px;
+        line-height: 18px;
+        color: $cool_gray_700;
+
+        mat-icon {
+          font-size: 12px;
+          width: 12px;
+          height: 12px;
+          color: $cool_gray_500;
+        }
+      }
+
+      .none {
+        color: $cool_gray_400;
+      }
     `,
   ],
 })
@@ -476,9 +616,9 @@ export class DataModelPropertiesComponent {
 
   readonly columns = new TableColumns<Column>({
     storageKey: STORAGE_KEY,
-    columns: ['property', 'description', 'type', 'pointsTo', 'usedBy'],
-    defaultWidths: { property: 260, description: 360, type: 140, pointsTo: 200, usedBy: 300 },
-    minWidths: { property: 140, description: 140, type: 90, pointsTo: 110, usedBy: 130 },
+    columns: ['property', 'description', 'type', 'pointsTo', 'usedBy', 'standard'],
+    defaultWidths: { property: 260, description: 360, type: 140, pointsTo: 200, usedBy: 300, standard: 180 },
+    minWidths: { property: 140, description: 140, type: 90, pointsTo: 110, usedBy: 130, standard: 110 },
   });
   readonly columnLabels = COLUMN_LABELS;
   readonly maxUsedBy = MAX_USED_BY;
@@ -506,6 +646,11 @@ export class DataModelPropertiesComponent {
   readonly types = signal(new Set<string>());
   readonly targets = signal(new Set<string>());
   readonly users = signal(new Set<string>());
+  readonly standards = signal(new Set<string>());
+  /** The standard terms the properties map to, as written. */
+  readonly standardOptions = computed(() =>
+    [...new Set(this.state.propertyRows().flatMap(row => row.terms.map(term => term.short)))].sort()
+  );
 
   /** What the search and the filters look for, marked in the names and descriptions. */
   readonly nameTerms = computed(() => [this.query(), this.namedAs()]);
@@ -525,13 +670,68 @@ export class DataModelPropertiesComponent {
   });
   readonly userOptions = computed(() => this._byLabel(this.state.propertyRows().flatMap(row => row.usedBy)));
 
+  /** How far a level of sub-properties is indented, in px: one chevron's width. */
+  readonly indent = 24;
+  /** The properties folded, their sub-properties hidden. */
+  readonly collapsed = signal(new Set<string>());
+  /** Each property with sub-properties, and how many it has. */
+  readonly foldable = computed(() => {
+    const counts = new Map<string, number>();
+    for (const row of this.state.propertyRows()) {
+      if (row.parent) counts.set(row.parent, (counts.get(row.parent) ?? 0) + 1);
+    }
+    return counts;
+  });
+  /**
+   * Whether the table shows the properties as a tree, sub-properties under their parent, folding: nothing searched or
+   * filtered. A search or a filter lists what it finds wherever it is.
+   */
+  readonly folding = computed(
+    () =>
+      !this.query().trim() &&
+      !this.namedAs().trim() &&
+      !this.describedAs().trim() &&
+      !this.types().size &&
+      !this.targets().size &&
+      !this.users().size &&
+      !this.standards().size
+  );
+  readonly allExpanded = computed(() => this.collapsed().size === 0);
+
+  toggleFold(iri: string): void {
+    this.collapsed.update(collapsed => {
+      const next = new Set(collapsed);
+      if (!next.delete(iri)) next.add(iri);
+      return next;
+    });
+  }
+
+  toggleAllFolds(): void {
+    this.collapsed.set(this.allExpanded() ? new Set(this.foldable().keys()) : new Set());
+  }
+
+  /** Whether a folded property is above the row. */
+  private _folded(row: PropertyRow): boolean {
+    const collapsed = this.collapsed();
+    if (!collapsed.size) return false;
+    const parentOf = new Map(this.state.propertyRows().map(other => [other.id, other.parent]));
+    const seen = new Set<string>();
+    for (let up = row.parent; up && !seen.has(up); up = parentOf.get(up)) {
+      if (collapsed.has(up)) return true;
+      seen.add(up);
+    }
+    return false;
+  }
+
   readonly rows = computed(() => {
+    const folding = this.folding();
     const query = this.query().trim().toLowerCase();
     const namedAs = this.namedAs().trim().toLowerCase();
     const describedAs = this.describedAs().trim().toLowerCase();
     const types = this.types();
     const targets = this.targets();
     const users = this.users();
+    const standards = this.standards();
     const shown = this.columns.shown();
     return this.state
       .propertyRows()
@@ -545,7 +745,9 @@ export class DataModelPropertiesComponent {
       )
       .filter(row => !types.size || types.has(row.type))
       .filter(row => !targets.size || targets.has(row.linkTarget ?? NO_TARGET))
-      .filter(row => !users.size || row.usedBy.some(user => users.has(user)));
+      .filter(row => !users.size || row.usedBy.some(user => users.has(user)))
+      .filter(row => !standards.size || row.terms.some(term => standards.has(term.short)))
+      .filter(row => !folding || !this._folded(row));
   });
 
   /** The property whose panel is open, named in the URL like in the graph. */
@@ -653,6 +855,8 @@ export class DataModelPropertiesComponent {
         return !!row.linkTarget && has(this.state.labelOf(row.linkTarget));
       case 'usedBy':
         return row.usedBy.some(iri => has(this.state.labelOf(iri)));
+      case 'standard':
+        return row.terms.some(term => has(term.short) || has(term.vocabulary));
     }
   }
 

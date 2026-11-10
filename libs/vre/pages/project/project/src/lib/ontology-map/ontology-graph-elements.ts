@@ -503,9 +503,55 @@ export interface PropertyRow {
   linkTarget?: string;
   /** The classes that have it, inherited ones included, by label. */
   usedBy: string[];
+  /** The properties it is a sub-property of, knora-api's left out; see `DataModelProperty.superProperties`. */
+  superProperties: string[];
+  /** Its parent among the data model's properties, for a sub-property. */
+  parent?: string;
+  /** How many parents up it is from a property without one: 0, 1 for a sub-property, and so on. */
+  depth: number;
+  /** The terms of standard vocabularies it is a sub-property of, its own: not those of its parents. */
+  terms: StandardTerm[];
+  /** Whether no class has it: a parent of other properties only. */
+  unused?: boolean;
 }
 
-/** Every property the classes of the data model have, each once, by label, for the Properties table. */
+/** A term of a standard vocabulary a property maps to, such as Dublin Core's `title`. */
+export interface StandardTerm {
+  iri: string;
+  /** As it is commonly written, `dcterms:title`; the end of its IRI for a vocabulary not known here. */
+  short: string;
+  /** The vocabulary's name, `Dublin Core`; its host for one not known here. */
+  vocabulary: string;
+}
+
+/** Vocabularies data models map their properties to, with the prefix they are commonly written with. */
+const VOCABULARIES: readonly { prefix: string; namespace: string; name: string }[] = [
+  { prefix: 'dcterms', namespace: 'http://purl.org/dc/terms/', name: 'Dublin Core' },
+  { prefix: 'dc', namespace: 'http://purl.org/dc/elements/1.1/', name: 'Dublin Core' },
+  { prefix: 'foaf', namespace: 'http://xmlns.com/foaf/0.1/', name: 'FOAF' },
+  { prefix: 'bibo', namespace: 'http://purl.org/ontology/bibo/', name: 'Bibliographic Ontology (BIBO)' },
+  { prefix: 'schema', namespace: 'http://schema.org/', name: 'Schema.org' },
+  { prefix: 'schema', namespace: 'https://schema.org/', name: 'Schema.org' },
+  { prefix: 'skos', namespace: 'http://www.w3.org/2004/02/skos/core#', name: 'SKOS' },
+  { prefix: 'crm', namespace: 'http://www.cidoc-crm.org/cidoc-crm/', name: 'CIDOC CRM' },
+  { prefix: 'rdfs', namespace: 'http://www.w3.org/2000/01/rdf-schema#', name: 'RDF Schema' },
+];
+
+/** Whether an IRI names something of a DSP data model, rather than of a standard vocabulary. */
+const isDataModelIri = (iri: string) => /\/ontology\/.+\/v2#/.test(iri);
+
+/** How a term of a standard vocabulary is written, and of which vocabulary. */
+export function standardTermOf(iri: string): StandardTerm {
+  const known = VOCABULARIES.find(vocabulary => iri.startsWith(vocabulary.namespace));
+  if (known) return { iri, short: `${known.prefix}:${iri.slice(known.namespace.length)}`, vocabulary: known.name };
+  const host = /^[a-z]+:\/\/([^/]+)/i.exec(iri)?.[1] ?? iri;
+  return { iri, short: iri.split(/[#/]/).filter(Boolean).pop() ?? iri, vocabulary: host };
+}
+
+/**
+ * Every property the classes of the data model have, each once, for the Properties table: by label, each
+ * sub-property right under its parent, one level deeper.
+ */
 export function propertyRows(graph: DataModelGraph): PropertyRow[] {
   const rows = new Map<string, PropertyRow>();
   const classes = graph.nodes.filter(node => node.kind === 'class').sort((a, b) => a.label.localeCompare(b.label));
@@ -521,12 +567,50 @@ export function propertyRows(graph: DataModelGraph): PropertyRow[] {
         type: property.type,
         linkTarget: property.linkTarget,
         usedBy: [],
+        superProperties: property.superProperties ?? [],
+        depth: 0,
+        terms: [],
       };
       row.usedBy.push(node.id);
       rows.set(property.id, row);
     }
   }
-  return [...rows.values()].sort((a, b) => a.label.localeCompare(b.label) || a.name.localeCompare(b.name));
+  // The parents no class has, so their sub-properties can sit under them.
+  for (const property of graph.unusedProperties ?? []) {
+    if (rows.has(property.id)) continue;
+    rows.set(property.id, {
+      id: property.id,
+      label: property.label,
+      name: localNameOf(property.id),
+      description: property.description,
+      labels: property.labels ?? [],
+      descriptions: property.descriptions ?? [],
+      type: property.type,
+      linkTarget: property.linkTarget,
+      usedBy: [],
+      superProperties: property.superProperties ?? [],
+      depth: 0,
+      terms: [],
+      unused: true,
+    });
+  }
+  const sorted = [...rows.values()].sort((a, b) => a.label.localeCompare(b.label) || a.name.localeCompare(b.name));
+  for (const row of sorted) {
+    row.parent = row.superProperties.find(iri => iri !== row.id && rows.has(iri));
+    row.terms = row.superProperties.filter(iri => !isDataModelIri(iri)).map(standardTermOf);
+  }
+  const tree: PropertyRow[] = [];
+  const placed = new Set<string>();
+  const add = (row: PropertyRow, depth: number) => {
+    if (placed.has(row.id)) return;
+    placed.add(row.id);
+    tree.push({ ...row, depth });
+    for (const sub of sorted) if (sub.parent === row.id) add(sub, depth + 1);
+  };
+  for (const row of sorted) if (!row.parent) add(row, 0);
+  // A loop of sub-properties has no top; its properties still show, at the top level.
+  for (const row of sorted) add(row, 0);
+  return tree;
 }
 
 /** The data model without these classes and their links. */

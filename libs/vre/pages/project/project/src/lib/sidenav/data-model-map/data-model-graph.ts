@@ -34,6 +34,11 @@ export interface DataModelProperty {
   /** The controlled vocabulary (list) the values come from; only set for list properties. */
   list?: string;
   cardinality: Cardinality;
+  /**
+   * The properties it is a sub-property of, knora-api's left out: a property of a data model, or a term of a standard
+   * vocabulary such as Dublin Core's `title`.
+   */
+  superProperties?: string[];
 }
 
 export interface DataModelNode {
@@ -76,6 +81,11 @@ export interface DataModelEdge {
 export interface DataModelGraph {
   nodes: DataModelNode[];
   edges: DataModelEdge[];
+  /**
+   * Properties of the data model that no class has, but that others are sub-properties of: their parents, for the
+   * Properties table to list them too. Their cardinality means nothing.
+   */
+  unusedProperties?: DataModelProperty[];
 }
 
 const SUBCLASS_OF = 'http://www.w3.org/2000/01/rdf-schema#subClassOf';
@@ -197,7 +207,11 @@ export function buildDataModelGraph(
     }
   }
 
-  return { nodes: [...nodes.values()], edges: [...edges.values()] };
+  return {
+    nodes: [...nodes.values()],
+    edges: [...edges.values()],
+    unusedProperties: unusedParents([...nodes.values()], properties, labelOf),
+  };
 }
 
 /** The properties a project declares on a class, not knora-api's, without link values, in their form order. */
@@ -216,22 +230,54 @@ function ownProperties(
         const property = properties[has.propertyIndex] as ResourcePropertyDefinition | undefined;
         if (!property || property.isLinkValueProperty || seen.has(property.id)) return [];
         seen.add(property.id);
-        const objectType = property.objectType ?? '';
-        return [
-          {
-            id: property.id,
-            label: textOf(property, 'labels', 'label', labelOf) || localName(property.id),
-            description: textOf(property, 'comments', 'comment', labelOf),
-            labels: textsOf(property, 'labels'),
-            descriptions: textsOf(property, 'comments'),
-            type: property.isLinkProperty ? 'Link' : localName(objectType).replace(/Value$/, ''),
-            ...(property.isLinkProperty ? { linkTarget: objectType } : {}),
-            ...listOf(property),
-            cardinality: has.cardinality,
-          },
-        ];
+        return [describe(property, has.cardinality, labelOf)];
       })
   );
+}
+
+/** A property as the data model's tables and panels show it. */
+function describe(
+  property: ResourcePropertyDefinition,
+  cardinality: Cardinality,
+  labelOf: (labels: Labels) => string
+): DataModelProperty {
+  const objectType = property.objectType ?? '';
+  return {
+    id: property.id,
+    label: textOf(property, 'labels', 'label', labelOf) || localName(property.id),
+    description: textOf(property, 'comments', 'comment', labelOf),
+    labels: textsOf(property, 'labels'),
+    descriptions: textsOf(property, 'comments'),
+    type: property.isLinkProperty ? 'Link' : localName(objectType).replace(/Value$/, ''),
+    ...(property.isLinkProperty ? { linkTarget: objectType } : {}),
+    ...listOf(property),
+    cardinality,
+    superProperties: (property.subPropertyOf ?? []).filter(iri => !iri.startsWith(Constants.KnoraApiV2)),
+  };
+}
+
+/**
+ * The parents of the classes' properties, and their parents in turn, that no class has: declared in a data model,
+ * not in knora-api, not a link value.
+ */
+function unusedParents(
+  nodes: DataModelNode[],
+  properties: Record<string, PropertyDefinition>,
+  labelOf: (labels: Labels) => string
+): DataModelProperty[] {
+  const used = new Map(nodes.flatMap(node => node.propertyDetails ?? []).map(property => [property.id, property]));
+  const unused = new Map<string, DataModelProperty>();
+  const queue = [...used.values()].flatMap(property => property.superProperties ?? []);
+  while (queue.length) {
+    const iri = queue.shift()!;
+    if (used.has(iri) || unused.has(iri)) continue;
+    const property = properties[iri] as ResourcePropertyDefinition | undefined;
+    if (!property || property.isLinkValueProperty || iri.startsWith(Constants.KnoraApiV2)) continue;
+    const parent = describe(property, Cardinality._0_n, labelOf);
+    unused.set(iri, parent);
+    queue.push(...(parent.superProperties ?? []));
+  }
+  return [...unused.values()];
 }
 
 /** The list a list property takes its values from, named in its `hlist` GUI attribute. */

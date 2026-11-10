@@ -160,9 +160,10 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                           ><mat-icon>format_list_bulleted</mat-icon>{{ use.propertyLabel }}</span
                         >
                         @for (iri of use.classes; track iri) {
-                          <span class="chip" [style.background]="state.colors().get(iri) ?? '#F3F4F6'">{{
-                            state.labelOf(iri)
-                          }}</span>
+                          <span class="chip"
+                            ><span class="tab" [style.background]="state.colors().get(iri) ?? '#F3F4F6'"></span
+                            ><span class="chip-label">{{ state.labelOf(iri) }}</span></span
+                          >
                         }
                       } @empty {
                         <span class="none">{{ r + '.notUsed' | translate }}</span>
