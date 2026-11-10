@@ -33,6 +33,7 @@ import {
   GraphLabels,
   GraphSize,
   linkedWith,
+  dataModelNameOf,
   localNameOf,
   focusGraph,
   searchGraph,
@@ -460,8 +461,11 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [subclassLabel]="t + '.subclassOf' | translate"
                   [canEdit]="canEdit() ?? false"
                   [colors]="colors()"
+                  [currentModel]="selectedName()"
+                  [models]="modelNames()"
                   (classSelected)="openPanel($event)"
                   (closed)="openPanel(undefined)"
+                  (openInModel)="openInModel($event)"
                   (browse)="open($event)"
                   (filter)="filterOn($event)"
                   (propertyHovered)="hoveredProperty.set($event)"
@@ -1230,7 +1234,7 @@ export class OntologyMapPageComponent {
     clearTimeout(this._previewing);
     if (classIri) this.listClosed.set(true);
     this._navigate({
-      [ONTOLOGY_MAP_PARAM.panel]: classIri ? classNameOf(classIri) : null,
+      [ONTOLOGY_MAP_PARAM.panel]: classIri ? this._urlName(classIri) : null,
       [ONTOLOGY_MAP_PARAM.propertyPanel]: null,
     });
   }
@@ -1292,7 +1296,9 @@ export class OntologyMapPageComponent {
       ONTOLOGY_MAP_PARAM.property,
       ONTOLOGY_MAP_PARAM.hideProperty,
     ];
-    this._navigate(Object.fromEntries(params.map(param => [param, filter[param]?.map(classNameOf).join(',') ?? null])));
+    this._navigate(
+      Object.fromEntries(params.map(param => [param, filter[param]?.map(iri => this._urlName(iri)).join(',') ?? null]))
+    );
   }
 
   /** How a menu's ticks are kept: all ticked is no filter; nothing ticked, or ticking within `only`, shows them. */
@@ -1366,7 +1372,35 @@ export class OntologyMapPageComponent {
   }
 
   private _classNamed(name: string): string | undefined {
-    return this.graph()?.nodes.find(node => node.kind === 'class' && classNameOf(node.id) === name)?.id;
+    return this.graph()?.nodes.find(node => this._urlName(node.id) === name)?.id;
+  }
+
+  /**
+   * How the URL names a class: by the end of its IRI, or for a class of another data model, prefixed by that model's
+   * name, as `biblio:Book`. A property is named by the end of its IRI.
+   */
+  private _urlName(iri: string): string {
+    const node = this.graph()?.nodes.find(other => other.id === iri);
+    const model = node && node.kind !== 'class' ? dataModelNameOf(iri) : undefined;
+    return model ? `${model}:${classNameOf(iri)}` : classNameOf(iri);
+  }
+
+  /** The name of the data model shown, such as `beol`. */
+  readonly selectedName = computed(() => {
+    const iri = this.selected()?.iri;
+    return iri ? OntologyService.getOntologyNameFromIri(iri) : '';
+  });
+  /** The names of the project's data models. */
+  readonly modelNames = computed(() => this.ontologies().map(o => OntologyService.getOntologyNameFromIri(o.iri)));
+
+  /** Shows a class of another data model of the project in its own, its panel open; a step in the history. */
+  openInModel(iri: string): void {
+    const model = dataModelNameOf(iri);
+    if (!model) return;
+    this._router.navigate([], {
+      relativeTo: this._route,
+      queryParams: { [ONTOLOGY_MAP_PARAM.ontology]: model, [ONTOLOGY_MAP_PARAM.panel]: classNameOf(iri) },
+    });
   }
 
   setSize(size: GraphSize): void {

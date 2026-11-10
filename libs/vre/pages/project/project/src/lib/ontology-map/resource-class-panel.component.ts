@@ -10,7 +10,7 @@ import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/dat
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
 import { AddPropertyMenuComponent } from './add-property-menu.component';
 import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
-import { localNameOf } from './ontology-graph-elements';
+import { dataModelNameOf, localNameOf } from './ontology-graph-elements';
 import { typeIconOf, typeNameOf } from './property-types';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
@@ -45,6 +45,11 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
           <mat-icon class="class-icon">{{ icon() }}</mat-icon>
           <div class="title">
             <h2 data-cy="class-panel-title">{{ node.label }}</h2>
+            @if (elsewhere()) {
+              <span class="kind" data-cy="class-panel-kind">{{
+                builtIn() ? (t + '.builtIn' | translate) : (t + '.otherModel' | translate: { model: model() })
+              }}</span>
+            }
             <span class="name-line">
               <code class="name" data-cy="class-panel-name">{{ nameOf(classIri()) }}</code>
               <button
@@ -67,7 +72,16 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
           </button>
         </header>
 
-        @if (node.description) {
+        @if (elsewhere()) {
+          <!-- A class of another data model, or a built-in one: where it comes from, and how this one uses it. -->
+          <p class="description" data-cy="class-panel-elsewhere">
+            @if (builtIn()) {
+              {{ t + '.builtInText' | translate }}
+            } @else {
+              {{ t + '.otherModelText' | translate: { current: currentModel(), model: model() } }}
+            }
+          </p>
+        } @else if (node.description) {
           <p class="description">{{ node.description }}</p>
         }
 
@@ -79,70 +93,83 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
           [colors]="colors()"
           (classSelected)="showClass($event)" />
 
-        <div class="group">
-          <h3>{{ t + '.properties' | translate: { count: properties().length } }}</h3>
-          @if (properties().length === 0) {
-            <p class="none">{{ t + '.noProperties' | translate }}</p>
-          }
-          @for (property of properties(); track property.id) {
-            @let open = openProperty() === property.id;
-            <div
-              class="property"
-              [class.open]="open"
-              data-cy="class-panel-property"
-              (mouseenter)="propertyHovered.emit(property.id)"
-              (mouseleave)="propertyHovered.emit(undefined)">
-              <div class="property-line">
-                <button
-                  type="button"
-                  class="property-toggle"
-                  [disabled]="!property.description"
-                  [attr.aria-expanded]="property.description ? open : null"
-                  (click)="toggle(property)">
-                  <mat-icon class="type-icon" [attr.data-type]="property.type">{{ typeIcon(property) }}</mat-icon>
-                  <span class="property-label">{{ property.label }}</span>
-                </button>
-                @if (property.linkTarget; as target) {
+        @if (!elsewhere()) {
+          <div class="group">
+            <h3>{{ t + '.properties' | translate: { count: properties().length } }}</h3>
+            @if (properties().length === 0) {
+              <p class="none">{{ t + '.noProperties' | translate }}</p>
+            }
+            @for (property of properties(); track property.id) {
+              @let open = openProperty() === property.id;
+              <div
+                class="property"
+                [class.open]="open"
+                data-cy="class-panel-property"
+                (mouseenter)="propertyHovered.emit(property.id)"
+                (mouseleave)="propertyHovered.emit(undefined)">
+                <div class="property-line">
                   <button
                     type="button"
-                    class="value link"
-                    [disabled]="!isNavigable(target)"
-                    (click)="showClass(target)">
-                    → {{ labelOf(target) }} · {{ t + '.' + cardinalityKey(property) | translate }}
+                    class="property-toggle"
+                    [disabled]="!property.description"
+                    [attr.aria-expanded]="property.description ? open : null"
+                    (click)="toggle(property)">
+                    <mat-icon class="type-icon" [attr.data-type]="property.type">{{ typeIcon(property) }}</mat-icon>
+                    <span class="property-label">{{ property.label }}</span>
                   </button>
-                } @else {
-                  <span class="value" [attr.data-type]="property.type">
-                    {{ typeName(property) }} · {{ t + '.' + cardinalityKey(property) | translate }}
-                  </span>
-                }
-                @if (canEdit() && isEditable(property)) {
-                  <button
-                    type="button"
-                    class="edit-property"
-                    data-cy="class-panel-edit-property"
-                    [attr.aria-label]="t + '.editProperty' | translate: { property: property.label }"
-                    [matTooltip]="t + '.editProperty' | translate: { property: property.label }"
-                    (click)="editProperty.emit(property.id)">
-                    <mat-icon>edit</mat-icon>
-                  </button>
+                  @if (property.linkTarget; as target) {
+                    <button
+                      type="button"
+                      class="value link"
+                      [disabled]="!isNavigable(target)"
+                      (click)="showClass(target)">
+                      → {{ labelOf(target) }} · {{ t + '.' + cardinalityKey(property) | translate }}
+                    </button>
+                  } @else {
+                    <span class="value" [attr.data-type]="property.type">
+                      {{ typeName(property) }} · {{ t + '.' + cardinalityKey(property) | translate }}
+                    </span>
+                  }
+                  @if (canEdit() && isEditable(property)) {
+                    <button
+                      type="button"
+                      class="edit-property"
+                      data-cy="class-panel-edit-property"
+                      [attr.aria-label]="t + '.editProperty' | translate: { property: property.label }"
+                      [matTooltip]="t + '.editProperty' | translate: { property: property.label }"
+                      (click)="editProperty.emit(property.id)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  }
+                </div>
+                @if (open && property.description) {
+                  <p class="property-description">{{ property.description }}</p>
                 }
               </div>
-              @if (open && property.description) {
-                <p class="property-description">{{ property.description }}</p>
-              }
-            </div>
-          }
-          @if (canEdit()) {
-            <app-add-property-menu [classIri]="classIri()" />
-          }
-        </div>
+            }
+            @if (canEdit()) {
+              <app-add-property-menu [classIri]="classIri()" />
+            }
+          </div>
+        }
 
         <!-- Kept in view at the bottom of the panel, however long the class's properties. -->
         <div class="actions">
-          <button mat-flat-button color="primary" data-cy="class-panel-browse" (click)="browse.emit(classIri())">
-            <mat-icon>view_list</mat-icon>
-            {{ t + '.browse' | translate }}
-          </button>
+          @if (!elsewhere()) {
+            <button mat-flat-button color="primary" data-cy="class-panel-browse" (click)="browse.emit(classIri())">
+              <mat-icon>view_list</mat-icon>
+              {{ t + '.browse' | translate }}
+            </button>
+          } @else if (canOpenModel()) {
+            <button
+              mat-flat-button
+              color="primary"
+              data-cy="class-panel-open-model"
+              (click)="openInModel.emit(classIri())">
+              <mat-icon>open_in_new</mat-icon>
+              {{ t + '.openIn' | translate: { model: model() } }}
+            </button>
+          }
           <span class="spacer"></span>
           <button
             mat-stroked-button
@@ -152,7 +179,7 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
             <mat-icon>filter_alt</mat-icon>
             {{ t + '.filter' | translate }}
           </button>
-          @if (canEdit()) {
+          @if (canEdit() && !elsewhere()) {
             <button mat-stroked-button data-cy="class-panel-edit" (click)="edit.emit(classIri())">
               <mat-icon>edit</mat-icon>
               {{ t + '.edit' | translate }}
@@ -251,6 +278,11 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
       .description {
         margin: 0;
         color: $cool_gray_700;
+      }
+
+      .kind {
+        font-size: 12px;
+        color: $cool_gray_600;
       }
 
       .group {
@@ -449,6 +481,10 @@ export class ResourceClassPanelComponent {
   readonly canEdit = input(false);
   /** A CSS background per class, for the map of its links; see `familyColors`. */
   readonly colors = input<Map<string, string>>(new Map());
+  /** The name of the data model shown, for a class of another one to say which uses it. */
+  readonly currentModel = input('');
+  /** The names of the project's data models, which a class of another one can be opened in. */
+  readonly models = input<readonly string[]>([]);
 
   /** The panel was closed. */
   readonly closed = output<void>();
@@ -464,10 +500,21 @@ export class ResourceClassPanelComponent {
   readonly edit = output<string>();
   /** A property row's pencil was clicked; emits the property IRI. */
   readonly editProperty = output<string>();
+  /** "Open in …" was clicked, on a class of another data model; emits its IRI, to show it in its own. */
+  readonly openInModel = output<string>();
 
   readonly node = computed(() => this.graph().nodes.find(node => node.id === this.classIri()));
   readonly properties = computed(() => this.node()?.propertyDetails ?? []);
   readonly icon = computed(() => representationIcon(this.node()?.representationClass));
+
+  /** Whether the class belongs to another data model, or comes with DSP: shown, not defined, in this one. */
+  readonly elsewhere = computed(() => !!this.node() && this.node()!.kind !== 'class');
+  /** The name of the data model it comes from, such as `biblio`. */
+  readonly model = computed(() => (this.elsewhere() ? (dataModelNameOf(this.classIri()) ?? '') : ''));
+  /** Whether it comes with DSP itself, in knora-api, rather than from a project's data model. */
+  readonly builtIn = computed(() => this.classIri().startsWith(Constants.KnoraApiV2));
+  /** Whether its data model is one of the project's, so it can be opened there. */
+  readonly canOpenModel = computed(() => !this.builtIn() && this.models().includes(this.model()));
 
   /** The property whose description is shown, for the class it was opened on. */
   private readonly _open = signal<{ classIri: string; propertyId: string } | undefined>(undefined);
@@ -539,13 +586,13 @@ export class ResourceClassPanelComponent {
     }));
   }
 
-  /** The name in the data model, such as `linkToVideo`. */
+  /** The name in the data model, such as `linkToVideo`; for a class of another one, prefixed, as `biblio:Book`. */
   nameOf(iri: string): string {
-    return localNameOf(iri);
+    return this.elsewhere() && this.model() ? `${this.model()}:${localNameOf(iri)}` : localNameOf(iri);
   }
 
   copyName(iri: string): void {
-    this._clipboard.copy(localNameOf(iri));
+    this._clipboard.copy(this.nameOf(iri));
     this._notification.openSnackBar(this._translate.instant('pages.ontologyMap.nameCopied'));
   }
 }

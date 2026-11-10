@@ -719,6 +719,11 @@
       "noDataModels": "This project does not have any data model yet.",
       "classPanel": {
         "close": "Close the class details",
+        "otherModel": "Resource class · another data model: {{model}}",
+        "builtIn": "Built-in DSP class",
+        "otherModelText": "{{current}} does not define this class: it links to it in {{model}}, another data model.",
+        "builtInText": "This class comes with DSP itself, and every project can use it.",
+        "openIn": "Open in {{model}}",
         "properties": "Properties · {{count}}",
         "noProperties": "This class has no properties of its own.",
         "required": "required",

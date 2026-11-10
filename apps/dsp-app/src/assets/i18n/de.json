@@ -719,6 +719,11 @@
       "noDataModels": "Dieses Projekt hat noch kein Datenmodell.",
       "classPanel": {
         "close": "Klassendetails schliessen",
+        "otherModel": "Ressourcenklasse · anderes Datenmodell: {{model}}",
+        "builtIn": "Eingebaute DSP-Klasse",
+        "otherModelText": "{{current}} definiert diese Klasse nicht: Es verknüpft sie aus {{model}}, einem anderen Datenmodell.",
+        "builtInText": "Diese Klasse gehört zu DSP selbst, und jedes Projekt kann sie verwenden.",
+        "openIn": "In {{model}} öffnen",
         "properties": "Eigenschaften · {{count}}",
         "noProperties": "Diese Klasse hat keine eigenen Eigenschaften.",
         "required": "erforderlich",

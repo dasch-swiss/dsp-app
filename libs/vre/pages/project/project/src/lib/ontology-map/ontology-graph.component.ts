@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import type { Core, EdgeSingular, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
@@ -796,12 +797,21 @@ export class OntologyGraphComponent {
     const shapes = legend.families || legend.other || legend.link;
     return shapes || legend.files.length ? { ...legend, shapes } : undefined;
   });
-  /** Classes the user may open; other data models' classes and knora-api's are drawn but not clickable. */
+  /** Classes of the data model the user may open and filter on. */
   private readonly _navigable = computed(
     () =>
       new Set(
         this.graph()
           .nodes.filter(node => node.navigable && node.kind === 'class')
+          .map(node => node.id)
+      )
+  );
+  /** Classes whose panel opens on a click: the data model's, and those of other data models; not "Any resource". */
+  private readonly _openable = computed(
+    () =>
+      new Set(
+        this.graph()
+          .nodes.filter(node => (node.kind === 'class' ? node.navigable : node.id !== Constants.Resource))
           .map(node => node.id)
       )
   );
@@ -824,7 +834,7 @@ export class OntologyGraphComponent {
         });
         cy.on('tap', 'node', event => {
           const id = event.target.id();
-          if (this._navigable().has(id)) this.classSelected.emit(id);
+          if (this._openable().has(id)) this.classSelected.emit(id);
         });
         cy.on('dbltap', 'node', event => {
           const id = event.target.id();
@@ -871,7 +881,7 @@ export class OntologyGraphComponent {
         cy.on('mouseover', 'node', event => {
           event.target.connectedEdges().addClass('highlighted');
           event.target.ancestors('.island').union(event.target.filter('.island')).addClass('hovered');
-          if (this._navigable().has(event.target.id())) container.style.cursor = 'pointer';
+          if (this._openable().has(event.target.id())) container.style.cursor = 'pointer';
           // An island drags, with its classes; it only gets the pointer while islands are on.
           else if (event.target.is('.island')) container.style.cursor = 'grab';
         });

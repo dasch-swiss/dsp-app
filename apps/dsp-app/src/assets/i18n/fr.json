@@ -719,6 +719,11 @@
       "noDataModels": "Ce projet n'a pas encore de modèle de données.",
       "classPanel": {
         "close": "Fermer les détails de la classe",
+        "otherModel": "Classe de ressource · autre modèle de données : {{model}}",
+        "builtIn": "Classe intégrée de DSP",
+        "otherModelText": "{{current}} ne définit pas cette classe : il la relie depuis {{model}}, un autre modèle de données.",
+        "builtInText": "Cette classe fait partie de DSP, et tout projet peut l’utiliser.",
+        "openIn": "Ouvrir dans {{model}}",
         "properties": "Propriétés · {{count}}",
         "noProperties": "Cette classe n'a pas de propriétés propres.",
         "required": "obligatoire",
