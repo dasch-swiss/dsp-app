@@ -1193,7 +1193,12 @@ export class OntologyGraphComponent {
    */
   private _room(cy: Core): { x: number; y: number; w: number; h: number } {
     const legend = this._legend()?.nativeElement.offsetHeight ?? 0;
-    const panel = untracked(() => this.fullWidth()) ? 0 : Math.min(untracked(() => this.covered()), cy.width() / 2);
+    const panel = untracked(() => this.fullWidth())
+      ? 0
+      : Math.min(
+          untracked(() => this.covered()),
+          cy.width() / 2
+        );
     return {
       x: FIT_PADDING,
       y: TOOLBAR_ROOM,
@@ -1209,7 +1214,10 @@ export class OntologyGraphComponent {
    * undone.
    */
   private _keepInView(cy: Core, animate: boolean): void {
-    const covered = Math.min(untracked(() => this.covered()), cy.width() / 2);
+    const covered = Math.min(
+      untracked(() => this.covered()),
+      cy.width() / 2
+    );
     const focus = untracked(() => this.panelFocus());
     let dx = -this._panned;
     if (untracked(() => this.fullWidth()) && covered > 0 && focus) {
