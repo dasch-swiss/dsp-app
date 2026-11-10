@@ -10,6 +10,7 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { localNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
 import { PropertyLinkEnd, PropertyLinksComponent } from './property-links.component';
 import { typeIconOf, typeNameOf } from './property-types';
+import { TabShadePipe } from './tab-shade.pipe';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1]: 'required',
@@ -25,7 +26,7 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 @Component({
   selector: 'app-property-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, PropertyLinksComponent, TranslatePipe],
+  imports: [TabShadePipe, MatButton, MatIcon, MatIconButton, MatTooltip, PropertyLinksComponent, TranslatePipe],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.propertyPanel';
@@ -133,7 +134,10 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                     data-cy="property-panel-target"
                     [disabled]="!isNavigable(target)"
                     (click)="classSelected.emit(target)">
-                    <span class="tab" aria-hidden="true" [style.background]="colors().get(target) ?? 'white'"></span>
+                    <span
+                      class="tab"
+                      aria-hidden="true"
+                      [style.background]="colors().get(target) | tabShade: 'white'"></span>
                     <span class="chip-label">{{ labelOf(target) }}</span>
                     @if (isNavigable(target)) {
                       <mat-icon>chevron_right</mat-icon>
@@ -413,7 +417,7 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         align-items: stretch;
         gap: 2px;
         padding: 0 6px 0 0;
-        border: 1px solid #475569;
+        border: 1px solid #d1d5db;
         border-radius: 6px;
         overflow: hidden;
         background: white;
@@ -424,8 +428,7 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 
         .tab {
           flex: none;
-          width: 8px;
-          border-right: 1px solid #475569;
+          width: 12px;
         }
 
         .chip-label {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TabShadePipe } from './tab-shade.pipe';
 
 /** A class linked with the class shown, once, with the properties joining them. */
 export interface ClassConnection {
@@ -40,7 +41,7 @@ interface Placed extends ClassConnection {
 @Component({
   selector: 'app-class-connections',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [TabShadePipe, TranslatePipe],
   template: `
     @let t = 'pages.ontologyMap.classPanel';
     <div class="card" data-cy="class-connections">
@@ -78,7 +79,7 @@ interface Placed extends ClassConnection {
                 class="box"
                 data-cy="class-connection"
                 [disabled]="!place.navigable"
-                [style.--tab]="colors().get(place.id) ?? '#FFFFFF'"
+                [style.--tab]="colors().get(place.id) | tabShade: '#FFFFFF'"
                 (click)="classSelected.emit(place.id)">
                 {{ place.label }}
               </button>
@@ -103,7 +104,7 @@ interface Placed extends ClassConnection {
           [style.top.px]="middle() - BOX / 2 - 4"
           [style.left.%]="columns().center[0]"
           [style.width.%]="columns().center[1] - columns().center[0]">
-          <span class="box" [style.--tab]="colors().get(classIri()) ?? '#FFFFFF'">{{ classLabel() }}</span>
+          <span class="box" [style.--tab]="colors().get(classIri()) | tabShade: '#FFFFFF'">{{ classLabel() }}</span>
           @if (incoming().length) {
             <span class="arrow" aria-hidden="true"></span>
           }
@@ -181,7 +182,7 @@ interface Placed extends ClassConnection {
         height: ${BOX}px;
         box-sizing: border-box;
         padding: 0 8px;
-        border: 1px solid #475569;
+        border: 1px solid #d1d5db;
         border-radius: 6px;
         font: inherit;
         font-size: 12px;
@@ -197,7 +198,7 @@ interface Placed extends ClassConnection {
         // As the Overview draws a class with "Colour as a tab": white, a slate border, its colour in a tab at the left.
         position: relative;
         padding-left: 16px;
-        border-color: #475569;
+        border-color: #d1d5db;
         background: white;
 
         &::before {
@@ -206,8 +207,7 @@ interface Placed extends ClassConnection {
           top: 0;
           bottom: 0;
           left: 0;
-          width: 8px;
-          border-right: 1px solid #475569;
+          width: 12px;
           background: var(--tab, white);
         }
       }

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
 
@@ -9,7 +10,7 @@ import { HighlightPipe } from './highlight.pipe';
  */
 @Component({
   selector: 'app-class-chips',
-  imports: [HighlightPipe],
+  imports: [TabShadePipe, HighlightPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <span class="cut">
@@ -21,7 +22,10 @@ import { HighlightPipe } from './highlight.pipe';
           [class.on]="iri === selected()"
           (click)="$event.stopPropagation(); classSelected.emit(iri)"
           (keydown.enter)="$event.stopPropagation()">
-          <span class="tab" aria-hidden="true" [style.background]="state.colors().get(iri) ?? '#F3F4F6'"></span>
+          <span
+            class="tab"
+            aria-hidden="true"
+            [style.background]="state.colors().get(iri) | tabShade: '#F3F4F6'"></span>
           <span class="label">
             @for (part of state.labelOf(iri) | highlight: highlight(); track $index) {
               @if (part.match) {
@@ -76,7 +80,7 @@ import { HighlightPipe } from './highlight.pipe';
         display: inline-flex;
         align-items: stretch;
         padding: 0;
-        border: 1px solid #475569;
+        border: 1px solid #d1d5db;
         border-radius: 4px;
         overflow: hidden;
         background: white;
@@ -88,8 +92,7 @@ import { HighlightPipe } from './highlight.pipe';
 
         .tab {
           flex: none;
-          width: 6px;
-          border-right: 1px solid #475569;
+          width: 10px;
         }
 
         .label {

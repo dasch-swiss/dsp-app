@@ -20,6 +20,7 @@ import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/v
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, filter, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
@@ -39,6 +40,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
   selector: 'app-data-model-lists',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TabShadePipe,
     HighlightPipe,
     LanguagesMenuComponent,
     LanguageTextsComponent,
@@ -161,7 +163,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                         >
                         @for (iri of use.classes; track iri) {
                           <span class="chip"
-                            ><span class="tab" [style.background]="state.colors().get(iri) ?? '#F3F4F6'"></span
+                            ><span class="tab" [style.background]="state.colors().get(iri) | tabShade: '#F3F4F6'"></span
                             ><span class="chip-label">{{ state.labelOf(iri) }}</span></span
                           >
                         }

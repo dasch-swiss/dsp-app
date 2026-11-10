@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TabShadePipe } from './tab-shade.pipe';
 
 /** One link the property makes, from a class that has it to the class it points at. */
 export interface PropertyLink {
@@ -37,7 +38,7 @@ interface Placed extends PropertyLinkEnd {
 @Component({
   selector: 'app-property-links',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [TabShadePipe, TranslatePipe],
   template: `
     @let t = 'pages.ontologyMap.propertyPanel';
     <div class="card" data-cy="property-links">
@@ -67,7 +68,7 @@ interface Placed extends PropertyLinkEnd {
                 class="box"
                 data-cy="property-link-class"
                 [disabled]="!place.navigable"
-                [style.--tab]="colors().get(place.id) ?? '#FFFFFF'"
+                [style.--tab]="colors().get(place.id) | tabShade: '#FFFFFF'"
                 (click)="classSelected.emit(place.id)">
                 {{ place.label }}
               </button>
@@ -131,7 +132,7 @@ interface Placed extends PropertyLinkEnd {
         height: ${BOX}px;
         box-sizing: border-box;
         padding: 0 8px;
-        border: 1px solid #475569;
+        border: 1px solid #d1d5db;
         border-radius: 6px;
         font: inherit;
         font-size: 12px;
@@ -158,7 +159,7 @@ interface Placed extends PropertyLinkEnd {
         // As the Overview draws a class with "Colour as a tab": white, a slate border, its colour in a tab at the left.
         position: relative;
         padding-left: 16px;
-        border-color: #475569;
+        border-color: #d1d5db;
         background: white;
 
         &::before {
@@ -167,8 +168,7 @@ interface Placed extends PropertyLinkEnd {
           top: 0;
           bottom: 0;
           left: 0;
-          width: 8px;
-          border-right: 1px solid #475569;
+          width: 12px;
           background: var(--tab, white);
         }
       }

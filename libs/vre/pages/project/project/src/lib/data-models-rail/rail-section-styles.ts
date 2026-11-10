@@ -140,7 +140,7 @@ export const RAIL_SECTION_STYLES = `
   .chip {
     display: inline-flex;
     align-items: stretch;
-    border: 1px solid #475569;
+    border: 1px solid #d1d5db;
     border-radius: 4px;
     overflow: hidden;
     background: white;
@@ -150,8 +150,7 @@ export const RAIL_SECTION_STYLES = `
 
     .tab {
       flex: none;
-      width: 6px;
-      border-right: 1px solid #475569;
+      width: 10px;
     }
 
     .chip-label {
