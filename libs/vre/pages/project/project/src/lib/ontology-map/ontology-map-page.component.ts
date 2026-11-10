@@ -12,6 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -127,6 +128,8 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
     MatMenuContent,
     MatMenuItem,
     MatMenuTrigger,
+    MatButtonToggle,
+    MatButtonToggleGroup,
     MatSlideToggle,
     MatTooltip,
     OntologyGraphComponent,
@@ -306,22 +309,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
 
                 <!-- How to show it, and the Export menu: top right, left of an open panel. -->
                 <div class="top-right">
-                  <div class="float display" role="toolbar" [attr.aria-label]="m + '.display' | translate">
-                    @for (option of sizes; track option) {
-                      <button
-                        type="button"
-                        class="tool size"
-                        [attr.data-size]="option"
-                        [class.on]="size() === option"
-                        [attr.aria-pressed]="size() === option"
-                        [attr.data-cy]="'ontology-map-size-' + option"
-                        [attr.aria-label]="m + '.sizes.' + option | translate"
-                        [matTooltip]="m + '.sizes.' + option | translate"
-                        (click)="setSize(option)">
-                        A
-                      </button>
-                    }
-                  </div>
                   <button
                     type="button"
                     class="float export"
@@ -336,6 +323,27 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   </button>
                   <!-- View options, as in the tables: what the graph writes, then how links, islands and colours look. -->
                   <mat-menu #labelsMenu="matMenu" xPosition="before" class="view-menu">
+                    <span class="menu-heading">{{ m + '.viewMenu.textSize' | translate }}</span>
+                    <!-- How big classes, links and their texts are drawn; choosing keeps the menu open. -->
+                    <div
+                      class="menu-toggle"
+                      (click)="$event.stopPropagation()"
+                      (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
+                      <mat-button-toggle-group
+                        class="size-choice"
+                        hideSingleSelectionIndicator
+                        [attr.aria-label]="m + '.viewMenu.textSize' | translate"
+                        [value]="size()"
+                        (change)="setSize($event.value)">
+                        @for (option of sizes; track option) {
+                          <mat-button-toggle [value]="option" [attr.data-cy]="'ontology-map-size-' + option">
+                            <span class="size" [attr.data-size]="option" aria-hidden="true">A</span>
+                            {{ m + '.sizes.' + option | translate }}
+                          </mat-button-toggle>
+                        }
+                      </mat-button-toggle-group>
+                    </div>
+                    <hr class="menu-divider" />
                     <span class="menu-heading">{{ m + '.labelsMenu.heading' | translate }}</span>
                     @for (option of labelOptions; track option) {
                       @let chosen = labels() === option;
@@ -860,20 +868,27 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         }
       }
 
-      // Text sizes read as one letter, drawn at three sizes.
+      // In View options: the three text sizes side by side, each with its letter drawn at its size.
+      .size-choice {
+        --mat-button-toggle-height: 34px;
+        --mat-button-toggle-label-text-size: 13px;
+        white-space: nowrap;
+      }
+
       .size {
+        margin-right: 4px;
         font-weight: 500;
 
         &[data-size='small'] {
-          font-size: 12px;
+          font-size: 11px;
         }
 
         &[data-size='normal'] {
-          font-size: 16px;
+          font-size: 14px;
         }
 
         &[data-size='large'] {
-          font-size: 20px;
+          font-size: 17px;
         }
       }
 

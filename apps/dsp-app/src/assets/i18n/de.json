@@ -779,6 +779,7 @@
       "islandsToggle": "Inseln hervorheben und verschieben",
       "colourTab": "Farbe als Lasche",
       "viewMenu": {
+        "textSize": "Textgrösse",
         "links": "Verknüpfungen",
         "islands": "Inseln",
         "colours": "Farben",
@@ -798,7 +799,6 @@
         "type": "Typ",
         "from": "Von"
       },
-      "display": "Darstellung",
       "zoom": "Zoom",
       "zoomIn": "Vergrössern",
       "zoomOut": "Verkleinern",

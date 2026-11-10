@@ -779,6 +779,7 @@
       "islandsToggle": "Evidenzia e sposta le isole",
       "colourTab": "Colore come linguetta",
       "viewMenu": {
+        "textSize": "Dimensione del testo",
         "links": "Collegamenti",
         "islands": "Isole",
         "colours": "Colori",
@@ -798,7 +799,6 @@
         "type": "Tipo",
         "from": "Da"
       },
-      "display": "Visualizzazione",
       "zoom": "Zoom",
       "zoomIn": "Ingrandisci",
       "zoomOut": "Riduci",

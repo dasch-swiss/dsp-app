@@ -779,6 +779,7 @@
       "islandsToggle": "Highlight and move islands",
       "colourTab": "Colour as a tab",
       "viewMenu": {
+        "textSize": "Text size",
         "links": "Links",
         "islands": "Islands",
         "colours": "Colours",
@@ -798,7 +799,6 @@
         "type": "Type",
         "from": "From"
       },
-      "display": "Display",
       "zoom": "Zoom",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",

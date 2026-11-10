@@ -779,6 +779,7 @@
       "islandsToggle": "Mettre en évidence et déplacer les îlots",
       "colourTab": "Couleur en onglet",
       "viewMenu": {
+        "textSize": "Taille du texte",
         "links": "Liens",
         "islands": "Îlots",
         "colours": "Couleurs",
@@ -798,7 +799,6 @@
         "type": "Type",
         "from": "De"
       },
-      "display": "Affichage",
       "zoom": "Zoom",
       "zoomIn": "Zoom avant",
       "zoomOut": "Zoom arrière",
