@@ -79,7 +79,9 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
       group: 'nodes',
       data: {
         id: node.id,
-        ...texts(label, node.id),
+        ...(node.kind !== 'class' && node.id !== Constants.Resource
+          ? externalTexts(label, node.id)
+          : texts(label, node.id)),
         color: family ? familyColor(family) : (options.colors.get(node.id) ?? '#FFFFFF'),
         ...(hue && texture ? { dark: hue.dark, texture: textureImage(texture, hue.dark, family.sub), icon } : {}),
         // In the Colour tab look, every class of the data model shows its family's colour as a tab.
@@ -157,6 +159,22 @@ export const MAX_PARALLEL_LINKS = 4;
 function texts(label: string, iri: string): { label: string; name: string; both: string } {
   const name = localNameOf(iri);
   return { label, name, both: `${label}\n${name}` };
+}
+
+/** The data model a class IRI belongs to, by name, as in `…/ontology/0801/biblio/v2#Book`; none if not of that form. */
+export function dataModelNameOf(iri: string): string | undefined {
+  return /\/([^/#]+)\/v2#/.exec(iri)?.[1];
+}
+
+/**
+ * A class of another data model says which: its label over the data model's name in brackets; its name prefixed by
+ * the data model's, as in `biblio:Book`.
+ */
+function externalTexts(label: string, iri: string): { label: string; name: string; both: string } {
+  const model = dataModelNameOf(iri);
+  if (!model) return texts(label, iri);
+  const name = `${model}:${localNameOf(iri)}`;
+  return { label: `${label}\n(${model})`, name, both: `${label}\n${name}` };
 }
 
 const islandId = (index: number) => `island:${index}`;

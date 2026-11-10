@@ -2,6 +2,7 @@ import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
   classRows,
+  dataModelNameOf,
   focusGraph,
   graphScale,
   linkedWith,
@@ -100,6 +101,21 @@ describe('toGraphElements with many links between two classes', () => {
 
     expect(edges.map(e => e.data['label'])).toEqual(['5 links', 'Link 0', 'Link 1']);
     expect(edges[0].classes).toBe('links');
+  });
+});
+
+describe('a class of another data model', () => {
+  const iri = 'http://api.dasch.swiss/ontology/0801/biblio/v2#BookContent';
+  const [element] = toGraphElements(
+    { nodes: [{ id: iri, label: 'Book Content', kind: 'external', navigable: false }], edges: [] },
+    { colors: new Map(), anyResourceLabel: 'Any resource' }
+  );
+
+  it('names its data model under its label, and before its name', () => {
+    expect(dataModelNameOf(iri)).toBe('biblio');
+    expect(element.data['label']).toBe('Book Content\n(biblio)');
+    expect(element.data['name']).toBe('biblio:BookContent');
+    expect(element.data['both']).toBe('Book Content\nbiblio:BookContent');
   });
 });
 
