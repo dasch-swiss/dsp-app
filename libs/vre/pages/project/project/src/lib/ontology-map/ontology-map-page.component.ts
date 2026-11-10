@@ -324,15 +324,16 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                     type="button"
                     class="float export"
                     data-cy="ontology-map-labels"
-                    [attr.aria-label]="m + '.labelsMenu.title' | translate"
-                    [matTooltip]="m + '.labelsMenu.title' | translate"
+                    [attr.aria-label]="'pages.dataBrowser.viewOptions.title' | translate"
+                    [matTooltip]="'pages.dataBrowser.viewOptions.title' | translate"
                     [matTooltipDisabled]="!panelOpen()"
                     [matMenuTriggerFor]="labelsMenu">
-                    <mat-icon>label</mat-icon>
-                    <span class="button-text">{{ m + '.labelsMenu.title' | translate }}</span>
+                    <mat-icon>tune</mat-icon>
+                    <span class="button-text">{{ 'pages.dataBrowser.viewOptions.title' | translate }}</span>
                     <mat-icon class="drop">arrow_drop_down</mat-icon>
                   </button>
-                  <mat-menu #labelsMenu="matMenu" xPosition="before">
+                  <!-- View options, as in the tables: what the graph writes, then how links, islands and colours look. -->
+                  <mat-menu #labelsMenu="matMenu" xPosition="before" class="view-menu">
                     <span class="menu-heading">{{ m + '.labelsMenu.heading' | translate }}</span>
                     @for (option of labelOptions; track option) {
                       @let chosen = labels() === option;
@@ -355,27 +356,29 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                         </span>
                       </button>
                     }
-                    <hr class="menu-divider" />
-                    <div class="menu-toggle" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
-                      <mat-slide-toggle
-                        data-cy="ontology-map-level-labels"
-                        [checked]="levelLabels()"
-                        (change)="setLevelLabels($event.checked)">
-                        {{ m + '.levelLabels' | translate }}
-                      </mat-slide-toggle>
-                      <mat-slide-toggle
-                        data-cy="ontology-map-islands"
-                        [checked]="islands()"
-                        (change)="setIslands($event.checked)">
-                        {{ m + '.islandsToggle' | translate }}
-                      </mat-slide-toggle>
-                      <mat-slide-toggle
-                        data-cy="ontology-map-colour-tab"
-                        [checked]="colourTab()"
-                        (change)="setColourTab($event.checked)">
-                        {{ m + '.colourTab' | translate }}
-                      </mat-slide-toggle>
-                    </div>
+                    @for (
+                      option of [
+                        { section: 'links', key: 'levelLabels', cy: 'level-labels', on: levelLabels() },
+                        { section: 'islands', key: 'islandsToggle', cy: 'islands', on: islands() },
+                        { section: 'colours', key: 'colourTab', cy: 'colour-tab', on: colourTab() },
+                      ];
+                      track option.key
+                    ) {
+                      <hr class="menu-divider" />
+                      <span class="menu-heading">{{ m + '.viewMenu.' + option.section | translate }}</span>
+                      <!-- A switch keeps the menu open, to see the graph change behind it. -->
+                      <div class="menu-toggle" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                        <mat-slide-toggle
+                          [attr.data-cy]="'ontology-map-' + option.cy"
+                          [checked]="option.on"
+                          (change)="setViewOption(option.key, $event.checked)">
+                          <span class="export-item">
+                            <span>{{ m + '.' + option.key | translate }}</span>
+                            <span class="export-hint">{{ m + '.viewMenu.' + option.key + 'Hint' | translate }}</span>
+                          </span>
+                        </mat-slide-toggle>
+                      </div>
+                    }
                   </mat-menu>
                   <button
                     type="button"
@@ -640,7 +643,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         }
       }
 
-      // Beside an open panel the corner is narrower: Labels and Export keep their icons only.
+      // Beside an open panel the corner is narrower: View options and Export keep their icons only.
       .top-bar.beside-panel .button-text {
         display: none;
       }
@@ -655,8 +658,14 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
       }
 
       .menu-toggle {
-        padding: 6px 16px 8px;
+        padding: 2px 16px 8px;
         font-size: 13px;
+
+        // The switch's text and its hint on two lines, the switch beside both.
+        .export-item {
+          max-width: 240px;
+          white-space: normal;
+        }
       }
 
       .export-entry mat-icon.chosen {
@@ -1378,6 +1387,13 @@ export class OntologyMapPageComponent {
   setIslands(islands: boolean): void {
     this.islands.set(islands);
     store(ISLANDS_KEY, String(islands));
+  }
+
+  /** A switch of the View options menu. */
+  setViewOption(key: string, on: boolean): void {
+    if (key === 'levelLabels') this.setLevelLabels(on);
+    else if (key === 'islandsToggle') this.setIslands(on);
+    else if (key === 'colourTab') this.setColourTab(on);
   }
 
   setColourTab(colourTab: boolean): void {

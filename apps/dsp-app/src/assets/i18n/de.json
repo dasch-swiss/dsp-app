@@ -772,7 +772,15 @@
       "propertiesChosen": "{{count}} Eigenschaften",
       "levelLabels": "Verknüpfungsbeschriftungen waagrecht",
       "islandsToggle": "Inseln hervorheben und verschieben",
-      "colourTab": "Familienfarbe als Lasche",
+      "colourTab": "Farbe als Lasche",
+      "viewMenu": {
+        "links": "Verknüpfungen",
+        "islands": "Inseln",
+        "colours": "Farben",
+        "levelLabelsHint": "Leichter lesbar als entlang der Linie",
+        "islandsToggleHint": "Insel beim Überfahren einrahmen, mit ihren Klassen verschieben",
+        "colourTabHint": "Weisse Kästen, die Farbe als Lasche links"
+      },
       "propertyPanel": {
         "close": "Details der Eigenschaft schliessen",
         "pointsTo": "Verweist auf",
@@ -820,7 +828,6 @@
         "exportFailed": "Das Bild konnte nicht erstellt werden."
       },
       "labelsMenu": {
-        "title": "Beschriftung",
         "heading": "Auf Klassen und Verknüpfungen",
         "labels": "Bezeichnungen",
         "labelsHint": "Wie man sie liest",

@@ -772,7 +772,15 @@
       "propertiesChosen": "{{count}} properties",
       "levelLabels": "Horizontal link labels",
       "islandsToggle": "Highlight and move islands",
-      "colourTab": "Family colour as a tab",
+      "colourTab": "Colour as a tab",
+      "viewMenu": {
+        "links": "Links",
+        "islands": "Islands",
+        "colours": "Colours",
+        "levelLabelsHint": "Easier to read than along the line",
+        "islandsToggleHint": "Frame an island on hover, drag it with its classes",
+        "colourTabHint": "White boxes, the colour as a tab on the left"
+      },
       "propertyPanel": {
         "close": "Close the property details",
         "pointsTo": "Points to",
@@ -820,7 +828,6 @@
         "exportFailed": "The image could not be made."
       },
       "labelsMenu": {
-        "title": "Labels",
         "heading": "Write on classes and links",
         "labels": "Labels",
         "labelsHint": "As people read them",

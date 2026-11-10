@@ -772,7 +772,15 @@
       "propertiesChosen": "{{count}} propriétés",
       "levelLabels": "Libellés des liens à l’horizontale",
       "islandsToggle": "Mettre en évidence et déplacer les îlots",
-      "colourTab": "Couleur de famille en onglet",
+      "colourTab": "Couleur en onglet",
+      "viewMenu": {
+        "links": "Liens",
+        "islands": "Îlots",
+        "colours": "Couleurs",
+        "levelLabelsHint": "Plus lisibles que le long de la ligne",
+        "islandsToggleHint": "Encadrer un îlot au survol, le déplacer avec ses classes",
+        "colourTabHint": "Cases blanches, la couleur en onglet à gauche"
+      },
       "propertyPanel": {
         "close": "Fermer les détails de la propriété",
         "pointsTo": "Pointe vers",
@@ -820,7 +828,6 @@
         "exportFailed": "L’image n’a pas pu être créée."
       },
       "labelsMenu": {
-        "title": "Libellés",
         "heading": "Écrire sur les classes et les liens",
         "labels": "Libellés",
         "labelsHint": "Tels qu’on les lit",

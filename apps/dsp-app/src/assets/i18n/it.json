@@ -772,7 +772,15 @@
       "propertiesChosen": "{{count}} proprietà",
       "levelLabels": "Etichette dei collegamenti orizzontali",
       "islandsToggle": "Evidenzia e sposta le isole",
-      "colourTab": "Colore della famiglia come linguetta",
+      "colourTab": "Colore come linguetta",
+      "viewMenu": {
+        "links": "Collegamenti",
+        "islands": "Isole",
+        "colours": "Colori",
+        "levelLabelsHint": "Più leggibili che lungo la linea",
+        "islandsToggleHint": "Evidenzia un'isola al passaggio, spostala con le sue classi",
+        "colourTabHint": "Riquadri bianchi, il colore come linguetta a sinistra"
+      },
       "propertyPanel": {
         "close": "Chiudi i dettagli della proprietà",
         "pointsTo": "Punta a",
@@ -820,7 +828,6 @@
         "exportFailed": "Non è stato possibile creare l’immagine."
       },
       "labelsMenu": {
-        "title": "Etichette",
         "heading": "Scrivere su classi e collegamenti",
         "labels": "Etichette",
         "labelsHint": "Come si leggono",
