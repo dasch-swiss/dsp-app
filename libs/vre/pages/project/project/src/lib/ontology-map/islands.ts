@@ -831,7 +831,8 @@ function linkCrossings(island: NodeSingular): number {
 
 /**
  * Places an island's blocks where the force layout left them, the island given a shape, `aspect` its width over its
- * height: stretched one way, squeezed the other, as big as before; then as tight as its links' labels allow.
+ * height: stretched one way, squeezed the other, as big as before; then as tight as its links' labels allow. Its
+ * satellites go where they grow it least, then it is flattened on its limiting side; see `squeeze`.
  */
 function placeIsland(island: LinkedIsland, aspect: number, room: Room): void {
   const centers = new Map([...island.centers].map(([id, { x, y }]) => [id, { x, y }]));
@@ -856,7 +857,74 @@ function placeIsland(island: LinkedIsland, aspect: number, room: Room): void {
     const center = centers.get(block.id)!;
     placeBlock(block, center.x - block.w / 2, center.y - block.h / 2, room);
   }
-  placeSatellites(island, centers, room);
+  placeSatellites(island, centers, room, aspect);
+  // Then flattened on the side that limits how big it shows, satellites and all.
+  const all = [...island.blocks, ...island.satellites.map(satellite => satellite.block)].filter(block =>
+    centers.has(block.id)
+  );
+  if (squeeze(all, centers, island.links, aspect, room.block)) {
+    for (const block of all) {
+      const center = centers.get(block.id)!;
+      placeBlock(block, center.x - block.w / 2, center.y - block.h / 2, room);
+    }
+  }
+}
+
+/** How much the island is flattened at each step of `squeeze`, and at most how many steps. */
+const SQUEEZE_STEP = 0.9;
+const SQUEEZE_STEPS = 15;
+/** How much less two blocks may overlap on the other side and still be pushed apart along the preferred one. */
+const PREFERRED = 3;
+
+/** The box round blocks at their centres. */
+function boundsOf(blocks: Block[], centers: Map<string, Point>): Bounds {
+  const rects = blocks.map(block => rectAt(centers.get(block.id)!, block));
+  return {
+    x1: Math.min(...rects.map(r => r.x1)),
+    y1: Math.min(...rects.map(r => r.y1)),
+    x2: Math.max(...rects.map(r => r.x2)),
+    y2: Math.max(...rects.map(r => r.y2)),
+  };
+}
+
+/** How wide a room of shape `aspect` must be to show `box`: the bigger, the smaller the graph is drawn. */
+const extentOf = (box: Bounds, aspect: number) => Math.max(box.x2 - box.x1, (box.y2 - box.y1) * aspect);
+
+/**
+ * Flattens the blocks, step by step, on the side that limits how big they show in a room of shape `aspect`: down
+ * when they are too tall for it, across when too wide. Blocks then overlapping move aside, along the other side
+ * first, into the room the island's round shape leaves in its corners; links get long enough for their labels again.
+ * A step is kept only while the blocks show bigger. Whether any was.
+ */
+function squeeze(
+  blocks: Block[],
+  centers: Map<string, Point>,
+  links: Map<string, number>,
+  aspect: number,
+  gap: number
+): boolean {
+  if (blocks.length < 3) return false;
+  let squeezed = false;
+  for (let step = 0; step < SQUEEZE_STEPS; step++) {
+    const box = boundsOf(blocks, centers);
+    const tall = (box.x2 - box.x1) / Math.max(1, box.y2 - box.y1) < aspect;
+    const middle = tall ? (box.y1 + box.y2) / 2 : (box.x1 + box.x2) / 2;
+    const trial = new Map(
+      [...centers].map(([id, { x, y }]) => [
+        id,
+        tall ? { x, y: middle + (y - middle) * SQUEEZE_STEP } : { x: middle + (x - middle) * SQUEEZE_STEP, y },
+      ])
+    );
+    const aside = tall ? 'x' : 'y';
+    separate(blocks, trial, gap, aside);
+    for (let round = 0; round < 10 && lengthen(blocks, trial, links); round++) {
+      separate(blocks, trial, gap, aside);
+    }
+    if (extentOf(boundsOf(blocks, trial), aspect) >= extentOf(box, aspect) - 1) break;
+    for (const [id, center] of trial) centers.set(id, center);
+    squeezed = true;
+  }
+  return squeezed;
 }
 
 interface Bounds {
@@ -875,6 +943,8 @@ const rectAt = (center: { x: number; y: number }, block: Block): Bounds => ({
 
 /** How many directions round the graph a satellite may be placed in. */
 const DIRECTIONS = 36;
+/** How much a satellite growing the island weighs against its link's length, px for px. */
+const GROWTH_WEIGHT = 4;
 
 type Point = { x: number; y: number };
 
@@ -886,9 +956,11 @@ function crosses(a: Point, b: Point, c: Point, d: Point): boolean {
 
 /**
  * Places the satellites all round the outside of the island's other blocks, each in the direction where its link,
- * from the class it is linked to, crosses the fewest other links, the shortest among those; never over a block.
+ * from the class it is linked to, crosses the fewest other links; among those, where it grows the island least for a
+ * room of shape `aspect`, so on a wide screen at its sides rather than above or below; then the shortest. Never over a
+ * block. Each satellite's centre is added to `centers`.
  */
-function placeSatellites(island: LinkedIsland, centers: Map<string, Point>, room: Room): void {
+function placeSatellites(island: LinkedIsland, centers: Map<string, Point>, room: Room, aspect: number): void {
   if (!island.satellites.length) return;
   const placed = island.blocks.map(block => rectAt(centers.get(block.id)!, block));
   const outer = {
@@ -922,6 +994,13 @@ function placeSatellites(island: LinkedIsland, centers: Map<string, Point>, room
     // Every class of the block it is linked to that it has links with, once per link: each is a line to it.
     const ends = anchor.classes.flatMap(node => Array.from({ length: linksWith(node) }, () => node));
     const label = island.links.get(pairKey(satellite.block.id, satellite.anchor)) ?? 0;
+    const sofar = {
+      x1: Math.min(...placed.map(r => r.x1)),
+      y1: Math.min(...placed.map(r => r.y1)),
+      x2: Math.max(...placed.map(r => r.x2)),
+      y2: Math.max(...placed.map(r => r.y2)),
+    };
+    const extent = extentOf(sofar, aspect);
     let best: { spot: Bounds; center: Point; cost: number } | undefined;
     for (let ring = 0; !best && ring < 6; ring++) {
       for (let k = 0; k < DIRECTIONS; k++) {
@@ -960,13 +1039,24 @@ function placeSatellites(island: LinkedIsland, centers: Map<string, Point>, room
               .length,
           0
         );
-        // Each crossing outweighs any length.
-        const cost = crossed * 1e6 + Math.hypot(center.x - from.x, center.y - from.y);
+        const grown =
+          extentOf(
+            {
+              x1: Math.min(sofar.x1, spot.x1),
+              y1: Math.min(sofar.y1, spot.y1),
+              x2: Math.max(sofar.x2, spot.x2),
+              y2: Math.max(sofar.y2, spot.y2),
+            },
+            aspect
+          ) - extent;
+        // Each crossing outweighs any growth, and growth any length.
+        const cost = crossed * 1e6 + grown * GROWTH_WEIGHT + Math.hypot(center.x - from.x, center.y - from.y);
         if (!best || cost < best.cost) best = { spot, center, cost };
       }
     }
     if (!best) continue;
     placeBlock(satellite.block, best.spot.x1, best.spot.y1, room);
+    centers.set(satellite.block.id, best.center);
     placed.push(best.spot);
     lines.push(...ends.map(end => ({ ends: [end.id()], a: end.position(), b: best!.center })));
   }
@@ -1034,9 +1124,16 @@ function lengthen(
 
 /**
  * Pushes blocks apart until none overlaps another, with `gap` between them, each step along the axis they overlap
- * least on; the force layout leaves some overlaps.
+ * least on; the force layout leaves some overlaps. With `prefer`, along that axis unless they overlap far less on the
+ * other.
  */
-function separate(blocks: Block[], centers: Map<string, { x: number; y: number }>, gap: number): void {
+function separate(
+  blocks: Block[],
+  centers: Map<string, { x: number; y: number }>,
+  gap: number,
+  prefer?: 'x' | 'y'
+): void {
+  const weightX = prefer === 'x' ? 1 / PREFERRED : prefer === 'y' ? PREFERRED : 1;
   for (let step = 0; step < 100; step++) {
     let moved = false;
     for (let i = 0; i < blocks.length; i++) {
@@ -1049,7 +1146,7 @@ function separate(blocks: Block[], centers: Map<string, { x: number; y: number }
         const overlapY = (a.h + b.h) / 2 + gap - Math.abs(dy);
         if (overlapX <= 0 || overlapY <= 0) continue;
         moved = true;
-        if (overlapX < overlapY) {
+        if (overlapX * weightX < overlapY) {
           const push = (overlapX / 2) * (dx < 0 ? -1 : 1);
           ca.x -= push;
           cb.x += push;
