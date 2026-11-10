@@ -49,6 +49,8 @@ export interface ClassFamily {
   index: number;
   /** Whether the class is a subclass, drawn lighter than the top class. */
   sub: boolean;
+  /** IRI of its direct superclass in the data model, which a tree line joins it to; none for the top class. */
+  parent?: string;
 }
 
 export const familyHue = (index: number) => FAMILY_HUES[index % FAMILY_HUES.length];
@@ -132,7 +134,7 @@ export function classFamilies(graph: DataModelGraph): Map<string, ClassFamily> {
   const families = new Map<string, ClassFamily>();
   roots.forEach((root, index) => {
     for (const iri of members.get(root)!) {
-      families.set(iri, { root, index, sub: iri !== root });
+      families.set(iri, { root, index, sub: iri !== root, ...(iri !== root ? { parent: parentOf.get(iri) } : {}) });
     }
   });
   return families;
@@ -497,7 +499,7 @@ function placeSingles(singles: NodeSingular[], packed: NodeSingular[], room: Roo
       : [{ x1: boxes[i].x1, y1: boxes[i].y1, x2: boxes[i].x1 + boxes[i].w, y2: boxes[i].y1 + boxes[i].h }]
   );
   const lines = packed
-    .flatMap(island => island.descendants().connectedEdges('[^labelOf]').toArray())
+    .flatMap(island => island.descendants().connectedEdges('[^labelOf][^tree]').toArray())
     .map(edge => [edge.source().position(), edge.target().position()] as const);
   const right = outline.x2 + room.island;
   let below = outline.y1;
@@ -548,19 +550,38 @@ function lineInBox(a: Point, b: Point, box: Bounds): boolean {
 }
 
 /**
- * A family's classes placed as a block: its top class, then its subclasses in rows below, by label; classes linked to
- * each other far enough apart for their links' labels.
+ * A family's classes placed as a block, as a family tree: its top class, then each level of subclasses in rows below
+ * it, those of one parent together, by label; classes linked to each other far enough apart for their links' labels.
  */
 function familyBlock(family: NodeSingular, room: Room, labelWidth: LabelWidth): Block {
   const classes = family.children().toArray();
+  const byLabel = (a: NodeSingular, b: NodeSingular) => a.data('label').localeCompare(b.data('label'));
   const [top, ...subs] = [...classes].sort(
-    (a, b) => Number(a.hasClass('sub')) - Number(b.hasClass('sub')) || a.data('label').localeCompare(b.data('label'))
+    (a, b) => Number(a.hasClass('sub')) - Number(b.hasClass('sub')) || byLabel(a, b)
   );
+  // A subclass's parent is the class its tree line comes from; one without, under the top class.
+  const parentOf = (node: NodeSingular) => node.incomers('edge.tree').sources()[0]?.id() ?? top.id();
   const rows: NodeSingular[][] = [[top]];
-  for (let i = 0; i < subs.length; i += FAMILY_COLUMNS) rows.push(subs.slice(i, i + FAMILY_COLUMNS));
-  // How long a line between two classes must be for the labels of the links between them.
+  let level = [top];
+  const placed = new Set([top.id()]);
+  while (placed.size < classes.length) {
+    const ids = level.map(node => node.id());
+    let next = ids.flatMap(id => subs.filter(sub => !placed.has(sub.id()) && parentOf(sub) === id).sort(byLabel));
+    // Classes whose parent is not in the family, or a loop: the next level all the same.
+    if (!next.length) next = subs.filter(sub => !placed.has(sub.id()));
+    next.forEach(node => placed.add(node.id()));
+    for (let i = 0; i < next.length; i += FAMILY_COLUMNS) rows.push(next.slice(i, i + FAMILY_COLUMNS));
+    level = next;
+  }
+  // How long a line between two classes must be for the labels of the links between them; a tree line has none.
   const label = (a: NodeSingular, b: NodeSingular) =>
-    Math.max(0, ...a.edgesWith(b).map(edge => (labelWidth(edge) + LABEL_ROOM) * room.scale));
+    Math.max(
+      0,
+      ...a
+        .edgesWith(b)
+        .filter(edge => !edge.data('tree'))
+        .map(edge => (labelWidth(edge as EdgeSingular) + LABEL_ROOM) * room.scale)
+    );
   const sum = (values: number[]) => values.reduce((total, value) => total + value, 0);
   // In each row, the gaps between its classes, widened where two of them are linked: the nearest pairs first.
   const gaps = rows.map(row => {
@@ -574,21 +595,63 @@ function familyBlock(family: NodeSingular, room: Room, labelWidth: LabelWidth): 
     }
     return gaps;
   });
-  // Between two rows, room for the labels of links from one to the other.
-  const rowGaps = rows
-    .slice(1)
-    .map((row, r) => Math.max(room.block, ...rows[r].flatMap(a => row.map(b => label(a, b)))));
-  const widths = rows.map((row, r) => sum(row.map(node => node.outerWidth())) + sum(gaps[r]));
-  const width = Math.max(...widths);
+  // Across: each class's centre, the subclasses of one parent side by side under it, pushed right only where they
+  // would overlap the subclasses of the parent before.
+  const centreOf = new Map<string, number>();
+  const across = rows.map((row, r) => {
+    const groups: { parent?: string; indexes: number[] }[] = [];
+    row.forEach((node, i) => {
+      const parent = r === 0 ? undefined : parentOf(node);
+      const last = groups[groups.length - 1];
+      if (last && last.parent === parent) last.indexes.push(i);
+      else groups.push({ parent, indexes: [i] });
+    });
+    const centres: number[] = [];
+    let free = -Infinity;
+    for (const { parent, indexes } of groups) {
+      const width =
+        sum(indexes.map(i => row[i].outerWidth())) + sum(indexes.slice(0, -1).map(i => gaps[r][i] ?? room.block));
+      let x = Math.max((parent !== undefined ? (centreOf.get(parent) ?? 0) : 0) - width / 2, free);
+      for (const i of indexes) {
+        centres[i] = x + row[i].outerWidth() / 2;
+        x += row[i].outerWidth() + (gaps[r][i] ?? room.block);
+      }
+      free = x;
+    }
+    row.forEach((node, i) => centreOf.set(node.id(), centres[i]));
+    return centres;
+  });
+  const left = Math.min(...rows.flatMap((row, r) => row.map((node, i) => across[r][i] - node.outerWidth() / 2)));
+  const right = Math.max(...rows.flatMap((row, r) => row.map((node, i) => across[r][i] + node.outerWidth() / 2)));
+  const width = right - left;
+  const heights = rows.map(row => Math.max(...row.map(node => node.outerHeight())));
+  // Between two rows, room for the labels of links from one to the other. A link running across as well as down
+  // already has some: only the height still missing is added.
+  const rowGaps = rows.slice(1).map((row, r) => {
+    const boxes = (heights[r] + heights[r + 1]) / 2;
+    let gap = room.block;
+    for (const [i, a] of rows[r].entries()) {
+      for (const [j, b] of row.entries()) {
+        const needed = label(a, b);
+        const dx = Math.abs(across[r + 1][j] - across[r][i]);
+        // How much of the line from centre to centre lies between the two boxes, for a gap.
+        const between = (g: number) => Math.hypot(dx, g + boxes) * (g / (g + boxes));
+        if (between(gap) >= needed) continue;
+        let [low, high] = [gap, Math.max(gap, needed)];
+        for (let step = 0; step < 24; step++) {
+          const mid = (low + high) / 2;
+          if (between(mid) >= needed) high = mid;
+          else low = mid;
+        }
+        gap = high;
+      }
+    }
+    return gap;
+  });
   let y = 0;
   rows.forEach((row, r) => {
-    const height = Math.max(...row.map(node => node.outerHeight()));
-    let x = (width - widths[r]) / 2;
-    row.forEach((node, i) => {
-      node.position({ x: x + node.outerWidth() / 2, y: y + height / 2 });
-      x += node.outerWidth() + (gaps[r][i] ?? 0);
-    });
-    y += height + (rowGaps[r] ?? 0);
+    row.forEach((node, i) => node.position({ x: across[r][i] - left, y: y + heights[r] / 2 }));
+    y += heights[r] + (rowGaps[r] ?? 0);
   });
   return {
     id: family.id(),
@@ -625,7 +688,7 @@ function spread(
   const links = new Map<string, number>();
   for (const block of blocks) {
     for (const node of block.classes) {
-      for (const edge of node.connectedEdges().toArray()) {
+      for (const edge of node.connectedEdges('[^tree]').toArray()) {
         const [a, b] = [blockOf.get(edge.source().id()), blockOf.get(edge.target().id())];
         if (!a || !b || a === b) continue;
         const key = pairKey(a, b);
@@ -744,7 +807,7 @@ function startOrders(blocks: Block[], links: Map<string, number>): string[][] {
 function linkCrossings(island: NodeSingular): number {
   const segments = island
     .descendants()
-    .connectedEdges('[^labelOf]')
+    .connectedEdges('[^labelOf][^tree]')
     .toArray()
     .filter(edge => edge.source().id() !== edge.target().id())
     .map(edge => ({
@@ -839,7 +902,7 @@ function placeSatellites(island: LinkedIsland, centers: Map<string, Point>, room
   const core = new Set(island.blocks.flatMap(block => block.classes.map(node => node.id())));
   const lines = island.blocks
     .flatMap(block => block.classes)
-    .flatMap(node => node.connectedEdges('[^labelOf]').toArray())
+    .flatMap(node => node.connectedEdges('[^labelOf][^tree]').toArray())
     .filter(edge => core.has(edge.source().id()) && core.has(edge.target().id()))
     .map(edge => ({
       ends: [edge.source().id(), edge.target().id()],
@@ -851,7 +914,7 @@ function placeSatellites(island: LinkedIsland, centers: Map<string, Point>, room
     // The class it links to: the one of that family it has most links with, the top class first among equals.
     const anchor = blockOf.get(satellite.anchor)!;
     const linksWith = (node: NodeSingular) =>
-      satellite.block.classes.reduce((sum, own) => sum + own.edgesWith(node).filter('[^labelOf]').length, 0);
+      satellite.block.classes.reduce((sum, own) => sum + own.edgesWith(node).filter('[^labelOf][^tree]').length, 0);
     const by = [...anchor.classes].sort(
       (a, b) => linksWith(b) - linksWith(a) || Number(a.hasClass('sub')) - Number(b.hasClass('sub'))
     )[0];

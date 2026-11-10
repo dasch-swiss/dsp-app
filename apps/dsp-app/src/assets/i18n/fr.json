@@ -778,11 +778,14 @@
       "levelLabels": "Libellés des liens à l’horizontale",
       "islandsToggle": "Mettre en évidence et déplacer les îlots",
       "colourTab": "Couleur en onglet",
+      "treeLines": "Lignes vers les sous-classes",
       "viewMenu": {
         "textSize": "Taille du texte",
         "links": "Liens",
         "islands": "Îlots",
         "colours": "Couleurs",
+        "subclasses": "Sous-classes",
+        "treeLinesHint": "Une ligne de chaque classe parente vers ses sous-classes",
         "levelLabelsHint": "Plus lisibles que le long de la ligne",
         "islandsToggleHint": "Encadrer un îlot au survol, le déplacer avec ses classes",
         "colourTabHint": "Cases blanches, la couleur en onglet à gauche"
@@ -849,8 +852,7 @@
         "expand": "Afficher la légende",
         "files": "Fichiers",
         "shapes": "Formes",
-        "parent": "Classe parente",
-        "subclass": "Sous-classe",
+        "subclass": "Sous-classe, sous sa classe parente",
         "link": "Lien",
         "fileKinds": {
           "StillImageRepresentation": "Image",

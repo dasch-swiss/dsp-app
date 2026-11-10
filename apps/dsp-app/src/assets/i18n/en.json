@@ -778,11 +778,14 @@
       "levelLabels": "Horizontal link labels",
       "islandsToggle": "Highlight and move islands",
       "colourTab": "Colour as a tab",
+      "treeLines": "Lines to subclasses",
       "viewMenu": {
         "textSize": "Text size",
         "links": "Links",
         "islands": "Islands",
         "colours": "Colours",
+        "subclasses": "Subclasses",
+        "treeLinesHint": "A line from each parent class down to its subclasses",
         "levelLabelsHint": "Easier to read than along the line",
         "islandsToggleHint": "Frame an island on hover, drag it with its classes",
         "colourTabHint": "White boxes, the colour as a tab on the left"
@@ -849,8 +852,7 @@
         "expand": "Show the legend",
         "files": "Files",
         "shapes": "Shapes",
-        "parent": "Parent class",
-        "subclass": "Subclass",
+        "subclass": "Subclass, under its parent",
         "link": "Link",
         "fileKinds": {
           "StillImageRepresentation": "Image",

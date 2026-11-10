@@ -94,6 +94,7 @@ const PREVIEW_DELAY_MS = 150;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
 const ISLANDS_KEY = 'dsp-ontology-map-islands';
 const COLOUR_TAB_KEY = 'dsp-ontology-map-colour-tab';
+const TREE_LINES_KEY = 'dsp-ontology-map-tree-lines';
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
@@ -154,6 +155,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [labels]="labels()"
                 [islands]="islands()"
                 [colourTab]="colourTab()"
+                [treeLines]="treeLines()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                 [picked]="picked()"
                 [covered]="panelWidth"
@@ -370,6 +372,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       option of [
                         { section: 'links', key: 'levelLabels', cy: 'level-labels', on: levelLabels() },
                         { section: 'islands', key: 'islandsToggle', cy: 'islands', on: islands() },
+                        { section: 'subclasses', key: 'treeLines', cy: 'tree-lines', on: treeLines() },
                         { section: 'colours', key: 'colourTab', cy: 'colour-tab', on: colourTab() },
                       ];
                       track option.key
@@ -973,6 +976,8 @@ export class OntologyMapPageComponent {
   readonly islands = signal(readStored(ISLANDS_KEY) !== 'false');
   /** Whether a family's colour shows as a tab at the left of white boxes, rather than as their fill; off unless set. */
   readonly colourTab = signal(readStored(COLOUR_TAB_KEY) === 'true');
+  /** Whether a line joins each parent to its subclasses; on unless turned off. */
+  readonly treeLines = signal(readStored(TREE_LINES_KEY) !== 'false');
   readonly labelOptions = LABEL_OPTIONS;
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
@@ -1454,6 +1459,10 @@ export class OntologyMapPageComponent {
     if (key === 'levelLabels') this.setLevelLabels(on);
     else if (key === 'islandsToggle') this.setIslands(on);
     else if (key === 'colourTab') this.setColourTab(on);
+    else if (key === 'treeLines') {
+      this.treeLines.set(on);
+      store(TREE_LINES_KEY, String(on));
+    }
   }
 
   setColourTab(colourTab: boolean): void {

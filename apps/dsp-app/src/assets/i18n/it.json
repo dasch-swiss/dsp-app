@@ -778,11 +778,14 @@
       "levelLabels": "Etichette dei collegamenti orizzontali",
       "islandsToggle": "Evidenzia e sposta le isole",
       "colourTab": "Colore come linguetta",
+      "treeLines": "Linee verso le sottoclassi",
       "viewMenu": {
         "textSize": "Dimensione del testo",
         "links": "Collegamenti",
         "islands": "Isole",
         "colours": "Colori",
+        "subclasses": "Sottoclassi",
+        "treeLinesHint": "Una linea da ogni classe madre verso le sue sottoclassi",
         "levelLabelsHint": "Più leggibili che lungo la linea",
         "islandsToggleHint": "Evidenzia un'isola al passaggio, spostala con le sue classi",
         "colourTabHint": "Riquadri bianchi, il colore come linguetta a sinistra"
@@ -849,8 +852,7 @@
         "expand": "Mostra la legenda",
         "files": "File",
         "shapes": "Forme",
-        "parent": "Classe madre",
-        "subclass": "Sottoclasse",
+        "subclass": "Sottoclasse, sotto la sua classe madre",
         "link": "Collegamento",
         "fileKinds": {
           "StillImageRepresentation": "Immagine",

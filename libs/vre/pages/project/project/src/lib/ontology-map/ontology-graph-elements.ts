@@ -102,6 +102,27 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
     };
   });
   if (parents) nodes.unshift(...islandNodes(graph, islands!));
+  // Islands view: a line from each parent down to its subclasses, as in a family tree; not a link.
+  const drawnClasses = new Set(graph.nodes.map(node => node.id));
+  const tree: ElementDefinition[] = islands
+    ? graph.nodes.flatMap(node => {
+        const family = islands.families.get(node.id);
+        if (!family?.parent || !drawnClasses.has(family.parent)) return [];
+        return [
+          {
+            group: 'edges' as const,
+            data: {
+              id: `tree ${family.parent} ${node.id}`,
+              source: family.parent,
+              target: node.id,
+              tree: true,
+              dark: familyHue(family.index).dark,
+            },
+            classes: 'tree',
+          },
+        ];
+      })
+    : [];
   // A link to or from a class in a family is drawn over the family frames, which hide the links that only pass them.
   const inFamily = (iri: string) => !!parents?.get(iri)?.startsWith(FAMILY_PREFIX);
   const familyLink = (edge: { source: string; target: string }) => inFamily(edge.source) || inFamily(edge.target);
@@ -149,7 +170,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
       },
     ];
   });
-  return [...nodes, ...edges];
+  return [...nodes, ...edges, ...tree];
 }
 
 /** How many links from one class to another are drawn one by one; more are drawn as one. */

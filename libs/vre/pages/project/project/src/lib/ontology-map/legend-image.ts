@@ -5,7 +5,6 @@
 export interface LegendTexts {
   title: string;
   shapes?: string;
-  parent?: string;
   subclass?: string;
   other?: string;
   link?: string;
@@ -112,6 +111,20 @@ export async function withLegend(
       ctx.fill();
     },
   };
+  // A tree line as the graph draws it: down from a parent, across, and down to its subclass.
+  const treeLine: Piece = {
+    w: LOOK.shape.w,
+    draw: (ctx, x, mid) => {
+      ctx.strokeStyle = '#4B5563';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(x + 4, mid - 6);
+      ctx.lineTo(x + 4, mid);
+      ctx.lineTo(x + 18, mid);
+      ctx.lineTo(x + 18, mid + 6);
+      ctx.stroke();
+    },
+  };
   const icon = (image: HTMLImageElement): Piece => ({
     w: LOOK.icon.size,
     draw: (ctx, x, mid) => {
@@ -128,8 +141,7 @@ export async function withLegend(
   const groups: Piece[][] = [
     [text(legend.title, LOOK.title)],
     ...(legend.shapes ? [[divider], [text(heading(legend.shapes), LOOK.heading)]] : []),
-    ...shown(legend.parent, parent => [box('#D1D5DB', '#4B5563', 2), text(parent, LOOK.text)]),
-    ...shown(legend.subclass, subclass => [box('#E5E7EB', '#9CA3AF', 1), text(subclass, LOOK.text)]),
+    ...shown(legend.subclass, subclass => [treeLine, text(subclass, LOOK.text)]),
     ...shown(legend.other, other => [box('#FFFFFF', '#9CA3AF', 1.5, true), text(other, LOOK.text)]),
     ...shown(legend.link, link => [arrow, text(link, LOOK.text)]),
     ...(icons.length

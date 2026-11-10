@@ -116,7 +116,7 @@ function textWidth(text: string, font: string): number {
  */
 function measureIconBoxes(cy: Core): void {
   cy.nodes('[icon], [tab]').forEach(node => {
-    const weight = node.hasClass('sub') ? 500 : 600;
+    const weight = 500;
     const icon = node.data('icon') ? ICON.room : 0;
     for (const key of ['labels', 'names', 'both'] as const) {
       const font = `${weight} ${BASE_FONT_SIZE}px ${key === 'names' ? FONT.names : FONT.labels}`;
@@ -143,6 +143,8 @@ export interface GraphTextOptions {
   islands: boolean;
   /** Whether a family's colour is a tab at the left of white boxes, rather than the boxes' fill. */
   colourTab: boolean;
+  /** Whether a line joins each parent to its subclasses. */
+  treeLines: boolean;
 }
 
 /**
@@ -214,15 +216,11 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'font-style': 'italic',
     },
   },
-  // Islands view: a family's top class has a strong border in its hue, its subclasses a thin one.
-  {
-    selector: 'node.family-member',
-    style: { 'border-width': 2 * f, 'border-color': 'data(dark)', 'font-weight': 600 },
-  },
-  { selector: 'node.family-member.sub', style: { 'border-width': f, 'font-weight': 500 } },
+  // Islands view: every class drawn alike, a border in its family's hue; a tree line, not the box, says which
+  // classes are subclasses, and of which.
+  { selector: 'node.family-member', style: { 'border-width': 1.5 * f, 'border-color': 'data(dark)' } },
   // Past the first 30 families, a double border tells the next 30 apart.
-  { selector: 'node.family-member.double', style: { 'border-style': 'double', 'border-width': 5 * f } },
-  { selector: 'node.family-member.sub.double', style: { 'border-width': 3 * f } },
+  { selector: 'node.family-member.double', style: { 'border-style': 'double', 'border-width': 4.5 * f } },
   // A class with a file is widened for its icon, its label moved right to make room.
   {
     selector: 'node[icon]',
@@ -287,6 +285,8 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     },
   },
   ...(text.colourTab ? colourTabFrames : []),
+  // Subclass lines off: none drawn.
+  ...(text.treeLines ? [] : [{ selector: 'edge.tree', style: { display: 'none' as const } }]),
   {
     selector: 'edge.family-link',
     style: { 'z-compound-depth': 'top', 'z-index-compare': 'manual', 'z-index': 2 },
@@ -400,6 +400,25 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       opacity: 1,
     },
   },
+  // A tree line, from a parent down to its subclass: elbowed, in the family's dark shade, no arrow, no label, not
+  // clickable; over the family's frame, under its classes.
+  {
+    selector: 'edge.tree',
+    style: {
+      'curve-style': 'taxi',
+      'taxi-direction': 'downward',
+      'taxi-turn': '50%',
+      width: 1.6 * f,
+      'line-color': 'data(dark)',
+      'target-arrow-shape': 'none',
+      'source-arrow-shape': 'none',
+      label: '',
+      events: 'no',
+      'z-compound-depth': 'top',
+      'z-index-compare': 'manual',
+      'z-index': 2,
+    },
+  },
   // Islands off: no frame, even hovered, and the pointer goes through them, so they neither show nor move.
   ...(text.islands
     ? []
@@ -432,12 +451,11 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
             <span class="divider"></span>
             <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
           }
-          @if (legend.families) {
+          @if (legend.families && treeLines()) {
             <span class="shape"
-              ><span class="shape-box parent" [class.tab]="colourTab()"></span>{{ i + '.parent' | translate }}</span
-            >
-            <span class="shape"
-              ><span class="shape-box sub" [class.tab]="colourTab()"></span>{{ i + '.subclass' | translate }}</span
+              ><svg class="tree-line" width="22" height="12" aria-hidden="true">
+                <path d="M4 0V6H18V12" fill="none" stroke="currentColor" stroke-width="1.6" /></svg
+              >{{ i + '.subclass' | translate }}</span
             >
           }
           @if (legend.other) {
@@ -657,37 +675,20 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         }
       }
 
+      // A tree line as the graph draws it: down from a parent, across, and down to its subclass.
+      .tree-line {
+        flex: none;
+        color: $cool_gray_600;
+      }
+
       .shape-box {
         width: 22px;
         height: 12px;
         box-sizing: border-box;
         border-radius: 3px;
 
-        &.parent {
-          border: 2px solid $cool_gray_600;
-          background: $cool_gray_300;
-        }
-
-        &.sub {
-          border: 1px solid $cool_gray_400;
-          background: $cool_gray_200;
-        }
-
         &.other {
           border: 1.5px dashed $cool_gray_400;
-          background: white;
-        }
-
-        // The Colour tab look: white boxes, the family's colour as a tab at their left.
-        &.parent.tab {
-          border: 1.5px solid $cool_gray_500;
-          border-left: 6px solid $cool_gray_600;
-          background: white;
-        }
-
-        &.sub.tab {
-          border: 1px solid $cool_gray_500;
-          border-left: 6px solid $cool_gray_300;
           background: white;
         }
       }
@@ -711,6 +712,8 @@ export class OntologyGraphComponent {
   readonly islands = input(true);
   /** Whether a family's colour is a tab at the left of white boxes, rather than the boxes' fill; see `colourTabStyle`. */
   readonly colourTab = input(false);
+  /** Whether a line joins each parent to its subclasses, as in a family tree. */
+  readonly treeLines = input(true);
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
   /** A class, or a property's links, picked out in orange, as the search's results are gone through. */
@@ -849,7 +852,7 @@ export class OntologyGraphComponent {
           const margin = BASE_FONT_SIZE * this._scale;
           const at = node.boundingBox({ includeLabels: false });
           const box = { x1: at.x1 - margin, y1: at.y1 - margin, x2: at.x2 + margin, y2: at.y2 + margin };
-          cy.edges('[^labelOf]').forEach(edge => {
+          cy.edges('[^labelOf][^tree]').forEach(edge => {
             const line = edge.boundingBox({ includeLabels: false });
             const near = line.x2 > box.x1 && line.x1 < box.x2 && line.y2 > box.y1 && line.y1 < box.y2;
             if (near || edge.source().same(node) || edge.target().same(node)) reached.add(edge.id());
@@ -980,6 +983,7 @@ export class OntologyGraphComponent {
         labels: this.labels(),
         islands: this.islands(),
         colourTab: this.colourTab(),
+        treeLines: this.treeLines(),
       };
       if (!cy) return;
       cy.style(styleFor(this._scale, text));
@@ -1211,6 +1215,7 @@ export class OntologyGraphComponent {
         labels: this.labels(),
         islands: this.islands(),
         colourTab: this.colourTab(),
+        treeLines: this.treeLines(),
       }))
     );
   }
@@ -1249,8 +1254,7 @@ export class OntologyGraphComponent {
     return {
       title: t('islands.legend'),
       shapes: legend.shapes ? t('islands.shapes') : undefined,
-      parent: legend.families ? t('islands.parent') : undefined,
-      subclass: legend.families ? t('islands.subclass') : undefined,
+      subclass: legend.families && this.treeLines() ? t('islands.subclass') : undefined,
       other: legend.other ? t('legendDashed') : undefined,
       link: legend.link ? t('islands.link') : undefined,
       files: t('islands.files'),

@@ -778,11 +778,14 @@
       "levelLabels": "Verknüpfungsbeschriftungen waagrecht",
       "islandsToggle": "Inseln hervorheben und verschieben",
       "colourTab": "Farbe als Lasche",
+      "treeLines": "Linien zu Unterklassen",
       "viewMenu": {
         "textSize": "Textgrösse",
         "links": "Verknüpfungen",
         "islands": "Inseln",
         "colours": "Farben",
+        "subclasses": "Unterklassen",
+        "treeLinesHint": "Eine Linie von jeder Oberklasse hinunter zu ihren Unterklassen",
         "levelLabelsHint": "Leichter lesbar als entlang der Linie",
         "islandsToggleHint": "Insel beim Überfahren einrahmen, mit ihren Klassen verschieben",
         "colourTabHint": "Weisse Kästen, die Farbe als Lasche links"
@@ -849,8 +852,7 @@
         "expand": "Legende einblenden",
         "files": "Dateien",
         "shapes": "Formen",
-        "parent": "Oberklasse",
-        "subclass": "Unterklasse",
+        "subclass": "Unterklasse, unter ihrer Oberklasse",
         "link": "Verknüpfung",
         "fileKinds": {
           "StillImageRepresentation": "Bild",

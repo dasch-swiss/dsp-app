@@ -257,7 +257,7 @@ export function withLabelsOnTop(elements: ElementDefinition[]): ElementDefinitio
           .join('\n')
       : text;
   const labels = elements
-    .filter(element => element.group === 'edges')
+    .filter(element => element.group === 'edges' && !element.data['tree'])
     .map(edge => ({
       ...edge,
       data: {
@@ -283,7 +283,7 @@ export function routeEdges(cy: Core, scale: number, only?: ReadonlySet<string>):
   const classes = cy.nodes().filter(node => !node.isParent());
   const boxes = new Map(classes.map(node => [node.id(), node.boundingBox({ includeLabels: false })]));
   const pairs = new Map<string, string[]>();
-  cy.edges('[^labelOf]').forEach(edge => {
+  cy.edges('[^labelOf][^tree]').forEach(edge => {
     const [source, target] = [edge.source().id(), edge.target().id()];
     if (source === target) return;
     const key = source < target ? `${source}\n${target}` : `${target}\n${source}`;
