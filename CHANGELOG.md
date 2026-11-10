@@ -1,5 +1,18 @@
 # Changelog
 
+## [14.1.3](https://github.com/dasch-swiss/dsp-app/compare/v14.1.2...v14.1.3) (2026-11-10)
+
+
+### Bug Fixes
+
+* long values, class description, search jump and search tips (DEV-7517, DEV-7743, DEV-7483, DEV-7516) ([#3607](https://github.com/dasch-swiss/dsp-app/issues/3607)) ([73f8b5e](https://github.com/dasch-swiss/dsp-app/commit/73f8b5e736918b4b8e617c1db9f64dafcdaeb940))
+
+
+### Maintenances
+
+* **deps:** disable Renovate ([#3604](https://github.com/dasch-swiss/dsp-app/issues/3604)) ([27e29e1](https://github.com/dasch-swiss/dsp-app/commit/27e29e18664fbfa7dba94ca0e502d7cd83887553))
+* **open-api:** bump dsp-api spec v40.6.0-5-g8c46d15 → v40.6.1-2-ge20226e ([#3608](https://github.com/dasch-swiss/dsp-app/issues/3608)) ([2e399aa](https://github.com/dasch-swiss/dsp-app/commit/2e399aa2e1a2dd61050e2c41a515f446b427fd29))
+
 ## [14.1.2](https://github.com/dasch-swiss/dsp-app/compare/v14.1.1...v14.1.2) (2026-11-05)
 
 
