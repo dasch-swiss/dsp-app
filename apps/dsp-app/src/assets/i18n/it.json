@@ -771,6 +771,7 @@
       "allProperties": "Tutte le proprietà",
       "propertiesChosen": "{{count}} proprietà",
       "levelLabels": "Etichette dei collegamenti orizzontali",
+      "islandsToggle": "Evidenzia e sposta le isole",
       "propertyPanel": {
         "close": "Chiudi i dettagli della proprietà",
         "pointsTo": "Punta a",

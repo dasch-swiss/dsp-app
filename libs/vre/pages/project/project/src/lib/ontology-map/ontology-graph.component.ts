@@ -135,6 +135,8 @@ export interface GraphTextOptions {
   /** Whether link labels are drawn level, rather than along their line. */
   levelLabels: boolean;
   labels: GraphLabels;
+  /** Whether an island shows its frame while hovered, and moves when dragged. */
+  islands: boolean;
 }
 
 /** The graph's stylesheet, boxes, text and lines scaled by `f`, its texts written as `text` says. */
@@ -353,6 +355,10 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       opacity: 1,
     },
   },
+  // Islands off: no frame, even hovered, and the pointer goes through them, so they neither show nor move.
+  ...(text.islands
+    ? []
+    : [{ selector: 'node.island', style: { 'background-opacity': 0, 'border-opacity': 0, events: 'no' as const } }]),
 ];
 
 /**
@@ -639,6 +645,8 @@ export class OntologyGraphComponent {
   readonly levelLabels = input(false);
   /** Whether classes and links are written with their labels, their names, or both. */
   readonly labels = input<GraphLabels>('labels');
+  /** Whether an island shows its frame while hovered, and can be dragged, moving its classes. */
+  readonly islands = input(true);
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
   /** A class, or a property's links, picked out in orange, as the search's results are gone through. */
@@ -801,7 +809,11 @@ export class OntologyGraphComponent {
           event.target.connectedEdges().addClass('highlighted');
           event.target.ancestors('.island').union(event.target.filter('.island')).addClass('hovered');
           if (this._navigable().has(event.target.id())) container.style.cursor = 'pointer';
+          // An island drags, with its classes; it only gets the pointer while islands are on.
+          else if (event.target.is('.island')) container.style.cursor = 'grab';
         });
+        cy.on('grab', 'node.island', () => (container.style.cursor = 'grabbing'));
+        cy.on('free', 'node.island', () => (container.style.cursor = 'grab'));
         cy.on('mouseout', 'node', event => {
           event.target.connectedEdges().removeClass('highlighted');
           cy.nodes('.island.hovered').removeClass('hovered');
@@ -890,7 +902,7 @@ export class OntologyGraphComponent {
     // of each other again.
     effect(() => {
       const cy = this._cy();
-      const text = { levelLabels: this.levelLabels(), labels: this.labels() };
+      const text = { levelLabels: this.levelLabels(), labels: this.labels(), islands: this.islands() };
       if (!cy) return;
       cy.style(styleFor(this._scale, text));
       separateLabels(cy, this._scale);
@@ -1116,7 +1128,7 @@ export class OntologyGraphComponent {
   private _style(f: number): StylesheetJson {
     return styleFor(
       f,
-      untracked(() => ({ levelLabels: this.levelLabels(), labels: this.labels() }))
+      untracked(() => ({ levelLabels: this.levelLabels(), labels: this.labels(), islands: this.islands() }))
     );
   }
 

@@ -87,6 +87,7 @@ const SIZE_KEY = 'dsp-ontology-map-text-size';
 /** How wide a class or property panel is, at most half the page; its styles say the same. */
 const PANEL_WIDTH = 440;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
+const ISLANDS_KEY = 'dsp-ontology-map-islands';
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
@@ -143,6 +144,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [size]="size()"
                 [levelLabels]="levelLabels()"
                 [labels]="labels()"
+                [islands]="islands()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                 [picked]="picked()"
                 [covered]="panelWidth"
@@ -353,6 +355,12 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                         [checked]="levelLabels()"
                         (change)="setLevelLabels($event.checked)">
                         {{ m + '.levelLabels' | translate }}
+                      </mat-slide-toggle>
+                      <mat-slide-toggle
+                        data-cy="ontology-map-islands"
+                        [checked]="islands()"
+                        (change)="setIslands($event.checked)">
+                        {{ m + '.islandsToggle' | translate }}
                       </mat-slide-toggle>
                     </div>
                   </mat-menu>
@@ -919,6 +927,8 @@ export class OntologyMapPageComponent {
   readonly size = signal<GraphSize>(SIZES.find(size => size === readStored(SIZE_KEY)) ?? 'normal');
   /** Whether the graph draws link labels level, rather than along their line; remembered in this browser. */
   readonly levelLabels = signal(readStored(LEVEL_LABELS_KEY) === 'true');
+  /** Whether an island shows its frame on hover and can be dragged; on unless turned off. */
+  readonly islands = signal(readStored(ISLANDS_KEY) !== 'false');
   readonly labelOptions = LABEL_OPTIONS;
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
@@ -1280,6 +1290,11 @@ export class OntologyMapPageComponent {
   setLevelLabels(level: boolean): void {
     this.levelLabels.set(level);
     store(LEVEL_LABELS_KEY, String(level));
+  }
+
+  setIslands(islands: boolean): void {
+    this.islands.set(islands);
+    store(ISLANDS_KEY, String(islands));
   }
 
   /** Runs an Export menu item: a PNG downloaded or copied, or the link to this view copied. */

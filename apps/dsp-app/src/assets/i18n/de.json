@@ -771,6 +771,7 @@
       "allProperties": "Alle Eigenschaften",
       "propertiesChosen": "{{count}} Eigenschaften",
       "levelLabels": "Verknüpfungsbeschriftungen waagrecht",
+      "islandsToggle": "Inseln hervorheben und verschieben",
       "propertyPanel": {
         "close": "Details der Eigenschaft schliessen",
         "pointsTo": "Verweist auf",
