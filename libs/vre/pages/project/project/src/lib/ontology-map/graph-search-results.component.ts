@@ -1,9 +1,12 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
+  ElementRef,
+  inject,
   input,
   linkedSignal,
   output,
@@ -49,11 +52,16 @@ type Row = SearchResult | typeof ALL;
  * The classes and link properties of the graph whose label or name has the text, case aside, by label; each property
  * once. Subclasses are counted in `model`, which keeps its subclass edges.
  */
-export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph, text: string): SearchResults {
+export function graphSearchResults(
+  graph: DataModelGraph,
+  model: DataModelGraph,
+  text: string,
+  all = false
+): SearchResults {
   const query = text.trim().toLowerCase();
-  if (!query) return { classes: [], properties: [] };
+  if (!query && !all) return { classes: [], properties: [] };
   const holds = (label: string, iri: string) =>
-    label.toLowerCase().includes(query) || localNameOf(iri).toLowerCase().includes(query);
+    !query || label.toLowerCase().includes(query) || localNameOf(iri).toLowerCase().includes(query);
   const byLabel = (a: { label: string }, b: { label: string }) => a.label.localeCompare(b.label);
 
   const classes = graph.nodes
@@ -100,18 +108,20 @@ export function graphSearchResults(graph: DataModelGraph, model: DataModelGraph,
         role="listbox"
         [attr.aria-label]="s + '.results' | translate"
         (mouseleave)="browsing.set(false)">
-        <div
-          class="row all"
-          [hidden]="!count()"
-          role="option"
-          data-cy="ontology-map-search-all"
-          [attr.aria-selected]="active() === 0"
-          [class.active]="active() === 0"
-          (mouseenter)="browse(0)">
-          <mat-icon class="kind">search</mat-icon>
-          <span class="label">{{ s + '.all' | translate }}</span>
-          <span class="count">{{ count() }}</span>
-        </div>
+        @if (!browseAll()) {
+          <div
+            class="row all"
+            [hidden]="!count()"
+            role="option"
+            data-cy="ontology-map-search-all"
+            [attr.aria-selected]="active() === 0"
+            [class.active]="active() === 0"
+            (mouseenter)="browse(0)">
+            <mat-icon class="kind">search</mat-icon>
+            <span class="label">{{ s + '.all' | translate }}</span>
+            <span class="count">{{ count() }}</span>
+          </div>
+        }
         @if (results().classes.length) {
           <span class="heading">{{ s + '.classes' | translate: { count: results().classes.length } }}</span>
           @for (result of results().classes; track result.iri) {
@@ -337,6 +347,8 @@ export class GraphSearchResultsComponent {
   readonly labelOf = input.required<(iri: string) => string>();
   /** The class or property whose panel shows, which the list starts on when it opens again; else "All results". */
   readonly current = input<string | undefined>(undefined);
+  /** Whether the list shows every class and property, nothing searched: no "All results" row, which would do nothing. */
+  readonly browseAll = input(false);
 
   /** A row clicked: open its panel. */
   readonly opened = output<SearchResult>();
@@ -345,7 +357,11 @@ export class GraphSearchResultsComponent {
 
   readonly count = computed(() => this.results().classes.length + this.results().properties.length);
   /** Every row in the order shown, "All results" first, for the arrow keys. */
-  readonly rows = computed<Row[]>(() => [ALL, ...this.results().classes, ...this.results().properties]);
+  readonly rows = computed<Row[]>(() => [
+    ...(this.browseAll() ? [] : [ALL]),
+    ...this.results().classes,
+    ...this.results().properties,
+  ]);
   /** The row the arrow keys and Enter act on; "All results" again once the results change. */
   readonly active = linkedSignal<Row[], number>({
     source: this.rows,
@@ -368,7 +384,11 @@ export class GraphSearchResultsComponent {
    */
   readonly previewed = output<SearchResult | undefined>();
 
+  private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
+
   constructor() {
+    // The list opens scrolled to its active row, such as the one whose panel shows.
+    afterNextRender(() => this._scrollToActive());
     effect(() => {
       const row = this.browsing() ? this.rows()[this.active()] : undefined;
       this.browsedChange.emit(row && row.kind !== 'all' ? row : undefined);
@@ -386,8 +406,13 @@ export class GraphSearchResultsComponent {
     const count = this.rows().length;
     this.active.update(index => (index + step + count) % count);
     this.browsing.set(true);
+    setTimeout(() => this._scrollToActive());
     const row = this.rows()[this.active()];
     this.previewed.emit(row && row.kind !== 'all' ? row : undefined);
+  }
+
+  private _scrollToActive(): void {
+    this._host.nativeElement.querySelector('.row.active')?.scrollIntoView({ block: 'nearest' });
   }
 
   /** Opens the active row's panel, as a click on it does; see `opened`. */

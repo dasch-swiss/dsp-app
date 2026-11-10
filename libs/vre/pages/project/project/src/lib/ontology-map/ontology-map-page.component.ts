@@ -177,9 +177,9 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       [placeholder]="m + '.search.placeholder' | translate"
                       [attr.aria-label]="m + '.search.placeholder' | translate"
                       [value]="searchText()"
-                      (input)="searchText.set(searchInput.value); listClosed.set(false)"
+                      (input)="searchText.set(searchInput.value); listClosed.set(false); browseAll.set(false)"
                       (click)="listClosed.set(false)"
-                      (keydown.arrowdown)="$event.preventDefault(); searchResults()?.move(1)"
+                      (keydown.arrowdown)="$event.preventDefault(); arrowDown()"
                       (keydown.arrowup)="$event.preventDefault(); searchResults()?.move(-1)"
                       (keydown.enter)="searchResults()?.openActive()"
                       (keydown.shift.enter)="searchResults()?.filterActive()"
@@ -217,6 +217,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       [colors]="colors()"
                       [labelOf]="labelOf"
                       [current]="panelIri() ?? propertyPanelIri()"
+                      [browseAll]="browsingAll()"
                       (opened)="openResult($event)"
                       (filtered)="filterOnResult($event, searchInput)"
                       (browsedChange)="browsed.set($event)"
@@ -1042,8 +1043,12 @@ export class OntologyMapPageComponent {
   readonly searchMatches = computed(() => {
     const graph = this.graph();
     const shown = this.graphShown() ?? graph;
-    return graphSearchResults(shown ?? NOTHING, graph ?? NOTHING, this.searchText());
+    return graphSearchResults(shown ?? NOTHING, graph ?? NOTHING, this.searchText(), this.browsingAll());
   });
+  /** Whether ↓ in the empty search opened the list of every class and property; typing, or clearing, ends it. */
+  readonly browseAll = signal(false);
+  /** Whether the list shows every class and property: browsing, nothing typed. */
+  readonly browsingAll = computed(() => this.browseAll() && !this.searchText().trim());
   /** How many classes and properties the search found, as its results count them; none without a search. */
   readonly searchFound = computed(() => {
     if (!this.search()) return undefined;
@@ -1057,7 +1062,17 @@ export class OntologyMapPageComponent {
    */
   readonly listClosed = signal(false);
   /** Whether the search's results show, under it: while a search is typed, found or not, and its list is open. */
-  readonly searchDropdownOpen = computed(() => this.searchFound() !== undefined && !this.listClosed());
+  readonly searchDropdownOpen = computed(
+    () => (this.searchFound() !== undefined || this.browsingAll()) && !this.listClosed()
+  );
+
+  /** ↓ in the search: goes down the results; in the empty search, first opens the list of every class and property. */
+  arrowDown(): void {
+    if (!this.searchDropdownOpen() && !this.searchText().trim()) {
+      this.browseAll.set(true);
+      this.listClosed.set(false);
+    } else this.searchResults()?.move(1);
+  }
   /**
    * The search result gone through in its list, which the graph picks out over the search's fade: a class outlined, a
    * property's links highlighted; none while none is.
@@ -1131,6 +1146,7 @@ export class OntologyMapPageComponent {
   filterOnResult(result: SearchResult, input: HTMLInputElement): void {
     if (result.kind === 'class') this.setFilter([result.iri]);
     else this.setPropertyFilter([result.iri]);
+    this.browseAll.set(false);
     this.searchText.set('');
     input.value = '';
   }
@@ -1153,6 +1169,7 @@ export class OntologyMapPageComponent {
   clearSearch(input: HTMLInputElement): void {
     clearTimeout(this._previewing);
     this.listClosed.set(false);
+    this.browseAll.set(false);
     this.searchText.set('');
     input.value = '';
     input.focus();

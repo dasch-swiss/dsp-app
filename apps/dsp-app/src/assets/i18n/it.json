@@ -755,7 +755,7 @@
       "classesChosen": "{{count}} classi",
       "propertyFilter": "Proprietà",
       "search": {
-        "placeholder": "Cerca classi e proprietà",
+        "placeholder": "Cerca, o ↓ per sfogliare",
         "found": "{{count}} trovati",
         "none": "Nessun risultato",
         "clear": "Cancella la ricerca",
