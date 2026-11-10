@@ -526,16 +526,41 @@ export function searchGraph(graph: DataModelGraph, text: string): GraphSearch | 
   if (!query) return undefined;
   const holds = (label: string, iri: string) =>
     label.toLowerCase().includes(query) || localNameOf(iri).toLowerCase().includes(query);
+  return matchGraph(
+    graph,
+    node => holds(node.label, node.id),
+    edge => holds(edge.label, edge.property)
+  );
+}
+
+/**
+ * The graph seen from one class or link property, as a search that found only it: the class and the classes it is
+ * linked with, or the property's links and their classes, stand out; the rest fades.
+ */
+export function focusGraph(graph: DataModelGraph, target: { kind: 'class' | 'property'; iri: string }): GraphSearch {
+  return matchGraph(
+    graph,
+    node => target.kind === 'class' && node.id === target.iri,
+    edge => target.kind === 'property' && edge.property === target.iri
+  );
+}
+
+/** What a search finds: the classes and links that match, and the classes and links around them. */
+function matchGraph(
+  graph: DataModelGraph,
+  classMatches: (node: DataModelGraph['nodes'][number]) => boolean,
+  linkMatches: (edge: DataModelEdge) => boolean
+): GraphSearch {
   const drawn = graph.edges.filter(edge => edge.source !== edge.target);
   const between = new Map<string, number>();
   for (const edge of drawn) {
     if (edge.kind === 'link') between.set(pairOf(edge), (between.get(pairOf(edge)) ?? 0) + 1);
   }
-  const hitClasses = new Set(graph.nodes.filter(node => holds(node.label, node.id)).map(node => node.id));
+  const hitClasses = new Set(graph.nodes.filter(classMatches).map(node => node.id));
   const search: GraphSearch = { hitClasses, hitLinks: new Set(), classes: new Set(hitClasses), links: new Set() };
   for (const edge of drawn) {
     const id = edgeIdOf(edge, edge.kind === 'link' ? (between.get(pairOf(edge)) ?? 0) : 0);
-    const found = edge.kind === 'link' && holds(edge.label, edge.property);
+    const found = edge.kind === 'link' && linkMatches(edge);
     if (found) search.hitLinks.add(id);
     if (found || hitClasses.has(edge.source) || hitClasses.has(edge.target)) {
       search.links.add(id);

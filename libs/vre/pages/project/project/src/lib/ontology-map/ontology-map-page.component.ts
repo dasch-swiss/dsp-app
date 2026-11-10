@@ -34,6 +34,7 @@ import {
   GraphSize,
   linkedWith,
   localNameOf,
+  focusGraph,
   searchGraph,
   throughProperties,
   withInheritedLinks,
@@ -1035,10 +1036,15 @@ export class OntologyMapPageComponent {
 
   /** The text searched in the graph's classes and links. */
   readonly searchText = signal('');
-  /** The search in the classes and links drawn; see `searchGraph`. */
+  /**
+   * The search in the classes and links drawn; see `searchGraph`. While every class and property is browsed, nothing
+   * typed, the one gone through stands out the same way, the rest fading; see `focusGraph`.
+   */
   readonly search = computed(() => {
     const graph = this.graphShown() ?? this.graph();
-    return graph ? searchGraph(graph, this.searchText()) : undefined;
+    if (!graph) return undefined;
+    const browsed = this.browsingAll() && this.searchDropdownOpen() ? this.browsed() : undefined;
+    return browsed ? focusGraph(graph, browsed) : searchGraph(graph, this.searchText());
   });
   /** The classes and link properties the search found, each property once, as its results list them. */
   readonly searchMatches = computed(() => {
@@ -1058,7 +1064,7 @@ export class OntologyMapPageComponent {
   readonly browsingAll = computed(() => this.browseAll() && !this.searchText().trim());
   /** How many classes and properties the search found, as its results count them; none without a search. */
   readonly searchFound = computed(() => {
-    if (!this.search()) return undefined;
+    if (!this.searchText().trim() || !(this.graphShown() ?? this.graph())) return undefined;
     const { classes, properties } = this.searchMatches();
     return classes.length + properties.length;
   });

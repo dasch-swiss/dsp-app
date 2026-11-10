@@ -2,6 +2,7 @@ import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import {
   classRows,
+  focusGraph,
   graphScale,
   linkedWith,
   propertyRows,
@@ -142,6 +143,20 @@ describe('searchGraph', () => {
   it('finds nothing for a text nowhere in the graph', () => {
     const search = searchGraph(graph, 'sculpture')!;
     expect(search.hitClasses.size + search.hitLinks.size).toBe(0);
+  });
+});
+
+describe('focusGraph', () => {
+  it('keeps one class with its links and the classes at their other end, none by a similar name', () => {
+    const focus = focusGraph(graph, { kind: 'class', iri: 'Film' });
+    expect([...focus.hitClasses]).toEqual(['Film']);
+    expect([...focus.classes].sort()).toEqual(['Film', 'Person']);
+  });
+
+  it('keeps one property with its links and their classes', () => {
+    const focus = focusGraph(graph, { kind: 'property', iri: 'writer' });
+    expect([...focus.hitLinks]).toEqual(['Film writer Person']);
+    expect(focus.hitClasses.size).toBe(0);
   });
 });
 
