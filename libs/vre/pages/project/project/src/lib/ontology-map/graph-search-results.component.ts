@@ -194,7 +194,7 @@ export function graphSearchResults(
         display: block;
       }
 
-      // A card under the search.
+      // A card under the search, see-through: the graph shows faintly behind it.
       .results {
         box-sizing: border-box;
         width: 440px;
@@ -203,7 +203,8 @@ export function graphSearchResults(
         flex-direction: column;
         padding: 8px 8px 6px;
         border-radius: 10px;
-        background: white;
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(2px);
         box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
         font: 400 13px/20px var(--font-sans, Roboto, sans-serif);
       }
