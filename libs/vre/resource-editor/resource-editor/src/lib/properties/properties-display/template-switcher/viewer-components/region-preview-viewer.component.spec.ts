@@ -209,7 +209,7 @@ describe('RegionPreviewViewerComponent', () => {
     expect(el.querySelectorAll('.legal-label').length).toBeGreaterThan(1);
   });
 
-  it('omits the legal footer when the image has no legal info', () => {
+  it('shows "Not specified" for every legal field when the image has no legal info', () => {
     setValue({
       ...fullValue(),
       copyrightHolder: null,
@@ -218,7 +218,9 @@ describe('RegionPreviewViewerComponent', () => {
     } as unknown as ReadRegionPreviewValue);
     const el: HTMLElement = fixture.nativeElement;
 
-    expect(el.querySelectorAll('.legal-label').length).toBe(1);
+    // caption + copyright holder + authorship + license
+    expect(el.querySelectorAll('.legal-label').length).toBe(4);
+    expect((el.textContent ?? '').match(/resourceEditor\.legal\.notSpecified/g)?.length).toBe(3);
     // the crop still renders
     expect(el.querySelector('img.crop')).toBeTruthy();
   });
@@ -231,7 +233,7 @@ describe('RegionPreviewViewerComponent', () => {
     expect(el.querySelector('app-alert-info')).toBeTruthy();
 
     // a new value arrives on the reused instance -> the latch resets and the image is fetched again
-    // (now viewable), and the legal footer reflects the new value (here: no legal info -> footer omitted)
+    // (now viewable), and the legal footer reflects the new value (here: no legal info -> "Not specified")
     representationService.getImageBlob.mockReturnValue(of(new Blob()));
     setValue({
       ...fullValue(),
@@ -242,6 +244,6 @@ describe('RegionPreviewViewerComponent', () => {
 
     expect(el.querySelector('app-alert-info')).toBeNull();
     expect(el.querySelector('img.crop')).toBeTruthy();
-    expect(el.querySelectorAll('.legal-label').length).toBe(1);
+    expect((el.textContent ?? '').match(/resourceEditor\.legal\.notSpecified/g)?.length).toBe(3);
   });
 });

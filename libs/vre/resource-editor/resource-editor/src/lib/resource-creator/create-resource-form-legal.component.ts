@@ -25,7 +25,7 @@ import { CreateResourceFormRowComponent } from './create-resource-form-row.compo
             <mat-option>{{ 'ui.common.status.loading' | translate }}</mat-option>
           }
           @if (!copyrightHoldersLoading) {
-            <mat-option [value]="undefined">{{ 'resourceEditor.resourceCreator.legal.none' | translate }}</mat-option>
+            <mat-option [value]="undefined">{{ 'resourceEditor.legal.notSpecified' | translate }}</mat-option>
           }
           @for (copyrightHolder of copyrightHolders$ | async; track copyrightHolder) {
             <mat-option [value]="copyrightHolder">{{ copyrightHolder }} </mat-option>
@@ -44,7 +44,7 @@ import { CreateResourceFormRowComponent } from './create-resource-form-row.compo
             <mat-option>{{ 'ui.common.status.loading' | translate }}</mat-option>
           }
           @if (!licensesLoading) {
-            <mat-option [value]="undefined">{{ 'resourceEditor.resourceCreator.legal.none' | translate }}</mat-option>
+            <mat-option [value]="undefined">{{ 'resourceEditor.legal.notSpecified' | translate }}</mat-option>
           }
           @for (license of licenses$ | async; track license) {
             <mat-option [value]="license">{{ license.labelEn }}</mat-option>

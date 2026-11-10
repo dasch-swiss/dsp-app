@@ -10,7 +10,11 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import type { ReadRegionPreviewValue } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
+import {
+  isAuthorshipNotApplicable,
+  isCopyrightHolderNotApplicable,
+  ResourceService,
+} from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { forkJoin, Subscription, switchMap, take } from 'rxjs';
 // Direct relative imports (NOT the lib barrel) for same-lib components to avoid the intra-lib DI cycle.
@@ -95,25 +99,36 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
             <app-resource-explorer-button [resourceIri]="value.regionIri" />
           </span>
 
-          <!-- Placeholder legal values render as the readable marker, and the placeholder license as a
-               plain pill: its uri is the sentinel itself and is not dereferenceable (DEV-6982). -->
-          @if (value.copyrightHolder) {
-            <span class="legal-label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span>
-            <span class="legal-value">
+          <!-- Always rendered: an empty field says "Not specified", or "Not applicable" where the license
+               rules the field out. Placeholder values render as the readable marker, and the placeholder
+               license as a plain pill: its uri is the sentinel itself and is not dereferenceable. -->
+          <span class="legal-label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span>
+          <span class="legal-value">
+            @if (value.copyrightHolder) {
               @if (isPlaceholder(value.copyrightHolder)) {
                 {{ 'resourceEditor.legal.placeholder' | translate }}
               } @else {
                 {{ value.copyrightHolder }}
               }
-            </span>
-          }
-          @if (value.authorship?.length) {
-            <span class="legal-label">{{ 'resourceEditor.legal.authorship' | translate }}</span>
-            <span class="legal-value">{{ authorshipWith('resourceEditor.legal.placeholder' | translate) }}</span>
-          }
-          @if (resolvedLicense) {
-            <span class="legal-label">{{ 'resourceEditor.legal.license' | translate }}</span>
-            <span class="legal-value">
+            } @else if (isHolderNotApplicable) {
+              {{ 'resourceEditor.legal.notApplicable' | translate }}
+            } @else {
+              {{ 'resourceEditor.legal.notSpecified' | translate }}
+            }
+          </span>
+          <span class="legal-label">{{ 'resourceEditor.legal.authorship' | translate }}</span>
+          <span class="legal-value">
+            @if (value.authorship?.length) {
+              {{ authorshipWith('resourceEditor.legal.placeholder' | translate) }}
+            } @else if (isAuthorshipNotApplicable) {
+              {{ 'resourceEditor.legal.notApplicable' | translate }}
+            } @else {
+              {{ 'resourceEditor.legal.notSpecified' | translate }}
+            }
+          </span>
+          <span class="legal-label">{{ 'resourceEditor.legal.license' | translate }}</span>
+          <span class="legal-value">
+            @if (resolvedLicense) {
               @if (isPlaceholder(resolvedLicense.id)) {
                 <span class="license-pill license-pill--static">{{
                   'resourceEditor.legal.placeholder' | translate
@@ -128,8 +143,20 @@ import { ResourceExplorerButtonComponent } from '../../../resource-explorer-butt
                   >{{ resolvedLicense.labelEn }}</a
                 >
               }
-            </span>
-          }
+            } @else if (value.license) {
+              <!-- Recorded but not (yet) resolved: show the IRI only once the catalog has loaded, so a real
+                   license never flashes as a raw IRI or as "Not specified" while loading. -->
+              @if (isPlaceholder(value.license.id)) {
+                <span class="license-pill license-pill--static">{{
+                  'resourceEditor.legal.placeholder' | translate
+                }}</span>
+              } @else if (licensesLoaded) {
+                {{ value.license.id }}
+              }
+            } @else {
+              {{ 'resourceEditor.legal.notSpecified' | translate }}
+            }
+          </span>
         </div>
       </div>
     </div>
@@ -335,6 +362,7 @@ export class RegionPreviewViewerComponent implements OnChanges, OnDestroy, OnIni
   // The value carries only the license IRI (License.id); the human-readable label + uri come from the
   // project's license list, fetched once. Same mechanism as ResourceLegalComponent.
   private _licenses: ProjectLicenseDto[] = [];
+  licensesLoaded = false;
 
   constructor(
     private readonly _resourceService: ResourceService,
@@ -400,15 +428,31 @@ export class RegionPreviewViewerComponent implements OnChanges, OnDestroy, OnIni
         ),
         take(1)
       )
-      .subscribe(data => {
-        this._licenses = data.data;
-        this._cd.markForCheck(); // OnPush: the async result must trigger a view update
+      .subscribe({
+        next: data => {
+          this._licenses = data.data;
+          this.licensesLoaded = true;
+          this._cd.markForCheck(); // OnPush: the async result must trigger a view update
+        },
+        error: () => {
+          this.licensesLoaded = true;
+          this._cd.markForCheck();
+        },
       });
   }
 
   // Returns a stable DTO reference (value-equal across CD passes) → safe under OnPush.
   get resolvedLicense() {
     return this._licenses.find(license => license.id === this.value.license?.id);
+  }
+
+  // Primitives (value-equal across CD passes) → safe under OnPush.
+  get isHolderNotApplicable(): boolean {
+    return isCopyrightHolderNotApplicable(this.value.license?.id);
+  }
+
+  get isAuthorshipNotApplicable(): boolean {
+    return isAuthorshipNotApplicable(this.value.license?.id);
   }
 
   // Placeholder-aware predicate used by the legal rows; a plain function reference, stable under OnPush.

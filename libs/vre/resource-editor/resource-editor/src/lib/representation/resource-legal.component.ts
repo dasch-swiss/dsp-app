@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ReadFileValue } from '@dasch-swiss/dsp-js';
 import { AdminAPIApiService, ProjectLicenseDto } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { isAuthorshipNotApplicable, isCopyrightHolderNotApplicable } from '@dasch-swiss/vre/shared/app-common';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { TranslatePipe } from '@ngx-translate/core';
 import { switchMap, take } from 'rxjs';
@@ -11,38 +12,54 @@ import { ResourceLegalLicenseComponent } from './resource-legal-license.componen
 @Component({
   selector: 'app-resource-legal',
   template: `
-    @if (fileValue.copyrightHolder || fileValue.authorship?.length > 0 || fileValue.license) {
-      <div class="legal-panel mat-caption">
-        <!-- One label/value grid so all three values align in a single column and each wraps inside
-             its own column. A two-child "space-between" flex row had no gap and no width bound on the
-             license, so a long label fused into the rows beside it (DEV-6983). -->
-        <div class="meta-grid">
+    <!-- Always rendered: an empty field says so ("Not specified", or "Not applicable" where the
+         license rules the field out) instead of the panel disappearing. -->
+    <div class="legal-panel mat-caption">
+      <!-- One label/value grid so all three values align in a single column and each wraps inside
+           its own column. A two-child "space-between" flex row had no gap and no width bound on the
+           license, so a long label fused into the rows beside it. -->
+      <div class="meta-grid">
+        <span class="label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span>
+        <span class="value" data-cy="legal-copyright-holder">
           @if (fileValue.copyrightHolder) {
-            <span class="label">{{ 'resourceEditor.legal.copyrightHolder' | translate }}</span>
-            <span class="value">
-              @if (isPlaceholderCopyrightHolder) {
-                {{ 'resourceEditor.legal.placeholder' | translate }}
-              } @else {
-                {{ fileValue.copyrightHolder }}
-              }
-            </span>
+            @if (isPlaceholderCopyrightHolder) {
+              {{ 'resourceEditor.legal.placeholder' | translate }}
+            } @else {
+              {{ fileValue.copyrightHolder }}
+            }
+          } @else if (isHolderNotApplicable) {
+            {{ 'resourceEditor.legal.notApplicable' | translate }}
+          } @else {
+            {{ 'resourceEditor.legal.notSpecified' | translate }}
           }
-          @if (fileValue.authorship.length > 0) {
-            <span class="label">{{ 'resourceEditor.legal.authorship' | translate }}</span>
-            <span class="value">{{ authorshipWith('resourceEditor.legal.placeholder' | translate) }}</span>
+        </span>
+        <span class="label">{{ 'resourceEditor.legal.authorship' | translate }}</span>
+        <span class="value" data-cy="legal-authorship">
+          @if (fileValue.authorship?.length) {
+            {{ authorshipWith('resourceEditor.legal.placeholder' | translate) }}
+          } @else if (isAuthorshipNotApplicable) {
+            {{ 'resourceEditor.legal.notApplicable' | translate }}
+          } @else {
+            {{ 'resourceEditor.legal.notSpecified' | translate }}
           }
+        </span>
+        <span class="label">{{ 'resourceEditor.legal.license' | translate }}</span>
+        <span class="value" data-cy="legal-license">
           @if (license) {
-            <span class="label">{{ 'resourceEditor.legal.license' | translate }}</span>
-            <span class="value">
-              <app-resource-legal-license [license]="license" />
-            </span>
+            <app-resource-legal-license [license]="license" />
           } @else if (isLoadingLicense) {
-            <span class="label">{{ 'resourceEditor.legal.license' | translate }}</span>
-            <span class="value"><app-progress-indicator [compact]="true" size="xsmall" /></span>
+            <app-progress-indicator [compact]="true" size="xsmall" />
+          } @else if (isPlaceholderLicense) {
+            {{ 'resourceEditor.legal.placeholder' | translate }}
+          } @else if (fileValue.license) {
+            <!-- A license is recorded but not in the project's catalog: show its IRI, never "Not specified". -->
+            {{ fileValue.license.id }}
+          } @else {
+            {{ 'resourceEditor.legal.notSpecified' | translate }}
           }
-        </div>
+        </span>
       </div>
-    }
+    </div>
   `,
   styles: [
     `
@@ -100,6 +117,18 @@ export class ResourceLegalComponent implements OnInit {
    */
   get isPlaceholderCopyrightHolder(): boolean {
     return isPlaceholderLegalValue(this.fileValue.copyrightHolder);
+  }
+
+  get isPlaceholderLicense(): boolean {
+    return isPlaceholderLegalValue(this.fileValue.license?.id);
+  }
+
+  get isHolderNotApplicable(): boolean {
+    return isCopyrightHolderNotApplicable(this.fileValue.license?.id);
+  }
+
+  get isAuthorshipNotApplicable(): boolean {
+    return isAuthorshipNotApplicable(this.fileValue.license?.id);
   }
 
   /**
