@@ -1,5 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, linkedSignal, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  linkedSignal,
+  output,
+  untracked,
+} from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HighlightPipe } from '../data-models-rail/highlight.pipe';
@@ -326,6 +335,8 @@ export class GraphSearchResultsComponent {
   readonly text = input.required<string>();
   readonly colors = input<ReadonlyMap<string, string>>(new Map());
   readonly labelOf = input.required<(iri: string) => string>();
+  /** The class or property whose panel shows, which the list starts on when it opens again; else "All results". */
+  readonly current = input<string | undefined>(undefined);
 
   /** A row clicked: open its panel. */
   readonly opened = output<SearchResult>();
@@ -336,12 +347,26 @@ export class GraphSearchResultsComponent {
   /** Every row in the order shown, "All results" first, for the arrow keys. */
   readonly rows = computed<Row[]>(() => [ALL, ...this.results().classes, ...this.results().properties]);
   /** The row the arrow keys and Enter act on; "All results" again once the results change. */
-  readonly active = linkedSignal<Row[], number>({ source: this.rows, computation: () => 0 });
+  readonly active = linkedSignal<Row[], number>({
+    source: this.rows,
+    computation: rows => {
+      const current = untracked(() => this.current());
+      return Math.max(
+        0,
+        rows.findIndex(row => row.kind !== 'all' && row.iri === current)
+      );
+    },
+  });
 
   /** Whether the rows are being gone through, with the pointer or the arrow keys; not once the results change. */
   readonly browsing = linkedSignal<Row[], boolean>({ source: this.rows, computation: () => false });
   /** The row gone through, for the graph to pick out; none until a row is reached. */
   readonly browsedChange = output<SearchResult | undefined>();
+  /**
+   * The row the arrow keys reached, for its panel to show while the list stays open: a class or property, or none for
+   * "All results". The pointer only browses; it previews nothing.
+   */
+  readonly previewed = output<SearchResult | undefined>();
 
   constructor() {
     effect(() => {
@@ -361,6 +386,8 @@ export class GraphSearchResultsComponent {
     const count = this.rows().length;
     this.active.update(index => (index + step + count) % count);
     this.browsing.set(true);
+    const row = this.rows()[this.active()];
+    this.previewed.emit(row && row.kind !== 'all' ? row : undefined);
   }
 
   /** Opens the active row's panel, as a click on it does; see `opened`. */
