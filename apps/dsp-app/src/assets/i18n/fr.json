@@ -761,12 +761,12 @@
         "clear": "Effacer la recherche",
         "results": "Résultats de recherche",
         "all": "Tous les résultats",
+        "resetFilter": "Afficher toutes les classes",
+        "usedByOne": "1 classe",
+        "usedBy": "{{count}} classes",
         "classes": "Classes · {{count}}",
         "properties": "Propriétés · {{count}}",
-        "subclasses": "{{count}} sous-classes",
-        "filter": "Filtrer",
-        "filterOn": "Filtrer le graphe sur {{name}}",
-        "hint": "↑↓ pour se déplacer · Entrée ouvre · Maj+Entrée filtre"
+        "subclasses": "{{count}} sous-classes"
       },
       "allProperties": "Toutes les propriétés",
       "propertiesChosen": "{{count}} propriétés",

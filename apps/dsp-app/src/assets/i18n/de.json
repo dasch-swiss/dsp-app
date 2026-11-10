@@ -761,12 +761,12 @@
         "clear": "Suche löschen",
         "results": "Suchergebnisse",
         "all": "Alle Ergebnisse",
+        "resetFilter": "Alle Klassen anzeigen",
+        "usedByOne": "1 Klasse",
+        "usedBy": "{{count}} Klassen",
         "classes": "Klassen · {{count}}",
         "properties": "Eigenschaften · {{count}}",
-        "subclasses": "{{count}} Unterklassen",
-        "filter": "Filtern",
-        "filterOn": "Graph nach {{name}} filtern",
-        "hint": "↑↓ zum Wechseln · Enter öffnet · Umschalt+Enter filtert"
+        "subclasses": "{{count}} Unterklassen"
       },
       "allProperties": "Alle Eigenschaften",
       "propertiesChosen": "{{count}} Eigenschaften",

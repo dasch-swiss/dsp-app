@@ -181,8 +181,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       (click)="listClosed.set(false)"
                       (keydown.arrowdown)="$event.preventDefault(); arrowDown()"
                       (keydown.arrowup)="$event.preventDefault(); searchResults()?.move(-1)"
-                      (keydown.enter)="searchResults()?.openActive()"
-                      (keydown.shift.enter)="searchResults()?.filterActive()"
+                      (keydown.enter)="searchResults()?.filterActive()"
                       (keydown.escape)="escapeSearch($event, searchInput)" />
                     @if (searchFound(); as found) {
                       <span class="search-count" data-cy="ontology-map-search-count">{{
@@ -215,11 +214,10 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       [results]="searchMatches()"
                       [text]="searchText()"
                       [colors]="colors()"
-                      [labelOf]="labelOf"
-                      [current]="panelIri() ?? propertyPanelIri()"
                       [browseAll]="browsingAll()"
-                      (opened)="openResult($event)"
+                      [narrowed]="narrowed()"
                       (filtered)="filterOnResult($event, searchInput)"
+                      (resetFilter)="clearFilters()"
                       (browsedChange)="browsed.set($event)"
                       (previewed)="preview($event)" />
                   </ng-template>
@@ -444,7 +442,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
               @if (panelIri(); as openIri) {
                 <app-resource-class-panel
                   class="panel"
-                  tabindex="-1"
                   [graph]="graph"
                   [classIri]="openIri"
                   [anyResourceLabel]="t + '.anyResource' | translate"
@@ -461,7 +458,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
               } @else if (propertyPanelIri(); as propertyIri) {
                 <app-property-panel
                   class="panel"
-                  tabindex="-1"
                   [graph]="graph"
                   [propertyIri]="propertyIri"
                   [colors]="colors()"
@@ -871,10 +867,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
       }
 
       // The panel floats over the graph, which keeps its size, so opening a class moves nothing.
-      .panel:focus {
-        outline: none;
-      }
-
       .panel {
         position: absolute;
         z-index: 1;
@@ -946,7 +938,6 @@ export class OntologyMapPageComponent {
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
   readonly graphView = viewChild(OntologyGraphComponent);
   private readonly _searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
-  private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   /** The family of every class of the data model, which the Islands view groups and colours classes by. */
   readonly families = computed(() => {
@@ -1045,6 +1036,12 @@ export class OntologyMapPageComponent {
     const shown = this.graphShown() ?? graph;
     return graphSearchResults(shown ?? NOTHING, graph ?? NOTHING, this.searchText(), this.browsingAll());
   });
+  /** Whether the graph shows less than the whole data model, filtered by class or by property. */
+  readonly narrowed = computed(() => {
+    const graph = this._graphLinks();
+    return !!graph && this.graphShown() !== graph;
+  });
+
   /** Whether ↓ in the empty search opened the list of every class and property; typing, or clearing, ends it. */
   readonly browseAll = signal(false);
   /** Whether the list shows every class and property: browsing, nothing typed. */
@@ -1085,23 +1082,6 @@ export class OntologyMapPageComponent {
   ];
   readonly searchResults = viewChild(GraphSearchResultsComponent);
 
-  /** A class's label in the data model, else the end of its IRI. */
-  readonly labelOf = (iri: string): string =>
-    this.graph()?.nodes.find(node => node.id === iri)?.label ?? classNameOf(iri);
-
-  /**
-   * Opens the panel of a class or property the search found, for good: the list closes and the panel takes the focus,
-   * for its own keys. The search stays, and comes back with its list on a click in it.
-   */
-  openResult(result: SearchResult): void {
-    clearTimeout(this._previewing);
-    const params = this._panelParams(result);
-    const shown = (this.panelIri() ?? this.propertyPanelIri()) === result.iri;
-    this.listClosed.set(true);
-    const opened = shown ? Promise.resolve(true) : this._navigate(params);
-    Promise.resolve(opened).then(() => setTimeout(() => this._focusPanel()));
-  }
-
   /**
    * Shows the panel of the result the arrow keys reached, the list staying open and the search keeping the focus; for
    * "All results", none. A short pause first, so going through fast does not open every panel on the way. The first
@@ -1125,10 +1105,6 @@ export class OntologyMapPageComponent {
     return result.kind === 'class'
       ? { [ONTOLOGY_MAP_PARAM.panel]: classNameOf(result.iri), [ONTOLOGY_MAP_PARAM.propertyPanel]: null }
       : { [ONTOLOGY_MAP_PARAM.propertyPanel]: classNameOf(result.iri), [ONTOLOGY_MAP_PARAM.panel]: null };
-  }
-
-  private _focusPanel(): void {
-    this._host.nativeElement.querySelector<HTMLElement>('.panel')?.focus();
   }
 
   /**

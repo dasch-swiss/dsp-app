@@ -761,12 +761,12 @@
         "clear": "Clear search",
         "results": "Search results",
         "all": "All results",
+        "resetFilter": "Show all classes",
+        "usedByOne": "1 class",
+        "usedBy": "{{count}} classes",
         "classes": "Classes · {{count}}",
         "properties": "Properties · {{count}}",
-        "subclasses": "{{count}} subclasses",
-        "filter": "Filter",
-        "filterOn": "Filter the graph on {{name}}",
-        "hint": "↑↓ to move · Enter opens · Shift+Enter filters"
+        "subclasses": "{{count}} subclasses"
       },
       "allProperties": "All properties",
       "propertiesChosen": "{{count}} properties",
