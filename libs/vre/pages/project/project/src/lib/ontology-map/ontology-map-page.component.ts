@@ -96,6 +96,8 @@ const ISLANDS_KEY = 'dsp-ontology-map-islands';
 const COLOUR_TAB_KEY = 'dsp-ontology-map-colour-tab';
 const TREE_LINES_KEY = 'dsp-ontology-map-tree-lines';
 const FULL_WIDTH_KEY = 'dsp-ontology-map-full-width';
+/** The widest screen, in CSS px, on which the graph uses the whole width until the user chooses; see `fullWidth`. */
+const FULL_WIDTH_UP_TO = 2560;
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
@@ -985,9 +987,12 @@ export class OntologyMapPageComponent {
   readonly treeLines = signal(readStored(TREE_LINES_KEY) !== 'false');
   /**
    * Whether the graph spreads over the whole width, an open panel covering its right, rather than keeping clear of
-   * where the panel opens.
+   * where the panel opens. Until the user chooses, it does on screens up to `FULL_WIDTH_UP_TO` wide, where the room
+   * kept for the panel would make the graph small; on wider ones there is room to spare for it.
    */
-  readonly fullWidth = signal(readStored(FULL_WIDTH_KEY) === 'true');
+  readonly fullWidth = signal(
+    (readStored(FULL_WIDTH_KEY) ?? String(window.innerWidth <= FULL_WIDTH_UP_TO)) === 'true'
+  );
   readonly labelOptions = LABEL_OPTIONS;
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
