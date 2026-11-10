@@ -1114,12 +1114,20 @@ export class OntologyMapPageComponent {
     () => (this.searchFound() !== undefined || this.browsingAll()) && !this.listClosed()
   );
 
-  /** ↓ in the search: goes down the results; in the empty search, first opens the list of every class and property. */
+  /**
+   * ↓ in the search: goes down the results. With the list closed, it opens it, in the empty search the list of every
+   * class and property, its first row gone through at once: the graph fades round it and its panel shows, as for the
+   * next ones.
+   */
   arrowDown(): void {
-    if (!this.searchDropdownOpen() && !this.searchText().trim()) {
-      this.browseAll.set(true);
-      this.listClosed.set(false);
-    } else this.searchResults()?.move(1);
+    if (this.searchDropdownOpen()) {
+      this.searchResults()?.move(1);
+      return;
+    }
+    if (!this.searchText().trim()) this.browseAll.set(true);
+    this.listClosed.set(false);
+    // The list is drawn on the next turn; then its first row is gone through.
+    setTimeout(() => this.searchResults()?.move(0));
   }
   /**
    * The search result gone through in its list, which the graph picks out over the search's fade: a class outlined, a
