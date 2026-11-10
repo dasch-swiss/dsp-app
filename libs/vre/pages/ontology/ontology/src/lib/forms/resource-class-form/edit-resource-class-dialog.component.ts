@@ -10,7 +10,7 @@ import {
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { MultiLanguages, StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { MultiLanguageLayout, MultiLanguages, StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take } from 'rxjs';
@@ -21,6 +21,8 @@ import { ResourceClassForm, ResourceClassFormData, UpdateResourceClassData } fro
 export interface EditResourceClassDialogProps {
   labels: StringLiteralV2[];
   data: UpdateResourceClassData;
+  /** How the label and description show their languages; one field with a language switcher each, unless set. */
+  layout?: MultiLanguageLayout;
 }
 
 @Component({
@@ -30,7 +32,10 @@ export interface EditResourceClassDialogProps {
       [title]="data.labels | appStringifyStringLiteral"
       [subtitle]="'pages.ontology.resourceClassForm.editSubtitle' | translate" />
     <div mat-dialog-content>
-      <app-resource-class-form [formData]="formData" (afterFormInit)="afterFormInit($event)" />
+      <app-resource-class-form
+        [formData]="formData"
+        [layout]="data.layout ?? 'switcher'"
+        (afterFormInit)="afterFormInit($event)" />
     </div>
     <div mat-dialog-actions align="end">
       <button data-cy="cancel-button" mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
