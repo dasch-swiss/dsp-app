@@ -1092,7 +1092,7 @@ export class OntologyMapPageComponent {
    * property's links highlighted; none while none is.
    */
   readonly browsed = signal<SearchResult | undefined>(undefined);
-  /** The browsed result while its list shows, which the graph draws in magenta. */
+  /** The browsed result while its list shows, which the graph draws stronger, in blue. */
   readonly picked = computed(() => (this.searchDropdownOpen() ? this.browsed() : undefined));
   readonly searchDropdownPositions: ConnectedPosition[] = [
     { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 6 },

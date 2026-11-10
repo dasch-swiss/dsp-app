@@ -50,9 +50,6 @@ const COLOR = {
   border: '#BDBFC1',
   text: '#1F2937',
   muted: '#6B7280',
-  /** A class or property picked out of a search, as its results are gone through. */
-  // A saturated magenta: no family pastel is near it, nor the app's blue, and it reads on the light canvas.
-  picked: '#C8007A',
 };
 
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
@@ -378,13 +375,14 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     style: { width: 2.4 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
   },
   { selector: '.faded', style: { opacity: SEARCH_FADE } },
-  // The search result gone through, in orange over the search's own marks; see `picked`.
+  // The search result gone through: the one class or link the graph is narrowed to, in the same blue as an open
+  // panel's class, drawn stronger; see `picked`.
   {
     selector: 'node.picked',
     style: {
       'border-width': 3 * f,
-      'border-color': COLOR.picked,
-      'underlay-color': COLOR.picked,
+      'border-color': COLOR.primary,
+      'underlay-color': COLOR.primary,
       'underlay-opacity': 0.3,
       'underlay-padding': 6 * f,
       'underlay-shape': 'round-rectangle',
@@ -395,9 +393,9 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     selector: 'edge.picked',
     style: {
       width: 3.2 * f,
-      'line-color': COLOR.picked,
-      'target-arrow-color': COLOR.picked,
-      color: COLOR.picked,
+      'line-color': COLOR.primary,
+      'target-arrow-color': COLOR.primary,
+      color: COLOR.primary,
       opacity: 1,
     },
   },
