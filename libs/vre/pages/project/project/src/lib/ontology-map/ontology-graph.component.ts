@@ -75,9 +75,6 @@ const LEGEND_TEXT_SIZE = 12.5;
 /** How far apart, at most, classes are spread to fill the box; past it, links grow too long to follow. */
 const MAX_SPREAD = 2.5;
 
-/** The share of the chosen name size a model is first shown at, at least, though it then does not fit. */
-const READABLE_SHARE = 0.6;
-
 /** How often, at most, links are routed again while a class is dragged, in ms. */
 const DRAG_ROUTE_MS = 100;
 
@@ -1054,8 +1051,7 @@ export class OntologyGraphComponent {
   /**
    * Scales boxes, text and lines so class names read at the chosen size once the model is fitted: a model of many
    * classes, fitted at a low zoom, is drawn bigger. Bigger boxes widen the model, so the scale is measured twice.
-   * A model too big to fit and stay readable is shown zoomed in on its middle, its names still readable; Fit shows it
-   * all.
+   * Then the whole model is fitted in the room, however big.
    */
   private _rescale(cy: Core): void {
     if (cy.elements().empty()) return;
@@ -1073,10 +1069,8 @@ export class OntologyGraphComponent {
     }
     this._spread(cy);
     this._route(cy);
+    // The whole model, always, in the room left of the panel's place: a big one with small names, zoomed in to read.
     this._fit(cy);
-    // Too big to fit and stay readable, it is shown from its top, below the tools, its names still readable.
-    const readable = (textSize * READABLE_SHARE) / (BASE_FONT_SIZE * this._scale);
-    if (cy.zoom() < readable) this._show(cy, readable, 'top');
     this._revealWhenSettled();
   }
 
