@@ -158,6 +158,12 @@ const COLUMN_LABELS: Record<Column, string> = {
           </mat-slide-toggle>
         </app-columns-menu>
         <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-classes" />
+        @if (folding() && foldable().size) {
+          <button mat-button type="button" data-cy="data-model-classes-expand" (click)="toggleAllFolds()">
+            <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+            {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
+          </button>
+        }
         <mat-button-toggle-group
           class="density"
           hideSingleSelectionIndicator
@@ -212,7 +218,22 @@ const COLUMN_LABELS: Record<Column, string> = {
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row" class="frozen">
-              <span class="labelled" [style.padding-left.px]="row.depth * 18" [title]="row.name">
+              <span class="labelled" [style.padding-left.px]="row.depth * indent" [title]="row.name">
+                @if (folding()) {
+                  @if (foldable().has(row.id)) {
+                    <button
+                      type="button"
+                      class="toggle"
+                      data-cy="data-model-classes-toggle"
+                      [attr.aria-expanded]="!collapsed().has(row.id)"
+                      [attr.aria-label]="(collapsed().has(row.id) ? r + '.expandRow' : r + '.collapseRow') | translate"
+                      (click)="$event.stopPropagation(); toggleFold(row.id)">
+                      <mat-icon>{{ collapsed().has(row.id) ? 'chevron_right' : 'expand_more' }}</mat-icon>
+                    </button>
+                  } @else {
+                    <span class="leaf" aria-hidden="true"></span>
+                  }
+                }
                 <span class="swatch" [style.background]="state.colors().get(row.id)"></span>
                 <span class="texts">
                   <app-language-texts
@@ -227,7 +248,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                     [expanded]="expanded"
                     [highlight]="searchTerms()"
                     (edit)="editText(row, 'label', $event)" />
-                  @if (row.superclass; as superclass) {
+                  @if (!folding() && row.superclass; as superclass) {
                     <span class="subclass-of">
                       @for (
                         part of r + '.subclassOf'
@@ -575,6 +596,29 @@ const COLUMN_LABELS: Record<Column, string> = {
         min-width: 0;
       }
 
+      // The tree: chevrons as in Controlled vocabularies.
+      .toggle {
+        flex: none;
+        display: flex;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 0;
+        border-radius: 4px;
+        background: none;
+        color: $cool_gray_600;
+        cursor: pointer;
+
+        &:hover {
+          background: $cool_gray_100;
+        }
+      }
+
+      .leaf {
+        flex: none;
+        width: 24px;
+      }
+
       // The table's other options, in View options under its columns.
       .view-heading {
         margin-top: 8px;
@@ -758,7 +802,61 @@ export class DataModelClassesComponent {
   readonly sourceOptions = computed(() => this._byLabel(this.state.classRows().flatMap(row => row.linkedFrom)));
   readonly targetOptions = computed(() => this._byLabel(this.state.classRows().flatMap(row => row.linksTo)));
 
+  /** How far a level of subclasses is indented, in px: one chevron's width. */
+  readonly indent = 24;
+  /** The classes folded, their subclasses hidden. */
+  readonly collapsed = signal(new Set<string>());
+  /** Each class with subclasses, and how many it has; it gets a chevron. */
+  readonly foldable = computed(() => {
+    const counts = new Map<string, number>();
+    for (const row of this.state.classRows()) {
+      if (row.superclass) counts.set(row.superclass, (counts.get(row.superclass) ?? 0) + 1);
+    }
+    return counts;
+  });
+  /**
+   * Whether the table shows the classes as a tree, folding: nothing searched or filtered. A search or a filter lists
+   * what it finds wherever it is, each subclass saying its superclass.
+   */
+  readonly folding = computed(
+    () =>
+      !this.query().trim() &&
+      this.level() === 'all' &&
+      !this.files().size &&
+      !this.describedAs().trim() &&
+      !this.types().size &&
+      !this.targets().size &&
+      !this.sources().size
+  );
+  readonly allExpanded = computed(() => this.collapsed().size === 0);
+
+  toggleFold(iri: string): void {
+    this.collapsed.update(collapsed => {
+      const next = new Set(collapsed);
+      if (!next.delete(iri)) next.add(iri);
+      return next;
+    });
+  }
+
+  toggleAllFolds(): void {
+    this.collapsed.set(this.allExpanded() ? new Set(this.foldable().keys()) : new Set());
+  }
+
+  /** Whether a folded class is above the row. */
+  private _folded(row: ClassRow): boolean {
+    const collapsed = this.collapsed();
+    if (!collapsed.size) return false;
+    const superclassOf = new Map(this.state.classRows().map(other => [other.id, other.superclass]));
+    const seen = new Set<string>();
+    for (let up = row.superclass; up && !seen.has(up); up = superclassOf.get(up)) {
+      if (collapsed.has(up)) return true;
+      seen.add(up);
+    }
+    return false;
+  }
+
   readonly rows = computed(() => {
+    const folding = this.folding();
     const query = this.query().trim().toLowerCase();
     const level = this.level();
     const files = this.files();
@@ -780,7 +878,8 @@ export class DataModelClassesComponent {
       )
       .filter(row => !types.size || row.propertyList.some(property => types.has(property.type)))
       .filter(row => !targets.size || row.linksTo.some(target => targets.has(target)))
-      .filter(row => !sources.size || row.linkedFrom.some(source => sources.has(source)));
+      .filter(row => !sources.size || row.linkedFrom.some(source => sources.has(source)))
+      .filter(row => !folding || !this._folded(row));
   });
 
   /** Every row of a family with subclasses, main class included, in the family's tone. */
