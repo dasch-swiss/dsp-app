@@ -158,10 +158,19 @@ import { DataModelsRailState } from './data-models-rail-state';
         --mat-list-list-item-hover-state-layer-opacity: 0.08;
         --mat-list-active-indicator-shape: 6px;
         --mat-list-active-indicator-color: transparent;
-        // Material sets a taller fixed height on items with a leading icon.
-        height: 36px;
+        // Material sets a taller fixed height on items with a leading icon; a longer name wraps onto a second line,
+        // in full, rather than being cut.
+        height: auto;
+        min-height: 36px;
+        padding-top: 6px;
+        padding-bottom: 6px;
         border-radius: 6px;
         cursor: pointer;
+
+        ::ng-deep .mdc-list-item__primary-text {
+          white-space: normal;
+          line-height: 18px;
+        }
 
         &.current {
           --mat-list-list-item-label-text-color: #{$primary_700};
