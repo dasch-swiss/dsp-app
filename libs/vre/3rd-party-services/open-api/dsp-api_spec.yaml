@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v40.6.1-2-ge20226e
+  version: v40.6.1-8-g5a8b56a
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -2134,7 +2134,7 @@ paths:
       tags:
       - Admin API
       description: Create a new administrative permission. Requires SystemAdmin or
-        ProjectAdmin permissions for the project.
+        ProjectAdmin permissions for the project given by the body forProject.
       operationId: postAdminPermissionsAp
       requestBody:
         content:
@@ -2921,7 +2921,7 @@ paths:
       tags:
       - Admin API
       description: Create a new default object access permission. Requires SystemAdmin
-        or ProjectAdmin permissions for the project.
+        or ProjectAdmin permissions for the project given by the body forProject.
       operationId: postAdminPermissionsDoap
       requestBody:
         content:
@@ -3601,8 +3601,7 @@ paths:
       tags:
       - Admin API
       description: Update a particular allowed copyright holder for use within this
-        project, does not update existing values on assets. The user must be a system
-        admin.
+        project, does not update existing values on assets. Requires SystemAdmin permissions.
       operationId: putAdminProjectsShortcodeProjectshortcodeLegal-infoCopyright-holders
       parameters:
       - name: projectShortcode
@@ -5524,7 +5523,8 @@ paths:
       tags:
       - Admin API
       description: Returns the user's project memberships for a user identified by
-        their IRI. Publicly accessible.
+        their IRI. Requires SystemAdmin permissions, or that the caller is the user
+        given by the path userIri.
       operationId: getAdminUsersIriUseririProject-memberships
       parameters:
       - name: userIri
@@ -5533,7 +5533,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       responses:
         '200':
           description: ''
@@ -5583,12 +5583,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
   /admin/users/iri/{userIri}/project-admin-memberships:
     get:
       tags:
       - Admin API
       description: Returns the user's project admin memberships for a user identified
-        by their IRI. Publicly accessible.
+        by their IRI. Requires SystemAdmin permissions, or that the caller is the
+        user given by the path userIri.
       operationId: getAdminUsersIriUseririProject-admin-memberships
       parameters:
       - name: userIri
@@ -5597,7 +5601,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       responses:
         '200':
           description: ''
@@ -5647,12 +5651,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
   /admin/users/iri/{userIri}/group-memberships:
     get:
       tags:
       - Admin API
       description: Returns the user's group memberships for a user identified by their
-        IRI. Publicly accessible.
+        IRI. Requires SystemAdmin permissions, or that the caller is the user given
+        by the path userIri.
       operationId: getAdminUsersIriUseririGroup-memberships
       parameters:
       - name: userIri
@@ -5661,7 +5669,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       responses:
         '200':
           description: ''
@@ -5711,6 +5719,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - httpAuth: []
+      - httpAuth1: []
   /admin/users:
     get:
       tags:
@@ -5773,9 +5784,8 @@ paths:
     post:
       tags:
       - Admin API
-      description: Create a new user. Requires SystemAdmin permissions to create a
-        system administrator. Requires SystemAdmin or ProjectAdmin permissions in
-        any project to create a regular user.
+      description: Create a new user. Requires SystemAdmin or ProjectAdmin permissions
+        in any project. Creating a system administrator requires SystemAdmin permissions.
       operationId: postAdminUsers
       requestBody:
         content:
@@ -5839,9 +5849,9 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns a user identified by their IRI. Publicly accessible. Returns
-        detailed information to SystemAdmin and the user themselves, restricted information
-        to others.
+      description: Returns a user identified by their IRI. Does not require authentication.
+        Returns detailed information to SystemAdmin and the user themselves, restricted
+        information to others.
       operationId: getAdminUsersIriUseriri
       parameters:
       - name: userIri
@@ -5850,7 +5860,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       responses:
         '200':
           description: ''
@@ -5906,8 +5916,9 @@ paths:
     delete:
       tags:
       - Admin API
-      description: Delete a user identified by IRI (change status to false). Users
-        can delete themselves. SystemAdmin can delete any user.
+      description: Delete a user identified by IRI (change status to false). Requires
+        SystemAdmin permissions, or that the caller is the user given by the path
+        userIri.
       operationId: deleteAdminUsersIriUseriri
       parameters:
       - name: userIri
@@ -5916,7 +5927,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       responses:
         '200':
           description: ''
@@ -5973,7 +5984,7 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns a user identified by their Email. Publicly accessible.
+      description: Returns a user identified by their Email. Does not require authentication.
         Returns detailed information to SystemAdmin and the user themselves, restricted
         information to others.
       operationId: getAdminUsersEmailEmail
@@ -6042,7 +6053,7 @@ paths:
     get:
       tags:
       - Admin API
-      description: Returns a user identified by their Username. Publicly accessible.
+      description: Returns a user identified by their Username. Does not require authentication.
         Returns detailed information to SystemAdmin and the user themselves, restricted
         information to others.
       operationId: getAdminUsersUsernameUsername
@@ -6120,7 +6131,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6194,7 +6205,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6269,7 +6280,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6343,7 +6354,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6417,7 +6428,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6491,7 +6502,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6555,8 +6566,8 @@ paths:
     put:
       tags:
       - Admin API
-      description: Update a user's basic information identified by IRI. Users can
-        update their own information. SystemAdmin can update any user.
+      description: Update a user's basic information identified by IRI. Requires SystemAdmin
+        permissions, or that the caller is the user given by the path userIri.
       operationId: putAdminUsersIriUseririBasicuserinformation
       parameters:
       - name: userIri
@@ -6565,7 +6576,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       requestBody:
         content:
           application/json:
@@ -6628,8 +6639,8 @@ paths:
     put:
       tags:
       - Admin API
-      description: Change a user's password identified by IRI. Users can change their
-        own password. SystemAdmin can change any user's password.
+      description: Change a user's password identified by IRI. Requires SystemAdmin
+        permissions, or that the caller is the user given by the path userIri.
       operationId: putAdminUsersIriUseririPassword
       parameters:
       - name: userIri
@@ -6638,7 +6649,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       requestBody:
         content:
           application/json:
@@ -6701,8 +6712,8 @@ paths:
     put:
       tags:
       - Admin API
-      description: Change a user's status identified by IRI. Users can update their
-        own status. SystemAdmin can update any user's status.
+      description: Change a user's status identified by IRI. Requires SystemAdmin
+        permissions, or that the caller is the user given by the path userIri.
       operationId: putAdminUsersIriUseririStatus
       parameters:
       - name: userIri
@@ -6711,7 +6722,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       requestBody:
         content:
           application/json:
@@ -6784,7 +6795,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/qso51x0DSzKp_btOiSPnNg
+        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
       requestBody:
         content:
           application/json:
@@ -7703,7 +7714,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/lhyLSjq9TmqjwDVNZrBh0g
+        example: http://rdfh.ch/lists/0001/kb2WXz5BR5uzbL7y29NYsA
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7831,7 +7842,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/lhyLSjq9TmqjwDVNZrBh0g
+        example: http://rdfh.ch/lists/0001/kb2WXz5BR5uzbL7y29NYsA
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7955,7 +7966,7 @@ paths:
         restricted to one resource class and to resources changed at or after a cutoff.
         `asOf` is the server time read before the listing was queried; to poll for
         changes, pass the previous `asOf` minus a safety window as the next cutoff.
-        Publicly accessible.
+        Does not require authentication.
       operationId: getV2ResourcesInfo
       parameters:
       - name: x-knora-accept-project
@@ -9736,8 +9747,9 @@ paths:
     put:
       tags:
       - API v2
-      description: Update resource metadata. Requires appropriate object access permissions
-        on the resource.
+      description: Update resource metadata. Requires Modify object access permission
+        on the resource, and ChangeRights if the request changes `knora-api:hasPermissions`.
+        Requires authentication and appropriate object access permissions.
       operationId: putV2Resources
       parameters:
       - name: x-knora-accept-schema
@@ -10207,7 +10219,8 @@ paths:
       tags:
       - API v2
       description: Erase a Resource and all of its values from the database completely.
-        Requires SystemAdmin or ProjectAdmin permissions for the resource's project.
+        Requires SystemAdmin or ProjectAdmin permissions for the project given by
+        the body resource IRI's project.
       operationId: postV2ResourcesErase
       parameters:
       - name: x-knora-accept-schema
@@ -12860,7 +12873,8 @@ paths:
         cardinality are provided, it checks if the cardinality can be set for the
         property on the specific class. Fails if not both a property IRI and a new
         cardinality is provided. Fails if the user does not have write access to the
-        ontology of the class.
+        ontology of the class. Requires SystemAdmin or ProjectAdmin permissions for
+        the project given by the ontology's project.
       operationId: getV2OntologiesCanreplacecardinalitiesResourceclassiri
       parameters:
       - name: resourceClassIri
@@ -13116,7 +13130,7 @@ paths:
     get:
       tags:
       - API v2
-      description: Check if a class can be deleted. Publicly accessible.
+      description: Check if a class can be deleted. Does not require authentication.
       operationId: getV2OntologiesCandeleteclassResourceclassiri
       parameters:
       - name: resourceClassIri
@@ -13481,7 +13495,7 @@ paths:
     get:
       tags:
       - API v2
-      description: Check if a property can be deleted. Publicly accessible.
+      description: Check if a property can be deleted. Does not require authentication.
       operationId: getV2OntologiesCandeletepropertyPropertyiri
       parameters:
       - name: propertyIri
@@ -14924,7 +14938,7 @@ paths:
       tags:
       - API v2
       description: Check if cardinalities can be deleted from a class. Requires SystemAdmin
-        or ProjectAdmin permissions for the ontology's project.
+        or ProjectAdmin permissions for the project given by the ontology's project.
       operationId: postV2OntologiesCandeletecardinalities
       parameters:
       - name: x-knora-accept-schema
@@ -15640,7 +15654,7 @@ paths:
         resource classes and the count of resource instances for each class. Note
         that the `itemCount` includes only non-deleted resources and it includes resources
         even if the current user may not be permitted to see some of them, for performance
-        reasons.
+        reasons. Does not require authentication.
       operationId: getV3ProjectsProjectiriResourcesperontology
       parameters:
       - name: projectIri
@@ -17435,8 +17449,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v40.6.1-2-ge20226e
-                buildCommit: e20226e08
+                webapi: v40.6.1-8-g5a8b56a
+                buildCommit: 5a8b56af4
                 buildTime: dev
                 fuseki: 6.2.0
                 scala: 3.8.4
