@@ -181,7 +181,8 @@ describe('buildDataModelGraph', () => {
       ),
     ]);
 
-    expect(graph.nodes[0]).toMatchObject({ description: 'A slide or a poster.', properties: ['author(s)', 'Topic'] });
+    expect(graph.nodes[0]).toMatchObject({ description: 'A slide or a poster.' });
+    expect(graph.nodes[0].propertyDetails?.map(property => property.label)).toEqual(['author(s)', 'Topic']);
     expect(graph.edges[0].label).toBe('author(s)');
   });
 });

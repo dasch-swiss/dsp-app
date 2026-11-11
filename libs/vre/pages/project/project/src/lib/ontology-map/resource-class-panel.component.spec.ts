@@ -68,10 +68,18 @@ describe('ResourceClassPanelComponent', () => {
   });
 
   it('names the classes it links to and is linked from, with the property between them', () => {
-    expect(component.sides().map(side => side.connections.map(c => [c.label, c.via]))).toEqual([
-      [['Person', 'Director']],
-      [['Page', 'Film related']],
-    ]);
+    expect(component.outgoing().map(c => [c.label, c.via])).toEqual([['Person', 'Director']]);
+    expect(component.incoming().map(c => [c.label, c.via])).toEqual([['Page', 'Film related']]);
+  });
+
+  it('draws them on a small map, a class clicked there described instead', () => {
+    const shown: string[] = [];
+    component.classSelected.subscribe(iri => shown.push(iri));
+    const boxes = [...fixture.nativeElement.querySelectorAll('[data-cy="class-connection"]')] as HTMLButtonElement[];
+
+    expect(boxes.map(box => box.textContent?.trim())).toEqual(['Page', 'Person']);
+    boxes[1].click();
+    expect(shown).toEqual(['Person']);
   });
 
   it('asks to describe a linked class, and to browse the class', () => {
@@ -105,5 +113,19 @@ describe('ResourceClassPanelComponent', () => {
     fixture.nativeElement.querySelector('[data-cy="class-panel-filter"]').click();
 
     expect(filtered).toEqual(['Film']);
+  });
+
+  it('offers to edit each property only to those who may edit the data model', () => {
+    const pencils = () => fixture.nativeElement.querySelectorAll('[data-cy="class-panel-edit-property"]');
+    expect(pencils().length).toBe(0);
+
+    fixture.componentRef.setInput('canEdit', true);
+    fixture.detectChanges();
+    const edited: string[] = [];
+    component.editProperty.subscribe(iri => edited.push(iri));
+    pencils()[1].click();
+
+    expect(pencils().length).toBe(2);
+    expect(edited).toEqual(['director']);
   });
 });

@@ -1,5 +1,5 @@
 import { DataModelEdge, DataModelGraph, DataModelNode } from './data-model-graph';
-import { linkCounts, linkTints, mainClass } from './data-model-importance';
+import { linkCounts, mainClass } from './data-model-importance';
 
 const node = (id: string, kind: DataModelNode['kind'] = 'class'): DataModelNode => ({
   id,
@@ -45,23 +45,6 @@ describe('linkCounts', () => {
 
     expect(counts.get('A')).toBe(0);
     expect(counts.has('Other')).toBe(false);
-  });
-});
-
-describe('linkTints', () => {
-  it('tints the most linked class darkest and classes with one link not at all', () => {
-    const tints = linkTints(linkCounts(star));
-
-    expect(tints.get('Film')).toBe(3);
-    expect(tints.get('Page')).toBe(2);
-    expect(tints.get('Person')).toBe(1);
-    expect(tints.get('Script')).toBe(0);
-  });
-
-  it('tints nothing when no class is linked with more than one other', () => {
-    const tints = linkTints(linkCounts({ nodes: [node('A'), node('B')], edges: [link('A', 'B')] }));
-
-    expect([...tints.values()]).toEqual([0, 0]);
   });
 });
 

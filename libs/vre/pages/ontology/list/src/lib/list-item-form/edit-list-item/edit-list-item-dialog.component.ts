@@ -10,7 +10,7 @@ import {
 import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { MultiLanguages, StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { MultiLanguageLayout, MultiLanguages, StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, of, switchMap } from 'rxjs';
@@ -21,6 +21,8 @@ export interface EditListItemDialogProps {
   nodeIri: string;
   projectIri: string;
   formData: { labels: MultiLanguages; comments: MultiLanguages };
+  /** How the label and description show their languages; one field with a language switcher each, unless set. */
+  layout?: MultiLanguageLayout;
 }
 
 @Component({
@@ -31,7 +33,10 @@ export interface EditListItemDialogProps {
       [subtitle]="'pages.ontology.list.editDialog.subtitle' | translate" />
 
     <div mat-dialog-content>
-      <app-reusable-list-item-form [formData]="data.formData" (afterFormInit)="form = $event" />
+      <app-reusable-list-item-form
+        [formData]="data.formData"
+        [layout]="data.layout ?? 'switcher'"
+        (afterFormInit)="form = $event" />
     </div>
 
     <div mat-dialog-actions align="end">

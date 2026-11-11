@@ -7,7 +7,10 @@ import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { localNameOf, propertyUsage } from './ontology-graph-elements';
+import { localNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
+import { PropertyLinkEnd, PropertyLinksComponent } from './property-links.component';
+import { typeIconOf, typeNameOf } from './property-types';
+import { TabShadePipe } from './tab-shade.pipe';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1]: 'required',
@@ -17,13 +20,13 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 };
 
 /**
- * The details of one link property of a data model, docked beside the Ontology map: its description, the classes it
- * points at, and the classes that have it, each with how many values it takes there.
+ * The details of one property of a data model, docked beside the Ontology map: its description, the classes a link
+ * points at or a value's type, and the classes that have it, each with how many values it takes there.
  */
 @Component({
   selector: 'app-property-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
+  imports: [TabShadePipe, MatButton, MatIcon, MatIconButton, MatTooltip, PropertyLinksComponent, TranslatePipe],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.propertyPanel';
@@ -31,7 +34,9 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
     @if (usage(); as usage) {
       <section class="panel" data-cy="property-panel" [attr.aria-label]="usage.label">
         <header class="header">
-          <span class="property-icon"><mat-icon>link</mat-icon></span>
+          <span class="property-icon" [attr.data-type]="usage.type"
+            ><mat-icon>{{ typeIcon(usage.type) }}</mat-icon></span
+          >
           <div class="title">
             <h2 data-cy="property-panel-title">{{ usage.label }}</h2>
             <span class="name-line">
@@ -45,7 +50,6 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                 <mat-icon>content_copy</mat-icon>
               </button>
             </span>
-            <span class="subtitle">{{ t + '.subtitle' | translate: { model: dataModelLabel() } }}</span>
           </div>
           <button
             mat-icon-button
@@ -61,30 +65,100 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
           <p class="description">{{ usage.description }}</p>
         }
 
-        <div class="facts">
-          <div class="fact">
-            <h3>{{ t + '.pointsTo' | translate }}</h3>
-            <span class="targets">
-              @for (target of usage.targets; track target) {
-                <button
-                  type="button"
-                  class="chip"
-                  data-cy="property-panel-target"
-                  [style.background]="colors().get(target) ?? 'white'"
-                  [disabled]="!isNavigable(target)"
-                  (click)="classSelected.emit(target)">
-                  {{ labelOf(target) }}
-                  @if (isNavigable(target)) {
-                    <mat-icon>chevron_right</mat-icon>
+        <!-- Where it sits among the properties: its parent, the standard terms it maps to, its sub-properties. -->
+        @if (lineage(); as lineage) {
+          <div class="lineage" data-cy="property-panel-lineage">
+            @if (lineage.parent; as parent) {
+              <span class="lineage-line">
+                <mat-icon>subdirectory_arrow_right</mat-icon>
+                <span
+                  >{{ t + '.subPropertyOf' | translate }}
+                  <button
+                    type="button"
+                    class="lineage-link"
+                    data-cy="property-panel-parent"
+                    (click)="propertySelected.emit(parent.id)">
+                    {{ parent.label }}</button
+                  ><code class="lineage-name">{{ parent.name }}</code></span
+                >
+              </span>
+            }
+            @for (term of lineage.terms; track term.iri) {
+              <span class="lineage-line" data-cy="property-panel-term">
+                <mat-icon>public</mat-icon>
+                <span
+                  >{{ t + '.standardTerm' | translate }}
+                  <code class="term" [title]="term.iri">{{ term.short }}</code>
+                  <span class="lineage-muted"
+                    >{{ term.vocabulary }}
+                    @if (term.through) {
+                      · {{ t + '.through' | translate: { property: term.through } }}
+                    }
+                  </span></span
+                >
+              </span>
+            }
+            @if (lineage.subs.length) {
+              <span class="lineage-line">
+                <mat-icon>account_tree</mat-icon>
+                <span
+                  >{{ t + '.subProperties' | translate }}
+                  @for (sub of lineage.subs; track sub.id; let last = $last) {
+                    <button type="button" class="lineage-link" (click)="propertySelected.emit(sub.id)">
+                      {{ sub.label }}</button
+                    >{{ last ? '' : ',' }}
                   }
-                </button>
-              }
-            </span>
+                </span>
+              </span>
+            }
           </div>
-          <div class="fact">
-            <h3>{{ t + '.inModel' | translate }}</h3>
-            <span class="count">{{ t + '.links' | translate: { count: usage.links } }}</span>
-          </div>
+        }
+
+        @if (usage.pairs.length) {
+          <app-property-links
+            [links]="usage.pairs"
+            [ends]="ends()"
+            [colors]="colors()"
+            (classSelected)="classSelected.emit($event)" />
+        }
+
+        <div class="facts">
+          @if (usage.type === 'Link') {
+            <div class="fact">
+              <h3>{{ t + '.pointsTo' | translate }}</h3>
+              <span class="targets">
+                @for (target of usage.targets; track target) {
+                  <button
+                    type="button"
+                    class="chip"
+                    data-cy="property-panel-target"
+                    [disabled]="!isNavigable(target)"
+                    (click)="classSelected.emit(target)">
+                    <span
+                      class="tab"
+                      aria-hidden="true"
+                      [style.background]="colors().get(target) | tabShade: 'white'"></span>
+                    <span class="chip-label">{{ labelOf(target) }}</span>
+                    @if (isNavigable(target)) {
+                      <mat-icon>chevron_right</mat-icon>
+                    }
+                  </button>
+                }
+              </span>
+            </div>
+            <div class="fact">
+              <h3>{{ t + '.inModel' | translate }}</h3>
+              <span class="count">{{ t + '.links' | translate: { count: usage.links } }}</span>
+            </div>
+          } @else {
+            <div class="fact" data-cy="property-panel-type">
+              <h3>{{ t + '.type' | translate }}</h3>
+              <span class="type" [attr.data-type]="usage.type">
+                <mat-icon>{{ typeIcon(usage.type) }}</mat-icon
+                >{{ typeName(usage.type) }}
+              </span>
+            </div>
+          }
         </div>
 
         <div class="group">
@@ -110,10 +184,16 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         </div>
 
         <div class="actions">
-          <button mat-flat-button color="primary" data-cy="property-panel-filter" (click)="filter.emit(propertyIri())">
-            <mat-icon>filter_alt</mat-icon>
-            {{ t + '.filter' | translate }}
-          </button>
+          @if (usage.type === 'Link') {
+            <button
+              mat-flat-button
+              color="primary"
+              data-cy="property-panel-filter"
+              (click)="filter.emit(propertyIri())">
+              <mat-icon>filter_alt</mat-icon>
+              {{ t + '.filter' | translate }}
+            </button>
+          }
           @if (canEdit()) {
             <button mat-stroked-button data-cy="property-panel-edit" (click)="edit.emit(propertyIri())">
               {{ t + '.edit' | translate }}
@@ -220,14 +300,69 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         }
       }
 
-      .subtitle {
-        font-size: 12px;
-        color: $cool_gray_500;
-      }
-
       .description {
         margin: 0;
         color: $cool_gray_700;
+      }
+
+      .lineage {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 10px 12px;
+        border: 1px solid $cool_gray_200;
+        border-radius: 8px;
+        background: $cool_gray_50;
+      }
+
+      .lineage-line {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        line-height: 20px;
+
+        mat-icon {
+          flex: none;
+          margin-top: 2px;
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          color: $cool_gray_500;
+        }
+      }
+
+      .lineage-link {
+        padding: 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        font-weight: 500;
+        color: $primary;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .lineage-name {
+        margin-left: 6px;
+        font-family: 'Roboto Mono', ui-monospace, monospace;
+        font-size: 11.5px;
+        color: $cool_gray_600;
+      }
+
+      .term {
+        padding: 0 6px;
+        border: 1px solid $cool_gray_300;
+        border-radius: 10px;
+        background: white;
+        font-family: 'Roboto Mono', ui-monospace, monospace;
+        font-size: 11.5px;
+      }
+
+      .lineage-muted {
+        color: $cool_gray_600;
       }
 
       h3 {
@@ -238,6 +373,20 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         letter-spacing: 0.04em;
         text-transform: uppercase;
         color: $cool_gray_500;
+      }
+
+      .type {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 15px;
+        font-weight: 500;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
       }
 
       .facts {
@@ -262,17 +411,31 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         gap: 4px;
       }
 
+      // A class as the Overview draws it: white, a slate border, its colour in a tab at the left.
       .chip {
         display: flex;
-        align-items: center;
+        align-items: stretch;
         gap: 2px;
-        padding: 2px 6px 2px 10px;
-        border: 1px solid rgba(0, 0, 0, 0.12);
-        border-radius: 12px;
+        padding: 0 6px 0 0;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        overflow: hidden;
+        background: white;
         font: inherit;
         font-weight: 500;
         color: #1f2937;
         cursor: pointer;
+
+        .tab {
+          flex: none;
+          width: 12px;
+        }
+
+        .chip-label {
+          display: flex;
+          align-items: center;
+          padding: 2px 0 2px 8px;
+        }
 
         &:disabled {
           padding-right: 10px;
@@ -280,6 +443,7 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         }
 
         mat-icon {
+          align-self: center;
           font-size: 16px;
           width: 16px;
           height: 16px;
@@ -368,8 +532,6 @@ export class PropertyPanelComponent {
   readonly propertyIri = input.required<string>();
   /** Colour per class, as the graph draws them. */
   readonly colors = input<Map<string, string>>(new Map());
-  /** Name of the data model, for the subtitle. */
-  readonly dataModelLabel = input('');
   /** Label of knora-api's "any resource", in the current language. */
   readonly anyResourceLabel = input('Any resource');
   /** Whether "Edit property" is offered. */
@@ -386,6 +548,43 @@ export class PropertyPanelComponent {
 
   readonly usage = computed(() => propertyUsage(this.graph(), this.propertyIri()));
 
+  /** A property named in the panel was clicked, its parent or a sub-property; emits its IRI, to show it instead. */
+  readonly propertySelected = output<string>();
+
+  /**
+   * Where the property sits: its parent among the data model's properties, the standard terms it maps to, its own and
+   * those it has through its parents, and its sub-properties; none when it has none of these.
+   */
+  readonly lineage = computed(() => {
+    const rows = propertyRows(this.graph());
+    const byId = new Map(rows.map(row => [row.id, row]));
+    const row = byId.get(this.propertyIri());
+    if (!row) return undefined;
+    const parent = row.parent ? byId.get(row.parent) : undefined;
+    const terms: (StandardTerm & { through?: string })[] = [...row.terms];
+    const seen = new Set([row.id]);
+    for (let up = parent; up && !seen.has(up.id); up = up.parent ? byId.get(up.parent) : undefined) {
+      seen.add(up.id);
+      terms.push(
+        ...up.terms
+          .filter(term => !terms.some(other => other.iri === term.iri))
+          .map(term => ({ ...term, through: up!.label }))
+      );
+    }
+    const subs = rows.filter(other => other.parent === row.id);
+    if (!parent && !terms.length && !subs.length) return undefined;
+    return { parent, terms, subs };
+  });
+
+  /** The classes at either end of the property's links, for its map. */
+  readonly ends = computed(() => {
+    const ends = new Map<string, PropertyLinkEnd>();
+    for (const { source, target } of this.usage()?.pairs ?? []) {
+      for (const id of [source, target]) ends.set(id, { id, label: this.labelOf(id), navigable: this.isNavigable(id) });
+    }
+    return ends;
+  });
+
   isNavigable(iri: string): boolean {
     return this.graph().nodes.some(node => node.id === iri && node.kind === 'class');
   }
@@ -393,6 +592,14 @@ export class PropertyPanelComponent {
   labelOf(iri: string): string {
     if (iri === Constants.Resource) return this.anyResourceLabel();
     return this.graph().nodes.find(node => node.id === iri)?.label ?? iri.substring(iri.lastIndexOf('#') + 1);
+  }
+
+  typeIcon(type: string): string {
+    return typeIconOf(type);
+  }
+
+  typeName(type: string): string {
+    return typeNameOf(type);
   }
 
   cardinalityKey(cardinality: Cardinality): string {
