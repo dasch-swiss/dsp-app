@@ -89,8 +89,12 @@ export const EmptyOptionSaysNotSpecified: Story = {
     await step('The first option reads "Not specified", not "None"', async () => {
       await waitFor(() => expect(document.querySelector('mat-option')?.textContent?.trim()).toBe('Not specified'));
     });
-    await step('Close the list', async () => {
-      await userEvent.keyboard('{Escape}');
+    await step('Choosing "Not specified" keeps it visible in the field', async () => {
+      await userEvent.click(document.querySelector('mat-option') as HTMLElement);
+      const select = canvasElement.querySelector('[data-cy="license-select"]') as HTMLElement;
+      await waitFor(() =>
+        expect(select.querySelector('.mat-mdc-select-value-text')?.textContent?.trim()).toBe('Not specified')
+      );
     });
   },
 };
