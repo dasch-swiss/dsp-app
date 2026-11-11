@@ -1,14 +1,14 @@
 {
   "dspRelease": "2023.05.03",
   "apiProtocol": "https",
-  "apiHost": "api.dev.dasch.swiss",
+  "apiHost": "api.rdu-06.dasch.swiss",
   "apiPort": 443,
   "apiPath": "",
   "iiifProtocol": "https",
-  "iiifHost": "iiif.dev.dasch.swiss",
+  "iiifHost": "iiif.rdu-06.dasch.swiss",
   "iiifPort": 443,
   "iiifPath": "",
-  "ingestUrl": "https://ingest.dev.dasch.swiss",
+  "ingestUrl": "https://ingest.rdu-06.dasch.swiss",
   "geonameToken": "knora",
   "jsonWebToken": "",
   "logErrors": true,
@@ -32,7 +32,7 @@
         "enabled": true,
         "disabledLevels": []
       },
-      "tracingCorsUrls": ["https://api.dev.dasch.swiss", "https://ingest.dev.dasch.swiss"]
+      "tracingCorsUrls": ["https://api.rdu-06.dasch.swiss", "https://ingest.rdu-06.dasch.swiss"]
     }
   },
   "featureFlags": {
