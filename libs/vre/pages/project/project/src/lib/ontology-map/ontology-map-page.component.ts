@@ -979,8 +979,8 @@ export class OntologyMapPageComponent {
   readonly size = signal<GraphSize>(SIZES.find(size => size === readStored(SIZE_KEY)) ?? 'normal');
   /** Whether the graph draws link labels level, rather than along their line; remembered in this browser. */
   readonly levelLabels = signal(readStored(LEVEL_LABELS_KEY) === 'true');
-  /** Whether an island shows its frame on hover and can be dragged; on unless turned off. */
-  readonly islands = signal(readStored(ISLANDS_KEY) !== 'false');
+  /** Whether an island shows its frame on hover and can be dragged; off unless turned on. */
+  readonly islands = signal(readStored(ISLANDS_KEY) === 'true');
   /** Whether a family's colour shows as a tab at the left of white boxes, rather than as their fill; on unless turned off. */
   readonly colourTab = signal(readStored(COLOUR_TAB_KEY) !== 'false');
   /** Whether a line joins each parent to its subclasses; on unless turned off. */
