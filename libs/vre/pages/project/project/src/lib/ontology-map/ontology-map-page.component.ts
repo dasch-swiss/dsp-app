@@ -981,8 +981,8 @@ export class OntologyMapPageComponent {
   readonly levelLabels = signal(readStored(LEVEL_LABELS_KEY) === 'true');
   /** Whether an island shows its frame on hover and can be dragged; on unless turned off. */
   readonly islands = signal(readStored(ISLANDS_KEY) !== 'false');
-  /** Whether a family's colour shows as a tab at the left of white boxes, rather than as their fill; off unless set. */
-  readonly colourTab = signal(readStored(COLOUR_TAB_KEY) === 'true');
+  /** Whether a family's colour shows as a tab at the left of white boxes, rather than as their fill; on unless turned off. */
+  readonly colourTab = signal(readStored(COLOUR_TAB_KEY) !== 'false');
   /** Whether a line joins each parent to its subclasses; on unless turned off. */
   readonly treeLines = signal(readStored(TREE_LINES_KEY) !== 'false');
   /**
