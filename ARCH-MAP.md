@@ -709,7 +709,6 @@ Recorded from the observed runtime graph, not from folder names.
 - Story titles follow `Feature Area / Component / Scenario`, export names encode acceptance criteria, and every story needs a `play()` asserting a user-visible outcome. See `CLAUDE.md`.
 - Stories that mount a real container break when that container's DI changes. When adding a dependency to a component that appears in stories, check which stories render it for real and stub the new providers there.
 - No library has a `CLAUDE.md` and there are no ADRs. Where architectural reasoning exists it is in docblocks citing DEV ticket numbers, notably in `vre/core/error-handler` and `vre/resource-editor/resource-editor`.
-- `.gitkeep.spec.ts` placeholders survive in several libraries that now have real specs.
 
 ### Banned constructs
 
