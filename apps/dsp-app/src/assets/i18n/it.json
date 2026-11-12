@@ -758,7 +758,9 @@
       "copyrightHolder": "Titolare del copyright",
       "authorship": "Autore",
       "license": "Licenza",
-      "placeholder": "Segnaposto"
+      "placeholder": "Segnaposto",
+      "notSpecified": "Non specificato",
+      "notApplicable": "Non applicabile"
     },
     "navigation": {
       "firstPage": "Prima pagina",

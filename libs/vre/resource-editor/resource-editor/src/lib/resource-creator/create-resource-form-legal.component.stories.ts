@@ -3,7 +3,7 @@ import { LegalInfoApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { AdminAPIApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { applicationConfig, componentWrapperDecorator, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { expect } from 'storybook/test';
+import { expect, userEvent, waitFor } from 'storybook/test';
 import { provideCompactFormFieldOptions } from '../properties/properties-display/template-switcher/compact-form-field-options';
 
 import { CreateResourceFormLegalComponent } from './create-resource-form-legal.component';
@@ -58,6 +58,43 @@ export const DefaultView: Story = {
     await step('License select is rendered', async () => {
       const field = canvasElement.querySelector('[data-cy="license-select"]');
       await expect(field).not.toBeNull();
+    });
+  },
+};
+
+export const EmptyOptionSaysNotSpecified: Story = {
+  name: 'Offers "Not specified" as the empty license option',
+  decorators: [
+    applicationConfig({
+      providers: [
+        {
+          provide: LegalInfoApiService,
+          useValue: {
+            getLicenses: () => of([]),
+            getCopyrightHolders: () => of([]),
+            getAuthorships: () => of([]),
+          },
+        },
+      ],
+    }),
+  ],
+  args: {
+    formGroup: makeFormGroup() as any,
+    projectShortcode: 'test',
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('Open the license list', async () => {
+      await userEvent.click(canvasElement.querySelector('[data-cy="license-select"]') as HTMLElement);
+    });
+    await step('The first option reads "Not specified", not "None"', async () => {
+      await waitFor(() => expect(document.querySelector('mat-option')?.textContent?.trim()).toBe('Not specified'));
+    });
+    await step('Choosing "Not specified" keeps it visible in the field', async () => {
+      await userEvent.click(document.querySelector('mat-option') as HTMLElement);
+      const select = canvasElement.querySelector('[data-cy="license-select"]') as HTMLElement;
+      await waitFor(() =>
+        expect(select.querySelector('.mat-mdc-select-value-text')?.textContent?.trim()).toBe('Not specified')
+      );
     });
   },
 };

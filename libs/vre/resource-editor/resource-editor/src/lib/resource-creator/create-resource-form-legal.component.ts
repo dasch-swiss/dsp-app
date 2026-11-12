@@ -19,13 +19,14 @@ import { CreateResourceFormRowComponent } from './create-resource-form-row.compo
       <mat-form-field>
         <mat-select
           [placeholder]="'resourceEditor.resourceCreator.legal.choose' | translate"
+          canSelectNullableOptions
           [formControl]="formGroup.controls.copyrightHolder"
           data-cy="copyright-holder-select">
           @if (copyrightHoldersLoading) {
             <mat-option>{{ 'ui.common.status.loading' | translate }}</mat-option>
           }
           @if (!copyrightHoldersLoading) {
-            <mat-option [value]="undefined">{{ 'resourceEditor.resourceCreator.legal.none' | translate }}</mat-option>
+            <mat-option [value]="null">{{ 'resourceEditor.legal.notSpecified' | translate }}</mat-option>
           }
           @for (copyrightHolder of copyrightHolders$ | async; track copyrightHolder) {
             <mat-option [value]="copyrightHolder">{{ copyrightHolder }} </mat-option>
@@ -38,13 +39,14 @@ import { CreateResourceFormRowComponent } from './create-resource-form-row.compo
       <mat-form-field>
         <mat-select
           [placeholder]="'resourceEditor.resourceCreator.legal.choose' | translate"
+          canSelectNullableOptions
           [formControl]="formGroup.controls.license"
           data-cy="license-select">
           @if (licensesLoading) {
             <mat-option>{{ 'ui.common.status.loading' | translate }}</mat-option>
           }
           @if (!licensesLoading) {
-            <mat-option [value]="undefined">{{ 'resourceEditor.resourceCreator.legal.none' | translate }}</mat-option>
+            <mat-option [value]="null">{{ 'resourceEditor.legal.notSpecified' | translate }}</mat-option>
           }
           @for (license of licenses$ | async; track license) {
             <mat-option [value]="license">{{ license.labelEn }}</mat-option>

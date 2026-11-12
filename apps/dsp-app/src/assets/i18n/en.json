@@ -758,7 +758,9 @@
       "copyrightHolder": "Copyright holder",
       "authorship": "Authorship",
       "license": "License",
-      "placeholder": "Placeholder"
+      "placeholder": "Placeholder",
+      "notSpecified": "Not specified",
+      "notApplicable": "Not applicable"
     },
     "navigation": {
       "firstPage": "First page",
