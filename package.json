@@ -86,6 +86,7 @@
     "angular-imask": "^7.5.0",
     "angular-split": "^20.0.0",
     "ckeditor5-custom-build": "github:dasch-swiss/ckeditor_custom_build#v2.1.5",
+    "cytoscape": "3.34.4",
     "json2typescript": "^1.6.1",
     "jsonld": "^9.0.0",
     "jwt-decode": "^4.0.0",

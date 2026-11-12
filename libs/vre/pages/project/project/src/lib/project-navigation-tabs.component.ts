@@ -30,6 +30,10 @@ import { ProjectPageService } from './project-page.service';
         <mat-icon class="tab-icon">lan</mat-icon>
         {{ 'shared.header.projectTabs.dataModels' | translate }}
       </a>
+      <a mat-tab-link [routerLink]="[ONTOLOGY_MAP]" routerLinkActive="active-link" data-cy="ontology-map-tab">
+        <mat-icon class="tab-icon">hub</mat-icon>
+        {{ 'shared.header.projectTabs.ontologyMap' | translate }}
+      </a>
       @if (projectPageService.hasProjectAdminRights$ | async) {
         <a mat-tab-link [routerLink]="[SETTINGS]" routerLinkActive="active-link">
           <mat-icon class="tab-icon">settings</mat-icon>
@@ -60,6 +64,7 @@ import { ProjectPageService } from './project-page.service';
 export class ProjectNavigationTabsComponent {
   readonly DATA = RouteConstants.data;
   readonly DATA_MODELS = RouteConstants.dataModels;
+  readonly ONTOLOGY_MAP = RouteConstants.ontologyMap;
   readonly SETTINGS = RouteConstants.settings;
   readonly SEARCH = RouteConstants.advancedSearch;
   readonly DESCRIPTION = RouteConstants.projectDescription;
@@ -88,7 +93,7 @@ export class ProjectNavigationTabsComponent {
   }
 
   isDataModelsRouteActive(): boolean {
-    return this.path.startsWith('data-models') || this.path.startsWith('ontology');
+    return this.path.startsWith('data-models') || this.path === RouteConstants.ontology;
   }
 
   isSearchRouteActive() {

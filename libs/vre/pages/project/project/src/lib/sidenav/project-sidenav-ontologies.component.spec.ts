@@ -1,8 +1,8 @@
 import { ActivatedRoute } from '@angular/router';
-import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { EMPTY, of } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
+import { DataModelGraphService } from './data-model-map/data-model-graph.service';
 import { ProjectSidenavOntologiesComponent } from './project-sidenav-ontologies.component';
 
 const ONTO_A = 'http://0.0.0.0:3333/ontology/0001/a/v2';
@@ -16,7 +16,7 @@ describe('ProjectSidenavOntologiesComponent', () => {
       { currentProject$: EMPTY } as unknown as ProjectPageService,
       { firstChild: null } as unknown as ActivatedRoute,
       {} as OntologyService,
-      {} as APIV3ApiService,
+      { projectOntologies$: EMPTY } as unknown as DataModelGraphService,
       { currentLanguage$: of('en') } as unknown as LocalizationService
     );
   });
