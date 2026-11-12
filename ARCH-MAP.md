@@ -152,12 +152,12 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Paths**: `libs/vre/core/session/**`
 - **Purpose**: Owns the JWT lifecycle: storage, expiry checking, login and logout orchestration, auto-login at boot, and the current-user stream.
 - **Key entities**: `AccessTokenService`, `AuthService`, `AutoLoginService`, `LocalStorageWatcherService`, `UserService`, `hasCheckedCredentials$`, `afterSuccessfulLogin$`, `isSysAdmin$`, `AuthError`
-- **Public interface**: Seven named exports from `src/index.ts`, no `export *`. `apiConnectionTokenProvider` is one of them and is registered at `apps/dsp-app/src/app/app.config.ts:56`.
+- **Public interface**: Seven named exports from `src/index.ts`, no `export *`. `apiConnectionTokenProvider` is one of them and is registered at `apps/dsp-app/src/app/app.config.ts:55`.
 - **Local-context kit**: `src/lib/access-token.service.ts`, `src/lib/auth.service.ts`, `src/lib/auto-login.service.ts`, `src/lib/user.service.ts`, `apps/dsp-app/src/app/main/http-interceptors/auth.interceptor.fn.ts`, `src/lib/api-connection-token.provider.ts`, `apps/dsp-app/src/app/app.component.ts`
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/analytics`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/error-handler`, `vre/shared/app-common`, `vre/shared/app-helper-services`
 - **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`
 - **Boundary rules**:
-  - Anything touching the token goes through `AccessTokenService`; anything touching the current user goes through `UserService`. Two places currently bypass this: `apiConnectionTokenProvider` reads raw localStorage, and `LocalStorageWatcherService` hardcodes the string `'ACCESS_TOKEN'` instead of `Auth.AccessToken`. `docs-only`
+  - Anything touching the token goes through `AccessTokenService`; anything touching the current user goes through `UserService`. One place currently bypasses this: `LocalStorageWatcherService` hardcodes the string `'ACCESS_TOKEN'` instead of `Auth.AccessToken`. `docs-only`
   - Token expiry is checked only at boot. There is no 401 handling anywhere in the application. `docs-only`
 - **Durable state**:
   - `localStorage['ACCESS_TOKEN']`. Intended single writer is `AccessTokenService`, called by `AuthService` on login and logout and by `AutoLoginService` when a stored token is expired.
@@ -516,16 +516,15 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Nx project**: `vre-pages-user-settings-user`
 - **Paths**: `libs/vre/pages/user-settings/user/**`
-- **Purpose**: Nominally the account area. It also owns the public landing page, the application-wide `AllProjectsService`, and the root API-connection DI provider, none of which is user settings.
-- **Key entities**: `UserComponent`, `ProfileComponent`, `AccountComponent`, `apiConnectionTokenProvider`, `EditUserDialogComponent`, `EditPasswordDialogComponent`, `ProjectOverviewComponent`, `ProjectCardComponent`, `AllProjectsService`, `existingNamesValidator`
+- **Purpose**: Nominally the account area. It also owns the public landing page and the application-wide `AllProjectsService`, neither of which is user settings.
+- **Key entities**: `UserComponent`, `ProfileComponent`, `AccountComponent`, `EditUserDialogComponent`, `EditPasswordDialogComponent`, `ProjectOverviewComponent`, `ProjectCardComponent`, `AllProjectsService`, `existingNamesValidator`
 - **Public interface**: 11 `export *` lines from `src/index.ts`.
 - **Local-context kit**: `src/lib/user.component.ts`, `src/lib/account/account.component.ts`, `src/lib/profile/profile.component.ts`, `src/lib/project-overview/project-overview.component.ts`, `src/lib/project-overview/all-projects.service.ts`, `src/index.ts`
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/session`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/ui`
 - **Used by**: `dsp-app`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`
 - **Boundary rules**:
-  - This library used to hold the sole provider of `DspApiConnectionToken`, so the root injector could not boot without a page library. #3436 moved it to `vre/core/session`, where `apps/dsp-app/src/app/app.config.ts:56` now registers it. `docs-only`
-  - That provider bypasses `AccessTokenService` and reads raw localStorage, so it never validates the token before seeding it. `docs-only`
-  - This library has no unit tests at all. `apiConnectionTokenProvider`, the most consequential file in it, has neither a test nor a story. `docs-only`
+  - This library used to hold the sole provider of `DspApiConnectionToken`, so the root injector could not boot without a page library. #3436 moved it to `vre/core/session`, where `apps/dsp-app/src/app/app.config.ts:55` now registers it. `docs-only`
+  - This library has no unit tests at all. `docs-only`
 - **Durable state**: `localStorage['ACCESS_TOKEN']` is read once here at DI factory time and written into `appConfigService.dspApiConfig.jsonWebToken`. That field has writers in three libraries.
 - **Fingerprint**: `bb87878556a0`
 
@@ -545,7 +544,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Boundary rules**:
   - `template-viewer-switcher.component.ts` and `template-editor-switcher.component.ts` carry thirteen mirrored cases each and must be kept in sync by hand. Nothing enforces the mirror. `docs-only`
   - A new resource-type wrapper must declare `providers: [PropertiesDisplayService, ...]`. Omitting it is a silent runtime DI failure, not a compile error. `docs-only`
-  - Adding a resource type means editing `resource-dispatcher.component.ts` in two places: the `@case` and the `imports:` array. `docs-only`
+  - Adding a resource type means editing `resource-dispatcher.component.ts` in two places: the `@case` and the `imports:` array. Missing the `imports:` entry fails the build with NG8001. `static-analysis`
   - The value-viewer layer reaches into the representation layer by relative path (`properties/.../viewer-components/` importing from `representation/`). This is the one internal layering violation. `docs-only`
   - Four doc comments are the de facto architecture record: in `get-resource-type.ts`, `region.service.ts`, `property-value.service.ts` and `representation.service.ts`. `docs-only`
 - **Durable state**: no application-wide domain state. Almost everything is component-scoped. The hotspots:
@@ -708,7 +707,7 @@ Recorded from the observed runtime graph, not from folder names.
 - Tests and stories are colocated with their subject. Storybook is the de facto coverage mechanism in the UI-heavy libraries; several libraries have stories and no unit tests at all (`vre/pages/ontology/ontology`, `vre/pages/user-settings/user`), and `vre/pages/ontology/list` has neither.
 - Story titles follow `Feature Area / Component / Scenario`, export names encode acceptance criteria, and every story needs a `play()` asserting a user-visible outcome. See `CLAUDE.md`.
 - Stories that mount a real container break when that container's DI changes. When adding a dependency to a component that appears in stories, check which stories render it for real and stub the new providers there.
-- No library has a `CLAUDE.md` and there are no ADRs. Where architectural reasoning exists it is in docblocks citing DEV ticket numbers, notably in `vre/core/error-handler` and `vre/resource-editor/resource-editor`.
+- No library has a `CLAUDE.md`. Cross-library decisions are ADRs under `docs/adr/`; library-local reasoning is in docblocks citing DEV ticket numbers, notably in `vre/core/error-handler` and `vre/resource-editor/resource-editor`.
 - `.gitkeep.spec.ts` placeholders survive in several libraries that now have real specs.
 
 ### Banned constructs
@@ -717,7 +716,7 @@ Recorded from the observed runtime graph, not from folder names.
 | --- | --- | --- | --- |
 | Editing one of the two template switchers in `resource-editor` | `template-viewer-switcher` and `template-editor-switcher` mirror thirteen cases each; editing one leaves the other silently wrong for that value type | Edit both, plus `resource-payloads-mapping.ts`, and `file-value-mapping.ts` for file values | `docs-only` |
 | Adding a property type in `pages/ontology/ontology` | The registry is in another library; the local edit compiles and does nothing | Add to `DefaultProperties.data` and branch `getDefaultProperty` in `vre/shared/app-helper-services`, then `_guiAttrFor` and the form branch here | `docs-only` |
-| Adding a resource-type `@case` without the `imports:` entry | `resource-dispatcher.component.ts` needs both; missing the second fails at runtime, not at compile time | Edit both places, and declare `providers: [PropertiesDisplayService]` on the new wrapper | `docs-only` |
+| A new resource-type wrapper without `providers: [PropertiesDisplayService]` | The dispatcher's `@case` and `imports:` entry are compiler-checked (NG8001), but the wrapper's missing provider fails only at runtime, as a DI error | Declare `providers: [PropertiesDisplayService]` on the new wrapper, as every existing one does | `docs-only` |
 | Calling `TranslateService.use()` to change language | Bypasses `LocalizationService`, leaving localStorage and `document.lang` unsynchronised | Set `LocalizationService.currentLanguage` | `docs-only` |
 | Reading or writing `localStorage['ACCESS_TOKEN']` directly | Two places already do, which is how an expired token can stay in the in-memory config after being removed from storage | Use `AccessTokenService` | `docs-only` |
 | A new HTTP call inline in a component | Splits the API surface across the tree and hides which client is in use | Add an `*ApiService` to `vre/3rd-party-services/api` extending `BaseApi` | `docs-only` |
