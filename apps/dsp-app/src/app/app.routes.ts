@@ -23,7 +23,6 @@ import {
   DataModelClassesComponent,
   DataModelPropertiesComponent,
   DataModelListsComponent,
-  lastDataModelsSection,
   ProjectAdminGuard,
   ProjectPageComponent,
   ProjectPageGuard,
@@ -78,8 +77,8 @@ export const routes: Routes = [
         path: RouteConstants.dataModels2,
         component: DataModelsRailPageComponent,
         children: [
-          // Opens on the section last opened here, or on Resource classes the first time.
-          { path: '', pathMatch: 'full', redirectTo: () => lastDataModelsSection() },
+          // Opens on Resource classes: the list of classes people know from the Data models tab.
+          { path: '', pathMatch: 'full', redirectTo: RouteConstants.classes },
           { path: RouteConstants.graph, component: OntologyMapPageComponent },
           { path: RouteConstants.classes, component: DataModelClassesComponent },
           { path: RouteConstants.properties, component: DataModelPropertiesComponent },
