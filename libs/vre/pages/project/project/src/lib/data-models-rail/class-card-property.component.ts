@@ -1,26 +1,16 @@
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
-import { concatMap, from, map } from 'rxjs';
-import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { CardinalityChipComponent } from '../ontology-map/cardinality-chip.component';
+import { DATA_MODEL_EDITOR, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { highlighted } from './highlighted';
 
 export type CardProperty = ClassRow['propertyList'][number];
-
-/** The four cardinalities, as the data model writes them and as the translations name them. */
-const CARDINALITIES = [
-  { value: Cardinality._1, label: '1', key: 'requiredOne', multiple: false },
-  { value: Cardinality._0_1, label: '0-1', key: 'optionalOne', multiple: false },
-  { value: Cardinality._1_n, label: '1-n', key: 'requiredMultiple', multiple: true },
-  { value: Cardinality._0_n, label: '0-n', key: 'optionalMultiple', multiple: true },
-] as const;
 
 /** A property's cardinality from whether it is required and may hold several values. */
 function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
@@ -36,7 +26,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
 @Component({
   selector: 'li[appClassCardProperty]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CdkDragHandle, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatTooltip, TranslatePipe],
+  imports: [CardinalityChipComponent, CdkDragHandle, MatIcon, MatTooltip, TranslatePipe],
   host: {
     class: 'prop',
     'data-cy': 'data-model-class-card-property',
@@ -91,60 +81,15 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         <span [class.hit]="part.match">{{ part.text }}</span>
       }
     </span>
-    @if (changeable()) {
-      <!-- For editors, on the class's own properties: a menu of the four cardinalities, checked against the data. -->
-      <button
-        type="button"
-        class="cardinality"
-        data-cy="data-model-class-card-cardinality"
-        [class.required]="property.required"
-        [attr.aria-label]="
-          r + '.changeCardinality' | translate: { property: property.label, cardinality: cardinality() }
-        "
-        [matTooltip]="r + '.cardinality.' + cardinalityKey() | translate"
-        [matMenuTriggerFor]="cardinalities"
-        (menuOpened)="checkCardinalities()">
-        {{ cardinality() }}
-      </button>
-      <mat-menu #cardinalities="matMenu" xPosition="before">
-        @for (choice of choices; track choice.value) {
-          @let check = checks().get(choice.value);
-          @let current = choice.value === currentCardinality();
-          <button
-            mat-menu-item
-            type="button"
-            class="choice"
-            [attr.data-cy]="'data-model-class-card-cardinality-' + choice.label"
-            [class.current]="current"
-            [disabled]="!current && !check?.canDo"
-            [matTooltip]="check?.reason ?? ''"
-            [matTooltipDisabled]="!check?.reason"
-            (click)="setCardinality(choice.value)">
-            <code>{{ choice.label }}</code>
-            <span class="choice-text">
-              {{ r + '.cardinality.' + choice.key | translate }}
-              @if (current) {
-                <small>{{ r + '.current' | translate }}</small>
-              } @else if (!check) {
-                <small>{{ r + '.checkingCardinality' | translate }}</small>
-              } @else if (!check.canDo) {
-                <small>{{
-                  (check.reason === booleanOne ? r + '.booleanOne' : r + '.cardinalityBlocked') | translate
-                }}</small>
-              }
-            </span>
-          </button>
-        }
-      </mat-menu>
-    } @else {
-      <span
-        class="cardinality"
-        data-cy="data-model-class-card-cardinality"
-        [class.required]="property.required"
-        [matTooltip]="r + '.cardinality.' + cardinalityKey() | translate">
-        {{ cardinality() }}
-      </span>
-    }
+    <app-cardinality-chip
+      class="cardinality"
+      data-cy="data-model-class-card-cardinality"
+      [cardinality]="currentCardinality()"
+      [type]="property.type"
+      [propertyIri]="property.id"
+      [propertyLabel]="property.label"
+      [classIri]="classIri()"
+      [changeable]="changeable()" />
     <!-- For editors, on hover: the property's dialog, and for the class's own ones, removing it from the class. -->
     @if (canEdit() && editable()) {
       <span class="actions">
@@ -280,24 +225,6 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         font-family: 'Roboto Mono', monospace;
         font-size: 10.5px;
         color: $primary;
-      }
-
-      // 1, 0-1, 1-n or 0-n; filled when a value is required.
-      .cardinality {
-        font-family: 'Roboto Mono', monospace;
-        font-size: 10.5px;
-        font-weight: 500;
-        line-height: 16px;
-        text-align: center;
-        border: 1px solid $cool_gray_300;
-        border-radius: 4px;
-        color: $cool_gray_600;
-
-        &.required {
-          background: $primary;
-          border-color: $primary;
-          color: white;
-        }
       }
 
       // The handle, in the left margin, on hover.
@@ -451,56 +378,11 @@ export class ClassCardPropertyComponent {
 
   // Only where the app provides the data model editor: without it, nothing here edits.
   private readonly _editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
-  private readonly _destroyRef = inject(DestroyRef);
-  /** A reason the API never gives, for a yes/no property asked to hold several values. */
-  readonly booleanOne = 'boolean';
-  readonly choices = CARDINALITIES;
-  /** What the API says of each cardinality, once the menu asked; none while it checks. */
-  readonly checks = signal(new Map<Cardinality, CanDo>());
-
   /** Whether the cardinality and the class's hold on the property can change here: for editors, on its own properties. */
   readonly changeable = computed(
     () => this.canEdit() && this.editable() && !!this.classIri() && !!this._editing?.canDelete
   );
   readonly currentCardinality = computed(() => cardinalityOf(this.property()));
-
-  /** Asks the API, for each other cardinality, whether the existing resources allow it. */
-  checkCardinalities(): void {
-    const classIri = this.classIri();
-    if (!classIri) return;
-    const { id, type } = this.property();
-    const editing = this._editing;
-    if (!editing) return;
-    this.checks.set(new Map());
-    const asked = CARDINALITIES.filter(choice => choice.value !== this.currentCardinality());
-    for (const choice of asked) {
-      if (type === Constants.BooleanValue && choice.multiple) {
-        this._setCheck(choice.value, { canDo: false, reason: this.booleanOne });
-      }
-    }
-    // One question at a time: the API turns several at once away as too many requests.
-    from(asked.filter(choice => !this.checks().has(choice.value)))
-      .pipe(
-        concatMap(choice =>
-          editing.canSetCardinality(classIri, id, choice.value).pipe(map(check => ({ choice, check })))
-        ),
-        takeUntilDestroyed(this._destroyRef)
-      )
-      .subscribe(({ choice, check }) => this._setCheck(choice.value, check));
-  }
-
-  setCardinality(cardinality: Cardinality): void {
-    const classIri = this.classIri();
-    if (!classIri || cardinality === this.currentCardinality()) return;
-    this._editing
-      ?.setCardinality(classIri, this.property().id, cardinality)
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe();
-  }
-
-  private _setCheck(cardinality: Cardinality, check: CanDo): void {
-    this.checks.update(checks => new Map(checks).set(cardinality, check));
-  }
 
   readonly localName = computed(() => {
     const iri = this.property().id;
@@ -523,16 +405,6 @@ export class ClassCardPropertyComponent {
   });
   readonly typeIcon = computed(() => typeIconOf(this.property().type));
   readonly typeName = computed(() => typeNameOf(this.property().type));
-  /** The cardinality as the data model writes it: 1, 0-1, 1-n or 0-n. */
-  readonly cardinality = computed(() => {
-    const { required, multiple } = this.property();
-    return `${required ? 1 : 0}${multiple ? '-n' : required ? '' : '-1'}`;
-  });
-  /** The translation key, under `pages.dataModels2.cardinality`, that says the cardinality in words. */
-  readonly cardinalityKey = computed(() => {
-    const { required, multiple } = this.property();
-    return `${required ? 'required' : 'optional'}${multiple ? 'Multiple' : 'One'}`;
-  });
   /** Whether the property is the data model's own, rather than built in, so it can be edited here. */
   readonly editable = computed(() => !this.property().id.startsWith(Constants.KnoraApiV2));
 }
