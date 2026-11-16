@@ -15,6 +15,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
@@ -54,7 +55,8 @@ export interface PropertyOrder {
  * lists its own properties; those from its superclass fold into one row. Past {@link CARD_PROPERTIES}, "Show more" opens
  * the rest. A link's target opens its card. The text searched for is marked, and the rows it is in are opened. Editors
  * drag a class's own properties to another place. As view options, the values and the links can show apart, and a
- * link's target as a chip in its family's colour. A card folds to its title. A clicked class opens its panel.
+ * link's target as a chip in its family's colour. A card folds to its title. Its menu edits the class, or shows
+ * its details in the side panel.
  */
 @Component({
   selector: 'app-data-model-class-cards',
@@ -66,6 +68,9 @@ export interface PropertyOrder {
     CdkDropList,
     ClassCardPropertyComponent,
     MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     MatTooltip,
     NgTemplateOutlet,
     TabShadePipe,
@@ -128,12 +133,7 @@ export interface PropertyOrder {
           [class.selected]="row.id === selected()"
           [class.flash]="row.id === flashed()"
           [style.--tab]="colors().get(row.id) | tabShade: '#FFFFFF'">
-          <header
-            class="card-head"
-            tabindex="0"
-            role="button"
-            (click)="classSelected.emit(row.id)"
-            (keydown.enter)="classSelected.emit(row.id)">
+          <header class="card-head">
             <span class="texts">
               @if (row.superclass) {
                 <span
@@ -163,9 +163,40 @@ export interface PropertyOrder {
                 }
               </span>
             </span>
+            <!-- The class's actions: edit it, for editors, and show its details in the side panel. -->
             <button
               type="button"
-              class="fold"
+              class="icon-button actions"
+              data-cy="data-model-class-card-actions"
+              [attr.aria-label]="r + '.classActions' | translate: { class: row.label }"
+              [matTooltip]="r + '.classActions' | translate: { class: row.label }"
+              matTooltipShowDelay="600"
+              [matMenuTriggerFor]="actions">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #actions="matMenu" xPosition="before">
+              @if (canEdit()) {
+                <button
+                  mat-menu-item
+                  type="button"
+                  data-cy="data-model-class-card-edit"
+                  (click)="editClass.emit(row.id)">
+                  <mat-icon>edit</mat-icon>
+                  {{ r + '.editClass' | translate }}
+                </button>
+              }
+              <button
+                mat-menu-item
+                type="button"
+                data-cy="data-model-class-card-details"
+                (click)="classSelected.emit(row.id)">
+                <mat-icon>info</mat-icon>
+                {{ r + '.showDetails' | translate }}
+              </button>
+            </mat-menu>
+            <button
+              type="button"
+              class="icon-button"
               data-cy="data-model-class-card-toggle"
               [attr.aria-expanded]="open"
               [attr.aria-label]="(open ? r + '.collapseRow' : r + '.expandRow') | translate"
@@ -285,13 +316,8 @@ export interface PropertyOrder {
       .card-head {
         display: flex;
         align-items: flex-start;
-        gap: 6px;
+        gap: 2px;
         padding: 6px 4px 6px 16px;
-        cursor: pointer;
-
-        &:hover {
-          background: $cool_gray_50;
-        }
 
         .texts {
           flex: 1;
@@ -381,7 +407,8 @@ export interface PropertyOrder {
         }
       }
 
-      .fold {
+      // The actions menu and the fold button, round and grey.
+      .icon-button {
         flex: none;
         border: 0;
         background: none;
@@ -396,6 +423,23 @@ export interface PropertyOrder {
         &:hover {
           background: $cool_gray_100;
         }
+      }
+
+      // The menu's dots, as small as the arrow looks, shown on hover, while open or with the focus.
+      .actions {
+        visibility: hidden;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .card:hover .actions,
+      .actions[aria-expanded='true'],
+      .actions:focus-visible {
+        visibility: visible;
       }
 
       .props {
@@ -526,7 +570,10 @@ export class DataModelClassCardsComponent {
   /** The text searched for: marked where it shows, and the rows it is in opened. */
   readonly query = input('');
 
+  /** "Show details" was picked: the class's side panel is to open. */
   readonly classSelected = output<string>();
+  /** "Edit class" was picked: the class's dialog is to open. */
+  readonly editClass = output<string>();
   /** A property's pencil was clicked: its dialog is to open. */
   readonly editProperty = output<string>();
   /** A property was dragged to another place: the class's own properties in their new order, to save. */

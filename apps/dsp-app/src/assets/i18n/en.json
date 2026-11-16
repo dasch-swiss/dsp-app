@@ -877,6 +877,9 @@
       "links": "links"
     },
     "dataModels2": {
+      "classActions": "Actions for {{class}}",
+      "editClass": "Edit class",
+      "showDetails": "Show details",
       "findInCards": "Search classes and properties",
       "dragToReorder": "Drag to change the order",
       "links": "Links",

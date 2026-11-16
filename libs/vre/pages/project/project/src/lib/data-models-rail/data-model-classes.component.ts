@@ -302,6 +302,7 @@ const COLUMN_LABELS: Record<Column, string> = {
           [(folded)]="foldedCards"
           (reorder)="reorderProperties($event)"
           (classSelected)="openPanel($event)"
+          (editClass)="edit($event)"
           (editProperty)="editing.editProperty($event)" />
         @if (rows().length === 0) {
           <p class="empty">{{ r + '.noMatch' | translate }}</p>
