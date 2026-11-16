@@ -21,6 +21,11 @@
   display: none !important;
 }
 
+.value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .value.with-styling {
   padding: 16px 0;
 }

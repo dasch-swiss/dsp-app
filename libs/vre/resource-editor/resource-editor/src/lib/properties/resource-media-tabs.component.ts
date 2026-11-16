@@ -40,6 +40,10 @@ import { SegmentTabComponent } from './segment-tab.component';
         height: auto !important;
         overflow: visible !important;
       }
+
+      :host ::ng-deep .mat-mdc-tab-body {
+        min-width: 0;
+      }
     `,
   ],
   imports: [

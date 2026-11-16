@@ -3,14 +3,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-search-tips',
-  template: ` <div
-    style="
-    border-radius: 5px;
-    width: 570px;
-    background: white;
-    padding: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border: 1px solid #e0e0e0;">
+  template: ` <div class="search-tips">
     {{ 'pages.search.searchTips.title' | translate }}
     <ul>
       <li>{{ 'pages.search.searchTips.exactPhrases' | translate }}</li>
@@ -22,7 +15,16 @@ import { TranslatePipe } from '@ngx-translate/core';
     `
       :host {
         display: block;
-        width: 100%;
+      }
+      .search-tips {
+        box-sizing: border-box;
+        width: 604px;
+        max-width: 100%;
+        border-radius: 5px;
+        background: white;
+        padding: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border: 1px solid #e0e0e0;
       }
       li {
         margin-bottom: 8px;

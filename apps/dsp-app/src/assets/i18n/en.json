@@ -631,7 +631,9 @@
       },
       "dataClassHeader": {
         "searchLabel": "Search",
-        "searchPlaceholder": "Search"
+        "searchPlaceholder": "Search",
+        "descriptionShowMore": "Show more",
+        "descriptionShowLess": "Show less"
       },
       "resultMeta": {
         "range": "{{start}} – {{end}} of {{total}}",

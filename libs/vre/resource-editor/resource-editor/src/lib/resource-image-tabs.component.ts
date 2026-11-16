@@ -45,6 +45,10 @@ import { AnnotationTabComponent } from './resource/annotation/annotation-tab.com
         overflow: visible !important;
       }
 
+      :host ::ng-deep .mat-mdc-tab-body {
+        min-width: 0;
+      }
+
       .dots-container {
         margin-left: 1.5em;
         min-width: 3ch;

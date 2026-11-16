@@ -243,7 +243,7 @@ def vre_library(
         assets: templates and other files the compiler reads.
         extra_visibility: packages ADR-0001 does not allow but that depend on the library today,
             each with a comment naming the ADR and the issue that removes it.
-        test_srcs: specs and test-setup.ts; no Jest target without them.
+        test_srcs: specs and test-setup.ts; no Jest target without a spec.
         test_deps: what only the specs import.
         test_data: files a spec reads at run time.
         test_size: the Jest target's size, which sets its timeout.
@@ -318,7 +318,8 @@ def vre_library(
         visibility = ["//:__pkg__"],
     )
 
-    if test_srcs:
+    # test-setup.ts alone is no test: a library without specs gets no Jest target.
+    if [s for s in test_srcs if s.endswith(".spec.ts")]:
         vre_jest_test(
             name = "test",
             srcs = test_srcs,
