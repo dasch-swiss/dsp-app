@@ -1,5 +1,17 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -10,6 +22,7 @@ import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/dat
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
 import { AddPropertyMenuComponent } from './add-property-menu.component';
 import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
+import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 import { dataModelNameOf, localNameOf } from './ontology-graph-elements';
 import { typeIconOf, typeNameOf } from './property-types';
 
@@ -154,9 +167,34 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         }
 
         <!-- Kept in view at the bottom of the panel, however long the class's properties. -->
+        <!-- Editors edit or delete the class; everyone browses its resources. -->
         <div class="actions">
+          @if (canEdit() && !elsewhere()) {
+            <button mat-flat-button color="primary" data-cy="class-panel-edit" (click)="edit.emit(classIri())">
+              <mat-icon>edit</mat-icon>
+              {{ t + '.edit' | translate }}
+            </button>
+            @if (editing?.canDelete) {
+              @let check = deleteCheck();
+              <!-- Only once the API says nothing uses the class; why not, on hover, when something does. -->
+              <span
+                [matTooltip]="(check?.canDo ? '' : 'pages.dataModels2.cannotDeleteClass') | translate"
+                [matTooltipDisabled]="!check || check.canDo">
+                <button
+                  mat-stroked-button
+                  class="delete"
+                  data-cy="class-panel-delete"
+                  [disabled]="!check?.canDo"
+                  (click)="deleteClass(node)">
+                  <mat-icon>delete</mat-icon>
+                  {{ 'ui.common.actions.delete' | translate }}
+                </button>
+              </span>
+            }
+          }
+          <span class="spacer"></span>
           @if (!elsewhere()) {
-            <button mat-flat-button color="primary" data-cy="class-panel-browse" (click)="browse.emit(classIri())">
+            <button mat-stroked-button data-cy="class-panel-browse" (click)="browse.emit(classIri())">
               <mat-icon>view_list</mat-icon>
               {{ t + '.browse' | translate }}
             </button>
@@ -168,21 +206,6 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
               (click)="openInModel.emit(classIri())">
               <mat-icon>open_in_new</mat-icon>
               {{ t + '.openIn' | translate: { model: model() } }}
-            </button>
-          }
-          <span class="spacer"></span>
-          <button
-            mat-stroked-button
-            data-cy="class-panel-filter"
-            [matTooltip]="t + '.filterHint' | translate"
-            (click)="filter.emit(classIri())">
-            <mat-icon>filter_alt</mat-icon>
-            {{ t + '.filter' | translate }}
-          </button>
-          @if (canEdit() && !elsewhere()) {
-            <button mat-stroked-button data-cy="class-panel-edit" (click)="edit.emit(classIri())">
-              <mat-icon>edit</mat-icon>
-              {{ t + '.edit' | translate }}
             </button>
           }
         </div>
@@ -450,6 +473,12 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         background: white;
         border-top: 1px solid $cool_gray_200;
 
+        // Deleting, in red, once possible.
+        .delete:not([disabled]) {
+          color: #b3261e;
+          border-color: #b3261e;
+        }
+
         button {
           --mat-button-filled-container-height: 36px;
           --mat-button-outlined-container-height: 36px;
@@ -494,8 +523,6 @@ export class ResourceClassPanelComponent {
   readonly browse = output<string>();
   /** A property row is hovered; emits its IRI, or `undefined` when the pointer leaves it. */
   readonly propertyHovered = output<string | undefined>();
-  /** "Filter on this class" was clicked; emits the class IRI, to show it with the classes it is linked with. */
-  readonly filter = output<string>();
   /** "Edit class" was clicked; emits the class IRI. */
   readonly edit = output<string>();
   /** A property row's pencil was clicked; emits the property IRI. */
@@ -504,6 +531,39 @@ export class ResourceClassPanelComponent {
   readonly openInModel = output<string>();
 
   readonly node = computed(() => this.graph().nodes.find(node => node.id === this.classIri()));
+
+  // Only where the app provides the data model editor: without it, nothing here edits.
+  readonly editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
+  private readonly _destroyRef = inject(DestroyRef);
+  /** What the API says of deleting the class shown; none while it checks. */
+  readonly deleteCheck = signal<CanDo | undefined>(undefined);
+
+  constructor() {
+    // Each class shown, for editors, is checked once: Delete is offered only when nothing uses it.
+    effect(() => {
+      const iri = this.classIri();
+      const editing = this.editing;
+      const check = this.canEdit() && !!editing?.canDelete && !this.elsewhere();
+      untracked(() => {
+        this.deleteCheck.set(undefined);
+        if (!check || !editing) return;
+        editing
+          .canDeleteClass(iri)
+          .pipe(takeUntilDestroyed(this._destroyRef))
+          .subscribe(result => {
+            if (this.classIri() === iri) this.deleteCheck.set(result);
+          });
+      });
+    });
+  }
+
+  /** Deletes the class once confirmed, then closes the panel. */
+  deleteClass(node: { id: string; label: string }): void {
+    this.editing
+      ?.deleteClass(node.id, node.label)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(deleted => deleted && this.closed.emit());
+  }
   readonly properties = computed(() => this.node()?.propertyDetails ?? []);
   readonly icon = computed(() => representationIcon(this.node()?.representationClass));
 

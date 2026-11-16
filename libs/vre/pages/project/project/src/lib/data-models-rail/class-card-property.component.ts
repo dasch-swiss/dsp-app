@@ -1,14 +1,32 @@
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Constants } from '@dasch-swiss/dsp-js';
+import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
+import { concatMap, from, map } from 'rxjs';
+import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { highlighted } from './highlighted';
 
 export type CardProperty = ClassRow['propertyList'][number];
+
+/** The four cardinalities, as the data model writes them and as the translations name them. */
+const CARDINALITIES = [
+  { value: Cardinality._1, label: '1', key: 'requiredOne', multiple: false },
+  { value: Cardinality._0_1, label: '0-1', key: 'optionalOne', multiple: false },
+  { value: Cardinality._1_n, label: '1-n', key: 'requiredMultiple', multiple: true },
+  { value: Cardinality._0_n, label: '0-n', key: 'optionalMultiple', multiple: true },
+] as const;
+
+/** A property's cardinality from whether it is required and may hold several values. */
+function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
+  if (required) return multiple ? Cardinality._1_n : Cardinality._1;
+  return multiple ? Cardinality._0_n : Cardinality._0_1;
+}
 
 /**
  * One property of a class card, on one line: value type, label, the class a link points at, local name and cardinality.
@@ -18,7 +36,7 @@ export type CardProperty = ClassRow['propertyList'][number];
 @Component({
   selector: 'li[appClassCardProperty]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CdkDragHandle, MatIcon, MatTooltip, TranslatePipe],
+  imports: [CdkDragHandle, MatIcon, MatMenu, MatMenuItem, MatMenuTrigger, MatTooltip, TranslatePipe],
   host: {
     class: 'prop',
     'data-cy': 'data-model-class-card-property',
@@ -73,23 +91,86 @@ export type CardProperty = ClassRow['propertyList'][number];
         <span [class.hit]="part.match">{{ part.text }}</span>
       }
     </span>
-    <span
-      class="cardinality"
-      data-cy="data-model-class-card-cardinality"
-      [class.required]="property.required"
-      [matTooltip]="r + '.cardinality.' + cardinalityKey() | translate">
-      {{ cardinality() }}
-    </span>
-    <!-- For editors, on hover: the property's dialog; built-in properties are not edited here. -->
-    @if (canEdit() && editable()) {
+    @if (changeable()) {
+      <!-- For editors, on the class's own properties: a menu of the four cardinalities, checked against the data. -->
       <button
         type="button"
-        class="edit"
-        data-cy="data-model-class-card-edit-property"
-        [attr.aria-label]="'pages.ontologyMap.classPanel.editProperty' | translate: { property: property.label }"
-        (click)="edit.emit(property.id)">
-        <mat-icon>edit</mat-icon>
+        class="cardinality"
+        data-cy="data-model-class-card-cardinality"
+        [class.required]="property.required"
+        [attr.aria-label]="
+          r + '.changeCardinality' | translate: { property: property.label, cardinality: cardinality() }
+        "
+        [matTooltip]="r + '.cardinality.' + cardinalityKey() | translate"
+        [matMenuTriggerFor]="cardinalities"
+        (menuOpened)="checkCardinalities()">
+        {{ cardinality() }}
       </button>
+      <mat-menu #cardinalities="matMenu" xPosition="before">
+        @for (choice of choices; track choice.value) {
+          @let check = checks().get(choice.value);
+          @let current = choice.value === currentCardinality();
+          <button
+            mat-menu-item
+            type="button"
+            class="choice"
+            [attr.data-cy]="'data-model-class-card-cardinality-' + choice.label"
+            [class.current]="current"
+            [disabled]="!current && !check?.canDo"
+            [matTooltip]="check?.reason ?? ''"
+            [matTooltipDisabled]="!check?.reason"
+            (click)="setCardinality(choice.value)">
+            <code>{{ choice.label }}</code>
+            <span class="choice-text">
+              {{ r + '.cardinality.' + choice.key | translate }}
+              @if (current) {
+                <small>{{ r + '.current' | translate }}</small>
+              } @else if (!check) {
+                <small>{{ r + '.checkingCardinality' | translate }}</small>
+              } @else if (!check.canDo) {
+                <small>{{
+                  (check.reason === booleanOne ? r + '.booleanOne' : r + '.cardinalityBlocked') | translate
+                }}</small>
+              }
+            </span>
+          </button>
+        }
+      </mat-menu>
+    } @else {
+      <span
+        class="cardinality"
+        data-cy="data-model-class-card-cardinality"
+        [class.required]="property.required"
+        [matTooltip]="r + '.cardinality.' + cardinalityKey() | translate">
+        {{ cardinality() }}
+      </span>
+    }
+    <!-- For editors, on hover: the property's dialog, and for the class's own ones, removing it from the class. -->
+    @if (canEdit() && editable()) {
+      <span class="actions">
+        <button
+          type="button"
+          class="edit"
+          data-cy="data-model-class-card-edit-property"
+          [attr.aria-label]="'pages.ontologyMap.classPanel.editProperty' | translate: { property: property.label }"
+          [matTooltip]="'pages.ontologyMap.classPanel.editProperty' | translate: { property: property.label }"
+          matTooltipShowDelay="600"
+          (click)="edit.emit(property.id)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        @if (changeable()) {
+          <button
+            type="button"
+            class="remove"
+            data-cy="data-model-class-card-remove-property"
+            [attr.aria-label]="r + '.removeFromClass' | translate: { class: className() }"
+            [matTooltip]="r + '.removeFromClass' | translate: { class: className() }"
+            matTooltipShowDelay="600"
+            (click)="remove.emit(property.id)">
+            <mat-icon>remove_circle_outline</mat-icon>
+          </button>
+        }
+      </span>
     }
   `,
   styles: [
@@ -233,25 +314,77 @@ export type CardProperty = ClassRow['propertyList'][number];
         visibility: hidden;
       }
 
-      // The pencil covers the end of the local name, next to the cardinality, on the row's hover colour.
-      .edit {
+      // A cardinality that can change is a button: a ring on hover says so.
+      button.cardinality {
+        padding: 0;
+        background: white;
+        cursor: pointer;
+
+        &.required {
+          background: $primary;
+        }
+
+        &:hover {
+          box-shadow: 0 0 0 2px $primary_50;
+        }
+      }
+
+      // The cardinalities in the menu: the notation, then what it means and why one is out of reach.
+      .choice {
+        code {
+          display: inline-block;
+          min-width: 30px;
+          margin-right: 10px;
+          padding: 0 4px;
+          border: 1px solid $cool_gray_300;
+          border-radius: 4px;
+          font:
+            500 11.5px 'Roboto Mono',
+            monospace;
+          text-align: center;
+        }
+
+        &.current code {
+          background: $primary;
+          border-color: $primary;
+          color: white;
+        }
+
+        small {
+          display: block;
+          font-size: 11.5px;
+          line-height: 1.3;
+          color: $cool_gray_500;
+        }
+      }
+
+      .choice-text {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 1.3;
+      }
+
+      // The pencil and the remove button cover the end of the local name, next to the cardinality, on hover.
+      .actions {
         position: absolute;
         top: 50%;
         right: 46px;
         transform: translateY(-50%);
         display: flex;
+        border-radius: 99px;
+        background: $cool_gray_50;
+        box-shadow: -10px 0 8px -2px $cool_gray_50;
+        visibility: hidden;
+      }
+
+      .edit,
+      .remove {
+        display: flex;
         padding: 2px;
         border: 0;
         border-radius: 50%;
-        background: $cool_gray_50;
-        box-shadow: -10px 0 8px -2px $cool_gray_50;
-        color: $primary;
+        background: none;
         cursor: pointer;
-        visibility: hidden;
-
-        &:hover {
-          background: $primary_50;
-        }
 
         mat-icon {
           font-size: 16px;
@@ -260,9 +393,26 @@ export type CardProperty = ClassRow['propertyList'][number];
         }
       }
 
-      :host(:hover) .edit,
+      .edit {
+        color: $primary;
+
+        &:hover {
+          background: $primary_50;
+        }
+      }
+
+      .remove {
+        color: $cool_gray_500;
+
+        &:hover {
+          color: #b3261e;
+          background: #fdecea;
+        }
+      }
+
+      :host(:hover) .actions,
       :host(:hover) .grip,
-      .edit:focus-visible {
+      .actions:focus-within {
         visibility: visible;
       }
 
@@ -288,10 +438,69 @@ export class ClassCardPropertyComponent {
   readonly canEdit = input(false);
   /** Whether the property can be dragged to another place: the class's own ones, for editors. */
   readonly draggable = input(false);
+  /** The class the row is on, when it is the class's own property: its cardinality and removal can change then. */
+  readonly classIri = input<string | undefined>(undefined);
+  /** That class's label, for the remove button. */
+  readonly className = input('');
 
   readonly edit = output<string>();
   /** The link target was clicked: its card is to show. */
   readonly goTo = output<string>();
+  /** The remove button was clicked: the property is to come off the class, once checked and confirmed. */
+  readonly remove = output<string>();
+
+  // Only where the app provides the data model editor: without it, nothing here edits.
+  private readonly _editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
+  private readonly _destroyRef = inject(DestroyRef);
+  /** A reason the API never gives, for a yes/no property asked to hold several values. */
+  readonly booleanOne = 'boolean';
+  readonly choices = CARDINALITIES;
+  /** What the API says of each cardinality, once the menu asked; none while it checks. */
+  readonly checks = signal(new Map<Cardinality, CanDo>());
+
+  /** Whether the cardinality and the class's hold on the property can change here: for editors, on its own properties. */
+  readonly changeable = computed(
+    () => this.canEdit() && this.editable() && !!this.classIri() && !!this._editing?.canDelete
+  );
+  readonly currentCardinality = computed(() => cardinalityOf(this.property()));
+
+  /** Asks the API, for each other cardinality, whether the existing resources allow it. */
+  checkCardinalities(): void {
+    const classIri = this.classIri();
+    if (!classIri) return;
+    const { id, type } = this.property();
+    const editing = this._editing;
+    if (!editing) return;
+    this.checks.set(new Map());
+    const asked = CARDINALITIES.filter(choice => choice.value !== this.currentCardinality());
+    for (const choice of asked) {
+      if (type === Constants.BooleanValue && choice.multiple) {
+        this._setCheck(choice.value, { canDo: false, reason: this.booleanOne });
+      }
+    }
+    // One question at a time: the API turns several at once away as too many requests.
+    from(asked.filter(choice => !this.checks().has(choice.value)))
+      .pipe(
+        concatMap(choice =>
+          editing.canSetCardinality(classIri, id, choice.value).pipe(map(check => ({ choice, check })))
+        ),
+        takeUntilDestroyed(this._destroyRef)
+      )
+      .subscribe(({ choice, check }) => this._setCheck(choice.value, check));
+  }
+
+  setCardinality(cardinality: Cardinality): void {
+    const classIri = this.classIri();
+    if (!classIri || cardinality === this.currentCardinality()) return;
+    this._editing
+      ?.setCardinality(classIri, this.property().id, cardinality)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe();
+  }
+
+  private _setCheck(cardinality: Cardinality, check: CanDo): void {
+    this.checks.update(checks => new Map(checks).set(cardinality, check));
+  }
 
   readonly localName = computed(() => {
     const iri = this.property().id;

@@ -696,7 +696,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             (classSelected)="openPanel($event)"
             (closed)="openPanel(undefined)"
             (browse)="browse($event)"
-            (filter)="filterOn($event)"
             (edit)="edit($event)"
             (editProperty)="editing.editProperty($event)" />
         } @else if (propertyPanelIri(); as iri) {

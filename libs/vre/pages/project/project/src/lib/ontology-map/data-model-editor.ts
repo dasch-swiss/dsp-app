@@ -1,6 +1,7 @@
 import { DestroyRef, inject, InjectionToken } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { Cardinality } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { filter, map, Observable, of, tap } from 'rxjs';
@@ -31,6 +32,27 @@ export interface DataModelEditor {
    * Emits `true` once saved.
    */
   reorderProperties(classIri: string, propertyIris: string[]): Observable<boolean>;
+  /** Whether the class can be deleted: no resources, subclasses or links use it. */
+  canDeleteClass(classIri: string): Observable<CanDo>;
+  /** Asks to confirm, then deletes the class; `true` once deleted. */
+  deleteClass(classIri: string, label: string): Observable<boolean>;
+  /**
+   * Checks whether the class can lose the property, saying why not, then asks to confirm and removes it; the property
+   * stays in the data model. `true` once removed.
+   */
+  removeProperty(
+    classIri: string,
+    propertyIri: string,
+    labels: { property: string; class: string }
+  ): Observable<boolean>;
+  /** Whether the property can be deleted: no class or value uses it. */
+  canDeleteProperty(propertyIri: string): Observable<CanDo>;
+  /** Checks whether the property can be deleted, saying why not, then asks to confirm and deletes it; `true` once deleted. */
+  deleteProperty(propertyIri: string, label: string): Observable<boolean>;
+  /** Whether the class's property can take that cardinality, given the resources there are. */
+  canSetCardinality(classIri: string, propertyIri: string, cardinality: Cardinality): Observable<CanDo>;
+  /** Gives the class's property that cardinality; `true` once saved. */
+  setCardinality(classIri: string, propertyIri: string, cardinality: Cardinality): Observable<boolean>;
   /** Opens the dialog creating a class of that kind in the data model; emits once it closes, the new class's IRI if made. */
   createClass(ontologyIri: string, kind: DefaultClass): Observable<string | undefined>;
   /** Opens the dialog creating a property of that type in the data model, for no class yet; emits its IRI if made. */
@@ -45,6 +67,12 @@ export interface DataModelEditor {
   deleteVocabularyValue(value: VocabularyValue): Observable<boolean>;
   /** Moves a vocabulary value to `position` among the values of `parentIri`; `true` once moved. */
   moveVocabularyValue(valueIri: string, parentIri: string, position: number): Observable<boolean>;
+}
+
+/** Whether an action is possible, and if not, the API's reason. */
+export interface CanDo {
+  canDo: boolean;
+  reason?: string;
 }
 
 /** A value of a controlled vocabulary, as the editor's dialogs take it. */
@@ -121,6 +149,26 @@ export function injectDataModelEditing() {
     /** Creates a property of that type for the class, in the data model editor's dialog, then reads the project again. */
     addNewProperty: (classIri: string, type: DefaultProperty) =>
       editor && edit(classIri, RouteConstants.classes, () => editor.addNewProperty(classIri, type)),
+    /** Whether classes and properties can be deleted, and cardinalities changed, here. */
+    canDelete: !!editor,
+    canDeleteClass: (classIri: string): Observable<CanDo> =>
+      editor ? editor.canDeleteClass(classIri) : of({ canDo: false }),
+    /** Deletes the class once confirmed, then reads the project again. */
+    deleteClass: (classIri: string, label: string): Observable<boolean> =>
+      editor ? reloadOnceSaved(editor.deleteClass(classIri, label)) : of(false),
+    /** Removes the property from the class once checked and confirmed, then reads the project again. */
+    removeProperty: (classIri: string, propertyIri: string, labels: { property: string; class: string }) =>
+      editor ? reloadOnceSaved(editor.removeProperty(classIri, propertyIri, labels)) : of(false),
+    canDeleteProperty: (propertyIri: string): Observable<CanDo> =>
+      editor ? editor.canDeleteProperty(propertyIri) : of({ canDo: false }),
+    /** Deletes the property once checked and confirmed, then reads the project again. */
+    deleteProperty: (propertyIri: string, label: string): Observable<boolean> =>
+      editor ? reloadOnceSaved(editor.deleteProperty(propertyIri, label)) : of(false),
+    canSetCardinality: (classIri: string, propertyIri: string, cardinality: Cardinality): Observable<CanDo> =>
+      editor ? editor.canSetCardinality(classIri, propertyIri, cardinality) : of({ canDo: false }),
+    /** Gives the class's property that cardinality, then reads the project again. */
+    setCardinality: (classIri: string, propertyIri: string, cardinality: Cardinality): Observable<boolean> =>
+      editor ? reloadOnceSaved(editor.setCardinality(classIri, propertyIri, cardinality)) : of(false),
     /** Whether properties can be put in another order here. */
     canReorder: !!editor,
     /** Saves the form order of the class's own properties, then reads the project again. Emits `true` once saved. */

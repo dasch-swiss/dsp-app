@@ -106,15 +106,6 @@ describe('ResourceClassPanelComponent', () => {
     expect(hovered).toEqual(['director', undefined]);
   });
 
-  it('asks to filter the graph on the class', () => {
-    const filtered: string[] = [];
-    component.filter.subscribe(iri => filtered.push(iri));
-
-    fixture.nativeElement.querySelector('[data-cy="class-panel-filter"]').click();
-
-    expect(filtered).toEqual(['Film']);
-  });
-
   it('offers to edit each property only to those who may edit the data model', () => {
     const pencils = () => fixture.nativeElement.querySelectorAll('[data-cy="class-panel-edit-property"]');
     expect(pencils().length).toBe(0);

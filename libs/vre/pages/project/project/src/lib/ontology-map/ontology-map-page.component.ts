@@ -493,7 +493,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   (closed)="openPanel(undefined)"
                   (openInModel)="openInModel($event)"
                   (browse)="open($event)"
-                  (filter)="filterOn($event)"
                   (propertyHovered)="hoveredProperty.set($event)"
                   (edit)="edit($event)"
                   (editProperty)="editProperty($event)" />

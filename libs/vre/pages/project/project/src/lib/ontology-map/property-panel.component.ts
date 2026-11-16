@@ -1,5 +1,17 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -7,6 +19,7 @@ import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
+import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 import { localNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
 import { PropertyLinkEnd, PropertyLinksComponent } from './property-links.component';
 import { typeIconOf, typeNameOf } from './property-types';
@@ -198,6 +211,23 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
             <button mat-stroked-button data-cy="property-panel-edit" (click)="edit.emit(propertyIri())">
               {{ t + '.edit' | translate }}
             </button>
+            @if (editing?.canDelete) {
+              @let check = deleteCheck();
+              <!-- Only once the API says no class or value uses the property; why not, on hover, otherwise. -->
+              <span
+                [matTooltip]="'pages.dataModels2.cannotDeleteProperty' | translate: { property: usage.label }"
+                [matTooltipDisabled]="!check || check.canDo">
+                <button
+                  mat-stroked-button
+                  class="delete"
+                  data-cy="property-panel-delete"
+                  [disabled]="!check?.canDo"
+                  (click)="deleteProperty(usage.label)">
+                  <mat-icon>delete</mat-icon>
+                  {{ 'ui.common.actions.delete' | translate }}
+                </button>
+              </span>
+            }
           }
         </div>
       </section>
@@ -514,6 +544,12 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
       }
 
       .actions {
+        // Deleting, in red, once possible.
+        .delete:not([disabled]) {
+          color: #b3261e;
+          border-color: #b3261e;
+        }
+
         display: flex;
         gap: 8px;
         padding-top: 4px;
@@ -547,6 +583,39 @@ export class PropertyPanelComponent {
   readonly edit = output<string>();
 
   readonly usage = computed(() => propertyUsage(this.graph(), this.propertyIri()));
+
+  // Only where the app provides the data model editor: without it, nothing here edits.
+  readonly editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
+  private readonly _destroyRef = inject(DestroyRef);
+  /** What the API says of deleting the property shown; none while it checks. */
+  readonly deleteCheck = signal<CanDo | undefined>(undefined);
+
+  constructor() {
+    // Each property shown, for editors, is checked once: Delete is offered only when nothing uses it.
+    effect(() => {
+      const iri = this.propertyIri();
+      const editing = this.editing;
+      const check = this.canEdit() && !!editing?.canDelete;
+      untracked(() => {
+        this.deleteCheck.set(undefined);
+        if (!check || !editing) return;
+        editing
+          .canDeleteProperty(iri)
+          .pipe(takeUntilDestroyed(this._destroyRef))
+          .subscribe(result => {
+            if (this.propertyIri() === iri) this.deleteCheck.set(result);
+          });
+      });
+    });
+  }
+
+  /** Deletes the property once confirmed, then closes the panel. */
+  deleteProperty(label: string): void {
+    this.editing
+      ?.deleteProperty(this.propertyIri(), label)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(deleted => deleted && this.closed.emit());
+  }
 
   /** A property named in the panel was clicked, its parent or a sub-property; emits its IRI, to show it instead. */
   readonly propertySelected = output<string>();

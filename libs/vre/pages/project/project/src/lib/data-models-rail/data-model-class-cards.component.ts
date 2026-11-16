@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   ElementRef,
   inject,
@@ -14,11 +15,14 @@ import {
   untracked,
   WritableSignal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
+import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
@@ -67,6 +71,7 @@ export interface PropertyOrder {
     CdkDragPlaceholder,
     CdkDropList,
     ClassCardPropertyComponent,
+    MatDivider,
     MatIcon,
     MatMenu,
     MatMenuItem,
@@ -103,7 +108,10 @@ export interface PropertyOrder {
             [query]="query()"
             [canEdit]="canEdit()"
             [draggable]="drag"
+            [classIri]="card.row.id"
+            [className]="card.row.label"
             (edit)="editProperty.emit($event)"
+            (remove)="removeProperty(card.row, property)"
             (goTo)="goTo($event)">
             <div class="drop-line" *cdkDragPlaceholder></div>
           </li>
@@ -171,7 +179,8 @@ export interface PropertyOrder {
               [attr.aria-label]="r + '.classActions' | translate: { class: row.label }"
               [matTooltip]="r + '.classActions' | translate: { class: row.label }"
               matTooltipShowDelay="600"
-              [matMenuTriggerFor]="actions">
+              [matMenuTriggerFor]="actions"
+              (menuOpened)="checkDelete(row.id)">
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #actions="matMenu" xPosition="before">
@@ -193,6 +202,30 @@ export interface PropertyOrder {
                 <mat-icon>info</mat-icon>
                 {{ r + '.showDetails' | translate }}
               </button>
+              <!-- For editors: deleting the class, once the API says nothing uses it; why not, when something does. -->
+              @if (canEdit() && editing.canDelete) {
+                @let check = deleteChecks().get(row.id);
+                <mat-divider />
+                <button
+                  mat-menu-item
+                  type="button"
+                  class="delete"
+                  data-cy="data-model-class-card-delete"
+                  [disabled]="!check?.canDo"
+                  [matTooltip]="check?.reason ?? ''"
+                  [matTooltipDisabled]="!check?.reason"
+                  (click)="deleteClass(row)">
+                  <mat-icon>delete</mat-icon>
+                  <span class="menu-text">
+                    {{ r + '.deleteClass' | translate }}
+                    @if (!check) {
+                      <small>{{ r + '.checkingDelete' | translate }}</small>
+                    } @else if (!check.canDo) {
+                      <small>{{ r + '.cannotDeleteClass' | translate }}</small>
+                    }
+                  </span>
+                </button>
+              }
             </mat-menu>
             <button
               type="button"
@@ -523,6 +556,19 @@ export interface PropertyOrder {
         }
       }
 
+      // Deleting a class, in red, and why it can't be, under it.
+      .delete:not([disabled]),
+      .delete:not([disabled]) mat-icon {
+        color: #b3261e;
+      }
+
+      .menu-text small {
+        display: block;
+        font-size: 11.5px;
+        line-height: 1.3;
+        color: $cool_gray_500;
+      }
+
       // "Add property" under an opened card's properties, as in the Data models tab.
       .add-property {
         display: block;
@@ -547,6 +593,10 @@ export interface PropertyOrder {
 })
 export class DataModelClassCardsComponent {
   private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly _destroyRef = inject(DestroyRef);
+  readonly editing = injectDataModelEditing();
+  /** What the API says of deleting each class, once its menu asked; none while it checks. */
+  readonly deleteChecks = signal(new Map<string, CanDo>());
 
   readonly CARD_PROPERTIES = CARD_PROPERTIES;
 
@@ -646,6 +696,33 @@ export class DataModelClassCardsComponent {
       this.classes();
       untracked(() => this._dragged.set(new Map()));
     });
+  }
+
+  /** Asks the API whether the class can be deleted, for its menu to say so. */
+  checkDelete(classIri: string): void {
+    if (!this.canEdit() || !this.editing.canDelete) return;
+    this.deleteChecks.update(checks => {
+      const next = new Map(checks);
+      next.delete(classIri);
+      return next;
+    });
+    this.editing
+      .canDeleteClass(classIri)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(check => this.deleteChecks.update(checks => new Map(checks).set(classIri, check)));
+  }
+
+  /** Deletes the class once confirmed; the data model is then read again. */
+  deleteClass(row: ClassRow): void {
+    this.editing.deleteClass(row.id, row.label).pipe(takeUntilDestroyed(this._destroyRef)).subscribe();
+  }
+
+  /** Takes the property off the class once checked and confirmed; the data model is then read again. */
+  removeProperty(row: ClassRow, property: CardProperty): void {
+    this.editing
+      .removeProperty(row.id, property.id, { property: property.label, class: row.label })
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe();
   }
 
   toggle(set: WritableSignal<Set<string>>, iri: string): void {

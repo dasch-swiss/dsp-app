@@ -51,7 +51,6 @@ export const resourceClassDialogConfig = (data: ResourceClassDialogData): MatDia
         (classSelected)="classIri.set($event)"
         (closed)="close()"
         (browse)="browse($event)"
-        (filter)="filterOn($event)"
         (edit)="editing.editClass($event)"
         (editProperty)="editing.editProperty($event)" />
     }

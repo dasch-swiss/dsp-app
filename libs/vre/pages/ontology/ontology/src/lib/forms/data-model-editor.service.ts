@@ -1,8 +1,16 @@
 import { createEnvironmentInjector, EnvironmentInjector, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ListInfoResponse, ListResponse, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import {
+  ApiResponseError,
+  CanDoResponse,
+  Cardinality,
+  KnoraApiConnection,
+  ListInfoResponse,
+  ListResponse,
+  ResourceClassDefinitionWithAllLanguages,
+} from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
-import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
   CreateListItemDialogComponent,
   CreateListItemDialogProps,
@@ -12,6 +20,7 @@ import {
 } from '@dasch-swiss/vre/pages/ontology/list';
 import {
   AvailableProperties,
+  CanDo,
   DataModelEditor,
   ProjectPageService,
   TextsToSave,
@@ -23,11 +32,12 @@ import {
   LocalizationService,
   OntologyService,
 } from '@dasch-swiss/vre/shared/app-helper-services';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DIALOG_LARGE, DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, filter, finalize, map, Observable, of, switchMap, take, takeUntil } from 'rxjs';
+import { catchError, combineLatest, filter, finalize, map, Observable, of, switchMap, take, takeUntil } from 'rxjs';
 import { OntologyEditService } from '../services/ontology-edit.service';
 import { EditPropertyFormDialogComponent } from './property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData, EditPropertyDialogData } from './property-form/property-form.type';
@@ -52,6 +62,8 @@ export class DataModelEditorService implements DataModelEditor {
   private readonly _listApi = inject(ListApiService);
   private readonly _confirm = inject(DialogService);
   private readonly _translate = inject(TranslateService);
+  private readonly _api = inject<KnoraApiConnection>(DspApiConnectionToken);
+  private readonly _notification = inject(NotificationService);
 
   editClass(classIri: string): Observable<boolean> {
     return this._withEditing(classIri, (editing, injector) =>
@@ -360,6 +372,154 @@ export class DataModelEditorService implements DataModelEditor {
       .pipe(takeUntil(ref.afterClosed()))
       .subscribe(() => ref.close());
     return ref.afterClosed();
+  }
+
+  canDeleteClass(classIri: string): Observable<CanDo> {
+    return this._canDo(this._api.v2.onto.canDeleteResourceClass(classIri));
+  }
+
+  deleteClass(classIri: string, label: string): Observable<boolean> {
+    return this._confirm
+      .afterConfirmation(this._translate.instant('pages.dataModels2.deleteClassConfirm', { class: label }))
+      .pipe(
+        switchMap(() =>
+          this._withEditing(classIri, editing =>
+            editing.currentOntology$.pipe(
+              filter(ontology => !!ontology?.classes[classIri]),
+              take(1),
+              switchMap(() => editing.deleteResourceClass$(classIri)),
+              map(() => true)
+            )
+          )
+        )
+      );
+  }
+
+  removeProperty(
+    classIri: string,
+    propertyIri: string,
+    labels: { property: string; class: string }
+  ): Observable<boolean> {
+    return this._withEditing(classIri, editing =>
+      editing.currentOntology$.pipe(
+        filter(ontology => !!ontology?.classes[classIri]),
+        take(1),
+        switchMap(ontology => {
+          const card = ontology!.classes[classIri].propertiesList.find(
+            property => property.propertyIndex === propertyIri
+          );
+          if (!card) return of(false);
+          return editing.propertyCanBeRemovedFromClass$(card, classIri).pipe(
+            switchMap(check => {
+              if (!check.canDo) {
+                this._notify(this._translate.instant('pages.dataModels2.cannotRemove', labels), check.cannotDoReason);
+                return of(false);
+              }
+              return this._confirm
+                .afterConfirmation(this._translate.instant('pages.dataModels2.removeFromClassConfirm', labels))
+                .pipe(
+                  switchMap(() => {
+                    editing.removePropertyFromClass(card, classIri);
+                    // Saved once the data model, read again, no longer gives the class the property.
+                    return editing.currentOntology$.pipe(
+                      filter(
+                        read =>
+                          !!read?.classes[classIri] &&
+                          !read.classes[classIri].propertiesList.some(
+                            property => property.propertyIndex === propertyIri
+                          )
+                      ),
+                      take(1),
+                      map(() => true)
+                    );
+                  })
+                );
+            })
+          );
+        })
+      )
+    );
+  }
+
+  canDeleteProperty(propertyIri: string): Observable<CanDo> {
+    return this._canDo(this._api.v2.onto.canDeleteResourceProperty(propertyIri));
+  }
+
+  deleteProperty(propertyIri: string, label: string): Observable<boolean> {
+    return this.canDeleteProperty(propertyIri).pipe(
+      switchMap(check => {
+        if (!check.canDo) {
+          this._notify(
+            this._translate.instant('pages.dataModels2.cannotDeleteProperty', { property: label }),
+            check.reason
+          );
+          return of(false);
+        }
+        return this._confirm
+          .afterConfirmation(this._translate.instant('pages.dataModels2.deletePropertyConfirm', { property: label }))
+          .pipe(
+            switchMap(() =>
+              this._withEditing(propertyIri, editing =>
+                editing.currentOntology$.pipe(
+                  filter(ontology => !!ontology?.properties[propertyIri]),
+                  take(1),
+                  switchMap(() => editing.deleteProperty$(propertyIri)),
+                  map(() => true)
+                )
+              )
+            )
+          );
+      })
+    );
+  }
+
+  canSetCardinality(classIri: string, propertyIri: string, cardinality: Cardinality): Observable<CanDo> {
+    return this._canDo(this._api.v2.onto.canReplaceCardinalityOfResourceClassWith(classIri, propertyIri, cardinality));
+  }
+
+  setCardinality(classIri: string, propertyIri: string, cardinality: Cardinality): Observable<boolean> {
+    return this._withEditing(classIri, editing =>
+      editing.currentOntology$.pipe(
+        filter(ontology => !!ontology?.classes[classIri]),
+        take(1),
+        switchMap(ontology => {
+          // The class's own properties, as the API replaces them all; this one with its new cardinality.
+          const own = ontology!.classes[classIri].propertiesList.filter(property => !property.isInherited);
+          if (!own.some(property => property.propertyIndex === propertyIri)) return of(false);
+          editing.updatePropertiesOfResourceClass(
+            classIri,
+            own.map(property => (property.propertyIndex === propertyIri ? { ...property, cardinality } : property))
+          );
+          return editing.currentOntology$.pipe(
+            filter(
+              read =>
+                read?.classes[classIri]?.propertiesList.find(property => property.propertyIndex === propertyIri)
+                  ?.cardinality === cardinality
+            ),
+            take(1),
+            map(() => true)
+          );
+        })
+      )
+    );
+  }
+
+  /** Whether the API allows it, and why not; an error answer counts as not, with its message. */
+  private _canDo(check: Observable<CanDoResponse | ApiResponseError>): Observable<CanDo> {
+    return check.pipe(
+      take(1),
+      map(response =>
+        response instanceof ApiResponseError
+          ? { canDo: false, reason: response.error instanceof Error ? response.error.message : String(response.error) }
+          : { canDo: response.canDo, reason: response.cannotDoReason }
+      ),
+      catchError(() => of({ canDo: false }))
+    );
+  }
+
+  /** Says why an action could not be done, with the API's reason when there is one. */
+  private _notify(message: string, reason?: string): void {
+    this._notification.openSnackBar(reason ? `${message} ${reason}` : message, 'error');
   }
 
   /** Runs `open` with an editing service on the data model of `iri`, dropped once the dialog closes. */
