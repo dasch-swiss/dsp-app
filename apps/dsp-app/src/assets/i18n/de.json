@@ -877,6 +877,7 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "createVocabulary": "Kontrolliertes Vokabular erstellen",
       "createClass": "Ressourcenklasse erstellen",
       "createProperty": "Eigenschaft erstellen",
       "new": "Neu",

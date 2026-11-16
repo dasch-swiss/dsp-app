@@ -40,6 +40,12 @@ export const RAIL_SECTION_STYLES = `
     flex: 1;
   }
 
+  // A section's create button after the search, compact like the other header controls.
+  .create {
+    --mat-button-filled-container-height: 36px;
+    flex: none;
+  }
+
   .search {
     --mat-form-field-container-height: 36px;
     --mat-form-field-container-vertical-padding: 6px;

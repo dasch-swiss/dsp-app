@@ -71,6 +71,19 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
             [attr.aria-label]="r + '.findList' | translate"
             (input)="query.set(search.value)" />
         </mat-form-field>
+        <!-- For editors: a new vocabulary, made in the data model editor's dialog, then shown opened. -->
+        @if (canCreate()) {
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            class="create"
+            data-cy="data-model-lists-create"
+            (click)="createVocabulary()">
+            <mat-icon>add</mat-icon>
+            {{ r + '.createVocabulary' | translate }}
+          </button>
+        }
         <span class="spacer"></span>
         <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-lists" />
         <button mat-button type="button" data-cy="data-model-lists-expand" (click)="toggleAll()">
@@ -414,6 +427,17 @@ export class DataModelListsComponent {
   private readonly _editing = injectDataModelEditing();
   /** Whether values can be added, edited, moved and deleted here. */
   readonly canEdit = computed(() => this.state.canEdit() && this._editing.canEditVocabularies);
+  /** Whether "Create controlled vocabulary" shows: for editors, where the editor's dialogs are at hand. */
+  readonly canCreate = computed(() => this.state.canEdit() && this._editing.canCreate);
+
+  /** Creates a vocabulary in the project, then shows it opened, ready for its first values. */
+  createVocabulary(): void {
+    this._editing.createVocabulary(iri => {
+      this.expanded.update(expanded => new Set(expanded).add(iri));
+      this._reload.update(count => count + 1);
+    });
+  }
+
   /** Read the vocabularies again, once a value changed. */
   private readonly _reload = signal(0);
 

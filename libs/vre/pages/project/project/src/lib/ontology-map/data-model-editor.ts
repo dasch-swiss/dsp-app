@@ -30,6 +30,8 @@ export interface DataModelEditor {
   createClass(ontologyIri: string, kind: DefaultClass): Observable<string | undefined>;
   /** Opens the dialog creating a property of that type in the data model, for no class yet; emits its IRI if made. */
   createProperty(ontologyIri: string, type: DefaultProperty): Observable<string | undefined>;
+  /** Opens the dialog creating a controlled vocabulary in the project; emits the new vocabulary's IRI if made. */
+  createVocabulary(): Observable<string | undefined>;
   /** Opens the dialog adding a value to a controlled vocabulary, under `parentIri` at `position`; `true` once added. */
   addVocabularyValue(parentIri: string, position: number): Observable<boolean>;
   /** Opens the dialog editing a vocabulary value's labels and descriptions; `true` once saved. */
@@ -133,6 +135,15 @@ export function injectDataModelEditing() {
     createClass: (ontologyIri: string, kind: DefaultClass, created: (iri: string) => void) =>
       editor
         ?.createClass(ontologyIri, kind)
+        .pipe(filter(Boolean), takeUntilDestroyed(destroyRef))
+        .subscribe(iri => {
+          project.reloadProject();
+          created(iri);
+        }),
+    /** Creates a controlled vocabulary in the project, as `createClass` creates a class. */
+    createVocabulary: (created: (iri: string) => void) =>
+      editor
+        ?.createVocabulary()
         .pipe(filter(Boolean), takeUntilDestroyed(destroyRef))
         .subscribe(iri => {
           project.reloadProject();

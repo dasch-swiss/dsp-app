@@ -693,12 +693,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         align-self: flex-start;
       }
 
-      // The create button after the search, compact like the other header controls.
-      .create {
-        --mat-button-filled-container-height: 36px;
-        flex: none;
-      }
-
       .tools {
         flex: 1;
         min-width: 0;

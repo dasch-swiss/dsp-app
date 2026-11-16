@@ -1,6 +1,6 @@
 import { createEnvironmentInjector, EnvironmentInjector, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { ListInfoResponse, ListResponse, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
@@ -8,6 +8,7 @@ import {
   CreateListItemDialogProps,
   EditListItemDialogComponent,
   EditListItemDialogProps,
+  ListInfoFormComponent,
 } from '@dasch-swiss/vre/pages/ontology/list';
 import {
   AvailableProperties,
@@ -243,6 +244,15 @@ export class DataModelEditorService implements DataModelEditor {
       map(name => (name ? `${ontologyIri}#${name}` : undefined)),
       finalize(() => injector.destroy())
     );
+  }
+
+  createVocabulary(): Observable<string | undefined> {
+    return this._closedByClickOnly(
+      this._dialog.open<ListInfoFormComponent, null, ListResponse | ListInfoResponse>(
+        ListInfoFormComponent,
+        DspDialogConfig.dialogDrawerConfig(null, true)
+      )
+    ).pipe(map(response => (response && 'list' in response ? response.list.listinfo.id : undefined)));
   }
 
   addVocabularyValue(parentIri: string, position: number): Observable<boolean> {
