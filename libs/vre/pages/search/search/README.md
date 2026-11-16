@@ -1,6 +1,9 @@
-# @dasch-swiss/vre/pages/search/search
+# vre-shared-app-search
+
+This library was generated with [Nx](https://nx.dev).
+
 
 ## Running unit tests
 
-Run `just test //libs/vre/pages/search/search/...` to execute the unit tests.
+Run `nx test vre-shared-app-search` to execute the unit tests.
 

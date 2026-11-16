@@ -34,7 +34,7 @@ import { OntologyEditService } from './services/ontology-edit.service';
       </mat-sidenav-container>
     </div>
   `,
-  styleUrls: ['./ontology-page.component.css'],
+  styleUrls: ['./ontology-page.component.scss'],
   providers: [OntologyPageService, OntologyEditService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

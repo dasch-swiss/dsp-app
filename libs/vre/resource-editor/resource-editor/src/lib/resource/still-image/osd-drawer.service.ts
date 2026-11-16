@@ -1,6 +1,13 @@
 import { ChangeDetectorRef, Inject, Injectable, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Constants, KnoraApiConnection, ReadColorValue, ReadResource, RegionGeometry } from '@dasch-swiss/dsp-js';
+import {
+  Constants,
+  KnoraApiConnection,
+  ReadColorValue,
+  ReadResource,
+  ReadStillImageFileValue,
+  RegionGeometry,
+} from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import OpenSeadragon from 'openseadragon';
@@ -207,8 +214,10 @@ export class OsdDrawerService implements OnDestroy {
       return;
     }
 
-    const aspectRatio = this._drawnImageAspectRatio();
-    if (aspectRatio === null) return;
+    const imageValues = this.resource.properties[Constants.HasStillImageFileValue];
+    if (!imageValues?.length) return;
+    const stillImage = imageValues[0] as ReadStillImageFileValue;
+    const aspectRatio = stillImage.dimY / stillImage.dimX;
 
     // Add only new regions to existing SVG
     regions.forEach(region => {
@@ -240,25 +249,15 @@ export class OsdDrawerService implements OnDestroy {
   }
 
   private _renderRegions(regions: ReadResource[]): void {
-    const aspectRatio = this._drawnImageAspectRatio();
-    if (aspectRatio === null) return;
+    const imageValues = this.resource.properties[Constants.HasStillImageFileValue];
+    if (!imageValues?.length) return;
+    const stillImage = imageValues[0] as ReadStillImageFileValue;
+    const aspectRatio = stillImage.dimY / stillImage.dimX;
 
     const geometries = StillImageHelper.collectAndSortGeometries(regions, this._paintedPolygons);
 
     // Create or update the master SVG overlay
     this._createMasterSVGOverlay(geometries, aspectRatio);
-  }
-
-  /**
-   * Height/width of the image OpenSeadragon drew, i.e. its height in viewport coordinates (the image is 1 wide).
-   * Region geometries are fractions of the image, so they line up with whatever size Sipi served; the file
-   * value's dimX/dimY are the native size, which differs (by rounding) from a size-restricted image.
-   */
-  private _drawnImageAspectRatio(): number | null {
-    const image = this._osd.viewer.world.getItemAt(0);
-    if (!image) return null;
-    const size = image.getContentSize();
-    return size.y / size.x;
   }
 
   private _createMasterSVGOverlay(

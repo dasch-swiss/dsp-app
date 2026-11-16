@@ -52,7 +52,7 @@ import { EditResourceLabelDialogComponent } from './more-menu/edit-resource-labe
       }
     </div>
   `,
-  styleUrls: ['../properties/properties-display/property-value/property-value-actions.css'],
+  styleUrls: ['../properties/properties-display/property-value/property-value-actions.scss'],
   styles: [
     `
       :host {

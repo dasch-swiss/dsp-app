@@ -52,27 +52,27 @@ import { ProjectImageCoverComponent } from '../project-image-cover.component';
         transition:
           background-color 0.2s ease,
           box-shadow 0.2s ease;
-      }
 
-      .project-card .project-content {
-        display: flex;
-      }
+        .project-content {
+          display: flex;
+        }
 
-      .project-card .project-details {
-        padding-top: 8px;
-      }
+        .project-details {
+          padding-top: 8px;
 
-      .project-card .project-details .project-title {
-        color: black;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        margin: 0;
-      }
+          .project-title {
+            color: black;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin: 0;
+          }
 
-      .project-card .project-details .project-subtitle > span {
-        margin-right: 0.5rem;
+          .project-subtitle > span {
+            margin-right: 0.5rem;
+          }
+        }
       }
 
       .project-card:hover,
@@ -82,11 +82,10 @@ import { ProjectImageCoverComponent } from '../project-image-cover.component';
         position: absolute;
         z-index: 1;
         width: 100%;
-      }
 
-      .project-card:hover .project-details .project-title,
-      .project-card:focus .project-details .project-title {
-        -webkit-line-clamp: unset;
+        .project-details .project-title {
+          -webkit-line-clamp: unset;
+        }
       }
 
       .image-container {

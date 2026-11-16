@@ -1,4 +1,4 @@
-@use 'config' as *;
+@use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
 // Using ViewEncapsulation.None to style dynamically injected SVG content.
 // All styles are scoped under app-vector-image to prevent global conflicts.

@@ -109,11 +109,9 @@ const CLOSE_DELAY_MS = 150;
           0 12px 32px rgba(15, 23, 42, 0.22),
           0 0 0 1px rgba(15, 23, 42, 0.08);
       }
-      /* Fills the card at any natural size: the small thumbnail stands in until the larger rendition
-         arrives, and would otherwise show at its own size and then jump to the larger one. */
       .preview-card img {
-        width: 100%;
-        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
       }
     `,

@@ -21,7 +21,7 @@ import { OntologyEditService } from '../../services/ontology-edit.service';
 @Component({
   selector: 'app-property-info',
   templateUrl: './property-info.component.html',
-  styleUrls: ['./property-info.component.css'],
+  styleUrls: ['./property-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AsyncPipe, MatButton, MatIcon, MatTooltip, SplitPipe, StringifyStringLiteralPipe, TranslatePipe],
 })

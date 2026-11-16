@@ -23,17 +23,17 @@ import { MatCardImage } from '@angular/material/card';
       :host {
         display: block;
         position: relative;
-      }
 
-      :host::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 98%;
-        pointer-events: none;
-        background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 100%);
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 98%;
+          pointer-events: none;
+          background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 100%);
+        }
       }
 
       .img {
@@ -53,10 +53,10 @@ import { MatCardImage } from '@angular/material/card';
         font-size: 48px;
         font-weight: bold;
         text-transform: uppercase;
-      }
 
-      .backup-text.small {
-        font-size: 24px;
+        &.small {
+          font-size: 24px;
+        }
       }
     `,
   ],

@@ -26,7 +26,6 @@ import { HeaderUserActionsComponent } from './header-user-actions.component';
         border-bottom: 1px solid #ebebeb;
         background-color: #fcfdff;
       }
-
       .title {
         font-size: 18px;
         cursor: pointer;
@@ -35,10 +34,10 @@ import { HeaderUserActionsComponent } from './header-user-actions.component';
         text-decoration: none;
         color: inherit;
         display: inline-block;
-      }
 
-      .title:hover {
-        background-color: #e8e9eb;
+        &:hover {
+          background-color: #e8e9eb;
+        }
       }
     `,
   ],

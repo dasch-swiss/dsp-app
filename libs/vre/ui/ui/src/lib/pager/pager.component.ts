@@ -20,7 +20,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   selector: 'app-pager',
   imports: [MatIconModule, MatButtonModule, TranslatePipe, MatInputModule, MatTooltipModule],
   templateUrl: './pager.component.html',
-  styleUrls: ['./pager.component.css'],
+  styleUrls: ['./pager.component.scss'],
 })
 export class PagerComponent implements OnChanges {
   @Input() numberOfAllResults = 0;

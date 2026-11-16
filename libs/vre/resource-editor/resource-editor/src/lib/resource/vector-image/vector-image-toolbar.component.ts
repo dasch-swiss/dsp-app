@@ -29,7 +29,7 @@ import { ResourceUtil } from '../../representation/resource.util';
   standalone: true,
   selector: 'app-vector-image-toolbar',
   templateUrl: './vector-image-toolbar.component.html',
-  styleUrls: ['./vector-image-toolbar.component.css'],
+  styleUrls: ['./vector-image-toolbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatMenuTrigger, MatTooltip, TranslatePipe, MatIcon, AsyncPipe, MatMenu, MatMenuItem, ClipboardModule],
 })

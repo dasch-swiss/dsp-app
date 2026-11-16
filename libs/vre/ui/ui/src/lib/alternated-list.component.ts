@@ -7,24 +7,26 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   </div>`,
   styles: [
     `
-      :host ::ng-deep .container {
-        max-height: 400px;
-        min-width: 400px;
-        overflow-y: auto;
-      }
+      :host ::ng-deep {
+        .container {
+          max-height: 400px;
+          min-width: 400px;
+          overflow-y: auto;
+        }
 
-      :host ::ng-deep .container > * {
-        padding: 16px 8px;
-        border: 1px solid #f2f2f2;
-        border-bottom-width: 0;
-      }
+        .container > * {
+          padding: 16px 8px;
+          border: 1px solid #f2f2f2;
+          border-bottom-width: 0;
 
-      :host ::ng-deep .container > *:last-child {
-        border-bottom-width: 1px;
-      }
+          &:last-child {
+            border-bottom-width: 1px;
+          }
 
-      :host ::ng-deep .container > *:nth-child(odd) {
-        background-color: #f2f2f2;
+          &:nth-child(odd) {
+            background-color: #f2f2f2;
+          }
+        }
       }
     `,
   ],

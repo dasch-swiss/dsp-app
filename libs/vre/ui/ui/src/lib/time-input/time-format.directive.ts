@@ -19,9 +19,8 @@ export class TimeFormatDirective implements ControlValueAccessor {
 
   constructor(private readonly _el: ElementRef) {}
 
-  @HostListener('input', ['$event'])
-  onInput(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
+  @HostListener('input', ['$event.target.value'])
+  onInput(value: string): void {
     if (this.onChange) {
       this.onChange(value === '' ? null : timeStringToSeconds(value));
     }

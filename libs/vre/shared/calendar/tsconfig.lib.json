@@ -3,16 +3,8 @@
   "compilerOptions": {
     "outDir": "../../../../dist/out-tsc",
     "declaration": true,
-    "types": ["node", "window", "ckeditor5-custom-build"]
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": [
-    "jest.config.js",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "**/*.stories.ts",
-    "**/stories.helpers.ts",
-    "**/*.stories.helpers.ts",
-    "**/*-stories.helper.ts"
-  ]
+  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }

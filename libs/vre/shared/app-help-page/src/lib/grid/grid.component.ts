@@ -23,7 +23,7 @@ export interface GridItem {
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
-  styleUrls: ['./grid.component.css'],
+  styleUrls: ['./grid.component.scss'],
   imports: [MatButtonModule, MatIconModule, RouterLink, RouterLinkActive, TranslatePipe],
 })
 export class GridComponent {

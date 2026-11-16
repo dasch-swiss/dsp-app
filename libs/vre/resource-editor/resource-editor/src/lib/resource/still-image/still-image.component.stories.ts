@@ -7,12 +7,7 @@ import { expect } from 'storybook/test';
 import { RegionService } from '../../representation/region.service';
 import { RepresentationService } from '../../representation/representation.service';
 import { ResourceFetcherService } from '../../representation/resource-fetcher.service';
-import {
-  STORY_EXTERNAL_IIIF_URL,
-  STORY_IIIF_BASE_URL,
-  STORY_IMAGE_URL,
-  storyGetIiifImageInfo,
-} from '../../stories.helpers';
+import { STORY_EXTERNAL_IIIF_URL, STORY_IIIF_BASE_URL, STORY_IMAGE_URL } from '../../stories.helpers';
 import { CompoundService } from '../compound/compound.service';
 import { OpenSeaDragonService } from './open-sea-dragon.service';
 import { OsdDrawerService } from './osd-drawer.service';
@@ -137,7 +132,6 @@ const sharedProviders = [
     useValue: {
       downloadProjectFile: () => {},
       getFileInfo: () => of({ originalFilename: 'image.jp2' }),
-      getIiifImageInfo: storyGetIiifImageInfo,
       getIngestOriginalUrl: () => of(''),
     },
   },

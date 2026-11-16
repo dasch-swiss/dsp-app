@@ -84,7 +84,7 @@ export class ResourceLinkDialogComponent implements OnDestroy {
   readonly title = this._translateService.instant('pages.dataBrowser.resourceLinkDialog.createCollection', {
     count: this.data.resources.length,
   });
-  form = this._fb.nonNullable.group({
+  form = this._fb.group({
     label: ['', [Validators.required]],
     comment: [''],
   });

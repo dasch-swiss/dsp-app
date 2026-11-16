@@ -117,7 +117,7 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
       <app-progress-indicator [size]="'xsmall'" />
     }
   `,
-  styleUrls: ['./property-value-actions.css'],
+  styleUrls: ['./property-value-actions.scss'],
   styles: [
     `
       .edit-line {
@@ -130,26 +130,22 @@ function calendarOf(value: KnoraDate | KnoraPeriod | null): string | null {
         border-radius: 4px;
         background: var(--property-value-edit-background, none);
       }
-
       .edit-content {
         flex: 1;
         min-width: 0;
       }
-
       .edit-actions {
         padding-top: 4px;
       }
-
       .comment-toggle {
         --mat-button-text-container-height: 26px;
         --mat-button-text-horizontal-padding: 4px;
         font-size: 12px;
-      }
-
-      .comment-toggle mat-icon {
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
       }
     `,
   ],

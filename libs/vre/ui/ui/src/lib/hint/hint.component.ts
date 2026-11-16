@@ -22,7 +22,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       <mat-icon class="suffix">launch</mat-icon>
     </a>
   `,
-  styleUrls: ['./hint.component.css'],
+  styleUrls: ['./hint.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButtonModule, MatIconModule, TranslatePipe],
 })

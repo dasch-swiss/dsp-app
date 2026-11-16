@@ -14,7 +14,7 @@ import { ProjectCardComponent } from './project-card.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-project-overview',
   templateUrl: './project-overview.component.html',
-  styleUrls: ['./project-overview.component.css'],
+  styleUrls: ['./project-overview.component.scss'],
   imports: [AsyncPipe, FooterComponent, MatIcon, TranslatePipe, ProjectCardComponent, AppProgressIndicatorComponent],
 })
 export class ProjectOverviewComponent implements AfterViewInit {

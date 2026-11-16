@@ -1,4 +1,4 @@
-@use 'config' as *;
+@use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
 :host ::ng-deep .app-progress-indicator {
   margin: 0 auto !important;
@@ -31,10 +31,6 @@
 
 .value {
   flex: 1;
-  ::ng-deep pre {
-    white-space: pre-wrap;
-  }
-
   // A denser host overrides the custom property instead of reaching in with ::ng-deep.
   padding: var(--property-value-padding-block, 16px) 0;
 

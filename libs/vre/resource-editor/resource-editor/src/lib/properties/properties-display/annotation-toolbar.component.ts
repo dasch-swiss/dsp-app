@@ -97,15 +97,15 @@ import { ColorViewerComponent } from './template-switcher/viewer-components/colo
       .actions {
         display: flex;
         align-items: center;
-      }
 
-      .actions .color-value {
-        display: flex;
-        align-items: center;
-      }
+        .color-value {
+          display: flex;
+          align-items: center;
+        }
 
-      .actions button {
-        border-radius: 0;
+        button {
+          border-radius: 0;
+        }
       }
     `,
   ],
