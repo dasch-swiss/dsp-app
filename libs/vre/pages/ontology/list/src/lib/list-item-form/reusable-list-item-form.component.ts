@@ -4,6 +4,7 @@ import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
 import {
   DEFAULT_MULTILANGUAGE_FORM,
   MultiLanguageFieldsComponent,
+  MultiLanguageModeSwitchComponent,
   MultiLanguageInputComponent,
   MultiLanguageLayout,
   MultiLanguageTextareaComponent,
@@ -16,6 +17,7 @@ import { ListItemForm } from './list-item-form.type';
   selector: 'app-reusable-list-item-form',
   template: `
     @if (layout === 'stacked') {
+      <app-multi-language-mode-switch />
       <app-multi-language-fields
         data-cy="label-input"
         [label]="'pages.ontology.list.reusableForm.labelPlaceholder' | translate"
@@ -41,7 +43,13 @@ import { ListItemForm } from './list-item-form.type';
         [isRequired]="false" />
     }
   `,
-  imports: [TranslatePipe, MultiLanguageFieldsComponent, MultiLanguageInputComponent, MultiLanguageTextareaComponent],
+  imports: [
+    TranslatePipe,
+    MultiLanguageFieldsComponent,
+    MultiLanguageInputComponent,
+    MultiLanguageModeSwitchComponent,
+    MultiLanguageTextareaComponent,
+  ],
 })
 export class ReusableListItemFormComponent implements OnInit {
   @Input() formData: {

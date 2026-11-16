@@ -5,6 +5,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { Constants } from '@dasch-swiss/dsp-js';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { DefaultProperties } from '@dasch-swiss/vre/shared/app-helper-services';
+import { MULTI_LANGUAGE_MODE } from '@dasch-swiss/vre/ui/string-literal';
 import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent, waitFor } from 'storybook/test';
 import { OntologyEditService } from '../../services/ontology-edit.service';
@@ -95,7 +96,7 @@ export const EditPropertyDialog: Story = {
 };
 
 export const ShowsEveryLanguageInItsOwnField: Story = {
-  name: 'Shows every language of the label and description in its own field, as in Data models 2',
+  name: 'Shows the label and description one language at a time, or every language in its own field, as in Data models 2',
   decorators: [
     applicationConfig({
       providers: [...sharedProviders, { provide: MAT_DIALOG_DATA, useValue: { ...editDialogData, layout: 'stacked' } }],
@@ -106,6 +107,17 @@ export const ShowsEveryLanguageInItsOwnField: Story = {
       document.querySelector<HTMLInputElement | HTMLTextAreaElement>(
         `[data-cy="${group}"] [data-cy="multi-language-${language}"]`
       );
+    MULTI_LANGUAGE_MODE.set('one');
+    await step('One language at a time at first, under a tab per language', async () => {
+      await waitFor(() =>
+        expect(document.querySelector('[data-cy="label-input"] [data-cy="multi-language-tab-en"]')).not.toBeNull()
+      );
+      await expect(document.querySelectorAll('[data-cy="label-input"] [role="tab"]').length).toBe(5);
+      await expect(document.querySelectorAll('[data-cy="label-input"] input').length).toBe(1);
+    });
+    await step('All languages shows every language in its own field', async () => {
+      await userEvent.click(document.querySelector<HTMLElement>('[data-cy="multi-language-mode-all"] button')!);
+    });
     await step('Label and description each show all five languages', async () => {
       await waitFor(() => expect(field('label-input', 'en')).not.toBeNull());
       for (const language of ['en', 'de', 'fr', 'it', 'rm']) {

@@ -6,6 +6,7 @@ import { atLeastOneStringRequired, CustomRegex } from '@dasch-swiss/vre/shared/a
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   MultiLanguageFieldsComponent,
+  MultiLanguageModeSwitchComponent,
   MultiLanguageInputComponent,
   MultiLanguageLayout,
   MultiLanguageTextareaComponent,
@@ -29,6 +30,7 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
         prefixIcon="fingerprint" />
 
       @if (layout === 'stacked') {
+        <app-multi-language-mode-switch />
         <app-multi-language-fields
           data-cy="label-input"
           [label]="'pages.ontology.resourceClassForm.labelPlaceholder' | translate"
@@ -66,6 +68,7 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
   imports: [
     CommonInputComponent,
     MultiLanguageFieldsComponent,
+    MultiLanguageModeSwitchComponent,
     MultiLanguageInputComponent,
     MultiLanguageTextareaComponent,
     ReactiveFormsModule,

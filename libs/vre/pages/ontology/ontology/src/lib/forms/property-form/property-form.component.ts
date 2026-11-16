@@ -10,6 +10,7 @@ import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-setting
 import { DefaultProperties, LocalizationService, PropertyCategory } from '@dasch-swiss/vre/shared/app-helper-services';
 import {
   MultiLanguageFieldsComponent,
+  MultiLanguageModeSwitchComponent,
   MultiLanguageInputComponent,
   MultiLanguageTextareaComponent,
   DEFAULT_MULTILANGUAGE_FORM,
@@ -53,6 +54,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       prefixIcon="fingerprint"
       [control]="form.controls.name" />
     @if (stacked) {
+      <app-multi-language-mode-switch />
       <app-multi-language-fields
         [formArray]="form.controls.labels"
         [isRequired]="true"
@@ -102,6 +104,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
     MatSelect,
     MatSelectTrigger,
     MultiLanguageFieldsComponent,
+    MultiLanguageModeSwitchComponent,
     MultiLanguageInputComponent,
     MultiLanguageTextareaComponent,
     ReactiveFormsModule,

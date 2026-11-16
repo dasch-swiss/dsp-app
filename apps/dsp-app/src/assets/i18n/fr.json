@@ -1313,6 +1313,12 @@
     }
   },
   "ui": {
+    "multiLanguage": {
+      "languages": "Langues",
+      "oneAtATime": "Une à la fois",
+      "allLanguages": "Toutes les langues",
+      "filled": "{{count}} sur {{total}}"
+    },
     "common": {
       "actions": {
         "cancel": "Annuler",
