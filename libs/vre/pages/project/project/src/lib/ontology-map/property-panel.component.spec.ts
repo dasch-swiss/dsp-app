@@ -57,7 +57,7 @@ describe('PropertyPanelComponent', () => {
     expect(text('[data-cy="property-panel-name"]')).toEqual(['director']);
   });
 
-  it('shows the type of a value property, with no links to filter on', () => {
+  it('shows the type of a value property', () => {
     fixture.componentRef.setInput('graph', {
       ...graph,
       nodes: graph.nodes.map(node =>
@@ -76,7 +76,6 @@ describe('PropertyPanelComponent', () => {
 
     expect(text('[data-cy="property-panel-type"]')[0]).toContain('Date');
     expect(text('[data-cy="property-panel-user"] .class-link')).toEqual(['Person']);
-    expect(fixture.nativeElement.querySelector('[data-cy="property-panel-filter"]')).toBeNull();
   });
 
   it('opens a class the property points at', () => {

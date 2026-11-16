@@ -463,6 +463,8 @@
         "selectList": "Seleziona lista"
       },
       "addPropertyMenu": {
+        "usedBy": "in {{classes}}",
+        "notUsed": "non ancora usata",
         "addProperty": "Aggiungi proprietà",
         "createNewFromType": "Crea nuovo dal tipo",
         "addExistingProperty": "Aggiungi proprietà esistente"

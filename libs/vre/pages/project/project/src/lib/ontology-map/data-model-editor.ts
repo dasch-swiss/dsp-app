@@ -85,7 +85,19 @@ export interface VocabularyValue {
 /** Properties a class could be given, from one data model of the project. */
 export interface AvailableProperties {
   ontologyLabel: string;
-  properties: { iri: string; label: string; icon: string; description: string }[];
+  properties: {
+    iri: string;
+    label: string;
+    icon: string;
+    description: string;
+    /** Its name in the data model, such as `hasYear`. */
+    name: string;
+    /** For a link, the label of the class it points at; else the label of its value type. */
+    type: string;
+    isLink: boolean;
+    /** The labels of the classes that already use it: what tells same-named properties apart. */
+    usedBy: string[];
+  }[];
 }
 
 /** A class's or property's labels or description, in each language it has. */

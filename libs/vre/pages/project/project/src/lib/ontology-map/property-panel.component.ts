@@ -32,6 +32,13 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1_n]: 'oneOrMore',
 };
 
+const CARDINALITY_NOTATION: Record<Cardinality, string> = {
+  [Cardinality._1]: '1',
+  [Cardinality._0_1]: '0-1',
+  [Cardinality._0_n]: '0-n',
+  [Cardinality._1_n]: '1-n',
+};
+
 /**
  * The details of one property of a data model, docked beside the Ontology map: its description, the classes a link
  * points at or a value's type, and the classes that have it, each with how many values it takes there.
@@ -190,25 +197,22 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                 <span class="inherited">{{ t + '.inheritedFrom' | translate: { class: labelOf(from) } }}</span>
               }
               @if (user.cardinality !== undefined) {
-                <span class="cardinality">{{ c + '.' + cardinalityKey(user.cardinality) | translate }}</span>
+                <!-- As on the class cards: 1, 0-1, 1-n or 0-n, filled when required; in words on hover. -->
+                <span
+                  class="cardinality"
+                  data-cy="property-panel-cardinality"
+                  [class.required]="isRequired(user.cardinality)"
+                  [matTooltip]="c + '.' + cardinalityKey(user.cardinality) | translate"
+                  >{{ cardinalityNotation(user.cardinality) }}</span
+                >
               }
             </div>
           }
         </div>
 
         <div class="actions">
-          @if (usage.type === 'Link') {
-            <button
-              mat-flat-button
-              color="primary"
-              data-cy="property-panel-filter"
-              (click)="filter.emit(propertyIri())">
-              <mat-icon>filter_alt</mat-icon>
-              {{ t + '.filter' | translate }}
-            </button>
-          }
           @if (canEdit()) {
-            <button mat-stroked-button data-cy="property-panel-edit" (click)="edit.emit(propertyIri())">
+            <button mat-flat-button color="primary" data-cy="property-panel-edit" (click)="edit.emit(propertyIri())">
               {{ t + '.edit' | translate }}
             </button>
             @if (editing?.canDelete) {
@@ -539,8 +543,22 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 
       .cardinality {
         flex: none;
-        font-size: 12px;
-        color: $cool_gray_500;
+        min-width: 32px;
+        padding: 0 4px;
+        border: 1px solid $cool_gray_300;
+        border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 500;
+        line-height: 16px;
+        text-align: center;
+        color: $cool_gray_600;
+
+        &.required {
+          background: $primary;
+          border-color: $primary;
+          color: white;
+        }
       }
 
       .actions {
@@ -577,8 +595,6 @@ export class PropertyPanelComponent {
   readonly closed = output<void>();
   /** A class was clicked; emits its IRI, to describe it instead. */
   readonly classSelected = output<string>();
-  /** "Show only these links" was clicked; emits the property IRI. */
-  readonly filter = output<string>();
   /** "Edit property" was clicked; emits the property IRI. */
   readonly edit = output<string>();
 
@@ -673,6 +689,15 @@ export class PropertyPanelComponent {
 
   cardinalityKey(cardinality: Cardinality): string {
     return CARDINALITY_KEY[cardinality];
+  }
+
+  /** The cardinality as the data model writes it, as the class cards show it. */
+  cardinalityNotation(cardinality: Cardinality): string {
+    return CARDINALITY_NOTATION[cardinality];
+  }
+
+  isRequired(cardinality: Cardinality): boolean {
+    return cardinality === Cardinality._1 || cardinality === Cardinality._1_n;
   }
 
   /** The name in the data model, such as `linkToVideo`. */

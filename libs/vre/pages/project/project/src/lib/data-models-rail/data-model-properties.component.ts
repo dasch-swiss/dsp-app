@@ -536,7 +536,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             (classSelected)="showClass($event)"
             (closed)="openPanel(undefined)"
             (propertySelected)="openPanel($event)"
-            (filter)="filterOn($event)"
             (edit)="edit($event)" />
         }
       }

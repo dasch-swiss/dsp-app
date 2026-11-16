@@ -150,6 +150,11 @@ export class DataModelEditorService implements DataModelEditor {
       take(1),
       map(([ontology, properties]) => {
         const used = new Set(ontology!.classes[classIri].propertiesList.map(property => property.propertyIndex));
+        // Whether a superclass of the class, at any depth in this data model, is among `classes`.
+        const hasAncestorIn = (iri: string, classes: Set<string>, seen = new Set<string>()): boolean =>
+          (ontology!.classes[iri]?.subClassOf ?? []).some(
+            parent => !seen.has(parent) && (classes.has(parent) || hasAncestorIn(parent, classes, seen.add(parent)))
+          );
         const byOntology = new Map<string, AvailableProperties>();
         for (const property of properties) {
           if (used.has(property.propDef.id)) continue;
@@ -162,6 +167,17 @@ export class DataModelEditorService implements DataModelEditor {
             label: stringify.transform(property.propDef.labels) || property.propDef.label || '',
             icon: property.propType?.icon ?? 'label',
             description: stringify.transform(property.propDef.comments) || '',
+            name: property.propDef.id.substring(property.propDef.id.lastIndexOf('#') + 1),
+            isLink: property.propDef.isLinkProperty,
+            type: property.propDef.isLinkProperty
+              ? stringify.transform(property.objectLabels) ||
+                (property.propDef.objectType ?? '').substring((property.propDef.objectType ?? '').lastIndexOf('#') + 1)
+              : (property.propType?.label ?? ''),
+            // The topmost classes using it: their subclasses, which have it too, would only repeat them.
+            usedBy: property.usedByClasses
+              .filter(used => !hasAncestorIn(used.id, new Set(property.usedByClasses.map(other => other.id))))
+              .map(used => stringify.transform(used.labels))
+              .filter(Boolean),
           });
           byOntology.set(property.baseOntologyId, group);
         }

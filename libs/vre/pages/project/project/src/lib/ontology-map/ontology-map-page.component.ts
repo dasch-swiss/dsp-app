@@ -506,7 +506,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [canEdit]="canEdit() ?? false"
                   (classSelected)="openPanel($event)"
                   (closed)="openPanel(undefined)"
-                  (filter)="setPropertyFilter([$event])"
                   (propertySelected)="openPropertyPanel($event)"
                   (edit)="editProperty($event)" />
               }
