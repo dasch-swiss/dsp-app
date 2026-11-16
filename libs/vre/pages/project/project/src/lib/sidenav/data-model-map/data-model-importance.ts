@@ -1,8 +1,5 @@
 import { DataModelGraph } from './data-model-graph';
 
-/** How strongly a card is tinted: 0 (white) to 3 (the most linked classes of the model). */
-export type LinkTint = 0 | 1 | 2 | 3;
-
 export interface MainClass {
   id: string;
   /** How many other classes of the data model it is linked with. */
@@ -21,14 +18,6 @@ export function linkCounts(graph: DataModelGraph): Map<string, number> {
     neighbours.get(target)!.add(source);
   }
   return new Map([...neighbours].map(([id, set]) => [id, set.size]));
-}
-
-/** Tints relative to the most linked class: it and its equals darkest, classes with one link white. */
-export function linkTints(counts: Map<string, number>): Map<string, LinkTint> {
-  const most = Math.max(0, ...counts.values());
-  const tint = (links: number): LinkTint =>
-    most < 2 || links < 2 ? 0 : links === most ? 3 : links / most >= 0.4 ? 2 : 1;
-  return new Map([...counts].map(([id, links]) => [id, tint(links)]));
 }
 
 /**

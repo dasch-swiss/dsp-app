@@ -13,18 +13,34 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
-import type { Core, StylesheetJson } from 'cytoscape';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { Constants } from '@dasch-swiss/dsp-js';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import type { Core, EdgeSingular, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
+import { routeEdges, separateLabels, withLabelsOnTop } from './edge-routes';
+import {
+  arrangeIslands,
+  ClassFamily,
+  CytoscapeFactory,
+  FILE_KINDS,
+  fileIconImage,
+  ISLAND_PADDING,
+  LabelWidth,
+  TAB_LINE,
+  TAB_WIDTH,
+  TEXTURE_TILE,
+} from './islands';
+import { LegendTexts, withLegend } from './legend-image';
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
   GraphLabels,
-  GraphLayout,
   graphScale,
+  GraphSearch,
   GraphSize,
-  layoutOptions,
   toGraphElements,
 } from './ontology-graph-elements';
 
@@ -39,6 +55,8 @@ const COLOR = {
 
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
 const FIT_PADDING = 56;
+/** Room left above the model when it is fitted, clear of the filter bar and tools floating over the top edge. */
+const TOOLBAR_ROOM = 72;
 
 const edgeKey = (edge: DataModelGraph['edges'][number]) => `${edge.source}>${edge.property}>${edge.target}`;
 
@@ -51,12 +69,66 @@ const EXPORT_SCALE = 2;
 const EXPORT_BACKGROUND = '#F9FAFB';
 /** The whole model of a big data model is drawn no bigger than this, in px each way. */
 const EXPORT_MAX_SIZE = 8000;
+/** Size of the legend's text at scale 1, as on screen and in an exported image; see `withLegend`. */
+const LEGEND_TEXT_SIZE = 12.5;
 
-/** The share of the chosen name size a model is first shown at, at least, though it then does not fit. */
-const READABLE_SHARE = 0.8;
+/** How far apart, at most, classes are spread to fill the box; past it, links grow too long to follow. */
+const MAX_SPREAD = 2.5;
+
+/** How often, at most, links are routed again while a class is dragged, in ms. */
+const DRAG_ROUTE_MS = 100;
+
+/** How visible classes and links away from a search stay. */
+const SEARCH_FADE = 0.18;
+
+/** How long no layout must follow, on load, before the graph is shown. */
+const SETTLE_MS = 150;
+/** How long the graph takes to pan clear of a panel opening, or back as it closes. */
+const PAN_MS = 300;
+
+/** Size of a link's label at scale 1. */
+const LINK_FONT_SIZE = 13;
 
 /** Names are code: they are written in a monospaced font. */
 const FONT = { labels: 'Roboto, sans-serif', names: 'Roboto Mono, ui-monospace, monospace' };
+
+/** An empty image, for a class box with only one of its two images: a texture and a file icon. */
+const NO_IMAGE =
+  'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221%22%20height%3D%221%22%2F%3E';
+
+/** A file icon in a class's box, at scale 1: its size, its gap from the box's left edge, and the room it takes. */
+const ICON = { size: 26, inset: 12, room: 28 };
+
+let measuring: CanvasRenderingContext2D | null | undefined;
+
+/** How wide a text is drawn in a font, its longest line for a text on several lines. */
+function textWidth(text: string, font: string): number {
+  measuring ??= document.createElement('canvas').getContext('2d');
+  if (!measuring) return text.length * 9;
+  measuring.font = font;
+  return Math.max(...text.split('\n').map(line => measuring!.measureText(line).width));
+}
+
+/**
+ * Stores, on every class with a file icon, how wide its box is at scale 1 for each of its texts: its label and the
+ * icon's room. The graph cannot widen a box for an icon by itself.
+ */
+function measureIconBoxes(cy: Core): void {
+  cy.nodes('[icon], [tab]').forEach(node => {
+    const weight = 500;
+    const icon = node.data('icon') ? ICON.room : 0;
+    for (const key of ['labels', 'names', 'both'] as const) {
+      const font = `${weight} ${BASE_FONT_SIZE}px ${key === 'names' ? FONT.names : FONT.labels}`;
+      const text = textWidth(node.data(DATA_KEY[key]) ?? '', font);
+      node.data(`${key}Width`, text + icon);
+      // In the Colour tab look, a class with a tab is widened for it too.
+      node.data(`${key}TabWidth`, text + icon + (node.data('tab') ? TAB_WIDTH : 0));
+    }
+  });
+}
+
+/** The element data each `GraphLabels` writes, by key. */
+const DATA_KEY: Record<GraphLabels, string> = { labels: 'label', names: 'name', both: 'both' };
 
 /** The element data each `GraphLabels` writes. */
 const LABEL_DATA: Record<GraphLabels, string> = { labels: 'data(label)', names: 'data(name)', both: 'data(both)' };
@@ -66,7 +138,49 @@ export interface GraphTextOptions {
   /** Whether link labels are drawn level, rather than along their line. */
   levelLabels: boolean;
   labels: GraphLabels;
+  /** Whether an island shows its frame while hovered, and moves when dragged. */
+  islands: boolean;
+  /** Whether a family's colour is a tab at the left of white boxes, rather than the boxes' fill. */
+  colourTab: boolean;
+  /** Whether a line joins each parent to its subclasses. */
+  treeLines: boolean;
 }
+
+/**
+ * The Colour tab look: every class box white, with slate borders, its label always on white; every class shows its
+ * family's hue as a tab at the box's left, stronger on a top class than on its subclasses. No stripes behind a label.
+ */
+const colourTabStyle = (f: number, labels: GraphLabels): StylesheetJson => [
+  { selector: 'node.family-member', style: { 'background-color': '#FFFFFF', 'border-color': TAB_LINE } },
+  {
+    selector: 'node[icon], node[texture], node[tab]',
+    style: {
+      'background-image': (node: NodeSingular) =>
+        `${node.data('tab') ?? NO_IMAGE} ${node.data('plainIcon') ?? node.data('icon') ?? NO_IMAGE}` as never,
+      'background-fit': 'none none' as never,
+      'background-clip': 'node none' as never,
+      'background-width': `${TAB_WIDTH * f}px ${ICON.size * f}px` as never,
+      'background-height': `${TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
+      // The tab at the very left; a file icon right of it.
+      'background-position-x': ((node: NodeSingular) =>
+        `0px ${(ICON.inset + (node.data('tab') ? TAB_WIDTH : 0)) * f}px`) as never,
+      'background-position-y': `50% 50%` as never,
+    },
+  },
+  {
+    selector: 'node[tab]',
+    style: {
+      width: `mapData(${labels}TabWidth, 0, 10000, 0, ${10000 * f})`,
+      'text-margin-x': (TAB_WIDTH * f) / 2,
+    },
+  },
+  { selector: 'node[icon][tab]', style: { 'text-margin-x': ((ICON.room + TAB_WIDTH) * f) / 2 } },
+];
+
+/** The Colour tab look's family frames: grey, so the colour is only the tabs'. Drawn after the frames' own style. */
+const colourTabFrames: StylesheetJson = [
+  { selector: 'node.family', style: { 'background-color': '#EEF1F4', 'border-color': '#D5DBE2', 'border-opacity': 1 } },
+];
 
 /** The graph's stylesheet, boxes, text and lines scaled by `f`, its texts written as `text` says. */
 const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
@@ -101,6 +215,92 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'font-style': 'italic',
     },
   },
+  // Islands view: every class drawn alike, a border in its family's hue; a tree line, not the box, says which
+  // classes are subclasses, and of which.
+  { selector: 'node.family-member', style: { 'border-width': 1.5 * f, 'border-color': 'data(dark)' } },
+  // Past the first 30 families, a double border tells the next 30 apart.
+  { selector: 'node.family-member.double', style: { 'border-style': 'double', 'border-width': 4.5 * f } },
+  // A class with a file is widened for its icon, its label moved right to make room.
+  {
+    selector: 'node[icon]',
+    style: {
+      // Its width at scale 1, from `measureIconBoxes`, times `f`.
+      width: `mapData(${text.labels}Width, 0, 10000, 0, ${10000 * f})`,
+      'text-margin-x': (ICON.room * f) / 2,
+    },
+  },
+  {
+    selector: 'node[icon], node[texture]',
+    style: {
+      'background-image': (node: NodeSingular) =>
+        `${node.data('texture') ?? NO_IMAGE} ${node.data('icon') ?? NO_IMAGE}` as never,
+      'background-fit': 'none none' as never,
+      'background-clip': 'node none' as never,
+      // The stripes grow with the graph, so they stay as visible as its texts.
+      'background-width': `${TEXTURE_TILE.width * f}px ${ICON.size * f}px` as never,
+      'background-height': `${TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
+      // From the box's left edge, about as far as from its top.
+      'background-position-x': `50% ${ICON.inset * f}px` as never,
+      'background-position-y': `50% 50%` as never,
+    },
+  },
+  ...(text.colourTab ? colourTabStyle(f, text.labels) : []),
+  // An island's frame shows only while hovered.
+  {
+    selector: 'node.island',
+    style: {
+      shape: 'round-rectangle',
+      'background-color': '#FFFFFF',
+      'background-opacity': 0,
+      'border-width': 1.5 * f,
+      'border-style': 'dashed',
+      'border-color': '#CBD5E1',
+      'border-opacity': 0,
+      padding: `${ISLAND_PADDING * f}px`,
+      'text-valign': 'top',
+      'text-halign': 'center',
+      'font-family': FONT.labels,
+      'font-size': 14 * f,
+      'font-weight': 500,
+      'font-style': 'normal',
+      color: '#334155',
+      'text-margin-y': -6 * f,
+    },
+  },
+  // A family's frame lies over the links that only pass it, hiding them in a solid tint; its classes, the links to
+  // them and every label lie over the frame, so a link to a class of the family still reaches it.
+  {
+    selector: 'node.family',
+    style: {
+      shape: 'round-rectangle',
+      'background-color': 'data(tint)',
+      'border-width': f,
+      'border-color': 'data(dark)',
+      'border-opacity': 0.25,
+      padding: `${12 * f}px`,
+      'z-compound-depth': 'top',
+      'z-index-compare': 'manual',
+      'z-index': 1,
+    },
+  },
+  ...(text.colourTab ? colourTabFrames : []),
+  // Subclass lines off: none drawn.
+  ...(text.treeLines ? [] : [{ selector: 'edge.tree', style: { display: 'none' as const } }]),
+  {
+    selector: 'edge.family-link',
+    style: { 'z-compound-depth': 'top', 'z-index-compare': 'manual', 'z-index': 2 },
+  },
+  {
+    selector: 'node.family-member',
+    style: { 'z-compound-depth': 'top', 'z-index-compare': 'manual', 'z-index': 3 },
+  },
+  { selector: 'node.island.hovered', style: { 'background-opacity': 0.6, 'border-opacity': 1 } },
+  // A lone island, or one of a single class, is only there for the layout: no frame, not even hovered, and clicks go
+  // through to the background.
+  {
+    selector: 'node.island.alone',
+    style: { 'background-opacity': 0, 'border-width': 0, padding: '0px', events: 'no' },
+  },
   { selector: 'node.main', style: { 'border-width': 2 * f, 'border-color': COLOR.text } },
   { selector: 'node.selected', style: { 'border-width': 3 * f, 'border-color': COLOR.primary } },
   { selector: 'node:active', style: { 'overlay-opacity': 0.08, 'overlay-color': COLOR.primary } },
@@ -118,20 +318,110 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'text-max-width': '1000px',
       'font-family': text.labels === 'names' ? FONT.names : FONT.labels,
       // Link labels close to class names in size, so a property reads as easily as the classes it joins.
-      'font-size': 13 * f,
+      'font-size': LINK_FONT_SIZE * f,
       color: COLOR.text,
       'text-rotation': text.levelLabels ? 'none' : 'autorotate',
+      // A label hides the line behind it; the room on its sides is in its text, see `withLabelsOnTop`.
       'text-background-color': '#F9FAFB',
-      'text-background-opacity': 0.9,
-      'text-background-padding': '1px',
+      'text-background-opacity': 1,
+      'text-background-padding': `${f}px`,
       // Labels give way when zoomed out, so a big model stays readable.
       'min-zoomed-font-size': 7,
+    },
+  },
+  // Each link is drawn twice: its line without a label, then above every line and family frame its label on an
+  // unseen line.
+  { selector: 'edge[^labelOf]', style: { label: '' } },
+  {
+    selector: 'edge.label-only',
+    style: {
+      'line-opacity': 0,
+      'target-arrow-shape': 'none',
+      'z-compound-depth': 'top',
+      'z-index-compare': 'manual',
+      'z-index': 2,
+    },
+  },
+  // A label slid along its link, clear of the others; see `separateLabels`.
+  {
+    selector: 'edge.label-only[shiftX]',
+    style: { 'text-margin-x': 'data(shiftX)' as never, 'text-margin-y': 'data(shiftY)' as never },
+  },
+  // A link that would pass through a class's box bends round it; see `routeEdges`.
+  {
+    selector: 'edge[bend]',
+    style: {
+      'curve-style': 'unbundled-bezier',
+      'control-point-distances': 'data(bend)' as never,
+      'control-point-weights': 'data(weight)' as never,
     },
   },
   {
     selector: 'edge.highlighted, edge.same-property',
     style: { width: 2 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
   },
+  // A search: what it found is outlined or drawn bold, what lies away from it fades; see `searchGraph`.
+  {
+    selector: 'node.search-hit',
+    style: {
+      'underlay-color': COLOR.primary,
+      'underlay-opacity': 0.25,
+      'underlay-padding': 5 * f,
+      'underlay-shape': 'round-rectangle',
+    },
+  },
+  {
+    selector: 'edge.search-hit',
+    style: { width: 2.4 * f, 'line-color': COLOR.primary, 'target-arrow-color': COLOR.primary, color: COLOR.primary },
+  },
+  { selector: '.faded', style: { opacity: SEARCH_FADE } },
+  // The search result gone through: the one class or link the graph is narrowed to, in the same blue as an open
+  // panel's class, drawn stronger; see `picked`.
+  {
+    selector: 'node.picked',
+    style: {
+      'border-width': 3 * f,
+      'border-color': COLOR.primary,
+      'underlay-color': COLOR.primary,
+      'underlay-opacity': 0.3,
+      'underlay-padding': 6 * f,
+      'underlay-shape': 'round-rectangle',
+      opacity: 1,
+    },
+  },
+  {
+    selector: 'edge.picked',
+    style: {
+      width: 3.2 * f,
+      'line-color': COLOR.primary,
+      'target-arrow-color': COLOR.primary,
+      color: COLOR.primary,
+      opacity: 1,
+    },
+  },
+  // A tree line, from a parent down to its subclass: elbowed, in the family's dark shade, no arrow, no label, not
+  // clickable; over the family's frame, under its classes.
+  {
+    selector: 'edge.tree',
+    style: {
+      'curve-style': 'taxi',
+      'taxi-direction': 'downward',
+      'taxi-turn': '50%',
+      width: 1.6 * f,
+      'line-color': 'data(dark)',
+      'target-arrow-shape': 'none',
+      'source-arrow-shape': 'none',
+      label: '',
+      events: 'no',
+      'z-compound-depth': 'top',
+      'z-index-compare': 'manual',
+      'z-index': 2,
+    },
+  },
+  // Islands off: no frame, even hovered, and the pointer goes through them, so they neither show nor move.
+  ...(text.islands
+    ? []
+    : [{ selector: 'node.island', style: { 'background-opacity': 0, 'border-opacity': 0, events: 'no' as const } }]),
 ];
 
 /**
@@ -141,25 +431,82 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
 @Component({
   selector: 'app-ontology-graph',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [MatIcon, MatProgressSpinner, TranslatePipe],
   template: `
     @let t = 'pages.dataBrowser.dataModelMap';
-    <div #canvas class="canvas" data-cy="ontology-graph"></div>
+    @let i = 'pages.ontologyMap.islands';
+    <div #canvas class="canvas" data-cy="ontology-graph" [class.hidden]="!laidOut()"></div>
+    @if (!laidOut() && !failed()) {
+      <mat-progress-spinner class="laying-out" mode="indeterminate" diameter="32" />
+    }
     @if (failed()) {
       <p class="failed">{{ 'pages.ontologyMap.graphFailed' | translate }}</p>
     }
-    <div class="legend" aria-hidden="true">
-      <span class="legend-item">
-        <svg width="28" height="8" viewBox="0 0 28 8">
-          <path class="legend-line" d="M 0 4 L 22 4" />
-          <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
-        </svg>
-        {{ t + '.legendLink' | translate }}
-      </span>
-      <span class="legend-item"
-        ><span class="legend-dashed"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
-      >
-    </div>
+    @if (islandsLegend(); as legend) {
+      <div #islandsLegend class="islands-legend" role="region" [attr.aria-label]="i + '.legend' | translate">
+        <span class="legend-title">{{ i + '.legend' | translate }}</span>
+        @if (legendOpen()) {
+          @if (legend.shapes) {
+            <span class="divider"></span>
+            <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
+          }
+          @if (legend.families && treeLines()) {
+            <span class="shape"
+              ><svg class="tree-line" width="22" height="12" aria-hidden="true">
+                <path d="M4 0V6H18V12" fill="none" stroke="currentColor" stroke-width="1.6" /></svg
+              >{{ i + '.subclass' | translate }}</span
+            >
+          }
+          @if (legend.other) {
+            <span class="shape"
+              ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
+            >
+          }
+          @if (legend.link) {
+            <span class="shape">
+              <svg width="22" height="8" viewBox="0 0 28 8" aria-hidden="true">
+                <path class="legend-line" d="M 0 4 L 22 4" />
+                <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
+              </svg>
+              {{ i + '.link' | translate }}
+            </span>
+          }
+          @if (legend.files.length) {
+            <span class="divider"></span>
+            <span class="legend-heading">{{ i + '.files' | translate }}</span>
+            @for (file of legend.files; track file.representation) {
+              <span class="file"
+                ><span class="file-icon"
+                  ><mat-icon>{{ file.icon }}</mat-icon></span
+                >{{ i + '.fileKinds.' + file.representation | translate }}</span
+              >
+            }
+          }
+        }
+        <button
+          type="button"
+          class="legend-toggle"
+          data-cy="islands-legend-toggle"
+          [attr.aria-expanded]="legendOpen()"
+          [attr.aria-label]="i + (legendOpen() ? '.collapse' : '.expand') | translate"
+          (click)="legendOpen.set(!legendOpen())">
+          <mat-icon>{{ legendOpen() ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+        </button>
+      </div>
+    } @else {
+      <div class="legend" aria-hidden="true">
+        <span class="legend-item">
+          <svg width="28" height="8" viewBox="0 0 28 8">
+            <path class="legend-line" d="M 0 4 L 22 4" />
+            <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
+          </svg>
+          {{ t + '.legendLink' | translate }}
+        </span>
+        <span class="legend-item"
+          ><span class="legend-dashed"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
+        >
+      </div>
+    }
   `,
   styles: [
     `
@@ -174,6 +521,18 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       .canvas {
         position: absolute;
         inset: 0;
+
+        // Laid out, measured and fitted while hidden, so it is first seen in place.
+        &.hidden {
+          visibility: hidden;
+        }
+      }
+
+      .laying-out {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
 
       .failed {
@@ -222,6 +581,116 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         border: 1px dashed #bdbfc1;
         border-radius: 3px;
       }
+
+      // The Islands view's legend, in one row: the shapes, then the kinds of file shown.
+      .islands-legend {
+        position: absolute;
+        left: 16px;
+        bottom: 16px;
+        max-width: calc(100% - 96px);
+        min-height: 44px;
+        box-sizing: border-box;
+        padding: 6px 8px 6px 16px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 16px;
+        background: white;
+        border: 1px solid $cool_gray_200;
+        border-radius: 14px;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        font: 400 12.5px/1.3 var(--font-sans, Roboto, sans-serif);
+        color: $cool_gray_800;
+      }
+
+      .legend-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: $cool_gray_900;
+      }
+
+      .divider {
+        width: 1px;
+        height: 20px;
+        background: $cool_gray_200;
+      }
+
+      .legend-toggle {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: -8px;
+        padding: 0;
+        border: 0;
+        border-radius: 14px;
+        background: transparent;
+        color: $cool_gray_500;
+        cursor: pointer;
+
+        &:hover {
+          background: $cool_gray_100;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .legend-heading {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: $cool_gray_500;
+      }
+
+      .file,
+      .shape {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 22px;
+        white-space: nowrap;
+      }
+
+      .file-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        background: $cool_gray_100;
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+          color: $cool_gray_600;
+        }
+      }
+
+      // A tree line as the graph draws it: down from a parent, across, and down to its subclass.
+      .tree-line {
+        flex: none;
+        color: $cool_gray_600;
+      }
+
+      .shape-box {
+        width: 22px;
+        height: 12px;
+        box-sizing: border-box;
+        border-radius: 3px;
+
+        &.other {
+          border: 1.5px dashed $cool_gray_400;
+          background: white;
+        }
+      }
     `,
   ],
 })
@@ -230,9 +699,7 @@ export class OntologyGraphComponent {
   readonly graph = input.required<DataModelGraph>();
   /** IRI of the class to outline, if any. */
   readonly selectedIri = input<string | undefined>(undefined);
-  /** How the classes are arranged. */
-  readonly layout = input<GraphLayout>('circle');
-  /** Colour per class, from the whole data model so a filter keeps them; see `classColors`. */
+  /** Colour per class, from the whole data model so a filter keeps them; see `familyColors`. */
   readonly colors = input.required<Map<string, string>>();
   /** How big boxes, text and lines are drawn. */
   readonly size = input<GraphSize>('normal');
@@ -240,10 +707,37 @@ export class OntologyGraphComponent {
   readonly levelLabels = input(false);
   /** Whether classes and links are written with their labels, their names, or both. */
   readonly labels = input<GraphLabels>('labels');
+  /** Whether an island shows its frame while hovered, and can be dragged, moving its classes. */
+  readonly islands = input(true);
+  /** Whether a family's colour is a tab at the left of white boxes, rather than the boxes' fill; see `colourTabStyle`. */
+  readonly colourTab = input(false);
+  /** Whether a line joins each parent to its subclasses, as in a family tree. */
+  readonly treeLines = input(true);
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
+  /** A class, or a property's links, picked out in orange, as the search's results are gone through. */
+  readonly picked = input<{ kind: 'class' | 'property'; iri: string } | undefined>(undefined);
+  /**
+   * How wide a panel lying over the right of the graph is, in px, at most half the box. Without `fullWidth`, the model
+   * is laid out and fitted left of it, open or not, so opening it moves nothing. With `fullWidth`, it is 0 while no
+   * panel is open; see `fullWidth`.
+   */
+  readonly covered = input(0);
+  /**
+   * Whether the model is laid out and fitted over the whole box: an open panel covers its right, and the graph pans
+   * sideways only to bring `panelFocus` out from under it; see `_keepInView`.
+   */
+  readonly fullWidth = input(false);
+  /** What the open panel is about, a class or a link property, kept clear of the panel. */
+  readonly panelFocus = input<{ kind: 'class' | 'property'; iri: string } | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
   readonly anyResourceLabel = input('Any resource');
+  /** The word after the count on a link standing for several, as in "5 links", in the current language. */
+  readonly linksLabel = input('links');
+  /** The family of every class of the data model, for the Islands view; see `classFamilies`. */
+  readonly families = input<Map<string, ClassFamily> | undefined>(undefined);
+  /** A search to show: what it found stands out, what lies away from it fades. Nothing found, nothing fades. */
+  readonly search = input<GraphSearch | undefined>(undefined);
 
   /** A class of this project was clicked; emits its IRI. */
   readonly classSelected = output<string>();
@@ -254,32 +748,82 @@ export class OntologyGraphComponent {
   /** The background, not a class or a link, was clicked. */
   readonly backgroundClicked = output<void>();
 
+  private readonly _translate = inject(TranslateService);
   private readonly _canvas = viewChild.required<ElementRef<HTMLElement>>('canvas');
   private readonly _cy = signal<Core | undefined>(undefined);
   readonly failed = signal(false);
   private readonly _hoveredProperty = signal<string | undefined>(undefined);
   /** Whether the user moved classes since the last layout; their places then survive a resize. */
   private _dragged = false;
-  /** The layout, classes and links last laid out, to tell a new model from the same one handed over again. */
+  /** The classes and links last laid out, to tell a new model from the same one handed over again. */
   private _shown = '';
+  /** The Cytoscape factory, once loaded, for layouts run apart from the graph shown. */
+  private _cytoscape?: CytoscapeFactory;
   /** How much bigger than at scale 1 boxes, text and lines are drawn; see `graphScale`. */
   private _scale = 1;
+  /** Whether the graph is laid out for good and shown; see `_revealWhenSettled`. */
+  readonly laidOut = signal(false);
+  private _reveal?: ReturnType<typeof setTimeout>;
+  /** Whether the canvas's box has had its first size; see the constructor's `ResizeObserver`. */
+  private _sized = false;
+  /** How far, in screen px, the graph was panned sideways to keep the panel's focus in view; undone on closing. */
+  private _panned = 0;
 
   private readonly _counts = computed(() => linkCounts(this.graph()));
+  private readonly _islands = computed(() => {
+    const families = this.families();
+    if (!families) return undefined;
+    return { families };
+  });
   private readonly _elements = computed(() =>
     toGraphElements(this.graph(), {
       colors: this.colors(),
       mainIri: mainClass(this._counts())?.id,
       selectedIri: this.selectedIri(),
       anyResourceLabel: this.anyResourceLabel(),
+      linksLabel: this.linksLabel(),
+      islands: this._islands(),
     })
   );
-  /** Classes the user may open; other data models' classes and knora-api's are drawn but not clickable. */
+
+  /** Whether the Islands view's legend is open. */
+  readonly legendOpen = signal(true);
+  private readonly _legend = viewChild<ElementRef<HTMLElement>>('islandsLegend');
+
+  /**
+   * What the Islands view's legend lists, only what the classes shown need: parent and subclass when a subclass is
+   * shown, other data models when a class of one is, links when there are any, and the kinds of file the classes
+   * carry. None when nothing needs telling.
+   */
+  readonly islandsLegend = computed(() => {
+    const islands = this._islands();
+    if (!islands) return undefined;
+    const graph = this.graph();
+    const files = new Set(graph.nodes.map(node => node.representationClass));
+    const legend = {
+      families: graph.nodes.some(node => islands.families.get(node.id)?.sub),
+      other: graph.nodes.some(node => node.kind !== 'class'),
+      link: graph.edges.some(edge => edge.kind === 'link' && edge.source !== edge.target),
+      files: FILE_KINDS.filter(kind => files.has(kind.representation)),
+    };
+    const shapes = legend.families || legend.other || legend.link;
+    return shapes || legend.files.length ? { ...legend, shapes } : undefined;
+  });
+  /** Classes of the data model the user may open and filter on. */
   private readonly _navigable = computed(
     () =>
       new Set(
         this.graph()
           .nodes.filter(node => node.navigable && node.kind === 'class')
+          .map(node => node.id)
+      )
+  );
+  /** Classes whose panel opens on a click: the data model's, and those of other data models; not "Any resource". */
+  private readonly _openable = computed(
+    () =>
+      new Set(
+        this.graph()
+          .nodes.filter(node => (node.kind === 'class' ? node.navigable : node.id !== Constants.Resource))
           .map(node => node.id)
       )
   );
@@ -289,6 +833,7 @@ export class OntologyGraphComponent {
     afterNextRender(async () => {
       try {
         const { default: cytoscape } = await import('cytoscape');
+        this._cytoscape = cytoscape as unknown as CytoscapeFactory;
         const cy = cytoscape({
           container: this._canvas().nativeElement,
           style: this._style(1),
@@ -301,40 +846,84 @@ export class OntologyGraphComponent {
         });
         cy.on('tap', 'node', event => {
           const id = event.target.id();
-          if (this._navigable().has(id)) this.classSelected.emit(id);
+          if (this._openable().has(id)) this.classSelected.emit(id);
         });
         cy.on('dbltap', 'node', event => {
           const id = event.target.id();
           if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
         cy.on('tap', 'edge.link', event => this.propertySelected.emit(event.target.data('property')));
-        cy.on('dragfree', 'node', () => (this._dragged = true));
+        // Links follow a dragged class as they will lie once it is dropped: routed round the boxes, a few times a
+        // second, and once more on the drop, the same way. Only the links the drag reaches are routed again: those
+        // of the class, and those passing where it was or is, which may bend or straighten.
+        let reached = new Set<string>();
+        const reach = (node: NodeSingular) => {
+          const margin = BASE_FONT_SIZE * this._scale;
+          const at = node.boundingBox({ includeLabels: false });
+          const box = { x1: at.x1 - margin, y1: at.y1 - margin, x2: at.x2 + margin, y2: at.y2 + margin };
+          cy.edges('[^labelOf][^tree]').forEach(edge => {
+            const line = edge.boundingBox({ includeLabels: false });
+            const near = line.x2 > box.x1 && line.x1 < box.x2 && line.y2 > box.y1 && line.y1 < box.y2;
+            if (near || edge.source().same(node) || edge.target().same(node)) reached.add(edge.id());
+          });
+        };
+        let routing: ReturnType<typeof setTimeout> | undefined;
+        let routed = 0;
+        const route = () => {
+          routing = undefined;
+          routed = performance.now();
+          this._route(cy, reached);
+        };
+        cy.on('grab', 'node', event => {
+          reached = new Set();
+          reach(event.target);
+        });
+        cy.on('drag', 'node', event => {
+          reach(event.target);
+          routing ??= setTimeout(route, Math.max(0, DRAG_ROUTE_MS - (performance.now() - routed)));
+        });
+        cy.on('dragfree', 'node', event => {
+          this._dragged = true;
+          clearTimeout(routing);
+          reach(event.target);
+          route();
+        });
         // Hovering a class highlights its links; a class that opens on click shows a link's pointer.
         const container = this._canvas().nativeElement;
         cy.on('mouseover', 'node', event => {
           event.target.connectedEdges().addClass('highlighted');
-          if (this._navigable().has(event.target.id())) container.style.cursor = 'pointer';
+          event.target.ancestors('.island').union(event.target.filter('.island')).addClass('hovered');
+          if (this._openable().has(event.target.id())) container.style.cursor = 'pointer';
+          // An island drags, with its classes; it only gets the pointer while islands are on.
+          else if (event.target.is('.island')) container.style.cursor = 'grab';
         });
+        cy.on('grab', 'node.island', () => (container.style.cursor = 'grabbing'));
+        cy.on('free', 'node.island', () => (container.style.cursor = 'grab'));
         cy.on('mouseout', 'node', event => {
           event.target.connectedEdges().removeClass('highlighted');
+          cy.nodes('.island.hovered').removeClass('hovered');
           container.style.cursor = '';
         });
         // Hovering a link highlights every link through the same property, wherever it is used; a click opens it.
         cy.on('mouseover', 'edge', event => {
           this._hoveredProperty.set(event.target.data('property'));
+          event.target.source().ancestors('.island').addClass('hovered');
           container.style.cursor = 'pointer';
         });
         cy.on('mouseout', 'edge', () => {
           this._hoveredProperty.set(undefined);
+          cy.nodes('.island.hovered').removeClass('hovered');
           container.style.cursor = '';
         });
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
         // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
-        // user has dragged some, whose places are then kept and only fitted.
+        // user has dragged some, whose places are then kept and only fitted. The first size, once the box has one,
+        // lays out the classes for the first time.
         let frame = 0;
         const observer = new ResizeObserver(() => {
           cancelAnimationFrame(frame);
           frame = requestAnimationFrame(() => {
+            this._sized = true;
             cy.resize();
             if (this._dragged) {
               this._fit(cy);
@@ -346,6 +935,8 @@ export class OntologyGraphComponent {
         observer.observe(this._canvas().nativeElement);
         destroyRef.onDestroy(() => {
           cancelAnimationFrame(frame);
+          clearTimeout(routing);
+          clearTimeout(this._reveal);
           observer.disconnect();
           cy.destroy();
         });
@@ -361,14 +952,16 @@ export class OntologyGraphComponent {
     effect(() => {
       const cy = this._cy();
       const graph = this.graph();
-      const layout = this.layout();
       if (!cy) return;
-      const shown = `${layout} ${graph.nodes.map(node => node.id).join(' ')} ${graph.edges.map(edgeKey).join(' ')}`;
+      // Labels count too, so a class renamed in the edit dialog is drawn with its new name.
+      const shown = `${graph.nodes.map(node => `${node.id}\t${node.label}`).join(' ')} ${graph.edges.map(edgeKey).join(' ')}`;
       if (shown === this._shown) return;
       this._shown = shown;
       cy.elements().remove();
-      cy.add(untracked(() => this._elements()));
-      this._arrange(cy, layout);
+      cy.add(withLabelsOnTop(untracked(() => this._elements())));
+      measureIconBoxes(cy);
+      // Before the box has its size, the first size lays them out; laid out now, they would be again then.
+      if (this._sized) this._arrange(cy);
     });
     effect(() => {
       const cy = this._cy();
@@ -380,17 +973,63 @@ export class OntologyGraphComponent {
           .filter(edge => edge.data('property') === property)
           .addClass('same-property');
     });
-    // A new size rescales in place: classes stay where they are, only boxes, text and lines grow or shrink.
+    // A new size rescales in place: classes stay where they are, only boxes, text and lines grow or shrink. The size
+    // the graph starts with is already the one it is laid out at.
+    let sizeShown = untracked(() => this.size());
     effect(() => {
       const cy = this._cy();
-      this.size();
-      if (cy) this._rescale(cy);
+      const size = this.size();
+      if (!cy || size === sizeShown) return;
+      sizeShown = size;
+      this._rescale(cy);
     });
-    // New texts restyle in place: classes stay where they are, their boxes fitting the new texts.
+    // New texts restyle in place: classes stay where they are, their boxes fitting the new texts, and the labels clear
+    // of each other again.
     effect(() => {
       const cy = this._cy();
-      const text = { levelLabels: this.levelLabels(), labels: this.labels() };
-      if (cy) cy.style(styleFor(this._scale, text));
+      const text = {
+        levelLabels: this.levelLabels(),
+        labels: this.labels(),
+        islands: this.islands(),
+        colourTab: this.colourTab(),
+        treeLines: this.treeLines(),
+      };
+      if (!cy) return;
+      cy.style(styleFor(this._scale, text));
+      separateLabels(cy, this._scale);
+    });
+    effect(() => {
+      const cy = this._cy();
+      const picked = this.picked();
+      this.graph();
+      if (!cy) return;
+      cy.batch(() => {
+        cy.elements().removeClass('picked');
+        if (picked?.kind === 'class') cy.getElementById(picked.iri).addClass('picked');
+        if (picked?.kind === 'property')
+          cy.edges()
+            .filter(edge => edge.data('property') === picked.iri)
+            .addClass('picked');
+      });
+    });
+    // Over the whole width or left of the panel's place: the classes are spread over the new room again, or, once
+    // dragged, only fitted in it.
+    let fullWidthShown = untracked(() => this.fullWidth());
+    effect(() => {
+      const cy = this._cy();
+      const fullWidth = this.fullWidth();
+      if (!cy || fullWidth === fullWidthShown) return;
+      fullWidthShown = fullWidth;
+      untracked(() => (this._dragged ? this._fit(cy) : this._arrange(cy)));
+    });
+    // Opening a panel, or showing another class or link in it, pans the graph sideways only when what it is about lies
+    // under it; closing it pans back. Before the graph is shown, fitting it does the same, without the motion.
+    effect(() => {
+      const cy = this._cy();
+      this.covered();
+      this.panelFocus();
+      if (!cy || !this.laidOut()) return;
+      untracked(() => this._keepInView(cy, true));
     });
     effect(() => {
       const cy = this._cy();
@@ -399,14 +1038,43 @@ export class OntologyGraphComponent {
       cy.nodes().removeClass('selected');
       if (selected) cy.getElementById(selected).addClass('selected');
     });
+    // Run after the classes and links are replaced, which drops their marks, so it reads the graph too.
+    effect(() => {
+      const cy = this._cy();
+      const search = this.search();
+      this.graph();
+      if (!cy) return;
+      cy.batch(() => {
+        cy.elements().removeClass('faded search-hit');
+        if (!search || (!search.hitClasses.size && !search.hitLinks.size)) return;
+        const classes = cy.nodes().not('.island, .family');
+        classes.filter(node => search.hitClasses.has(node.id())).addClass('search-hit');
+        classes.filter(node => !search.classes.has(node.id())).addClass('faded');
+        // A label is drawn on a copy of its link; see `withLabelsOnTop`.
+        const linkOf = (edge: EdgeSingular) => (edge.data('labelOf') as string | undefined) ?? edge.id();
+        cy.edges()
+          .filter(edge => search.hitLinks.has(linkOf(edge)))
+          .addClass('search-hit');
+        cy.edges()
+          .filter(edge => !search.links.has(linkOf(edge)))
+          .addClass('faded');
+        // A family's frame fades with all its classes; faded, it would fade them twice, so its children stay as set.
+        cy.nodes('.family')
+          .filter(family => family.children().not('.faded').empty())
+          .forEach(family => {
+            family.children().removeClass('faded');
+            family.addClass('faded');
+          });
+      });
+    });
   }
 
   /** Lays the classes out over the whole box and fits them in it; dragged places are forgotten. */
-  private _arrange(cy: Core, layout = untracked(() => this.layout())): void {
+  private _arrange(cy: Core): void {
     if (cy.elements().empty()) return;
     // Lay out at scale 1, so the scale changes how big things are drawn, not how far apart they are.
     cy.style(this._style(1));
-    cy.layout(layoutOptions(layout) as never).run();
+    arrangeIslands(cy, this._cytoscape!, 1, this._aspect(cy), this._labelWidth());
     this._dragged = false;
     this._rescale(cy);
   }
@@ -414,8 +1082,7 @@ export class OntologyGraphComponent {
   /**
    * Scales boxes, text and lines so class names read at the chosen size once the model is fitted: a model of many
    * classes, fitted at a low zoom, is drawn bigger. Bigger boxes widen the model, so the scale is measured twice.
-   * A model too big to fit and stay readable is shown zoomed in on its middle, its names still readable; Fit shows it
-   * all.
+   * Then the whole model is fitted in the room, however big.
    */
   private _rescale(cy: Core): void {
     if (cy.elements().empty()) return;
@@ -427,37 +1094,213 @@ export class OntologyGraphComponent {
       this._scale = graphScale(textSize, cy.zoom());
     }
     cy.style(this._style(this._scale));
+    // Islands are laid out again with the boxes as drawn, so families and classes stay clear of each other.
+    if (this._cytoscape) {
+      arrangeIslands(cy, this._cytoscape, this._scale, this._aspect(cy), this._labelWidth(), true);
+    }
+    this._spread(cy);
+    this._route(cy);
+    // The whole model, always, over the whole box: a big one with small names, zoomed in to read.
     this._fit(cy);
-    const readable = (textSize * READABLE_SHARE) / (BASE_FONT_SIZE * this._scale);
-    if (cy.zoom() < readable) {
-      cy.zoom(readable);
-      cy.center();
+    this._revealWhenSettled();
+  }
+
+  /**
+   * Shows the graph once it is laid out for good: on load it is laid out several times, as the classes arrive and the
+   * box settles, so it is shown only once no layout has followed for a moment.
+   */
+  private _revealWhenSettled(): void {
+    if (this.laidOut()) return;
+    clearTimeout(this._reveal);
+    this._reveal = setTimeout(() => this.laidOut.set(true), SETTLE_MS);
+  }
+
+  /**
+   * Spreads the classes apart, across and down each on its own, so the model fills the box instead of leaving room
+   * to spare on a side: the side the fit leaves empty, or both when names reach their chosen size before it fits.
+   * Boxes and text keep their size, only the room between them grows. A family's classes move together.
+   */
+  private _spread(cy: Core): void {
+    const screen = this._room(cy);
+    const before = cy.elements().boundingBox({});
+    // The zoom the model is fitted at, at most the one that draws names at the chosen size.
+    const zoom = Math.min(
+      GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale),
+      screen.w / before.w,
+      screen.h / before.h
+    );
+    const room = { w: screen.w / zoom, h: screen.h / zoom };
+    const units = new Map<string, NodeSingular[]>();
+    cy.nodes()
+      .filter(node => !node.isParent())
+      .forEach(node => {
+        const family = node.parent().filter('.family');
+        const key = family.nonempty() ? family.id() : node.id();
+        units.set(key, [...(units.get(key) ?? []), node]);
+      });
+    if (units.size < 2) return;
+    const centers = [...units.values()].map(nodes => ({
+      nodes,
+      x: nodes.reduce((sum, node) => sum + node.position('x'), 0) / nodes.length,
+      y: nodes.reduce((sum, node) => sum + node.position('y'), 0) / nodes.length,
+    }));
+    const box = cy.elements().boundingBox({});
+    const factor = (axis: 'x' | 'y', size: number, space: number) => {
+      const values = centers.map(center => center[axis]);
+      const span = Math.max(...values) - Math.min(...values);
+      // The boxes at the edges take as much room as before; only the span between centres stretches.
+      return span > 0 ? Math.min(MAX_SPREAD, Math.max(1, (space - (size - span)) / span)) : 1;
+    };
+    const fx = factor('x', box.w, room.w);
+    const fy = factor('y', box.h, room.h);
+    if (fx === 1 && fy === 1) return;
+    const mid = { x: (box.x1 + box.x2) / 2, y: (box.y1 + box.y2) / 2 };
+    for (const { nodes, x, y } of centers) {
+      const dx = (x - mid.x) * (fx - 1);
+      const dy = (y - mid.y) * (fy - 1);
+      for (const node of nodes) node.position({ x: node.position('x') + dx, y: node.position('y') + dy });
     }
   }
 
-  /** Fits the whole model in the box, zooming in no further than the chosen size of class names. */
-  private _fit(cy: Core): void {
-    cy.fit(undefined, FIT_PADDING);
-    const zoom = GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale);
-    if (cy.zoom() > zoom) {
-      cy.zoom(zoom);
-      cy.center();
+  /**
+   * How wide a link's label is drawn at scale 1: the widest of its label and its name, so the layout leaves room for
+   * either, whichever the graph writes.
+   */
+  private _labelWidth(): LabelWidth {
+    return edge =>
+      Math.max(
+        textWidth(edge.data('label') ?? '', `${LINK_FONT_SIZE}px ${FONT.labels}`),
+        textWidth(edge.data('name') ?? '', `${LINK_FONT_SIZE}px ${FONT.names}`)
+      );
+  }
+
+  /** Routes the links round the classes, then slides their labels clear of each other: all, or `only` those. */
+  private _route(cy: Core, only?: ReadonlySet<string>): void {
+    routeEdges(cy, this._scale, only);
+    separateLabels(cy, this._scale, only);
+  }
+
+  /** The shape of the room the model is fitted in: its width over its height. */
+  private _aspect(cy: Core): number {
+    const room = this._room(cy);
+    return room.h > 0 ? room.w / room.h : 16 / 9;
+  }
+
+  /**
+   * The room the model is fitted in, in screen pixels: the box less its padding, the tools above, the legend below and,
+   * without `fullWidth`, the panel's place on the right. With `fullWidth`, an open panel covers the model's right; see
+   * `_keepInView`.
+   */
+  private _room(cy: Core): { x: number; y: number; w: number; h: number } {
+    const legend = this._legend()?.nativeElement.offsetHeight ?? 0;
+    const panel = untracked(() => this.fullWidth())
+      ? 0
+      : Math.min(
+          untracked(() => this.covered()),
+          cy.width() / 2
+        );
+    return {
+      x: FIT_PADDING,
+      y: TOOLBAR_ROOM,
+      w: cy.width() - 2 * FIT_PADDING - panel,
+      h: cy.height() - TOOLBAR_ROOM - FIT_PADDING - legend,
+    };
+  }
+
+  /**
+   * Pans the graph sideways, without zooming, so what the open panel is about lies left of it: a class with the
+   * classes it is linked with, or every class a link property joins. The class itself comes first, then the left edge
+   * of the rest, then its right edge. Nothing in view already, nothing moves. With no panel, the pan made for one is
+   * undone.
+   */
+  private _keepInView(cy: Core, animate: boolean): void {
+    const covered = Math.min(
+      untracked(() => this.covered()),
+      cy.width() / 2
+    );
+    const focus = untracked(() => this.panelFocus());
+    let dx = -this._panned;
+    if (untracked(() => this.fullWidth()) && covered > 0 && focus) {
+      const right = cy.width() - covered - FIT_PADDING;
+      const classes = cy.nodes().not('.island, .family');
+      const node = focus.kind === 'class' ? classes.filter(n => n.id() === focus.iri) : undefined;
+      const around =
+        focus.kind === 'class'
+          ? node!.union(node!.neighborhood().nodes().not('.island, .family'))
+          : cy
+              .edges()
+              .filter(edge => edge.data('property') === focus.iri)
+              .connectedNodes()
+              .not('.island, .family');
+      if (around.empty()) return;
+      const box = around.renderedBoundingBox({});
+      dx = box.x2 > right ? right - box.x2 : 0;
+      if (box.x1 + dx < FIT_PADDING) dx = Math.min(0, FIT_PADDING - box.x1);
+      if (node?.nonempty()) {
+        const own = node.renderedBoundingBox({});
+        dx = Math.max(FIT_PADDING - own.x1, Math.min(dx, right - own.x2));
+      }
     }
+    if (Math.abs(dx) < 1) return;
+    this._panned += dx;
+    cy.stop(true, true);
+    const pan = { x: cy.pan().x + dx, y: cy.pan().y };
+    const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (animate && !still) cy.animate({ pan }, { duration: PAN_MS, easing: 'ease-in-out-cubic' });
+    else cy.pan(pan);
+  }
+
+  /**
+   * Shows the model at `zoom`, centred in the room, or from its top when it is taller than the room. One wider than
+   * the room, even at the smallest zoom, starts at its left: what does not fit runs to the right, under where a panel
+   * opens, rather than off the left edge.
+   */
+  private _show(cy: Core, zoom: number, align: 'middle' | 'top'): void {
+    const room = this._room(cy);
+    const box = cy.elements().boundingBox({});
+    cy.zoom(zoom);
+    // The zoom as the graph keeps it, within its own limits.
+    const kept = cy.zoom();
+    const top = align === 'top' && box.h * kept > room.h ? room.y : room.y + (room.h - box.h * kept) / 2;
+    const left = box.w * kept > room.w ? room.x : room.x + (room.w - box.w * kept) / 2;
+    cy.pan({ x: left - box.x1 * kept, y: top - box.y1 * kept });
+  }
+
+  /**
+   * Fits the whole model in the box, clear of the Islands view's legend, zooming in no further than the chosen size of
+   * class names.
+   */
+  private _fit(cy: Core): void {
+    const room = this._room(cy);
+    const box = cy.elements().boundingBox({});
+    const largest = GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale);
+    const zoom = Math.min(largest, room.w / box.w, room.h / box.h);
+    if (!Number.isFinite(zoom) || zoom <= 0) return;
+    cy.stop(true, false);
+    this._show(cy, zoom, 'middle');
+    this._panned = 0;
+    this._keepInView(cy, false);
   }
 
   private _style(f: number): StylesheetJson {
     return styleFor(
       f,
-      untracked(() => ({ levelLabels: this.levelLabels(), labels: this.labels() }))
+      untracked(() => ({
+        levelLabels: this.levelLabels(),
+        labels: this.labels(),
+        islands: this.islands(),
+        colourTab: this.colourTab(),
+        treeLines: this.treeLines(),
+      }))
     );
   }
 
   /**
-   * The graph as a PNG at twice the screen's resolution, on the graph's background: the part in view, or every class
-   * shown; `undefined` before the graph has loaded.
+   * The graph as a PNG at twice the screen's resolution, on the graph's background, its legend under it: the part in
+   * view, or every class shown; `undefined` before the graph has loaded.
    */
   png(area: GraphExportArea): Promise<Blob> | undefined {
-    return this._cy()?.png({
+    const png = this._cy()?.png({
       output: 'blob-promise',
       full: area === 'whole',
       // Cytoscape already draws at the screen's pixel ratio; the scale is against CSS pixels.
@@ -466,6 +1309,35 @@ export class OntologyGraphComponent {
       maxWidth: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
       maxHeight: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
     });
+    const cy = this._cy();
+    const legend = this._legendTexts();
+    if (!png || !cy || !legend) return png;
+    // The legend's text as big in the image as the class names: image pixels per graph unit, times their size.
+    const model = cy.elements().boundingBox({});
+    const scaleFor = (width: number) => {
+      const perUnit = area === 'whole' ? width / model.w : EXPORT_SCALE * cy.zoom();
+      return Math.max(EXPORT_SCALE, (BASE_FONT_SIZE * this._scale * perUnit) / LEGEND_TEXT_SIZE);
+    };
+    return png.then(image => withLegend(image, legend, scaleFor, EXPORT_BACKGROUND));
+  }
+
+  /** The legend's texts and file icons in the current language, as the export draws them; none without a legend. */
+  private _legendTexts(): LegendTexts | undefined {
+    const legend = this.islandsLegend();
+    if (!legend) return undefined;
+    const t = (key: string) => this._translate.instant(`pages.ontologyMap.${key}`);
+    return {
+      title: t('islands.legend'),
+      shapes: legend.shapes ? t('islands.shapes') : undefined,
+      subclass: legend.families && this.treeLines() ? t('islands.subclass') : undefined,
+      other: legend.other ? t('legendDashed') : undefined,
+      link: legend.link ? t('islands.link') : undefined,
+      files: t('islands.files'),
+      fileKinds: legend.files.map(kind => ({
+        label: t(`islands.fileKinds.${kind.representation}`),
+        icon: fileIconImage(kind.representation, '#4B5563')!,
+      })),
+    };
   }
 
   /** Zooms in (`factor` above 1) or out, about the middle of the box. */

@@ -35,8 +35,11 @@ import { DataClassUrlStateService } from './data-class-url-state.service';
 import { DataClassViewToggleComponent } from './data-class-view-toggle.component';
 import { DataTabTourComponent, DataTabTourStep } from './data-tab-tour/data-tab-tour.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
+import {
+  ResourceClassDialogComponent,
+  resourceClassDialogConfig,
+} from './ontology-map/resource-class-dialog.component';
 import { ProjectPageService } from './project-page.service';
-import { DataClassConnectionsContainerComponent } from './sidenav/data-model-map/data-class-connections-container.component';
 
 interface SelectedClass {
   classLabel: string;
@@ -68,9 +71,13 @@ interface CreateResourceDialogProps {
             @let description = classSelected.resClass.comments | appStringifyStringLiteral;
             <p class="class-description" [title]="description">{{ description }}</p>
           }
-          <app-data-class-connections-container class="connections" [classIri]="classSelected.resClass.id" />
         </div>
         <div class="actions">
+          <!-- The class as the Data models 2 pages describe it: its links, its properties, editing. -->
+          <button mat-stroked-button (click)="openClassDetails()" data-cy="class-details-btn">
+            <mat-icon>info_outline</mat-icon>
+            {{ 'pages.dataBrowser.dataClassHeader.classDetails' | translate }}
+          </button>
           <!-- "All" and the class total: the export ignores the row selection, search and filters. -->
           <button mat-stroked-button (click)="openDownloadDialog()" data-cy="download-btn">
             <mat-icon>download</mat-icon>
@@ -139,7 +146,6 @@ interface CreateResourceDialogProps {
     StringifyStringLiteralPipe,
     AdvancedSearchBarComponent,
     DataClassResultMetaComponent,
-    DataClassConnectionsContainerComponent,
     DataClassViewToggleComponent,
     TableViewOptionsComponent,
     DataTabTourComponent,
@@ -253,6 +259,14 @@ export class DataClassHeaderComponent {
           width: `${1200 - this._dialog.openDialogs.length * 40}px`,
         });
       });
+  }
+
+  /** Opens the class's details over the right of the page, as the Data models 2 pages show them. */
+  openClassDetails() {
+    this._dialog.open(ResourceClassDialogComponent, {
+      ...resourceClassDialogConfig({ classIri: this.classSelected.resClass.id }),
+      viewContainerRef: this._viewContainerRef,
+    });
   }
 
   openDownloadDialog() {

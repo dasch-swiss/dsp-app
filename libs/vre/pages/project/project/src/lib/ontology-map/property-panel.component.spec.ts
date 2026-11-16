@@ -57,6 +57,28 @@ describe('PropertyPanelComponent', () => {
     expect(text('[data-cy="property-panel-name"]')).toEqual(['director']);
   });
 
+  it('shows the type of a value property, with no links to filter on', () => {
+    fixture.componentRef.setInput('graph', {
+      ...graph,
+      nodes: graph.nodes.map(node =>
+        node.id === 'Person'
+          ? {
+              ...node,
+              propertyDetails: [
+                { id: 'birth', label: 'Birth', description: '', type: 'Date', cardinality: Cardinality._0_1 },
+              ],
+            }
+          : node
+      ),
+    });
+    fixture.componentRef.setInput('propertyIri', 'birth');
+    fixture.detectChanges();
+
+    expect(text('[data-cy="property-panel-type"]')[0]).toContain('Date');
+    expect(text('[data-cy="property-panel-user"] .class-link')).toEqual(['Person']);
+    expect(fixture.nativeElement.querySelector('[data-cy="property-panel-filter"]')).toBeNull();
+  });
+
   it('opens a class the property points at', () => {
     const selected = jest.fn();
     component.classSelected.subscribe(selected);

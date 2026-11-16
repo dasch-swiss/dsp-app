@@ -8,7 +8,6 @@ import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indi
 import { combineLatest, first, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from './data-model-map/data-model-graph.service';
-import { DataModelMapContainerComponent } from './data-model-map/data-model-map-container.component';
 import { ResourceClassSidenavComponent } from './resource-class-sidenav/resource-class-sidenav.component';
 import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
 
@@ -19,7 +18,6 @@ import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
     MatIcon,
     ResourceClassSidenavComponent,
     AppProgressIndicatorComponent,
-    DataModelMapContainerComponent,
     TooltipIfTruncatedDirective,
   ],
   template: `
@@ -44,9 +42,6 @@ import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
               <mat-icon class="ontology-chevron">{{ expanded ? 'expand_more' : 'chevron_right' }}</mat-icon>
             </button>
             @if (expanded) {
-              @if (onto.classesAndCount?.length) {
-                <app-data-model-map-container [ontology]="onto" />
-              }
               <app-resource-class-sidenav [ontology]="onto" />
             }
           </div>

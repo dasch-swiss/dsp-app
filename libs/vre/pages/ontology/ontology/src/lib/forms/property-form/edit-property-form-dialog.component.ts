@@ -91,7 +91,8 @@ export class EditPropertyFormDialogComponent implements OnInit {
         .updateProperty$(propertyData)
         .pipe(take(1))
         .subscribe(_ => {
-          this._dialogRef.close();
+          // Closing with the update tells whoever opened the dialog that the property was saved.
+          this._dialogRef.close(propertyData);
         });
     } else {
       propertyData = {
