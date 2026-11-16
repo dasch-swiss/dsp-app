@@ -929,7 +929,6 @@
       "createVocabulary": "Create controlled vocabulary",
       "createClass": "Create resource class",
       "createProperty": "Create property",
-      "new": "New",
       "cardsTip": "Each class with its properties in order, as in the Data models tab",
       "layout": "Layout",
       "cards": "Cards",

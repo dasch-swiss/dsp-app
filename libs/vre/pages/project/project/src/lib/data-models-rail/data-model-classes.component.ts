@@ -267,17 +267,13 @@ const COLUMN_LABELS: Record<Column, string> = {
           data-cy="data-model-classes-layout"
           [attr.aria-label]="r + '.layout' | translate"
           [value]="layout()"
-          (change)="layout.set($event.value); layoutTipSeen.set(true)">
+          (change)="layout.set($event.value)">
           <mat-button-toggle
             value="cards"
             data-cy="data-model-classes-layout-cards"
-            [matTooltip]="r + '.cardsTip' | translate"
-            [matTooltipDisabled]="layoutTipSeen()">
+            [matTooltip]="r + '.cardsTip' | translate">
             <mat-icon>view_module</mat-icon>
             {{ r + '.cards' | translate }}
-            @if (!layoutTipSeen()) {
-              <span class="new" data-cy="data-model-classes-layout-new">{{ r + '.new' | translate }}</span>
-            }
           </mat-button-toggle>
           <mat-button-toggle value="table" data-cy="data-model-classes-layout-table">
             <mat-icon>table_rows</mat-icon>
@@ -760,17 +756,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         min-width: 140px;
       }
 
-      .new {
-        margin-left: 6px;
-        padding: 0 6px;
-        border-radius: 99px;
-        font-size: 10px;
-        font-weight: 500;
-        line-height: 16px;
-        color: white;
-        background: $primary;
-      }
-
       .labelled {
         min-width: 0;
       }
@@ -964,8 +949,6 @@ export class DataModelClassesComponent {
   readonly layout = rememberedSignal<ClassesLayout>(`${STORAGE_KEY}-layout`, 'cards', stored =>
     stored === 'table' ? 'table' : 'cards'
   );
-  /** Whether the layouts were switched once in this browser: the Cards switch says it is new until then. */
-  readonly layoutTipSeen = rememberedSignal(`${STORAGE_KEY}-layout-tip`, false, stored => stored === 'true');
   /** The cards folded to their title: none at first, so every class shows its properties, as in the Data models tab. */
   readonly foldedCards = signal(new Set<string>());
   readonly allCardsOpen = computed(() => {
