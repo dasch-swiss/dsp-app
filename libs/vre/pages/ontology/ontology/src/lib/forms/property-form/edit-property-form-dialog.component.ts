@@ -107,7 +107,8 @@ export class EditPropertyFormDialogComponent implements OnInit {
         .createProperty$(propertyData, this.data.assignToClass)
         .pipe(take(1))
         .subscribe(_ => {
-          this._dialogRef.close();
+          // Closing with its name tells whoever opened the dialog which property was made.
+          this._dialogRef.close((propertyData as CreatePropertyData).name);
         });
     }
   }

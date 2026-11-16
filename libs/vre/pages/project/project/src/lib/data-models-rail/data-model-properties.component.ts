@@ -17,6 +17,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import {
   MatCell,
   MatCellDef,
@@ -31,6 +32,7 @@ import {
 } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { DefaultProperties, DefaultProperty } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
@@ -107,6 +109,9 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatHeaderRow,
     MatHeaderRowDef,
     MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     MatInput,
     MatPrefix,
     MatRow,
@@ -134,6 +139,36 @@ const COLUMN_LABELS: Record<Column, string> = {
             [attr.aria-label]="r + '.findProperty' | translate"
             (input)="query.set(search.value)" />
         </mat-form-field>
+        <!-- For editors: a property of the type picked, for no class yet, made in the data model editor's dialog. -->
+        @if (canCreate()) {
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            class="create"
+            data-cy="data-model-properties-create"
+            [matMenuTriggerFor]="createMenu">
+            <mat-icon>add</mat-icon>
+            {{ r + '.createProperty' | translate }}
+          </button>
+          <mat-menu #createMenu="matMenu">
+            @for (category of propertyTypes; track category.group) {
+              <button mat-menu-item type="button" [matMenuTriggerFor]="typeMenu">{{ category.group }}</button>
+              <mat-menu #typeMenu="matMenu">
+                @for (type of category.elements; track type.label) {
+                  <button
+                    mat-menu-item
+                    type="button"
+                    [attr.data-cy]="'data-model-properties-create-' + type.label"
+                    (click)="createProperty(type)">
+                    <mat-icon>{{ type.icon }}</mat-icon>
+                    {{ type.label }}
+                  </button>
+                }
+              </mat-menu>
+            }
+          </mat-menu>
+        }
         <span class="spacer"></span>
         <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
         <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-properties" />
@@ -615,6 +650,16 @@ export class DataModelPropertiesComponent {
   private readonly _route = inject(ActivatedRoute);
   private readonly _params = toSignal(this._route.queryParamMap);
   private readonly _editing = injectDataModelEditing();
+  /** The value types of a property to create, by group, as the data model editor offers them. */
+  readonly propertyTypes = DefaultProperties.data;
+  /** Whether "Create property" shows: for editors, where the editor's dialogs are at hand. */
+  readonly canCreate = computed(() => this.state.canEdit() && this._editing.canCreate);
+
+  /** Creates a property of that type in the data model shown, for no class yet, then opens it in the panel. */
+  createProperty(type: DefaultProperty): void {
+    const ontologyIri = this.state.selected()?.iri;
+    if (ontologyIri) this._editing.createProperty(ontologyIri, type, iri => this.openPanel(iri));
+  }
 
   readonly columns = new TableColumns<Column>({
     storageKey: STORAGE_KEY,

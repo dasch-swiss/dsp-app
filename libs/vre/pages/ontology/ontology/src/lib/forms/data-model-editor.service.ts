@@ -16,7 +16,12 @@ import {
   TextsToSave,
   VocabularyValue,
 } from '@dasch-swiss/vre/pages/project/project';
-import { DefaultProperty, LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  DefaultClass,
+  DefaultProperty,
+  LocalizationService,
+  OntologyService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DIALOG_LARGE, DialogService } from '@dasch-swiss/vre/ui/ui';
@@ -25,6 +30,7 @@ import { combineLatest, filter, finalize, map, Observable, of, switchMap, take, 
 import { OntologyEditService } from '../services/ontology-edit.service';
 import { EditPropertyFormDialogComponent } from './property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData, EditPropertyDialogData } from './property-form/property-form.type';
+import { CreateResourceClassDialogComponent } from './resource-class-form/create-resource-class-dialog.component';
 import {
   EditResourceClassDialogComponent,
   EditResourceClassDialogProps,
@@ -191,6 +197,51 @@ export class DataModelEditorService implements DataModelEditor {
         // The dialog closes without a result either way; the project is read again to show a property created.
         map(() => true)
       )
+    );
+  }
+
+  createClass(ontologyIri: string, kind: DefaultClass): Observable<string | undefined> {
+    return this._created(ontologyIri, (editing, injector) =>
+      this._closedByClickOnly(
+        this._dialog.open<CreateResourceClassDialogComponent, DefaultClass, string>(
+          CreateResourceClassDialogComponent,
+          {
+            ...DspDialogConfig.mediumDialog(kind),
+            injector,
+          }
+        )
+      )
+    );
+  }
+
+  createProperty(ontologyIri: string, type: DefaultProperty): Observable<string | undefined> {
+    return this._created(ontologyIri, (editing, injector) =>
+      this._closedByClickOnly(
+        this._dialog.open<EditPropertyFormDialogComponent, CreatePropertyDialogData, string>(
+          EditPropertyFormDialogComponent,
+          { data: { propType: type }, injector }
+        )
+      )
+    );
+  }
+
+  /**
+   * Opens a create dialog with an editing service on the data model, once it is read, dropped once the dialog closes;
+   * emits the IRI of what was made, from the name the dialog closes with, or nothing if it was cancelled.
+   */
+  private _created(
+    ontologyIri: string,
+    open: (editing: OntologyEditService, injector: EnvironmentInjector) => Observable<string | undefined>
+  ): Observable<string | undefined> {
+    const injector = createEnvironmentInjector([OntologyEditService], this._injector);
+    const editing = injector.get(OntologyEditService);
+    editing.initOntologyByLabel(OntologyService.getOntologyNameFromIri(ontologyIri));
+    return editing.currentOntology$.pipe(
+      filter(ontology => !!ontology),
+      take(1),
+      switchMap(() => open(editing, injector)),
+      map(name => (name ? `${ontologyIri}#${name}` : undefined)),
+      finalize(() => injector.destroy())
     );
   }
 

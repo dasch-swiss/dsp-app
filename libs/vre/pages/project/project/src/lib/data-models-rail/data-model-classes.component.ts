@@ -17,6 +17,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {
@@ -35,7 +36,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { DefaultClass, DefaultResourceClasses, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { classFamilies, familyHue, familyTint, FILE_KINDS } from '../ontology-map/islands';
@@ -120,6 +121,9 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatHeaderRow,
     MatHeaderRowDef,
     MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     MatInput,
     MatPrefix,
     MatRadioButton,
@@ -152,6 +156,31 @@ const COLUMN_LABELS: Record<Column, string> = {
             [attr.aria-label]="r + '.findClass' | translate"
             (input)="query.set(search.value)" />
         </mat-form-field>
+        <!-- For editors: a class of the kind picked, made in the data model editor's dialog, then opened in the panel. -->
+        @if (canCreate()) {
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            class="create"
+            data-cy="data-model-classes-create"
+            [matMenuTriggerFor]="createMenu">
+            <mat-icon>add</mat-icon>
+            {{ r + '.createClass' | translate }}
+          </button>
+          <mat-menu #createMenu="matMenu">
+            @for (kind of classKinds; track kind.iri) {
+              <button
+                mat-menu-item
+                type="button"
+                [attr.data-cy]="'data-model-classes-create-' + kind.label"
+                (click)="createClass(kind)">
+                <mat-icon>{{ kind.icon }}</mat-icon>
+                {{ kind.label }}
+              </button>
+            }
+          </mat-menu>
+        }
         <!-- What each layout adds, wrapping on its own so the layout switch stays put at the right. -->
         <div class="tools">
           @if (layout() === 'cards' && rows().length) {
@@ -664,6 +693,12 @@ const COLUMN_LABELS: Record<Column, string> = {
         align-self: flex-start;
       }
 
+      // The create button after the search, compact like the other header controls.
+      .create {
+        --mat-button-filled-container-height: 36px;
+        flex: none;
+      }
+
       .tools {
         flex: 1;
         min-width: 0;
@@ -672,6 +707,24 @@ const COLUMN_LABELS: Record<Column, string> = {
         align-items: center;
         justify-content: flex-end;
         gap: 8px 12px;
+        // Never narrower than its widest tool, which would then lie over the create button.
+        min-width: min-content;
+        // Each tool keeps its width; a tool that does not fit goes to the next line rather than over its neighbour.
+        > * {
+          flex: none;
+          white-space: nowrap;
+        }
+      }
+
+      // The title on one line, whatever room the tools take.
+      .head h2 {
+        white-space: nowrap;
+      }
+
+      // On a narrow screen the search gives room first, down to a usable width.
+      .head .search {
+        flex: 0 1 280px;
+        min-width: 140px;
       }
 
       .new {
@@ -870,6 +923,17 @@ export class DataModelClassesComponent {
 
   toggleAllCards(): void {
     this.openCards.set(this.allCardsOpen() ? new Set() : new Set(this.rows().map(row => row.id)));
+  }
+
+  /** The kinds of class to create, as the data model editor offers them. */
+  readonly classKinds = DefaultResourceClasses.data;
+  /** Whether "Create resource class" shows: for editors, where the editor's dialogs are at hand. */
+  readonly canCreate = computed(() => this.state.canEdit() && this.editing.canCreate);
+
+  /** Creates a class of that kind in the data model shown, then opens it in the panel. */
+  createClass(kind: DefaultClass): void {
+    const ontologyIri = this.state.selected()?.iri;
+    if (ontologyIri) this.editing.createClass(ontologyIri, kind, iri => this.openPanel(iri));
   }
 
   /** A class's label from its IRI, for the cards. */

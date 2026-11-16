@@ -877,6 +877,8 @@
       "links": "collegamenti"
     },
     "dataModels2": {
+      "createClass": "Crea classe di risorsa",
+      "createProperty": "Crea proprietà",
       "new": "Nuovo",
       "cardsTip": "Ogni classe con le sue proprietà in ordine, come nella scheda Modelli di dati",
       "layout": "Presentazione",

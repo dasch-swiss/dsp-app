@@ -2,7 +2,7 @@ import { DestroyRef, inject, InjectionToken } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { filter, map, Observable, of, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
@@ -26,6 +26,10 @@ export interface DataModelEditor {
   addExistingProperty(classIri: string, propertyIri: string): Observable<boolean>;
   /** Opens the dialog creating a property of that type for the class; emits once it closes, `true` if it may have saved. */
   addNewProperty(classIri: string, type: DefaultProperty): Observable<boolean>;
+  /** Opens the dialog creating a class of that kind in the data model; emits once it closes, the new class's IRI if made. */
+  createClass(ontologyIri: string, kind: DefaultClass): Observable<string | undefined>;
+  /** Opens the dialog creating a property of that type in the data model, for no class yet; emits its IRI if made. */
+  createProperty(ontologyIri: string, type: DefaultProperty): Observable<string | undefined>;
   /** Opens the dialog adding a value to a controlled vocabulary, under `parentIri` at `position`; `true` once added. */
   addVocabularyValue(parentIri: string, position: number): Observable<boolean>;
   /** Opens the dialog editing a vocabulary value's labels and descriptions; `true` once saved. */
@@ -120,6 +124,29 @@ export function injectDataModelEditing() {
       editor ? editor.deleteVocabularyValue(value) : of(false),
     moveVocabularyValue: (valueIri: string, parentIri: string, position: number): Observable<boolean> =>
       editor ? editor.moveVocabularyValue(valueIri, parentIri, position) : of(false),
+    /** Whether classes and properties can be created here, in the editor's dialogs. */
+    canCreate: !!editor,
+    /**
+     * Creates a class of that kind in the data model, in the editor's dialog; once made, reads the project again and
+     * calls `created` with its IRI.
+     */
+    createClass: (ontologyIri: string, kind: DefaultClass, created: (iri: string) => void) =>
+      editor
+        ?.createClass(ontologyIri, kind)
+        .pipe(filter(Boolean), takeUntilDestroyed(destroyRef))
+        .subscribe(iri => {
+          project.reloadProject();
+          created(iri);
+        }),
+    /** Creates a property of that type in the data model, as `createClass` creates a class. */
+    createProperty: (ontologyIri: string, type: DefaultProperty, created: (iri: string) => void) =>
+      editor
+        ?.createProperty(ontologyIri, type)
+        .pipe(filter(Boolean), takeUntilDestroyed(destroyRef))
+        .subscribe(iri => {
+          project.reloadProject();
+          created(iri);
+        }),
     editClass: (iri: string) => edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i))),
     editProperty: (iri: string) => edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i))),
   };
