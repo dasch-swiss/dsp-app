@@ -121,6 +121,7 @@ OPENAPI_FILES = [
     "model/paged-response-restricted-resource.ts",
     "model/pagination.ts",
     "model/password-change-request.ts",
+    "model/payload-too-large.ts",
     "model/permission-adm.ts",
     "model/permission-delete-response-adm.ts",
     "model/permission-get-response-adm.ts",
