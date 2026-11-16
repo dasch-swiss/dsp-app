@@ -162,6 +162,7 @@ lint: install openapi-generate
     # Both halves run, so one call reports every finding.
     status=0
     bazel build --config=lint //... $BAZEL_FLAGS || status=1
+    node scripts/inline-styles-check.mjs || status=1
     # The aspect lints only a ts_project's `srcs`; specs, stories, templates, JavaScript configs,
     # libs/dsp-js/test and apps/dsp-app stay with pnpm until a Bazel target carries them.
     linted="$(bazel query 'labels(srcs, kind(ts_project, //...))' | sed -E 's|^//:?||; s|:|/|')"
