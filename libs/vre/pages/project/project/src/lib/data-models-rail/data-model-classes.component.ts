@@ -1106,9 +1106,8 @@ export class DataModelClassesComponent {
     const types = this.types();
     const targets = this.targets();
     const sources = this.sources();
-    // The table searches the columns it shows; the cards, what they show: names, file, description and properties.
-    const searched: Column[] =
-      this.layout() === 'cards' ? ['class', 'file', 'description', 'properties'] : this.columns.shown();
+    // The table searches the columns it shows; the cards, what they show: names, file and properties.
+    const searched: Column[] = this.layout() === 'cards' ? ['class', 'file', 'properties'] : this.columns.shown();
     return this.state
       .classRows()
       .filter(row => !query || searched.some(column => this._columnHas(row, column, query)))

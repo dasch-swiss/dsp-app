@@ -50,7 +50,7 @@ export interface PropertyOrder {
 
 /**
  * Data models 2 › Classes as cards, the way the Data models tab shows a data model: one box per class, with the kind of
- * file its resources carry and its description, then its properties in their form order, one line each. A subclass
+ * file its resources carry, then its properties in their form order, one line each. A subclass
  * lists its own properties; those from its superclass fold into one row. Past {@link CARD_PROPERTIES}, "Show more" opens
  * the rest. A link's target opens its card. The text searched for is marked, and the rows it is in are opened. Editors
  * drag a class's own properties to another place. As view options, the values and the links can show apart, and a
@@ -162,17 +162,6 @@ export interface PropertyOrder {
                   </span>
                 }
               </span>
-              @if (row.description) {
-                <span
-                  class="description"
-                  data-cy="data-model-class-card-description"
-                  [matTooltip]="row.description"
-                  matTooltipShowDelay="400">
-                  @for (part of mark(row.description); track $index) {
-                    <span [class.hit]="part.match">{{ part.text }}</span>
-                  }
-                </span>
-              }
             </span>
             <button
               type="button"
@@ -390,16 +379,6 @@ export interface PropertyOrder {
           width: 13px;
           height: 13px;
         }
-      }
-
-      // One line of the description; the rest on hover.
-      .description {
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 12px;
-        color: $cool_gray_500;
       }
 
       .fold {
