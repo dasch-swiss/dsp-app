@@ -48,7 +48,7 @@ describe('Lists', () => {
 
     cy.get('[data-cy=edit-button]').click();
     cy.get('[data-cy=label-input] input').clear().type(data.label, { force: true });
-    cy.get('[data-cy=comments-input]').clear().type(data.comment);
+    cy.get('[data-cy=comments-input] textarea').clear().type(data.comment);
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@editRequest');

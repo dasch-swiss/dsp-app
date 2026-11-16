@@ -69,7 +69,7 @@ describe('Project Member - List management', () => {
 
       cy.get('[data-cy=edit-button]').click();
       cy.get('[data-cy=label-input] input').clear().type(editData.label, { force: true });
-      cy.get('[data-cy=comments-input]').clear().type(editData.comment);
+      cy.get('[data-cy=comments-input] textarea').clear().type(editData.comment);
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@editRequest');
@@ -115,7 +115,7 @@ describe('Project Member - List management', () => {
       // Edit the created list
       cy.get('[data-cy=edit-button]').click();
       cy.get('[data-cy=label-input] input').clear().type(editData.label, { force: true });
-      cy.get('[data-cy=comments-input]').clear().type(editData.comment);
+      cy.get('[data-cy=comments-input] textarea').clear().type(editData.comment);
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@editRequest');
