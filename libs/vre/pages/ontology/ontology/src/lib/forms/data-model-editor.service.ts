@@ -60,8 +60,6 @@ export class DataModelEditorService implements DataModelEditor {
                 ...DspDialogConfig.mediumDialog({
                   labels: resourceClass.labels,
                   data: resourceClass as unknown as UpdateResourceClassData,
-                  // Data models 2 shows every language of the label and description at once.
-                  layout: 'stacked',
                 }),
                 injector,
               }
@@ -89,8 +87,6 @@ export class DataModelEditorService implements DataModelEditor {
             guiElement: propDef.guiElement || propType.guiElement,
             guiAttribute: propDef.guiAttributes[0],
             objectType: propDef.objectType,
-            // Data models 2 shows every language of the label and description at once.
-            layout: 'stacked',
           };
           return this._closedByClickOnly(
             this._dialog.open(EditPropertyFormDialogComponent, {
@@ -188,7 +184,7 @@ export class DataModelEditorService implements DataModelEditor {
           this._closedByClickOnly(
             this._dialog.open<EditPropertyFormDialogComponent, CreatePropertyDialogData>(
               EditPropertyFormDialogComponent,
-              { data: { propType: type, assignToClass: ontology!.classes[classIri], layout: 'stacked' }, injector }
+              { data: { propType: type, assignToClass: ontology!.classes[classIri] }, injector }
             )
           )
         ),
@@ -228,8 +224,6 @@ export class DataModelEditorService implements DataModelEditor {
                   labels: value.labels as MultiLanguages,
                   comments: (value.comments ?? []) as MultiLanguages,
                 },
-                // Data models 2 shows every language of the label and description at once.
-                layout: 'stacked',
               },
               true
             )

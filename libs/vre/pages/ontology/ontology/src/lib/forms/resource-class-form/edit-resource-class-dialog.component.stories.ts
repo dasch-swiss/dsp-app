@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { MULTI_LANGUAGE_MODE } from '@dasch-swiss/vre/ui/string-literal';
-import { applicationConfig, moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
+import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
 import { expect, userEvent, waitFor } from 'storybook/test';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { makeOntologyEditServiceStub, makeProjectPageServiceStub, STORY_PROVIDERS } from '../../stories.helpers';
@@ -27,20 +27,6 @@ class EditResourceClassDialogLauncherComponent implements OnInit {
   private _dialog = inject(MatDialog);
   ngOnInit() {
     this._dialog.open(EditResourceClassDialogComponent, { data: dialogProps });
-  }
-}
-
-const stackedProps: EditResourceClassDialogProps = { ...dialogProps, layout: 'stacked' };
-
-/** Opens the dialog as Data models 2 does, every language of the label and description in its own field. */
-@Component({
-  selector: 'app-edit-resource-class-dialog-stacked-launcher',
-  template: ``,
-})
-class EditResourceClassDialogStackedLauncherComponent implements OnInit {
-  private _dialog = inject(MatDialog);
-  ngOnInit() {
-    this._dialog.open(EditResourceClassDialogComponent, { data: stackedProps });
   }
 }
 
@@ -77,11 +63,7 @@ export const DefaultView: Story = {
 
 export const ShowsEveryLanguageInItsOwnField: Story = {
   name: 'Shows the label and description one language at a time, or every language in its own field, as in Data models 2',
-  render: () => ({ template: '<app-edit-resource-class-dialog-stacked-launcher />' }),
-  decorators: [
-    applicationConfig({ providers: sharedProviders }),
-    moduleMetadata({ imports: [EditResourceClassDialogStackedLauncherComponent] }),
-  ],
+  decorators: [applicationConfig({ providers: sharedProviders })],
   play: async ({ step }) => {
     const field = (group: string, language: string) =>
       document.querySelector<HTMLInputElement | HTMLTextAreaElement>(

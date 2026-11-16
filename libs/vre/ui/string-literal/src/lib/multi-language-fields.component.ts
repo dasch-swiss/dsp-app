@@ -1,6 +1,6 @@
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, Input, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, inject, Input, OnInit, signal } from '@angular/core';
 import { FormBuilder, ValidatorFn } from '@angular/forms';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -11,9 +11,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { MultiLanguageFormArray, MultiLanguageFormControl } from './multi-language-form-array.type';
 import { MULTI_LANGUAGE_MODE, MultiLanguageMode } from './multi-language-mode';
 
-/** How a form shows a multilingual text: one field with a language switcher, or every language in its own field. */
-export type MultiLanguageLayout = 'switcher' | 'stacked';
-
 /**
  * A multilingual text under its heading, in one of two modes, as `MULTI_LANGUAGE_MODE` says unless `mode` is set: one
  * language at a time, under a row of language tabs that mark the languages with a text, or every language in its own
@@ -22,6 +19,7 @@ export type MultiLanguageLayout = 'switcher' | 'stacked';
  */
 @Component({
   selector: 'app-multi-language-fields',
+  host: { '(click)': 'focusField($event)' },
   imports: [
     CdkTextareaAutosize,
     HumanReadableErrorPipe,
@@ -208,6 +206,20 @@ export class MultiLanguageFieldsComponent implements OnInit {
   readonly languages = AvailableLanguages;
   /** The language shown in "one at a time": the interface language if it has a text, else the first with one. */
   readonly current = signal<AvailableLanguage>(AvailableLanguages[0].language);
+
+  private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /**
+   * A click anywhere in it, a language tab included, ends in the text field shown, ready to type in; in "all languages",
+   * in the field clicked, as usual.
+   */
+  focusField(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (target.closest('input, textarea')) return;
+    if (this.shownMode() === 'all' && !target.closest('.tab')) return;
+    // After the field of the language picked is drawn.
+    setTimeout(() => this._host.nativeElement.querySelector<HTMLElement>('input, textarea')?.focus());
+  }
 
   constructor(
     private readonly _fb: FormBuilder,

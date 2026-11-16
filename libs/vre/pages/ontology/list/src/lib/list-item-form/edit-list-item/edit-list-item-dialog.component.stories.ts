@@ -52,20 +52,9 @@ const field = (group: string, language: string) =>
     `[data-cy="${group}"] [data-cy="multi-language-${language}"]`
   );
 
-export const ShowsOneLanguageAtATimeByDefault: Story = {
-  name: 'Shows the label and description one language at a time, with a language switcher',
-  decorators: [applicationConfig({ providers: providers(dialogProps) })],
-  play: async ({ step }) => {
-    await step('Dialog is rendered with the language switcher fields', async () => {
-      await waitFor(() => expect(document.querySelector('app-multi-language-input')).not.toBeNull());
-      await expect(document.querySelector('app-multi-language-fields')).toBeNull();
-    });
-  },
-};
-
 export const ShowsEveryLanguageInItsOwnField: Story = {
   name: 'Shows the label and description one language at a time, or every language in its own field, as in Data models 2',
-  decorators: [applicationConfig({ providers: providers({ ...dialogProps, layout: 'stacked' }) })],
+  decorators: [applicationConfig({ providers: providers(dialogProps) })],
   play: async ({ step }) => {
     MULTI_LANGUAGE_MODE.set('one');
     await step('One language at a time at first, under a tab per language', async () => {

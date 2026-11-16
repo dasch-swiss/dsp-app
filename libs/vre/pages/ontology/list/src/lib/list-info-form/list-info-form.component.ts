@@ -23,8 +23,8 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import {
   DEFAULT_MULTILANGUAGE_FORM,
-  MultiLanguageInputComponent,
-  MultiLanguageTextareaComponent,
+  MultiLanguageFieldsComponent,
+  MultiLanguageModeSwitchComponent,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -35,15 +35,17 @@ import { ListInfoForm } from './list-info-form.type';
   template: `
     <app-dialog-header title="" [subtitle]="title" />
     <div mat-dialog-content>
-      <app-multi-language-input
+      <app-multi-language-mode-switch />
+      <app-multi-language-fields
         [formArray]="form.controls.labels"
-        [placeholder]="_translate.instant('pages.ontology.list.listInfoForm.labelPlaceholder')"
+        [label]="'pages.ontology.list.listInfoForm.labelPlaceholder' | translate"
         [isRequired]="true"
         data-cy="label-input" />
 
-      <app-multi-language-textarea
+      <app-multi-language-fields
         [formArray]="form.controls.comments"
-        [placeholder]="_translate.instant('pages.ontology.list.listInfoForm.commentPlaceholder')"
+        [label]="'pages.ontology.list.listInfoForm.commentPlaceholder' | translate"
+        [multiline]="true"
         [isRequired]="true"
         data-cy="comments-input" />
       <div mat-dialog-actions align="end">
@@ -69,8 +71,8 @@ import { ListInfoForm } from './list-info-form.type';
     MatDialogContent,
     TranslatePipe,
     DialogHeaderComponent,
-    MultiLanguageInputComponent,
-    MultiLanguageTextareaComponent,
+    MultiLanguageFieldsComponent,
+    MultiLanguageModeSwitchComponent,
     LoadingButtonDirective,
   ],
 })

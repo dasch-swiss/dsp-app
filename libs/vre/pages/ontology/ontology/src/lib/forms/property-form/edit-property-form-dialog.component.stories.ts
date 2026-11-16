@@ -99,7 +99,7 @@ export const ShowsEveryLanguageInItsOwnField: Story = {
   name: 'Shows the label and description one language at a time, or every language in its own field, as in Data models 2',
   decorators: [
     applicationConfig({
-      providers: [...sharedProviders, { provide: MAT_DIALOG_DATA, useValue: { ...editDialogData, layout: 'stacked' } }],
+      providers: [...sharedProviders, { provide: MAT_DIALOG_DATA, useValue: editDialogData }],
     }),
   ],
   play: async ({ step }) => {

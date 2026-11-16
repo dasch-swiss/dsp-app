@@ -7,9 +7,6 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 import {
   MultiLanguageFieldsComponent,
   MultiLanguageModeSwitchComponent,
-  MultiLanguageInputComponent,
-  MultiLanguageLayout,
-  MultiLanguageTextareaComponent,
   DEFAULT_MULTILANGUAGE_FORM,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
@@ -29,38 +26,21 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
         [validatorErrors]="[namePatternErrorMsg]"
         prefixIcon="fingerprint" />
 
-      @if (layout === 'stacked') {
-        <app-multi-language-mode-switch />
-        <app-multi-language-fields
-          data-cy="label-input"
-          [label]="'pages.ontology.resourceClassForm.labelPlaceholder' | translate"
-          [formArray]="form.controls.labels"
-          [validators]="labelsValidators"
-          [isRequired]="true" />
+      <app-multi-language-mode-switch />
+      <app-multi-language-fields
+        data-cy="label-input"
+        [label]="'pages.ontology.resourceClassForm.labelPlaceholder' | translate"
+        [formArray]="form.controls.labels"
+        [validators]="labelsValidators"
+        [isRequired]="true" />
 
-        <app-multi-language-fields
-          data-cy="comment-textarea"
-          [label]="'pages.ontology.resourceClassForm.commentPlaceholder' | translate"
-          [formArray]="form.controls.comments"
-          [multiline]="true"
-          [validators]="commentsValidators"
-          [isRequired]="true" />
-      } @else {
-        <app-multi-language-input
-          data-cy="label-input"
-          [placeholder]="'pages.ontology.resourceClassForm.labelPlaceholder' | translate"
-          [formArray]="form.controls.labels"
-          [validators]="labelsValidators"
-          [isRequired]="true" />
-
-        <app-multi-language-textarea
-          data-cy="comment-textarea"
-          [placeholder]="'pages.ontology.resourceClassForm.commentPlaceholder' | translate"
-          [formArray]="form.controls.comments"
-          [editable]="true"
-          [validators]="commentsValidators"
-          [isRequired]="true" />
-      }
+      <app-multi-language-fields
+        data-cy="comment-textarea"
+        [label]="'pages.ontology.resourceClassForm.commentPlaceholder' | translate"
+        [formArray]="form.controls.comments"
+        [multiline]="true"
+        [validators]="commentsValidators"
+        [isRequired]="true" />
     </form>
   `,
   styles: [':host ::ng-deep .name-input .mat-icon { padding-right: 24px; }'],
@@ -69,19 +49,12 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
     CommonInputComponent,
     MultiLanguageFieldsComponent,
     MultiLanguageModeSwitchComponent,
-    MultiLanguageInputComponent,
-    MultiLanguageTextareaComponent,
     ReactiveFormsModule,
     TranslatePipe,
   ],
 })
 export class ResourceClassFormComponent implements OnInit {
   @Input({ required: true }) formData!: ResourceClassFormData;
-  /**
-   * How the label and description show their languages: one field with a language switcher each, or every language in
-   * its own field, as Data models 2 shows them.
-   */
-  @Input() layout: MultiLanguageLayout = 'switcher';
   @Output() afterFormInit = new EventEmitter<ResourceClassForm>();
 
   form!: ResourceClassForm;

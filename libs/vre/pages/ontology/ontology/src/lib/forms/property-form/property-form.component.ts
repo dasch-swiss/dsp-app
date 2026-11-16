@@ -11,8 +11,6 @@ import { DefaultProperties, LocalizationService, PropertyCategory } from '@dasch
 import {
   MultiLanguageFieldsComponent,
   MultiLanguageModeSwitchComponent,
-  MultiLanguageInputComponent,
-  MultiLanguageTextareaComponent,
   DEFAULT_MULTILANGUAGE_FORM,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
@@ -53,20 +51,12 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       data-cy="name-input"
       prefixIcon="fingerprint"
       [control]="form.controls.name" />
-    @if (stacked) {
-      <app-multi-language-mode-switch />
-      <app-multi-language-fields
-        [formArray]="form.controls.labels"
-        [isRequired]="true"
-        data-cy="label-input"
-        [label]="'pages.ontology.propertyForm.labelPlaceholder' | translate" />
-    } @else {
-      <app-multi-language-input
-        [formArray]="form.controls.labels"
-        [isRequired]="true"
-        data-cy="label-input"
-        [placeholder]="'pages.ontology.propertyForm.labelPlaceholder' | translate" />
-    }
+    <app-multi-language-mode-switch />
+    <app-multi-language-fields
+      [formArray]="form.controls.labels"
+      [isRequired]="true"
+      data-cy="label-input"
+      [label]="'pages.ontology.propertyForm.labelPlaceholder' | translate" />
 
     @if (propertyData.propType.objectType === Constants.ListValue) {
       <app-gui-attr-list data-cy="object-attribute-list" [control]="form.controls.guiAttr" />
@@ -76,20 +66,12 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       <app-gui-attr-link data-cy="object-attribute-link" [control]="form.controls.objectType" />
     }
 
-    @if (stacked) {
-      <app-multi-language-fields
-        [formArray]="form.controls.comments"
-        data-cy="comment-textarea"
-        [label]="'pages.ontology.propertyForm.commentPlaceholder' | translate"
-        [multiline]="true"
-        [isRequired]="true" />
-    } @else {
-      <app-multi-language-textarea
-        [formArray]="form.controls.comments"
-        data-cy="comment-textarea"
-        [placeholder]="'pages.ontology.propertyForm.commentPlaceholder' | translate"
-        [isRequired]="true" />
-    }
+    <app-multi-language-fields
+      [formArray]="form.controls.comments"
+      data-cy="comment-textarea"
+      [label]="'pages.ontology.propertyForm.commentPlaceholder' | translate"
+      [multiline]="true"
+      [isRequired]="true" />
   </form>`,
   imports: [
     CommonInputComponent,
@@ -105,8 +87,6 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
     MatSelectTrigger,
     MultiLanguageFieldsComponent,
     MultiLanguageModeSwitchComponent,
-    MultiLanguageInputComponent,
-    MultiLanguageTextareaComponent,
     ReactiveFormsModule,
     TranslatePipe,
   ],
@@ -117,11 +97,6 @@ export class PropertyFormComponent implements OnInit {
 
   readonly Constants = Constants;
   readonly defaultProperties = DefaultProperties.data;
-
-  /** Whether the label and description show every language in its own field, as Data models 2 asks for. */
-  get stacked(): boolean {
-    return this.propertyData.layout === 'stacked';
-  }
 
   form!: PropertyForm;
 
