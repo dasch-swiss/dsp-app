@@ -317,14 +317,15 @@ interface Card {
         border-top: 1px solid $cool_gray_100;
       }
 
-      // One line per property: type, label and target, local name, cardinality, pencil.
+      // One line per property: type, label and target, local name, cardinality; the pencil floats over it on hover.
       .prop {
+        position: relative;
         display: grid;
-        grid-template-columns: 16px minmax(0, 1fr) auto 32px 22px;
+        grid-template-columns: 16px minmax(0, 1fr) auto 32px;
         gap: 6px;
         align-items: center;
         min-height: 26px;
-        padding: 1px 4px 1px 16px;
+        padding: 1px 8px 1px 16px;
         font-size: 12.5px;
 
         & + .prop {
@@ -383,14 +384,19 @@ interface Card {
         }
       }
 
-      // The pencil, as in the class's panel: shown on hover, or while it has the focus.
+      // The pencil, as in the class's panel: shown on hover, or while it has the focus. It takes no room of its own:
+      // it covers the end of the local name, next to the cardinality, on the row's hover colour.
       .edit {
-        grid-column: 5;
+        position: absolute;
+        top: 50%;
+        right: 46px;
+        transform: translateY(-50%);
         display: flex;
         padding: 2px;
         border: 0;
         border-radius: 50%;
-        background: none;
+        background: $cool_gray_50;
+        box-shadow: -10px 0 8px -2px $cool_gray_50;
         color: $primary;
         cursor: pointer;
         visibility: hidden;
