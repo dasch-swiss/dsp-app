@@ -217,14 +217,25 @@ export class DataModelEditorService implements DataModelEditor {
         take(1),
         switchMap(ontology =>
           this._closedByClickOnly(
-            this._dialog.open<EditPropertyFormDialogComponent, CreatePropertyDialogData>(
+            this._dialog.open<EditPropertyFormDialogComponent, CreatePropertyDialogData, string>(
               EditPropertyFormDialogComponent,
               { data: { propType: type, assignToClass: ontology!.classes[classIri] }, injector }
             )
           )
         ),
-        // The dialog closes without a result either way; the project is read again to show a property created.
-        map(() => true)
+        // The dialog closes with the new property's name once it exists, but the class gets it only after: saved
+        // once the data model, read again, gives the class the property; nothing to wait for when cancelled.
+        switchMap(name => {
+          if (!name) return of(false);
+          const propertyIri = `${classIri.split('#')[0]}#${name}`;
+          return editing.currentOntology$.pipe(
+            filter(
+              read => !!read?.classes[classIri]?.propertiesList.some(property => property.propertyIndex === propertyIri)
+            ),
+            take(1),
+            map(() => true)
+          );
+        })
       )
     );
   }
