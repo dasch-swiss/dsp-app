@@ -153,6 +153,12 @@ const COLUMN_LABELS: Record<Column, string> = {
             (input)="query.set(search.value)" />
         </mat-form-field>
         <span class="spacer"></span>
+        @if (layout() === 'cards' && rows().length) {
+          <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAllCards()">
+            <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+            {{ (allCardsOpen() ? r + '.collapseAll' : r + '.expandAll') | translate }}
+          </button>
+        }
         <!-- Cards, as the Data models tab shows a data model, or the table. -->
         <mat-button-toggle-group
           class="density"
@@ -223,6 +229,7 @@ const COLUMN_LABELS: Record<Column, string> = {
           [colors]="state.colors()"
           [labelOf]="labelOf"
           [selected]="panelIri()"
+          [(opened)]="openCards"
           (classSelected)="openPanel($event)"
           (propertySelected)="openProperty($event)" />
         @if (rows().length === 0) {
@@ -831,6 +838,17 @@ export class DataModelClassesComponent {
   );
   /** Whether the layouts were switched once in this browser: the Cards switch says it is new until then. */
   readonly layoutTipSeen = rememberedSignal(`${STORAGE_KEY}-layout-tip`, false, stored => stored === 'true');
+  /** The cards opened to show their properties: none at first, so the classes fit at a glance. */
+  readonly openCards = signal(new Set<string>());
+  readonly allCardsOpen = computed(() => {
+    const rows = this.rows();
+    return rows.length > 0 && rows.every(row => this.openCards().has(row.id));
+  });
+
+  toggleAllCards(): void {
+    this.openCards.set(this.allCardsOpen() ? new Set() : new Set(this.rows().map(row => row.id)));
+  }
+
   /** A class's label from its IRI, for the cards. */
   readonly labelOf = (iri: string) => this.state.labelOf(iri);
   /** Condensed rows of one line, or expanded rows showing everything; remembered in this browser. */

@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -10,25 +9,18 @@ import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 /**
  * Data models 2 › Classes as cards, the way the Data models tab shows a data model: one box per class with its
  * properties in their form order, each with its value type, the class a link points at, and whether a resource may
- * have several values of it and must have one. A card folds to its title. A clicked class or property opens its panel.
+ * have several values of it and must have one. A card shows its title only until opened. A clicked class or property
+ * opens its panel.
  */
 @Component({
   selector: 'app-data-model-class-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIcon, MatTooltip, TabShadePipe, TranslatePipe],
+  imports: [MatIcon, MatTooltip, TabShadePipe, TranslatePipe],
   template: `
     @let r = 'pages.dataModels2';
-    @if (rows().length) {
-      <div class="bar">
-        <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAll()">
-          <mat-icon>{{ allFolded() ? 'unfold_more' : 'unfold_less' }}</mat-icon>
-          {{ (allFolded() ? r + '.expandAll' : r + '.collapseAll') | translate }}
-        </button>
-      </div>
-    }
     <div class="cards" data-cy="data-model-class-cards">
       @for (row of rows(); track row.id) {
-        @let open = !folded().has(row.id);
+        @let open = opened().has(row.id);
         <article
           class="card"
           data-cy="data-model-class-card"
@@ -108,12 +100,6 @@ import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
         flex: 1;
         min-height: 0;
         overflow: auto;
-      }
-
-      .bar {
-        display: flex;
-        justify-content: flex-end;
-        padding-bottom: 4px;
       }
 
       .cards {
@@ -288,18 +274,13 @@ export class DataModelClassCardsComponent {
   readonly classSelected = output<string>();
   readonly propertySelected = output<string>();
 
-  /** The cards folded to their title. */
-  readonly folded = signal(new Set<string>());
-  readonly allFolded = computed(() => this.rows().length > 0 && this.rows().every(row => this.folded().has(row.id)));
+  /** The cards opened to show their properties; the others show their title only. */
+  readonly opened = model(new Set<string>());
 
   toggle(iri: string): void {
-    const folded = new Set(this.folded());
-    if (!folded.delete(iri)) folded.add(iri);
-    this.folded.set(folded);
-  }
-
-  toggleAll(): void {
-    this.folded.set(this.allFolded() ? new Set() : new Set(this.rows().map(row => row.id)));
+    const opened = new Set(this.opened());
+    if (!opened.delete(iri)) opened.add(iri);
+    this.opened.set(opened);
   }
 
   typeIcon(type: string): string {
