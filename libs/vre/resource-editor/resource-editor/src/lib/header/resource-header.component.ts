@@ -27,7 +27,7 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
       </h3>
       <app-resource-toolbar [resource]="resource.res" />
     </div>
-    <div class="resource-label" style="display: flex; justify-content: space-between">
+    <div class="resource-label">
       <h4 data-cy="resource-header-label">{{ resource.res.label }}</h4>
       @if (resourceFetcherService.userCanEdit$ | async) {
         <button
@@ -48,8 +48,20 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
         margin-bottom: 24px;
       }
 
+      .resource-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .resource-label button {
+        flex-shrink: 0;
+      }
+
       .resource-label h4 {
         display: inline-block;
+        min-width: 0;
+        overflow-wrap: anywhere;
         font-weight: 500;
         font-size: 18px;
         line-height: 22px;
@@ -65,28 +77,34 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
         flex-direction: row;
         align-items: flex-start;
         justify-content: space-between;
+      }
 
-        h3.label-info {
-          cursor: help;
-        }
+      .resource-class-header h3.label-info {
+        cursor: help;
+      }
 
-        h3 {
-          display: inline-block;
-          text-transform: uppercase;
-          font-size: 16px;
-          font-weight: normal;
-          letter-spacing: 1.25px;
-          margin-block-end: 0em;
-        }
+      .resource-class-header app-resource-toolbar {
+        flex-shrink: 0;
+      }
 
-        .action {
-          display: inline-block;
-          white-space: nowrap;
+      .resource-class-header h3 {
+        display: inline-block;
+        min-width: 0;
+        overflow-wrap: anywhere;
+        text-transform: uppercase;
+        font-size: 16px;
+        font-weight: normal;
+        letter-spacing: 1.25px;
+        margin-block-end: 0em;
+      }
 
-          button {
-            border-radius: 0;
-          }
-        }
+      .resource-class-header .action {
+        display: inline-block;
+        white-space: nowrap;
+      }
+
+      .resource-class-header .action button {
+        border-radius: 0;
       }
     `,
   ],

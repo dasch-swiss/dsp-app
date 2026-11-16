@@ -62,9 +62,9 @@ import { TranslatePipe } from '@ngx-translate/core';
   `,
   styles: [
     `
-      // Three equal columns, so the control reads as one choice among three rather than a row of
-      // buttons — and so a longer translation ("Islamisch (tabellarisch)") cannot resize its
-      // neighbours.
+      /* Three equal columns, so the control reads as one choice among three rather than a row of
+         buttons — and so a longer translation ("Islamisch (tabellarisch)") cannot resize its
+         neighbours. */
       .calendar-segmented {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -79,7 +79,7 @@ import { TranslatePipe } from '@ngx-translate/core';
         height: 32px;
         padding: 0 6px;
         border: 0;
-        // Hairlines between the options, not around them: the group owns the outer border.
+        /* Hairlines between the options, not around them: the group owns the outer border. */
         border-right: 1px solid #e5e7eb;
         background: #fff;
         font-family: inherit;
@@ -94,32 +94,32 @@ import { TranslatePipe } from '@ngx-translate/core';
         transition:
           background 150ms,
           color 150ms;
+      }
 
-        &:last-child {
-          border-right: 0;
-        }
+      .calendar-option:last-child {
+        border-right: 0;
+      }
 
-        &:hover:not(:disabled):not(.is-selected) {
-          background: #f9fafb;
-        }
+      .calendar-option:hover:not(:disabled):not(.is-selected) {
+        background: #f9fafb;
+      }
 
-        // Filled rather than ticked: a checkmark left the label unreadable.
-        &.is-selected {
-          background: #336790;
-          color: #fff;
-          font-weight: 700;
-        }
+      /* Filled rather than ticked: a checkmark left the label unreadable. */
+      .calendar-option.is-selected {
+        background: #336790;
+        color: #fff;
+        font-weight: 700;
+      }
 
-        // Dimmed rather than hidden, so a reader can see the calendar exists but does not apply.
-        &:disabled {
-          cursor: default;
-          opacity: 0.4;
-        }
+      /* Dimmed rather than hidden, so a reader can see the calendar exists but does not apply. */
+      .calendar-option:disabled {
+        cursor: default;
+        opacity: 0.4;
+      }
 
-        &:focus-visible {
-          outline: 2px solid #336790;
-          outline-offset: -2px;
-        }
+      .calendar-option:focus-visible {
+        outline: 2px solid #336790;
+        outline-offset: -2px;
       }
 
       .calendar-caption {

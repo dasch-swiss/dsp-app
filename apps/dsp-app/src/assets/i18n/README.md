@@ -7,7 +7,7 @@ once a while are translated in bulk.
 
 1. Root library name segment. I.e.: 3rdPartyServices, core, etc. (Required)
 2. Secondary identifier from top segment. I.e.: userSettings, propertiesDisplay, etc. (Optional)
-3. Tertiary and deeper identifier segments according to the path of the label file in nx lib folder. I.e.: passwordForm, imageSettings etc. (Optional)
+3. Tertiary and deeper identifier segments according to the path of the label file in its library folder. I.e.: passwordForm, imageSettings etc. (Optional)
 4. Label name
 
 ## Label path examples:

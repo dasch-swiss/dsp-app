@@ -78,7 +78,7 @@ interface CountLine {
       }
     </span>
   `,
-  styleUrl: './count-cell.component.scss',
+  styleUrl: './count-cell.component.css',
   imports: [MatIcon, MatTooltipModule, TranslatePipe],
 })
 export class CountCellComponent {

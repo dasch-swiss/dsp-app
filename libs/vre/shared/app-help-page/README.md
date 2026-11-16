@@ -1,9 +1,6 @@
-# app-help-page
-
-This library was generated with [Nx](https://nx.dev).
-
+# @dasch-swiss/vre/shared/app-help-page
 
 ## Running unit tests
 
-Run `nx test app-help-page` to execute the unit tests.
+Run `just test //libs/vre/shared/app-help-page/...` to execute the unit tests.
 

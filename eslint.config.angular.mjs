@@ -37,7 +37,6 @@ export default tseslint.config(
     rules: {
       'no-undef': 'off',
       '@typescript-eslint/no-empty-function': 'off',
-      '@nx/enforce-module-boundaries': 'off',
       '@angular-eslint/no-empty-lifecycle-method': 'off',
       '@angular-eslint/component-selector': 'off',
     },

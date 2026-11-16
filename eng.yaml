@@ -1,0 +1,37 @@
+version: 1
+
+defaults:
+  conventions: [CLAUDE.md, CONVENTIONS.md, ARCH-MAP.md]
+  commands:
+    test: just test
+    lint: just lint
+    gate: just ci
+    test_targeted: just test-files -- {files}
+
+overrides:
+  - when: "apps/**"
+    reviewers: [eng:review:angular-reviewer]
+
+  - when: "libs/**"
+    reviewers: [eng:review:angular-reviewer]
+
+  - when: "libs/vre/ui/**"
+    verify:
+      - skill: eng:test-browser
+
+  - when: "libs/vre/pages/**"
+    verify:
+      - skill: eng:test-browser
+
+  - when: "libs/vre/resource-editor/**"
+    verify:
+      - skill: eng:test-browser
+
+  - when: ".github/**"
+    reviewers: [eng:review:devops-reviewer]
+
+  - when: "justfile"
+    reviewers: [eng:review:devops-reviewer]
+
+  - when: "flake.nix"
+    reviewers: [eng:review:nix-reviewer]

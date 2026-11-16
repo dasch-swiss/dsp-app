@@ -1,7 +1,7 @@
 # ADR-0004: Cross-feature access
 
-- **Status:** Accepted (2026-09-13)
-- **Relates to:** ADR-0001 (library taxonomy), ADR-0003 (feature state), ADR-0005 (what `shared/` means)
+- **Status:** Accepted (2026-09-13); enforcement note revised (2026-11-06) when Bazel replaced Nx ([ADR-0007](0007-bazel-builds-the-repository.md))
+- **Relates to:** ADR-0001 (library taxonomy), ADR-0003 (feature state), ADR-0005 (what `shared/` means), ADR-0007 (Bazel builds the repository)
 - **Adapts:** dasch-ops-platform ADR-0013 (cross-capability access, the Modulith contract)
 
 ## Context
@@ -51,7 +51,7 @@ The distribution matters more than the total. Fourteen of the thirty-three files
 
 ## Decision
 
-1. **A feature library may not import another feature library.** Enforced by the scope constraint in ADR-0001. (**static-analysis**)
+1. **A feature library may not import another feature library.** Enforced by the scope constraint in ADR-0001. (**structure**)
 
 2. **The default resolution is relocation, not indirection.** (**review**)
 
@@ -89,7 +89,7 @@ The distribution matters more than the total. Fourteen of the thirty-three files
 
    A type that is genuinely the same concept everywhere belongs in a shared `type:util` library. A shape that merely happens to match, particularly a generated DTO from `3rd-party-services/open-api`, does not become shared code because two places need something like it. ADR-0001 decision 7 applies this to `LanguageStringDto` in `ui/string-literal`: the UI library declares the two fields it needs rather than importing the generated DTO.
 
-7. **`pages/data-browser` is tagged `scope:shared, type:feature`.** (**static-analysis**)
+7. **`pages/data-browser` is tagged `scope:shared, type:feature`.** (**structure**)
 
    The question was whether it is a page or shared infrastructure, and the import graph answers it without product input. `apps/dsp-app/src/app/app.routes.ts` never imports it: the route that shows it is `DataBrowserPageComponent` in `pages/project`. `pages/project` embeds four of its internals (`MultipleViewerComponent`, `MultipleViewerService`, `ResourcesListComponent`, `ResourceClassCountApi`) across four files, and both search libraries embed `ResourceBrowserComponent`. A library that nothing routes to and that three features render inside themselves is shared infrastructure, whatever folder it sits in. It carries the same tags as `resource-editor`, and the six imports of it across six files become legal with no code moving. The folder is a hint and the tag is the truth (ADR-0001 decision 4); it leaves `pages/` opportunistically, because that rename touches every importer and buys nothing the tag does not.
 
@@ -101,13 +101,14 @@ Stating this explicitly, because adopting the vocabulary without the limits woul
 - **Separate datastores and data sovereignty over tables.** There is no database in the browser. The ownership rule that replaces it is ADR-0003's one-writer-per-value, which is about DI-scoped state rather than schemas.
 - **Per-module transactions and eventual consistency.** There is one runtime and one change-detection cycle. The distributed-transaction discussion has no analogue.
 - **The extraction test.** ADR-0013 asks whether a module could be extracted to a service without touching callers. Here the useful version is weaker and worth keeping anyway: could this library be deleted, or lazily loaded on its own route, without editing another library? Today the answer for every page library is no, which is exactly why the routing table cannot use `loadComponent`.
-- **Bazel visibility.** Replaced by Nx tags (ADR-0001), which are weaker: they see TypeScript imports and not Sass, templates or asset strings.
+
+Bazel visibility, which an earlier version of this list named, does carry over since Bazel replaced Nx (ADR-0007): ADR-0001's rules are now `visibility`, as dasch-ops-platform ADR-0013's are. It checks every declared dependency, Sass libraries included, but not template or asset strings.
 
 ## Consequences
 
 **Positive.** The seventeen symbols get a decision rather than accumulating. `scope:shared` acquires an actual definition, which ADR-0005 then polices. Route-level lazy loading becomes reachable, since the reason it is impossible today is precisely that every page is reachable from every other. The routing table stays the one place that knows the whole application.
 
-**Negative and costs.** Relocating eleven symbols touches thirty-three files plus both barrels on each move, and `CLAUDE.md` already warns that a missed barrel export breaks consumers at build time. Until the moves land, ADR-0001's constraint block cannot be switched on, so this ADR is on the critical path for that one.
+**Negative and costs.** Relocating eleven symbols touches thirty-three files plus both barrels on each move, and `CLAUDE.md` already warns that a missed barrel export breaks consumers at build time. ADR-0001's rules are enforced already: the symbols not yet moved are its explicit `extra_visibility` exceptions, tracked as DEV-7555, and each move removes one.
 
 **`data-browser`.** Decision 7 settles the highest-leverage question in the migration by tagging rather than moving: six imports across six files stop being violations. What it does not settle is when the library leaves the `pages/` folder. That is a rename touching every importer and is done opportunistically, as ADR-0001 decision 4 says for every folder-versus-tag mismatch.
 

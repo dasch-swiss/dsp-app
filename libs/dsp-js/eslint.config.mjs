@@ -21,9 +21,15 @@ export default [
     },
   },
   {
+    // test/ sits beside src/ and imports the library's own sources, which is not a library crossing.
+    files: ['test/**/*.ts'],
+    rules: {
+      'no-restricted-imports': 'off',
+    },
+  },
+  {
     files: ['**/*.spec.ts', 'test/**/*.ts', 'src/test-setup.ts'],
     rules: {
-      '@nx/enforce-module-boundaries': 'off',
     },
     languageOptions: {
       parser: typescriptEslintParser,

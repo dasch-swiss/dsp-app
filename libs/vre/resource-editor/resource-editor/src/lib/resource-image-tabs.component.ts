@@ -39,22 +39,27 @@ import { AnnotationTabComponent } from './resource/annotation/annotation-tab.com
   `,
   styles: [
     `
-      :host ::ng-deep {
-        .mat-mdc-tab-body,
-        .mat-mdc-tab-body-content {
-          height: auto !important;
-          overflow: visible !important;
-        }
+      :host ::ng-deep .mat-mdc-tab-body,
+      :host ::ng-deep .mat-mdc-tab-body-content {
+        height: auto !important;
+        overflow: visible !important;
       }
+
+      :host ::ng-deep .mat-mdc-tab-body {
+        min-width: 0;
+      }
+
       .dots-container {
         margin-left: 1.5em;
         min-width: 3ch;
       }
+
       .dots {
         position: relative;
         display: inline-block;
         color: var(--primary);
       }
+
       .dots::after {
         content: '...';
         display: inline-block;
@@ -63,6 +68,7 @@ import { AnnotationTabComponent } from './resource/annotation/annotation-tab.com
         vertical-align: bottom;
         animation: dots 1s steps(3, end) infinite;
       }
+
       @keyframes dots {
         to {
           width: 3ch;

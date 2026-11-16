@@ -44,7 +44,7 @@ interface ExpandedProperty {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-view-restrictions-by-property-table',
   templateUrl: './view-restrictions-by-property-table.component.html',
-  styleUrl: './view-restrictions.component.scss',
+  styleUrl: './view-restrictions.component.css',
   imports: [AsyncPipe, TranslatePipe, MatIcon, AppProgressIndicatorComponent, PagerComponent, CountCellComponent],
 })
 export class ViewRestrictionsByPropertyTableComponent {

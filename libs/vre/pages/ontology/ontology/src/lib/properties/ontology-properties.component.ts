@@ -20,18 +20,18 @@ import { PropertyInfoComponent } from './property-info/property-info.component';
   styles: `
     .properties {
       max-width: 100em;
+    }
 
-      .property {
-        background: white;
-        border-radius: 8px;
-        height: auto;
-        margin: 8px 0;
+    .properties .property {
+      background: white;
+      border-radius: 8px;
+      height: auto;
+      margin: 8px 0;
+    }
 
-        &.admin:hover {
-          background: var(--element-active-hover);
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-      }
+    .properties .property.admin:hover {
+      background: var(--element-active-hover);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

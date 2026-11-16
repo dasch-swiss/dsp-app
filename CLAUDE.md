@@ -22,13 +22,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is DaSCH Service Platform (DSP) monorepo - a digital humanities platform for storing, sharing, and working with primary research resources and data. Built with Angular, NX, and Node.js (see [package.json](package.json) for current versions).
+This is DaSCH Service Platform (DSP) monorepo - a digital humanities platform for storing, sharing, and working with primary research resources and data. Built with Angular and Node.js (see [package.json](package.json) for current versions); Bazel builds and tests it, and `just` recipes are the entry points.
 
 The main application is **DSP-APP** - a user interface for the Swiss National Data and Service Center for the Humanities (DaSCH) research data repository, connecting to DSP-API backend and implementing DSP-JS client library.
 
 ## Essential Development Commands
 
-Standard `nx` / `npm` invocations live in `package.json` scripts. Regenerating the generated OpenAPI client has a deploy-coupling gotcha — `check-openapi-sync` compares the vendored spec against the live dev API, so a red check is *expected* until the dsp-api change is deployed to dev. **Never edit the vendored spec to silence it.** Use the `/update-openapi-client` skill for the full sequence.
+Standard commands are `just` recipes (`just --list`); the OpenAPI client has `just openapi-generate`, `just openapi-check` and `just openapi-update`. Regenerating the generated OpenAPI client has a deploy-coupling gotcha — `check-openapi-sync` compares the vendored spec against the live dev API, so a red check is *expected* until the dsp-api change is deployed to dev. **Never edit the vendored spec to silence it.** Use the `/update-openapi-client` skill for the full sequence.
 
 ## Coding Conventions
 
@@ -55,8 +55,8 @@ Read [`CONVENTIONS.md`](CONVENTIONS.md) before writing code: components, depende
 - Use `storyName` when the export name would be awkward
 - Every story must have at least one `play()` function asserting a user-visible outcome
 - `argTypes` must include a `description` for every `@Input()` and `@Output()`
-- Run Storybook locally: `npm run storybook`
-- Run interaction tests: `npm run test-storybook`
+- Run Storybook locally: `just storybook` (http://localhost:4400)
+- Run interaction tests: `just storybook-test`
 - **Stories that render a real container break when its DI changes.** Some stories mount the
   actual container component (others mock it) — adding a service injection to a container breaks
   exactly those stories, not the mocked ones. When you add a dependency to a component that
@@ -94,7 +94,7 @@ Multi-language support with translation files in:
   require changes to the dsp-js models in `libs/dsp-js/` — regenerating the OpenAPI client does
   **not** surface the field there. Project data, resources, and values go through dsp-js.
 - Endpoints consumed through the **generated OpenAPI client** only need
-  `npm run update-openapi` after the API is deployed to dev.
+  `just openapi-update` after the API is deployed to dev.
 
 If a new backend field "doesn't arrive" in the UI, check which client the reading code uses
 before debugging further.

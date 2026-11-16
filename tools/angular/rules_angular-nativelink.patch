@@ -1,0 +1,23 @@
+rules_angular-nativelink.patch: let rules_angular's worker run a non-worker compile in NativeLink's
+work directory, so `ng_project` and `ts_project` (the TsProject and NgCompile actions) can execute
+remotely (ADR-0007, decision 6).
+
+Without it a remote action fails with
+  "It's disallowed to compile outside of sandbox/or outside of a worker."
+because worker.mts accepts a non-worker run only when the working directory starts with Google's
+RBE prefix `/b/f/w/` or contains `sandbox`, and NativeLink runs actions under `/data/slow/work-<n>/`.
+The check is otherwise kept. Applies to rules_angular 88a34a4f4f10f495b051c06c2ffa8698829b9215;
+re-derive it when that commit moves.
+
+--- a/src/worker/worker.mts
++++ b/src/worker/worker.mts
+@@ -11,7 +11,8 @@
+ 
+ export async function bootWorker(optionalAngular?: OptionalAngular) {
+   if (!worker.isPersistentWorker(process.argv)) {
+-    const isRemoteExecution = process.cwd().startsWith('/b/f/w/');
++    const isRemoteExecution =
++      process.cwd().startsWith('/b/f/w/') || process.cwd().startsWith('/data/slow/work-');
+ 
+     // Detect if we run outside sandbox and without RBE.
+     // This is disallowed as it can result in TS picking up unrelated files,

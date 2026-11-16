@@ -21,7 +21,7 @@ const Editor = (EditorNs as EditorNamespace).default ?? EditorNs;
 
 @Component({
   selector: 'app-ck-editor',
-  styleUrl: './ck-editor.component.scss',
+  styleUrl: './ck-editor.component.css',
   template: `
     <ckeditor
       [formControl]="footnoteControl"
@@ -51,7 +51,7 @@ const Editor = (EditorNs as EditorNamespace).default ?? EditorNs;
 })
 export class CkEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) control!: FormControl<string | null>;
-  @Input() projectShortcode?: string;
+  @Input() projectShortcode?: string | null;
   footnoteControl = new FormControl('');
 
   readonly editor = Editor;

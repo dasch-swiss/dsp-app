@@ -1,9 +1,6 @@
-# vre-shared-app-list
-
-This library was generated with [Nx](https://nx.dev).
-
+# @dasch-swiss/vre/pages/ontology/list
 
 ## Running unit tests
 
-Run `nx test vre-shared-app-list` to execute the unit tests.
+Run `just test //libs/vre/pages/ontology/list/...` to execute the unit tests.
 

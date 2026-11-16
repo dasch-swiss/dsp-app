@@ -72,6 +72,10 @@ import { ResourceFetcherService } from '../../../representation/resource-fetcher
         align-items: center;
       }
 
+      .value-row > * {
+        min-width: 0;
+      }
+
       .has-multiple .value-row:not(:last-child) {
         border-bottom: 1px solid rgba(51, 103, 144, 0.1); /* rgba($primary, 0.1) */
       }

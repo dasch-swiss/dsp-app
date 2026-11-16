@@ -16,7 +16,7 @@ import { PropertiesDisplayService } from './properties-display.service';
       <ng-content />
     </div>
   </div>`,
-  styleUrls: ['./property-row.component.scss'],
+  styleUrls: ['./property-row.component.css'],
 })
 export class PropertyRowComponent {
   @Input({ required: true }) label!: string;

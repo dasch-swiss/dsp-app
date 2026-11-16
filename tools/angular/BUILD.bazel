@@ -1,0 +1,28 @@
+load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_library")
+load(":visibility.bzl", "declare_package_groups")
+
+declare_package_groups()
+
+exports_files([
+    "bundle_size_test.sh",
+    "optimization_test.sh",
+    "rules_angular-nativelink.patch",
+])
+
+# vre_application's tools.
+js_library(
+    name = "esbuild_config",
+    srcs = ["esbuild.config.mjs"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:node_modules/@angular/compiler-cli",
+        "//:node_modules/@babel/core",
+    ],
+)
+
+js_binary(
+    name = "write_index",
+    data = ["//:node_modules/beasties"],
+    entry_point = "write_index.mjs",
+    visibility = ["//visibility:public"],
+)
