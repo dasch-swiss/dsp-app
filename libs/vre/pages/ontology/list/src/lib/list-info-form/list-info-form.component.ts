@@ -25,6 +25,7 @@ import {
   DEFAULT_MULTILANGUAGE_FORM,
   MultiLanguageFieldsComponent,
   MultiLanguageModeSwitchComponent,
+  StringifyStringLiteralPipe,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -33,7 +34,10 @@ import { ListInfoForm } from './list-info-form.type';
 @Component({
   selector: 'app-list-info-form',
   template: `
-    <app-dialog-header title="" [subtitle]="title" />
+    <!-- As the other dialogs: what is edited as the title, the action over it; a new one has the action as its title. -->
+    <app-dialog-header
+      [title]="data ? (data.labels | appStringifyStringLiteral) : title"
+      [subtitle]="data ? title : undefined" />
     <div mat-dialog-content>
       <app-multi-language-mode-switch />
       <app-multi-language-fields
@@ -48,20 +52,20 @@ import { ListInfoForm } from './list-info-form.type';
         [multiline]="true"
         [isRequired]="true"
         data-cy="comments-input" />
-      <div mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
-        <button
-          mat-raised-button
-          type="submit"
-          color="primary"
-          [disabled]="form.invalid"
-          (click)="submitForm()"
-          appLoadingButton
-          [isLoading]="loading"
-          data-cy="submit-button">
-          {{ 'ui.common.actions.submit' | translate }}
-        </button>
-      </div>
+    </div>
+    <div mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
+      <button
+        mat-raised-button
+        type="submit"
+        color="primary"
+        [disabled]="form.invalid"
+        (click)="submitForm()"
+        appLoadingButton
+        [isLoading]="loading"
+        data-cy="submit-button">
+        {{ 'ui.common.actions.submit' | translate }}
+      </button>
     </div>
   `,
   imports: [
@@ -74,6 +78,7 @@ import { ListInfoForm } from './list-info-form.type';
     MultiLanguageFieldsComponent,
     MultiLanguageModeSwitchComponent,
     LoadingButtonDirective,
+    StringifyStringLiteralPipe,
   ],
 })
 export class ListInfoFormComponent implements OnInit {

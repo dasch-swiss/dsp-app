@@ -42,6 +42,12 @@ import { MULTI_LANGUAGE_MODE } from './multi-language-mode';
         --mat-button-toggle-label-text-size: 13px;
       }
 
+      // First in a form, with nothing above it to set apart from: no line.
+      :host:first-child {
+        border-top: 0;
+        padding-top: 0;
+      }
+
       .title {
         font-size: 12px;
         font-weight: 500;
