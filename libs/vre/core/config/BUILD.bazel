@@ -1,0 +1,23 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "config",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    test_size = "small",
+    test_srcs = glob(TEST_SRCS),
+    # ADR-0001 decision 7: AvailableLanguage moves to a `type:util` library (DEV-7552).
+    extra_visibility = [
+        "//libs/vre/ui/string-literal:__pkg__",
+    ],
+    deps = [
+        "//:node_modules/@angular/common",
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/material",
+        "//:node_modules/rxjs",
+        "//:node_modules/zod",
+        "//libs/dsp-js",
+    ],
+)

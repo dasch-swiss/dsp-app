@@ -150,7 +150,7 @@ interface CreateResourceDialogProps {
       <app-data-tab-tour [steps]="tourSteps()" />
     </div>
   `,
-  styleUrl: './data-class-header.component.scss',
+  styleUrl: './data-class-header.component.css',
   imports: [
     AsyncPipe,
     DecimalPipe,

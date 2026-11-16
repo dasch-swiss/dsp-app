@@ -1,0 +1,24 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "session",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    test_size = "small",
+    test_srcs = glob(TEST_SRCS),
+    deps = [
+        "//:node_modules/@angular/core",
+        "//:node_modules/jwt-decode",
+        "//:node_modules/rxjs",
+        "//libs/dsp-js",
+        "//libs/vre/3rd-party-services/analytics",
+        "//libs/vre/3rd-party-services/api",
+        "//libs/vre/core/config",
+        "//libs/vre/core/error-handler",
+        "//libs/vre/shared/app-common",
+        "//libs/vre/shared/app-helper-services",
+    ],
+    test_deps = ["//libs/vre/shared/app-helper-services:testing"],
+)

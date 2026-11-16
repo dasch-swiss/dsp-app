@@ -54,17 +54,19 @@ import { MultiLanguageFormService } from './multi-language-form.service';
         [ngModel]="formService.inputValue"
         (ngModelChange)="formService.onInputChange($event)"
         (blur)="formService.formArray.markAsTouched()"
-        [disabled]="formService.selectedFormControl?.disabled"
+        [disabled]="formService.isDisabled"
         [readonly]="!editable" />
     </mat-form-field>
     @if (formService.formArray.invalid && formService.formArray.touched) {
       <mat-error>
-        @if (formService.invalidErrors?.language) {
-          {{ 'ui.common.fields.language' | translate }} {{ formService.invalidErrors.language }}:
-          {{ formService.invalidErrors.error | humanReadableError }}
-        }
-        @if (!formService.invalidErrors?.language) {
-          {{ formService.invalidErrors.error | humanReadableError }}
+        @if (formService.invalidErrors; as errors) {
+          @if (errors.language) {
+            {{ 'ui.common.fields.language' | translate }} {{ errors.language }}:
+            {{ errors.error | humanReadableError }}
+          }
+          @if (!errors.language) {
+            {{ errors.error | humanReadableError }}
+          }
         }
       </mat-error>
     }

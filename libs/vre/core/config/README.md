@@ -1,7 +1,5 @@
-# vre-shared-app-config
-
-This library was generated with [Nx](https://nx.dev).
+# @dasch-swiss/vre/core/config
 
 ## Running unit tests
 
-Run `nx test vre-shared-app-config` to execute the unit tests.
+Run `just test //libs/vre/core/config/...` to execute the unit tests.

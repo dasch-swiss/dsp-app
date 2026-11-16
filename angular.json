@@ -1,0 +1,110 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "analytics": false
+  },
+  "projects": {
+    "dsp-app": {
+      "projectType": "application",
+      "root": "apps/dsp-app",
+      "sourceRoot": "apps/dsp-app/src",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": {
+              "base": "dist/apps/dsp-app",
+              "browser": ""
+            },
+            "index": "apps/dsp-app/src/index.html",
+            "browser": "apps/dsp-app/src/main.ts",
+            "polyfills": [
+              "apps/dsp-app/src/polyfills.ts"
+            ],
+            "tsConfig": "apps/dsp-app/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "apps/dsp-app/src/favicon.ico",
+              "apps/dsp-app/src/config",
+              {
+                "glob": "**/*",
+                "input": "apps/dsp-app/src/assets/",
+                "output": "/assets/"
+              }
+            ],
+            "styles": [
+              "apps/dsp-app/src/styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "libs/vre/ui/styles"
+              ]
+            },
+            "scripts": [
+              "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
+            ]
+          }
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "port": 4400,
+            "configDir": ".storybook",
+            "browserTarget": "dsp-app:build",
+            "compodoc": false,
+            "styles": [
+              "apps/dsp-app/src/styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "libs/vre/ui/styles"
+              ]
+            },
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "apps/dsp-app/src/assets",
+                "output": "assets"
+              }
+            ]
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "outputDir": "dist/storybook",
+            "configDir": ".storybook",
+            "browserTarget": "dsp-app:build",
+            "compodoc": false,
+            "styles": [
+              "apps/dsp-app/src/styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "libs/vre/ui/styles"
+              ]
+            },
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "apps/dsp-app/src/assets",
+                "output": "assets"
+              }
+            ]
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

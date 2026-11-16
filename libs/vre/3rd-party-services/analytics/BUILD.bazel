@@ -1,0 +1,20 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "analytics",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    test_size = "small",
+    test_srcs = glob(TEST_SRCS),
+    deps = [
+        "//:node_modules/@angular/core",
+        "//:node_modules/@grafana/faro-core",
+        "//:node_modules/@grafana/faro-transport-otlp-http",
+        "//:node_modules/@grafana/faro-web-sdk",
+        "//:node_modules/@grafana/faro-web-tracing",
+        "//:node_modules/uuid",
+        "//libs/vre/core/config",
+    ],
+)

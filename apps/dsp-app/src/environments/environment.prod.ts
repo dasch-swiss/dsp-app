@@ -1,7 +1,7 @@
-import packageJson from '../../../../package.json';
+import { APP_VERSION } from '@dasch-swiss/vre/core/config';
 
 export const environment = {
   name: 'prod',
   production: true,
-  version: packageJson.version,
+  version: APP_VERSION,
 };

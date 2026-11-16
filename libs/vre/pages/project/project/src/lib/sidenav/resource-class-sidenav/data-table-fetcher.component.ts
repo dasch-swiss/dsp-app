@@ -95,7 +95,7 @@ import { ProjectPageService } from '../../project-page.service';
       <app-progress-indicator />
     }
   `,
-  styleUrl: './data-table-fetcher.component.scss',
+  styleUrl: './data-table-fetcher.component.css',
   imports: [
     AsyncPipe,
     TranslatePipe,

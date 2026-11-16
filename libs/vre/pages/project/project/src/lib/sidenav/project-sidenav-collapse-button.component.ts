@@ -26,15 +26,15 @@ import { MatTooltip } from '@angular/material/tooltip';
         width: 23px;
         height: 23px;
         padding: 0;
+      }
 
-        mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-          position: relative;
-          line-height: 18px;
-          top: -2px;
-        }
+      .collapse-btn mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        position: relative;
+        line-height: 18px;
+        top: -2px;
       }
     `,
   ],

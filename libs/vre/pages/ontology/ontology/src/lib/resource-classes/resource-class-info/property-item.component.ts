@@ -128,7 +128,22 @@ import { CardinalityComponent } from './cardinality-component/cardinality.compon
     </mat-menu>`,
   styles: [
     `
-      @use '../../../../../../../../../apps/dsp-app/src/styles/config' as *;
+      /* Copy of libs/vre/ui/styles/_material-icons.scss: inline styles cannot use Sass. */
+      .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+      }
 
       .list-icon {
         color: black;
@@ -173,7 +188,7 @@ import { CardinalityComponent } from './cardinality-component/cardinality.compon
       }
 
       .lower-prop-container {
-        color: $primary_700;
+        color: #336790; /* $primary_700 */
         display: flex;
         align-items: center;
         gap: 0.25rem;

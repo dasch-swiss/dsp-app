@@ -53,7 +53,22 @@ import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
   `,
   styles: [
     `
-      @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+      /* Copy of libs/vre/ui/styles/_material-icons.scss: inline styles cannot use Sass. */
+      .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+      }
 
       :host {
         display: block;
@@ -84,16 +99,16 @@ import { TooltipIfTruncatedDirective } from './tooltip-if-truncated.directive';
         font: 500 12px/1 var(--font-sans, Roboto, sans-serif);
         letter-spacing: 0.04em;
         text-transform: uppercase;
-        color: $cool_gray_500;
+        color: #6b7280; /* $cool_gray_500 */
+      }
 
-        &:hover {
-          color: $cool_gray_700;
-        }
+      .ontology-header:hover {
+        color: #374151; /* $cool_gray_700 */
+      }
 
-        &:focus-visible {
-          outline: 2px solid $primary;
-          outline-offset: -2px;
-        }
+      .ontology-header:focus-visible {
+        outline: 2px solid #336790; /* $primary */
+        outline-offset: -2px;
       }
 
       .ontology-label {

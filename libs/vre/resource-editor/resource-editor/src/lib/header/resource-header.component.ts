@@ -52,10 +52,10 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+      }
 
-        button {
-          flex-shrink: 0;
-        }
+      .resource-label button {
+        flex-shrink: 0;
       }
 
       .resource-label h4 {
@@ -77,34 +77,34 @@ import { ResourceToolbarComponent } from './resource-toolbar.component';
         flex-direction: row;
         align-items: flex-start;
         justify-content: space-between;
+      }
 
-        h3.label-info {
-          cursor: help;
-        }
+      .resource-class-header h3.label-info {
+        cursor: help;
+      }
 
-        app-resource-toolbar {
-          flex-shrink: 0;
-        }
+      .resource-class-header app-resource-toolbar {
+        flex-shrink: 0;
+      }
 
-        h3 {
-          display: inline-block;
-          min-width: 0;
-          overflow-wrap: anywhere;
-          text-transform: uppercase;
-          font-size: 16px;
-          font-weight: normal;
-          letter-spacing: 1.25px;
-          margin-block-end: 0em;
-        }
+      .resource-class-header h3 {
+        display: inline-block;
+        min-width: 0;
+        overflow-wrap: anywhere;
+        text-transform: uppercase;
+        font-size: 16px;
+        font-weight: normal;
+        letter-spacing: 1.25px;
+        margin-block-end: 0em;
+      }
 
-        .action {
-          display: inline-block;
-          white-space: nowrap;
+      .resource-class-header .action {
+        display: inline-block;
+        white-space: nowrap;
+      }
 
-          button {
-            border-radius: 0;
-          }
-        }
+      .resource-class-header .action button {
+        border-radius: 0;
       }
     `,
   ],

@@ -1,13 +1,13 @@
 # ADR-0002: The barrel is the only public interface
 
-- **Status:** Accepted (2026-09-13)
-- **Relates to:** ADR-0001 (library taxonomy), ADR-0005 (what `shared/` means)
+- **Status:** Accepted (2026-09-13); mechanism revised (2026-11-06) when Bazel replaced Nx ([ADR-0007](0007-bazel-builds-the-repository.md))
+- **Relates to:** ADR-0001 (library taxonomy), ADR-0005 (what `shared/` means), ADR-0007 (Bazel builds the repository)
 
 ## Context
 
-Every library in the workspace exposes a `src/index.ts` barrel, and consumers import through the `@dasch-swiss/*` path aliases declared in `tsconfig.base.json`. `@nx/enforce-module-boundaries` rejects imports that reach past a barrel into a library's internal files.
+Every library in the workspace exposes a `src/index.ts` barrel, and consumers import through the `@dasch-swiss/*` path aliases declared in `tsconfig.base.json`. When this ADR was written, `@nx/enforce-module-boundaries` rejected imports that reach past a barrel into a library's internal files; since Nx left, an ESLint `no-restricted-imports` rule does (decision 1).
 
-Unusually for a codebase of this age, the rule holds. There are zero deep-path reach-ins in any linted file, and exactly one suppression of the boundary rule in the entire repository, at `libs/vre/shared/app-help-page/src/lib/help-page/help-page.component.ts:6`, where it is commented and reads the root `package.json` for a version string. The one un-linted subtree is the exception: `apps/dsp-app/cypress/` holds four relative cross-project imports of `libs/dsp-js/src`, which ADR-0006 covers. This is the single strongest boundary the codebase currently has, and it holds by habit rather than by decision. Writing it down costs nothing and protects it against the first contributor who does not share the habit.
+Unusually for a codebase of this age, the rule held at the time of writing. There are zero deep-path reach-ins in any linted file, and exactly one suppression of the boundary rule in the entire repository, at `libs/vre/shared/app-help-page/src/lib/help-page/help-page.component.ts:6`, where it is commented and reads the root `package.json` for a version string. The one un-linted subtree is the exception: `apps/dsp-app/cypress/` holds four relative cross-project imports of `libs/dsp-js/src`, which ADR-0006 covers. This is the single strongest boundary the codebase currently has, and it holds by habit rather than by decision. Writing it down costs nothing and protects it against the first contributor who does not share the habit.
 
 What does not hold is the narrowness of the barrels themselves. Of twenty-seven library barrels, twenty-four re-export with `export *` (one of them, `pages/data-browser`, mixes both styles in five statements) and three are hand-curated named-export lists:
 
@@ -33,9 +33,9 @@ Four files out of 403 are reachable. The surface is genuinely narrow even though
 
 ## Decision
 
-1. **A library's `src/index.ts` is its entire public interface.** Nothing else in a library may be imported from outside it. (**static-analysis**, via `@nx/enforce-module-boundaries`)
+1. **A library's `src/index.ts` is its entire public interface.** Nothing else in a library may be imported from outside it. (**static-analysis**, via the ESLint `no-restricted-imports` rule: `libraryBoundaryPatterns` in `eslint.config.mjs` rejects an `@dasch-swiss/*/src/*` import and a relative import that crosses a library root)
 
-2. **A suppression of the boundary rule requires a comment giving the reason.** There is one today and it has one. This is a review expectation, not a lint setting, because a lint rule cannot judge whether a reason is good. (**review**)
+2. **A suppression of the boundary rule requires a comment giving the reason.** There are three today, all in story files, and each has one; the help-page suppression the context describes is gone. This is a review expectation, not a lint setting, because a lint rule cannot judge whether a reason is good. (**review**)
 
 3. **New libraries use curated named exports.** `export { A, B } from './lib/x'`, not `export * from './lib/x'`. Adding a symbol to the public surface then requires editing the barrel, which puts it in the diff and in front of a reviewer. `shared/calendar` is the reference shape (ADR-0005). (**review**)
 
@@ -54,9 +54,9 @@ Four files out of 403 are reachable. The surface is genuinely narrow even though
 
 ## The gap this does not close
 
-Nx does not reliably block an aliased deep import into a file a library does not export. The behaviour has been reported (Nx issue #29258) and closed as "not planned". In practice the rule catches relative reach-ins and the common alias forms, which is why the workspace is clean today, but it should not be described as airtight.
+The rule matches import specifiers against patterns; it does not resolve them. It catches relative reach-ins and the `src/` alias form, the forms seen in the workspace so far, but it should not be described as airtight. In particular it does not see a dynamic `import()`: `no-restricted-imports` covers static `import` and `export ... from` only, where `@nx/enforce-module-boundaries` also analysed `import()`. The build closes part of that: a library a dynamic `import()` reaches must be a declared Bazel dependency, or the compile fails with TS2307. A dynamic deep import into a declared dependency's internal file is caught by neither.
 
-**Sheriff** (SoftArc) closes this gap. It enforces module boundaries at folder level, independently of Nx's project graph, and its `noTag` default means it can be adopted incrementally without tagging everything first.
+**Sheriff** (SoftArc) closes this gap. It enforces module boundaries at folder level, independently of the build graph, and its `noTag` default means it can be adopted incrementally without tagging everything first.
 
 Sheriff is **not adopted now**, deliberately. The workspace currently has zero deep-import violations, so Sheriff would be protecting against a problem that has not occurred, and ADR-0001 is already changing how boundary failures are reported. Introducing a second boundary tool in the same period would make a failing build ambiguous about which tool rejected it and why. Sheriff is recorded here as the known answer, to be revisited if a deep-import violation ever lands on `main`.
 
@@ -64,10 +64,10 @@ Sheriff is **not adopted now**, deliberately. The workspace currently has zero d
 
 **Positive.** The strongest existing boundary becomes a stated rule rather than a shared habit, and survives contributor turnover. New libraries get a reviewable public surface from the start. The refactoring freedom that a narrow barrel buys, changing anything not exported without touching a consumer, becomes real rather than accidental.
 
-**Negative and costs.** Curated barrels are more work per change than `export *`: adding a component means editing two files. Twenty-four libraries keep a wide surface indefinitely under decision 4, so the benefit arrives slowly and unevenly. The Nx deep-import gap stays open, accepted knowingly.
+**Negative and costs.** Curated barrels are more work per change than `export *`: adding a component means editing two files. Twenty-four libraries keep a wide surface indefinitely under decision 4, so the benefit arrives slowly and unevenly. The pattern rule's gaps stay open, accepted knowingly: a dynamic `import()` and any deep-import form its patterns do not name.
 
 ## Alternatives rejected
 
 - **Convert all twenty-four barrels now.** Mechanical, reviewable only in aggregate, and produces a diff nobody can meaningfully check. The value of a curated barrel comes from the review step at the moment a symbol is added, which a bulk conversion does not provide retroactively.
-- **Adopt Sheriff alongside Nx tags immediately.** Correct in the long run and rejected only on timing, as set out above.
+- **Adopt Sheriff alongside ADR-0001's tier rules immediately.** Correct in the long run and rejected only on timing, as set out above.
 - **Drop barrels and import by deep path with a lint rule listing permitted paths.** Some workspaces do this to improve tree-shaking. It replaces one reviewable file per library with a central allowlist that every team edits, which is a worse place to put the decision, and the bundler already handles what it would buy.

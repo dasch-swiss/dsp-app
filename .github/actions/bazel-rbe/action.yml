@@ -1,0 +1,82 @@
+name: bazel-rbe
+description: >
+  Set up mTLS material for the self-hosted NativeLink RBE backend and emit the
+  Bazel flag string (remote cache + remote executor at :50051). Single-platform
+  (linux-x86_64): exec == target == worker arch, so tests execute on the worker
+  and there is no cross-leg wiring. Emits an empty flag string when the mTLS
+  material is absent (fork PR / secrets not shared with the repo) so the build
+  falls through to a cold local build. Adapted from the sibling SIPI monorepo's
+  action; see docs — the SIPI version carries the extra cross-leg flags this
+  single-platform repo does not need.
+
+inputs:
+  runner-endpoint:
+    description: RE-API endpoint, e.g. grpcs://<host>:50051 — serves the remote cache (AC+CAS) and the remote executor.
+    required: true
+  ca-cert:
+    description: NativeLink server CA (PEM). Bazel verifies the server cert against it.
+    required: true
+  client-cert:
+    description: mTLS client cert (PEM) — the CI identity.
+    required: true
+  client-key:
+    description: mTLS client key (PEM).
+    required: true
+
+outputs:
+  flags:
+    description: Bazel flag string to append to a bazel invocation. Empty when mTLS material is absent (fork PR / unshared secrets -> cold build).
+    value: ${{ steps.build.outputs.flags }}
+
+runs:
+  using: composite
+  steps:
+    - id: build
+      shell: bash
+      env:
+        RBE_RUNNER_ENDPOINT: ${{ inputs.runner-endpoint }}
+        RBE_CA_CERT: ${{ inputs.ca-cert }}
+        RBE_CLIENT_CERT: ${{ inputs.client-cert }}
+        RBE_CLIENT_KEY: ${{ inputs.client-key }}
+      run: |
+        set -euo pipefail
+        # Missing endpoint/secrets (fork PR, or org secrets not shared with this
+        # repo) -> emit empty flags so the build runs cold locally.
+        if [ -z "${RBE_RUNNER_ENDPOINT:-}" ] || [ -z "${RBE_CLIENT_KEY:-}" ]; then
+          echo "bazel-rbe: endpoint/mTLS material absent — cold local build." >&2
+          echo "flags=" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        # Cert material lives OUTSIDE the checkout so it can never be picked up
+        # as a Bazel action input/output.
+        CERT_DIR="$RUNNER_TEMP/.nl"
+        mkdir -p "$CERT_DIR"
+        printf '%s' "$RBE_CA_CERT"     > "$CERT_DIR/ca.crt"
+        printf '%s' "$RBE_CLIENT_CERT" > "$CERT_DIR/client.crt"
+        printf '%s' "$RBE_CLIENT_KEY"  > "$CERT_DIR/client.key"
+        chmod 600 "$CERT_DIR/client.key"
+        # Remote cache (AC + CAS).
+        FLAGS="--remote_cache=$RBE_RUNNER_ENDPOINT --remote_instance_name=main"
+        FLAGS="$FLAGS --tls_certificate=$CERT_DIR/ca.crt --tls_client_certificate=$CERT_DIR/client.crt --tls_client_key=$CERT_DIR/client.key"
+        # Only main and release tags upload locally executed results; a branch
+        # still reads them. Remotely executed results are stored by NativeLink
+        # itself, whatever the ref, so a branch writes to the cache only what
+        # the worker computed.
+        case "$GITHUB_REF" in
+          refs/heads/main | refs/tags/v*) UPLOAD=true ;;
+          *) UPLOAD=false ;;
+        esac
+        # NativeLink v1.5.2 advertises no wire compression; retry on transient CAS
+        # eviction races.
+        FLAGS="$FLAGS --noremote_cache_compression --remote_upload_local_results=$UPLOAD --experimental_remote_cache_eviction_retries=5"
+        # Client fan-out to the worker. Bazel's default is the runner core count
+        # (~4), far too low when actions execute remotely. 128 was the value
+        # validated on SIPI's cold builds; conservative for a newly-onboarding
+        # repo. Retune as more repos share the backend.
+        FLAGS="$FLAGS --jobs=128"
+        # Remote execution: compile AND run on the x86_64 worker (exec == target
+        # == x86_64, so no cross-leg TestRunner=local / host_platform needed).
+        # Pin the exec platform to the worker so exec-config tools resolve there.
+        FLAGS="$FLAGS --remote_executor=$RBE_RUNNER_ENDPOINT --remote_default_exec_properties=cpu_arch=x86_64"
+        FLAGS="$FLAGS --extra_execution_platforms=//platforms:linux_x86_64 --platforms=//platforms:linux_x86_64"
+        echo "flags=$FLAGS" >> "$GITHUB_OUTPUT"

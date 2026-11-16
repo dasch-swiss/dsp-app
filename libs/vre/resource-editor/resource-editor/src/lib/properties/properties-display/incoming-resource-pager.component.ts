@@ -29,7 +29,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       </div>
     </div>
   `,
-  styleUrls: ['./incoming-resource-pager.component.scss'],
+  styleUrls: ['./incoming-resource-pager.component.css'],
   imports: [MatButtonModule, MatIconModule, TranslatePipe],
 })
 export class IncomingResourcePagerComponent {

@@ -47,7 +47,7 @@ import { OrderByComponent } from './ui/order-by/order-by.component';
       <app-search-tips class="page-search-tips" />
     }
   `,
-  styleUrl: './advanced-search-page.component.scss',
+  styleUrl: './advanced-search-page.component.css',
   providers: [provideAdvancedSearch()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

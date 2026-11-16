@@ -1,7 +1,8 @@
-import { STORY_PROVIDERS } from '@dasch-swiss/vre/pages/search/search-filters';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, userEvent, within } from 'storybook/test';
+// eslint-disable-next-line no-restricted-imports -- story-only helpers, kept out of search-filters' barrel.
+import { STORY_PROVIDERS } from '../../../../search/search-filters/src/lib/stories.helpers';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 
 const seeded = (total: number | null, pageIndex = 0) => {

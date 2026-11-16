@@ -1,0 +1,23 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "error-handler",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    test_size = "small",
+    test_srcs = glob(TEST_SRCS),
+    deps = [
+        "//:node_modules/@angular/common",
+        "//:node_modules/@angular/core",
+        "//:node_modules/@ngx-translate/core",
+        "//:node_modules/rxjs",
+        "//libs/dsp-js",
+        "//libs/vre/core/config",
+        "//libs/vre/ui/notification",
+    ],
+    test_deps = [
+        "//:node_modules/ng-mocks",
+    ],
+)

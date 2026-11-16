@@ -1,0 +1,24 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "app-help-page",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    assets = glob(["src/**/*.html"]),
+    stylesheets = glob(["src/**/*.scss"]),
+    sass_deps = ["//libs/vre/ui/styles"],
+    test_size = "small",
+    test_srcs = glob(TEST_SRCS) + ["src/lib/i18n.spec-helper.ts"],
+    test_data = ["//apps/dsp-app:i18n"],
+    deps = [
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/material",
+        "//:node_modules/@angular/router",
+        "//:node_modules/@ngx-translate/core",
+        "//libs/vre/3rd-party-services/api",
+        "//libs/vre/core/config",
+    ],
+    test_deps = ["//:node_modules/@angular/common"],
+)

@@ -16,26 +16,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: 'npm'
-          # Note: registry-url is NOT set here to allow OIDC authentication
-
-      - name: Set up npm
-        uses: ./.github/actions/setup-npm
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit
-        env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
 
       - name: Build dsp-js
-        run: npx nx build dsp-js
+        env:
+          BAZEL_FLAGS: --lockfile_mode=error --build_event_json_file=${{ runner.temp }}/bep-build.json
+        run: nix develop --command just build //libs/dsp-js:npm_package
+
+      - name: Upload the build event logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bep-dsp-js
+          path: ${{ runner.temp }}/bep-*.json
+          if-no-files-found: ignore
 
       - name: Publish to NPM
-        run: npx npm@11 publish dist/libs/dsp-js --access public --provenance
+        run: nix develop --command npx npm@11 publish bazel-bin/libs/dsp-js/npm_package --access public --provenance
         # OIDC authentication via trusted publishers - no token needed
 
   notification:

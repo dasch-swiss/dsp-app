@@ -1,0 +1,11 @@
+load("@aspect_rules_js//npm:defs.bzl", "npm_package")
+
+# package.json's `optionalDependencies.canvas: file:mocks/canvas`; rules_js links it from here.
+npm_package(
+    name = "pkg",
+    srcs = [
+        "index.js",
+        "package.json",
+    ],
+    visibility = ["//visibility:public"],
+)

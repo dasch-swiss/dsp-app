@@ -1,0 +1,15 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "vre_library")
+
+vre_library(
+    name = "nested-menu",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    deps = [
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/material",
+        "//libs/dsp-js",
+        "//libs/vre/ui/string-literal",
+    ],
+)

@@ -29,7 +29,7 @@ const VISIBILITY_SLUG: Record<Visibility, string> = {
       }
     </span>
   `,
-  styleUrl: './visibility-cell.component.scss',
+  styleUrl: './visibility-cell.component.css',
   imports: [MatIcon, MatTooltipModule, TranslatePipe],
 })
 export class VisibilityCellComponent {

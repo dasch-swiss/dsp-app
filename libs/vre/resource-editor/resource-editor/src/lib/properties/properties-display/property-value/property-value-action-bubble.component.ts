@@ -81,7 +81,7 @@ import { VALUE_ACTIONS_OPTIONS, ValueActionsOptions } from './value-actions-opti
       }
     </div>
   `,
-  styleUrls: ['./property-value-actions.scss', './property-value-action-bubble.component.scss'],
+  styleUrls: ['./property-value-actions.css', './property-value-action-bubble.component.css'],
   host: { '[class.is-empty]': 'isEmpty' },
   // The bubble shows only while the pointer is over its value. An interactive tooltip, opening under the
   // pointer, takes the hover away from the value, which hides the bubble and its tooltip, and the pointer is

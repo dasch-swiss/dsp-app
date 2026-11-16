@@ -21,6 +21,8 @@ import {
   IEraseProjectDialogProps,
 } from './erase-project-dialog/erase-project-dialog.component';
 
+type ProjectSortKey = 'shortcode' | 'shortname' | 'longname';
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-projects-list',
@@ -70,7 +72,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     },
   };
 
-  sortProps: SortProp[] = [
+  sortProps: SortProp<ProjectSortKey>[] = [
     {
       key: 'shortcode',
       label: this._translateService.instant('pages.system.projectsList.sortShortCode'),
@@ -85,7 +87,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
     },
   ];
 
-  sortBy = 'longname';
+  sortBy: ProjectSortKey = 'longname';
 
   user$ = this._userService.user$;
   isSysAdmin$ = this._userService.isSysAdmin$;
@@ -100,7 +102,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.sortBy = localStorage.getItem('sortProjectsBy') || this.sortBy;
+    this.sortBy = (localStorage.getItem('sortProjectsBy') as ProjectSortKey | null) || this.sortBy;
     this.sortList(this.sortBy);
   }
 
@@ -174,7 +176,7 @@ export class ProjectsListComponent implements OnInit, OnDestroy {
       });
   }
 
-  sortList(key: any) {
+  sortList(key: ProjectSortKey) {
     if (!this.projectsList) {
       throw new AppError('List is not defined.');
     }

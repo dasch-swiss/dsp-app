@@ -1,5 +1,3 @@
-/// <reference types="window" />
-
 import { inject, Injectable, NgZone } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 

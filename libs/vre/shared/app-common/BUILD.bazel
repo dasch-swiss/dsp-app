@@ -1,0 +1,24 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "app-common",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    test_size = "small",
+    test_srcs = glob(TEST_SRCS),
+    # ADR-0001 decision 7: joinPlaceholderLegalValues moves to a `type:util` library (DEV-7552).
+    extra_visibility = [
+        "//libs/vre/ui/ui:__pkg__",
+    ],
+    deps = [
+        "//:node_modules/@angular/animations",
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/forms",
+        "//:node_modules/@angular/material",
+        "//:node_modules/rxjs",
+        "//libs/dsp-js",
+        "//libs/vre/core/config",
+    ],
+)

@@ -1,0 +1,22 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "string-literal",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    test_size = "small",
+    test_srcs = glob(TEST_SRCS),
+    deps = [
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/forms",
+        "//:node_modules/@angular/material",
+        "//:node_modules/@ngx-translate/core",
+        "//libs/dsp-js",
+        "//libs/vre/3rd-party-services/open-api",
+        "//libs/vre/core/config",
+        "//libs/vre/shared/app-helper-services",
+        "//libs/vre/ui/ui",
+    ],
+)

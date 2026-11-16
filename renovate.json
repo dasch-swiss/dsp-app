@@ -7,7 +7,7 @@
     "schedule: before 5am on monday through friday — Renovate opens new PRs only during the midnight-to-5am window on weekdays (Europe/Zurich). platformAutomerge merges a PR the moment CI passes, so the last batch (Fri 00:00-05:00) runs CI during Friday and merges before the weekend. lockFileMaintenance keeps its own Monday schedule.",
     "rebaseWhen: conflicted (global) — major PRs sit unmerged intentionally; rebasing them on every automated merge would waste CI runs on a PR nobody is about to merge. Automated rules override this with behind-base-branch to keep the automerge chain moving.",
     "vulnerabilityAlerts disabled — Dependabot handles security advisories instead. Its native GitHub Security Advisory integration links CVEs to the Security tab with GHSA references and co-locates with secret scanning and code scanning, which Renovate cannot replicate. Tradeoff: Dependabot covers only direct dependencies and is slower than Renovate would be, but the GitHub-native security workflow outweighs that for this project.",
-    "lockFileMaintenance.postUpdateOptions: npmInstallTwice — lock file maintenance deletes package-lock.json and regenerates it from scratch, and npm 10 gets that single pass wrong for the @noble/hashes conflict: pkijs (via webpack-dev-server > selfsigned) pins 1.4.0 exactly while @exodus/bytes (via jsdom 28, arrived with Angular 21 / NX 23 in #3189) peer-requires ^1.8.0 || ^2.0.0. npm hoists 1.4.0 to the root and drops the nested copy, leaving the peer unsatisfied, so every npm ci in CI fails with EUSAGE. A second install pass converges to the correct tree (2.2.0 hoisted, 1.4.0 nested under pkijs). Not skipInstalls: false — a full install reproduces the same broken lock. npm 11 resolves it correctly in one pass, so this workaround can be dropped once devEngines.packageManager moves off ^10.9.0.",
+    "lockFileMaintenance.postUpdateOptions: npmInstallTwice — lock file maintenance deletes package-lock.json and regenerates it from scratch, and npm 10 gets that single pass wrong for the @noble/hashes conflict: pkijs (via webpack-dev-server > selfsigned) pins 1.4.0 exactly while @exodus/bytes (via jsdom 28, arrived with Angular 21 in #3189) peer-requires ^1.8.0 || ^2.0.0. npm hoists 1.4.0 to the root and drops the nested copy, leaving the peer unsatisfied, so every npm ci in CI fails with EUSAGE. A second install pass converges to the correct tree (2.2.0 hoisted, 1.4.0 nested under pkijs). Not skipInstalls: false — a full install reproduces the same broken lock. npm 11 resolves it correctly in one pass, so this workaround can be dropped once devEngines.packageManager moves off ^10.9.0.",
     "npm version: Renovate takes it from package.json devEngines.packageManager, which it reads before engines.npm. engines.npm is deliberately wide (^10.9.0 || ^11 || ^12) so developers on a newer npm can install under engine-strict; resolving that range gave Renovate npm 12, whose lock layout npm 10 in CI rejects (npm ci EUSAGE: Missing yaml@2.9.1, #3458, #3459). The lock layout only holds within one npm major, so devEngines names the major that writes the lock: CI installs the same range via .github/actions/setup-npm, and npm warns (onFail: warn) a developer on another npm. Moving to another npm major is a one-value change there plus a lock regeneration; no constraints entry here."
   ],
   "extends": ["config:recommended"],
@@ -52,21 +52,18 @@
       "groupName": "docker-deps"
     },
     {
-      "description": "Angular and NX: manual upgrade only (ng update / nx migrate)",
+      "description": "Angular: manual upgrade only (ng update)",
       "enabled": false,
       "matchPackageNames": [
         "/^@angular//",
         "/^@angular-devkit//",
         "/^@angular-eslint//",
         "angular-eslint",
-        "/^@schematics/angular/",
-        "/^nx$/",
-        "/^@nx//",
-        "/^@nrwl//"
+        "/^@schematics/angular/"
       ]
     },
     {
-      "description": "TypeScript: tightly coupled to Angular/NX version",
+      "description": "TypeScript: tightly coupled to the Angular version",
       "matchPackageNames": ["typescript"],
       "enabled": false
     },
@@ -77,7 +74,7 @@
       "enabled": false
     },
     {
-      "description": "ESLint core + TypeScript ESLint: major updates disabled — eslint 10 / ts-eslint 9 are coupled to the manually-managed Angular, NX and TypeScript versions; minor and patch updates are managed by Renovate",
+      "description": "ESLint core + TypeScript ESLint: major updates disabled — eslint 10 / ts-eslint 9 are coupled to the manually-managed Angular and TypeScript versions; minor and patch updates are managed by Renovate",
       "matchPackageNames": [
         "eslint",
         "typescript-eslint",
@@ -114,23 +111,18 @@
       "enabled": false
     },
     {
-      "description": "jsdom: exact-pinned in devDependencies and managed manually. It is not imported by the app — it arrives only as a peer of jest-preset-angular (peer jsdom >=26.0.0), so while unpinned npm was free to pick the newest release on every full lock regeneration. Each jsdom major moves both its engines.node floor and its peerOptional canvas range: 28.x wants canvas ^3.0.0, 30.x wants ^3.2.3 and node ^22.22.2. Because .nvmrc (22.23.1) satisfies jsdom 30's engines, lock file maintenance regenerated a tree with jsdom 30 against the canvas@3.0.0 stub in mocks/canvas, which npm cannot resolve (ERESOLVE) — Renovate could then produce no lock at all and every lock refresh stayed red. Pinning also keeps the canvas peer range fixed, so the stub version stops drifting. Bump deliberately alongside ng update / nx migrate, and move mocks/canvas/package.json in lockstep if the canvas range changes. If a jest-preset-angular update fails on an unsatisfiable jsdom peer range, raise this pin to the lowest jsdom satisfying the new floor rather than unpinning it. Revisit 2027-01: check whether jest-preset-angular still needs jsdom as a peer and whether the mocks/canvas stub is still required — if either is gone, this pin can be dropped.",
+      "description": "jsdom: exact-pinned in devDependencies and managed manually. It is not imported by the app — it arrives only as a peer of jest-preset-angular (peer jsdom >=26.0.0), so while unpinned npm was free to pick the newest release on every full lock regeneration. Each jsdom major moves both its engines.node floor and its peerOptional canvas range: 28.x wants canvas ^3.0.0, 30.x wants ^3.2.3 and node ^22.22.2. Because the Node of the time (22.23.1) satisfied jsdom 30's engines, lock file maintenance regenerated a tree with jsdom 30 against the canvas@3.0.0 stub in mocks/canvas, which npm cannot resolve (ERESOLVE) — Renovate could then produce no lock at all and every lock refresh stayed red. Pinning also keeps the canvas peer range fixed, so the stub version stops drifting. Bump deliberately alongside ng update, and move mocks/canvas/package.json in lockstep if the canvas range changes. If a jest-preset-angular update fails on an unsatisfiable jsdom peer range, raise this pin to the lowest jsdom satisfying the new floor rather than unpinning it. Revisit 2027-01: check whether jest-preset-angular still needs jsdom as a peer and whether the mocks/canvas stub is still required — if either is gone, this pin can be dropped.",
       "matchPackageNames": ["jsdom"],
       "enabled": false
     },
     {
-      "description": "Node.js (.nvmrc): all updates managed manually — minor/patch must stay in sync with package.json engines and CI runners; @types/node is also frozen, so any Node.js bump is a coordinated toolchain decision",
-      "matchManagers": ["nvm"],
-      "enabled": false
-    },
-    {
-      "description": "Node.js (package.json engines): all updates managed manually — same rationale as .nvmrc rule; the ^ range means Renovate would only bump on version outside the current range anyway, so disabling prevents partial updates",
+      "description": "Node.js (package.json engines): all updates managed manually — minor/patch must stay in sync with MODULE.bazel's node.toolchain and the Nix shell's nodejs_24; @types/node is also frozen, so any Node.js bump is a coordinated toolchain decision; the ^ range means Renovate would only bump on version outside the current range anyway, so disabling prevents partial updates",
       "matchManagers": ["npm"],
       "matchPackageNames": ["node"],
       "enabled": false
     },
     {
-      "description": "npm major: managed manually — not Angular/NX coupled but major npm releases have behavioural changes worth evaluating before adopting",
+      "description": "npm major: managed manually — not Angular-coupled but major npm releases have behavioural changes worth evaluating before adopting",
       "matchManagers": ["npm"],
       "matchPackageNames": ["npm"],
       "matchUpdateTypes": ["major"],
@@ -156,23 +148,7 @@
       "enabled": false
     },
     {
-      "description": "NX-wrapped tools: major version ceiling is set by @nx/* peer deps — disable majors until nx migrate lifts the constraint",
-      "matchPackageNames": [
-        "cypress",
-        "/^jest/",
-        "jest-preset-angular",
-        "@types/jest",
-        "/^ts-jest$/",
-        "storybook",
-        "/^@storybook//",
-        "/^@swc//",
-        "@swc-node/register"
-      ],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
-    },
-    {
-      "description": "eslint-plugin-storybook: major updates disabled — its peer dependency pins storybook to the same major, and storybook's own major is ceiling-locked by @nx/storybook (peer storybook <11.0.0) and @storybook/angular (peer @angular <23.0.0). It is therefore bound by the same nx + Angular major coupling that freezes the storybook packages above, and is upgraded in lockstep during nx migrate / ng update",
+      "description": "eslint-plugin-storybook: major updates disabled — its peer dependency pins storybook to the same major, and storybook's own major is ceiling-locked by @storybook/angular (peer @angular <23.0.0). It is therefore bound by the Angular major coupling, and is upgraded in lockstep during ng update",
       "matchPackageNames": ["eslint-plugin-storybook"],
       "matchUpdateTypes": ["major"],
       "enabled": false
@@ -275,14 +251,6 @@
       "groupName": "uuid-deps"
     },
     {
-      "description": "Test coverage tooling",
-      "matchPackageNames": [
-        "istanbul-lib-coverage",
-        "nyc"
-      ],
-      "groupName": "test-coverage-deps"
-    },
-    {
       "description": "Third-party Angular-compatible packages (not strictly version-coupled to Angular)",
       "matchPackageNames": [
         "angular-split",
@@ -314,15 +282,6 @@
     {
       "description": "Automerge github-actions and docker patch/minor updates — 3-day age guard matches devDep policy and guards against supply chain attacks on newly-published action versions; matchDepTypes: devDependencies does not apply to these managers so they need an explicit rule",
       "matchManagers": ["github-actions", "dockerfile", "docker-compose"],
-      "matchUpdateTypes": ["patch", "minor"],
-      "automerge": true,
-      "platformAutomerge": true,
-      "minimumReleaseAge": "3 days",
-      "rebaseWhen": "behind-base-branch"
-    },
-    {
-      "description": "Automerge pip_requirements patch/minor updates — 3-day age guard for consistency; docs tooling only (docs/requirements.txt); matchDepTypes does not apply to this manager so an explicit rule is needed",
-      "matchManagers": ["pip_requirements"],
       "matchUpdateTypes": ["patch", "minor"],
       "automerge": true,
       "platformAutomerge": true,
