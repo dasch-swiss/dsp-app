@@ -26,6 +26,11 @@ export interface DataModelEditor {
   addExistingProperty(classIri: string, propertyIri: string): Observable<boolean>;
   /** Opens the dialog creating a property of that type for the class; emits once it closes, `true` if it may have saved. */
   addNewProperty(classIri: string, type: DefaultProperty): Observable<boolean>;
+  /**
+   * Saves the form order of the class's own properties, as `propertyIris` lists them; inherited ones keep their places.
+   * Emits `true` once saved.
+   */
+  reorderProperties(classIri: string, propertyIris: string[]): Observable<boolean>;
   /** Opens the dialog creating a class of that kind in the data model; emits once it closes, the new class's IRI if made. */
   createClass(ontologyIri: string, kind: DefaultClass): Observable<string | undefined>;
   /** Opens the dialog creating a property of that type in the data model, for no class yet; emits its IRI if made. */
@@ -116,6 +121,11 @@ export function injectDataModelEditing() {
     /** Creates a property of that type for the class, in the data model editor's dialog, then reads the project again. */
     addNewProperty: (classIri: string, type: DefaultProperty) =>
       editor && edit(classIri, RouteConstants.classes, () => editor.addNewProperty(classIri, type)),
+    /** Whether properties can be put in another order here. */
+    canReorder: !!editor,
+    /** Saves the form order of the class's own properties, then reads the project again. Emits `true` once saved. */
+    reorderProperties: (classIri: string, propertyIris: string[]): Observable<boolean> =>
+      editor ? reloadOnceSaved(editor.reorderProperties(classIri, propertyIris)) : of(false),
     /** Whether vocabulary values can be added, edited, moved and deleted here, in the editor's dialogs. */
     canEditVocabularies: !!editor,
     addVocabularyValue: (parentIri: string, position: number): Observable<boolean> =>

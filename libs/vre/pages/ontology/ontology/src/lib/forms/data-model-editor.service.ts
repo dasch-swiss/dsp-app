@@ -201,6 +201,44 @@ export class DataModelEditorService implements DataModelEditor {
     );
   }
 
+  reorderProperties(classIri: string, propertyIris: string[]): Observable<boolean> {
+    return this._withEditing(classIri, editing =>
+      editing.currentOntology$.pipe(
+        filter(ontology => !!ontology?.classes[classIri]),
+        take(1),
+        switchMap(ontology => {
+          // The class's properties in form order; its own ones take the new order, in the places they had.
+          const current = [...ontology!.classes[classIri].propertiesList].sort(
+            (a, b) => (a.guiOrder ?? 0) - (b.guiOrder ?? 0)
+          );
+          const moved = new Set(propertyIris);
+          const next = [...propertyIris];
+          const ordered = current.map(property => {
+            if (!moved.has(property.propertyIndex)) return property;
+            return current.find(own => own.propertyIndex === next.shift())!;
+          });
+          const saved = ordered.map((property, index) => ({ ...property, guiOrder: index + 1 }));
+          editing.updateGuiOrderOfClassProperties(classIri, saved);
+          // Saved once the data model, read again, has the class's properties in that order.
+          const order = (properties: { propertyIndex: string; guiOrder?: number }[]) =>
+            properties
+              .filter(property => moved.has(property.propertyIndex))
+              .sort((a, b) => (a.guiOrder ?? 0) - (b.guiOrder ?? 0))
+              .map(property => property.propertyIndex)
+              .join(' ');
+          return editing.currentOntology$.pipe(
+            filter(
+              read =>
+                !!read?.classes[classIri] && order(read.classes[classIri].propertiesList) === propertyIris.join(' ')
+            ),
+            take(1)
+          );
+        }),
+        map(() => true)
+      )
+    );
+  }
+
   createClass(ontologyIri: string, kind: DefaultClass): Observable<string | undefined> {
     return this._created(ontologyIri, (editing, injector) =>
       this._closedByClickOnly(

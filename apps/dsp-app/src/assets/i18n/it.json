@@ -877,6 +877,8 @@
       "links": "collegamenti"
     },
     "dataModels2": {
+      "findInCards": "Cerca classi e proprietà",
+      "dragToReorder": "Trascina per cambiare l’ordine",
       "links": "Collegamenti",
       "groupLinks": "Mostra i collegamenti separati dai valori",
       "linkChips": "Mostra le destinazioni dei collegamenti a colori",

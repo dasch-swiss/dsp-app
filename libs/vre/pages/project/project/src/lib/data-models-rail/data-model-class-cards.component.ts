@@ -1,27 +1,34 @@
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
+  ElementRef,
+  inject,
   input,
   model,
   output,
   signal,
+  untracked,
   WritableSignal,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
+import { FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
-import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
-
-type CardProperty = ClassRow['propertyList'][number];
+import { CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
+import { hasText, highlighted } from './highlighted';
 
 /** How many of a class's own properties a card shows before "Show more". */
 export const CARD_PROPERTIES = 8;
+
+/** How long a card opened from a link target stays outlined. */
+const FLASH_MS = 1500;
 
 /** A class as its card shows it: its own properties, and those it has from its superclass, apart. */
 interface Card {
@@ -35,72 +42,66 @@ interface Card {
   parent?: string;
 }
 
+/** A class's own properties in a new form order, to save. */
+export interface PropertyOrder {
+  classIri: string;
+  propertyIris: string[];
+}
+
 /**
- * Data models 2 › Classes as cards, the way the Data models tab shows a data model: one box per class with its
- * properties in their form order, one line each: value type, label, the class a link points at, local name and
- * cardinality. A subclass lists its own properties; those from its superclass fold into one row. Past
- * {@link CARD_PROPERTIES}, "Show more" opens the rest. As view options, the values and the links can show apart,
- * and a link's target as a chip in its family's colour. A card folds to its title. A clicked class opens its panel.
+ * Data models 2 › Classes as cards, the way the Data models tab shows a data model: one box per class, with the kind of
+ * file its resources carry and its description, then its properties in their form order, one line each. A subclass
+ * lists its own properties; those from its superclass fold into one row. Past {@link CARD_PROPERTIES}, "Show more" opens
+ * the rest. A link's target opens its card. The text searched for is marked, and the rows it is in are opened. Editors
+ * drag a class's own properties to another place. As view options, the values and the links can show apart, and a
+ * link's target as a chip in its family's colour. A card folds to its title. A clicked class opens its panel.
  */
 @Component({
   selector: 'app-data-model-class-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AddPropertyMenuComponent, MatIcon, MatTooltip, NgTemplateOutlet, TabShadePipe, TranslatePipe],
+  imports: [
+    AddPropertyMenuComponent,
+    CdkDrag,
+    CdkDragPlaceholder,
+    CdkDropList,
+    ClassCardPropertyComponent,
+    MatIcon,
+    MatTooltip,
+    NgTemplateOutlet,
+    TabShadePipe,
+    TranslatePipe,
+  ],
   template: `
     @let r = 'pages.dataModels2';
-    <ng-template #propertyRow let-property>
-      <li
-        class="prop"
-        data-cy="data-model-class-card-property"
-        [class.link]="linkChips() && property.linkTarget"
-        [matTooltip]="propertyTip(property)"
-        matTooltipShowDelay="600">
-        <mat-icon class="type" [attr.aria-label]="typeName(property.type)">{{ typeIcon(property.type) }}</mat-icon>
-        <span class="name">
-          {{ property.label }}
-          @if (property.linkTarget) {
-            @if (linkChips()) {
-              <!-- The target in its family's colour, as its card and its box in the diagram. -->
-              <span
-                class="target-chip"
-                data-cy="data-model-class-card-target"
-                [style.--c]="colors().get(property.linkTarget) ?? '#9ca3af'"
-                >{{ labelOf()(property.linkTarget) }}</span
-              >
-            } @else {
-              <span class="target">→ {{ labelOf()(property.linkTarget) }}</span>
-            }
-          }
-        </span>
-        <span class="local">{{ localName(property.id) }}</span>
-        <span
-          class="cardinality"
-          data-cy="data-model-class-card-cardinality"
-          [class.required]="property.required"
-          [matTooltip]="r + '.cardinality.' + cardinalityKey(property) | translate">
-          {{ cardinality(property) }}
-        </span>
-        <!-- For editors, on hover: the property's dialog; built-in properties are not edited here. -->
-        @if (canEdit() && editable(property.id)) {
-          <button
-            type="button"
-            class="edit"
-            data-cy="data-model-class-card-edit-property"
-            [attr.aria-label]="'pages.ontologyMap.classPanel.editProperty' | translate: { property: property.label }"
-            (click)="editProperty.emit(property.id)">
-            <mat-icon>edit</mat-icon>
-          </button>
-        }
-      </li>
-    </ng-template>
-
-    <!-- Properties up to the cap, then "Show n more"; key names what "Show more" opens. -->
-    <ng-template #capped let-properties let-key="key">
-      @let all = showAll().has(key);
+    <!-- A class's own properties, or one group of them, up to the cap, then "Show n more"; editors drag them. -->
+    <ng-template #capped let-properties let-key="key" let-card="card">
+      @let all = showAll().has(key) || autoOpened().has(key);
       @let hidden = properties.length - CARD_PROPERTIES;
-      <ul class="props">
+      @let drag = reorderable();
+      <ul
+        class="props"
+        cdkDropList
+        [cdkDropListDisabled]="!drag"
+        (cdkDropListDropped)="dropped(card, properties, $event)">
         @for (property of all ? properties : properties.slice(0, CARD_PROPERTIES); track property.id) {
-          <ng-container *ngTemplateOutlet="propertyRow; context: { $implicit: property }" />
+          <li
+            appClassCardProperty
+            cdkDrag
+            cdkDragLockAxis="y"
+            cdkDragBoundary=".props"
+            [cdkDragDisabled]="!drag"
+            [property]="property"
+            [labelOf]="labelOf()"
+            [colors]="colors()"
+            [linkChips]="linkChips()"
+            [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
+            [query]="query()"
+            [canEdit]="canEdit()"
+            [draggable]="drag"
+            (edit)="editProperty.emit($event)"
+            (goTo)="goTo($event)">
+            <div class="drop-line" *cdkDragPlaceholder></div>
+          </li>
         }
       </ul>
       @if (hidden > 0) {
@@ -123,7 +124,9 @@ interface Card {
         <article
           class="card"
           data-cy="data-model-class-card"
+          [attr.data-iri]="row.id"
           [class.selected]="row.id === selected()"
+          [class.flash]="row.id === flashed()"
           [style.--tab]="colors().get(row.id) | tabShade: '#FFFFFF'">
           <header
             class="card-head"
@@ -141,9 +144,35 @@ interface Card {
                 </span>
               }
               <span class="title">
-                <b>{{ row.label }}</b>
-                <small>{{ row.name }}</small>
+                <b>
+                  @for (part of mark(row.label); track $index) {
+                    <span [class.hit]="part.match">{{ part.text }}</span>
+                  }
+                </b>
+                <small>
+                  @for (part of mark(row.name); track $index) {
+                    <span [class.hit]="part.match">{{ part.text }}</span>
+                  }
+                </small>
+                <!-- The kind of file the class's resources carry. -->
+                @if (row.representation; as representation) {
+                  <span class="file" data-cy="data-model-class-card-file">
+                    <mat-icon>{{ fileIcon(representation) }}</mat-icon>
+                    {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
+                  </span>
+                }
               </span>
+              @if (row.description) {
+                <span
+                  class="description"
+                  data-cy="data-model-class-card-description"
+                  [matTooltip]="row.description"
+                  matTooltipShowDelay="400">
+                  @for (part of mark(row.description); track $index) {
+                    <span [class.hit]="part.match">{{ part.text }}</span>
+                  }
+                </span>
+              }
             </span>
             <button
               type="button"
@@ -158,19 +187,21 @@ interface Card {
           @if (open) {
             <!-- Values, then the links under their own heading, each in form order, when asked apart. -->
             @if (groupLinks() && card.values.length && card.links.length) {
-              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.values, key: row.id + ' values' }" />
+              <ng-container
+                *ngTemplateOutlet="capped; context: { $implicit: card.values, key: row.id + ' values', card }" />
               <div class="group" data-cy="data-model-class-card-links">
                 <mat-icon>link</mat-icon>
                 {{ r + '.links' | translate }} <span class="n">{{ card.links.length }}</span>
               </div>
-              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.links, key: row.id + ' links' }" />
+              <ng-container
+                *ngTemplateOutlet="capped; context: { $implicit: card.links, key: row.id + ' links', card }" />
             } @else if (card.own.length) {
-              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.own, key: row.id }" />
+              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.own, key: row.id, card }" />
             } @else if (!card.inherited.length) {
               <p class="none">{{ r + '.noProperties' | translate }}</p>
             }
             @if (card.inherited.length) {
-              @let inheritedOpen = inheritedShown().has(row.id);
+              @let inheritedOpen = inheritedShown().has(row.id) || autoOpened().has(row.id + ' inherited');
               <div class="inherited">
                 <button
                   type="button"
@@ -184,7 +215,17 @@ interface Card {
                 @if (inheritedOpen) {
                   <ul class="props">
                     @for (property of card.inherited; track property.id) {
-                      <ng-container *ngTemplateOutlet="propertyRow; context: { $implicit: property }" />
+                      <li
+                        appClassCardProperty
+                        [property]="property"
+                        [labelOf]="labelOf()"
+                        [colors]="colors()"
+                        [linkChips]="linkChips()"
+                        [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
+                        [query]="query()"
+                        [canEdit]="canEdit()"
+                        (edit)="editProperty.emit($event)"
+                        (goTo)="goTo($event)"></li>
                     }
                   </ul>
                 }
@@ -226,6 +267,8 @@ interface Card {
         border-radius: 6px;
         overflow: hidden;
         position: relative;
+        scroll-margin: 16px;
+        transition: box-shadow 0.2s;
 
         // The family's colour as a tab, as the class chips and the graph show it.
         &::before {
@@ -236,17 +279,23 @@ interface Card {
           bottom: 0;
           width: 6px;
           background: var(--tab);
+          z-index: 1;
         }
 
-        &.selected {
+        &.selected,
+        &.flash {
           border-color: $primary;
           box-shadow: 0 0 0 1px $primary;
+        }
+
+        &.flash {
+          box-shadow: 0 0 0 3px rgba(51, 103, 144, 0.35);
         }
       }
 
       .card-head {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 6px;
         padding: 6px 4px 6px 16px;
         cursor: pointer;
@@ -258,13 +307,18 @@ interface Card {
         .texts {
           flex: 1;
           min-width: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
         }
 
         .title {
           display: flex;
           align-items: baseline;
-          gap: 6px;
+          flex-wrap: wrap;
+          column-gap: 6px;
           min-width: 0;
+          max-width: 100%;
         }
 
         b {
@@ -284,6 +338,12 @@ interface Card {
           text-overflow: ellipsis;
           white-space: nowrap;
         }
+      }
+
+      .hit {
+        background: #fde68a;
+        color: inherit;
+        border-radius: 2px;
       }
 
       // The superclass, in the family's colour, above the name.
@@ -311,6 +371,37 @@ interface Card {
         }
       }
 
+      // The kind of file, after the names.
+      .file {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        align-self: center;
+        padding: 0 7px 0 4px;
+        border: 1px solid $cool_gray_300;
+        border-radius: 99px;
+        font-size: 11px;
+        line-height: 16px;
+        color: $cool_gray_600;
+        white-space: nowrap;
+
+        mat-icon {
+          font-size: 13px;
+          width: 13px;
+          height: 13px;
+        }
+      }
+
+      // One line of the description; the rest on hover.
+      .description {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12px;
+        color: $cool_gray_500;
+      }
+
       .fold {
         flex: none;
         border: 0;
@@ -335,73 +426,18 @@ interface Card {
         border-top: 1px solid $cool_gray_100;
       }
 
-      // One line per property: type, label and target, local name, cardinality; the pencil floats over it on hover.
-      .prop {
-        position: relative;
-        display: grid;
-        grid-template-columns: 16px minmax(0, 1fr) auto 32px;
-        gap: 6px;
-        align-items: center;
-        min-height: 26px;
-        padding: 1px 8px 1px 16px;
-        font-size: 12.5px;
-
-        & + .prop {
-          border-top: 1px solid $cool_gray_100;
-        }
-
-        &:hover {
-          background: $cool_gray_50;
-        }
+      // Where a dragged property lands.
+      .drop-line {
+        height: 2px;
+        background: $primary;
       }
 
-      .type {
-        font-size: 15px;
-        width: 15px;
-        height: 15px;
-        color: $cool_gray_500;
+      .cdk-drag-animating,
+      .props.cdk-drop-list-dragging .prop:not(.cdk-drag-placeholder) {
+        transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
       }
 
-      .name {
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: $cool_gray_900;
-      }
-
-      .target {
-        color: $cool_gray_500;
-      }
-
-      // A link's target in its family's colour; the link icon then takes the primary colour.
-      .target-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        margin-left: 4px;
-        padding: 0 7px 0 5px;
-        border-radius: 99px;
-        background: color-mix(in srgb, var(--c) 22%, white);
-        font-size: 11px;
-        line-height: 16px;
-        color: $cool_gray_900;
-        vertical-align: 1px;
-
-        &::before {
-          content: '';
-          width: 6px;
-          height: 6px;
-          border-radius: 2px;
-          background: var(--c);
-        }
-      }
-
-      .prop.link .type {
-        color: $primary;
-      }
-
-      // "Values" and "Links" over their groups.
+      // "Links" over their group.
       .group {
         display: flex;
         align-items: center;
@@ -425,67 +461,6 @@ interface Card {
           width: 14px;
           height: 14px;
         }
-      }
-
-      .local {
-        max-width: 120px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-family: 'Roboto Mono', monospace;
-        font-size: 10.5px;
-        color: $primary;
-      }
-
-      // 1, 0-1, 1-n or 0-n; filled when a value is required.
-      .cardinality {
-        font-family: 'Roboto Mono', monospace;
-        font-size: 10.5px;
-        font-weight: 500;
-        line-height: 16px;
-        text-align: center;
-        border: 1px solid $cool_gray_300;
-        border-radius: 4px;
-        color: $cool_gray_600;
-
-        &.required {
-          background: $primary;
-          border-color: $primary;
-          color: white;
-        }
-      }
-
-      // The pencil, as in the class's panel: shown on hover, or while it has the focus. It takes no room of its own:
-      // it covers the end of the local name, next to the cardinality, on the row's hover colour.
-      .edit {
-        position: absolute;
-        top: 50%;
-        right: 46px;
-        transform: translateY(-50%);
-        display: flex;
-        padding: 2px;
-        border: 0;
-        border-radius: 50%;
-        background: $cool_gray_50;
-        box-shadow: -10px 0 8px -2px $cool_gray_50;
-        color: $primary;
-        cursor: pointer;
-        visibility: hidden;
-
-        &:hover {
-          background: $primary_50;
-        }
-
-        mat-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-        }
-      }
-
-      .prop:hover .edit,
-      .edit:focus-visible {
-        visibility: visible;
       }
 
       // "Show n more" and the inherited row.
@@ -523,10 +498,6 @@ interface Card {
           font-weight: 400;
           color: $cool_gray_600;
         }
-
-        .name {
-          color: $cool_gray_600;
-        }
       }
 
       // "Add property" under an opened card's properties, as in the Data models tab.
@@ -552,6 +523,8 @@ interface Card {
   ],
 })
 export class DataModelClassCardsComponent {
+  private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
+
   readonly CARD_PROPERTIES = CARD_PROPERTIES;
 
   readonly rows = input.required<ClassRow[]>();
@@ -565,14 +538,20 @@ export class DataModelClassCardsComponent {
   readonly selected = input<string | undefined>(undefined);
   /** Whether an opened card offers "Add property": for those who may edit the data model. */
   readonly canEdit = input(false);
+  /** Whether editors may drag a class's own properties to another place, where the editor can save it. */
+  readonly canReorder = input(false);
   /** Whether a class's own properties show as values, then links, rather than all in form order. */
   readonly groupLinks = input(false);
   /** Whether a link's target shows as a chip in its family's colour, rather than as "→ class". */
   readonly linkChips = input(false);
+  /** The text searched for: marked where it shows, and the rows it is in opened. */
+  readonly query = input('');
 
   readonly classSelected = output<string>();
   /** A property's pencil was clicked: its dialog is to open. */
   readonly editProperty = output<string>();
+  /** A property was dragged to another place: the class's own properties in their new order, to save. */
+  readonly reorder = output<PropertyOrder>();
 
   /** The cards folded to their title; the others show their properties. */
   readonly folded = model(new Set<string>());
@@ -580,13 +559,27 @@ export class DataModelClassCardsComponent {
   readonly showAll = signal(new Set<string>());
   /** The cards showing the properties their class has from its superclass. */
   readonly inheritedShown = signal(new Set<string>());
+  /** The card a link target just opened, outlined a moment. */
+  readonly flashed = signal<string | undefined>(undefined);
+  private _flashTimer?: ReturnType<typeof setTimeout>;
+
+  /** The orders dragged but not read back yet, by class: shown at once, until the data model is read again. */
+  private readonly _dragged = signal(new Map<string, string[]>());
+
+  readonly reorderable = computed(() => this.canEdit() && this.canReorder());
+
+  /** The classes whose cards show, for link targets to open. */
+  readonly shown = computed(() => new Set(this.rows().map(row => row.id)));
 
   readonly cards = computed<Card[]>(() => {
     const byId = new Map((this.classes() ?? this.rows()).map(row => [row.id, row]));
+    const dragged = this._dragged();
     return this.rows().map(row => {
       const parent = row.superclass ? byId.get(row.superclass) : undefined;
       const fromParent = new Set(parent?.propertyList.map(property => property.id));
-      const own = row.propertyList.filter(property => !fromParent.has(property.id));
+      let own = row.propertyList.filter(property => !fromParent.has(property.id));
+      const order = dragged.get(row.id);
+      if (order) own = [...own].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
       return {
         row,
         own,
@@ -598,42 +591,77 @@ export class DataModelClassCardsComponent {
     });
   });
 
+  /** The lists opened for the search: past "Show more", or the inherited row, where a property has the text. */
+  readonly autoOpened = computed(() => {
+    const query = this.query();
+    const opened = new Set<string>();
+    if (!query.trim()) return opened;
+    const has = (property: CardProperty) =>
+      hasText(property.label, query) || hasText(property.id.substring(property.id.lastIndexOf('#') + 1), query);
+    const grouped = this.groupLinks();
+    for (const card of this.cards()) {
+      const id = card.row.id;
+      const lists: [string, CardProperty[]][] =
+        grouped && card.values.length && card.links.length
+          ? [
+              [`${id} values`, card.values],
+              [`${id} links`, card.links],
+            ]
+          : [[id, card.own]];
+      for (const [key, list] of lists) if (list.slice(CARD_PROPERTIES).some(has)) opened.add(key);
+      if (card.inherited.some(has)) opened.add(`${id} inherited`);
+    }
+    return opened;
+  });
+
+  constructor() {
+    // The data model read again has the dragged orders, or not if saving failed: either way it is what shows.
+    effect(() => {
+      this.classes();
+      untracked(() => this._dragged.set(new Map()));
+    });
+  }
+
   toggle(set: WritableSignal<Set<string>>, iri: string): void {
     const next = new Set(set());
     if (!next.delete(iri)) next.add(iri);
     set.set(next);
   }
 
-  /** The cardinality as the data model writes it: 1, 0-1, 1-n or 0-n. */
-  cardinality(property: CardProperty): string {
-    return `${property.required ? 1 : 0}${property.multiple ? '-n' : property.required ? '' : '-1'}`;
+  /** The text cut where it has the searched text, to mark it. */
+  mark(text: string) {
+    return highlighted(text, this.query());
   }
 
-  /** The translation key, under `pages.dataModels2.cardinality`, that says the cardinality in words. */
-  cardinalityKey(property: CardProperty): string {
-    return `${property.required ? 'required' : 'optional'}${property.multiple ? 'Multiple' : 'One'}`;
+  fileIcon(representation: string): string {
+    return FILE_KINDS.find(kind => kind.representation === representation)?.icon ?? 'insert_drive_file';
   }
 
-  /** The whole line, for when the card is too narrow for it. */
-  propertyTip(property: CardProperty): string {
-    const target = property.linkTarget ? ` → ${this.labelOf()(property.linkTarget)}` : '';
-    return `${property.label}${target} (${this.localName(property.id)})`;
+  /** Brings the class's card into view and outlines it a moment. */
+  goTo(iri: string): void {
+    const card = Array.from(this._host.nativeElement.querySelectorAll<HTMLElement>('[data-iri]')).find(
+      element => element.dataset['iri'] === iri
+    );
+    if (!card) return;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    card.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    this.flashed.set(iri);
+    clearTimeout(this._flashTimer);
+    this._flashTimer = setTimeout(() => this.flashed.set(undefined), FLASH_MS);
   }
 
-  /** Whether the property is the data model's own, rather than built in, so it can be edited here. */
-  editable(iri: string): boolean {
-    return !iri.startsWith(Constants.KnoraApiV2);
-  }
-
-  typeIcon(type: string): string {
-    return typeIconOf(type);
-  }
-
-  typeName(type: string): string {
-    return typeNameOf(type);
-  }
-
-  localName(iri: string): string {
-    return iri.substring(iri.lastIndexOf('#') + 1);
+  /**
+   * A property of `list`, the class's own ones or one group of them, was dropped elsewhere in it: the class's own
+   * properties take the new order, the other group's keeping their places, and it is shown at once, then saved.
+   */
+  dropped(card: Card, list: CardProperty[], event: CdkDragDrop<unknown>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    const moved = [...list];
+    moveItemInArray(moved, event.previousIndex, event.currentIndex);
+    const inList = new Set(list.map(property => property.id));
+    const next = [...moved];
+    const order = card.own.map(property => (inList.has(property.id) ? next.shift()!.id : property.id));
+    this._dragged.update(dragged => new Map(dragged).set(card.row.id, order));
+    this.reorder.emit({ classIri: card.row.id, propertyIris: order });
   }
 }

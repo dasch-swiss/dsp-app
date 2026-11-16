@@ -4,13 +4,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   signal,
   viewChild,
   WritableSignal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -48,7 +49,7 @@ import { ResourceClassPanelComponent } from '../ontology-map/resource-class-pane
 import { ClassChipsComponent } from './class-chips.component';
 import { ColumnHeaderComponent } from './column-header.component';
 import { ColumnsMenuComponent } from './columns-menu.component';
-import { DataModelClassCardsComponent } from './data-model-class-cards.component';
+import { DataModelClassCardsComponent, PropertyOrder } from './data-model-class-cards.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { TextKind } from './description-editor.component';
 import { escapeClosesPanel } from './escape-closes';
@@ -152,8 +153,8 @@ const COLUMN_LABELS: Record<Column, string> = {
             #search
             matInput
             data-cy="data-model-classes-search"
-            [placeholder]="r + '.findClass' | translate"
-            [attr.aria-label]="r + '.findClass' | translate"
+            [placeholder]="(layout() === 'cards' ? r + '.findInCards' : r + '.findClass') | translate"
+            [attr.aria-label]="(layout() === 'cards' ? r + '.findInCards' : r + '.findClass') | translate"
             (input)="query.set(search.value)" />
         </mat-form-field>
         <!-- For editors: a class of the kind picked, made in the data model editor's dialog, then opened in the panel. -->
@@ -296,7 +297,10 @@ const COLUMN_LABELS: Record<Column, string> = {
           [canEdit]="state.canEdit()"
           [groupLinks]="groupLinks()"
           [linkChips]="linkChips()"
+          [canReorder]="editing.canReorder"
+          [query]="query()"
           [(folded)]="foldedCards"
+          (reorder)="reorderProperties($event)"
           (classSelected)="openPanel($event)"
           (editProperty)="editing.editProperty($event)" />
         @if (rows().length === 0) {
@@ -941,6 +945,7 @@ export class DataModelClassesComponent {
   private readonly _params = toSignal(this._route.queryParamMap);
   private readonly _translate = inject(TranslateService);
   readonly editing = injectDataModelEditing();
+  private readonly _destroyRef = inject(DestroyRef);
 
   readonly columns = new TableColumns<Column>({
     storageKey: STORAGE_KEY,
@@ -973,6 +978,11 @@ export class DataModelClassesComponent {
   readonly groupLinks = rememberedSignal(`${STORAGE_KEY}-group-links`, false, stored => stored === 'true');
   /** Whether the cards show a link's target as a chip in its family's colour; off at first; remembered. */
   readonly linkChips = rememberedSignal(`${STORAGE_KEY}-link-chips`, false, stored => stored === 'true');
+
+  /** Saves the form order a property was dragged to on a card; the data model is then read again. */
+  reorderProperties({ classIri, propertyIris }: PropertyOrder): void {
+    this.editing.reorderProperties(classIri, propertyIris).pipe(takeUntilDestroyed(this._destroyRef)).subscribe();
+  }
 
   toggleAllCards(): void {
     this.foldedCards.set(this.allCardsOpen() ? new Set(this.rows().map(row => row.id)) : new Set());
@@ -1096,10 +1106,12 @@ export class DataModelClassesComponent {
     const types = this.types();
     const targets = this.targets();
     const sources = this.sources();
-    const shown = this.columns.shown();
+    // The table searches the columns it shows; the cards, what they show: names, file, description and properties.
+    const searched: Column[] =
+      this.layout() === 'cards' ? ['class', 'file', 'description', 'properties'] : this.columns.shown();
     return this.state
       .classRows()
-      .filter(row => !query || shown.some(column => this._columnHas(row, column, query)))
+      .filter(row => !query || searched.some(column => this._columnHas(row, column, query)))
       .filter(row => level === 'all' || (level === 'sub') === !!row.superclass)
       .filter(row => !files.size || files.has(row.representation ?? NO_FILE))
       .filter(
@@ -1269,7 +1281,12 @@ export class DataModelClassesComponent {
       case 'description':
         return has(row.description) || row.descriptions.some(text => has(text.value));
       case 'properties':
-        return row.propertyList.some(property => has(property.label) || hasClass(property.linkTarget));
+        return row.propertyList.some(
+          property =>
+            has(property.label) ||
+            has(property.id.substring(property.id.lastIndexOf('#') + 1)) ||
+            hasClass(property.linkTarget)
+        );
       case 'linkedFrom':
         return row.linkedFrom.some(hasClass);
       case 'linksTo':

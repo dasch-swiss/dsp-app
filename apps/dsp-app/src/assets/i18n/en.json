@@ -877,6 +877,8 @@
       "links": "links"
     },
     "dataModels2": {
+      "findInCards": "Search classes and properties",
+      "dragToReorder": "Drag to change the order",
       "links": "Links",
       "groupLinks": "Show links apart from values",
       "linkChips": "Show link targets in colour",
