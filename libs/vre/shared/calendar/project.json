@@ -1,0 +1,31 @@
+{
+  "name": "calendar",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/vre/shared/calendar/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/vre/shared/calendar",
+        "main": "libs/vre/shared/calendar/src/index.ts",
+        "tsConfig": "libs/vre/shared/calendar/tsconfig.lib.json",
+        "assets": ["libs/vre/shared/calendar/*.md"]
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "runInBand": true,
+          "coverage": true
+        }
+      }
+    }
+  }
+}

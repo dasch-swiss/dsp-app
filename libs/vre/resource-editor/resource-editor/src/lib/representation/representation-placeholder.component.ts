@@ -10,6 +10,6 @@ import { TranslatePipe } from '@ngx-translate/core';
     [title]="'resourceEditor.representations.placeholder.title' | translate"
     [message]="'resourceEditor.representations.placeholder.message' | translate"
     [color]="'white'" />`,
-  styleUrl: './representation-placeholder.component.css',
+  styleUrl: './representation-placeholder.component.scss',
 })
 export class RepresentationPlaceholderComponent {}

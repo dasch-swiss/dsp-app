@@ -113,25 +113,24 @@ export class GlobalSearchComponent implements OnDestroy {
           offsetY: 25,
           offsetX: -130,
         },
-      ])
-      .withPush(false);
+      ]);
 
     this.overlayRef = this._overlay.create({
       positionStrategy,
       hasBackdrop: false,
-      scrollStrategy: this._overlay.scrollStrategies.reposition({ autoClose: true }),
-      width: '604px',
+      scrollStrategy: this._overlay.scrollStrategies.reposition(),
+      width: '570px',
     });
 
     const portal = new ComponentPortal(SearchTipsComponent);
     this.overlayRef.attach(portal);
-    this.overlayRef.detachments().subscribe(() => this.hideSearchTips());
   }
 
   hideSearchTips() {
-    const overlayRef = this.overlayRef;
-    this.overlayRef = null;
-    overlayRef?.dispose();
+    if (this.overlayRef) {
+      this.overlayRef.dispose();
+      this.overlayRef = null;
+    }
   }
   search() {
     this.hideSearchTips();

@@ -57,10 +57,10 @@ import { UploadFileService } from '../representation/upload/upload-file.service'
         text-align: center;
         padding: 16px;
         border: 1px gray dashed;
-      }
 
-      .zone:hover {
-        background: #ececec !important;
+        &:hover {
+          background: #ececec !important;
+        }
       }
 
       .upload-progress {

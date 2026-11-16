@@ -16,7 +16,7 @@ const UTF8_BOM = '\uFEFF';
 @Component({
   selector: 'app-resource-metadata',
   templateUrl: './resource-metadata.component.html',
-  styleUrl: './resource-metadata.component.css',
+  styleUrl: './resource-metadata.component.scss',
   imports: [MatButton, AppProgressIndicatorComponent, TranslatePipe],
 })
 export class ResourceMetadataComponent implements OnDestroy {

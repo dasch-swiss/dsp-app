@@ -62,7 +62,6 @@ import { ProjectPageService } from '../../project-page.service';
             [visibleColumns]="layout().visible"
             [columnWidths]="layout().widths"
             [rowHeight]="layout().rowHeight"
-            [showComments]="showComments()"
             [checkedResourceIds]="checkedResourceIds()"
             [selectionActive]="selectionActive()"
             [selectable]="isLoggedIn()"
@@ -95,7 +94,7 @@ import { ProjectPageService } from '../../project-page.service';
       <app-progress-indicator />
     }
   `,
-  styleUrl: './data-table-fetcher.component.css',
+  styleUrl: './data-table-fetcher.component.scss',
   imports: [
     AsyncPipe,
     TranslatePipe,
@@ -143,7 +142,6 @@ export class DataTableFetcherComponent implements OnChanges {
     )
   );
   readonly layout = this._tableState.layout;
-  readonly showComments = this._tableState.showComments;
 
   /**
    * The comparison selection as last published. `MultipleViewerService` writes `selectMode` *after*

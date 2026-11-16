@@ -24,7 +24,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       }
     </div>
   `,
-  styleUrls: ['./result-count.component.css'],
+  styleUrls: ['./result-count.component.scss'],
   imports: [PagerComponent, TranslatePipe],
 })
 export class ResultCountComponent {

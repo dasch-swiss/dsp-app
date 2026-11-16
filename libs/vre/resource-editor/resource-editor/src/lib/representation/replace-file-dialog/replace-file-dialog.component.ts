@@ -65,7 +65,7 @@ export interface ReplaceFileDialogProps {
       </button>
     </mat-dialog-actions>
   `,
-  styleUrls: ['./replace-file-dialog.component.css'],
+  styleUrls: ['./replace-file-dialog.component.scss'],
   imports: [
     DialogHeaderComponent,
     MatDialogContent,

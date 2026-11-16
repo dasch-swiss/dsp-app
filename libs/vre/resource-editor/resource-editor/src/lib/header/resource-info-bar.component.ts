@@ -46,7 +46,7 @@ import { ResourceFetcherService } from '../representation/resource-fetcher.servi
     `
       .infobar {
         box-sizing: border-box;
-        overflow-wrap: anywhere;
+        white-space: nowrap;
         color: rgba(0, 0, 0, 0.87);
         padding-right: 16px;
       }

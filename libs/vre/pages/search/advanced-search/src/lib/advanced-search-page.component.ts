@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDivider } from '@angular/material/divider';
 import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
-import { AdvancedSearchBarComponent, OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
+import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search-filters';
 import { SearchTipsComponent } from '@dasch-swiss/vre/shared/app-common-to-move';
 import { map } from 'rxjs';
 import { AdvancedSearchResultsComponent } from './advanced-search-results.component';
@@ -43,11 +43,14 @@ import { OrderByComponent } from './ui/order-by/order-by.component';
       <div class="whole-height">
         <app-advanced-search-results [query]="query()!" [showResourceClass]="resultsCanMixClasses()" />
       </div>
-    } @else if (!ontologyLoading()) {
-      <app-search-tips class="page-search-tips" />
+    } @else {
+      <app-search-tips
+        style="
+    display: flex;
+    padding: 16px; margin-left: 8px" />
     }
   `,
-  styleUrl: './advanced-search-page.component.css',
+  styleUrl: './advanced-search-page.component.scss',
   providers: [provideAdvancedSearch()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -58,8 +61,6 @@ export class AdvancedSearchPageComponent {
   // Query is derived purely from the URL — the same pipeline serves first load, back/forward, and
   // user actions.
   readonly query = toSignal(this._derivation.gravsearchQuery$, { initialValue: null });
-
-  readonly ontologyLoading = toSignal(inject(OntologyDataService).ontologyLoading$, { initialValue: true });
 
   /**
    * A query restricted to one resource class returns rows that all share it, so showing the class on

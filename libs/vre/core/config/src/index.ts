@@ -9,4 +9,3 @@ export * from './lib/app-config/dsp-iiif-config';
 export * from './lib/app-config/dsp-instrumentation-config';
 export * from './lib/build-tag/build-tag-token';
 export * from './lib/build-tag/build-tag';
-export * from './lib/app-version';

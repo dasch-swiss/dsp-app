@@ -27,10 +27,10 @@ import { UsersListRowMenuComponent } from './users-list-row-menu.component';
       :host {
         display: block;
         padding: 16px;
-      }
 
-      :host:hover {
-        background: #d6e0e8;
+        &:hover {
+          background: #d6e0e8;
+        }
       }
     `,
   ],

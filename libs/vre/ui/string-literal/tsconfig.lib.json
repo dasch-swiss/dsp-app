@@ -5,17 +5,13 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": ["window", "ckeditor5-custom-build"]
+    "types": []
   },
   "exclude": [
     "src/**/*.spec.ts",
     "src/test-setup.ts",
-    "jest.config.js",
-    "src/**/*.test.ts",
-    "**/*.stories.ts",
-    "**/stories.helpers.ts",
-    "**/*.stories.helpers.ts",
-    "**/*-stories.helper.ts"
+    "jest.config.ts",
+    "src/**/*.test.ts"
   ],
   "include": ["src/**/*.ts"]
 }

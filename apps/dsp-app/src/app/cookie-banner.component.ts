@@ -20,7 +20,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       </div>
     </div>
   }`,
-  styleUrls: [`./cookie-banner.component.css`],
+  styleUrls: [`./cookie-banner.component.scss`],
   imports: [MatButtonModule, TranslatePipe],
 })
 export class CookieBannerComponent implements OnInit {

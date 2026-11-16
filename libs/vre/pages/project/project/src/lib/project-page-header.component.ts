@@ -38,10 +38,9 @@ import { ProjectPageService } from './project-page.service';
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-      }
-
-      .title:hover {
-        background-color: #e8e9eb;
+        &:hover {
+          background-color: #e8e9eb;
+        }
       }
 
       app-header-user-actions {

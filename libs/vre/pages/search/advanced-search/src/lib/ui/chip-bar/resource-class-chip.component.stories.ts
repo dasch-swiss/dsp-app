@@ -3,6 +3,7 @@ import { importProvidersFrom } from '@angular/core';
 import { OntologyDataService } from '@dasch-swiss/vre/pages/search/search-filters';
 import {
   ConfirmedSearchStateService,
+  EMPTY_SEARCH_STATE,
   SearchFilterState,
   StatementDraftStore,
 } from '@dasch-swiss/vre/pages/search/search-filters';
@@ -11,7 +12,6 @@ import { of } from 'rxjs';
 import { expect, userEvent, within } from 'storybook/test';
 import { DerivedSearchState, DerivedSearchStateService } from '../../service/derived-search-state.service';
 import {
-  EMPTY_SEARCH_STATE,
   makeDerivedSearchStateServiceStub,
   makeOntologyDataServiceStub,
   SAMPLE_RESOURCE_CLASSES,

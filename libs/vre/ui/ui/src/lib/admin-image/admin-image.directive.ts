@@ -13,7 +13,7 @@ export class AdminImageDirective implements OnChanges {
    * - in the case of user (gr)avatar it's the e-mail address,
    * - in the case of project logo it's the image url
    */
-  @Input({ required: true }) image!: string | null | undefined;
+  @Input({ required: true }) image!: string;
 
   /**
    * @param {string} type
@@ -40,7 +40,7 @@ export class AdminImageDirective implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.source = String(this.image);
+    this.source = this.image;
 
     switch (this.type) {
       case 'user':
@@ -66,7 +66,7 @@ export class AdminImageDirective implements OnChanges {
         break;
 
       default:
-        this.source = String(this.image);
+        this.source = this.image;
     }
 
     this._renderer.setAttribute(this._ele.nativeElement, 'src', this.source);

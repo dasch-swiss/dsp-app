@@ -23,12 +23,14 @@ import { FootnoteService } from './footnote.service';
         padding: 8px 0;
       }
 
-      .footnote-value::ng-deep > p:first-of-type {
-        margin-top: 0;
-      }
+      .footnote-value::ng-deep {
+        & > p:first-of-type {
+          margin-top: 0;
+        }
 
-      .footnote-value::ng-deep > p:last-of-type {
-        margin-bottom: 0;
+        & > p:last-of-type {
+          margin-bottom: 0;
+        }
       }
     `,
   ],

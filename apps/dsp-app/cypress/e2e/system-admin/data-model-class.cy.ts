@@ -1,4 +1,4 @@
-import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { ResourceClassDefinitionWithAllLanguages } from '../../../../../libs/dsp-js/src';
 import { faker } from '@faker-js/faker';
 import { DataModelClassProperty } from '../../models/data-model-class';
 import { CLASS_TYPES, PropertyType } from '../../support/helpers/constants';

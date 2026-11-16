@@ -123,7 +123,7 @@ const FULLTEXT_ERROR_MESSAGES: Record<
       </div>
     }
   `,
-  styleUrl: './advanced-search-bar.component.css',
+  styleUrl: './advanced-search-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdvancedSearchBarComponent implements OnInit {

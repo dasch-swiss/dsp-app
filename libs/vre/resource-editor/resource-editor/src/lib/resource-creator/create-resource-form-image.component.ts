@@ -18,8 +18,7 @@ import { UploadControlComponent } from './upload-control.component';
   template: ` <app-create-resource-form-row
     [label]="'resourceEditor.resourceCreator.image.label' | translate"
     style="display: block; margin-bottom: 16px">
-    <!-- As tall as the label's line with its padding, so the chips centre on the label beside them. -->
-    <div class="source-selector">
+    <div style="margin-bottom: 8px; margin-top: 8px">
       <app-double-chip-selector
         data-cy="image-source-selector"
         [options]="[
@@ -42,16 +41,6 @@ import { UploadControlComponent } from './upload-control.component';
       <app-iiif-control [control]="control" />
     }
   </app-create-resource-form-row>`,
-  styles: [
-    `
-      .source-selector {
-        display: flex;
-        align-items: center;
-        height: calc(2 * var(--create-form-label-padding-block, 16px) + 22px);
-        margin-bottom: 8px;
-      }
-    `,
-  ],
   imports: [
     CreateResourceFormRowComponent,
     DoubleChipSelectorComponent,

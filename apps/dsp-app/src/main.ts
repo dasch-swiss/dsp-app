@@ -35,10 +35,7 @@ async function initSentry(environmentName: string): Promise<void> {
       environment: environmentName,
       release: environment.version,
       integrations: [
-        Sentry.browserTracingIntegration({
-          // Don't trace Grafana Faro's own requests, otherwise Sentry and Faro report each other endlessly
-          shouldCreateSpanForRequest: url => !/\.grafana\.net\//.test(url),
-        }),
+        Sentry.browserTracingIntegration(),
         Sentry.replayIntegration({
           maskAllText: false,
           blockAllMedia: false,

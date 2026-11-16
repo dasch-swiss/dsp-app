@@ -1,0 +1,28 @@
+{
+  "name": "vre-ui-nested-menu",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/vre/ui/nested-menu/src",
+  "prefix": "dasch-swiss",
+  "projectType": "library",
+  "tags": ["type:ui"],
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "runInBand": true,
+          "coverage": true
+        }
+      }
+    },
+    "tsc-errors": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit --project {projectRoot}/tsconfig.lib.json"
+      }
+    }
+  }
+}

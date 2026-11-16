@@ -33,7 +33,7 @@ interface ImageSettingsState {
 
 @Component({
   selector: 'app-image-settings',
-  styleUrls: ['./image-settings.component.css'],
+  styleUrls: ['./image-settings.component.scss'],
   templateUrl: './image-settings.component.html',
   animations: [ReplaceAnimation.animation],
   imports: [
@@ -65,10 +65,7 @@ export class ImageSettingsComponent implements OnInit {
 
   private _loadedState?: ImageSettingsState;
 
-  minMaxInputMask(
-    min: number,
-    max: number
-  ): { mask: typeof IMask.MaskedNumber; min: number; max: number; autofix: boolean } {
+  minMaxInputMask(min: number, max: number) {
     return {
       mask: IMask.MaskedNumber,
       min,

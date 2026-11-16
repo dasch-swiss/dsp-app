@@ -70,10 +70,10 @@ import { PermissionInfoComponent } from './permission-info/permission-info.compo
     `
       .action {
         display: inline-flex;
-      }
 
-      .action button {
-        border-radius: 0;
+        button {
+          border-radius: 0;
+        }
       }
     `,
   ],

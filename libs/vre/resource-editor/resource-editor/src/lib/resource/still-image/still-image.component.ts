@@ -13,9 +13,6 @@ import {
 import { Constants, ReadResource, ReadStillImageExternalFileValue, ReadStillImageFileValue } from '@dasch-swiss/dsp-js';
 import { NoResultsFoundComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
-import { firstValueFrom } from 'rxjs';
-import { IiifImageInfo } from '../../representation/iiif-image-info';
-import { RepresentationService } from '../../representation/representation.service';
 import { IIIFUrl } from '../../representation/third-party-iiif/third-party-iiif';
 import { CompoundArrowNavigationComponent } from '../compound/compound-arrow-navigation.component';
 import { CompoundSliderComponent } from '../compound/compound-slider.component';
@@ -58,7 +55,7 @@ import { StillImageToolbarComponent } from './still-image-toolbar.component';
         }
       </div>
     }`,
-  styleUrls: ['./still-image.component.css'],
+  styleUrls: ['./still-image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [OsdDrawerService, OpenSeaDragonService],
   imports: [
@@ -78,14 +75,10 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
   isPng = false;
   errorMessage: string | null = null;
 
-  // Increments on every load, so an info.json answer that arrives after the next load started is dropped.
-  private _loadCount = 0;
-
   constructor(
     private readonly _cdr: ChangeDetectorRef,
     protected osdService: OpenSeaDragonService,
     private readonly _osdDrawerService: OsdDrawerService,
-    private readonly _representationService: RepresentationService,
     private readonly _translateService: TranslateService
   ) {}
 
@@ -114,7 +107,6 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
   }
 
   private async _loadImage() {
-    const load = ++this._loadCount;
     try {
       // Clear any previous errors
       this.errorMessage = null;
@@ -131,7 +123,7 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
 
       switch (image.type) {
         case Constants.StillImageFileValue:
-          await this._openInternalImage(image as ReadStillImageFileValue, load);
+          this._openInternalImage(image as ReadStillImageFileValue);
           break;
         case Constants.StillImageExternalFileValue:
           await this._openExternal3iFImage(image as ReadStillImageExternalFileValue);
@@ -151,20 +143,9 @@ export class StillImageComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
   }
 
-  private async _openInternalImage(image: ReadStillImageFileValue, load: number): Promise<void> {
-    let imageInfo: IiifImageInfo;
-    try {
-      imageInfo = await firstValueFrom(this._representationService.getIiifImageInfo(image.iiifBaseUrl, image.filename));
-    } catch {
-      // Clear the viewer so the previous image does not stay on screen. No error message: it would replace the
-      // viewer and, in compound mode, the page navigation with it (an error state that keeps it: DEV-7660).
-      if (load === this._loadCount) this.osdService.viewer.close();
-      return;
-    }
-    if (load !== this._loadCount) return;
-
-    const tiles = StillImageHelper.prepareTileSourceFromImageInfo(
-      imageInfo,
+  private _openInternalImage(image: ReadStillImageFileValue): void {
+    const tiles = StillImageHelper.prepareTileSourcesFromFileValues(
+      [image],
       (this.osdService.viewer as any).ajaxHeaders,
       this.isPng
     );

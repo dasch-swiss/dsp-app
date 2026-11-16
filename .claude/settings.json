@@ -1,9 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "mcp__linear__list_teams",
-      "Bash(just:*)",
-      "Bash(bazel:*)"
+      "mcp__linear__list_teams"
     ],
     "deny": []
   }

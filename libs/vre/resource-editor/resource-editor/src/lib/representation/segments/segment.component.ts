@@ -14,7 +14,7 @@ import { Segment } from './segment';
       [ngStyle]="{ width: width + '%', left: start + '%' }"
       (click)="playMedia()"></div>
   `,
-  styleUrls: ['./segment.component.css'],
+  styleUrls: ['./segment.component.scss'],
 })
 export class SegmentComponent implements OnInit {
   @Input({ required: true }) segment!: Segment;
