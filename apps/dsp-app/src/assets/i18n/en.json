@@ -716,13 +716,6 @@
     },
     "ontologyMap": {
       "showProperties": "Show properties",
-      "hint": {
-        "text": "Looking for each class with its properties?",
-        "cards": "Resource classes › Cards",
-        "showProperties": "Show them in the graph",
-        "oldTab": "Previous Data models tab",
-        "dismiss": "Dismiss"
-      },
       "dataModels": "Data models",
       "noDataModels": "This project does not have any data model yet.",
       "classPanel": {

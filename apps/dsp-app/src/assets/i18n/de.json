@@ -716,13 +716,6 @@
     },
     "ontologyMap": {
       "showProperties": "Eigenschaften anzeigen",
-      "hint": {
-        "text": "Sie suchen jede Klasse mit ihren Eigenschaften?",
-        "cards": "Ressourcenklassen › Karten",
-        "showProperties": "Im Graphen anzeigen",
-        "oldTab": "Bisheriger Tab Datenmodelle",
-        "dismiss": "Ausblenden"
-      },
       "dataModels": "Datenmodelle",
       "noDataModels": "Dieses Projekt hat noch kein Datenmodell.",
       "classPanel": {

@@ -152,16 +152,55 @@ const COLUMN_LABELS: Record<Column, string> = {
             [attr.aria-label]="r + '.findClass' | translate"
             (input)="query.set(search.value)" />
         </mat-form-field>
-        <span class="spacer"></span>
-        @if (layout() === 'cards' && rows().length) {
-          <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAllCards()">
-            <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
-            {{ (allCardsOpen() ? r + '.collapseAll' : r + '.expandAll') | translate }}
-          </button>
-        }
-        <!-- Cards, as the Data models tab shows a data model, or the table. -->
+        <!-- What each layout adds, wrapping on its own so the layout switch stays put at the right. -->
+        <div class="tools">
+          @if (layout() === 'cards' && rows().length) {
+            <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAllCards()">
+              <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+              {{ (allCardsOpen() ? r + '.collapseAll' : r + '.expandAll') | translate }}
+            </button>
+          }
+          @if (layout() === 'table') {
+            <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-classes">
+              <span class="view-heading">{{ r + '.display' | translate }}</span>
+              <mat-slide-toggle
+                class="view-toggle"
+                data-cy="data-model-classes-row-colors"
+                [checked]="rowColors()"
+                (change)="rowColors.set($event.checked)">
+                {{ r + '.rowColors' | translate }}
+              </mat-slide-toggle>
+            </app-columns-menu>
+            <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-classes" />
+          }
+          @if (layout() === 'table' && folding() && foldable().size) {
+            <button mat-button type="button" data-cy="data-model-classes-expand" (click)="toggleAllFolds()">
+              <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+              {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
+            </button>
+          }
+          @if (layout() === 'table') {
+            <mat-button-toggle-group
+              class="density"
+              hideSingleSelectionIndicator
+              data-cy="data-model-classes-density"
+              [attr.aria-label]="r + '.density' | translate"
+              [value]="density()"
+              (change)="density.set($event.value)">
+              <mat-button-toggle value="condensed">
+                <mat-icon>density_small</mat-icon>
+                {{ r + '.condensed' | translate }}
+              </mat-button-toggle>
+              <mat-button-toggle value="expanded">
+                <mat-icon>density_large</mat-icon>
+                {{ r + '.expanded' | translate }}
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          }
+        </div>
+        <!-- Cards, as the Data models tab shows a data model, or the table; last, so it stays put when switched. -->
         <mat-button-toggle-group
-          class="density"
+          class="density layout-switch"
           hideSingleSelectionIndicator
           data-cy="data-model-classes-layout"
           [attr.aria-label]="r + '.layout' | translate"
@@ -183,43 +222,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             {{ r + '.table' | translate }}
           </mat-button-toggle>
         </mat-button-toggle-group>
-        @if (layout() === 'table') {
-          <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-classes">
-            <span class="view-heading">{{ r + '.display' | translate }}</span>
-            <mat-slide-toggle
-              class="view-toggle"
-              data-cy="data-model-classes-row-colors"
-              [checked]="rowColors()"
-              (change)="rowColors.set($event.checked)">
-              {{ r + '.rowColors' | translate }}
-            </mat-slide-toggle>
-          </app-columns-menu>
-          <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-classes" />
-        }
-        @if (layout() === 'table' && folding() && foldable().size) {
-          <button mat-button type="button" data-cy="data-model-classes-expand" (click)="toggleAllFolds()">
-            <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
-            {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
-          </button>
-        }
-        @if (layout() === 'table') {
-          <mat-button-toggle-group
-            class="density"
-            hideSingleSelectionIndicator
-            data-cy="data-model-classes-density"
-            [attr.aria-label]="r + '.density' | translate"
-            [value]="density()"
-            (change)="density.set($event.value)">
-            <mat-button-toggle value="condensed">
-              <mat-icon>density_small</mat-icon>
-              {{ r + '.condensed' | translate }}
-            </mat-button-toggle>
-            <mat-button-toggle value="expanded">
-              <mat-icon>density_large</mat-icon>
-              {{ r + '.expanded' | translate }}
-            </mat-button-toggle>
-          </mat-button-toggle-group>
-        }
       </div>
 
       @if (layout() === 'cards') {
@@ -651,6 +653,27 @@ const COLUMN_LABELS: Record<Column, string> = {
       @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
       // Says the Cards layout is new, until the layouts are switched once.
+      // Title, search, tools and the layout switch on one line; only the tools wrap.
+      .head {
+        flex-wrap: nowrap;
+      }
+
+      // The layout switch at the top right, whether or not the tools beside it wrap.
+      .layout-switch {
+        flex: none;
+        align-self: flex-start;
+      }
+
+      .tools {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px 12px;
+      }
+
       .new {
         margin-left: 6px;
         padding: 0 6px;

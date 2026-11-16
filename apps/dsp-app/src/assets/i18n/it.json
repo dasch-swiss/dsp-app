@@ -716,13 +716,6 @@
     },
     "ontologyMap": {
       "showProperties": "Mostra le proprietà",
-      "hint": {
-        "text": "Cerca ogni classe con le sue proprietà?",
-        "cards": "Classi di risorse › Schede",
-        "showProperties": "Mostrarle nel grafo",
-        "oldTab": "Scheda Modelli di dati precedente",
-        "dismiss": "Nascondi"
-      },
       "dataModels": "Modelli di dati",
       "noDataModels": "Questo progetto non ha ancora un modello di dati.",
       "classPanel": {
