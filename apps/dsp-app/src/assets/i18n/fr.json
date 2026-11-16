@@ -715,6 +715,14 @@
       }
     },
     "ontologyMap": {
+      "showProperties": "Afficher les propriétés",
+      "hint": {
+        "text": "Vous cherchez chaque classe avec ses propriétés ?",
+        "cards": "Classes de ressources › Cartes",
+        "showProperties": "Les afficher dans le graphe",
+        "oldTab": "Ancien onglet Modèles de données",
+        "dismiss": "Masquer"
+      },
       "dataModels": "Modèles de données",
       "noDataModels": "Ce projet n'a pas encore de modèle de données.",
       "classPanel": {
@@ -781,6 +789,8 @@
       "fullWidth": "Utiliser toute la largeur",
       "treeLines": "Lignes vers les sous-classes",
       "viewMenu": {
+        "classProperties": "Classes",
+        "showPropertiesHint": "Lister les propriétés de chaque classe dans sa boîte, comme dans l'onglet Modèles de données",
         "textSize": "Taille du texte",
         "links": "Liens",
         "islands": "Îlots",
@@ -874,6 +884,14 @@
       "links": "liens"
     },
     "dataModels2": {
+      "new": "Nouveau",
+      "cardsTip": "Chaque classe avec ses propriétés dans l'ordre, comme dans l'onglet Modèles de données",
+      "layout": "Présentation",
+      "cards": "Cartes",
+      "table": "Tableau",
+      "multiple": "Valeurs multiples",
+      "required": "Obligatoire",
+      "noProperties": "Aucune propriété pour l'instant",
       "currentLanguage": "Langue actuelle",
       "allLanguages": "Toutes les langues",
       "valueActions": "Actions pour {{value}}",

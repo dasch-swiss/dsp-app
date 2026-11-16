@@ -715,6 +715,14 @@
       }
     },
     "ontologyMap": {
+      "showProperties": "Show properties",
+      "hint": {
+        "text": "Looking for each class with its properties?",
+        "cards": "Resource classes › Cards",
+        "showProperties": "Show them in the graph",
+        "oldTab": "Previous Data models tab",
+        "dismiss": "Dismiss"
+      },
       "dataModels": "Data models",
       "noDataModels": "This project does not have any data model yet.",
       "classPanel": {
@@ -781,6 +789,8 @@
       "fullWidth": "Use the whole width",
       "treeLines": "Lines to subclasses",
       "viewMenu": {
+        "classProperties": "Classes",
+        "showPropertiesHint": "List each class's properties in its box, as in the Data models tab",
         "textSize": "Text size",
         "links": "Links",
         "islands": "Islands",
@@ -874,6 +884,14 @@
       "links": "links"
     },
     "dataModels2": {
+      "new": "New",
+      "cardsTip": "Each class with its properties in order, as in the Data models tab",
+      "layout": "Layout",
+      "cards": "Cards",
+      "table": "Table",
+      "multiple": "Multiple values",
+      "required": "Required",
+      "noProperties": "No properties yet",
       "currentLanguage": "Current language",
       "allLanguages": "All languages",
       "valueActions": "Actions for {{value}}",

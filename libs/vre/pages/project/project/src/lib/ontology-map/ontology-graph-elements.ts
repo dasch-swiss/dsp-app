@@ -69,19 +69,22 @@ export interface IslandElementOptions {
 export function toGraphElements(graph: DataModelGraph, options: GraphElementOptions): ElementDefinition[] {
   const islands = options.islands;
   const parents = islands ? islandParents(graph, islands) : undefined;
+  const labels = new Map(graph.nodes.map(node => [node.id, node.label]));
+  const labelOf = (iri: string) => labels.get(iri) ?? localNameOf(iri);
   const nodes: ElementDefinition[] = graph.nodes.map(node => {
     const family = islands?.families.get(node.id);
     const hue = family && familyHue(family.index);
     const texture = family && familyTexture(family.index);
     const icon = islands && hue ? fileIconImage(node.representationClass, hue.dark) : undefined;
     const label = node.kind === 'generic' && node.id === Constants.Resource ? options.anyResourceLabel : node.label;
+    const own =
+      node.kind !== 'class' && node.id !== Constants.Resource ? externalTexts(label, node.id) : texts(label, node.id);
     return {
       group: 'nodes',
       data: {
         id: node.id,
-        ...(node.kind !== 'class' && node.id !== Constants.Resource
-          ? externalTexts(label, node.id)
-          : texts(label, node.id)),
+        ...own,
+        ...withProperties(own, node.propertyDetails ?? [], labelOf),
         color: family ? familyColor(family) : (options.colors.get(node.id) ?? '#FFFFFF'),
         ...(hue && texture ? { dark: hue.dark, texture: textureImage(texture, hue.dark, family.sub), icon } : {}),
         // In the Colour tab look, every class of the data model shows its family's colour as a tab.
@@ -182,6 +185,30 @@ function texts(label: string, iri: string): { label: string; name: string; both:
   return { label, name, both: `${label}\n${name}` };
 }
 
+/** The texts of a frame, which is not named: every text the graph may write, empty. */
+const NO_TEXTS = { label: '', name: '', both: '', labelProps: '', nameProps: '', bothProps: '' };
+
+/**
+ * An element's texts with its properties listed under them, one per line in their form order, as the "Show properties"
+ * view option draws a class: each by label, name, or both as the texts are, a link with the class it points at. A class
+ * without properties keeps its texts as they are.
+ */
+function withProperties(
+  own: { label: string; name: string; both: string },
+  properties: readonly { id: string; label: string; linkTarget?: string }[],
+  labelOf: (iri: string) => string
+): { labelProps: string; nameProps: string; bothProps: string } {
+  const lines = (text: (property: (typeof properties)[number]) => string) =>
+    properties.length ? `\n\n${properties.map(property => `· ${text(property)}`).join('\n')}` : '';
+  const target = (property: (typeof properties)[number], of: (iri: string) => string) =>
+    property.linkTarget ? ` → ${of(property.linkTarget)}` : '';
+  return {
+    labelProps: own.label + lines(p => p.label + target(p, labelOf)),
+    nameProps: own.name + lines(p => localNameOf(p.id) + target(p, localNameOf)),
+    bothProps: own.both + lines(p => `${p.label} (${localNameOf(p.id)})${target(p, labelOf)}`),
+  };
+}
+
 /** The data model a class IRI belongs to, by name, as in `…/ontology/0801/biblio/v2#Book`; none if not of that form. */
 export function dataModelNameOf(iri: string): string | undefined {
   return /\/([^/#]+)\/v2#/.exec(iri)?.[1];
@@ -247,7 +274,7 @@ function islandNodes(graph: DataModelGraph, options: IslandElementOptions): Elem
   for (const { id, iris } of groups) {
     elements.push({
       group: 'nodes',
-      data: { id, label: '', name: '', both: '' },
+      data: { id, ...NO_TEXTS },
       classes: [
         'island',
         id === UNLINKED_ISLAND ? 'unlinked' : '',
@@ -265,9 +292,7 @@ function islandNodes(graph: DataModelGraph, options: IslandElementOptions): Elem
           id: parent!,
           parent: id,
           // A family's frame and hue group its classes; it is not named.
-          label: '',
-          name: '',
-          both: '',
+          ...NO_TEXTS,
           tint: familyTint(hue.base),
           dark: hue.dark,
         },
@@ -416,8 +441,18 @@ export interface ClassRow {
   representation?: RepresentationClass;
   /** How many properties it has, inherited ones included. */
   properties: number;
-  /** Its properties in their form order: label, value type, and the class a link points at. */
-  propertyList: { id: string; label: string; type: string; linkTarget?: string }[];
+  /**
+   * Its properties in their form order: label, value type, the class a link points at, and whether a resource may have
+   * several values of it and must have one.
+   */
+  propertyList: {
+    id: string;
+    label: string;
+    type: string;
+    linkTarget?: string;
+    multiple: boolean;
+    required: boolean;
+  }[];
   /** The classes it links to, each once, its superclasses' links included. */
   linksTo: string[];
   /** The classes that link to it, each once, their superclasses' links included. */
@@ -462,11 +497,13 @@ export function classRows(graph: DataModelGraph): ClassRow[] {
         ? node.representationClass
         : undefined,
     properties: node.propertyDetails?.length ?? 0,
-    propertyList: (node.propertyDetails ?? []).map(({ id, label, type, linkTarget }) => ({
+    propertyList: (node.propertyDetails ?? []).map(({ id, label, type, linkTarget, cardinality }) => ({
       id,
       label,
       type,
       ...(linkTarget ? { linkTarget } : {}),
+      multiple: cardinality === Cardinality._0_n || cardinality === Cardinality._1_n,
+      required: cardinality === Cardinality._1 || cardinality === Cardinality._1_n,
     })),
     // Links only: a superclass shows as "Subclass of".
     linksTo: [

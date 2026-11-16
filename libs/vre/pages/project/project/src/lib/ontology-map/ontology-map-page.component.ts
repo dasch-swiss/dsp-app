@@ -17,7 +17,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
@@ -95,6 +95,8 @@ const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
 const ISLANDS_KEY = 'dsp-ontology-map-islands';
 const COLOUR_TAB_KEY = 'dsp-ontology-map-colour-tab';
 const TREE_LINES_KEY = 'dsp-ontology-map-tree-lines';
+const SHOW_PROPERTIES_KEY = 'dsp-ontology-map-show-properties';
+const HINT_KEY = 'dsp-ontology-map-properties-hint';
 const FULL_WIDTH_KEY = 'dsp-ontology-map-full-width';
 /** The widest screen, in CSS px, on which the graph uses the whole width until the user chooses; see `fullWidth`. */
 const FULL_WIDTH_UP_TO = 2560;
@@ -123,6 +125,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'closeOnEscape($event)' },
   imports: [
+    RouterLink,
     CdkConnectedOverlay,
     CdkOverlayOrigin,
     FilterMenuComponent,
@@ -159,6 +162,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [islands]="islands()"
                 [colourTab]="colourTab()"
                 [treeLines]="treeLines()"
+                [showProperties]="showProperties()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                 [picked]="picked()"
                 [fullWidth]="fullWidth()"
@@ -378,6 +382,12 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                         { section: 'links', key: 'levelLabels', cy: 'level-labels', on: levelLabels() },
                         { section: 'islands', key: 'islandsToggle', cy: 'islands', on: islands() },
                         { section: 'subclasses', key: 'treeLines', cy: 'tree-lines', on: treeLines() },
+                        {
+                          section: 'classProperties',
+                          key: 'showProperties',
+                          cy: 'show-properties',
+                          on: showProperties(),
+                        },
                         { section: 'colours', key: 'colourTab', cy: 'colour-tab', on: colourTab() },
                         { section: 'panel', key: 'fullWidth', cy: 'full-width', on: fullWidth() },
                       ];
@@ -430,6 +440,43 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                     }
                   </mat-menu>
                 </div>
+
+                <!-- For people who know the Data models tab: where each class with its properties is, until dismissed. -->
+                @if (!hintDismissed()) {
+                  <div class="float hint" role="note" data-cy="ontology-map-hint">
+                    <mat-icon class="hint-icon">info</mat-icon>
+                    <span class="hint-text">
+                      {{ m + '.hint.text' | translate }}
+                      <a
+                        [routerLink]="['..', classesPath]"
+                        queryParamsHandling="preserve"
+                        data-cy="ontology-map-hint-cards"
+                        >{{ m + '.hint.cards' | translate }}</a
+                      >
+                      ·
+                      <button
+                        type="button"
+                        class="hint-link"
+                        data-cy="ontology-map-hint-properties"
+                        (click)="setViewOption('showProperties', true)">
+                        {{ m + '.hint.showProperties' | translate }}
+                      </button>
+                      ·
+                      <a [routerLink]="['../..', oldDataModelsPath]" data-cy="ontology-map-hint-old">{{
+                        m + '.hint.oldTab' | translate
+                      }}</a>
+                    </span>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      class="hint-close"
+                      data-cy="ontology-map-hint-dismiss"
+                      [attr.aria-label]="m + '.hint.dismiss' | translate"
+                      (click)="dismissHint()">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
               </div>
 
               <!-- Zoom, bottom right. -->
@@ -731,6 +778,58 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         color: $cool_gray_500;
       }
 
+      // The note under the top bar, on its own row, as wide as its text.
+      .hint {
+        flex-basis: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        max-width: 720px;
+        padding: 4px 4px 4px 12px;
+        font-size: 13px;
+        color: $cool_gray_700;
+        background: $primary_50;
+        border: 1px solid $primary_100;
+
+        a,
+        .hint-link {
+          color: $primary_700;
+          font-weight: 500;
+          cursor: pointer;
+        }
+
+        .hint-link {
+          border: 0;
+          background: none;
+          padding: 0;
+          font: inherit;
+        }
+      }
+
+      .hint-icon {
+        flex: none;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: $primary;
+      }
+
+      .hint-text {
+        flex: 1;
+      }
+
+      .hint-close {
+        flex: none;
+        --mat-icon-button-state-layer-size: 28px;
+        padding: 2px;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
       .zoom {
         right: 16px;
         bottom: 16px;
@@ -985,6 +1084,17 @@ export class OntologyMapPageComponent {
   readonly colourTab = signal(readStored(COLOUR_TAB_KEY) !== 'false');
   /** Whether a line joins each parent to its subclasses; on unless turned off. */
   readonly treeLines = signal(readStored(TREE_LINES_KEY) !== 'false');
+  /** Whether each class box lists its properties, as the Data models tab shows a class; off unless turned on. */
+  readonly showProperties = signal(readStored(SHOW_PROPERTIES_KEY) === 'true');
+  /** Whether the note on where each class with its properties is was dismissed in this browser. */
+  readonly hintDismissed = signal(readStored(HINT_KEY) === 'dismissed');
+  readonly classesPath = RouteConstants.classes;
+  readonly oldDataModelsPath = RouteConstants.dataModels;
+
+  dismissHint(): void {
+    this.hintDismissed.set(true);
+    store(HINT_KEY, 'dismissed');
+  }
   /**
    * Whether the graph spreads over the whole width, an open panel covering its right, rather than keeping clear of
    * where the panel opens. Until the user chooses, it does on screens up to `FULL_WIDTH_UP_TO` wide, where the room
@@ -1487,7 +1597,10 @@ export class OntologyMapPageComponent {
     if (key === 'levelLabels') this.setLevelLabels(on);
     else if (key === 'islandsToggle') this.setIslands(on);
     else if (key === 'colourTab') this.setColourTab(on);
-    else if (key === 'treeLines') {
+    else if (key === 'showProperties') {
+      this.showProperties.set(on);
+      store(SHOW_PROPERTIES_KEY, String(on));
+    } else if (key === 'treeLines') {
       this.treeLines.set(on);
       store(TREE_LINES_KEY, String(on));
     } else if (key === 'fullWidth') {

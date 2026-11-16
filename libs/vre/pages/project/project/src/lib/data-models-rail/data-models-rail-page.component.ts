@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
@@ -8,6 +9,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import {
   ActivatedRoute,
   IsActiveMatchOptions,
+  NavigationEnd,
   Router,
   RouterLink,
   RouterLinkActive,
@@ -16,8 +18,10 @@ import {
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
+import { filter, startWith } from 'rxjs';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { DataModelsRailState } from './data-models-rail-state';
+import { rememberDataModelsSection } from './last-section';
 
 /**
  * The Data models 2 tab: a rail to pick a data model and a section of it (the graph, its classes, its properties, the
@@ -253,12 +257,29 @@ export class DataModelsRailPageComponent {
     fragment: 'ignored',
   };
 
-  /** The views of the data model picked: its diagram, its resource classes and its properties. */
+  /**
+   * The views of the data model picked: its resource classes first, as the Data models tab lists them, its properties,
+   * then its diagram.
+   */
   readonly modelSections = computed(() => [
-    { path: RouteConstants.graph, icon: 'hub', count: undefined },
     { path: RouteConstants.classes, icon: 'view_list', count: this.state.classRows().length },
     { path: RouteConstants.properties, icon: 'label', count: this.state.propertyRows().length },
+    { path: RouteConstants.graph, icon: 'hub', count: undefined },
   ]);
+
+  constructor() {
+    // The section opened is remembered, for the tab to open on it next time; see `lastDataModelsSection`.
+    this._router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        startWith(null),
+        takeUntilDestroyed()
+      )
+      .subscribe(() => {
+        const section = this._route.firstChild?.snapshot.url[0]?.path;
+        if (section) rememberDataModelsSection(section);
+      });
+  }
   /** The lists belong to the project, not to a data model: every data model of the project can use them. */
   readonly projectSections = computed(() => [
     { path: RouteConstants.lists, icon: 'format_list_bulleted', count: this.state.lists()?.length },

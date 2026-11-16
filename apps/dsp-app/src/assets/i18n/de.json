@@ -715,6 +715,14 @@
       }
     },
     "ontologyMap": {
+      "showProperties": "Eigenschaften anzeigen",
+      "hint": {
+        "text": "Sie suchen jede Klasse mit ihren Eigenschaften?",
+        "cards": "Ressourcenklassen › Karten",
+        "showProperties": "Im Graphen anzeigen",
+        "oldTab": "Bisheriger Tab Datenmodelle",
+        "dismiss": "Ausblenden"
+      },
       "dataModels": "Datenmodelle",
       "noDataModels": "Dieses Projekt hat noch kein Datenmodell.",
       "classPanel": {
@@ -781,6 +789,8 @@
       "fullWidth": "Ganze Breite nutzen",
       "treeLines": "Linien zu Unterklassen",
       "viewMenu": {
+        "classProperties": "Klassen",
+        "showPropertiesHint": "Die Eigenschaften jeder Klasse in ihrem Kasten auflisten, wie im Tab Datenmodelle",
         "textSize": "Textgrösse",
         "links": "Verknüpfungen",
         "islands": "Inseln",
@@ -874,6 +884,14 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "new": "Neu",
+      "cardsTip": "Jede Klasse mit ihren Eigenschaften der Reihe nach, wie im Tab Datenmodelle",
+      "layout": "Darstellung",
+      "cards": "Karten",
+      "table": "Tabelle",
+      "multiple": "Mehrere Werte",
+      "required": "Erforderlich",
+      "noProperties": "Noch keine Eigenschaften",
       "currentLanguage": "Aktuelle Sprache",
       "allLanguages": "Alle Sprachen",
       "valueActions": "Aktionen für {{value}}",

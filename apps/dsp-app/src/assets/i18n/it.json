@@ -715,6 +715,14 @@
       }
     },
     "ontologyMap": {
+      "showProperties": "Mostra le proprietà",
+      "hint": {
+        "text": "Cerca ogni classe con le sue proprietà?",
+        "cards": "Classi di risorse › Schede",
+        "showProperties": "Mostrarle nel grafo",
+        "oldTab": "Scheda Modelli di dati precedente",
+        "dismiss": "Nascondi"
+      },
       "dataModels": "Modelli di dati",
       "noDataModels": "Questo progetto non ha ancora un modello di dati.",
       "classPanel": {
@@ -781,6 +789,8 @@
       "fullWidth": "Usa tutta la larghezza",
       "treeLines": "Linee verso le sottoclassi",
       "viewMenu": {
+        "classProperties": "Classi",
+        "showPropertiesHint": "Elencare le proprietà di ogni classe nel suo riquadro, come nella scheda Modelli di dati",
         "textSize": "Dimensione del testo",
         "links": "Collegamenti",
         "islands": "Isole",
@@ -874,6 +884,14 @@
       "links": "collegamenti"
     },
     "dataModels2": {
+      "new": "Nuovo",
+      "cardsTip": "Ogni classe con le sue proprietà in ordine, come nella scheda Modelli di dati",
+      "layout": "Presentazione",
+      "cards": "Schede",
+      "table": "Tabella",
+      "multiple": "Valori multipli",
+      "required": "Obbligatorio",
+      "noProperties": "Ancora nessuna proprietà",
       "currentLanguage": "Lingua attuale",
       "allLanguages": "Tutte le lingue",
       "valueActions": "Azioni per {{value}}",

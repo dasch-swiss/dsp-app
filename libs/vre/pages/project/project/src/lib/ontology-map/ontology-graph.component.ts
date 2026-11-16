@@ -119,10 +119,13 @@ function measureIconBoxes(cy: Core): void {
     const icon = node.data('icon') ? ICON.room : 0;
     for (const key of ['labels', 'names', 'both'] as const) {
       const font = `${weight} ${BASE_FONT_SIZE}px ${key === 'names' ? FONT.names : FONT.labels}`;
-      const text = textWidth(node.data(DATA_KEY[key]) ?? '', font);
-      node.data(`${key}Width`, text + icon);
-      // In the Colour tab look, a class with a tab is widened for it too.
-      node.data(`${key}TabWidth`, text + icon + (node.data('tab') ? TAB_WIDTH : 0));
+      // Its texts alone, and with its properties under them; see `GraphTextOptions.properties`.
+      for (const props of ['', 'Props']) {
+        const text = textWidth(node.data(`${DATA_KEY[key]}${props}`) ?? '', font);
+        node.data(`${key}${props}Width`, text + icon);
+        // In the Colour tab look, a class with a tab is widened for it too.
+        node.data(`${key}${props}TabWidth`, text + icon + (node.data('tab') ? TAB_WIDTH : 0));
+      }
     }
   });
 }
@@ -132,6 +135,22 @@ const DATA_KEY: Record<GraphLabels, string> = { labels: 'label', names: 'name', 
 
 /** The element data each `GraphLabels` writes. */
 const LABEL_DATA: Record<GraphLabels, string> = { labels: 'data(label)', names: 'data(name)', both: 'data(both)' };
+
+/** A class box's text: its label, name or both, with its properties under them when they are shown. */
+const nodeLabel = (text: GraphTextOptions) =>
+  text.properties ? `data(${DATA_KEY[text.labels]}Props)` : LABEL_DATA[text.labels];
+
+/** The data a class box's width at scale 1 is stored under, for the texts it writes; see `measureIconBoxes`. */
+const widthKey = (text: GraphTextOptions) => `${text.labels}${text.properties ? 'Props' : ''}`;
+
+/**
+ * How tall a box's background images are drawn, its tab or stripes, and where its file icon sits: with properties
+ * listed the box grows tall, so the images reach its whole height and the icon stays beside the class's name.
+ */
+const imageSize = (f: number, properties: boolean) => ({
+  'background-height': `${(properties ? 5 : 1) * TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
+  'background-position-y': (properties ? `50% ${ICON.inset * f}px` : `50% 50%`) as never,
+});
 
 /** How the graph writes and turns its texts. */
 export interface GraphTextOptions {
@@ -144,13 +163,15 @@ export interface GraphTextOptions {
   colourTab: boolean;
   /** Whether a line joins each parent to its subclasses. */
   treeLines: boolean;
+  /** Whether each class box lists its properties under its name. */
+  properties: boolean;
 }
 
 /**
  * The Colour tab look: every class box white, with slate borders, its label always on white; every class shows its
  * family's hue as a tab at the box's left, stronger on a top class than on its subclasses. No stripes behind a label.
  */
-const colourTabStyle = (f: number, labels: GraphLabels): StylesheetJson => [
+const colourTabStyle = (f: number, labels: string, properties: boolean): StylesheetJson => [
   { selector: 'node.family-member', style: { 'background-color': '#FFFFFF', 'border-color': TAB_LINE } },
   {
     selector: 'node[icon], node[texture], node[tab]',
@@ -160,11 +181,10 @@ const colourTabStyle = (f: number, labels: GraphLabels): StylesheetJson => [
       'background-fit': 'none none' as never,
       'background-clip': 'node none' as never,
       'background-width': `${TAB_WIDTH * f}px ${ICON.size * f}px` as never,
-      'background-height': `${TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
       // The tab at the very left; a file icon right of it.
       'background-position-x': ((node: NodeSingular) =>
         `0px ${(ICON.inset + (node.data('tab') ? TAB_WIDTH : 0)) * f}px`) as never,
-      'background-position-y': `50% 50%` as never,
+      ...imageSize(f, properties),
     },
   },
   {
@@ -188,11 +208,13 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     selector: 'node',
     style: {
       shape: 'round-rectangle',
-      label: LABEL_DATA[text.labels],
+      label: nodeLabel(text),
       'text-wrap': 'wrap',
       'text-max-width': '1000px',
       'text-valign': 'center',
       'text-halign': 'center',
+      // A list of properties reads down its left edge.
+      'text-justification': text.properties ? 'left' : 'center',
       'font-family': text.labels === 'names' ? FONT.names : FONT.labels,
       'font-size': BASE_FONT_SIZE * f,
       'font-weight': 500,
@@ -225,7 +247,7 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     selector: 'node[icon]',
     style: {
       // Its width at scale 1, from `measureIconBoxes`, times `f`.
-      width: `mapData(${text.labels}Width, 0, 10000, 0, ${10000 * f})`,
+      width: `mapData(${widthKey(text)}Width, 0, 10000, 0, ${10000 * f})`,
       'text-margin-x': (ICON.room * f) / 2,
     },
   },
@@ -238,13 +260,12 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'background-clip': 'node none' as never,
       // The stripes grow with the graph, so they stay as visible as its texts.
       'background-width': `${TEXTURE_TILE.width * f}px ${ICON.size * f}px` as never,
-      'background-height': `${TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
       // From the box's left edge, about as far as from its top.
       'background-position-x': `50% ${ICON.inset * f}px` as never,
-      'background-position-y': `50% 50%` as never,
+      ...imageSize(f, text.properties),
     },
   },
-  ...(text.colourTab ? colourTabStyle(f, text.labels) : []),
+  ...(text.colourTab ? colourTabStyle(f, widthKey(text), text.properties) : []),
   // An island's frame shows only while hovered.
   {
     selector: 'node.island',
@@ -713,6 +734,8 @@ export class OntologyGraphComponent {
   readonly colourTab = input(false);
   /** Whether a line joins each parent to its subclasses, as in a family tree. */
   readonly treeLines = input(true);
+  /** Whether each class box lists its properties under its name, as the Data models tab shows a class. */
+  readonly showProperties = input(false);
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
   /** A class, or a property's links, picked out in orange, as the search's results are gone through. */
@@ -993,6 +1016,7 @@ export class OntologyGraphComponent {
         islands: this.islands(),
         colourTab: this.colourTab(),
         treeLines: this.treeLines(),
+        properties: this.showProperties(),
       };
       if (!cy) return;
       cy.style(styleFor(this._scale, text));
@@ -1021,6 +1045,16 @@ export class OntologyGraphComponent {
       if (!cy || fullWidth === fullWidthShown) return;
       fullWidthShown = fullWidth;
       untracked(() => (this._dragged ? this._fit(cy) : this._arrange(cy)));
+    });
+    // Listing the properties in the boxes, or no longer, changes their size by far: the classes are laid out again,
+    // dragged places forgotten, as they would overlap.
+    let propertiesShown = untracked(() => this.showProperties());
+    effect(() => {
+      const cy = this._cy();
+      const properties = this.showProperties();
+      if (!cy || properties === propertiesShown) return;
+      propertiesShown = properties;
+      untracked(() => this._arrange(cy));
     });
     // Opening a panel, or showing another class or link in it, pans the graph sideways only when what it is about lies
     // under it; closing it pans back. Before the graph is shown, fitting it does the same, without the motion.
@@ -1291,6 +1325,7 @@ export class OntologyGraphComponent {
         islands: this.islands(),
         colourTab: this.colourTab(),
         treeLines: this.treeLines(),
+        properties: this.showProperties(),
       }))
     );
   }
