@@ -1,18 +1,23 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MULTI_LANGUAGE_MODE } from './multi-language-mode';
 
 /**
  * Picks how the multilingual texts of a form show their languages: one at a time, under a row of language tabs, or
- * all at once. Every `app-multi-language-fields` follows it, and the choice is remembered in this browser.
+ * all at once. Every `app-multi-language-fields` follows it, and the choice is remembered in this browser. A display
+ * setting rather than a field, it sits in the form's action bar, on the left of its buttons.
  */
 @Component({
   selector: 'app-multi-language-mode-switch',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonToggle, MatButtonToggleGroup, TranslatePipe],
+  imports: [MatButtonToggle, MatButtonToggleGroup, MatIcon, MatTooltip, TranslatePipe],
   template: `
-    <span class="title">{{ 'ui.multiLanguage.languages' | translate }}</span>
+    <mat-icon class="icon" aria-hidden="true" [matTooltip]="'ui.multiLanguage.languages' | translate"
+      >translate</mat-icon
+    >
     <mat-button-toggle-group
       hideSingleSelectionIndicator
       data-cy="multi-language-mode"
@@ -29,31 +34,26 @@ import { MULTI_LANGUAGE_MODE } from './multi-language-mode';
   `,
   styles: [
     `
+      // On the left of the action bar: the buttons keep the right.
       :host {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin: 4px 0 12px;
-        padding-top: 12px;
-        border-top: 1px solid rgba(0, 0, 0, 0.12);
-        --mat-button-toggle-height: 32px;
-        --mat-button-toggle-label-text-size: 13px;
+        gap: 6px;
+        margin-right: auto;
+        --mat-button-toggle-height: 28px;
+        --mat-button-toggle-label-text-size: 12px;
       }
 
-      // First in a form, with nothing above it to set apart from: no line.
-      :host:first-child {
-        border-top: 0;
-        padding-top: 0;
+      // In a dialog's action bar, which is padded less than the content: in line with the fields above.
+      :host-context(.mat-mdc-dialog-actions) {
+        margin-left: 16px;
       }
 
-      .title {
-        font-size: 12px;
-        font-weight: 500;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: rgba(0, 0, 0, 0.6);
+      .icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: rgba(0, 0, 0, 0.54);
       }
     `,
   ],

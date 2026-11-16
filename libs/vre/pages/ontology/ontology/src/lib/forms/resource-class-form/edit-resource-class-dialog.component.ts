@@ -10,6 +10,7 @@ import {
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { MultiLanguageModeSwitchComponent } from '@dasch-swiss/vre/ui/string-literal';
 import { MultiLanguages, StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -33,6 +34,7 @@ export interface EditResourceClassDialogProps {
       <app-resource-class-form [formData]="formData" (afterFormInit)="afterFormInit($event)" />
     </div>
     <div mat-dialog-actions align="end">
+      <app-multi-language-mode-switch />
       <button data-cy="cancel-button" mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button
         data-cy="submit-button"
@@ -48,6 +50,7 @@ export interface EditResourceClassDialogProps {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    MultiLanguageModeSwitchComponent,
     DialogHeaderComponent,
     LoadingButtonDirective,
     MatButton,

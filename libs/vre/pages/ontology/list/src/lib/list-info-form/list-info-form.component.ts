@@ -39,7 +39,6 @@ import { ListInfoForm } from './list-info-form.type';
       [title]="data ? (data.labels | appStringifyStringLiteral) : title"
       [subtitle]="data ? title : undefined" />
     <div mat-dialog-content>
-      <app-multi-language-mode-switch />
       <app-multi-language-fields
         [formArray]="form.controls.labels"
         [label]="'pages.ontology.list.listInfoForm.labelPlaceholder' | translate"
@@ -54,6 +53,7 @@ import { ListInfoForm } from './list-info-form.type';
         data-cy="comments-input" />
     </div>
     <div mat-dialog-actions align="end">
+      <app-multi-language-mode-switch />
       <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button
         mat-raised-button

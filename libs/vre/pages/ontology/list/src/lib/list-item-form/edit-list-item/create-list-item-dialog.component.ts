@@ -11,6 +11,7 @@ import { StringLiteral } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
+import { MultiLanguageModeSwitchComponent } from '@dasch-swiss/vre/ui/string-literal';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -35,6 +36,7 @@ export interface CreateListItemDialogProps {
     </div>
 
     <div mat-dialog-actions align="end">
+      <app-multi-language-mode-switch />
       <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
 
       <button
@@ -49,6 +51,7 @@ export interface CreateListItemDialogProps {
     </div>
   `,
   imports: [
+    MultiLanguageModeSwitchComponent,
     MatButton,
     MatDialogActions,
     MatDialogClose,

@@ -4,7 +4,6 @@ import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
 import {
   DEFAULT_MULTILANGUAGE_FORM,
   MultiLanguageFieldsComponent,
-  MultiLanguageModeSwitchComponent,
   MultiLanguages,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -13,7 +12,6 @@ import { ListItemForm } from './list-item-form.type';
 @Component({
   selector: 'app-reusable-list-item-form',
   template: `
-    <app-multi-language-mode-switch />
     <app-multi-language-fields
       data-cy="label-input"
       [label]="'pages.ontology.list.reusableForm.labelPlaceholder' | translate"
@@ -27,7 +25,7 @@ import { ListItemForm } from './list-item-form.type';
       [validators]="commentsValidators"
       [multiline]="true" />
   `,
-  imports: [TranslatePipe, MultiLanguageFieldsComponent, MultiLanguageModeSwitchComponent],
+  imports: [TranslatePipe, MultiLanguageFieldsComponent],
 })
 export class ReusableListItemFormComponent implements OnInit {
   @Input() formData: {

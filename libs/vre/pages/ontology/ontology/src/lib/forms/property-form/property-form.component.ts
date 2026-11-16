@@ -8,11 +8,7 @@ import { Constants } from '@dasch-swiss/dsp-js';
 import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { DefaultProperties, LocalizationService, PropertyCategory } from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  MultiLanguageFieldsComponent,
-  MultiLanguageModeSwitchComponent,
-  DEFAULT_MULTILANGUAGE_FORM,
-} from '@dasch-swiss/vre/ui/string-literal';
+import { MultiLanguageFieldsComponent, DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
@@ -61,7 +57,6 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       <app-gui-attr-link data-cy="object-attribute-link" [control]="form.controls.objectType" />
     }
 
-    <app-multi-language-mode-switch />
     <app-multi-language-fields
       [formArray]="form.controls.labels"
       [isRequired]="true"
@@ -88,7 +83,6 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
     MatSelect,
     MatSelectTrigger,
     MultiLanguageFieldsComponent,
-    MultiLanguageModeSwitchComponent,
     ReactiveFormsModule,
     TranslatePipe,
   ],

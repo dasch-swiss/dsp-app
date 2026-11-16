@@ -109,12 +109,11 @@ import { MULTI_LANGUAGE_MODE, MultiLanguageMode } from './multi-language-mode';
         margin-bottom: 16px;
       }
 
+      // The field's name, as a form label: written as is, so it reads as a field and not as a section.
       .heading {
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 500;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: rgba(0, 0, 0, 0.6);
+        color: rgba(0, 0, 0, 0.87);
         margin: 4px 0 2px;
       }
 

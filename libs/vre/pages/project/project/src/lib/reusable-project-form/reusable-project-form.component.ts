@@ -5,7 +5,6 @@ import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
 import {
   DEFAULT_MULTILANGUAGE_FORM,
   MultiLanguageFieldsComponent,
-  MultiLanguageModeSwitchComponent,
   MultiLanguages,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { ChipListInputComponent, CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
@@ -36,7 +35,6 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
           [label]="'pages.project.reusableProjectForm.longname' | translate"
           [control]="form.controls.longname"
           data-cy="longname-input" />
-        <app-multi-language-mode-switch />
         <app-multi-language-fields
           [label]="'ui.common.fields.description' | translate"
           [formArray]="form.controls.description"
@@ -56,7 +54,6 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
     TranslatePipe,
     CommonInputComponent,
     MultiLanguageFieldsComponent,
-    MultiLanguageModeSwitchComponent,
     ChipListInputComponent,
   ],
 })
