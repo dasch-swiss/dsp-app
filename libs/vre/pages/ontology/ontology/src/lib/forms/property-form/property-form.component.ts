@@ -51,13 +51,8 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       data-cy="name-input"
       prefixIcon="fingerprint"
       [control]="form.controls.name" />
-    <app-multi-language-mode-switch />
-    <app-multi-language-fields
-      [formArray]="form.controls.labels"
-      [isRequired]="true"
-      data-cy="label-input"
-      [label]="'pages.ontology.propertyForm.labelPlaceholder' | translate" />
 
+    <!-- What the values are, a vocabulary or a class, with the type and name; the texts in languages after. -->
     @if (propertyData.propType.objectType === Constants.ListValue) {
       <app-gui-attr-list data-cy="object-attribute-list" [control]="form.controls.guiAttr" />
     }
@@ -65,6 +60,13 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
     @if (propertyData.propType.objectType === Constants.LinkValue) {
       <app-gui-attr-link data-cy="object-attribute-link" [control]="form.controls.objectType" />
     }
+
+    <app-multi-language-mode-switch />
+    <app-multi-language-fields
+      [formArray]="form.controls.labels"
+      [isRequired]="true"
+      data-cy="label-input"
+      [label]="'pages.ontology.propertyForm.labelPlaceholder' | translate" />
 
     <app-multi-language-fields
       [formArray]="form.controls.comments"
