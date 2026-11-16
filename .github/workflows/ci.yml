@@ -477,7 +477,9 @@ jobs:
       needs.changes.outputs.automation_skip == 'false' &&
       needs.changes.outputs.only_workflows == 'false' &&
       needs.changes.outputs.bot_push == 'false'
-    runs-on: ubuntu-latest
+    # The pixeleye CLI bundles Playwright 1.59.0, which cannot install its OS dependencies on
+    # ubuntu-26.04, the image ubuntu-latest moved to. Unpin when the CLI's Playwright supports it.
+    runs-on: ubuntu-24.04
     # Capture only: this job uploads snapshots and never decides anything. The
     # verdict reaches the PR as the commit status `Pixeleye – dasch-swiss/dsp-app`,
     # posted by the pixeleye GitHub App and updated the moment a build is approved
