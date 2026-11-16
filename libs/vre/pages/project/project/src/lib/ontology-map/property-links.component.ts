@@ -156,7 +156,7 @@ interface Placed extends PropertyLinkEnd {
           color: $cool_gray_600;
         }
 
-        // As the Overview draws a class with "Colour as a tab": white, a slate border, its colour in a tab at the left.
+        // As the Diagram draws a class with "Colour as a tab": white, a slate border, its colour in a tab at the left.
         position: relative;
         padding-left: 16px;
         border-color: #d1d5db;

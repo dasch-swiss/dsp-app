@@ -411,7 +411,7 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         gap: 4px;
       }
 
-      // A class as the Overview draws it: white, a slate border, its colour in a tab at the left.
+      // A class as the Diagram draws it: white, a slate border, its colour in a tab at the left.
       .chip {
         display: flex;
         align-items: stretch;

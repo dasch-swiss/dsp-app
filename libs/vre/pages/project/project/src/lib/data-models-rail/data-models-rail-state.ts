@@ -47,7 +47,7 @@ export class DataModelsRailState {
     const iri = this.selected()?.iri;
     return iri ? this._graphsByIri()?.get(iri) : undefined;
   });
-  /** A colour per class, its family's, as the Overview graph draws it. */
+  /** A colour per class, its family's, as the Diagram draws it. */
   readonly colors = computed(() => {
     const graph = this.graph();
     return graph ? familyColors(graph) : new Map<string, string>();

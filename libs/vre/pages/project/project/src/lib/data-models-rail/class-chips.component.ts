@@ -4,7 +4,7 @@ import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
 
 /**
- * Classes as chips on one line, each white with its colour in a tab at its left, as the Overview draws a class with
+ * Classes as chips on one line, each white with its colour in a tab at its left, as the Diagram draws a class with
  * "Colour as a tab": condensed, the first `max` and a count of the others; expanded, every one, wrapping. A dash when
  * there is none. A clicked chip asks to open its class.
  */
