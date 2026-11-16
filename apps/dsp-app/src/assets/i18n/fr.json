@@ -877,6 +877,15 @@
       "links": "liens"
     },
     "dataModels2": {
+      "showMore": "Afficher {{count}} de plus",
+      "showLess": "Afficher moins",
+      "inheritedFrom": "{{count}} de {{class}}",
+      "cardinality": {
+        "requiredOne": "Obligatoire, une valeur",
+        "optionalOne": "Facultatif, une valeur",
+        "requiredMultiple": "Obligatoire, plusieurs valeurs",
+        "optionalMultiple": "Facultatif, plusieurs valeurs"
+      },
       "createVocabulary": "Créer un vocabulaire contrôlé",
       "createClass": "Créer une classe de ressource",
       "createProperty": "Créer une propriété",
@@ -885,8 +894,6 @@
       "layout": "Présentation",
       "cards": "Cartes",
       "table": "Tableau",
-      "multiple": "Valeurs multiples",
-      "required": "Obligatoire",
       "noProperties": "Aucune propriété pour l'instant",
       "currentLanguage": "Langue actuelle",
       "allLanguages": "Toutes les langues",

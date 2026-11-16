@@ -877,6 +877,15 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "showMore": "{{count}} weitere anzeigen",
+      "showLess": "Weniger anzeigen",
+      "inheritedFrom": "{{count}} von {{class}}",
+      "cardinality": {
+        "requiredOne": "Pflichtfeld, ein Wert",
+        "optionalOne": "Optional, ein Wert",
+        "requiredMultiple": "Pflichtfeld, mehrere Werte",
+        "optionalMultiple": "Optional, mehrere Werte"
+      },
       "createVocabulary": "Kontrolliertes Vokabular erstellen",
       "createClass": "Ressourcenklasse erstellen",
       "createProperty": "Eigenschaft erstellen",
@@ -885,8 +894,6 @@
       "layout": "Darstellung",
       "cards": "Karten",
       "table": "Tabelle",
-      "multiple": "Mehrere Werte",
-      "required": "Erforderlich",
       "noProperties": "Noch keine Eigenschaften",
       "currentLanguage": "Aktuelle Sprache",
       "allLanguages": "Alle Sprachen",

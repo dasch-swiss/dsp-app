@@ -877,6 +877,15 @@
       "links": "links"
     },
     "dataModels2": {
+      "showMore": "Show {{count}} more",
+      "showLess": "Show less",
+      "inheritedFrom": "{{count}} from {{class}}",
+      "cardinality": {
+        "requiredOne": "Required, one value",
+        "optionalOne": "Optional, one value",
+        "requiredMultiple": "Required, multiple values",
+        "optionalMultiple": "Optional, multiple values"
+      },
       "createVocabulary": "Create controlled vocabulary",
       "createClass": "Create resource class",
       "createProperty": "Create property",
@@ -885,8 +894,6 @@
       "layout": "Layout",
       "cards": "Cards",
       "table": "Table",
-      "multiple": "Multiple values",
-      "required": "Required",
       "noProperties": "No properties yet",
       "currentLanguage": "Current language",
       "allLanguages": "All languages",

@@ -257,6 +257,7 @@ const COLUMN_LABELS: Record<Column, string> = {
         <app-data-model-class-cards
           class="cards-box"
           [rows]="rows()"
+          [classes]="state.classRows()"
           [colors]="state.colors()"
           [labelOf]="labelOf"
           [selected]="panelIri()"
