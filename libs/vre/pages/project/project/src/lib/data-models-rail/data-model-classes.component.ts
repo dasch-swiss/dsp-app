@@ -260,9 +260,10 @@ const COLUMN_LABELS: Record<Column, string> = {
           [colors]="state.colors()"
           [labelOf]="labelOf"
           [selected]="panelIri()"
-          [(opened)]="openCards"
+          [canEdit]="state.canEdit()"
+          [(folded)]="foldedCards"
           (classSelected)="openPanel($event)"
-          (propertySelected)="openProperty($event)" />
+          (editProperty)="editing.editProperty($event)" />
         @if (rows().length === 0) {
           <p class="empty">{{ r + '.noMatch' | translate }}</p>
         }
@@ -908,15 +909,15 @@ export class DataModelClassesComponent {
   );
   /** Whether the layouts were switched once in this browser: the Cards switch says it is new until then. */
   readonly layoutTipSeen = rememberedSignal(`${STORAGE_KEY}-layout-tip`, false, stored => stored === 'true');
-  /** The cards opened to show their properties: none at first, so the classes fit at a glance. */
-  readonly openCards = signal(new Set<string>());
+  /** The cards folded to their title: none at first, so every class shows its properties, as in the Data models tab. */
+  readonly foldedCards = signal(new Set<string>());
   readonly allCardsOpen = computed(() => {
     const rows = this.rows();
-    return rows.length > 0 && rows.every(row => this.openCards().has(row.id));
+    return rows.length > 0 && rows.every(row => !this.foldedCards().has(row.id));
   });
 
   toggleAllCards(): void {
-    this.openCards.set(this.allCardsOpen() ? new Set() : new Set(this.rows().map(row => row.id)));
+    this.foldedCards.set(this.allCardsOpen() ? new Set(this.rows().map(row => row.id)) : new Set());
   }
 
   /** The kinds of class to create, as the data model editor offers them. */

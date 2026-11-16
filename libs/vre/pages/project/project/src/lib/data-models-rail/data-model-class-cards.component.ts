@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
@@ -9,18 +11,18 @@ import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 /**
  * Data models 2 › Classes as cards, the way the Data models tab shows a data model: one box per class with its
  * properties in their form order, each with its value type, the class a link points at, and whether a resource may
- * have several values of it and must have one. A card shows its title only until opened. A clicked class or property
+ * have several values of it and must have one. A card folds to its title. A clicked class
  * opens its panel.
  */
 @Component({
   selector: 'app-data-model-class-cards',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatIcon, MatTooltip, TabShadePipe, TranslatePipe],
+  imports: [AddPropertyMenuComponent, MatIcon, MatTooltip, TabShadePipe, TranslatePipe],
   template: `
     @let r = 'pages.dataModels2';
     <div class="cards" data-cy="data-model-class-cards">
       @for (row of rows(); track row.id) {
-        @let open = opened().has(row.id);
+        @let open = !folded().has(row.id);
         <article
           class="card"
           data-cy="data-model-class-card"
@@ -55,12 +57,7 @@ import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
             @if (row.propertyList.length) {
               <ul class="props">
                 @for (property of row.propertyList; track property.id) {
-                  <li
-                    class="prop"
-                    tabindex="0"
-                    data-cy="data-model-class-card-property"
-                    (click)="propertySelected.emit(property.id)"
-                    (keydown.enter)="propertySelected.emit(property.id)">
+                  <li class="prop" data-cy="data-model-class-card-property">
                     <mat-icon class="type" [matTooltip]="typeName(property.type)">{{
                       typeIcon(property.type)
                     }}</mat-icon>
@@ -79,11 +76,33 @@ import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
                         <span class="flag required">{{ r + '.required' | translate }}</span>
                       }
                     </span>
+                    <!-- For editors, on hover: the property's dialog; built-in properties are not edited here. -->
+                    @if (canEdit() && editable(property.id)) {
+                      <button
+                        type="button"
+                        class="edit"
+                        data-cy="data-model-class-card-edit-property"
+                        [attr.aria-label]="
+                          'pages.ontologyMap.classPanel.editProperty' | translate: { property: property.label }
+                        "
+                        [matTooltip]="
+                          'pages.ontologyMap.classPanel.editProperty' | translate: { property: property.label }
+                        "
+                        (click)="editProperty.emit(property.id)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    }
                   </li>
                 }
               </ul>
             } @else {
               <p class="none">{{ r + '.noProperties' | translate }}</p>
+            }
+            <!-- For editors: a new property of a type, or one the project has, as in the class's panel. -->
+            @if (canEdit()) {
+              <div class="add-property">
+                <app-add-property-menu [classIri]="row.id" />
+              </div>
             }
           }
         </article>
@@ -187,12 +206,11 @@ import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 
       .prop {
         display: grid;
-        grid-template-columns: 20px minmax(0, 1fr) auto;
+        grid-template-columns: 20px minmax(0, 1fr) auto 26px;
         gap: 8px;
         align-items: start;
-        padding: 6px 10px 6px 16px;
+        padding: 6px 6px 6px 16px;
         font-size: 13px;
-        cursor: pointer;
 
         & + .prop {
           border-top: 1px solid $cool_gray_100;
@@ -201,6 +219,34 @@ import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
         &:hover {
           background: $cool_gray_50;
         }
+      }
+
+      // The pencil, as in the class's panel: shown on hover, or while it has the focus.
+      .edit {
+        grid-column: 4;
+        display: flex;
+        padding: 3px;
+        border: 0;
+        border-radius: 50%;
+        background: none;
+        color: $primary;
+        cursor: pointer;
+        visibility: hidden;
+
+        &:hover {
+          background: $primary_50;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .prop:hover .edit,
+      .edit:focus-visible {
+        visibility: visible;
       }
 
       .type {
@@ -247,6 +293,12 @@ import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
         }
       }
 
+      // "Add property" under an opened card's properties, as in the Data models tab.
+      .add-property {
+        padding: 2px 8px 6px;
+        border-top: 1px solid $cool_gray_100;
+      }
+
       .none {
         margin: 0;
         padding: 8px 16px 10px;
@@ -270,17 +322,25 @@ export class DataModelClassCardsComponent {
   readonly labelOf = input.required<(iri: string) => string>();
   /** The class whose panel is open. */
   readonly selected = input<string | undefined>(undefined);
+  /** Whether an opened card offers "Add property": for those who may edit the data model. */
+  readonly canEdit = input(false);
 
   readonly classSelected = output<string>();
-  readonly propertySelected = output<string>();
+  /** A property's pencil was clicked: its dialog is to open. */
+  readonly editProperty = output<string>();
 
-  /** The cards opened to show their properties; the others show their title only. */
-  readonly opened = model(new Set<string>());
+  /** The cards folded to their title; the others show their properties. */
+  readonly folded = model(new Set<string>());
 
   toggle(iri: string): void {
-    const opened = new Set(this.opened());
-    if (!opened.delete(iri)) opened.add(iri);
-    this.opened.set(opened);
+    const folded = new Set(this.folded());
+    if (!folded.delete(iri)) folded.add(iri);
+    this.folded.set(folded);
+  }
+
+  /** Whether the property is the data model's own, rather than built in, so it can be edited here. */
+  editable(iri: string): boolean {
+    return !iri.startsWith(Constants.KnoraApiV2);
   }
 
   typeIcon(type: string): string {
