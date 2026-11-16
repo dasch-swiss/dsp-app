@@ -188,6 +188,38 @@ const COLUMN_LABELS: Record<Column, string> = {
               <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
               {{ (allCardsOpen() ? r + '.collapseAll' : r + '.expandAll') | translate }}
             </button>
+            <!-- How the cards show links: apart from the values, and their targets in colour. -->
+            <button
+              mat-button
+              type="button"
+              class="view-options"
+              data-cy="data-model-class-cards-view-options"
+              [matMenuTriggerFor]="cardsView">
+              <mat-icon>tune</mat-icon>
+              {{ 'pages.dataBrowser.viewOptions.title' | translate }}
+            </button>
+            <mat-menu #cardsView="matMenu" xPosition="before">
+              <div
+                class="cards-view"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
+                <span class="view-heading first">{{ r + '.links' | translate }}</span>
+                <mat-slide-toggle
+                  class="view-toggle"
+                  data-cy="data-model-class-cards-group-links"
+                  [checked]="groupLinks()"
+                  (change)="groupLinks.set($event.checked)">
+                  {{ r + '.groupLinks' | translate }}
+                </mat-slide-toggle>
+                <mat-slide-toggle
+                  class="view-toggle"
+                  data-cy="data-model-class-cards-link-chips"
+                  [checked]="linkChips()"
+                  (change)="linkChips.set($event.checked)">
+                  {{ r + '.linkChips' | translate }}
+                </mat-slide-toggle>
+              </div>
+            </mat-menu>
           }
           @if (layout() === 'table') {
             <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-classes">
@@ -262,6 +294,8 @@ const COLUMN_LABELS: Record<Column, string> = {
           [labelOf]="labelOf"
           [selected]="panelIri()"
           [canEdit]="state.canEdit()"
+          [groupLinks]="groupLinks()"
+          [linkChips]="linkChips()"
           [(folded)]="foldedCards"
           (classSelected)="openPanel($event)"
           (editProperty)="editing.editProperty($event)" />
@@ -777,6 +811,24 @@ const COLUMN_LABELS: Record<Column, string> = {
         font-size: 13px;
       }
 
+      // The cards' View options: no columns above, so its first heading has no line.
+      .view-options {
+        font-size: 13px;
+      }
+
+      .cards-view {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 220px;
+        padding: 4px 12px;
+
+        .view-heading.first {
+          margin-top: 0;
+          border-top: 0;
+        }
+      }
+
       .subclass-of {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -916,6 +968,11 @@ export class DataModelClassesComponent {
     const rows = this.rows();
     return rows.length > 0 && rows.every(row => !this.foldedCards().has(row.id));
   });
+
+  /** Whether the cards show a class's values, then its links, apart; off at first; remembered in this browser. */
+  readonly groupLinks = rememberedSignal(`${STORAGE_KEY}-group-links`, false, stored => stored === 'true');
+  /** Whether the cards show a link's target as a chip in its family's colour; off at first; remembered. */
+  readonly linkChips = rememberedSignal(`${STORAGE_KEY}-link-chips`, false, stored => stored === 'true');
 
   toggleAllCards(): void {
     this.foldedCards.set(this.allCardsOpen() ? new Set(this.rows().map(row => row.id)) : new Set());

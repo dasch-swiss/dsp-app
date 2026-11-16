@@ -27,6 +27,9 @@ export const CARD_PROPERTIES = 8;
 interface Card {
   row: ClassRow;
   own: CardProperty[];
+  /** The own properties that hold values, and those that link to a resource, each in form order. */
+  values: CardProperty[];
+  links: CardProperty[];
   inherited: CardProperty[];
   /** The label of the superclass the inherited ones come from, when it is a class of the data model. */
   parent?: string;
@@ -36,7 +39,8 @@ interface Card {
  * Data models 2 › Classes as cards, the way the Data models tab shows a data model: one box per class with its
  * properties in their form order, one line each: value type, label, the class a link points at, local name and
  * cardinality. A subclass lists its own properties; those from its superclass fold into one row. Past
- * {@link CARD_PROPERTIES}, "Show more" opens the rest. A card folds to its title. A clicked class opens its panel.
+ * {@link CARD_PROPERTIES}, "Show more" opens the rest. As view options, the values and the links can show apart,
+ * and a link's target as a chip in its family's colour. A card folds to its title. A clicked class opens its panel.
  */
 @Component({
   selector: 'app-data-model-class-cards',
@@ -48,13 +52,24 @@ interface Card {
       <li
         class="prop"
         data-cy="data-model-class-card-property"
+        [class.link]="linkChips() && property.linkTarget"
         [matTooltip]="propertyTip(property)"
         matTooltipShowDelay="600">
         <mat-icon class="type" [attr.aria-label]="typeName(property.type)">{{ typeIcon(property.type) }}</mat-icon>
         <span class="name">
           {{ property.label }}
           @if (property.linkTarget) {
-            <span class="target">→ {{ labelOf()(property.linkTarget) }}</span>
+            @if (linkChips()) {
+              <!-- The target in its family's colour, as its card and its box in the diagram. -->
+              <span
+                class="target-chip"
+                data-cy="data-model-class-card-target"
+                [style.--c]="colors().get(property.linkTarget) ?? '#9ca3af'"
+                >{{ labelOf()(property.linkTarget) }}</span
+              >
+            } @else {
+              <span class="target">→ {{ labelOf()(property.linkTarget) }}</span>
+            }
           }
         </span>
         <span class="local">{{ localName(property.id) }}</span>
@@ -79,12 +94,32 @@ interface Card {
       </li>
     </ng-template>
 
+    <!-- Properties up to the cap, then "Show n more"; key names what "Show more" opens. -->
+    <ng-template #capped let-properties let-key="key">
+      @let all = showAll().has(key);
+      @let hidden = properties.length - CARD_PROPERTIES;
+      <ul class="props">
+        @for (property of all ? properties : properties.slice(0, CARD_PROPERTIES); track property.id) {
+          <ng-container *ngTemplateOutlet="propertyRow; context: { $implicit: property }" />
+        }
+      </ul>
+      @if (hidden > 0) {
+        <button
+          type="button"
+          class="more"
+          data-cy="data-model-class-card-more"
+          [attr.aria-expanded]="all"
+          (click)="toggle(showAll, key)">
+          <mat-icon>{{ all ? 'expand_less' : 'expand_more' }}</mat-icon>
+          {{ all ? (r + '.showLess' | translate) : (r + '.showMore' | translate: { count: hidden }) }}
+        </button>
+      }
+    </ng-template>
+
     <div class="cards" data-cy="data-model-class-cards">
       @for (card of cards(); track card.row.id) {
         @let row = card.row;
         @let open = !folded().has(row.id);
-        @let all = showAll().has(row.id);
-        @let hidden = card.own.length - CARD_PROPERTIES;
         <article
           class="card"
           data-cy="data-model-class-card"
@@ -110,7 +145,6 @@ interface Card {
                 <small>{{ row.name }}</small>
               </span>
             </span>
-            <span class="count" [matTooltip]="r + '.colProperties' | translate">{{ row.propertyList.length }}</span>
             <button
               type="button"
               class="fold"
@@ -122,25 +156,18 @@ interface Card {
             </button>
           </header>
           @if (open) {
-            @if (card.own.length) {
-              <ul class="props">
-                @for (property of all ? card.own : card.own.slice(0, CARD_PROPERTIES); track property.id) {
-                  <ng-container *ngTemplateOutlet="propertyRow; context: { $implicit: property }" />
-                }
-              </ul>
+            <!-- Values, then the links under their own heading, each in form order, when asked apart. -->
+            @if (groupLinks() && card.values.length && card.links.length) {
+              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.values, key: row.id + ' values' }" />
+              <div class="group" data-cy="data-model-class-card-links">
+                <mat-icon>link</mat-icon>
+                {{ r + '.links' | translate }} <span class="n">{{ card.links.length }}</span>
+              </div>
+              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.links, key: row.id + ' links' }" />
+            } @else if (card.own.length) {
+              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.own, key: row.id }" />
             } @else if (!card.inherited.length) {
               <p class="none">{{ r + '.noProperties' | translate }}</p>
-            }
-            @if (hidden > 0) {
-              <button
-                type="button"
-                class="more"
-                data-cy="data-model-class-card-more"
-                [attr.aria-expanded]="all"
-                (click)="toggle(showAll, row.id)">
-                <mat-icon>{{ all ? 'expand_less' : 'expand_more' }}</mat-icon>
-                {{ all ? (r + '.showLess' | translate) : (r + '.showMore' | translate: { count: hidden }) }}
-              </button>
             }
             @if (card.inherited.length) {
               @let inheritedOpen = inheritedShown().has(row.id);
@@ -166,7 +193,7 @@ interface Card {
             <!-- For editors: a new property of a type, or one the project has, as in the class's panel. -->
             @if (canEdit()) {
               <div class="add-property">
-                <app-add-property-menu [classIri]="row.id" />
+                <app-add-property-menu [classIri]="row.id" [row]="true" />
               </div>
             }
           }
@@ -284,15 +311,6 @@ interface Card {
         }
       }
 
-      .count {
-        font-size: 11px;
-        color: $cool_gray_600;
-        border: 1px solid $cool_gray_300;
-        border-radius: 99px;
-        padding: 0 7px;
-        font-variant-numeric: tabular-nums;
-      }
-
       .fold {
         flex: none;
         border: 0;
@@ -354,6 +372,59 @@ interface Card {
 
       .target {
         color: $cool_gray_500;
+      }
+
+      // A link's target in its family's colour; the link icon then takes the primary colour.
+      .target-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: 4px;
+        padding: 0 7px 0 5px;
+        border-radius: 99px;
+        background: color-mix(in srgb, var(--c) 22%, white);
+        font-size: 11px;
+        line-height: 16px;
+        color: $cool_gray_900;
+        vertical-align: 1px;
+
+        &::before {
+          content: '';
+          width: 6px;
+          height: 6px;
+          border-radius: 2px;
+          background: var(--c);
+        }
+      }
+
+      .prop.link .type {
+        color: $primary;
+      }
+
+      // "Values" and "Links" over their groups.
+      .group {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 16px 2px;
+        border-top: 1px solid $cool_gray_100;
+        background: $cool_gray_50;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: $cool_gray_500;
+
+        .n {
+          font-weight: 400;
+          letter-spacing: 0;
+        }
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+        }
       }
 
       .local {
@@ -460,7 +531,7 @@ interface Card {
 
       // "Add property" under an opened card's properties, as in the Data models tab.
       .add-property {
-        padding: 0 8px 2px;
+        display: block;
         border-top: 1px solid $cool_gray_100;
       }
 
@@ -494,6 +565,10 @@ export class DataModelClassCardsComponent {
   readonly selected = input<string | undefined>(undefined);
   /** Whether an opened card offers "Add property": for those who may edit the data model. */
   readonly canEdit = input(false);
+  /** Whether a class's own properties show as values, then links, rather than all in form order. */
+  readonly groupLinks = input(false);
+  /** Whether a link's target shows as a chip in its family's colour, rather than as "→ class". */
+  readonly linkChips = input(false);
 
   readonly classSelected = output<string>();
   /** A property's pencil was clicked: its dialog is to open. */
@@ -510,13 +585,15 @@ export class DataModelClassCardsComponent {
     const byId = new Map((this.classes() ?? this.rows()).map(row => [row.id, row]));
     return this.rows().map(row => {
       const parent = row.superclass ? byId.get(row.superclass) : undefined;
-      if (!parent) return { row, own: row.propertyList, inherited: [] };
-      const fromParent = new Set(parent.propertyList.map(property => property.id));
+      const fromParent = new Set(parent?.propertyList.map(property => property.id));
+      const own = row.propertyList.filter(property => !fromParent.has(property.id));
       return {
         row,
-        own: row.propertyList.filter(property => !fromParent.has(property.id)),
+        own,
+        values: own.filter(property => !property.linkTarget),
+        links: own.filter(property => property.linkTarget),
         inherited: row.propertyList.filter(property => fromParent.has(property.id)),
-        parent: parent.label,
+        parent: parent?.label,
       };
     });
   });

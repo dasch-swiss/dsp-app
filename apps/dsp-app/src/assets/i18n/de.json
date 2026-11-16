@@ -877,6 +877,9 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "links": "Verknüpfungen",
+      "groupLinks": "Verknüpfungen getrennt von Werten anzeigen",
+      "linkChips": "Verknüpfungsziele farbig anzeigen",
       "showMore": "{{count}} weitere anzeigen",
       "showLess": "Weniger anzeigen",
       "inheritedFrom": "{{count}} von {{class}}",

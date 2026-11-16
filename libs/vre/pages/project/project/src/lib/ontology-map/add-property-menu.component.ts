@@ -25,6 +25,7 @@ import { AvailableProperties, DATA_MODEL_EDITOR, injectDataModelEditing } from '
         type="button"
         class="add"
         data-cy="class-panel-add-property"
+        [class.row]="row()"
         [matMenuTriggerFor]="menu"
         (menuOpened)="opened.set(true)">
         <mat-icon>add</mat-icon>
@@ -85,6 +86,25 @@ import { AvailableProperties, DATA_MODEL_EDITOR, injectDataModelEditing } from '
         height: 32px;
         font-size: 13px;
       }
+
+      // As a card's last row: the whole line is the button, square, its text at the start.
+      .add.row {
+        width: 100%;
+        margin: 0;
+        height: 28px;
+        padding: 0 16px;
+        justify-content: flex-start;
+        border-radius: 0;
+        font-size: 12.5px;
+        --mat-button-text-container-shape: 0;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          margin-right: 4px;
+        }
+      }
     `,
   ],
 })
@@ -95,6 +115,8 @@ export class AddPropertyMenuComponent {
   private readonly _editing = this.canAdd ? injectDataModelEditing() : undefined;
 
   readonly classIri = input.required<string>();
+  /** Whether the button spans its whole line, as a card's last row, rather than sitting under the panel's list. */
+  readonly row = input(false);
 
   readonly categories: PropertyCategory[] = DefaultProperties.data;
 
