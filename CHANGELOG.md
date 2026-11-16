@@ -1,5 +1,13 @@
 # Changelog
 
+## [14.1.4](https://github.com/dasch-swiss/dsp-app/compare/v14.1.3...v14.1.4) (2026-11-12)
+
+
+### Maintenances
+
+* close the AI-readiness gaps that don't need Bazel (DEV-7641) ([#3618](https://github.com/dasch-swiss/dsp-app/issues/3618)) ([3865cf7](https://github.com/dasch-swiss/dsp-app/commit/3865cf75f13297c05c548ac8194fdbb88f17ee00))
+* **open-api:** bump dsp-api spec v40.6.1-2-ge20226e → v40.6.1-8-g5a8b56a ([#3610](https://github.com/dasch-swiss/dsp-app/issues/3610)) ([85b1828](https://github.com/dasch-swiss/dsp-app/commit/85b182800e23870b2f289621ebbbfeb884b4a7ff))
+
 ## [14.1.3](https://github.com/dasch-swiss/dsp-app/compare/v14.1.2...v14.1.3) (2026-11-10)
 
 
