@@ -33,6 +33,13 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1_n]: 'oneOrMore',
 };
 
+const CARDINALITY_NOTATION: Record<Cardinality, string> = {
+  [Cardinality._1]: '1',
+  [Cardinality._0_1]: '0-1',
+  [Cardinality._0_n]: '0-n',
+  [Cardinality._1_n]: '1-n',
+};
+
 /**
  * The details of one class of a data model, docked beside the Ontology map: its description, a small map of the
  * classes it links to and is linked from, and its properties with their types and how many values they take.
@@ -136,13 +143,19 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                       class="value link"
                       [disabled]="!isNavigable(target)"
                       (click)="showClass(target)">
-                      → {{ labelOf(target) }} · {{ t + '.' + cardinalityKey(property) | translate }}
+                      → {{ labelOf(target) }}
                     </button>
                   } @else {
-                    <span class="value" [attr.data-type]="property.type">
-                      {{ typeName(property) }} · {{ t + '.' + cardinalityKey(property) | translate }}
-                    </span>
+                    <span class="value" [attr.data-type]="property.type">{{ typeName(property) }}</span>
                   }
+                  <!-- As on the class cards: 1, 0-1, 1-n or 0-n, filled when required; in words on hover. -->
+                  <span
+                    class="cardinality"
+                    data-cy="class-panel-cardinality"
+                    [class.required]="isRequired(property)"
+                    [matTooltip]="t + '.' + cardinalityKey(property) | translate"
+                    >{{ cardinalityNotation(property) }}</span
+                  >
                   @if (canEdit() && isEditable(property)) {
                     <button
                       type="button"
@@ -152,6 +165,18 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                       [matTooltip]="t + '.editProperty' | translate: { property: property.label }"
                       (click)="editProperty.emit(property.id)">
                       <mat-icon>edit</mat-icon>
+                    </button>
+                  }
+                  <!-- For editors, on the class's own properties: taking it off the class, once checked and confirmed. -->
+                  @if (canEdit() && editing?.canDelete && isEditable(property) && !inherited().has(property.id)) {
+                    <button
+                      type="button"
+                      class="edit-property remove-property"
+                      data-cy="class-panel-remove-property"
+                      [attr.aria-label]="'pages.dataModels2.removeFromClass' | translate: { class: node.label }"
+                      [matTooltip]="'pages.dataModels2.removeFromClass' | translate: { class: node.label }"
+                      (click)="removeProperty(node, property)">
+                      <mat-icon>remove_circle_outline</mat-icon>
                     </button>
                   }
                 </div>
@@ -395,6 +420,26 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         color: $cool_gray_500;
       }
 
+      .cardinality {
+        flex: none;
+        min-width: 32px;
+        padding: 0 4px;
+        border: 1px solid $cool_gray_300;
+        border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 500;
+        line-height: 16px;
+        text-align: center;
+        color: $cool_gray_600;
+
+        &.required {
+          background: $primary;
+          border-color: $primary;
+          color: white;
+        }
+      }
+
       .link {
         cursor: pointer;
 
@@ -444,6 +489,16 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
           font-size: 18px;
           width: 18px;
           height: 18px;
+        }
+      }
+
+      // Removing a property from the class: grey, red on hover.
+      .remove-property {
+        color: $cool_gray_500;
+
+        &:hover {
+          color: #b3261e;
+          background: #fdecea;
         }
       }
 
@@ -557,6 +612,22 @@ export class ResourceClassPanelComponent {
     });
   }
 
+  /** The properties the class has from its superclass: removed on the superclass, not here. */
+  readonly inherited = computed(() => {
+    const graph = this.graph();
+    const parent = graph.edges.find(edge => edge.kind === 'subclass' && edge.source === this.classIri())?.target;
+    const parentNode = parent ? graph.nodes.find(node => node.id === parent) : undefined;
+    return new Set((parentNode?.propertyDetails ?? []).map(property => property.id));
+  });
+
+  /** Takes the property off the class, once checked and confirmed; the data model is then read again. */
+  removeProperty(node: { id: string; label: string }, property: DataModelProperty): void {
+    this.editing
+      ?.removeProperty(node.id, property.id, { property: property.label, class: node.label })
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe();
+  }
+
   /** Deletes the class once confirmed, then closes the panel. */
   deleteClass(node: { id: string; label: string }): void {
     this.editing
@@ -623,6 +694,15 @@ export class ResourceClassPanelComponent {
 
   cardinalityKey(property: DataModelProperty): string {
     return CARDINALITY_KEY[property.cardinality];
+  }
+
+  /** The cardinality as the data model writes it, as the class cards show it. */
+  cardinalityNotation(property: DataModelProperty): string {
+    return CARDINALITY_NOTATION[property.cardinality];
+  }
+
+  isRequired(property: DataModelProperty): boolean {
+    return property.cardinality === Cardinality._1 || property.cardinality === Cardinality._1_n;
   }
 
   /** The classes on one side, each once, with the properties joining them. */

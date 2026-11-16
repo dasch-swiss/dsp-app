@@ -717,6 +717,21 @@
       }
     },
     "ontologyMap": {
+      "filterNote": {
+        "classesOnlyOne": "Seulement {{names}} et les classes qui y sont liées",
+        "classesOnlyNamed": "Seulement {{names}} et les classes qui y sont liées",
+        "classesOnlyMany": "Seulement {{count}} classes et les classes qui y sont liées",
+        "classesAllButOne": "Toutes les classes sauf {{names}}",
+        "classesAllButNamed": "Toutes les classes sauf {{names}}",
+        "classesAllButMany": "Toutes les classes sauf {{count}}",
+        "linksOnlyOne": "Seulement les liens {{names}}",
+        "linksOnlyNamed": "Seulement les liens {{names}}",
+        "linksOnlyMany": "Seulement {{count}} sortes de liens",
+        "linksAllButOne": "Tous les liens sauf {{names}}",
+        "linksAllButNamed": "Tous les liens sauf {{names}}",
+        "linksAllButMany": "Tous les liens sauf {{count}} sortes",
+        "showAll": "Retour au diagramme complet"
+      },
       "showProperties": "Afficher les propriétés",
       "dataModels": "Modèles de données",
       "noDataModels": "Ce projet n'a pas encore de modèle de données.",

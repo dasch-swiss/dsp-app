@@ -12,6 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -85,6 +86,9 @@ const sameFilter = (a: ListFilter, b: ListFilter) =>
 
 const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
+/** How many classes or properties the filter banner names; past that, it counts them. */
+const MAX_NAMED = 3;
+
 // Renamed when the sizes moved up a step, so a size chosen before starts again from the new normal, the old large.
 const SIZE_KEY = 'dsp-ontology-map-text-size';
 /** How wide a class or property panel is, at most half the page; its styles say the same. */
@@ -133,6 +137,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
     MatMenuContent,
     MatMenuItem,
     MatMenuTrigger,
+    MatButton,
     MatButtonToggle,
     MatButtonToggleGroup,
     MatSlideToggle,
@@ -314,6 +319,17 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       </ng-template>
                     </mat-menu>
                   </div>
+                  <!-- While a filter narrows the graph, right of the filters: what it shows, and the way back. -->
+                  @if (filterNote(); as note) {
+                    <div class="filter-note" role="status" data-cy="ontology-map-filter-note">
+                      <mat-icon>filter_alt</mat-icon>
+                      @let noteText = m + '.filterNote.' + note.key | translate: note.params;
+                      <span class="note-text" [title]="noteText">{{ noteText }}</span>
+                      <button mat-flat-button type="button" data-cy="ontology-map-show-all" (click)="clearFilters()">
+                        {{ m + '.filterNote.showAll' | translate }}
+                      </button>
+                    </div>
+                  }
                 </div>
 
                 <!-- How to show it, and the Export menu: top right, left of an open panel. -->
@@ -586,7 +602,51 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         padding-left: 14px;
       }
 
+      // Right of the filters, as tall as them: what the filter shows, and the way back.
+      .filter-note {
+        // Shrinks, its text cut short, before it wraps under the filters.
+        flex: 1 1 0;
+        min-width: 360px;
+        max-width: max-content;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-sizing: border-box;
+        height: 42px;
+        padding: 0 6px 0 12px;
+        border-radius: 24px;
+        background: #fff4dc;
+        color: #6b4a00;
+        font-size: 13px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+        mat-icon {
+          flex: none;
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+        .note-text {
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        button.mat-mdc-unelevated-button {
+          flex: none;
+          height: 30px;
+          border-radius: 15px;
+          background-color: #6b4a00;
+          color: #fff4dc;
+        }
+      }
+
       .top-left {
+        // Takes the room left of the top right, for the filter note to use.
+        flex: 1 1 0;
+        min-width: 0;
         display: flex;
         flex-wrap: wrap;
         align-items: flex-start;
@@ -1113,6 +1173,27 @@ export class OntologyMapPageComponent {
   readonly narrowed = computed(() => {
     const graph = this._graphLinks();
     return !!graph && this.graphShown() !== graph;
+  });
+
+  /**
+   * What the banner over a narrowed graph says, under `filterNote` in the translations: only some classes with those
+   * they link to, all but some, only some links, or all but some links. The property filter wins, as in `graphShown`.
+   */
+  readonly filterNote = computed<{ key: string; params: Record<string, string | number> } | undefined>(() => {
+    if (!this.narrowed()) return undefined;
+    const named = (iris: string[], options: readonly { id: string; label: string }[]) =>
+      iris.length > MAX_NAMED
+        ? undefined
+        : iris.map(iri => options.find(option => option.id === iri)?.label ?? classNameOf(iri)).join(', ');
+    const note = (filter: ListFilter, options: readonly { id: string; label: string }[], kind: 'classes' | 'links') => {
+      const names = named(filter.iris, options);
+      const key = `${kind}${filter.mode === 'only' ? 'Only' : 'AllBut'}${names ? (filter.iris.length === 1 ? 'One' : 'Named') : 'Many'}`;
+      return { key, params: { names: names ?? '', count: filter.iris.length } };
+    };
+    const properties = this.propertyFilter();
+    if (properties.mode) return note(properties, this.propertyOptions(), 'links');
+    const classes = this.classFilter();
+    return classes.mode ? note(classes, this.classOptions(), 'classes') : undefined;
   });
 
   /** Whether ↓ in the empty search opened the list of every class and property; typing, or clearing, ends it. */

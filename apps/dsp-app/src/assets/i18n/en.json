@@ -717,6 +717,21 @@
       }
     },
     "ontologyMap": {
+      "filterNote": {
+        "classesOnlyOne": "Only {{names}} and the classes it links to",
+        "classesOnlyNamed": "Only {{names}} and the classes they link to",
+        "classesOnlyMany": "Only {{count}} classes and the classes they link to",
+        "classesAllButOne": "Every class but {{names}}",
+        "classesAllButNamed": "Every class but {{names}}",
+        "classesAllButMany": "Every class but {{count}} of them",
+        "linksOnlyOne": "Only the links {{names}}",
+        "linksOnlyNamed": "Only the links {{names}}",
+        "linksOnlyMany": "Only {{count}} kinds of links",
+        "linksAllButOne": "Every link but {{names}}",
+        "linksAllButNamed": "Every link but {{names}}",
+        "linksAllButMany": "Every link but {{count}} kinds",
+        "showAll": "Back to the full diagram"
+      },
       "showProperties": "Show properties",
       "dataModels": "Data models",
       "noDataModels": "This project does not have any data model yet.",

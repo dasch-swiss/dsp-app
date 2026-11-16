@@ -717,6 +717,21 @@
       }
     },
     "ontologyMap": {
+      "filterNote": {
+        "classesOnlyOne": "Nur {{names}} und die damit verknüpften Klassen",
+        "classesOnlyNamed": "Nur {{names}} und die damit verknüpften Klassen",
+        "classesOnlyMany": "Nur {{count}} Klassen und die damit verknüpften Klassen",
+        "classesAllButOne": "Alle Klassen ausser {{names}}",
+        "classesAllButNamed": "Alle Klassen ausser {{names}}",
+        "classesAllButMany": "Alle Klassen ausser {{count}}",
+        "linksOnlyOne": "Nur die Verknüpfungen {{names}}",
+        "linksOnlyNamed": "Nur die Verknüpfungen {{names}}",
+        "linksOnlyMany": "Nur {{count}} Arten von Verknüpfungen",
+        "linksAllButOne": "Alle Verknüpfungen ausser {{names}}",
+        "linksAllButNamed": "Alle Verknüpfungen ausser {{names}}",
+        "linksAllButMany": "Alle Verknüpfungen ausser {{count}} Arten",
+        "showAll": "Zurück zum ganzen Diagramm"
+      },
       "showProperties": "Eigenschaften anzeigen",
       "dataModels": "Datenmodelle",
       "noDataModels": "Dieses Projekt hat noch kein Datenmodell.",
