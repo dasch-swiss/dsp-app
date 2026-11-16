@@ -715,7 +715,11 @@
     "properties": "Properties",
     "labelAnnotations": "Annotations",
     "representation": "Representation",
-    "restricted": "Access restricted: Images may be of lower quality and some values may be hidden.",
+    "restricted": "Restricted access: some values of this resource are hidden.",
+    "restrictedAsset": {
+      "label": "Restricted view",
+      "hint": "Your access to this image is restricted, so it may be shown in reduced size or with a watermark."
+    },
     "versioned": "This is an outdated version of the resource.",
     "seeCurrentVersion": "Go to current version",
     "versionNotValid": "The version you requested is not valid. The latest version is displayed.",

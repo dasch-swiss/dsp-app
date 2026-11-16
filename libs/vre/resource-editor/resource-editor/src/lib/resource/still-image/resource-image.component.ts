@@ -7,6 +7,7 @@ import { ResourceRestrictionComponent } from '../../meta/resource-restriction.co
 import { PropertiesDisplayService } from '../../properties/properties-display/property-value/properties-display.service';
 import { getFileValue } from '../../representation/get-file-value';
 import { isPlaceholderFileValue } from '../../representation/is-placeholder-file-value';
+import { isRestrictedImage } from '../../representation/is-restricted-image';
 import { RegionService } from '../../representation/region.service';
 import { RepresentationPlaceholderComponent } from '../../representation/representation-placeholder.component';
 import { RepresentationRestrictedComponent } from '../../representation/representation-restricted.component';
@@ -32,7 +33,7 @@ import { StillImageComponent } from './still-image.component';
           <app-vector-image [resource]="resource.res" />
         </app-resource-representation-container>
       } @else {
-        <app-resource-representation-container>
+        <app-resource-representation-container [restrictedView]="isRestrictedImage(file)">
           <app-still-image [compoundMode]="false" [resource]="resource.res" />
         </app-resource-representation-container>
       }
@@ -73,6 +74,9 @@ export class ResourceImageComponent implements OnChanges, OnDestroy {
   get isPlaceholder() {
     return isPlaceholderFileValue(this.fileValue);
   }
+
+  /** Image-level restriction: read off the file value, never the resource (DEV-7392). */
+  protected readonly isRestrictedImage = isRestrictedImage;
 
   ngOnChanges() {
     this._destroy$.next();

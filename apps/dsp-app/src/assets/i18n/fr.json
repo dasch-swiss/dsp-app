@@ -715,7 +715,11 @@
     "properties": "Propriétés",
     "labelAnnotations": "Annotations",
     "representation": "Représentation",
-    "restricted": "Accès restreint : les images sont susceptibles d'être de qualité inférieure et certaines valeurs d'être masquées.",
+    "restricted": "Accès restreint : certaines valeurs de cette ressource sont masquées.",
+    "restrictedAsset": {
+      "label": "Vue restreinte",
+      "hint": "Votre accès à cette image est restreint ; elle peut être affichée en taille réduite ou avec un filigrane."
+    },
     "versioned": "Ceci est une version obsolète de cette ressource.",
     "seeCurrentVersion": "Aller à la version actuelle",
     "versionNotValid": "La version que vous avez demandée n'est pas valide. La dernière version est affichée.",

@@ -1,25 +1,29 @@
 @use '../../../../../../../apps/dsp-app/src/styles/config' as *;
 
-
-.restricted-message {
-  background: $yellow_100;
+.alert {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 25px;
-  border-radius: 20px;
-  gap: 10px;
-  margin: 2%;
-
-
-  ::ng-deep {
-    mat-icon {
-      color: $yellow_500;
-      min-width: 25px;
-    }
-  }
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid $yellow_200;
+  border-radius: 8px;
+  background: $yellow_50;
+  // Replaces the old `margin: 2%`, which scaled with the viewport and pushed the notice away from
+  // the resource it describes.
+  margin: 0 0 16px;
 }
 
-.close {
-  cursor: pointer;
+.alert-icon {
+  flex: 0 0 auto;
+  color: $yellow_800;
+}
+
+// Consumers project bare text here rather than a <p>: under emulated encapsulation a rule written
+// for projected elements would not match them, so the layout stays owned by this component.
+.alert-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 20px;
 }

@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { AssetRestrictedBadgeComponent } from './asset-restricted-badge.component';
 
 @Component({
   selector: 'app-resource-representation-container',
@@ -7,6 +8,9 @@ import { Component, Input } from '@angular/core';
   },
   template: `
     <div class="representation-container center">
+      @if (restrictedView) {
+        <app-asset-restricted-badge />
+      }
       <ng-content />
     </div>
   `,
@@ -20,12 +24,21 @@ import { Component, Input } from '@angular/core';
         color: white;
         display: flex;
         flex-direction: column;
+        /* Positioning context for the asset-level restriction badge (DEV-7392). */
+        position: relative;
       }
     `,
   ],
+  imports: [AssetRestrictedBadgeComponent],
 })
 export class ResourceRepresentationContainerComponent {
   @Input() height: 'auto' | 'small' | 'big' = 'big';
+
+  /**
+   * Whether the image shown inside this container is served in restricted view (reduced size or watermarked),
+   * i.e. its *file value* — not the resource — is `RV`. Only applies to images, see `isRestrictedImage` (DEV-7392).
+   */
+  @Input() restrictedView = false;
 
   get heightValue(): string {
     switch (this.height) {
