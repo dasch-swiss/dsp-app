@@ -297,6 +297,8 @@ const COLUMN_LABELS: Record<Column, string> = {
           [query]="query()"
           [(folded)]="foldedCards"
           (reorder)="reorderProperties($event)"
+          [graph]="state.graph()"
+          (browse)="browse($event)"
           (editClass)="edit($event)"
           (editProperty)="editing.editProperty($event)" />
         @if (rows().length === 0) {

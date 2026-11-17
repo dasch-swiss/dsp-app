@@ -8,6 +8,7 @@ import {
   effect,
   ElementRef,
   inject,
+  Injector,
   input,
   model,
   output,
@@ -16,15 +17,18 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
+import { openClassDeleteDialog } from '../ontology-map/class-delete-dialog.component';
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
+import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
 import { hasText, highlighted } from './highlighted';
 
@@ -201,17 +205,16 @@ export interface PropertyOrder {
                     type="button"
                     class="delete"
                     data-cy="data-model-class-card-delete"
-                    [disabled]="!check?.canDo"
-                    [matTooltip]="check?.reason ?? ''"
-                    [matTooltipDisabled]="!check?.reason"
-                    (click)="deleteClass(row)">
+                    [class.blocked]="check?.canDo === false"
+                    [disabled]="!check"
+                    (click)="check?.canDo ? deleteClass(row) : openDeleteHelp(row)">
                     <mat-icon>delete</mat-icon>
                     <span class="menu-text">
                       {{ r + '.deleteClass' | translate }}
                       @if (!check) {
                         <small>{{ r + '.checkingDelete' | translate }}</small>
                       } @else if (!check.canDo) {
-                        <small>{{ r + '.cannotDeleteClass' | translate }}</small>
+                        <small>{{ r + '.cannotDeleteClassHelp' | translate }}</small>
                       }
                     </span>
                   </button>
@@ -548,8 +551,8 @@ export interface PropertyOrder {
       }
 
       // Deleting a class, in red, and why it can't be, under it.
-      .delete:not([disabled]),
-      .delete:not([disabled]) mat-icon {
+      .delete:not([disabled]):not(.blocked),
+      .delete:not([disabled]):not(.blocked) mat-icon {
         color: #b3261e;
       }
 
@@ -585,6 +588,8 @@ export interface PropertyOrder {
 export class DataModelClassCardsComponent {
   private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _injector = inject(Injector);
   readonly editing = injectDataModelEditing();
   /** What the API says of deleting each class, once its menu asked; none while it checks. */
   readonly deleteChecks = signal(new Map<string, CanDo>());
@@ -617,6 +622,10 @@ export class DataModelClassCardsComponent {
   readonly editProperty = output<string>();
   /** A property was dragged to another place: the class's own properties in their new order, to save. */
   readonly reorder = output<PropertyOrder>();
+  /** "Browse resources" was picked, from what keeps a class from being deleted: its resources are to show. */
+  readonly browse = output<string>();
+  /** The data model, for what keeps a class from being deleted. */
+  readonly graph = input<DataModelGraph | undefined>(undefined);
 
   /** The cards folded to their title; the others show their properties. */
   readonly folded = model(new Set<string>());
@@ -699,6 +708,17 @@ export class DataModelClassCardsComponent {
       .canDeleteClass(classIri)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe(check => this.deleteChecks.update(checks => new Map(checks).set(classIri, check)));
+  }
+
+  /** The checklist of what keeps the class from being deleted, each with the action that clears it. */
+  openDeleteHelp(row: ClassRow): void {
+    openClassDeleteDialog(this._dialog, this._injector, {
+      classIri: row.id,
+      label: row.label,
+      graph: this.graph,
+      open: iri => this.goTo(iri),
+      browse: iri => this.browse.emit(iri),
+    });
   }
 
   /** Deletes the class once confirmed; the data model is then read again. */

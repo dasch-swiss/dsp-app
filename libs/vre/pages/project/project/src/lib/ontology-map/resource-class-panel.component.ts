@@ -8,6 +8,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  Injector,
   input,
   output,
   signal,
@@ -15,6 +16,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
@@ -25,6 +27,8 @@ import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/dat
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
 import { AddPropertyMenuComponent } from './add-property-menu.component';
 import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
+import { classDeleteBlockers } from './class-delete-blockers';
+import { openClassDeleteDialog } from './class-delete-dialog.component';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 import { dataModelNameOf, localNameOf } from './ontology-graph-elements';
 
@@ -218,6 +222,43 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
           </div>
         }
 
+        <!-- For editors, when the class can't be deleted: what is in the way, and the checklist that clears it. -->
+        @if (canEdit() && !elsewhere() && editing?.canDelete && deleteCheck()?.canDo === false) {
+          @let d = 'pages.dataModels2.deleteBlockers';
+          <div class="delete-note" data-cy="class-panel-delete-note">
+            <b>{{ d + '.noteTitle' | translate }}</b>
+            @if (blockers().length) {
+              <ul>
+                @for (blocker of blockers(); track blocker.id) {
+                  <li>
+                    @switch (blocker.kind) {
+                      @case ('unusedLink') {
+                        {{ d + '.unusedLinkNote' | translate: { property: blocker.propertyLabel } }}
+                      }
+                      @case ('link') {
+                        {{
+                          d + '.linkNote' | translate: { property: blocker.propertyLabel, class: blocker.sourceLabel }
+                        }}
+                      }
+                      @case ('subclass') {
+                        {{ d + '.subclassNote' | translate: { class: blocker.subclassLabel } }}
+                      }
+                      @case ('resources') {
+                        {{ d + '.resourcesNote' | translate: { count: blocker.count } }}
+                      }
+                    }
+                  </li>
+                }
+              </ul>
+            } @else {
+              <span>{{ d + '.apiReason' | translate }} {{ deleteCheck()?.reason }}</span>
+            }
+            <button type="button" class="how" data-cy="class-panel-delete-how" (click)="openDeleteHelp(node)">
+              {{ d + '.showHow' | translate }}
+            </button>
+          </div>
+        }
+
         <!-- Kept in view at the bottom of the panel, however long the class's properties. -->
         <!-- Editors edit or delete the class; everyone browses its resources. -->
         <div class="actions">
@@ -228,20 +269,17 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
             </button>
             @if (editing?.canDelete) {
               @let check = deleteCheck();
-              <!-- Only once the API says nothing uses the class; why not, on hover, when something does. -->
-              <span
-                [matTooltip]="(check?.canDo ? '' : 'pages.dataModels2.cannotDeleteClass') | translate"
-                [matTooltipDisabled]="!check || check.canDo">
-                <button
-                  mat-stroked-button
-                  class="delete"
-                  data-cy="class-panel-delete"
-                  [disabled]="!check?.canDo"
-                  (click)="deleteClass(node)">
-                  <mat-icon>delete</mat-icon>
-                  {{ 'ui.common.actions.delete' | translate }}
-                </button>
-              </span>
+              <!-- Once the API has answered: deletes the class, or says what is in the way and how to clear it. -->
+              <button
+                mat-stroked-button
+                class="delete"
+                data-cy="class-panel-delete"
+                [class.blocked]="check?.canDo === false"
+                [disabled]="!check"
+                (click)="check?.canDo ? deleteClass(node) : openDeleteHelp(node)">
+                <mat-icon>delete</mat-icon>
+                {{ 'ui.common.actions.delete' | translate }}
+              </button>
             }
           }
           <span class="spacer"></span>
@@ -485,7 +523,7 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
         border-top: 1px solid $cool_gray_200;
 
         // Deleting, in red, once possible.
-        .delete:not([disabled]) {
+        .delete:not([disabled]):not(.blocked) {
           color: #b3261e;
           border-color: #b3261e;
         }
@@ -501,11 +539,42 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
       .spacer {
         flex: 1;
       }
+
+      // What keeps the class from being deleted, over the footer.
+      .delete-note {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        background: #fff4dc;
+        color: #6b4a00;
+        font-size: 13px;
+
+        ul {
+          margin: 0;
+          padding-left: 18px;
+        }
+
+        .how {
+          padding: 0;
+          border: 0;
+          background: none;
+          font: inherit;
+          font-weight: 500;
+          color: inherit;
+          text-decoration: underline;
+          cursor: pointer;
+        }
+      }
     `,
   ],
 })
 export class ResourceClassPanelComponent {
   private readonly _clipboard = inject(Clipboard);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _injector = inject(Injector);
   private readonly _notification = inject(NotificationService);
   private readonly _translate = inject(TranslateService);
 
@@ -634,6 +703,20 @@ export class ResourceClassPanelComponent {
       ?.removeProperty(node.id, property.id, { property: property.label, class: node.label })
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe();
+  }
+
+  /** What the data model shows in the way of deleting the class. */
+  readonly blockers = computed(() => classDeleteBlockers(this.graph(), this.classIri()));
+
+  /** The checklist of what keeps the class from being deleted, each with the action that clears it. */
+  openDeleteHelp(node: { id: string; label: string }): void {
+    openClassDeleteDialog(this._dialog, this._injector, {
+      classIri: node.id,
+      label: node.label,
+      graph: this.graph,
+      open: iri => this.showClass(iri),
+      browse: iri => this.browse.emit(iri),
+    });
   }
 
   /** Deletes the class once confirmed, then closes the panel. */
