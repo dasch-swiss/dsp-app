@@ -297,7 +297,6 @@ const COLUMN_LABELS: Record<Column, string> = {
           [query]="query()"
           [(folded)]="foldedCards"
           (reorder)="reorderProperties($event)"
-          (classSelected)="openPanel($event)"
           (editClass)="edit($event)"
           (editProperty)="editing.editProperty($event)" />
         @if (rows().length === 0) {
@@ -975,10 +974,13 @@ export class DataModelClassesComponent {
   /** Whether "Create resource class" shows: for editors, where the editor's dialogs are at hand. */
   readonly canCreate = computed(() => this.state.canEdit() && this.editing.canCreate);
 
-  /** Creates a class of that kind in the data model shown, then opens it in the panel. */
+  /** Creates a class of that kind in the data model shown; the table then opens it in the panel, the cards don't. */
   createClass(kind: DefaultClass): void {
     const ontologyIri = this.state.selected()?.iri;
-    if (ontologyIri) this.editing.createClass(ontologyIri, kind, iri => this.openPanel(iri));
+    if (!ontologyIri) return;
+    this.editing.createClass(ontologyIri, kind, iri => {
+      if (this.layout() === 'table') this.openPanel(iri);
+    });
   }
 
   /** A class's label from its IRI, for the cards. */

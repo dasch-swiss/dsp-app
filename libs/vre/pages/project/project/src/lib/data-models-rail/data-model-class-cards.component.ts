@@ -16,7 +16,6 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -71,7 +70,6 @@ export interface PropertyOrder {
     CdkDragPlaceholder,
     CdkDropList,
     ClassCardPropertyComponent,
-    MatDivider,
     MatIcon,
     MatMenu,
     MatMenuItem,
@@ -171,62 +169,55 @@ export interface PropertyOrder {
                 }
               </span>
             </span>
-            <!-- The class's actions: edit it, for editors, and show its details in the side panel. -->
-            <button
-              type="button"
-              class="icon-button actions"
-              data-cy="data-model-class-card-actions"
-              [attr.aria-label]="r + '.classActions' | translate: { class: row.label }"
-              [matTooltip]="r + '.classActions' | translate: { class: row.label }"
-              matTooltipShowDelay="600"
-              [matMenuTriggerFor]="actions"
-              (menuOpened)="checkDelete(row.id)">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #actions="matMenu" xPosition="before">
-              @if (canEdit()) {
-                <button
-                  mat-menu-item
-                  type="button"
-                  data-cy="data-model-class-card-edit"
-                  (click)="editClass.emit(row.id)">
-                  <mat-icon>edit</mat-icon>
-                  {{ r + '.editClass' | translate }}
-                </button>
-              }
+            <!-- The class's actions, for editors: edit or delete it. -->
+            @if (canEdit()) {
               <button
-                mat-menu-item
                 type="button"
-                data-cy="data-model-class-card-details"
-                (click)="classSelected.emit(row.id)">
-                <mat-icon>info</mat-icon>
-                {{ r + '.showDetails' | translate }}
+                class="icon-button actions"
+                data-cy="data-model-class-card-actions"
+                [attr.aria-label]="r + '.classActions' | translate: { class: row.label }"
+                [matTooltip]="r + '.classActions' | translate: { class: row.label }"
+                matTooltipShowDelay="600"
+                [matMenuTriggerFor]="actions"
+                (menuOpened)="checkDelete(row.id)">
+                <mat-icon>more_vert</mat-icon>
               </button>
-              <!-- For editors: deleting the class, once the API says nothing uses it; why not, when something does. -->
-              @if (canEdit() && editing.canDelete) {
-                @let check = deleteChecks().get(row.id);
-                <mat-divider />
-                <button
-                  mat-menu-item
-                  type="button"
-                  class="delete"
-                  data-cy="data-model-class-card-delete"
-                  [disabled]="!check?.canDo"
-                  [matTooltip]="check?.reason ?? ''"
-                  [matTooltipDisabled]="!check?.reason"
-                  (click)="deleteClass(row)">
-                  <mat-icon>delete</mat-icon>
-                  <span class="menu-text">
-                    {{ r + '.deleteClass' | translate }}
-                    @if (!check) {
-                      <small>{{ r + '.checkingDelete' | translate }}</small>
-                    } @else if (!check.canDo) {
-                      <small>{{ r + '.cannotDeleteClass' | translate }}</small>
-                    }
-                  </span>
-                </button>
-              }
-            </mat-menu>
+              <mat-menu #actions="matMenu" xPosition="before">
+                @if (canEdit()) {
+                  <button
+                    mat-menu-item
+                    type="button"
+                    data-cy="data-model-class-card-edit"
+                    (click)="editClass.emit(row.id)">
+                    <mat-icon>edit</mat-icon>
+                    {{ r + '.editClass' | translate }}
+                  </button>
+                }
+                <!-- Deleting the class, once the API says nothing uses it; why not, when something does. -->
+                @if (canEdit() && editing.canDelete) {
+                  @let check = deleteChecks().get(row.id);
+                  <button
+                    mat-menu-item
+                    type="button"
+                    class="delete"
+                    data-cy="data-model-class-card-delete"
+                    [disabled]="!check?.canDo"
+                    [matTooltip]="check?.reason ?? ''"
+                    [matTooltipDisabled]="!check?.reason"
+                    (click)="deleteClass(row)">
+                    <mat-icon>delete</mat-icon>
+                    <span class="menu-text">
+                      {{ r + '.deleteClass' | translate }}
+                      @if (!check) {
+                        <small>{{ r + '.checkingDelete' | translate }}</small>
+                      } @else if (!check.canDo) {
+                        <small>{{ r + '.cannotDeleteClass' | translate }}</small>
+                      }
+                    </span>
+                  </button>
+                }
+              </mat-menu>
+            }
             <button
               type="button"
               class="icon-button"
@@ -620,8 +611,6 @@ export class DataModelClassCardsComponent {
   /** The text searched for: marked where it shows, and the rows it is in opened. */
   readonly query = input('');
 
-  /** "Show details" was picked: the class's side panel is to open. */
-  readonly classSelected = output<string>();
   /** "Edit class" was picked: the class's dialog is to open. */
   readonly editClass = output<string>();
   /** A property's pencil was clicked: its dialog is to open. */
