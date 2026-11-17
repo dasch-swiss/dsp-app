@@ -912,13 +912,7 @@
         "removeFrom": "Remove from {{class}}",
         "open": "Open",
         "browse": "Browse resources",
-        "apiReason": "The server still refuses to delete it:",
-        "noteTitle": "To delete this class, first:",
-        "unusedLinkNote": "delete “{{property}}”, a link to it no class uses",
-        "linkNote": "remove “{{property}}” from {{class}}",
-        "subclassNote": "delete the subclass {{class}}",
-        "resourcesNote": "delete its {{count}} resources",
-        "showHow": "Show me how"
+        "apiReason": "The server still refuses to delete it:"
       },
       "propertyActions": "Actions for {{property}}",
       "editProperty": "Edit property",

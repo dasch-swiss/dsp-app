@@ -912,13 +912,7 @@
         "removeFrom": "Retirer de {{class}}",
         "open": "Ouvrir",
         "browse": "Parcourir les ressources",
-        "apiReason": "Le serveur refuse encore la suppression :",
-        "noteTitle": "Pour supprimer cette classe, d’abord :",
-        "unusedLinkNote": "supprimer « {{property}} », un lien vers elle qu’aucune classe n’utilise",
-        "linkNote": "retirer « {{property}} » de {{class}}",
-        "subclassNote": "supprimer la sous-classe {{class}}",
-        "resourcesNote": "supprimer ses {{count}} ressources",
-        "showHow": "Montrer comment"
+        "apiReason": "Le serveur refuse encore la suppression :"
       },
       "propertyActions": "Actions pour {{property}}",
       "editProperty": "Modifier la propriété",

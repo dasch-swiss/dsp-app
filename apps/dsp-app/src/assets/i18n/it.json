@@ -912,13 +912,7 @@
         "removeFrom": "Rimuovi da {{class}}",
         "open": "Apri",
         "browse": "Sfoglia le risorse",
-        "apiReason": "Il server rifiuta ancora l’eliminazione:",
-        "noteTitle": "Per eliminare questa classe, prima:",
-        "unusedLinkNote": "eliminare «{{property}}», un collegamento a essa che nessuna classe usa",
-        "linkNote": "rimuovere «{{property}}» da {{class}}",
-        "subclassNote": "eliminare la sottoclasse {{class}}",
-        "resourcesNote": "eliminare le sue {{count}} risorse",
-        "showHow": "Mostrami come"
+        "apiReason": "Il server rifiuta ancora l’eliminazione:"
       },
       "propertyActions": "Azioni per {{property}}",
       "editProperty": "Modifica proprietà",

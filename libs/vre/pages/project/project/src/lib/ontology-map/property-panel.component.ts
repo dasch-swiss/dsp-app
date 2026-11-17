@@ -213,9 +213,11 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
           }
         </div>
 
-        <div class="actions">
-          @if (canEdit()) {
+        <!-- Kept in view at the bottom of the panel, as in the class panel. -->
+        @if (canEdit()) {
+          <div class="actions">
             <button mat-flat-button color="primary" data-cy="property-panel-edit" (click)="edit.emit(propertyIri())">
+              <mat-icon>edit</mat-icon>
               {{ t + '.edit' | translate }}
             </button>
             @if (editing?.canDelete) {
@@ -232,8 +234,8 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
                 {{ 'ui.common.actions.delete' | translate }}
               </button>
             }
-          }
-        </div>
+          </div>
+        }
       </section>
     }
   `,
@@ -561,16 +563,31 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
         }
       }
 
+      // A footer across the panel, against its padding: pushed down when the panel is short, stuck to the bottom when
+      // it scrolls; as in the class panel.
       .actions {
+        position: sticky;
+        bottom: -20px;
+        margin: auto -24px -20px;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        border-top: 1px solid $cool_gray_200;
+
         // Deleting, in red, once possible.
         .delete:not([disabled]):not(.blocked) {
           color: #b3261e;
           border-color: #b3261e;
         }
 
-        display: flex;
-        gap: 8px;
-        padding-top: 4px;
+        button {
+          --mat-button-filled-container-height: 36px;
+          --mat-button-outlined-container-height: 36px;
+          flex: none;
+          white-space: nowrap;
+        }
       }
     `,
   ],

@@ -912,13 +912,7 @@
         "removeFrom": "Aus {{class}} entfernen",
         "open": "Öffnen",
         "browse": "Ressourcen durchsuchen",
-        "apiReason": "Der Server verweigert das Löschen weiterhin:",
-        "noteTitle": "Um diese Klasse zu löschen, zuerst:",
-        "unusedLinkNote": "„{{property}}“ löschen, eine Verknüpfung dorthin, die keine Klasse verwendet",
-        "linkNote": "„{{property}}“ aus {{class}} entfernen",
-        "subclassNote": "die Unterklasse {{class}} löschen",
-        "resourcesNote": "ihre {{count}} Ressourcen löschen",
-        "showHow": "Zeigen, wie"
+        "apiReason": "Der Server verweigert das Löschen weiterhin:"
       },
       "propertyActions": "Aktionen für {{property}}",
       "editProperty": "Eigenschaft bearbeiten",

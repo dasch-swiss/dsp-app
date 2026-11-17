@@ -28,7 +28,6 @@ import { representationIcon } from '../sidenav/resource-class-sidenav/representa
 import { AddPropertyMenuComponent } from './add-property-menu.component';
 import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
-import { classDeleteBlockers } from './delete-blockers';
 import { openDeleteBlockersDialog } from './delete-blockers-dialog.component';
 import { dataModelNameOf, localNameOf } from './ontology-graph-elements';
 
@@ -219,43 +218,6 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                 <app-add-property-menu [classIri]="classIri()" [row]="true" />
               </div>
             }
-          </div>
-        }
-
-        <!-- For editors, when the class can't be deleted: what is in the way, and the checklist that clears it. -->
-        @if (canEdit() && !elsewhere() && editing?.canDelete && deleteCheck()?.canDo === false) {
-          @let d = 'pages.dataModels2.deleteBlockers';
-          <div class="delete-note" data-cy="class-panel-delete-note">
-            <b>{{ d + '.noteTitle' | translate }}</b>
-            @if (blockers().length) {
-              <ul>
-                @for (blocker of blockers(); track blocker.id) {
-                  <li>
-                    @switch (blocker.kind) {
-                      @case ('unusedLink') {
-                        {{ d + '.unusedLinkNote' | translate: { property: blocker.propertyLabel } }}
-                      }
-                      @case ('link') {
-                        {{
-                          d + '.linkNote' | translate: { property: blocker.propertyLabel, class: blocker.sourceLabel }
-                        }}
-                      }
-                      @case ('subclass') {
-                        {{ d + '.subclassNote' | translate: { class: blocker.subclassLabel } }}
-                      }
-                      @case ('resources') {
-                        {{ d + '.resourcesNote' | translate: { count: blocker.count } }}
-                      }
-                    }
-                  </li>
-                }
-              </ul>
-            } @else {
-              <span>{{ d + '.apiReason' | translate }} {{ deleteCheck()?.reason }}</span>
-            }
-            <button type="button" class="how" data-cy="class-panel-delete-how" (click)="openDeleteHelp(node)">
-              {{ d + '.showHow' | translate }}
-            </button>
           </div>
         }
 
@@ -539,35 +501,6 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
       .spacer {
         flex: 1;
       }
-
-      // What keeps the class from being deleted, over the footer.
-      .delete-note {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-        padding: 10px 14px;
-        border-radius: 8px;
-        background: #fff4dc;
-        color: #6b4a00;
-        font-size: 13px;
-
-        ul {
-          margin: 0;
-          padding-left: 18px;
-        }
-
-        .how {
-          padding: 0;
-          border: 0;
-          background: none;
-          font: inherit;
-          font-weight: 500;
-          color: inherit;
-          text-decoration: underline;
-          cursor: pointer;
-        }
-      }
     `,
   ],
 })
@@ -704,9 +637,6 @@ export class ResourceClassPanelComponent {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe();
   }
-
-  /** What the data model shows in the way of deleting the class. */
-  readonly blockers = computed(() => classDeleteBlockers(this.graph(), this.classIri()));
 
   /** The checklist of what keeps the class from being deleted, each with the action that clears it. */
   openDeleteHelp(node: { id: string; label: string }): void {
