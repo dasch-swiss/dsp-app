@@ -17,6 +17,7 @@ import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/
 import { TranslatePipe } from '@ngx-translate/core';
 import { AngularSplitModule, SplitGutterInteractionEvent } from 'angular-split';
 import { combineLatest, distinctUntilChanged, EMPTY, first, map, skip } from 'rxjs';
+import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassHeaderComponent } from './data-class-header.component';
 import { DataClassPanelComponent } from './data-class-panel.component';
 import { provideDataClassSearch } from './data-class-query.service';
@@ -49,7 +50,7 @@ const QUERIES = RESULT_LIST_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}p
         <!-- selectMode is a plain field with no change notification: keep it in the template. A
              computed that reads it behind a short-circuited signal read caches forever. -->
         @if ((selectedResources$ | async)?.length && multipleViewerService.selectMode) {
-          <app-resource-list-selection />
+          <app-resource-list-selection (bulkEdited)="onBulkEdited()" />
         }
         <as-split direction="horizontal" unit="pixel" (dragEnd)="onResultListDragged($event)">
           <as-split-area [size]="panelSize()" cdkScrollable>
@@ -123,6 +124,7 @@ export class DataClassViewComponent {
   readonly selectedResources$ = this.multipleViewerService.selectedResources$;
 
   private readonly _breakpoints = inject(BreakpointObserver);
+  private readonly _dataBrowserPageService = inject(DataBrowserPageService);
 
   /** The width for the widest breakpoint the screen reaches. */
   private readonly _breakpointWidth = toSignal(
@@ -204,6 +206,11 @@ export class DataClassViewComponent {
 
   onResourceDeleted() {
     this._projectPageService.reloadProject();
+  }
+
+  /** The edited values may move rows in or out of the filter, so the results are queried again. */
+  onBulkEdited() {
+    this._dataBrowserPageService.reloadNavigation();
   }
 
   onResultListDragged({ sizes }: SplitGutterInteractionEvent): void {
