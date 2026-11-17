@@ -7,8 +7,8 @@ import {
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { applicationConfig, type Meta, type StoryObj } from '@storybook/angular';
-import { of } from 'rxjs';
+import { applicationConfig, componentWrapperDecorator, type Meta, type StoryObj } from '@storybook/angular';
+import { of, throwError } from 'rxjs';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { STORY_PROVIDERS } from '../stories.helpers';
 import { BulkEditDialogComponent } from './bulk-edit-dialog.component';
@@ -71,11 +71,13 @@ const meta: Meta<BulkEditDialogComponent> = {
   title: 'Pages / Data Browser / Bulk Edit Dialog',
   component: BulkEditDialogComponent,
   argTypes: {},
+  // The side panel's size, as the selection bar opens it.
+  decorators: [componentWrapperDecorator(story => `<div style="width: 600px; height: 800px">${story}</div>`)],
 };
 export default meta;
 type Story = StoryObj<BulkEditDialogComponent>;
 
-export const ReviewsAReplaceBeforeApplying: Story = {
+export const PreviewsAReplaceAsYouType: Story = {
   decorators: [applicationConfig({ providers: providers(letters) })],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
@@ -84,10 +86,8 @@ export const ReviewsAReplaceBeforeApplying: Story = {
       await userEvent.type(await canvas.findByTestId('bulk-edit-find'), 'Wien');
       await userEvent.type(canvas.getByTestId('bulk-edit-replace-with'), 'Vienna');
     });
-    await step('Open the review', async () => {
-      await userEvent.click(canvas.getByTestId('bulk-edit-review'));
-    });
-    await step('Only the matching value is listed, with before and after', async () => {
+    await step('Only the matching value is previewed, with before and after', async () => {
+      await expect(canvas.getByTestId('bulk-edit-preview-count')).toHaveTextContent('1 of 3 resources will change');
       await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(1);
       await expect(canvas.getByText('Wien')).toBeInTheDocument();
       await expect(canvas.getByText('Vienna')).toBeInTheDocument();
@@ -104,7 +104,6 @@ export const SetsADefaultValueOnlyWhereEmptyAndReportsTheResult: Story = {
     await step('Choose Default value and type it', async () => {
       await userEvent.click(await canvas.findByText('Default value'));
       await userEvent.type(canvas.getByTestId('bulk-edit-default-value'), 'Wien');
-      await userEvent.click(canvas.getByTestId('bulk-edit-review'));
     });
     await step('Only the letter without a place is changed', async () => {
       await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(1);
@@ -113,6 +112,39 @@ export const SetsADefaultValueOnlyWhereEmptyAndReportsTheResult: Story = {
     await step('Applying reports the updated count', async () => {
       await userEvent.click(canvas.getByTestId('bulk-edit-apply'));
       await waitFor(() => expect(canvas.getByTestId('bulk-edit-done')).toHaveTextContent('Values updated: 1'));
+    });
+  },
+};
+
+export const ListsAFailedValueAndOffersARetry: Story = {
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...providers(letters),
+        {
+          provide: DspApiConnectionToken,
+          useValue: {
+            v2: {
+              res: { getResources: () => of({ resources: letters }) },
+              values: { updateValue: () => throwError(() => new Error('403')), createValue: () => of({}) },
+            },
+          },
+        },
+      ],
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('Replace a value the API refuses', async () => {
+      await userEvent.type(await canvas.findByTestId('bulk-edit-find'), 'Wien');
+      await userEvent.type(canvas.getByTestId('bulk-edit-replace-with'), 'Vienna');
+      await userEvent.click(canvas.getByTestId('bulk-edit-apply'));
+    });
+    await step('The failure is listed and can be retried', async () => {
+      await waitFor(() => expect(canvas.getByTestId('bulk-edit-failed')).toHaveTextContent('not updated: 1'));
+      await expect(canvas.getByTestId('bulk-edit-failed-change')).toHaveTextContent('Brief an Arnold Schönberg');
+      await expect(canvas.getByTestId('bulk-edit-retry')).toBeInTheDocument();
     });
   },
 };

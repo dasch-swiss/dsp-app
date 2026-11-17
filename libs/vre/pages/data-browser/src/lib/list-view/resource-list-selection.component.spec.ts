@@ -321,7 +321,10 @@ describe('ResourceListSelectionComponent', () => {
 
       expect(mockDialog.open).toHaveBeenCalledWith(
         BulkEditDialogComponent,
-        expect.objectContaining({ data: { resourceIris: ['resource-1', 'resource-2'] } })
+        expect.objectContaining({
+          data: { resourceIris: ['resource-1', 'resource-2'] },
+          position: { right: '0px' },
+        })
       );
       expect(mockMultipleViewerService.notifyResourceChanged).toHaveBeenCalledWith('resource-1');
       expect(emitted).toEqual([['resource-1']]);

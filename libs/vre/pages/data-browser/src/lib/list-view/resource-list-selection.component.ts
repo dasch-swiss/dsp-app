@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -150,9 +151,10 @@ export class ResourceListSelectionComponent {
   openBulkEditDialog(resources: ReadResource[]): void {
     this._dialog
       .open<BulkEditDialogComponent, BulkEditDialogProps, BulkEditDialogResult>(BulkEditDialogComponent, {
-        data: { resourceIris: resources.map(resource => resource.id) },
-        width: '880px',
-        maxWidth: '95vw',
+        ...DspDialogConfig.dialogDrawerConfig({ resourceIris: resources.map(resource => resource.id) }, true),
+        width: '600px',
+        maxWidth: '100vw',
+        minWidth: 0,
         autoFocus: false,
       })
       .afterClosed()
