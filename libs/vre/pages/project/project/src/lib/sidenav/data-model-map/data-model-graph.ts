@@ -210,7 +210,7 @@ export function buildDataModelGraph(
   return {
     nodes: [...nodes.values()],
     edges: [...edges.values()],
-    unusedProperties: unusedParents([...nodes.values()], properties, labelOf),
+    unusedProperties: unusedProperties([...nodes.values()], ontology.ontology.iri, properties, labelOf),
   };
 }
 
@@ -257,17 +257,20 @@ function describe(
 }
 
 /**
- * The parents of the classes' properties, and their parents in turn, that no class has: declared in a data model,
- * not in knora-api, not a link value.
+ * The properties no class has: those of the data model shown, such as one taken off its last class, which still
+ * points at its target and keeps that class from being deleted; and the parents of the classes' properties, and
+ * their parents in turn, declared in a data model. Not knora-api's, not link values.
  */
-function unusedParents(
+function unusedProperties(
   nodes: DataModelNode[],
+  ontologyIri: string,
   properties: Record<string, PropertyDefinition>,
   labelOf: (labels: Labels) => string
 ): DataModelProperty[] {
   const used = new Map(nodes.flatMap(node => node.propertyDetails ?? []).map(property => [property.id, property]));
   const unused = new Map<string, DataModelProperty>();
-  const queue = [...used.values()].flatMap(property => property.superProperties ?? []);
+  const own = Object.keys(properties).filter(iri => iri.startsWith(`${ontologyIri}#`));
+  const queue = [...own, ...[...used.values()].flatMap(property => property.superProperties ?? [])];
   while (queue.length) {
     const iri = queue.shift()!;
     if (used.has(iri) || unused.has(iri)) continue;
