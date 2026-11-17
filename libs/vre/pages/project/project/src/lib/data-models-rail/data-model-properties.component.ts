@@ -36,7 +36,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { DefaultProperties, DefaultProperty } from '@dasch-swiss/vre/shared/app-helper-services';
+import { DefaultProperties, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
@@ -44,6 +44,7 @@ import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-element
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
+import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { ClassChipsComponent } from './class-chips.component';
 import { ColumnHeaderComponent } from './column-header.component';
@@ -127,6 +128,7 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatTable,
     MatTooltip,
     PropertyPanelComponent,
+    ResourceClassPanelComponent,
     TextEditorPopoverComponent,
     TranslatePipe,
   ],
@@ -652,7 +654,22 @@ const COLUMN_LABELS: Record<Column, string> = {
       <app-text-editor-popover [editing]="textEditing" />
 
       @if (state.graph(); as graph) {
-        @if (panelIri(); as iri) {
+        <!-- A class clicked in the table or the property's panel, described here, over the property's panel. -->
+        @if (classPanelIri(); as iri) {
+          <app-resource-class-panel
+            class="panel"
+            [graph]="graph"
+            [classIri]="iri"
+            [anyResourceLabel]="t + '.anyResource' | translate"
+            [subclassLabel]="t + '.subclassOf' | translate"
+            [canEdit]="state.canEdit()"
+            [colors]="state.colors()"
+            (classSelected)="showClass($event)"
+            (closed)="closeClass()"
+            (browse)="browse($event)"
+            (edit)="editing.editClass($event)"
+            (editProperty)="edit($event)" />
+        } @else if (panelIri(); as iri) {
           <app-property-panel
             class="panel"
             [graph]="graph"
@@ -1016,6 +1033,12 @@ export class DataModelPropertiesComponent {
     return name ? this.state.propertyRows().find(row => row.name === name)?.id : undefined;
   });
 
+  /** The class whose panel is open over the property's, from a click on its chip; named in the URL. */
+  readonly classPanelIri = computed(() => {
+    const name = this._params()?.get(ONTOLOGY_MAP_PARAM.panel);
+    return name ? this.state.classRows().find(row => row.name === name)?.id : undefined;
+  });
+
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
 
   constructor() {
@@ -1071,7 +1094,8 @@ export class DataModelPropertiesComponent {
    */
   closeOnEscape(event: Event): void {
     if (!escapeClosesPanel(event) || this.textEditing.target()) return;
-    if (this.panelIri()) this.openPanel(undefined);
+    if (this.classPanelIri()) this.closeClass();
+    else if (this.panelIri()) this.openPanel(undefined);
   }
 
   /** Opens the property's panel, or closes it; a step in the browser history. */
@@ -1082,13 +1106,42 @@ export class DataModelPropertiesComponent {
       queryParams: {
         ...this.state.modelParam(),
         [ONTOLOGY_MAP_PARAM.propertyPanel]: propertyIri ? localNameOf(propertyIri) : null,
+        [ONTOLOGY_MAP_PARAM.panel]: null,
       },
     });
   }
 
-  /** Opens a class the panel names, in the Classes section. */
+  /**
+   * Opens a class of the data model in its panel, here, a step in the browser history; one of another data model in
+   * the Classes section, where its data model shows.
+   */
   showClass(iri: string): void {
-    this.state.openSection(RouteConstants.classes, { [ONTOLOGY_MAP_PARAM.panel]: localNameOf(iri) });
+    if (!this.state.classRows().some(row => row.id === iri)) {
+      this.state.openSection(RouteConstants.classes, { [ONTOLOGY_MAP_PARAM.panel]: localNameOf(iri) });
+      return;
+    }
+    this._router.navigate([], {
+      relativeTo: this._route,
+      queryParamsHandling: 'merge',
+      queryParams: { ...this.state.modelParam(), [ONTOLOGY_MAP_PARAM.panel]: localNameOf(iri) },
+    });
+  }
+
+  /** Closes the class's panel, back to the property's if one was open. */
+  closeClass(): void {
+    this._router.navigate([], {
+      relativeTo: this._route,
+      queryParamsHandling: 'merge',
+      queryParams: { [ONTOLOGY_MAP_PARAM.panel]: null },
+    });
+  }
+
+  /** Browses the class's resources. */
+  browse(iri: string): void {
+    const [ontologyIri, className] = iri.split('#');
+    this._router.navigate(
+      this.state.projectPath(RouteConstants.data, OntologyService.getOntologyNameFromIri(ontologyIri), className)
+    );
   }
 
   /** Shows only the links through the property, in the graph. */
