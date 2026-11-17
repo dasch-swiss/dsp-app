@@ -1,4 +1,3 @@
-import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import {
   afterNextRender,
@@ -37,8 +36,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultProperties, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
@@ -606,10 +604,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             <mat-icon>hub</mat-icon>
             {{ r + '.showInDiagram' | translate }}
           </button>
-          <button mat-menu-item type="button" data-cy="data-model-properties-copy" (click)="copyName(row)">
-            <mat-icon>content_copy</mat-icon>
-            {{ 'pages.ontologyMap.copyName' | translate }}
-          </button>
           <!-- Deleting the property, once the API says nothing uses it; why not, when something does. -->
           @if (canEdit() && editing.canDelete) {
             @let check = deleteChecks().get(row.id);
@@ -858,9 +852,6 @@ export class DataModelPropertiesComponent {
   private readonly _route = inject(ActivatedRoute);
   private readonly _params = toSignal(this._route.queryParamMap);
   readonly editing = injectDataModelEditing();
-  private readonly _clipboard = inject(Clipboard);
-  private readonly _notification = inject(NotificationService);
-  private readonly _translate = inject(TranslateService);
   private readonly _destroyRef = inject(DestroyRef);
   readonly canEdit = this.state.canEdit;
   /** The width of the menu column, past the columns shown. */
@@ -1192,12 +1183,6 @@ export class DataModelPropertiesComponent {
   /** Gives the class the property, optional and single; the data model is then read again. */
   addToClass(classIri: string, propertyIri: string): void {
     this.editing.addExistingProperty(classIri, propertyIri);
-  }
-
-  /** Copies the property's name in the data model, such as `hasAuthor`. */
-  copyName(row: PropertyRow): void {
-    this._clipboard.copy(row.name);
-    this._notification.openSnackBar(this._translate.instant('pages.ontologyMap.nameCopied'));
   }
 
   /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
