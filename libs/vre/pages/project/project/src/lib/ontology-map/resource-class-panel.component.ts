@@ -1,4 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,14 +20,13 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { CardProperty, ClassCardPropertyComponent } from '../data-models-rail/class-card-property.component';
 import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/data-model-graph';
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
 import { AddPropertyMenuComponent } from './add-property-menu.component';
-import { CardinalityChipComponent } from './cardinality-chip.component';
 import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 import { dataModelNameOf, localNameOf } from './ontology-graph-elements';
-import { typeIconOf, typeNameOf } from './property-types';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1]: 'required',
@@ -33,6 +34,18 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._0_n]: 'many',
   [Cardinality._1_n]: 'oneOrMore',
 };
+
+/** A property of the class as a row of the class cards. */
+function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelProperty): CardProperty {
+  return {
+    id,
+    label,
+    type,
+    ...(linkTarget ? { linkTarget } : {}),
+    multiple: cardinality === Cardinality._0_n || cardinality === Cardinality._1_n,
+    required: cardinality === Cardinality._1 || cardinality === Cardinality._1_n,
+  };
+}
 
 /**
  * The details of one class of a data model, docked beside the Ontology map: its description, a small map of the
@@ -43,8 +56,12 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AddPropertyMenuComponent,
-    CardinalityChipComponent,
+    CdkDrag,
+    CdkDragPlaceholder,
+    CdkDropList,
+    ClassCardPropertyComponent,
     ClassConnectionsComponent,
+    NgTemplateOutlet,
     MatButton,
     MatIcon,
     MatIconButton,
@@ -111,85 +128,92 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         @if (!elsewhere()) {
           <div class="group">
             <h3>{{ t + '.properties' | translate: { count: properties().length } }}</h3>
-            @if (properties().length === 0) {
-              <p class="none">{{ t + '.noProperties' | translate }}</p>
-            }
-            @for (property of properties(); track property.id) {
-              @let open = openProperty() === property.id;
-              <div
-                class="property"
-                [class.open]="open"
-                data-cy="class-panel-property"
-                (mouseenter)="propertyHovered.emit(property.id)"
-                (mouseleave)="propertyHovered.emit(undefined)">
-                <div class="property-line">
-                  <button
-                    type="button"
-                    class="property-toggle"
-                    [disabled]="!property.description"
-                    [attr.aria-expanded]="property.description ? open : null"
-                    (click)="toggle(property)">
-                    <mat-icon class="type-icon" [attr.data-type]="property.type">{{ typeIcon(property) }}</mat-icon>
-                    <span class="property-label">{{ property.label }}</span>
-                  </button>
-                  @if (property.linkTarget; as target) {
-                    <button
-                      type="button"
-                      class="value link"
-                      [disabled]="!isNavigable(target)"
-                      (click)="showClass(target)">
-                      → {{ labelOf(target) }}
-                    </button>
-                  } @else {
-                    <span class="value" [attr.data-type]="property.type">{{ typeName(property) }}</span>
-                  }
-                  <!-- As on the class cards: 1, 0-1, 1-n or 0-n, and for editors, on the class's own properties, a menu
-                       to change it. -->
-                  <app-cardinality-chip
-                    class="cardinality"
-                    data-cy="class-panel-cardinality"
-                    [cardinality]="property.cardinality"
-                    [type]="property.type"
-                    [propertyIri]="property.id"
-                    [propertyLabel]="property.label"
+            <!-- The rows of the class cards, alike in look and use: editors drag the class's own properties to
+                 another place, change a cardinality, edit or remove a property on hover. -->
+            @let drag = reorderable();
+            <ng-template #ownList let-list>
+              <ul
+                class="props"
+                cdkDropList
+                [cdkDropListDisabled]="!drag"
+                (cdkDropListDropped)="dropped(node.id, list, $event)">
+                @for (property of list; track property.id) {
+                  <li
+                    appClassCardProperty
+                    cdkDrag
+                    cdkDragLockAxis="y"
+                    cdkDragBoundary=".props"
+                    [cdkDragDisabled]="!drag"
+                    [property]="property"
+                    [labelOf]="labelOfIri"
+                    [colors]="colors()"
+                    [linkChips]="linkChips()"
+                    [reachable]="!!property.linkTarget && isNavigable(property.linkTarget)"
+                    [canEdit]="canEdit()"
+                    [draggable]="drag"
                     [classIri]="node.id"
-                    [changeable]="
-                      canEdit() && !!editing?.canDelete && isEditable(property) && !inherited().has(property.id)
-                    " />
-                  <!-- For editors, on hover, as on the cards: editing the property, and taking a class's own one off it.
-                       They float over the end of the line and keep no room of their own. -->
-                  @if (canEdit() && isEditable(property)) {
-                    <span class="row-actions">
-                      <button
-                        type="button"
-                        class="edit-property"
-                        data-cy="class-panel-edit-property"
-                        [attr.aria-label]="t + '.editProperty' | translate: { property: property.label }"
-                        [matTooltip]="t + '.editProperty' | translate: { property: property.label }"
-                        (click)="editProperty.emit(property.id)">
-                        <mat-icon>edit</mat-icon>
-                      </button>
-                      @if (editing?.canDelete && !inherited().has(property.id)) {
-                        <button
-                          type="button"
-                          class="edit-property remove-property"
-                          data-cy="class-panel-remove-property"
-                          [attr.aria-label]="'pages.dataModels2.removeFromClass' | translate: { class: node.label }"
-                          [matTooltip]="'pages.dataModels2.removeFromClass' | translate: { class: node.label }"
-                          (click)="removeProperty(node, property)">
-                          <mat-icon>remove_circle_outline</mat-icon>
-                        </button>
-                      }
-                    </span>
-                  }
-                </div>
-                @if (open && property.description) {
-                  <p class="property-description">{{ property.description }}</p>
+                    [className]="node.label"
+                    (mouseenter)="propertyHovered.emit(property.id)"
+                    (mouseleave)="propertyHovered.emit(undefined)"
+                    (edit)="editProperty.emit($event)"
+                    (remove)="removeProperty(node, property)"
+                    (goTo)="showClass($event)">
+                    <div class="drop-line" *cdkDragPlaceholder></div>
+                  </li>
+                }
+              </ul>
+            </ng-template>
+            <!-- Values, then the links under their own heading, when the cards show them apart. -->
+            @if (groupLinks() && values().length && links().length) {
+              <ng-container *ngTemplateOutlet="ownList; context: { $implicit: values() }" />
+              <div class="links-heading" data-cy="data-model-class-card-links">
+                <mat-icon>link</mat-icon>
+                {{ 'pages.dataModels2.links' | translate }} <span class="n">{{ links().length }}</span>
+              </div>
+              <ng-container *ngTemplateOutlet="ownList; context: { $implicit: links() }" />
+            } @else if (own().length) {
+              <ng-container *ngTemplateOutlet="ownList; context: { $implicit: own() }" />
+            } @else if (!inheritedRows().length) {
+              <p class="none">{{ 'pages.dataModels2.noProperties' | translate }}</p>
+            }
+            @if (inheritedRows().length) {
+              <div class="inherited">
+                <button
+                  type="button"
+                  class="more"
+                  data-cy="data-model-class-card-inherited"
+                  [attr.aria-expanded]="inheritedOpen()"
+                  (click)="inheritedOpen.set(!inheritedOpen())">
+                  <mat-icon>{{ inheritedOpen() ? 'expand_less' : 'chevron_right' }}</mat-icon>
+                  {{
+                    'pages.dataModels2.inheritedFrom'
+                      | translate: { count: inheritedRows().length, class: parentLabel() }
+                  }}
+                </button>
+                @if (inheritedOpen()) {
+                  <ul class="props">
+                    @for (property of inheritedRows(); track property.id) {
+                      <li
+                        appClassCardProperty
+                        [property]="property"
+                        [labelOf]="labelOfIri"
+                        [colors]="colors()"
+                        [linkChips]="linkChips()"
+                        [reachable]="!!property.linkTarget && isNavigable(property.linkTarget)"
+                        [canEdit]="canEdit()"
+                        (mouseenter)="propertyHovered.emit(property.id)"
+                        (mouseleave)="propertyHovered.emit(undefined)"
+                        (edit)="editProperty.emit($event)"
+                        (goTo)="showClass($event)"></li>
+                    }
+                  </ul>
                 }
               </div>
             }
             @if (canEdit()) {
-              <app-add-property-menu [classIri]="classIri()" />
+              <div class="add-property">
+                <app-add-property-menu [classIri]="classIri()" [row]="true" />
+              </div>
             }
           </div>
         }
@@ -353,144 +377,85 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 
       .none {
         margin: 0;
+        padding: 6px 0 8px;
+        border-top: 1px solid $cool_gray_100;
+        font-size: 12.5px;
         color: $cool_gray_500;
       }
 
-      .property {
+      // The cards' rows, across the panel's padding, between lines as on a card.
+      .props {
+        list-style: none;
+        margin: 0 -16px;
+        padding: 0;
         border-top: 1px solid $cool_gray_100;
+      }
 
-        &.open {
-          margin: 0 -10px;
-          padding: 0 10px 8px;
-          border-top-color: transparent;
-          border-radius: 4px;
-          background: #f1f5fa;
+      // Where a dragged property lands.
+      .drop-line {
+        height: 2px;
+        background: $primary;
+      }
 
-          .property-label {
-            font-weight: 500;
-          }
+      .cdk-drag-animating,
+      .props.cdk-drop-list-dragging .prop:not(.cdk-drag-placeholder) {
+        transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
+      // "Links" over their group, as on a card.
+      .links-heading {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 0 -16px;
+        padding: 4px 16px 2px;
+        border-top: 1px solid $cool_gray_100;
+        background: $cool_gray_50;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: $cool_gray_500;
+
+        .n {
+          font-weight: 400;
+          letter-spacing: 0;
+        }
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
         }
       }
 
-      .property-line {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 0;
+      .inherited {
+        margin: 0 -16px;
+        background: $cool_gray_50;
+
+        .props {
+          margin: 0;
+        }
       }
 
-      .property-toggle,
-      .link,
-      .class-link {
-        padding: 0;
+      // The inherited row, as on a card.
+      .more {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        padding: 3px 16px;
         border: 0;
+        border-top: 1px solid $cool_gray_100;
         background: none;
         font: inherit;
-        text-align: left;
-      }
-
-      .property-toggle {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: inherit;
-        cursor: pointer;
-
-        &:disabled {
-          cursor: default;
-        }
-      }
-
-      .type-icon {
-        flex: none;
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
-        color: $cool_gray_500;
-      }
-
-      .property-label {
-        flex: 1;
-        min-width: 0;
-      }
-
-      // Every type in the same grey: a link's class too, which still opens on a click.
-      .value {
-        flex: none;
         font-size: 12px;
-        color: $cool_gray_500;
-      }
-
-      .cardinality {
-        flex: none;
-      }
-
-      .link {
+        color: $cool_gray_600;
+        text-align: left;
         cursor: pointer;
 
         &:hover {
-          text-decoration: underline;
-        }
-
-        &:disabled {
-          cursor: default;
-          text-decoration: none;
-        }
-      }
-
-      .class-link {
-        color: $primary;
-        cursor: pointer;
-
-        &:hover {
-          text-decoration: underline;
-        }
-
-        &:disabled {
-          color: $cool_gray_500;
-          cursor: default;
-          text-decoration: none;
-        }
-      }
-
-      // A pencil at the end of the row, shown while the row is hovered or has focus; its room is kept, so the row's
-      // texts do not move.
-      // The pencil and remove button, over the end of the line next to the cardinality, on the row's colour.
-      .property-line {
-        position: relative;
-      }
-
-      .row-actions {
-        position: absolute;
-        top: 50%;
-        right: 44px;
-        transform: translateY(-50%);
-        display: flex;
-        border-radius: 99px;
-        background: white;
-        box-shadow: -12px 0 8px -2px white;
-        visibility: hidden;
-      }
-
-      .property.open .row-actions {
-        background: #f1f5fa;
-        box-shadow: -12px 0 8px -2px #f1f5fa;
-      }
-
-      .edit-property {
-        flex: none;
-        display: flex;
-        padding: 3px;
-        border: 0;
-        border-radius: 50%;
-        background: none;
-        color: $primary;
-        cursor: pointer;
-
-        &:hover {
-          background: $primary_50;
+          background: $cool_gray_100;
         }
 
         mat-icon {
@@ -500,27 +465,10 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         }
       }
 
-      // Removing a property from the class: grey, red on hover.
-      .remove-property {
-        color: $cool_gray_500;
-
-        &:hover {
-          color: #b3261e;
-          background: #fdecea;
-        }
-      }
-
-      .property:hover .row-actions,
-      .property:focus-within .row-actions {
-        visibility: visible;
-      }
-
-      .property-description {
-        margin: 0;
-        padding-left: 24px;
-        font-size: 12px;
-        line-height: 18px;
-        color: $cool_gray_600;
+      .add-property {
+        display: block;
+        margin: 0 -16px;
+        border-top: 1px solid $cool_gray_100;
       }
 
       // A footer across the panel, against its padding: pushed down when the panel is short, stuck to the bottom when
@@ -561,6 +509,10 @@ export class ResourceClassPanelComponent {
   private readonly _notification = inject(NotificationService);
   private readonly _translate = inject(TranslateService);
 
+  /** Whether a link's target shows as a chip in its family's colour, as the cards' View options say. */
+  readonly linkChips = input(false);
+  /** Whether the links show apart from the values, under their own heading, as the cards' View options say. */
+  readonly groupLinks = input(false);
   /** The data model the class belongs to. */
   readonly graph = input.required<DataModelGraph>();
   /** IRI of the class to describe. */
@@ -602,6 +554,11 @@ export class ResourceClassPanelComponent {
   readonly deleteCheck = signal<CanDo | undefined>(undefined);
 
   constructor() {
+    // The data model read again has the dragged order, or not if saving failed: either way it is what shows.
+    effect(() => {
+      this.graph();
+      untracked(() => this._dragged.set(undefined));
+    });
     // Each class shown, for editors, is checked once: Delete is offered only when nothing uses it.
     effect(() => {
       const iri = this.classIri();
@@ -609,6 +566,7 @@ export class ResourceClassPanelComponent {
       const check = this.canEdit() && !!editing?.canDelete && !this.elsewhere();
       untracked(() => {
         this.deleteCheck.set(undefined);
+        this.inheritedOpen.set(false);
         if (!check || !editing) return;
         editing
           .canDeleteClass(iri)
@@ -620,16 +578,58 @@ export class ResourceClassPanelComponent {
     });
   }
 
-  /** The properties the class has from its superclass: removed on the superclass, not here. */
-  readonly inherited = computed(() => {
+  /** The class's superclass, whose properties it has. */
+  private readonly _parent = computed(() => {
     const graph = this.graph();
     const parent = graph.edges.find(edge => edge.kind === 'subclass' && edge.source === this.classIri())?.target;
-    const parentNode = parent ? graph.nodes.find(node => node.id === parent) : undefined;
-    return new Set((parentNode?.propertyDetails ?? []).map(property => property.id));
+    return parent ? graph.nodes.find(node => node.id === parent) : undefined;
   });
+  /** The properties the class has from its superclass: removed on the superclass, not here. */
+  readonly inherited = computed(() => new Set((this._parent()?.propertyDetails ?? []).map(property => property.id)));
+  readonly parentLabel = computed(() => this._parent()?.label ?? '');
+
+  /** The order a drag gave the class's own properties, shown until the data model is read again. */
+  private readonly _dragged = signal<{ classIri: string; order: string[] } | undefined>(undefined);
+  /** The class's own properties, as rows of the cards, in their form order. */
+  readonly own = computed(() => {
+    let own = this.properties()
+      .filter(property => !this.inherited().has(property.id))
+      .map(cardPropertyOf);
+    const dragged = this._dragged();
+    if (dragged?.classIri === this.classIri()) {
+      own = [...own].sort((a, b) => dragged.order.indexOf(a.id) - dragged.order.indexOf(b.id));
+    }
+    return own;
+  });
+  readonly values = computed(() => this.own().filter(property => !property.linkTarget));
+  readonly links = computed(() => this.own().filter(property => property.linkTarget));
+  /** The properties it has from its superclass, as rows of the cards, folded under one row. */
+  readonly inheritedRows = computed(() =>
+    this.properties()
+      .filter(property => this.inherited().has(property.id))
+      .map(cardPropertyOf)
+  );
+  readonly inheritedOpen = signal(false);
+  /** For editors, where the editor can save a new order. */
+  readonly reorderable = computed(() => this.canEdit() && !!this.editing?.canReorder);
+  readonly labelOfIri = (iri: string) => this.labelOf(iri);
+
+  /**
+   * A property of `list`, the class's own ones or one group of them, was dropped elsewhere in it: the class's own
+   * properties take the new order, the other group's keeping their places, shown at once, then saved.
+   */
+  dropped(classIri: string, list: CardProperty[], event: CdkDragDrop<unknown>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    const moved = list.map(property => property.id);
+    moveItemInArray(moved, event.previousIndex, event.currentIndex);
+    const inList = new Set(moved);
+    const order = this.own().map(property => (inList.has(property.id) ? moved.shift()! : property.id));
+    this._dragged.set({ classIri, order });
+    this.editing?.reorderProperties(classIri, order).pipe(takeUntilDestroyed(this._destroyRef)).subscribe();
+  }
 
   /** Takes the property off the class, once checked and confirmed; the data model is then read again. */
-  removeProperty(node: { id: string; label: string }, property: DataModelProperty): void {
+  removeProperty(node: { id: string; label: string }, property: CardProperty): void {
     this.editing
       ?.removeProperty(node.id, property.id, { property: property.label, class: node.label })
       .pipe(takeUntilDestroyed(this._destroyRef))
@@ -655,22 +655,8 @@ export class ResourceClassPanelComponent {
   /** Whether its data model is one of the project's, so it can be opened there. */
   readonly canOpenModel = computed(() => !this.builtIn() && this.models().includes(this.model()));
 
-  /** The property whose description is shown, for the class it was opened on. */
-  private readonly _open = signal<{ classIri: string; propertyId: string } | undefined>(undefined);
-  readonly openProperty = computed(() => {
-    const open = this._open();
-    return open?.classIri === this.classIri() ? open.propertyId : undefined;
-  });
-
   readonly incoming = computed(() => this._connections('incoming'));
   readonly outgoing = computed(() => this._connections('outgoing'));
-
-  toggle(property: DataModelProperty): void {
-    if (!property.description) return;
-    this._open.set(
-      this.openProperty() === property.id ? undefined : { classIri: this.classIri(), propertyId: property.id }
-    );
-  }
 
   showClass(iri: string): void {
     if (this.isNavigable(iri)) {
@@ -685,19 +671,6 @@ export class ResourceClassPanelComponent {
   labelOf(iri: string): string {
     if (iri === Constants.Resource) return this.anyResourceLabel();
     return this.graph().nodes.find(node => node.id === iri)?.label ?? iri.substring(iri.lastIndexOf('#') + 1);
-  }
-
-  /** Whether the property belongs to a data model, which the project can edit, rather than to knora-api. */
-  isEditable(property: DataModelProperty): boolean {
-    return !property.id.startsWith(Constants.KnoraApiV2);
-  }
-
-  typeIcon(property: DataModelProperty): string {
-    return typeIconOf(property.type);
-  }
-
-  typeName(property: DataModelProperty): string {
-    return typeNameOf(property.type);
   }
 
   cardinalityKey(property: DataModelProperty): string {
