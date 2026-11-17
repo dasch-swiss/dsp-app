@@ -11,10 +11,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -45,6 +47,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
     LanguagesMenuComponent,
     LanguageTextsComponent,
     MatButton,
+    MatDivider,
     MatFormField,
     MatIcon,
     MatIconButton,
@@ -54,6 +57,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
     MatMenuItem,
     MatMenuTrigger,
     MatPrefix,
+    MatTooltip,
     TranslatePipe,
   ],
   template: `
@@ -98,12 +102,18 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
             <col class="name-column" />
             <col />
             <col class="used-column" />
+            @if (canEdit()) {
+              <col class="actions-column" />
+            }
           </colgroup>
           <thead>
             <tr>
               <th>{{ r + '.colVocabulary' | translate }}</th>
               <th>{{ r + '.colDescription' | translate }}</th>
               <th>{{ r + '.colUsedBy' | translate }}</th>
+              @if (canEdit()) {
+                <th class="actions-cell"></th>
+              }
             </tr>
           </thead>
           <tbody>
@@ -140,19 +150,6 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                     @if (row.count) {
                       <span class="count">{{ row.count }}</span>
                     }
-                    @if (canEdit()) {
-                      <span class="row-spacer"></span>
-                      <button
-                        mat-icon-button
-                        type="button"
-                        class="row-menu"
-                        data-cy="data-model-lists-row-menu"
-                        [attr.aria-label]="r + '.valueActions' | translate: { value: row.label }"
-                        [matMenuTriggerFor]="actions"
-                        [matMenuTriggerData]="{ row }">
-                        <mat-icon>more_vert</mat-icon>
-                      </button>
-                    }
                   </span>
                 </td>
                 <td class="description">
@@ -186,12 +183,34 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                     </span>
                   }
                 </td>
+                <!-- The row's actions, in a menu at the end of the row, as in the Classes and Properties tables. -->
+                @if (canEdit()) {
+                  <td class="actions-cell">
+                    <button
+                      mat-icon-button
+                      type="button"
+                      class="row-menu"
+                      data-cy="data-model-lists-row-menu"
+                      [attr.aria-label]="r + '.valueActions' | translate: { value: row.label }"
+                      [matTooltip]="r + '.valueActions' | translate: { value: row.label }"
+                      matTooltipShowDelay="600"
+                      [matMenuTriggerFor]="actions"
+                      [matMenuTriggerData]="{ row }">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                  </td>
+                }
               </tr>
             }
           </tbody>
         </table>
         <mat-menu #actions="matMenu">
           <ng-template matMenuContent let-row="row">
+            @if (row.depth > 0) {
+              <button mat-menu-item data-cy="data-model-lists-edit" (click)="editValue(row)">
+                <mat-icon>edit</mat-icon>{{ r + '.editValue' | translate }}
+              </button>
+            }
             <button mat-menu-item data-cy="data-model-lists-add-inside" (click)="addInside(row)">
               <mat-icon>subdirectory_arrow_right</mat-icon>{{ r + '.addValueInside' | translate }}
             </button>
@@ -199,15 +218,13 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
               <button mat-menu-item data-cy="data-model-lists-add-after" (click)="addAfter(row)">
                 <mat-icon>playlist_add</mat-icon>{{ r + '.addValueAfter' | translate }}
               </button>
-              <button mat-menu-item data-cy="data-model-lists-edit" (click)="editValue(row)">
-                <mat-icon>edit</mat-icon>{{ r + '.editValue' | translate }}
-              </button>
               <button mat-menu-item [disabled]="row.position === 0" (click)="move(row, -1)">
                 <mat-icon>arrow_upward</mat-icon>{{ r + '.moveUp' | translate }}
               </button>
               <button mat-menu-item [disabled]="row.position === row.siblings - 1" (click)="move(row, 1)">
                 <mat-icon>arrow_downward</mat-icon>{{ r + '.moveDown' | translate }}
               </button>
+              <mat-divider />
               <button mat-menu-item class="delete" data-cy="data-model-lists-delete" (click)="deleteValue(row)">
                 <mat-icon>delete</mat-icon>{{ r + '.deleteValue' | translate }}
               </button>
@@ -239,6 +256,10 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
 
         .used-column {
           width: 30%;
+        }
+
+        .actions-column {
+          width: 48px;
         }
 
         th {
@@ -333,30 +354,29 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
         text-overflow: ellipsis;
       }
 
-      .row-spacer {
-        flex: 1;
+      // The row's menu, at the end, as in the other tables: shown on the hovered or focused row, and while open.
+      .tree .actions-cell {
+        padding: 0 4px;
+        text-align: right;
       }
 
-      // The row's menu shows on the hovered or focused row, and while open.
       .row-menu {
-        --mat-icon-button-state-layer-size: 28px;
-        flex: none;
-        width: 28px;
-        height: 28px;
-        padding: 2px;
-        opacity: 0;
+        --mat-icon-button-state-layer-size: 32px;
+        padding: 4px;
+        color: $cool_gray_500;
+        visibility: hidden;
 
         mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
         }
       }
 
       tr:hover .row-menu,
       tr:focus-within .row-menu,
       .row-menu[aria-expanded='true'] {
-        opacity: 1;
+        visibility: visible;
       }
 
       .delete {
