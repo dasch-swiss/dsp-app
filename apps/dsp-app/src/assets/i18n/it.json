@@ -1016,14 +1016,8 @@
       "deselectAll": "Deseleziona tutto",
       "resizeColumn": "Ridimensiona la colonna",
       "descriptionEditor": {
-        "title": "Descrizione di {{class}}",
-        "needsOne": "Mantieni almeno una lingua",
-        "save": "Salva",
         "edit": "Modifica la descrizione ({{language}}) di {{class}}",
         "add": "Aggiungi una descrizione ({{language}}) a {{class}}",
-        "saved": "{{class}} salvata",
-        "notSaved": "Non è stato possibile salvare la modifica. Riprova.",
-        "labelTitle": "Etichetta di {{class}}",
         "editLabel": "Modifica l'etichetta ({{language}}) di {{class}}",
         "addLabel": "Aggiungi un'etichetta ({{language}}) a {{class}}"
       },

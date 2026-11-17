@@ -23,7 +23,6 @@ import {
   CanDo,
   DataModelEditor,
   ProjectPageService,
-  TextsToSave,
   VocabularyValue,
 } from '@dasch-swiss/vre/pages/project/project';
 import {
@@ -60,7 +59,7 @@ import {
   EditResourceClassDialogComponent,
   EditResourceClassDialogProps,
 } from './resource-class-form/edit-resource-class-dialog.component';
-import { UpdateResourceClassData } from './resource-class-form/resource-class-form.type';
+import { TextFocus, UpdateResourceClassData } from './resource-class-form/resource-class-form.type';
 
 /**
  * Opens the data model editor's "Customize resource class" and "Edit property" dialogs away from it, as on the Data
@@ -79,7 +78,7 @@ export class DataModelEditorService implements DataModelEditor {
   private readonly _api = inject<KnoraApiConnection>(DspApiConnectionToken);
   private readonly _notification = inject(NotificationService);
 
-  editClass(classIri: string): Observable<boolean> {
+  editClass(classIri: string, focus?: TextFocus): Observable<boolean> {
     return this._withEditing(classIri, (editing, injector) =>
       editing.currentOntology$.pipe(
         filter(ontology => !!ontology?.classes[classIri]),
@@ -93,7 +92,9 @@ export class DataModelEditorService implements DataModelEditor {
                 ...DspDialogConfig.mediumDialog({
                   labels: resourceClass.labels,
                   data: resourceClass as unknown as UpdateResourceClassData,
+                  focus,
                 }),
+                ...(focus ? { autoFocus: false } : {}),
                 injector,
               }
             )
@@ -103,7 +104,7 @@ export class DataModelEditorService implements DataModelEditor {
     );
   }
 
-  editProperty(propertyIri: string): Observable<boolean> {
+  editProperty(propertyIri: string, focus?: TextFocus): Observable<boolean> {
     return this._withEditing(propertyIri, (editing, injector) =>
       editing.currentOntologyProperties$.pipe(
         map(properties => properties.find(property => property.propDef.id === propertyIri)),
@@ -120,36 +121,16 @@ export class DataModelEditorService implements DataModelEditor {
             guiElement: propDef.guiElement || propType.guiElement,
             guiAttribute: propDef.guiAttributes[0],
             objectType: propDef.objectType,
+            focus,
           };
           return this._closedByClickOnly(
             this._dialog.open(EditPropertyFormDialogComponent, {
               ...DspDialogConfig.dialogDrawerConfig(data),
+              ...(focus ? { autoFocus: false } : {}),
               injector,
             })
           );
         })
-      )
-    );
-  }
-
-  saveClassTexts(classIri: string, { labels, descriptions }: TextsToSave): Observable<boolean> {
-    return this._withEditing(classIri, editing =>
-      editing.currentOntology$.pipe(
-        filter(ontology => !!ontology?.classes[classIri]),
-        take(1),
-        switchMap(() => editing.updateResourceClass$({ id: classIri, labels, comments: descriptions })),
-        map(() => true)
-      )
-    );
-  }
-
-  savePropertyTexts(propertyIri: string, { labels, descriptions }: TextsToSave): Observable<boolean> {
-    return this._withEditing(propertyIri, editing =>
-      editing.currentOntology$.pipe(
-        filter(ontology => !!ontology?.properties[propertyIri]),
-        take(1),
-        switchMap(() => editing.updateProperty$({ id: propertyIri, labels, comment: descriptions })),
-        map(() => true)
       )
     );
   }

@@ -27,7 +27,8 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
         [label]="'pages.ontology.resourceClassForm.labelPlaceholder' | translate"
         [formArray]="form.controls.labels"
         [validators]="labelsValidators"
-        [isRequired]="true" />
+        [isRequired]="true"
+        [focusLanguage]="formData.focus?.field === 'label' ? formData.focus?.language : undefined" />
 
       <app-multi-language-fields
         data-cy="comment-textarea"
@@ -35,7 +36,8 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
         [formArray]="form.controls.comments"
         [multiline]="true"
         [validators]="commentsValidators"
-        [isRequired]="true" />
+        [isRequired]="true"
+        [focusLanguage]="formData.focus?.field === 'description' ? formData.focus?.language : undefined" />
     </form>
   `,
   styles: [':host ::ng-deep .name-input .mat-icon { padding-right: 24px; }'],

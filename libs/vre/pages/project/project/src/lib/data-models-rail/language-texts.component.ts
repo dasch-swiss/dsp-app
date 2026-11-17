@@ -3,8 +3,8 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
-import { DESCRIPTION_LANGUAGES, TextKind } from './description-editor.component';
 import { HighlightPipe } from './highlight.pipe';
+import { DESCRIPTION_LANGUAGES, TextKind } from './text-kind';
 
 const orderOf = (language: string) => {
   const index = DESCRIPTION_LANGUAGES.indexOf(language);
@@ -62,7 +62,7 @@ export interface LanguageTextEdit {
   template: `
     @let t = 'pages.dataModels2.descriptionEditor';
     @for (text of lines(); track text.language) {
-      <span #line class="lang-line" [class.single]="!labelled()" [class.active]="text.language === activeLanguage()">
+      <span #line class="lang-line" [class.single]="!labelled()">
         @if (labelled()) {
           <span class="lang">{{ text.language }}</span>
         }
@@ -112,7 +112,6 @@ export interface LanguageTextEdit {
             type="button"
             class="lang-add"
             [attr.data-cy]="cyPrefix() + '-add-' + kind()"
-            [class.active]="language === activeLanguage()"
             [attr.aria-label]="
               t + (kind() === 'label' ? '.addLabel' : '.add') | translate: { language, class: owner() }
             "
@@ -149,16 +148,10 @@ export interface LanguageTextEdit {
 
         // Only the pencil shows on hover: the text itself opens nothing.
         &:hover,
-        &:focus-within,
-        &.active {
+        &:focus-within {
           .lang-edit {
             opacity: 1;
           }
-        }
-
-        &.active {
-          background: rgba(0, 0, 0, 0.05);
-          box-shadow: inset 0 0 0 1px $primary;
         }
       }
 
@@ -250,8 +243,7 @@ export interface LanguageTextEdit {
         cursor: pointer;
 
         &:hover,
-        &:focus-visible,
-        &.active {
+        &:focus-visible {
           border-color: $primary;
           color: $primary;
         }
@@ -282,8 +274,6 @@ export class LanguageTextsComponent {
   readonly languages = input<readonly string[] | null>(null);
   /** Whether the viewer may edit the text, which shows the pencils and the missing languages. */
   readonly canEdit = input(false);
-  /** The language being edited, its line outlined. */
-  readonly activeLanguage = input<string | null>(null);
   /** Whose text it is, for the buttons' names. */
   readonly owner = input('');
   /** Long texts wrap instead of being cut. */

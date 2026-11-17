@@ -1016,14 +1016,8 @@
       "deselectAll": "Tout désélectionner",
       "resizeColumn": "Redimensionner la colonne",
       "descriptionEditor": {
-        "title": "Description de {{class}}",
-        "needsOne": "Gardez au moins une langue",
-        "save": "Enregistrer",
         "edit": "Modifier la description ({{language}}) de {{class}}",
         "add": "Ajouter une description ({{language}}) à {{class}}",
-        "saved": "{{class}} enregistrée",
-        "notSaved": "La modification n'a pas pu être enregistrée. Réessayez.",
-        "labelTitle": "Libellé de {{class}}",
         "editLabel": "Modifier le libellé ({{language}}) de {{class}}",
         "addLabel": "Ajouter un libellé ({{language}}) à {{class}}"
       },

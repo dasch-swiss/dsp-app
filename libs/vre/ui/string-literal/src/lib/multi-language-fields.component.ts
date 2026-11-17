@@ -1,6 +1,6 @@
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, ElementRef, inject, Input, OnInit, signal } from '@angular/core';
+import { afterNextRender, Component, ElementRef, inject, Input, OnInit, signal } from '@angular/core';
 import { FormBuilder, ValidatorFn } from '@angular/forms';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -201,6 +201,8 @@ export class MultiLanguageFieldsComponent implements OnInit {
   @Input() isRequired = false;
   /** One language at a time or all at once; unless set, as `MULTI_LANGUAGE_MODE` says. */
   @Input() mode?: MultiLanguageMode;
+  /** A language to open on, its field focused, ready to type in; as when a table's cell asks to edit that language. */
+  @Input() focusLanguage?: string;
 
   readonly languages = AvailableLanguages;
   /** The language shown in "one at a time": the interface language if it has a text, else the first with one. */
@@ -223,9 +225,19 @@ export class MultiLanguageFieldsComponent implements OnInit {
   constructor(
     private readonly _fb: FormBuilder,
     private readonly _localization: LocalizationService
-  ) {}
+  ) {
+    afterNextRender(() => {
+      if (!this.focusLanguage) return;
+      this._host.nativeElement.querySelector<HTMLElement>(`[data-cy="multi-language-${this.focusLanguage}"]`)?.focus();
+    });
+  }
 
   ngOnInit(): void {
+    const asked = this.languages.find(language => language.language === this.focusLanguage)?.language;
+    if (asked) {
+      this.current.set(asked);
+      return;
+    }
     const ui = this._localization.currentLanguage as AvailableLanguage;
     const known = this.languages.some(language => language.language === ui);
     const first = this.languages.find(language => this.hasText(language.language))?.language;

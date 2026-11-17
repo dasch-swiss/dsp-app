@@ -3,6 +3,7 @@ import { ClassDefinition } from '@dasch-swiss/dsp-js';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DefaultProperty } from '@dasch-swiss/vre/shared/app-helper-services';
 import { MultiLanguageForm } from '@dasch-swiss/vre/ui/string-literal';
+import { TextFocus } from '../resource-class-form/resource-class-form.type';
 
 export type PropertyForm = FormGroup<{
   guiElement: FormControl<string>;
@@ -22,6 +23,8 @@ export interface EditPropertyDialogData {
   guiElement: string;
   guiAttribute?: string;
   objectType?: string;
+  /** The text to open on, focused. */
+  focus?: TextFocus;
 }
 
 export interface CreatePropertyDialogData {

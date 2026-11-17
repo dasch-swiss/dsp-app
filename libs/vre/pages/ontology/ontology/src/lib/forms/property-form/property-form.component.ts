@@ -60,6 +60,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
     <app-multi-language-fields
       [formArray]="form.controls.labels"
       [isRequired]="true"
+      [focusLanguage]="propertyData.focus?.field === 'label' ? propertyData.focus?.language : undefined"
       data-cy="label-input"
       [label]="'pages.ontology.propertyForm.labelPlaceholder' | translate" />
 
@@ -68,7 +69,8 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       data-cy="comment-textarea"
       [label]="'pages.ontology.propertyForm.commentPlaceholder' | translate"
       [multiline]="true"
-      [isRequired]="true" />
+      [isRequired]="true"
+      [focusLanguage]="propertyData.focus?.field === 'description' ? propertyData.focus?.language : undefined" />
   </form>`,
   imports: [
     CommonInputComponent,

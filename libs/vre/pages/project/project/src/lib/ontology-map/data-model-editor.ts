@@ -6,21 +6,20 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { filter, map, Observable, of, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
-import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 
 /**
  * Edits a class or a property of a data model in place, in the data model editor's dialogs. Those dialogs belong to
  * the ontology pages, which depend on this library, so the app provides them here; see `app.routes.ts`.
  */
 export interface DataModelEditor {
-  /** Opens the class's dialog, for its labels and description; emits once it closes, `true` if it was saved. */
-  editClass(classIri: string): Observable<boolean>;
-  /** Opens the property's dialog, for its labels and description; emits once it closes, `true` if it was saved. */
-  editProperty(propertyIri: string): Observable<boolean>;
-  /** Saves the class's labels or description, every language at once; emits `true` once saved. */
-  saveClassTexts(classIri: string, texts: TextsToSave): Observable<boolean>;
-  /** Saves the property's labels or description, every language at once; emits `true` once saved. */
-  savePropertyTexts(propertyIri: string, texts: TextsToSave): Observable<boolean>;
+  /**
+   * Opens the class's dialog, on `focus` when given; emits once it closes, `true` if it was saved.
+   */
+  editClass(classIri: string, focus?: TextFocus): Observable<boolean>;
+  /**
+   * Opens the property's dialog, on `focus` when given; emits once it closes, `true` if it was saved.
+   */
+  editProperty(propertyIri: string, focus?: TextFocus): Observable<boolean>;
   /** The project's properties the class does not have yet, by data model. */
   availableProperties(classIri: string): Observable<AvailableProperties[]>;
   /** Gives the class an existing property, optional and single; emits `true` once saved. */
@@ -105,10 +104,10 @@ export interface AvailableProperties {
   }[];
 }
 
-/** A class's or property's labels or description, in each language it has. */
-export interface TextsToSave {
-  labels?: LanguageText[];
-  descriptions?: LanguageText[];
+/** The text an edit dialog opens on: its label or description, the field of that language focused. */
+export interface TextFocus {
+  field: 'label' | 'description';
+  language: string;
 }
 
 /** The data model editor, if the app provides one; without it, editing opens the data model editor page instead. */
@@ -149,14 +148,8 @@ export function injectDataModelEditing() {
       map(Boolean)
     );
   return {
-    /** Whether labels and descriptions can be saved in place, without the data model editor's page. */
-    canSaveInPlace: !!editor,
-    /** Saves the class's labels or description. Emits `true` once saved. */
-    saveClassTexts: (iri: string, texts: TextsToSave): Observable<boolean> =>
-      editor ? reloadOnceSaved(editor.saveClassTexts(iri, texts)) : of(false),
-    /** Saves the property's labels or description. Emits `true` once saved. */
-    savePropertyTexts: (iri: string, texts: TextsToSave): Observable<boolean> =>
-      editor ? reloadOnceSaved(editor.savePropertyTexts(iri, texts)) : of(false),
+    /** Whether labels and descriptions can be edited in the editor's dialogs, without the data model editor's page. */
+    canEditInPlace: !!editor,
     /** The project's properties the class does not have yet; none without the editor. */
     availableProperties: (classIri: string): Observable<AvailableProperties[]> =>
       editor ? editor.availableProperties(classIri) : of([]),
@@ -236,7 +229,11 @@ export function injectDataModelEditing() {
           project.reloadProject();
           created(iri);
         }),
-    editClass: (iri: string) => edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i))),
-    editProperty: (iri: string) => edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i))),
+    /** Edits the class in the editor's dialog, opened on `focus` when given. */
+    editClass: (iri: string, focus?: TextFocus) =>
+      edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i, focus))),
+    /** Edits the property in the editor's dialog, opened on `focus` when given. */
+    editProperty: (iri: string, focus?: TextFocus) =>
+      edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i, focus))),
   };
 }

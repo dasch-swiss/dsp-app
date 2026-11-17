@@ -17,11 +17,18 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassFormComponent } from './resource-class-form.component';
-import { ResourceClassForm, ResourceClassFormData, UpdateResourceClassData } from './resource-class-form.type';
+import {
+  ResourceClassForm,
+  ResourceClassFormData,
+  TextFocus,
+  UpdateResourceClassData,
+} from './resource-class-form.type';
 
 export interface EditResourceClassDialogProps {
   labels: StringLiteralV2[];
   data: UpdateResourceClassData;
+  /** The text to open on, focused. */
+  focus?: TextFocus;
 }
 
 @Component({
@@ -80,6 +87,7 @@ export class EditResourceClassDialogComponent implements OnInit {
       name: OntologyService.getNameFromIri(this.data.data.id),
       labels: this.data.data.labels as MultiLanguages,
       comments: this.data.data.comments as MultiLanguages,
+      focus: this.data.focus,
     };
   }
 

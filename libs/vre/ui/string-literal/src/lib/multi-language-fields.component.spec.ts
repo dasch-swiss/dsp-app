@@ -15,7 +15,13 @@ describe('MultiLanguageFieldsComponent', () => {
       entries.map(e => fb.nonNullable.group({ language: e.language, value: e.value }))
     ) as unknown as MultiLanguageFormArray;
 
-  function render(formArray: MultiLanguageFormArray, mode: MultiLanguageMode, multiline = false, ui = 'en') {
+  function render(
+    formArray: MultiLanguageFormArray,
+    mode: MultiLanguageMode,
+    multiline = false,
+    ui = 'en',
+    focusLanguage?: string
+  ) {
     TestBed.configureTestingModule({
       imports: [MultiLanguageFieldsComponent, NoopAnimationsModule, TranslateModule.forRoot()],
       providers: [{ provide: LocalizationService, useValue: { currentLanguage: ui } }],
@@ -26,6 +32,7 @@ describe('MultiLanguageFieldsComponent', () => {
     fixture.componentInstance.multiline = multiline;
     fixture.componentInstance.mode = mode;
     fixture.componentInstance.validators = [Validators.maxLength(5)];
+    fixture.componentInstance.focusLanguage = focusLanguage;
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
     const field = (language: string) => el.querySelector(`[data-cy="multi-language-${language}"]`) as HTMLInputElement;
@@ -118,6 +125,20 @@ describe('MultiLanguageFieldsComponent', () => {
       ]);
       expect(tab('it').classList).toContain('filled');
       expect(tab('it').getAttribute('aria-selected')).toBe('true');
+    });
+  });
+
+  describe('opened on a language', () => {
+    it('shows that language and focuses its field, as when a table cell asks to edit it', () => {
+      const { el, field } = render(formArrayOf([{ language: 'en', value: 'Book' }]), 'one', false, 'en', 'fr');
+      expect(el.querySelectorAll('input').length).toBe(1);
+      expect(field('fr')).toBeTruthy();
+      expect(document.activeElement).toBe(field('fr'));
+    });
+
+    it('focuses that language among all of them', () => {
+      const { field } = render(formArrayOf([{ language: 'en', value: 'Book' }]), 'all', false, 'en', 'de');
+      expect(document.activeElement).toBe(field('de'));
     });
   });
 });

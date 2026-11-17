@@ -1016,14 +1016,8 @@
       "deselectAll": "Deselect all",
       "resizeColumn": "Resize the column",
       "descriptionEditor": {
-        "title": "Description of {{class}}",
-        "needsOne": "Keep at least one language",
-        "save": "Save",
         "edit": "Edit the {{language}} description of {{class}}",
         "add": "Add a {{language}} description to {{class}}",
-        "saved": "Saved {{class}}",
-        "notSaved": "The change could not be saved. Try again.",
-        "labelTitle": "Label of {{class}}",
         "editLabel": "Edit the {{language}} label of {{class}}",
         "addLabel": "Add a {{language}} label to {{class}}"
       },

@@ -1016,14 +1016,8 @@
       "deselectAll": "Alle abwählen",
       "resizeColumn": "Spaltenbreite ändern",
       "descriptionEditor": {
-        "title": "Beschreibung von {{class}}",
-        "needsOne": "Mindestens eine Sprache behalten",
-        "save": "Speichern",
         "edit": "Beschreibung ({{language}}) von {{class}} bearbeiten",
         "add": "Beschreibung ({{language}}) zu {{class}} hinzufügen",
-        "saved": "{{class}} gespeichert",
-        "notSaved": "Die Änderung konnte nicht gespeichert werden. Bitte erneut versuchen.",
-        "labelTitle": "Bezeichnung von {{class}}",
         "editLabel": "Bezeichnung ({{language}}) von {{class}} bearbeiten",
         "addLabel": "Bezeichnung ({{language}}) zu {{class}} hinzufügen"
       },

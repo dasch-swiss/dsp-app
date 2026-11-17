@@ -6,7 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
-import { DESCRIPTION_LANGUAGES } from './description-editor.component';
+import { DESCRIPTION_LANGUAGES } from './text-kind';
 
 /** The languages a table shows, as stored: every one, or none chosen (`null`), which follows the app language. */
 export function parseLanguages(stored: string): string[] | null {

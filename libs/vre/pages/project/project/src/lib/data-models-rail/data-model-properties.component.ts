@@ -51,7 +51,6 @@ import { ClassChipsComponent } from './class-chips.component';
 import { ColumnHeaderComponent } from './column-header.component';
 import { ColumnsMenuComponent } from './columns-menu.component';
 import { DataModelsRailState } from './data-models-rail-state';
-import { TextKind } from './description-editor.component';
 import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
@@ -60,7 +59,7 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { rememberedSignal } from './remembered-signal';
 import { TableColumns } from './table-columns';
 import { TABLE_STYLES } from './table-styles';
-import { TextEditing, TextEditorPopoverComponent } from './text-editor-popover.component';
+import { TextKind } from './text-kind';
 
 /** How many classes a condensed "Used by" shows; the others are counted. */
 const MAX_USED_BY = 3;
@@ -130,7 +129,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatTooltip,
     PropertyPanelComponent,
     ResourceClassPanelComponent,
-    TextEditorPopoverComponent,
     TranslatePipe,
   ],
   template: `
@@ -303,7 +301,6 @@ const COLUMN_LABELS: Record<Column, string> = {
                     [owner]="row.label"
                     [languages]="languages()"
                     [canEdit]="canEditTexts()"
-                    [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
                     [expanded]="expanded"
                     [highlight]="nameTerms()"
                     (edit)="editText(row, 'label', $event)" />
@@ -360,7 +357,6 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [owner]="row.label"
                 [languages]="languages()"
                 [canEdit]="canEditTexts()"
-                [activeLanguage]="textEditing.activeLanguage(row.id, 'description')"
                 [expanded]="expanded"
                 [highlight]="descriptionTerms()"
                 (edit)="editText(row, 'description', $event)" />
@@ -647,8 +643,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         </ng-template>
       </mat-menu>
 
-      <app-text-editor-popover [editing]="textEditing" />
-
       @if (state.graph(); as graph) {
         <!-- A class clicked in the table or the property's panel, described here, over the property's panel. -->
         @if (classPanelIri(); as iri) {
@@ -886,10 +880,7 @@ export class DataModelPropertiesComponent {
   readonly scrolled = signal(false);
 
   /** The property names and descriptions edited from their cells. */
-  readonly textEditing = new TextEditing((target, texts) =>
-    this.editing.savePropertyTexts(target.id, target.kind === 'label' ? { labels: texts } : { descriptions: texts })
-  );
-  readonly canEditTexts = computed(() => this.state.canEdit() && this.editing.canSaveInPlace);
+  readonly canEditTexts = computed(() => this.state.canEdit() && this.editing.canEditInPlace);
 
   readonly query = signal('');
   /** The column filters; an empty set or text filters nothing. */
@@ -1057,13 +1048,7 @@ export class DataModelPropertiesComponent {
 
   /** Opens the editor of a property's name or description, on the language asked for. */
   editText(row: PropertyRow, kind: TextKind, edit: LanguageTextEdit): void {
-    this.textEditing.open({
-      ...edit,
-      id: row.id,
-      label: row.label,
-      kind,
-      texts: kind === 'label' ? row.labels : row.descriptions,
-    });
+    this.editing.editProperty(row.id, { field: kind, language: edit.language });
   }
 
   /**
@@ -1071,7 +1056,7 @@ export class DataModelPropertiesComponent {
    * and leaves the panel under it open too.
    */
   closeOnEscape(event: Event): void {
-    if (!escapeClosesPanel(event) || this.textEditing.target()) return;
+    if (!escapeClosesPanel(event)) return;
     if (this.classPanelIri()) this.closeClass();
     else if (this.panelIri()) this.openPanel(undefined);
   }
