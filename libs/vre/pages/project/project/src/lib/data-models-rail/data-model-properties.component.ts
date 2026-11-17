@@ -1,23 +1,26 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   signal,
   viewChild,
   WritableSignal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import {
   MatCell,
   MatCellDef,
@@ -30,11 +33,13 @@ import {
   MatRowDef,
   MatTable,
 } from '@angular/material/table';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultProperties, DefaultProperty } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe } from '@ngx-translate/core';
-import { injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
@@ -103,13 +108,16 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatCellDef,
     MatCheckbox,
     MatColumnDef,
+    MatDivider,
     MatFormField,
     MatHeaderCell,
     MatHeaderCellDef,
     MatHeaderRow,
     MatHeaderRowDef,
     MatIcon,
+    MatIconButton,
     MatMenu,
+    MatMenuContent,
     MatMenuItem,
     MatMenuTrigger,
     MatInput,
@@ -117,6 +125,7 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatRow,
     MatRowDef,
     MatTable,
+    MatTooltip,
     PropertyPanelComponent,
     TextEditorPopoverComponent,
     TranslatePipe,
@@ -196,13 +205,40 @@ const COLUMN_LABELS: Record<Column, string> = {
         </mat-button-toggle-group>
       </div>
 
+      <!-- For editors: the data model's properties no class uses, which a link among them keeps its target from being
+           deleted; shown on their own, or deleted together. -->
+      @if (canEdit() && unused().length; as count) {
+        <div class="unused-note" data-cy="data-model-properties-unused-note">
+          <mat-icon>info</mat-icon>
+          <span class="unused-text">{{ r + '.unusedNote' | translate: { count } }}</span>
+          <button
+            mat-stroked-button
+            type="button"
+            data-cy="data-model-properties-unused-show"
+            (click)="unusedOnly.set(!unusedOnly())">
+            {{ (unusedOnly() ? r + '.showAllProperties' : r + '.showUnused') | translate }}
+          </button>
+          @if (editing.canDelete) {
+            <button
+              mat-stroked-button
+              type="button"
+              class="delete"
+              data-cy="data-model-properties-unused-delete"
+              (click)="deleteUnused()">
+              <mat-icon>delete</mat-icon>
+              {{ r + '.deleteAllUnused' | translate: { count } }}
+            </button>
+          }
+        </div>
+      }
+
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
         <table
           mat-table
           [dataSource]="rows()"
           data-cy="data-model-properties"
           [class.expanded]="expanded"
-          [style.width.px]="cols.tableWidth()"
+          [style.width.px]="cols.tableWidth() + actionsWidth"
           cdkDropList
           cdkDropListOrientation="horizontal"
           cdkDropListElementContainer="thead tr"
@@ -507,10 +543,31 @@ const COLUMN_LABELS: Record<Column, string> = {
               </span>
             </td>
           </ng-container>
-          <tr mat-header-row *matHeaderRowDef="cols.shown(); sticky: true"></tr>
+          <!-- Each property's actions, in a menu kept in view at the end of the row. -->
+          <ng-container matColumnDef="actions" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef class="actions-cell" [style.width.px]="actionsWidth"></th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <button
+                mat-icon-button
+                type="button"
+                class="row-menu"
+                data-cy="data-model-properties-actions"
+                [attr.aria-label]="r + '.propertyActions' | translate: { property: row.label }"
+                [matTooltip]="r + '.propertyActions' | translate: { property: row.label }"
+                matTooltipShowDelay="600"
+                [matMenuTriggerFor]="rowMenu"
+                [matMenuTriggerData]="{ row }"
+                (click)="$event.stopPropagation()"
+                (keydown.enter)="$event.stopPropagation()"
+                (menuOpened)="checkDelete(row.id)">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="shownColumns(); sticky: true"></tr>
           <tr
             mat-row
-            *matRowDef="let row; columns: cols.shown()"
+            *matRowDef="let row; columns: shownColumns()"
             data-cy="data-model-properties-row"
             tabindex="0"
             [class.selected]="row.id === panelIri()"
@@ -521,6 +578,76 @@ const COLUMN_LABELS: Record<Column, string> = {
           <p class="empty">{{ r + '.noMatch' | translate }}</p>
         }
       </div>
+
+      <mat-menu #rowMenu="matMenu" xPosition="before">
+        <ng-template matMenuContent let-row="row">
+          @if (canEdit()) {
+            <button mat-menu-item type="button" data-cy="data-model-properties-edit" (click)="edit(row.id)">
+              <mat-icon>edit</mat-icon>
+              {{ r + '.editProperty' | translate }}
+            </button>
+            @if (editing.canDelete) {
+              @let classes = classesWithout(row);
+              <button
+                mat-menu-item
+                type="button"
+                data-cy="data-model-properties-add-to-class"
+                [disabled]="!classes.length"
+                [matMenuTriggerFor]="classMenu"
+                [matMenuTriggerData]="{ row, classes }">
+                <mat-icon>add_box</mat-icon>
+                {{ r + '.addToClass' | translate }}
+              </button>
+            }
+          }
+          <button mat-menu-item type="button" data-cy="data-model-properties-diagram" (click)="filterOn(row.id)">
+            <mat-icon>hub</mat-icon>
+            {{ r + '.showInDiagram' | translate }}
+          </button>
+          <button mat-menu-item type="button" data-cy="data-model-properties-copy" (click)="copyName(row)">
+            <mat-icon>content_copy</mat-icon>
+            {{ 'pages.ontologyMap.copyName' | translate }}
+          </button>
+          <!-- Deleting the property, once the API says nothing uses it; why not, when something does. -->
+          @if (canEdit() && editing.canDelete) {
+            @let check = deleteChecks().get(row.id);
+            <mat-divider />
+            <button
+              mat-menu-item
+              type="button"
+              class="delete"
+              data-cy="data-model-properties-delete"
+              [disabled]="!check?.canDo"
+              [matTooltip]="check?.reason ?? ''"
+              [matTooltipDisabled]="!check?.reason"
+              (click)="deleteProperty(row)">
+              <mat-icon>delete</mat-icon>
+              <span class="menu-text">
+                {{ r + '.deleteProperty' | translate }}
+                @if (!check) {
+                  <small>{{ r + '.checkingDelete' | translate }}</small>
+                } @else if (!check.canDo) {
+                  <small>{{ r + '.cannotDeletePropertyShort' | translate }}</small>
+                }
+              </span>
+            </button>
+          }
+        </ng-template>
+      </mat-menu>
+      <!-- The classes of the data model that don't have the property yet. -->
+      <mat-menu #classMenu="matMenu">
+        <ng-template matMenuContent let-row="row" let-classes="classes">
+          @for (cls of classes; track cls.id) {
+            <button
+              mat-menu-item
+              type="button"
+              data-cy="data-model-properties-add-to-class-option"
+              (click)="addToClass(cls.id, row.id)">
+              {{ cls.label }}
+            </button>
+          }
+        </ng-template>
+      </mat-menu>
 
       <app-text-editor-popover [editing]="textEditing" />
 
@@ -640,6 +767,71 @@ const COLUMN_LABELS: Record<Column, string> = {
       .none {
         color: $cool_gray_400;
       }
+
+      // The menu column, at the end of the row, on the row's background.
+      .actions-cell {
+        padding: 0 4px;
+        text-align: right;
+      }
+
+      .mat-mdc-cell.actions-cell {
+        background: white;
+      }
+
+      .mat-mdc-row.selected .mat-mdc-cell.actions-cell {
+        background: inherit;
+      }
+
+      .row-menu {
+        --mat-icon-button-state-layer-size: 32px;
+        padding: 4px;
+        color: $cool_gray_500;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      // The data model's properties no class uses, above the table.
+      .unused-note {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 12px;
+        margin-bottom: 12px;
+        padding: 8px 12px 8px 16px;
+        border-radius: 8px;
+        background: #fff4dc;
+        color: #6b4a00;
+
+        > mat-icon {
+          flex: none;
+        }
+
+        button {
+          --mat-button-outlined-container-height: 32px;
+          background: white;
+        }
+      }
+
+      .unused-text {
+        flex: 1 1 280px;
+      }
+
+      // Deleting, in red, and why it can't be, under it.
+      .delete:not([disabled]),
+      .delete:not([disabled]) mat-icon {
+        color: #b3261e;
+      }
+
+      .menu-text small {
+        display: block;
+        font-size: 11.5px;
+        line-height: 1.3;
+        color: $cool_gray_500;
+      }
     `,
   ],
 })
@@ -648,16 +840,35 @@ export class DataModelPropertiesComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _params = toSignal(this._route.queryParamMap);
-  private readonly _editing = injectDataModelEditing();
+  readonly editing = injectDataModelEditing();
+  private readonly _clipboard = inject(Clipboard);
+  private readonly _notification = inject(NotificationService);
+  private readonly _translate = inject(TranslateService);
+  private readonly _destroyRef = inject(DestroyRef);
+  readonly canEdit = this.state.canEdit;
+  /** The width of the menu column, past the columns shown. */
+  readonly actionsWidth = 48;
+  /** The columns shown, then the menu's. */
+  readonly shownColumns = computed(() => [...this.columns.shown(), 'actions']);
+
+  /** What the API says of deleting each property whose menu was opened. */
+  readonly deleteChecks = signal(new Map<string, CanDo>());
+  /** The data model's own properties no class uses. */
+  readonly unused = computed(() => {
+    const ontologyIri = this.state.selected()?.iri;
+    return this.state.propertyRows().filter(row => row.unused && !!ontologyIri && row.id.startsWith(`${ontologyIri}#`));
+  });
+  /** Whether the table shows only those. */
+  readonly unusedOnly = signal(false);
   /** The value types of a property to create, by group, as the data model editor offers them. */
   readonly propertyTypes = DefaultProperties.data;
   /** Whether "Create property" shows: for editors, where the editor's dialogs are at hand. */
-  readonly canCreate = computed(() => this.state.canEdit() && this._editing.canCreate);
+  readonly canCreate = computed(() => this.state.canEdit() && this.editing.canCreate);
 
   /** Creates a property of that type in the data model shown, for no class yet, then opens it in the panel. */
   createProperty(type: DefaultProperty): void {
     const ontologyIri = this.state.selected()?.iri;
-    if (ontologyIri) this._editing.createProperty(ontologyIri, type, iri => this.openPanel(iri));
+    if (ontologyIri) this.editing.createProperty(ontologyIri, type, iri => this.openPanel(iri));
   }
 
   readonly columns = new TableColumns<Column>({
@@ -681,9 +892,9 @@ export class DataModelPropertiesComponent {
 
   /** The property names and descriptions edited from their cells. */
   readonly textEditing = new TextEditing((target, texts) =>
-    this._editing.savePropertyTexts(target.id, target.kind === 'label' ? { labels: texts } : { descriptions: texts })
+    this.editing.savePropertyTexts(target.id, target.kind === 'label' ? { labels: texts } : { descriptions: texts })
   );
-  readonly canEditTexts = computed(() => this.state.canEdit() && this._editing.canSaveInPlace);
+  readonly canEditTexts = computed(() => this.state.canEdit() && this.editing.canSaveInPlace);
 
   readonly query = signal('');
   /** The column filters; an empty set or text filters nothing. */
@@ -740,7 +951,8 @@ export class DataModelPropertiesComponent {
       !this.types().size &&
       !this.targets().size &&
       !this.users().size &&
-      !this.standards().size
+      !this.standards().size &&
+      !this.unusedOnly()
   );
   readonly allExpanded = computed(() => this.collapsed().size === 0);
 
@@ -778,6 +990,7 @@ export class DataModelPropertiesComponent {
     const targets = this.targets();
     const users = this.users();
     const standards = this.standards();
+    const unused = this.unusedOnly() ? new Set(this.unused().map(row => row.id)) : undefined;
     const shown = this.columns.shown();
     return this.state
       .propertyRows()
@@ -793,6 +1006,7 @@ export class DataModelPropertiesComponent {
       .filter(row => !targets.size || targets.has(row.linkTarget ?? NO_TARGET))
       .filter(row => !users.size || row.usedBy.some(user => users.has(user)))
       .filter(row => !standards.size || row.terms.some(term => standards.has(term.short)))
+      .filter(row => !unused || unused.has(row.id))
       .filter(row => !folding || !this._folded(row));
   });
 
@@ -882,9 +1096,60 @@ export class DataModelPropertiesComponent {
     this.state.openSection(RouteConstants.graph, { [ONTOLOGY_MAP_PARAM.property]: localNameOf(iri) });
   }
 
+  /** Asks the API whether the property can be deleted, for its menu to say so. */
+  checkDelete(propertyIri: string): void {
+    if (!this.canEdit() || !this.editing.canDelete) return;
+    this.deleteChecks.update(checks => {
+      const next = new Map(checks);
+      next.delete(propertyIri);
+      return next;
+    });
+    this.editing
+      .canDeleteProperty(propertyIri)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(check => this.deleteChecks.update(checks => new Map(checks).set(propertyIri, check)));
+  }
+
+  /** Deletes the property once confirmed, closing its panel; the data model is then read again. */
+  deleteProperty(row: PropertyRow): void {
+    this.editing
+      .deleteProperty(row.id, row.label)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(deleted => deleted && this.panelIri() === row.id && this.openPanel(undefined));
+  }
+
+  /** Deletes the data model's properties no class uses, those the API lets go, once confirmed. */
+  deleteUnused(): void {
+    this.editing
+      .deleteProperties(this.unused().map(row => ({ iri: row.id, label: row.label })))
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(deleted => deleted && this.unusedOnly.set(false));
+  }
+
+  /** The classes of the data model the property can be given to: those that don't have it. */
+  classesWithout(row: PropertyRow): { id: string; label: string }[] {
+    const has = new Set(row.usedBy);
+    return this.state
+      .classRows()
+      .filter(cls => !has.has(cls.id))
+      .map(cls => ({ id: cls.id, label: cls.label }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }
+
+  /** Gives the class the property, optional and single; the data model is then read again. */
+  addToClass(classIri: string, propertyIri: string): void {
+    this.editing.addExistingProperty(classIri, propertyIri);
+  }
+
+  /** Copies the property's name in the data model, such as `hasAuthor`. */
+  copyName(row: PropertyRow): void {
+    this._clipboard.copy(row.name);
+    this._notification.openSnackBar(this._translate.instant('pages.ontologyMap.nameCopied'));
+  }
+
   /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
   edit(iri: string): void {
-    this._editing.editProperty(iri);
+    this.editing.editProperty(iri);
   }
 
   /** Whether what a column shows of a property has the searched text, in any language. */
