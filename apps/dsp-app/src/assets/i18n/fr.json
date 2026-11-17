@@ -896,7 +896,9 @@
     "dataModels2": {
       "cannotDeleteClassHelp": "Quelque chose l’utilise : voir quoi et comment y remédier",
       "deleteBlockers": {
-        "title": "« {{class}} » ne peut pas encore être supprimée",
+        "introProperty": "Réglez d’abord ces points, puis supprimez la propriété.",
+        "usedBy": "Utilisée par {{class}}",
+        "title": "« {{name}} » ne peut pas encore être supprimée",
         "intro": "Réglez d’abord ces points, puis supprimez la classe.",
         "unusedLink": "Le lien « {{property}} » pointe vers elle",
         "unusedLinkHint": "Aucune classe ne l’utilise : supprimez la propriété.",
@@ -922,7 +924,6 @@
       "editProperty": "Modifier la propriété",
       "addToClass": "Ajouter à une classe",
       "showInDiagram": "Afficher dans le diagramme",
-      "cannotDeletePropertyShort": "Une classe ou une valeur l’utilise",
       "unusedNote": "{{count}} propriétés ne sont utilisées par aucune classe. Un lien parmi elles peut empêcher la suppression de sa classe cible.",
       "showUnused": "Les afficher",
       "showAllProperties": "Afficher toutes les propriétés",

@@ -6,6 +6,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  Injector,
   input,
   output,
   signal,
@@ -13,6 +14,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
@@ -20,6 +22,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
+import { openDeleteBlockersDialog } from './delete-blockers-dialog.component';
 import { localNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
 import { PropertyLinkEnd, PropertyLinksComponent } from './property-links.component';
 import { typeIconOf, typeNameOf } from './property-types';
@@ -217,20 +220,17 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
             </button>
             @if (editing?.canDelete) {
               @let check = deleteCheck();
-              <!-- Only once the API says no class or value uses the property; why not, on hover, otherwise. -->
-              <span
-                [matTooltip]="'pages.dataModels2.cannotDeleteProperty' | translate: { property: usage.label }"
-                [matTooltipDisabled]="!check || check.canDo">
-                <button
-                  mat-stroked-button
-                  class="delete"
-                  data-cy="property-panel-delete"
-                  [disabled]="!check?.canDo"
-                  (click)="deleteProperty(usage.label)">
-                  <mat-icon>delete</mat-icon>
-                  {{ 'ui.common.actions.delete' | translate }}
-                </button>
-              </span>
+              <!-- Once the API has answered: deletes the property, or says what is in the way and how to clear it. -->
+              <button
+                mat-stroked-button
+                class="delete"
+                data-cy="property-panel-delete"
+                [class.blocked]="check?.canDo === false"
+                [disabled]="!check"
+                (click)="check?.canDo ? deleteProperty(usage.label) : openDeleteHelp(usage.label)">
+                <mat-icon>delete</mat-icon>
+                {{ 'ui.common.actions.delete' | translate }}
+              </button>
             }
           }
         </div>
@@ -563,7 +563,7 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
 
       .actions {
         // Deleting, in red, once possible.
-        .delete:not([disabled]) {
+        .delete:not([disabled]):not(.blocked) {
           color: #b3261e;
           border-color: #b3261e;
         }
@@ -603,6 +603,8 @@ export class PropertyPanelComponent {
   // Only where the app provides the data model editor: without it, nothing here edits.
   readonly editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _injector = inject(Injector);
   /** What the API says of deleting the property shown; none while it checks. */
   readonly deleteCheck = signal<CanDo | undefined>(undefined);
 
@@ -622,6 +624,18 @@ export class PropertyPanelComponent {
             if (this.propertyIri() === iri) this.deleteCheck.set(result);
           });
       });
+    });
+  }
+
+  /** The checklist of what keeps the property from being deleted, each with the action that clears it. */
+  openDeleteHelp(label: string): void {
+    openDeleteBlockersDialog(this._dialog, this._injector, {
+      kind: 'property',
+      iri: this.propertyIri(),
+      label,
+      graph: this.graph,
+      open: iri => this.classSelected.emit(iri),
+      browse: () => undefined,
     });
   }
 

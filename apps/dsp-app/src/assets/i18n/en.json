@@ -896,7 +896,9 @@
     "dataModels2": {
       "cannotDeleteClassHelp": "Something uses it: see what and how to clear it",
       "deleteBlockers": {
-        "title": "“{{class}}” can't be deleted yet",
+        "introProperty": "Clear these first, then delete the property.",
+        "usedBy": "Used by {{class}}",
+        "title": "“{{name}}” can't be deleted yet",
         "intro": "Clear these first, then delete the class.",
         "unusedLink": "The link “{{property}}” points to it",
         "unusedLinkHint": "No class uses it: delete the property.",
@@ -922,7 +924,6 @@
       "editProperty": "Edit property",
       "addToClass": "Add to class",
       "showInDiagram": "Show in diagram",
-      "cannotDeletePropertyShort": "A class or a value uses it",
       "unusedNote": "{{count}} properties aren't used by any class. A link among them can keep its target class from being deleted.",
       "showUnused": "Show them",
       "showAllProperties": "Show all properties",

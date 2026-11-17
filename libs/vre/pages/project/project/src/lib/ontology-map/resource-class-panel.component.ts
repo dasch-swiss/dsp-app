@@ -27,9 +27,9 @@ import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/dat
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
 import { AddPropertyMenuComponent } from './add-property-menu.component';
 import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
-import { classDeleteBlockers } from './class-delete-blockers';
-import { openClassDeleteDialog } from './class-delete-dialog.component';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
+import { classDeleteBlockers } from './delete-blockers';
+import { openDeleteBlockersDialog } from './delete-blockers-dialog.component';
 import { dataModelNameOf, localNameOf } from './ontology-graph-elements';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
@@ -710,8 +710,9 @@ export class ResourceClassPanelComponent {
 
   /** The checklist of what keeps the class from being deleted, each with the action that clears it. */
   openDeleteHelp(node: { id: string; label: string }): void {
-    openClassDeleteDialog(this._dialog, this._injector, {
-      classIri: node.id,
+    openDeleteBlockersDialog(this._dialog, this._injector, {
+      kind: 'class',
+      iri: node.id,
       label: node.label,
       graph: this.graph,
       open: iri => this.showClass(iri),

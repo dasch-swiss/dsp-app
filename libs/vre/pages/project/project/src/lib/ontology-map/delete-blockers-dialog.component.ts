@@ -24,40 +24,46 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { ClassDeleteBlocker, classDeleteBlockers } from './class-delete-blockers';
 import { CanDo, injectDataModelEditing } from './data-model-editor';
+import { classDeleteBlockers, DeleteBlocker, propertyDeleteBlockers } from './delete-blockers';
 
-export interface ClassDeleteDialogData {
-  classIri: string;
+export interface DeleteBlockersDialogData {
+  /** What is to be deleted: a class or a property. */
+  kind: 'class' | 'property';
+  iri: string;
   label: string;
   /** The data model, read again after each fix, so what is cleared is ticked. */
   graph: Signal<DataModelGraph | undefined>;
   /** Opens a class, a subclass or one whose link points here, where the dialog was opened from. */
   open: (classIri: string) => void;
-  /** Browses the class's resources. */
+  /** Browses a class's resources. */
   browse: (classIri: string) => void;
 }
 
-/** Opens the dialog saying what keeps the class from being deleted; `injector` gives it the page's data model editor. */
-export function openClassDeleteDialog(dialog: MatDialog, injector: Injector, data: ClassDeleteDialogData): void {
-  dialog.open(ClassDeleteDialogComponent, { data, injector, width: '560px', maxWidth: '95vw', autoFocus: false });
+/**
+ * Opens the dialog saying what keeps a class or a property from being deleted; `injector` gives it the page's data
+ * model editor.
+ */
+export function openDeleteBlockersDialog(dialog: MatDialog, injector: Injector, data: DeleteBlockersDialogData): void {
+  dialog.open(DeleteBlockersDialogComponent, { data, injector, width: '560px', maxWidth: '95vw', autoFocus: false });
 }
 
 /**
- * What keeps a class from being deleted, each with the action that clears it: deleting a link property no class has,
- * taking a link off the class that has it, opening a subclass, browsing the resources. Each is ticked once the data
- * model, read again, no longer has it; once all are, and the API agrees, the class can be deleted from here.
+ * What keeps a class or a property from being deleted, each with the action that clears it: for a class, deleting a
+ * link property no class has, taking a link off the class that has it, opening a subclass, browsing the resources;
+ * for a property, taking it off each class that has it. Each is ticked once the data model, read again, no longer has
+ * it; once all are, and the API agrees, it can be deleted from here.
  */
 @Component({
-  selector: 'app-class-delete-dialog',
+  selector: 'app-delete-blockers-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatButton, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle, MatIcon, TranslatePipe],
   template: `
     @let r = 'pages.dataModels2.deleteBlockers';
-    <h2 mat-dialog-title data-cy="class-delete-dialog-title">{{ r + '.title' | translate: { class: data.label } }}</h2>
+    <h2 mat-dialog-title data-cy="delete-blockers-title">{{ r + '.title' | translate: { name: data.label } }}</h2>
     <mat-dialog-content>
       @if (blockers.length) {
-        <p class="intro">{{ r + '.intro' | translate }}</p>
+        <p class="intro">{{ (data.kind === 'class' ? r + '.intro' : r + '.introProperty') | translate }}</p>
       }
       <ul class="steps">
         @for (blocker of blockers; track blocker.id) {
@@ -85,6 +91,12 @@ export function openClassDeleteDialog(dialog: MatDialog, injector: Injector, dat
                 @case ('resources') {
                   {{ r + '.resources' | translate: { count: blocker.count } }}
                   <small>{{ (cleared ? r + '.done' : r + '.resourcesHint') | translate }}</small>
+                }
+                @case ('usedBy') {
+                  {{ r + '.usedBy' | translate: { class: blocker.classLabel } }}
+                  <small>{{
+                    (cleared ? r + '.done' : r + '.linkHint') | translate: { class: blocker.classLabel }
+                  }}</small>
                 }
               }
             </span>
@@ -119,6 +131,16 @@ export function openClassDeleteDialog(dialog: MatDialog, injector: Injector, dat
                     (click)="openClass(blocker.subclass)">
                     <mat-icon>open_in_new</mat-icon>
                     {{ r + '.open' | translate }}
+                  </button>
+                }
+                @case ('usedBy') {
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    data-cy="class-delete-fix"
+                    (click)="removeLink(blocker.classIri, data.iri, data.label, blocker.classLabel)">
+                    <mat-icon>remove_circle_outline</mat-icon>
+                    {{ r + '.removeFrom' | translate: { class: blocker.classLabel } }}
                   </button>
                 }
                 @case ('resources') {
@@ -157,7 +179,7 @@ export function openClassDeleteDialog(dialog: MatDialog, injector: Injector, dat
         [disabled]="!apiCheck()?.canDo"
         (click)="deleteClass()">
         <mat-icon>delete</mat-icon>
-        {{ 'pages.dataModels2.deleteClass' | translate }}
+        {{ (data.kind === 'class' ? 'pages.dataModels2.deleteClass' : 'pages.dataModels2.deleteProperty') | translate }}
       </button>
     </mat-dialog-actions>
   `,
@@ -241,21 +263,21 @@ export function openClassDeleteDialog(dialog: MatDialog, injector: Injector, dat
     `,
   ],
 })
-export class ClassDeleteDialogComponent {
-  readonly data = inject<ClassDeleteDialogData>(MAT_DIALOG_DATA);
-  private readonly _dialogRef = inject(MatDialogRef<ClassDeleteDialogComponent>);
+export class DeleteBlockersDialogComponent {
+  readonly data = inject<DeleteBlockersDialogData>(MAT_DIALOG_DATA);
+  private readonly _dialogRef = inject(MatDialogRef<DeleteBlockersDialogComponent>);
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _editing = injectDataModelEditing();
 
   /** What was in the way when the dialog opened; each stays listed, ticked once cleared. */
-  readonly blockers: ClassDeleteBlocker[] = (() => {
-    const graph = this.data.graph();
-    return graph ? classDeleteBlockers(graph, this.data.classIri) : [];
-  })();
-  private readonly _current = computed(() => {
-    const graph = this.data.graph();
-    return new Set(graph ? classDeleteBlockers(graph, this.data.classIri).map(blocker => blocker.id) : []);
-  });
+  private readonly _blockersOf = (graph: DataModelGraph | undefined): DeleteBlocker[] =>
+    !graph
+      ? []
+      : this.data.kind === 'class'
+        ? classDeleteBlockers(graph, this.data.iri)
+        : propertyDeleteBlockers(graph, this.data.iri);
+  readonly blockers: DeleteBlocker[] = this._blockersOf(this.data.graph());
+  private readonly _current = computed(() => new Set(this._blockersOf(this.data.graph()).map(blocker => blocker.id)));
   readonly done = computed(() => new Set(this.blockers.map(b => b.id).filter(id => !this._current().has(id))));
   /** Whether the data model shows nothing in the way any more. */
   readonly cleared = computed(() => this._current().size === 0);
@@ -269,15 +291,17 @@ export class ClassDeleteDialogComponent {
       if (!this.cleared()) return;
       untracked(() => {
         this.apiCheck.set(undefined);
-        this._editing
-          .canDeleteClass(this.data.classIri)
+        (this.data.kind === 'class'
+          ? this._editing.canDeleteClass(this.data.iri)
+          : this._editing.canDeleteProperty(this.data.iri)
+        )
           .pipe(takeUntilDestroyed(this._destroyRef))
           .subscribe(check => this.apiCheck.set(check));
       });
     });
   }
 
-  iconOf(blocker: ClassDeleteBlocker): string {
+  iconOf(blocker: DeleteBlocker): string {
     switch (blocker.kind) {
       case 'unusedLink':
       case 'link':
@@ -286,6 +310,8 @@ export class ClassDeleteDialogComponent {
         return 'account_tree';
       case 'resources':
         return 'description';
+      case 'usedBy':
+        return 'category';
     }
   }
 
@@ -307,12 +333,15 @@ export class ClassDeleteDialogComponent {
 
   browse(): void {
     this._dialogRef.close();
-    this.data.browse(this.data.classIri);
+    this.data.browse(this.data.iri);
   }
 
-  /** Closes, then deletes the class once confirmed. */
+  /** Closes, then deletes the class or the property once confirmed. */
   deleteClass(): void {
     this._dialogRef.close();
-    this._editing.deleteClass(this.data.classIri, this.data.label).subscribe();
+    (this.data.kind === 'class'
+      ? this._editing.deleteClass(this.data.iri, this.data.label)
+      : this._editing.deleteProperty(this.data.iri, this.data.label)
+    ).subscribe();
   }
 }

@@ -7,6 +7,7 @@ import {
   DestroyRef,
   ElementRef,
   inject,
+  Injector,
   signal,
   viewChild,
   WritableSignal,
@@ -15,6 +16,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -38,6 +40,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultProperties, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { openDeleteBlockersDialog } from '../ontology-map/delete-blockers-dialog.component';
 import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
@@ -613,17 +616,16 @@ const COLUMN_LABELS: Record<Column, string> = {
               type="button"
               class="delete"
               data-cy="data-model-properties-delete"
-              [disabled]="!check?.canDo"
-              [matTooltip]="check?.reason ?? ''"
-              [matTooltipDisabled]="!check?.reason"
-              (click)="deleteProperty(row)">
+              [class.blocked]="check?.canDo === false"
+              [disabled]="!check"
+              (click)="check?.canDo ? deleteProperty(row) : openDeleteHelp(row)">
               <mat-icon>delete</mat-icon>
               <span class="menu-text">
                 {{ r + '.deleteProperty' | translate }}
                 @if (!check) {
                   <small>{{ r + '.checkingDelete' | translate }}</small>
                 } @else if (!check.canDo) {
-                  <small>{{ r + '.cannotDeletePropertyShort' | translate }}</small>
+                  <small>{{ r + '.cannotDeleteClassHelp' | translate }}</small>
                 }
               </span>
             </button>
@@ -779,30 +781,13 @@ const COLUMN_LABELS: Record<Column, string> = {
         color: $cool_gray_400;
       }
 
-      // The menu column, at the end of the row, on the row's background.
-      .actions-cell {
-        padding: 0 4px;
-        text-align: right;
-      }
-
+      // The menu column on white, as the frozen one.
       .mat-mdc-cell.actions-cell {
         background: white;
       }
 
       .mat-mdc-row.selected .mat-mdc-cell.actions-cell {
         background: inherit;
-      }
-
-      .row-menu {
-        --mat-icon-button-state-layer-size: 32px;
-        padding: 4px;
-        color: $cool_gray_500;
-
-        mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-        }
       }
 
       // The data model's properties no class uses, above the table.
@@ -832,8 +817,8 @@ const COLUMN_LABELS: Record<Column, string> = {
       }
 
       // Deleting, in red, and why it can't be, under it.
-      .delete:not([disabled]),
-      .delete:not([disabled]) mat-icon {
+      .delete:not([disabled]):not(.blocked),
+      .delete:not([disabled]):not(.blocked) mat-icon {
         color: #b3261e;
       }
 
@@ -853,6 +838,8 @@ export class DataModelPropertiesComponent {
   private readonly _params = toSignal(this._route.queryParamMap);
   readonly editing = injectDataModelEditing();
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _injector = inject(Injector);
   readonly canEdit = this.state.canEdit;
   /** The width of the menu column, past the columns shown. */
   readonly actionsWidth = 48;
@@ -1160,6 +1147,18 @@ export class DataModelPropertiesComponent {
       .deleteProperty(row.id, row.label)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe(deleted => deleted && this.panelIri() === row.id && this.openPanel(undefined));
+  }
+
+  /** The checklist of what keeps the property from being deleted, each with the action that clears it. */
+  openDeleteHelp(row: PropertyRow): void {
+    openDeleteBlockersDialog(this._dialog, this._injector, {
+      kind: 'property',
+      iri: row.id,
+      label: row.label,
+      graph: this.state.graph,
+      open: iri => this.showClass(iri),
+      browse: () => undefined,
+    });
   }
 
   /** Deletes the data model's properties no class uses, those the API lets go, once confirmed. */

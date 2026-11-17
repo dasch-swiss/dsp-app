@@ -7,18 +7,21 @@ import {
   DestroyRef,
   ElementRef,
   inject,
+  Injector,
   signal,
   viewChild,
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {
@@ -39,7 +42,8 @@ import { RepresentationClass } from '@dasch-swiss/vre/3rd-party-services/open-ap
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultClass, DefaultResourceClasses, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { openDeleteBlockersDialog } from '../ontology-map/delete-blockers-dialog.component';
 import { classFamilies, familyHue, familyTint, FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow, localNameOf } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
@@ -116,13 +120,16 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatCellDef,
     MatCheckbox,
     MatColumnDef,
+    MatDivider,
     MatFormField,
     MatHeaderCell,
     MatHeaderCellDef,
     MatHeaderRow,
     MatHeaderRowDef,
     MatIcon,
+    MatIconButton,
     MatMenu,
+    MatMenuContent,
     MatMenuItem,
     MatMenuTrigger,
     MatInput,
@@ -311,7 +318,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             [dataSource]="rows()"
             data-cy="data-model-classes"
             [class.expanded]="expanded"
-            [style.width.px]="cols.tableWidth()"
+            [style.width.px]="cols.tableWidth() + actionsWidth"
             cdkDropList
             cdkDropListOrientation="horizontal"
             cdkDropListElementContainer="thead tr"
@@ -661,10 +668,31 @@ const COLUMN_LABELS: Record<Column, string> = {
                   (classSelected)="openPanel($event)" />
               </td>
             </ng-container>
-            <tr mat-header-row *matHeaderRowDef="cols.shown(); sticky: true"></tr>
+            <!-- Each class's actions, in a menu kept in view at the end of the row, as in the Properties table. -->
+            <ng-container matColumnDef="actions" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef class="actions-cell" [style.width.px]="actionsWidth"></th>
+              <td mat-cell *matCellDef="let row" class="actions-cell">
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="row-menu"
+                  data-cy="data-model-classes-actions"
+                  [attr.aria-label]="r + '.classActions' | translate: { class: row.label }"
+                  [matTooltip]="r + '.classActions' | translate: { class: row.label }"
+                  matTooltipShowDelay="600"
+                  [matMenuTriggerFor]="rowMenu"
+                  [matMenuTriggerData]="{ row }"
+                  (click)="$event.stopPropagation()"
+                  (keydown.enter)="$event.stopPropagation()"
+                  (menuOpened)="checkDelete(row.id)">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="shownColumns(); sticky: true"></tr>
             <tr
               mat-row
-              *matRowDef="let row; columns: cols.shown()"
+              *matRowDef="let row; columns: shownColumns()"
               data-cy="data-model-classes-row"
               tabindex="0"
               [class.selected]="row.id === panelIri()"
@@ -677,6 +705,48 @@ const COLUMN_LABELS: Record<Column, string> = {
           }
         </div>
       }
+
+      <mat-menu #rowMenu="matMenu" xPosition="before">
+        <ng-template matMenuContent let-row="row">
+          @if (state.canEdit()) {
+            <button mat-menu-item type="button" data-cy="data-model-classes-edit" (click)="edit(row.id)">
+              <mat-icon>edit</mat-icon>
+              {{ r + '.editClass' | translate }}
+            </button>
+          }
+          <button mat-menu-item type="button" data-cy="data-model-classes-browse" (click)="browse(row.id)">
+            <mat-icon>view_list</mat-icon>
+            {{ r + '.deleteBlockers.browse' | translate }}
+          </button>
+          <button mat-menu-item type="button" data-cy="data-model-classes-diagram" (click)="filterOn(row.id)">
+            <mat-icon>hub</mat-icon>
+            {{ r + '.showInDiagram' | translate }}
+          </button>
+          <!-- Deleting the class once the API says nothing uses it; else what is in the way, and how to clear it. -->
+          @if (state.canEdit() && editing.canDelete) {
+            @let check = deleteChecks().get(row.id);
+            <mat-divider />
+            <button
+              mat-menu-item
+              type="button"
+              class="delete"
+              data-cy="data-model-classes-delete"
+              [class.blocked]="check?.canDo === false"
+              [disabled]="!check"
+              (click)="check?.canDo ? deleteClass(row) : openDeleteHelp(row)">
+              <mat-icon>delete</mat-icon>
+              <span class="menu-text">
+                {{ r + '.deleteClass' | translate }}
+                @if (!check) {
+                  <small>{{ r + '.checkingDelete' | translate }}</small>
+                } @else if (!check.canDo) {
+                  <small>{{ r + '.cannotDeleteClassHelp' | translate }}</small>
+                }
+              </span>
+            </button>
+          }
+        </ng-template>
+      </mat-menu>
 
       <app-text-editor-popover [editing]="textEditing" />
 
@@ -922,6 +992,19 @@ const COLUMN_LABELS: Record<Column, string> = {
           overflow: visible;
         }
       }
+
+      // Deleting, in red once possible, and why not, under it.
+      .delete:not([disabled]):not(.blocked),
+      .delete:not([disabled]):not(.blocked) mat-icon {
+        color: #b3261e;
+      }
+
+      .menu-text small {
+        display: block;
+        font-size: 11.5px;
+        line-height: 1.3;
+        color: $cool_gray_500;
+      }
     `,
   ],
 })
@@ -933,6 +1016,48 @@ export class DataModelClassesComponent {
   private readonly _translate = inject(TranslateService);
   readonly editing = injectDataModelEditing();
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _injector = inject(Injector);
+  /** The width of the menu column, past the columns shown. */
+  readonly actionsWidth = 48;
+  /** The columns shown, then the menu's. */
+  readonly shownColumns = computed(() => [...this.columns.shown(), 'actions']);
+  /** What the API says of deleting each class whose menu was opened. */
+  readonly deleteChecks = signal(new Map<string, CanDo>());
+
+  /** Asks the API whether the class can be deleted, for its menu to say so. */
+  checkDelete(classIri: string): void {
+    if (!this.state.canEdit() || !this.editing.canDelete) return;
+    this.deleteChecks.update(checks => {
+      const next = new Map(checks);
+      next.delete(classIri);
+      return next;
+    });
+    this.editing
+      .canDeleteClass(classIri)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(check => this.deleteChecks.update(checks => new Map(checks).set(classIri, check)));
+  }
+
+  /** Deletes the class once confirmed, closing its panel; the data model is then read again. */
+  deleteClass(row: ClassRow): void {
+    this.editing
+      .deleteClass(row.id, row.label)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(deleted => deleted && this.panelIri() === row.id && this.openPanel(undefined));
+  }
+
+  /** The checklist of what keeps the class from being deleted, each with the action that clears it. */
+  openDeleteHelp(row: ClassRow): void {
+    openDeleteBlockersDialog(this._dialog, this._injector, {
+      kind: 'class',
+      iri: row.id,
+      label: row.label,
+      graph: this.state.graph,
+      open: iri => this.openPanel(iri),
+      browse: iri => this.browse(iri),
+    });
+  }
 
   readonly columns = new TableColumns<Column>({
     storageKey: STORAGE_KEY,

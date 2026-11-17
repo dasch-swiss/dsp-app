@@ -23,8 +23,8 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
-import { openClassDeleteDialog } from '../ontology-map/class-delete-dialog.component';
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { openDeleteBlockersDialog } from '../ontology-map/delete-blockers-dialog.component';
 import { FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
@@ -712,8 +712,9 @@ export class DataModelClassCardsComponent {
 
   /** The checklist of what keeps the class from being deleted, each with the action that clears it. */
   openDeleteHelp(row: ClassRow): void {
-    openClassDeleteDialog(this._dialog, this._injector, {
-      classIri: row.id,
+    openDeleteBlockersDialog(this._dialog, this._injector, {
+      kind: 'class',
+      iri: row.id,
       label: row.label,
       graph: this.graph,
       open: iri => this.goTo(iri),
