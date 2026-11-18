@@ -258,7 +258,7 @@ def vre_library(
 
     css = _stylesheets(stylesheets, sass_deps)
 
-    # A loose library mirrors the Angular CLI's app program, which compiles every library unstrict.
+    # A loose library compiles without the strict flags until its LOOSE_LIBRARIES issue removes it.
     strict = package not in LOOSE_LIBRARIES
     _bazel_tsconfig("tsconfig_bazel", "tsconfig.bazel.json", "./tsconfig.lib.json", srcs, deps, strict)
 
@@ -386,8 +386,7 @@ def vre_application(
         "./tsconfig.app.json",
         srcs + ["src/environments/environment.ts"],
         deps,
-        # The Angular CLI compiled the shell unstrict, as tsconfig.json says.
-        strict = False,
+        strict = True,
     )
     ng_project(
         name = "app",
