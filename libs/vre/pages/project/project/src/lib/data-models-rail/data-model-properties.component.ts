@@ -719,6 +719,7 @@ export class DataModelPropertiesComponent {
     columns: ['property', 'description', 'type', 'pointsTo', 'usedBy'],
     defaultWidths: { property: 260, description: 360, type: 140, pointsTo: 200, usedBy: 300 },
     minWidths: { property: 140, description: 140, type: 90, pointsTo: 110, usedBy: 130 },
+    defaultHidden: ['description'],
   });
   readonly columnLabels = COLUMN_LABELS;
   readonly maxUsedBy = MAX_USED_BY;

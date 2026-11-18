@@ -11,6 +11,8 @@ export interface TableColumnsConfig<C extends string> {
   defaultWidths: Record<C, number>;
   /** Below these, a header's name and filter button no longer fit. */
   minWidths: Record<C, number>;
+  /** The columns hidden until the viewer shows them. */
+  defaultHidden?: readonly C[];
 }
 
 /**
@@ -43,7 +45,7 @@ export class TableColumns<C extends string> {
       Array.isArray(keys) ? [...new Set(keys.filter((key): key is C => movable.includes(key as C)))] : [];
     this._arranged = rememberedSignal<{ order: C[]; hidden: C[] }>(
       `${config.storageKey}-columns`,
-      { order: [], hidden: [] },
+      { order: [], hidden: known(config.defaultHidden) },
       stored => {
         const { order, hidden } = JSON.parse(stored);
         return { order: known(order), hidden: known(hidden) };

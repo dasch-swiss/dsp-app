@@ -24,6 +24,23 @@ describe('TableColumns', () => {
     expect(columns.tableWidth()).toBe(500);
   });
 
+  it('hides the default hidden columns until shown, and remembers showing them', () => {
+    const makeWithHidden = () =>
+      TestBed.runInInjectionContext(
+        () =>
+          new TableColumns<Column>({
+            storageKey: KEY,
+            columns: ['name', 'a', 'b', 'c'],
+            defaultWidths: { name: 200, a: 100, b: 100, c: 100 },
+            minWidths: { name: 100, a: 50, b: 50, c: 50 },
+            defaultHidden: ['b'],
+          })
+      );
+    expect(makeWithHidden().shown()).toEqual(['name', 'a', 'c']);
+    makeWithHidden().show('b', true);
+    expect(makeWithHidden().shown()).toEqual(['name', 'a', 'b', 'c']);
+  });
+
   it('moves a dropped column and remembers the order', () => {
     make().drop({ previousIndex: 1, currentIndex: 3 });
     expect(make().shown()).toEqual(['name', 'b', 'c', 'a']);
