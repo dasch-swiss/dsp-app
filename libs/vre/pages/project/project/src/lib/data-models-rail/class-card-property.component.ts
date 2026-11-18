@@ -17,7 +17,7 @@ export type CardProperty = ClassRow['propertyList'][number];
  * How a card shows a property's cardinality: "Multiple values" and "Required" as two columns named once, or with their
  * words on each row, as in the Data models tab; or as before, 0-1, 0-n, 1 or 1-n.
  */
-export type CardinalityLayout = 'columns' | 'ticked' | 'rows' | 'chip' | 'differs';
+export type CardinalityLayout = 'columns' | 'ticked' | 'rows' | 'chip' | 'differs' | 'bar';
 
 /** A property's cardinality from whether it is required and may hold several values. */
 function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
@@ -44,7 +44,9 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
   ],
   host: {
     class: 'prop',
-    '[class.chip-layout]': "cardinalityLayout() === 'chip' || cardinalityLayout() === 'differs'",
+    '[class.chip-layout]':
+      "cardinalityLayout() === 'chip' || cardinalityLayout() === 'differs' || (cardinalityLayout() === 'bar' && chipColumn())",
+    '[class.no-chip-column]': "cardinalityLayout() === 'bar' && !chipColumn()",
     'data-cy': 'data-model-class-card-property',
   },
   template: `
@@ -84,6 +86,22 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         [classIri]="classIri()"
         [changeable]="changeable()"
         [quietDefault]="cardinalityLayout() === 'differs'" />
+    } @else if (cardinalityLayout() === 'bar') {
+      <!-- Only what differs from 0-1; a 0-1 one changes from the hover tools, below. -->
+      @if (!isDefault()) {
+        <app-cardinality-chip
+          class="cardinality"
+          data-cy="data-model-class-card-cardinality"
+          [cardinality]="currentCardinality()"
+          [type]="property.type"
+          [propertyIri]="property.id"
+          [propertyLabel]="property.label"
+          [classIri]="classIri()"
+          [changeable]="changeable()"
+          [quietDefault]="true" />
+      } @else if (chipColumn()) {
+        <span></span>
+      }
     } @else {
       <app-cardinality-checkboxes
         class="cardinality"
@@ -134,6 +152,19 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
             <mat-icon>remove_circle_outline</mat-icon>
           </button>
         }
+        <!-- A 0-1 cardinality, unshown at rest, changes from here, last of the row's tools. -->
+        @if (cardinalityLayout() === 'bar' && changeable() && isDefault()) {
+          <app-cardinality-chip
+            class="bar-chip"
+            data-cy="data-model-class-card-cardinality"
+            [cardinality]="currentCardinality()"
+            [type]="property.type"
+            [propertyIri]="property.id"
+            [propertyLabel]="property.label"
+            [classIri]="classIri()"
+            [changeable]="true"
+            [quietDefault]="true" />
+        }
       </span>
     }
   `,
@@ -163,6 +194,16 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       :host(.chip-layout) {
         grid-template-columns: 16px minmax(0, 1fr) auto 32px;
         --actions-right: 46px;
+      }
+
+      // A card whose properties are all 0-1: no chip column, the local name to the edge, the tools over its end.
+      :host(.no-chip-column) {
+        grid-template-columns: 16px minmax(0, 1fr) auto;
+        --actions-right: 8px;
+      }
+
+      .bar-chip {
+        margin: 0 2px 0 4px;
       }
 
       :host + :host {
@@ -238,6 +279,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         right: var(--actions-right);
         transform: translateY(-50%);
         display: flex;
+        align-items: center;
         border-radius: 99px;
         background: $cool_gray_50;
         box-shadow: -10px 0 8px -2px $cool_gray_50;
@@ -278,7 +320,8 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       }
 
       :host(:hover) .actions,
-      .actions:focus-within {
+      .actions:focus-within,
+      .actions:has([aria-expanded='true']) {
         visibility: visible;
       }
 
@@ -306,6 +349,8 @@ export class ClassCardPropertyComponent {
   readonly className = input('');
   /** Whether the checkboxes carry their words on each row, or the card names their columns once. */
   readonly cardinalityLayout = input<CardinalityLayout>('columns');
+  /** Whether the card keeps a column for the chips: some property on it differs from 0-1. */
+  readonly chipColumn = input(true);
 
   readonly edit = output<string>();
   /** The link target was clicked: its card is to show. */
@@ -320,6 +365,7 @@ export class ClassCardPropertyComponent {
     () => this.canEdit() && this.editable() && !!this.classIri() && !!this._editing?.canDelete
   );
   readonly currentCardinality = computed(() => cardinalityOf(this.property()));
+  readonly isDefault = computed(() => this.currentCardinality() === Cardinality._0_1);
 
   readonly localName = computed(() => {
     const iri = this.property().id;

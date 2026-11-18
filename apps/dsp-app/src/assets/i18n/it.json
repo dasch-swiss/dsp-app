@@ -894,6 +894,8 @@
       "links": "collegamenti"
     },
     "dataModels2": {
+      "cardinalityBar": "Solo le differenze, 0–1 negli strumenti",
+      "cardinalityBarTip": "Come sopra, ma una scheda con solo proprietà 0–1 non ha la colonna; punta una proprietà per cambiarla dai suoi strumenti",
       "cardinalityDiffers": "Solo ciò che differisce da 0–1",
       "cardinalityDiffersTip": "1, 1–n e 0–n appaiono; una riga 0–1 non mostra nulla finché non la si punta per cambiarla",
       "cardinalityTicked": "Colonne, solo caselle spuntate",

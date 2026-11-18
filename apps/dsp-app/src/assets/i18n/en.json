@@ -894,6 +894,8 @@
       "links": "links"
     },
     "dataModels2": {
+      "cardinalityBar": "Only what differs, 0–1 in the row’s tools",
+      "cardinalityBarTip": "As above, but a card whose properties are all 0–1 has no chip column; point at a property to change it from its tools",
       "cardinalityDiffers": "Only what differs from 0–1",
       "cardinalityDiffersTip": "1, 1–n and 0–n show; a 0–1 row shows nothing until you point at it to change it",
       "cardinalityTicked": "Columns, ticked boxes only",

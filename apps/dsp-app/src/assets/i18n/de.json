@@ -894,6 +894,8 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "cardinalityBar": "Nur Abweichungen, 0–1 in den Werkzeugen",
+      "cardinalityBarTip": "Wie oben, doch eine Karte mit nur 0–1 hat keine Spalte; zum Ändern auf die Eigenschaft zeigen und ihre Werkzeuge nutzen",
       "cardinalityDiffers": "Nur was von 0–1 abweicht",
       "cardinalityDiffersTip": "1, 1–n und 0–n erscheinen; eine 0–1-Zeile zeigt nichts, bis man zum Ändern darauf zeigt",
       "cardinalityTicked": "Spalten, nur angekreuzte",

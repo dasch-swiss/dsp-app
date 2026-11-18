@@ -42,10 +42,10 @@ interface Card {
   parent?: string;
 }
 
-/** A class's own properties in a new form order, to save. */
 /** How a subclass's card shows the properties it has from its superclass. */
 export type InheritedLayout = 'grouped' | 'listed';
 
+/** A class's own properties in a new form order, to save. */
 export interface PropertyOrder {
   classIri: string;
   propertyIris: string[];
@@ -101,6 +101,7 @@ export interface PropertyOrder {
             [query]="query()"
             [canEdit]="canEdit()"
             [cardinalityLayout]="cardinalityLayout()"
+            [chipColumn]="hasChipColumn(card)"
             (edit)="editProperty.emit($event)"
             (goTo)="goTo($event)"></li>
         }
@@ -133,6 +134,7 @@ export interface PropertyOrder {
             [classIri]="card.row.id"
             [className]="card.row.label"
             [cardinalityLayout]="cardinalityLayout()"
+            [chipColumn]="hasChipColumn(card)"
             (edit)="editProperty.emit($event)"
             (remove)="removeProperty(card.row, property)"
             (goTo)="goTo($event)">
@@ -583,6 +585,11 @@ export class DataModelClassCardsComponent {
   readonly query = input('');
   /** Whether a subclass's card groups its superclass's properties under "n from …", or lists them with its own. */
   readonly inheritedLayout = input<InheritedLayout>('grouped');
+  /** Whether a card keeps a column for cardinality chips: one of its properties differs from 0-1. */
+  hasChipColumn(card: Card): boolean {
+    return [...card.own, ...card.inherited].some(property => property.required || property.multiple);
+  }
+
   /** Whether the properties' checkboxes carry their words on each row, or are named once as columns. */
   readonly cardinalityLayout = input<CardinalityLayout>('columns');
 

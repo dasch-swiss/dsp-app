@@ -894,6 +894,8 @@
       "links": "liens"
     },
     "dataModels2": {
+      "cardinalityBar": "Seulement les écarts, 0–1 dans les outils",
+      "cardinalityBarTip": "Comme ci-dessus, mais une carte dont toutes les propriétés sont 0–1 n’a pas de colonne ; survolez une propriété pour la changer depuis ses outils",
       "cardinalityDiffers": "Seulement ce qui diffère de 0–1",
       "cardinalityDiffersTip": "1, 1–n et 0–n s’affichent ; une ligne 0–1 n’affiche rien tant qu’on ne la survole pas pour la changer",
       "cardinalityTicked": "Colonnes, cases cochées seules",
