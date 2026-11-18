@@ -895,7 +895,6 @@
     },
     "dataModels2": {
       "dataModels": "Modelli di dati",
-      "project": "Progetto",
       "createDataModel": "Crea modello di dati",
       "documentation": "Documentazione",
       "showSections": "Mostra o nascondi le sezioni di {{model}}",

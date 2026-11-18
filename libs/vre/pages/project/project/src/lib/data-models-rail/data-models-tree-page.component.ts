@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -7,11 +16,11 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, startWith } from 'rxjs';
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
-import { VOCABULARY_PARAM } from './data-models-overview.component';
 import { DataModelsRailState } from './data-models-rail-state';
 
 /** A data model's sections, in the order the rail lists them under it. */
@@ -23,8 +32,8 @@ const MODEL_SECTIONS = [
 
 /**
  * The Data models 3 tab: a rail listing every data model of the project as a group that folds open on its sections
- * (its classes, its properties, its diagram), then what the project's data models share (the controlled
- * vocabularies) and the documentation; the section picked beside it. No overview: the tab opens on the first data
+ * (its classes, its properties, its diagram), then the project's controlled vocabularies by name, each opening as in
+ * the Data models tab, and the documentation; what is picked beside it. No overview: the tab opens on the first data
  * model's classes. Editors create a data model or a vocabulary from the "+" by each heading, and edit or delete a data
  * model with the pen and the bin shown on hover.
  */
@@ -42,6 +51,7 @@ const MODEL_SECTIONS = [
     MatTooltip,
     RouterLink,
     RouterOutlet,
+    StringifyStringLiteralPipe,
     TranslatePipe,
   ],
   template: `
@@ -142,9 +152,9 @@ const MODEL_SECTIONS = [
           }
         }
 
-        <!-- What the project's data models share. -->
+        <!-- The project's controlled vocabularies, which all its data models can use; each opens as in the Data models tab. -->
         <div class="heading project">
-          <span>{{ r + '.project' | translate }}</span>
+          <span>{{ r + '.lists' | translate }}</span>
           @if (state.canEdit() && editing.canCreate) {
             <button
               mat-icon-button
@@ -159,22 +169,21 @@ const MODEL_SECTIONS = [
           }
         </div>
         <mat-nav-list class="sections flat">
-          @let onLists = section() === lists;
-          <a
-            mat-list-item
-            class="rail-link"
-            [class.current]="onLists"
-            [activated]="onLists"
-            [attr.aria-current]="onLists ? 'page' : null"
-            [routerLink]="lists"
-            [queryParams]="state.modelParam()"
-            data-cy="data-models-tree-lists">
-            <mat-icon matListItemIcon>format_list_bulleted</mat-icon>
-            {{ r + '.lists' | translate }}
-            @if (state.lists(); as vocabularies) {
-              <span matListItemMeta class="count">{{ vocabularies.length }}</span>
-            }
-          </a>
+          @for (vocabulary of state.lists() ?? []; track vocabulary.id) {
+            @let name = nameOf(vocabulary.id);
+            @let active = section() === list && route().list === name;
+            <a
+              mat-list-item
+              class="rail-link"
+              [class.current]="active"
+              [activated]="active"
+              [attr.aria-current]="active ? 'page' : null"
+              [routerLink]="[list, name]"
+              data-cy="data-models-tree-vocabulary">
+              <mat-icon matListItemIcon>list</mat-icon>
+              {{ vocabulary.labels | appStringifyStringLiteral }}
+            </a>
+          }
           @if (state.canEdit()) {
             <a mat-list-item class="rail-link docs" [href]="docs" target="_blank" rel="noopener">
               <mat-icon matListItemIcon>open_in_new</mat-icon>
@@ -215,7 +224,7 @@ const MODEL_SECTIONS = [
         background: white;
       }
 
-      // "Data models" and "Project", with their "+".
+      // "Data models" and "Controlled vocabularies", with their "+".
       .heading {
         display: flex;
         align-items: center;
@@ -385,17 +394,30 @@ export class DataModelsTreePageComponent {
   readonly sections = MODEL_SECTIONS;
   readonly classes = RouteConstants.classes;
   readonly properties = RouteConstants.properties;
-  readonly lists = RouteConstants.lists;
+  readonly list = RouteConstants.list;
   readonly docs = 'https://dasch.swiss/knowledge-hub/dsp-app/project-admin#data-model';
 
-  /** The section shown: one of a data model's, or the controlled vocabularies. */
-  readonly section = toSignal(
+  /** What the URL shows: a data model's section, or a controlled vocabulary by its name. */
+  readonly route = toSignal(
     this._router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       startWith(null),
-      map(() => this._route.firstChild?.snapshot?.url?.[0]?.path)
-    )
+      map(() => {
+        const child = this._route.firstChild?.snapshot;
+        return {
+          section: child?.url?.[0]?.path,
+          list: child?.paramMap.get(RouteConstants.listParameter) ?? undefined,
+        };
+      })
+    ),
+    { initialValue: { section: undefined, list: undefined } }
   );
+  readonly section = computed(() => this.route().section);
+
+  /** A vocabulary's name in the URL: the end of its IRI. */
+  nameOf(listIri: string): string {
+    return listIri.split('/').pop() ?? '';
+  }
 
   /** The data models folded open on their sections; the one shown opens by itself. */
   readonly expanded = signal(new Set<string>());
@@ -468,10 +490,7 @@ export class DataModelsTreePageComponent {
   /** Creates a controlled vocabulary, then shows it opened, ready for its first values. */
   createVocabulary(): void {
     this.editing.createVocabulary(iri =>
-      this._router.navigate([RouteConstants.lists], {
-        relativeTo: this._route,
-        queryParams: { ...this.state.modelParam(), [VOCABULARY_PARAM]: iri.split('/').pop() ?? '' },
-      })
+      this._router.navigate([RouteConstants.list, this.nameOf(iri)], { relativeTo: this._route })
     );
   }
 }

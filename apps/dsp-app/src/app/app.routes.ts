@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
+import { LIST_PAGE_BACK, ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
 import {
   DataModelsPageComponent,
   OntologyEditorPageComponent,
@@ -98,6 +98,11 @@ export const routes: Routes = [
           { path: RouteConstants.classes, component: DataModelClassesComponent },
           { path: RouteConstants.properties, component: DataModelPropertiesComponent },
           { path: RouteConstants.lists, component: DataModelListsComponent },
+          {
+            path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
+            component: ListPageComponent,
+            data: { [LIST_PAGE_BACK]: RouteConstants.dataModels3 },
+          },
         ],
       },
       // The Ontology map tab became Data models 2 › Graph; links to it, with their query, land there.

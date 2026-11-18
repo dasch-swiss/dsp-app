@@ -20,6 +20,9 @@ import { ListInfoFormComponent } from './list-info-form/list-info-form.component
 import { ListItemComponent } from './list-item/list-item.component';
 import { ListItemService } from './list-item/list-item.service';
 
+/** The route data naming the project tab the list page's way back leads to; the Data models tab without it. */
+export const LIST_PAGE_BACK = 'listPageBack';
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-list-page',
@@ -106,9 +109,11 @@ export class ListPageComponent implements OnInit, OnDestroy {
       });
   }
 
+  /** Back to the tab the vocabulary was opened from: the Data models tab, unless its route names another. */
   navigateToDataModels() {
     const projectUuid = this._projectPageService.currentProjectUuid;
-    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.dataModels]);
+    const tab = this._route.snapshot.data[LIST_PAGE_BACK] ?? RouteConstants.dataModels;
+    this._router.navigate([RouteConstants.project, projectUuid, tab]);
   }
 
   ngOnDestroy() {

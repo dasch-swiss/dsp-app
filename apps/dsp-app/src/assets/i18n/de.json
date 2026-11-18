@@ -895,7 +895,6 @@
     },
     "dataModels2": {
       "dataModels": "Datenmodelle",
-      "project": "Projekt",
       "createDataModel": "Datenmodell erstellen",
       "documentation": "Dokumentation",
       "showSections": "Bereiche von {{model}} ein- oder ausblenden",
