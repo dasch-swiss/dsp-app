@@ -1,5 +1,5 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -9,6 +9,7 @@ import {
   inject,
   signal,
   viewChild,
+  TemplateRef,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -31,6 +32,7 @@ import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
+import { showToolbarInBar } from './section-toolbar';
 import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabularyUses } from './vocabulary-tree';
 
 /**
@@ -43,6 +45,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
   selector: 'app-data-model-lists',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
     TabShadePipe,
     HighlightPipe,
     LanguageTextsComponent,
@@ -63,37 +66,45 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
   template: `
     @let r = 'pages.dataModels2';
     <div class="section">
-      <div class="head">
-        <h2>{{ r + '.lists' | translate }}</h2>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
-          <mat-icon matPrefix>search</mat-icon>
-          <input
-            #search
-            matInput
-            data-cy="data-model-lists-search"
-            [placeholder]="r + '.findList' | translate"
-            [attr.aria-label]="r + '.findList' | translate"
-            (input)="query.set(search.value)" />
-        </mat-form-field>
-        <!-- For editors: a new vocabulary, made in the data model editor's dialog, then shown opened. -->
-        @if (canCreate()) {
-          <button
-            mat-flat-button
-            color="primary"
-            type="button"
-            class="create"
-            data-cy="data-model-lists-create"
-            (click)="createVocabulary()">
-            <mat-icon>add</mat-icon>
-            {{ r + '.createVocabulary' | translate }}
+      <!-- The section's title and tools: here, or in the tab's bar (no title there, its tab names the section). -->
+      @if (!state.toolbarInBar()) {
+        <ng-container [ngTemplateOutlet]="toolbar" />
+      }
+      <ng-template #toolbar>
+        <div class="head">
+          @if (!state.toolbarInBar()) {
+            <h2>{{ r + '.lists' | translate }}</h2>
+          }
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+            <mat-icon matPrefix>search</mat-icon>
+            <input
+              #search
+              matInput
+              data-cy="data-model-lists-search"
+              [placeholder]="r + '.findList' | translate"
+              [attr.aria-label]="r + '.findList' | translate"
+              (input)="query.set(search.value)" />
+          </mat-form-field>
+          <!-- For editors: a new vocabulary, made in the data model editor's dialog, then shown opened. -->
+          @if (canCreate()) {
+            <button
+              mat-flat-button
+              color="primary"
+              type="button"
+              class="create"
+              data-cy="data-model-lists-create"
+              (click)="createVocabulary()">
+              <mat-icon>add</mat-icon>
+              {{ r + '.createVocabulary' | translate }}
+            </button>
+          }
+          <span class="spacer"></span>
+          <button mat-button type="button" data-cy="data-model-lists-expand" (click)="toggleAll()">
+            <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+            {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
           </button>
-        }
-        <span class="spacer"></span>
-        <button mat-button type="button" data-cy="data-model-lists-expand" (click)="toggleAll()">
-          <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
-          {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
-        </button>
-      </div>
+        </div>
+      </ng-template>
 
       <div class="table-box">
         <table class="tree" data-cy="data-model-lists" role="treegrid" [attr.aria-label]="r + '.lists' | translate">
@@ -495,10 +506,10 @@ export class DataModelListsComponent {
   });
 
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
+  private readonly _toolbar = viewChild<TemplateRef<unknown>>('toolbar');
 
   constructor() {
-    // Arriving on the page, typing finds a vocabulary or a value.
-    afterNextRender(() => this._search()?.nativeElement.focus());
+    showToolbarInBar(this._toolbar, this._search);
     // Arriving from the Overview, the vocabulary picked there shows unfolded, once read.
     let opening = inject(ActivatedRoute).snapshot.queryParamMap.get(VOCABULARY_PARAM);
     effect(() => {

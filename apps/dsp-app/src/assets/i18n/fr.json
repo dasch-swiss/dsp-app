@@ -894,6 +894,13 @@
       "links": "liens"
     },
     "dataModels2": {
+      "dataModels": "Modèles de données",
+      "project": "Projet",
+      "createDataModel": "Créer un modèle de données",
+      "documentation": "Documentation",
+      "showSections": "Afficher ou masquer les sections de {{model}}",
+      "layoutSide": "Afficher les sections à gauche",
+      "layoutTop": "Afficher les sections en haut",
       "backToOverview": "Retour à la vue d’ensemble",
       "editDataModel": "Modifier le modèle de données",
       "deleteDataModel": "Supprimer le modèle de données",
@@ -1500,7 +1507,8 @@
         "data": "Données",
         "dataModels": "Modèles de données",
         "settings": "Paramètres",
-        "dataModels2": "Modèles de données 2"
+        "dataModels2": "Modèles de données 2",
+        "dataModels3": "Modèles de données 3"
       }
     },
     "grid": {

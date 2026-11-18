@@ -894,6 +894,13 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "dataModels": "Datenmodelle",
+      "project": "Projekt",
+      "createDataModel": "Datenmodell erstellen",
+      "documentation": "Dokumentation",
+      "showSections": "Bereiche von {{model}} ein- oder ausblenden",
+      "layoutSide": "Bereiche links anzeigen",
+      "layoutTop": "Bereiche oben anzeigen",
       "backToOverview": "Zurück zur Übersicht",
       "editDataModel": "Datenmodell bearbeiten",
       "deleteDataModel": "Datenmodell löschen",
@@ -1500,7 +1507,8 @@
         "data": "Daten",
         "dataModels": "Datenmodelle",
         "settings": "Einstellungen",
-        "dataModels2": "Datenmodelle 2"
+        "dataModels2": "Datenmodelle 2",
+        "dataModels3": "Datenmodelle 3"
       }
     },
     "grid": {

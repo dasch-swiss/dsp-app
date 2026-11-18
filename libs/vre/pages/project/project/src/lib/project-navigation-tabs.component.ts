@@ -34,6 +34,10 @@ import { ProjectPageService } from './project-page.service';
         <mat-icon class="tab-icon">hub</mat-icon>
         {{ 'shared.header.projectTabs.dataModels2' | translate }}
       </a>
+      <a mat-tab-link [routerLink]="[DATA_MODELS_3]" routerLinkActive="active-link" data-cy="data-models-3-tab">
+        <mat-icon class="tab-icon">account_tree</mat-icon>
+        {{ 'shared.header.projectTabs.dataModels3' | translate }}
+      </a>
       @if (projectPageService.hasProjectAdminRights$ | async) {
         <a mat-tab-link [routerLink]="[SETTINGS]" routerLinkActive="active-link">
           <mat-icon class="tab-icon">settings</mat-icon>
@@ -65,6 +69,7 @@ export class ProjectNavigationTabsComponent {
   readonly DATA = RouteConstants.data;
   readonly DATA_MODELS = RouteConstants.dataModels;
   readonly DATA_MODELS_2 = RouteConstants.dataModels2;
+  readonly DATA_MODELS_3 = RouteConstants.dataModels3;
   readonly SETTINGS = RouteConstants.settings;
   readonly SEARCH = RouteConstants.advancedSearch;
   readonly DESCRIPTION = RouteConstants.projectDescription;

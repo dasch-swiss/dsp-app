@@ -1,4 +1,5 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { TemplatePortal } from '@angular/cdk/portal';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -17,6 +18,11 @@ import { DataModelGraphService } from '../sidenav/data-model-map/data-model-grap
  */
 @Injectable()
 export class DataModelsRailState {
+  /** The toolbar of the section shown (its search, create button and view tools), shown in the tab's bar. */
+  readonly toolbar = signal<TemplatePortal | undefined>(undefined);
+  /** Whether the tab shows the section's toolbar in its bar; else the section shows it, under its title. */
+  readonly toolbarInBar = signal(false);
+
   private readonly _router = inject(Router);
   private readonly _graphs = inject(DataModelGraphService);
   private readonly _project = inject(ProjectPageService);
@@ -43,6 +49,16 @@ export class DataModelsRailState {
     return ontologies.find(o => OntologyService.getOntologyNameFromIri(o.iri) === name) ?? ontologies[0];
   });
   private readonly _graphsByIri = toSignal(this._graphs.graphs$);
+  /** The tab whose sections these are: Data models 2, or Data models 3 when its page says so. */
+  tab: string = RouteConstants.dataModels2;
+  /** How many classes and properties each data model has, by its IRI, once read. */
+  readonly counts = computed(() => {
+    const counts = new Map<string, { classes: number; properties: number }>();
+    this._graphsByIri()?.forEach((graph, iri) =>
+      counts.set(iri, { classes: classRows(graph).length, properties: propertyRows(graph).length })
+    );
+    return counts;
+  });
   readonly graph = computed(() => {
     const iri = this.selected()?.iri;
     return iri ? this._graphsByIri()?.get(iri) : undefined;
@@ -86,7 +102,7 @@ export class DataModelsRailState {
 
   /** Opens a section of the tab, keeping the data model; `params` add to it. */
   openSection(section: string, params: Record<string, string> = {}): void {
-    this._router.navigate(this.projectPath(RouteConstants.dataModels2, section), {
+    this._router.navigate(this.projectPath(this.tab, section), {
       queryParams: { ...this.modelParam(), ...params },
     });
   }

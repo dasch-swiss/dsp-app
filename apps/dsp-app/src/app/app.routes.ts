@@ -24,6 +24,7 @@ import {
   DataModelPropertiesComponent,
   DataModelListsComponent,
   DataModelsOverviewComponent,
+  DataModelsTreePageComponent,
   ProjectAdminGuard,
   ProjectPageComponent,
   ProjectPageGuard,
@@ -81,6 +82,18 @@ export const routes: Routes = [
           // Opens on the Overview: the project's data models and vocabularies, as the Data models tab lists them.
           { path: '', pathMatch: 'full', redirectTo: RouteConstants.overview },
           { path: RouteConstants.overview, component: DataModelsOverviewComponent },
+          { path: RouteConstants.graph, component: OntologyMapPageComponent },
+          { path: RouteConstants.classes, component: DataModelClassesComponent },
+          { path: RouteConstants.properties, component: DataModelPropertiesComponent },
+          { path: RouteConstants.lists, component: DataModelListsComponent },
+        ],
+      },
+      // The same sections under a rail listing every data model, each folding open on its sections; no overview.
+      {
+        path: RouteConstants.dataModels3,
+        component: DataModelsTreePageComponent,
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: RouteConstants.classes },
           { path: RouteConstants.graph, component: OntologyMapPageComponent },
           { path: RouteConstants.classes, component: DataModelClassesComponent },
           { path: RouteConstants.properties, component: DataModelPropertiesComponent },

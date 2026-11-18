@@ -29,6 +29,7 @@ export class RouteConstants {
   static readonly ontology = 'ontology';
   static readonly dataModels = 'data-models';
   static readonly dataModels2 = 'data-models-2';
+  static readonly dataModels3 = 'data-models-3';
   static readonly ontologyMap = 'ontology-map';
   static readonly graph = 'graph';
   static readonly lists = 'lists';
