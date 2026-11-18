@@ -175,6 +175,7 @@ export interface PropertyOrder {
           [attr.data-iri]="row.id"
           [class.selected]="row.id === selected()"
           [class.flash]="row.id === flashed()"
+          [class.no-colour]="!showColours()"
           [style.--tab]="colors().get(row.id) | tabShade: '#FFFFFF'">
           <header class="card-head" (mouseenter)="checkDelete(row.id)">
             <span class="texts">
@@ -365,6 +366,11 @@ export interface PropertyOrder {
           width: 6px;
           background: var(--tab);
           z-index: 1;
+        }
+
+        // Without colours, as the viewer chose: no tab.
+        &.no-colour::before {
+          display: none;
         }
 
         &.selected,
@@ -665,6 +671,8 @@ export class DataModelClassCardsComponent {
   readonly canReorder = input(false);
   /** The text searched for: marked where it shows, and the rows it is in opened. */
   readonly query = input('');
+  /** Whether each card shows its family's colour as a tab on its left edge. */
+  readonly showColours = input(true);
   /** Whether every class says its kind under its label, a plain object too; else only a class with a file does. */
   readonly kindForAll = input(false);
   /** Whether a subclass's card groups its superclass's properties under "n from …", or lists them with its own. */

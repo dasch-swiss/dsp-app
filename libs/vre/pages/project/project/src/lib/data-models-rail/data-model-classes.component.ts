@@ -122,6 +122,19 @@ import { rememberedSignal } from './remembered-signal';
               </mat-slide-toggle>
             </div>
             <hr class="menu-divider" />
+            <span class="menu-heading">{{ r + '.coloursHeading' | translate }}</span>
+            <div class="menu-toggle" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+              <mat-slide-toggle
+                data-cy="data-model-classes-colours"
+                [checked]="showColours()"
+                (change)="showColours.set($event.checked)">
+                <span class="view-item">
+                  <span>{{ r + '.coloursToggle' | translate }}</span>
+                  <span class="view-hint">{{ r + '.coloursToggleHint' | translate }}</span>
+                </span>
+              </mat-slide-toggle>
+            </div>
+            <hr class="menu-divider" />
             <span class="menu-heading">{{ r + '.inheritedLayout' | translate }}</span>
             @for (option of inheritedLayouts; track option.value) {
               @let chosen = inheritedLayout() === option.value;
@@ -187,6 +200,7 @@ import { rememberedSignal } from './remembered-signal';
         [cardinalityLayout]="cardinalityLayout()"
         [inheritedLayout]="inheritedLayout()"
         [kindForAll]="kindForAll()"
+        [showColours]="showColours()"
         [style.--card-width.px]="cardWidth()"
         [(folded)]="foldedCards"
         (reorder)="reorderProperties($event)"
@@ -374,6 +388,8 @@ export class DataModelClassesComponent {
         ? (stored as CardinalityLayout)
         : undefined
   );
+  /** Whether the cards show their family's colour on their left edge, as the viewer last chose. */
+  readonly showColours = rememberedSignal<boolean>('dsp-data-models-card-colours', true, stored => stored !== 'false');
   /** Whether every class's card says its kind, "Object without representation" too; else only a class with a file. */
   readonly kindForAll = rememberedSignal<boolean>('dsp-data-models-kind-for-all', false, stored => stored === 'true');
   /** How a subclass's card shows its superclass's properties, as the viewer last chose. */

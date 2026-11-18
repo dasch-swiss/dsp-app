@@ -894,6 +894,10 @@
       "links": "collegamenti"
     },
     "dataModels2": {
+      "chipColoursHint": "Il colore di famiglia di ogni etichetta di classe, come nel diagramma",
+      "coloursHeading": "Colori",
+      "coloursToggle": "Mostra i colori delle classi",
+      "coloursToggleHint": "Il colore di famiglia di ogni scheda sul bordo sinistro, come nel diagramma",
       "classActions": "Azioni per {{class}}",
       "objectWithoutRepresentation": "Oggetto senza rappresentazione",
       "kindHeading": "Tipo di risorse",

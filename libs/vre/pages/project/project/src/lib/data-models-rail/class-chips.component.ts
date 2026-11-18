@@ -16,10 +16,12 @@ import { HighlightPipe } from './highlight.pipe';
     <span class="cut">
       @for (iri of shown(); track iri) {
         <span class="chip" data-cy="class-chip">
-          <span
-            class="tab"
-            aria-hidden="true"
-            [style.background]="state.colors().get(iri) | tabShade: '#F3F4F6'"></span>
+          @if (showColours()) {
+            <span
+              class="tab"
+              aria-hidden="true"
+              [style.background]="state.colors().get(iri) | tabShade: '#F3F4F6'"></span>
+          }
           <span class="label">
             @for (part of state.labelOf(iri) | highlight: highlight(); track $index) {
               @if (part.match) {
@@ -121,6 +123,8 @@ export class ClassChipsComponent {
   /** How many a condensed line shows. */
   readonly max = input(2);
   readonly expanded = input(false);
+  /** Whether each chip shows its class's family colour as a tab on its left. */
+  readonly showColours = input(true);
   /** What a search looks for, marked in the class names. */
   readonly highlight = input<readonly string[]>([]);
 

@@ -894,6 +894,10 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "chipColoursHint": "Die Familienfarbe jedes Klassen-Chips, wie im Diagramm",
+      "coloursHeading": "Farben",
+      "coloursToggle": "Klassenfarben anzeigen",
+      "coloursToggleHint": "Die Familienfarbe jeder Karte am linken Rand, wie im Diagramm",
       "classActions": "Aktionen für {{class}}",
       "objectWithoutRepresentation": "Objekt ohne Repräsentation",
       "kindHeading": "Art der Ressourcen",

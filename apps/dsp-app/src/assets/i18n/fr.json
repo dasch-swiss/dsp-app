@@ -894,6 +894,10 @@
       "links": "liens"
     },
     "dataModels2": {
+      "chipColoursHint": "La couleur de famille de chaque pastille de classe, comme dans le diagramme",
+      "coloursHeading": "Couleurs",
+      "coloursToggle": "Afficher les couleurs des classes",
+      "coloursToggleHint": "La couleur de famille de chaque carte sur son bord gauche, comme dans le diagramme",
       "classActions": "Actions pour {{class}}",
       "objectWithoutRepresentation": "Objet sans représentation",
       "kindHeading": "Type de ressources",
