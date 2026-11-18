@@ -17,7 +17,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
@@ -67,9 +66,6 @@ export interface PropertyOrder {
     CdkDropList,
     ClassCardPropertyComponent,
     MatIcon,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
     MatTooltip,
     NgTemplateOutlet,
     TabShadePipe,
@@ -133,7 +129,7 @@ export interface PropertyOrder {
           [class.selected]="row.id === selected()"
           [class.flash]="row.id === flashed()"
           [style.--tab]="colors().get(row.id) | tabShade: '#FFFFFF'">
-          <header class="card-head">
+          <header class="card-head" (mouseenter)="checkDelete(row.id)">
             <span class="texts">
               @if (row.superclass) {
                 <span
@@ -163,52 +159,37 @@ export interface PropertyOrder {
                 }
               </span>
             </span>
-            <!-- The class's actions, for editors: edit or delete it. -->
+            <!-- For editors, on hover: the class's pen and its bin. -->
             @if (canEdit()) {
               <button
                 type="button"
                 class="icon-button actions"
-                data-cy="data-model-class-card-actions"
-                [attr.aria-label]="r + '.classActions' | translate: { class: row.label }"
-                [matTooltip]="r + '.classActions' | translate: { class: row.label }"
-                matTooltipShowDelay="600"
-                [matMenuTriggerFor]="actions"
-                (menuOpened)="checkDelete(row.id)">
-                <mat-icon>more_vert</mat-icon>
+                data-cy="data-model-class-card-edit"
+                [attr.aria-label]="r + '.editClass' | translate"
+                [matTooltip]="r + '.editClass' | translate"
+                (click)="editClass.emit(row.id)">
+                <mat-icon>edit</mat-icon>
               </button>
-              <mat-menu #actions="matMenu" xPosition="before">
-                @if (canEdit()) {
+              <!-- Deletes once the API says nothing uses the class; why not, on hover, when something does. -->
+              @if (editing.canDelete) {
+                @let check = deleteChecks().get(row.id);
+                <span
+                  class="actions"
+                  [matTooltip]="
+                    (!check ? r + '.checkingDelete' : check.canDo ? r + '.deleteClass' : r + '.cannotDeleteClass')
+                      | translate
+                  ">
                   <button
-                    mat-menu-item
                     type="button"
-                    data-cy="data-model-class-card-edit"
-                    (click)="editClass.emit(row.id)">
-                    <mat-icon>edit</mat-icon>
-                    {{ r + '.editClass' | translate }}
-                  </button>
-                }
-                <!-- Deleting the class, once the API says nothing uses it; why not, when something does. -->
-                @if (canEdit() && editing.canDelete) {
-                  @let check = deleteChecks().get(row.id);
-                  <button
-                    mat-menu-item
-                    type="button"
-                    class="delete"
+                    class="icon-button delete"
                     data-cy="data-model-class-card-delete"
+                    [attr.aria-label]="r + '.deleteClass' | translate"
                     [disabled]="!check?.canDo"
                     (click)="deleteClass(row)">
                     <mat-icon>delete</mat-icon>
-                    <span class="menu-text">
-                      {{ r + '.deleteClass' | translate }}
-                      @if (!check) {
-                        <small>{{ r + '.checkingDelete' | translate }}</small>
-                      } @else if (!check.canDo) {
-                        <small>{{ r + '.cannotDeleteClass' | translate }}</small>
-                      }
-                    </span>
                   </button>
-                }
-              </mat-menu>
+                </span>
+              }
             }
             <button
               type="button"
@@ -424,12 +405,17 @@ export interface PropertyOrder {
         display: grid;
         place-items: center;
 
-        &:hover {
+        &:hover:not([disabled]) {
           background: $cool_gray_100;
+        }
+
+        &[disabled] {
+          cursor: default;
+          color: $cool_gray_300;
         }
       }
 
-      // The menu's dots, as small as the arrow looks, shown on hover, while open or with the focus.
+      // The pen and the bin, as small as the arrow looks, shown on hover, while open or with the focus.
       .actions {
         visibility: hidden;
 
@@ -441,8 +427,8 @@ export interface PropertyOrder {
       }
 
       .card:hover .actions,
-      .actions[aria-expanded='true'],
-      .actions:focus-visible {
+      .actions:focus-visible,
+      .actions:focus-within {
         visibility: visible;
       }
 
@@ -507,13 +493,6 @@ export interface PropertyOrder {
         color: #b3261e;
       }
 
-      .menu-text small {
-        display: block;
-        font-size: 11.5px;
-        line-height: 1.3;
-        color: $cool_gray_500;
-      }
-
       // "Add property" under an opened card's properties, as in the Data models tab.
       .add-property {
         display: block;
@@ -542,6 +521,8 @@ export class DataModelClassCardsComponent {
   readonly editing = injectDataModelEditing();
   /** What the API says of deleting each class, once its menu asked; none while it checks. */
   readonly deleteChecks = signal(new Map<string, CanDo>());
+  /** The classes whose deletion was asked about, so hovering again asks no more. */
+  private readonly _checked = new Set<string>();
 
   readonly CARD_PROPERTIES = CARD_PROPERTIES;
 
@@ -627,14 +608,10 @@ export class DataModelClassCardsComponent {
     });
   }
 
-  /** Asks the API whether the class can be deleted, for its menu to say so. */
+  /** Asks the API whether the class can be deleted, for its bin to say so; once per class. */
   checkDelete(classIri: string): void {
-    if (!this.canEdit() || !this.editing.canDelete) return;
-    this.deleteChecks.update(checks => {
-      const next = new Map(checks);
-      next.delete(classIri);
-      return next;
-    });
+    if (!this.canEdit() || !this.editing.canDelete || this._checked.has(classIri)) return;
+    this._checked.add(classIri);
     this.editing
       .canDeleteClass(classIri)
       .pipe(takeUntilDestroyed(this._destroyRef))

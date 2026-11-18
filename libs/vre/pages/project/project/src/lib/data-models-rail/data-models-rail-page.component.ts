@@ -1,10 +1,10 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatListItem, MatListItemIcon, MatListItemMeta, MatNavList } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
+import { MatTooltip } from '@angular/material/tooltip';
 import {
   ActivatedRoute,
   IsActiveMatchOptions,
@@ -23,26 +23,25 @@ import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component'
 import { DataModelsRailState } from './data-models-rail-state';
 
 /**
- * The Data models 2 tab: first the Overview, as the Data models tab's page, then, for a data model opened there, a rail
- * to go back, pick another data model and a section of it (its classes, its properties, its diagram), the section
- * beside it. Controlled vocabularies, opened from the Overview, show with the way back only.
+ * The Data models 2 tab: first the Overview, as the Data models tab's page, then, for a data model opened there, one bar
+ * on top to go back, pick another data model, edit or delete it, and open a section of it (its classes, its
+ * properties, its diagram), the section under it. Controlled vocabularies, opened from the Overview, show with the
+ * way back and their title only.
  */
 @Component({
   selector: 'app-data-models-rail-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DataModelsRailState],
   imports: [
-    MatButton,
     MatIcon,
     MatIconButton,
-    MatListItem,
-    MatListItemIcon,
-    MatListItemMeta,
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
-    MatNavList,
-    NgTemplateOutlet,
+    MatTabLink,
+    MatTabNav,
+    MatTabNavPanel,
+    MatTooltip,
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
@@ -52,109 +51,100 @@ import { DataModelsRailState } from './data-models-rail-state';
     @let r = 'pages.dataModels2';
     <div class="page">
       @if (section() !== overview) {
-        <aside class="rail" data-cy="data-models-rail">
+        <header class="bar" data-cy="data-models-rail">
           <!-- Back to every data model and vocabulary of the project. -->
-          <mat-nav-list class="back">
-            <a mat-list-item class="rail-link" data-cy="data-models-rail-back" [routerLink]="overview">
-              <mat-icon matListItemIcon>arrow_back</mat-icon>
-              {{ r + '.backToOverview' | translate }}
-            </a>
-          </mat-nav-list>
+          <a
+            mat-icon-button
+            class="back"
+            data-cy="data-models-rail-back"
+            [routerLink]="overview"
+            [attr.aria-label]="r + '.backToOverview' | translate"
+            [matTooltip]="r + '.backToOverview' | translate">
+            <mat-icon>chevron_left</mat-icon>
+          </a>
 
-          @if (section() !== lists) {
-            @if (state.selected(); as selected) {
-              <div class="model">
-                @if (state.ontologies().length > 1) {
-                  <button
-                    mat-stroked-button
-                    class="picker"
-                    data-cy="data-models-rail-picker"
-                    [attr.aria-label]="'pages.ontologyMap.dataModel' | translate"
-                    [matMenuTriggerFor]="models">
-                    <b>{{ selected.label }}</b>
-                    <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
-                  </button>
-                  <mat-menu #models="matMenu">
-                    @for (ontology of state.ontologies(); track ontology.iri) {
-                      <button mat-menu-item (click)="show(ontology.iri)">{{ ontology.label }}</button>
-                    }
-                  </mat-menu>
-                } @else {
-                  <span class="picker static" data-cy="data-models-rail-picker">{{ selected.label }}</span>
+          <!-- Controlled vocabularies say their title themselves; a data model's sections, under its name. -->
+          @if (section() !== lists && state.selected(); as selected) {
+            <!-- The data model's name, a menu to pick another when there are several. -->
+            @if (state.ontologies().length > 1) {
+              <button
+                type="button"
+                class="name picker"
+                data-cy="data-models-rail-picker"
+                [attr.aria-label]="'pages.ontologyMap.dataModel' | translate"
+                [matMenuTriggerFor]="models">
+                <b>{{ selected.label }}</b>
+                <mat-icon>arrow_drop_down</mat-icon>
+              </button>
+              <mat-menu #models="matMenu">
+                @for (ontology of state.ontologies(); track ontology.iri) {
+                  <button mat-menu-item (click)="show(ontology.iri)">{{ ontology.label }}</button>
                 }
-                <!-- For editors: the data model's own label and comment, and deleting it once nothing uses it. -->
-                @if (state.canEdit() && editing.canEditDataModels) {
-                  <button
-                    mat-icon-button
-                    type="button"
-                    class="model-menu"
-                    data-cy="data-models-rail-model-menu"
-                    [attr.aria-label]="r + '.dataModelActions' | translate: { model: selected.label }"
-                    [matMenuTriggerFor]="modelMenu"
-                    (menuOpened)="checkDelete(selected.iri)">
-                    <mat-icon>more_vert</mat-icon>
-                  </button>
-                  <mat-menu #modelMenu="matMenu">
-                    <button mat-menu-item type="button" data-cy="data-models-rail-edit-model" (click)="editModel()">
-                      <mat-icon>edit</mat-icon>
-                      {{ r + '.editDataModel' | translate }}
-                    </button>
-                    @let check = deleteCheck();
-                    <button
-                      mat-menu-item
-                      type="button"
-                      data-cy="data-models-rail-delete-model"
-                      [disabled]="!check?.canDo"
-                      (click)="deleteModel(selected.iri, selected.label)">
-                      <mat-icon>delete</mat-icon>
-                      <span class="menu-texts">
-                        {{ r + '.deleteDataModel' | translate }}
-                        @if (!check) {
-                          <small>{{ r + '.checkingDelete' | translate }}</small>
-                        } @else if (!check.canDo) {
-                          <small>{{ r + '.cannotDeleteDataModel' | translate }}</small>
-                        }
-                      </span>
-                    </button>
-                  </mat-menu>
-                }
-              </div>
+              </mat-menu>
+            } @else {
+              <b class="name" data-cy="data-models-rail-picker">{{ selected.label }}</b>
             }
 
-            <!-- The picked data model's own views, under its picker. -->
-            <mat-nav-list>
-              @for (section of modelSections(); track section.path) {
-                <ng-container [ngTemplateOutlet]="link" [ngTemplateOutletContext]="{ $implicit: section }" />
-              }
-            </mat-nav-list>
-          }
+            <!-- For editors: the data model's pen and its bin. -->
+            @if (state.canEdit() && editing.canEditDataModels) {
+              <button
+                mat-icon-button
+                type="button"
+                class="small"
+                data-cy="data-models-rail-edit-model"
+                [attr.aria-label]="r + '.editDataModel' | translate"
+                [matTooltip]="r + '.editDataModel' | translate"
+                (click)="editModel()">
+                <mat-icon>edit</mat-icon>
+              </button>
+              @let check = deleteCheck();
+              <!-- Deletes once the API says nothing uses the data model; why not, on hover, otherwise. -->
+              <span
+                [matTooltip]="
+                  (!check ? r + '.checkingDelete' : check.canDo ? r + '.deleteDataModel' : r + '.cannotDeleteDataModel')
+                    | translate
+                ">
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="small delete"
+                  data-cy="data-models-rail-delete-model"
+                  [attr.aria-label]="r + '.deleteDataModel' | translate"
+                  [disabled]="!check?.canDo"
+                  (click)="deleteModel(selected.iri, selected.label)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </span>
+            }
 
-          <ng-template #link let-section>
-            <a
-              mat-list-item
-              routerLinkActive
-              #active="routerLinkActive"
-              [routerLinkActiveOptions]="activeOptions"
-              class="rail-link"
-              [class.current]="active.isActive"
-              [activated]="active.isActive"
-              [attr.aria-current]="active.isActive ? 'page' : null"
-              [routerLink]="section.path"
-              [queryParams]="state.modelParam()"
-              [attr.data-cy]="'data-models-rail-' + section.path">
-              <mat-icon matListItemIcon>{{ section.icon }}</mat-icon>
-              {{ r + '.' + section.path | translate }}
-              @if (section.count !== undefined) {
-                <span matListItemMeta class="count">{{ section.count }}</span>
+            <span class="divider"></span>
+
+            <!-- The data model's sections, as tabs. -->
+            <nav mat-tab-nav-bar class="sections" mat-stretch-tabs="false" [tabPanel]="panel">
+              @for (section of modelSections(); track section.path) {
+                <a
+                  mat-tab-link
+                  routerLinkActive
+                  #active="routerLinkActive"
+                  [routerLinkActiveOptions]="activeOptions"
+                  [active]="active.isActive"
+                  [routerLink]="section.path"
+                  [queryParams]="state.modelParam()"
+                  [attr.data-cy]="'data-models-rail-' + section.path">
+                  {{ r + '.' + section.path | translate }}
+                  @if (section.count !== undefined) {
+                    <span class="count">{{ section.count }}</span>
+                  }
+                </a>
               }
-            </a>
-          </ng-template>
-        </aside>
+            </nav>
+          }
+        </header>
       }
 
-      <main class="content">
+      <mat-tab-nav-panel #panel class="content">
         <router-outlet />
-      </main>
+      </mat-tab-nav-panel>
     </div>
   `,
   styles: [
@@ -168,132 +158,104 @@ import { DataModelsRailState } from './data-models-rail-state';
 
       .page {
         display: flex;
+        flex-direction: column;
         height: 100%;
       }
 
-      .rail {
+      // Back, the data model's name, its pen and bin, then its sections, on one line.
+      .bar {
         flex: none;
-        width: 248px;
-        box-sizing: border-box;
-        padding: 12px 8px;
-        border-right: 1px solid $cool_gray_200;
-        overflow: auto;
-
-        mat-nav-list {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-          padding: 0;
-        }
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-height: 48px;
+        padding: 0 16px 0 8px;
+        border-bottom: 1px solid $cool_gray_200;
+        background: white;
       }
 
-      // Rail rows as in the V3 design: compact, rounded, a pale blue for the current section. Specific enough to win
-      // over Material's own list item rules.
-      .rail .rail-link.mat-mdc-list-item {
-        --mat-list-list-item-one-line-container-height: 36px;
-        --mat-list-list-item-leading-icon-size: 18px;
-        --mat-list-list-item-leading-icon-start-space: 12px;
-        --mat-list-list-item-leading-icon-end-space: 10px;
-        --mat-list-list-item-label-text-size: 14px;
-        --mat-list-list-item-label-text-color: #{$cool_gray_700};
-        --mat-list-list-item-hover-label-text-color: #{$cool_gray_900};
-        --mat-list-list-item-leading-icon-color: #{$cool_gray_500};
-        --mat-list-list-item-hover-leading-icon-color: #{$cool_gray_700};
-        --mat-list-list-item-hover-state-layer-color: #{$cool_gray_500};
-        --mat-list-list-item-hover-state-layer-opacity: 0.08;
-        --mat-list-active-indicator-shape: 6px;
-        --mat-list-active-indicator-color: transparent;
-        // Material sets a taller fixed height on items with a leading icon; a longer name wraps onto a second line,
-        // in full, rather than being cut.
-        height: auto;
-        min-height: 36px;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        border-radius: 6px;
-        cursor: pointer;
-
-        ::ng-deep .mdc-list-item__primary-text {
-          white-space: normal;
-          line-height: 18px;
-        }
-
-        &.current {
-          --mat-list-list-item-label-text-color: #{$primary_700};
-          --mat-list-list-item-hover-label-text-color: #{$primary_700};
-          --mat-list-list-item-leading-icon-color: #{$primary};
-          --mat-list-list-item-hover-leading-icon-color: #{$primary};
-          background: $primary_50;
-          font-weight: 500;
-
-          .count {
-            color: $primary_700;
-          }
-        }
+      .back {
+        color: $cool_gray_600;
       }
 
+      .name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 15px;
+        font-weight: 500;
+        color: $cool_gray_900;
+      }
+
+      // With several data models, the name opens a menu to pick another; no box around it.
       .picker {
         display: flex;
-        justify-content: space-between;
-        width: calc(100% - 8px);
-        margin: 0 4px 10px;
-        --mat-button-outlined-container-shape: 6px;
-        --mat-button-outlined-container-height: 38px;
-        background: white;
+        align-items: center;
+        padding: 0;
+        border: 0;
+        background: none;
+        font: inherit;
         cursor: pointer;
 
         b {
+          font-size: 15px;
           font-weight: 500;
           overflow: hidden;
           text-overflow: ellipsis;
         }
 
-        &.static {
-          cursor: default;
-          box-sizing: border-box;
-          padding: 8px 12px;
-          border: 1px solid $cool_gray_300;
-          border-radius: 6px;
-          font-weight: 500;
-        }
-      }
-
-      .back {
-        margin-bottom: 10px;
-      }
-
-      // The picker and the data model's menu on one line.
-      .model {
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        margin-bottom: 10px;
-
-        .picker {
-          flex: 1;
-          min-width: 0;
-          width: auto;
-          margin: 0 0 0 4px;
-        }
-      }
-
-      .menu-texts {
-        display: flex;
-        flex-direction: column;
-
-        small {
+        mat-icon {
+          flex: none;
           color: $cool_gray_500;
         }
       }
 
+      .small.mat-mdc-icon-button {
+        width: 32px;
+        height: 32px;
+        padding: 7px;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .delete:not([disabled]) {
+        color: #b3261e;
+      }
+
+      .divider {
+        flex: none;
+        width: 1px;
+        height: 24px;
+        margin: 0 8px;
+        background: $cool_gray_200;
+      }
+
+      // The sections as compact tabs, the bar's border their only line.
+      .sections {
+        --mat-tab-container-height: 48px;
+        border-bottom: 0;
+
+        .mat-mdc-tab-link {
+          min-width: 0;
+          padding: 0 12px;
+        }
+      }
+
       .count {
+        margin-left: 6px;
         font-size: 12px;
         font-weight: 400;
         color: $cool_gray_500;
       }
 
       .content {
+        display: block;
         flex: 1;
-        min-width: 0;
         min-height: 0;
         background: $cool_gray_50;
       }
@@ -327,20 +289,34 @@ export class DataModelsRailPageComponent {
     )
   );
 
-  /** Whether the data model shown can be deleted, asked once its menu opens. */
+  /** Whether the data model shown can be deleted, asked once it shows. */
   readonly deleteCheck = signal<CanDo | undefined>(undefined);
+
+  constructor() {
+    // The bin says whether the data model can be deleted as soon as the data model shows.
+    effect(() => {
+      const iri = this.state.selected()?.iri;
+      if (iri && this.state.canEdit() && this.editing.canEditDataModels) this.checkDelete(iri);
+    });
+  }
 
   /**
    * The views of the data model picked: its resource classes first, as the Data models tab lists them, its properties,
    * then its diagram.
    */
   readonly modelSections = computed(() => [
-    { path: RouteConstants.classes, icon: 'view_list', count: this.state.classRows().length },
-    { path: RouteConstants.properties, icon: 'label', count: this.state.propertyRows().length },
-    { path: RouteConstants.graph, icon: 'hub', count: undefined },
+    { path: RouteConstants.classes, count: this.state.classRows().length },
+    { path: RouteConstants.properties, count: this.state.propertyRows().length },
+    { path: RouteConstants.graph, count: undefined },
   ]);
 
+  /** The data model whose deletion was last asked about; showing it again asks no more. */
+  private _checked?: string;
+
+  /** Asks the API whether the data model can be deleted, for its bin to say so. */
   checkDelete(ontologyIri: string): void {
+    if (this._checked === ontologyIri) return;
+    this._checked = ontologyIri;
     this.deleteCheck.set(undefined);
     this.editing
       .canDeleteDataModel(ontologyIri)

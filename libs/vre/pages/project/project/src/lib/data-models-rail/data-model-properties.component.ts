@@ -15,7 +15,6 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -100,7 +99,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatCellDef,
     MatCheckbox,
     MatColumnDef,
-    MatDivider,
     MatFormField,
     MatHeaderCell,
     MatHeaderCellDef,
@@ -202,7 +200,7 @@ const COLUMN_LABELS: Record<Column, string> = {
           [dataSource]="rows()"
           data-cy="data-model-properties"
           [class.expanded]="expanded"
-          [style.width.px]="cols.tableWidth() + actionsWidth"
+          [style.width.px]="cols.tableWidth() + actionsWidth()"
           cdkDropList
           cdkDropListOrientation="horizontal"
           cdkDropListElementContainer="thead tr"
@@ -454,31 +452,60 @@ const COLUMN_LABELS: Record<Column, string> = {
                 (classSelected)="showClass($event)" />
             </td>
           </ng-container>
-          <!-- Each property's actions, in a menu kept in view at the end of the row. -->
+          <!-- Each property's actions, as icons shown on hover, kept in view at the end of the row. -->
           <ng-container matColumnDef="actions" stickyEnd>
-            <th mat-header-cell *matHeaderCellDef class="actions-cell" [style.width.px]="actionsWidth"></th>
-            <td mat-cell *matCellDef="let row" class="actions-cell">
-              <button
-                mat-icon-button
-                type="button"
-                class="row-menu"
-                data-cy="data-model-properties-actions"
-                [attr.aria-label]="r + '.propertyActions' | translate: { property: row.label }"
-                [matTooltip]="r + '.propertyActions' | translate: { property: row.label }"
-                matTooltipShowDelay="600"
-                [matMenuTriggerFor]="rowMenu"
-                [matMenuTriggerData]="{ row }"
-                (click)="$event.stopPropagation()"
-                (keydown.enter)="$event.stopPropagation()"
-                (menuOpened)="checkDelete(row.id)">
-                <mat-icon>more_vert</mat-icon>
-              </button>
+            <th mat-header-cell *matHeaderCellDef class="actions-cell" [style.width.px]="actionsWidth()"></th>
+            <td
+              mat-cell
+              *matCellDef="let row"
+              class="actions-cell"
+              (click)="$event.stopPropagation()"
+              (keydown.enter)="$event.stopPropagation()">
+              <span class="row-actions">
+                @if (canEdit()) {
+                  <button
+                    mat-icon-button
+                    type="button"
+                    data-cy="data-model-properties-edit"
+                    [attr.aria-label]="r + '.editProperty' | translate"
+                    [matTooltip]="r + '.editProperty' | translate"
+                    (click)="edit(row.id)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                }
+                <!-- Deletes once the API says nothing uses the property; why not, on hover, otherwise. -->
+                @if (canEdit() && editing.canDelete) {
+                  @let check = deleteChecks().get(row.id);
+                  <span
+                    (mouseenter)="checkDelete(row.id)"
+                    [matTooltip]="
+                      (!check
+                        ? r + '.checkingDelete'
+                        : check.canDo
+                          ? r + '.deleteProperty'
+                          : r + '.cannotDeletePropertyShort'
+                      ) | translate
+                    ">
+                    <button
+                      mat-icon-button
+                      type="button"
+                      class="delete"
+                      data-cy="data-model-properties-delete"
+                      [attr.aria-label]="r + '.deleteProperty' | translate"
+                      [disabled]="!check?.canDo"
+                      (click)="deleteProperty(row)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </span>
+                }
+              </span>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="shownColumns(); sticky: true"></tr>
           <tr
             mat-row
             *matRowDef="let row; columns: shownColumns()"
+            (mouseenter)="checkDelete(row.id)"
             data-cy="data-model-properties-row"
             tabindex="0"
             [class.selected]="row.id === panelIri()"
@@ -489,70 +516,6 @@ const COLUMN_LABELS: Record<Column, string> = {
           <p class="empty">{{ r + '.noMatch' | translate }}</p>
         }
       </div>
-
-      <mat-menu #rowMenu="matMenu" xPosition="before">
-        <ng-template matMenuContent let-row="row">
-          @if (canEdit()) {
-            <button mat-menu-item type="button" data-cy="data-model-properties-edit" (click)="edit(row.id)">
-              <mat-icon>edit</mat-icon>
-              {{ r + '.editProperty' | translate }}
-            </button>
-            @if (editing.canDelete) {
-              @let classes = classesWithout(row);
-              <button
-                mat-menu-item
-                type="button"
-                data-cy="data-model-properties-add-to-class"
-                [disabled]="!classes.length"
-                [matMenuTriggerFor]="classMenu"
-                [matMenuTriggerData]="{ row, classes }">
-                <mat-icon>add_box</mat-icon>
-                {{ r + '.addToClass' | translate }}
-              </button>
-            }
-          }
-          <button mat-menu-item type="button" data-cy="data-model-properties-diagram" (click)="filterOn(row.id)">
-            <mat-icon>hub</mat-icon>
-            {{ r + '.showInDiagram' | translate }}
-          </button>
-          <!-- Deleting the property, once the API says nothing uses it; why not, when something does. -->
-          @if (canEdit() && editing.canDelete) {
-            @let check = deleteChecks().get(row.id);
-            <mat-divider />
-            <button
-              mat-menu-item
-              type="button"
-              class="delete"
-              data-cy="data-model-properties-delete"
-              [disabled]="!check?.canDo"
-              (click)="deleteProperty(row)">
-              <mat-icon>delete</mat-icon>
-              <span class="menu-text">
-                {{ r + '.deleteProperty' | translate }}
-                @if (!check) {
-                  <small>{{ r + '.checkingDelete' | translate }}</small>
-                } @else if (!check.canDo) {
-                  <small>{{ r + '.cannotDeletePropertyShort' | translate }}</small>
-                }
-              </span>
-            </button>
-          }
-        </ng-template>
-      </mat-menu>
-      <!-- The classes of the data model that don't have the property yet. -->
-      <mat-menu #classMenu="matMenu">
-        <ng-template matMenuContent let-row="row" let-classes="classes">
-          @for (cls of classes; track cls.id) {
-            <button
-              mat-menu-item
-              type="button"
-              data-cy="data-model-properties-add-to-class-option"
-              (click)="addToClass(cls.id, row.id)">
-              {{ cls.label }}
-            </button>
-          }
-        </ng-template>
-      </mat-menu>
 
       @if (state.graph(); as graph) {
         <!-- A class clicked in the table or the property's panel, described here, over the property's panel. -->
@@ -667,17 +630,30 @@ const COLUMN_LABELS: Record<Column, string> = {
         background: inherit;
       }
 
-      // Deleting, in red, and why it can't be, under it.
-      .delete:not([disabled]),
-      .delete:not([disabled]) mat-icon {
-        color: #b3261e;
+      // The row's icons, small, shown on hover or with the focus.
+      .row-actions {
+        display: inline-flex;
+        visibility: hidden;
+        .mat-mdc-icon-button {
+          width: 32px;
+          height: 32px;
+          padding: 7px;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
       }
 
-      .menu-text small {
-        display: block;
-        font-size: 11.5px;
-        line-height: 1.3;
-        color: $cool_gray_500;
+      .mat-mdc-row:hover .row-actions,
+      .row-actions:focus-within {
+        visibility: visible;
+      }
+
+      .delete:not([disabled]) {
+        color: #b3261e;
       }
     `,
   ],
@@ -690,13 +666,15 @@ export class DataModelPropertiesComponent {
   readonly editing = injectDataModelEditing();
   private readonly _destroyRef = inject(DestroyRef);
   readonly canEdit = this.state.canEdit;
-  /** The width of the menu column, past the columns shown. */
-  readonly actionsWidth = 48;
-  /** The columns shown, then the menu's. */
-  readonly shownColumns = computed(() => [...this.columns.shown(), 'actions']);
+  /** The width of the actions column, past the columns shown: the pen, and the bin where deleting is possible. */
+  readonly actionsWidth = computed(() => (this.canEdit() ? (this.editing.canDelete ? 2 : 1) * 32 + 16 : 0));
+  /** The columns shown, then, for editors, the actions'. */
+  readonly shownColumns = computed(() => [...this.columns.shown(), ...(this.canEdit() ? ['actions'] : [])]);
 
   /** What the API says of deleting each property whose menu was opened. */
   readonly deleteChecks = signal(new Map<string, CanDo>());
+  /** The properties whose deletion was asked about, so hovering again asks no more. */
+  private readonly _checked = new Set<string>();
   /** The value types of a property to create, by group, as the data model editor offers them. */
   readonly propertyTypes = DefaultProperties.data;
   /** Whether "Create property" shows: for editors, where the editor's dialogs are at hand. */
@@ -943,19 +921,10 @@ export class DataModelPropertiesComponent {
     );
   }
 
-  /** Shows only the links through the property, in the graph. */
-  filterOn(iri: string): void {
-    this.state.openSection(RouteConstants.graph, { [ONTOLOGY_MAP_PARAM.property]: localNameOf(iri) });
-  }
-
-  /** Asks the API whether the property can be deleted, for its menu to say so. */
+  /** Asks the API whether the property can be deleted, for its bin to say so; once per property. */
   checkDelete(propertyIri: string): void {
-    if (!this.canEdit() || !this.editing.canDelete) return;
-    this.deleteChecks.update(checks => {
-      const next = new Map(checks);
-      next.delete(propertyIri);
-      return next;
-    });
+    if (!this.canEdit() || !this.editing.canDelete || this._checked.has(propertyIri)) return;
+    this._checked.add(propertyIri);
     this.editing
       .canDeleteProperty(propertyIri)
       .pipe(takeUntilDestroyed(this._destroyRef))
@@ -968,21 +937,6 @@ export class DataModelPropertiesComponent {
       .deleteProperty(row.id, row.label)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe(deleted => deleted && this.panelIri() === row.id && this.openPanel(undefined));
-  }
-
-  /** The classes of the data model the property can be given to: those that don't have it. */
-  classesWithout(row: PropertyRow): { id: string; label: string }[] {
-    const has = new Set(row.usedBy);
-    return this.state
-      .classRows()
-      .filter(cls => !has.has(cls.id))
-      .map(cls => ({ id: cls.id, label: cls.label }))
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }
-
-  /** Gives the class the property, optional and single; the data model is then read again. */
-  addToClass(classIri: string, propertyIri: string): void {
-    this.editing.addExistingProperty(classIri, propertyIri);
   }
 
   /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
