@@ -979,7 +979,6 @@
       "colType": "Type",
       "colPointsTo": "Points to",
       "colUsedBy": "Used by",
-      "colStandard": "Standard term",
       "notUsedByClass": "Not used by any class",
       "noMatch": "Nothing matches the search.",
       "noLists": "This project has no lists yet.",

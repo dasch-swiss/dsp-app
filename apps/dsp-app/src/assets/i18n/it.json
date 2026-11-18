@@ -979,7 +979,6 @@
       "colType": "Tipo",
       "colPointsTo": "Punta a",
       "colUsedBy": "Usata da",
-      "colStandard": "Termine standard",
       "notUsedByClass": "Non usata da nessuna classe",
       "noMatch": "Nessun risultato per la ricerca.",
       "noLists": "Questo progetto non ha ancora liste.",

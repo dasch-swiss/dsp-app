@@ -68,7 +68,7 @@ const STORAGE_KEY = 'dsp-data-models-properties';
 /** The Points to filter's value for properties that are not links. */
 const NO_TARGET = 'none';
 
-type Column = 'property' | 'description' | 'type' | 'pointsTo' | 'usedBy' | 'standard';
+type Column = 'property' | 'description' | 'type' | 'pointsTo' | 'usedBy';
 type Density = 'condensed' | 'expanded';
 
 /** The translation key of each column's name. */
@@ -78,7 +78,6 @@ const COLUMN_LABELS: Record<Column, string> = {
   type: 'pages.dataModels2.colType',
   pointsTo: 'pages.dataModels2.colPointsTo',
   usedBy: 'pages.dataModels2.colUsedBy',
-  standard: 'pages.dataModels2.colStandard',
 };
 
 /**
@@ -465,55 +464,6 @@ const COLUMN_LABELS: Record<Column, string> = {
                 (classSelected)="showClass($event)" />
             </td>
           </ng-container>
-          <ng-container matColumnDef="standard">
-            <th
-              mat-header-cell
-              *matHeaderCellDef
-              class="movable"
-              cdkDrag
-              [style.width.px]="cols.widthOf('standard')"
-              [class.filtered]="standards().size">
-              <app-column-header
-                [columns]="cols"
-                column="standard"
-                [label]="columnLabels.standard"
-                [filtered]="!!standards().size"
-                menuPosition="before"
-                filterCy="data-model-properties-filter-standard"
-                resizeCy="data-model-properties-resize">
-                <span class="filter-head">
-                  <span class="filter-heading">{{ columnLabels.standard | translate }}</span>
-                  <button mat-button type="button" class="filter-all" (click)="toggleAll(standards, standardOptions())">
-                    {{ (allOn(standards(), standardOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
-                  </button>
-                </span>
-                @for (option of standardOptions(); track option) {
-                  <mat-checkbox [checked]="standards().has(option)" (change)="toggle(standards, option)">{{
-                    option
-                  }}</mat-checkbox>
-                }
-              </app-column-header>
-            </th>
-            <td mat-cell *matCellDef="let row">
-              <!-- The terms of standard vocabularies the property maps to; the vocabulary's name on hover. -->
-              <span class="terms">
-                @for (term of row.terms; track term.iri) {
-                  <span class="term" data-cy="data-model-properties-term" [title]="term.vocabulary + ' · ' + term.iri">
-                    <mat-icon>public</mat-icon>
-                    @for (part of term.short | highlight: searchTerms(); track $index) {
-                      @if (part.match) {
-                        <mark>{{ part.text }}</mark>
-                      } @else {
-                        <span>{{ part.text }}</span>
-                      }
-                    }
-                  </span>
-                } @empty {
-                  <span class="none">–</span>
-                }
-              </span>
-            </td>
-          </ng-container>
           <!-- Each property's actions, in a menu kept in view at the end of the row. -->
           <ng-container matColumnDef="actions" stickyEnd>
             <th mat-header-cell *matHeaderCellDef class="actions-cell" [style.width.px]="actionsWidth"></th>
@@ -715,34 +665,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         width: 24px;
       }
 
-      // A standard term, as it is commonly written.
-      .terms {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
-
-      .term {
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-        padding: 0 7px;
-        border: 1px solid $cool_gray_300;
-        border-radius: 10px;
-        background: $cool_gray_50;
-        font-family: 'Roboto Mono', ui-monospace, monospace;
-        font-size: 11.5px;
-        line-height: 18px;
-        color: $cool_gray_700;
-
-        mat-icon {
-          font-size: 12px;
-          width: 12px;
-          height: 12px;
-          color: $cool_gray_500;
-        }
-      }
-
       .none {
         color: $cool_gray_400;
       }
@@ -801,9 +723,9 @@ export class DataModelPropertiesComponent {
 
   readonly columns = new TableColumns<Column>({
     storageKey: STORAGE_KEY,
-    columns: ['property', 'description', 'type', 'pointsTo', 'usedBy', 'standard'],
-    defaultWidths: { property: 260, description: 360, type: 140, pointsTo: 200, usedBy: 300, standard: 180 },
-    minWidths: { property: 140, description: 140, type: 90, pointsTo: 110, usedBy: 130, standard: 110 },
+    columns: ['property', 'description', 'type', 'pointsTo', 'usedBy'],
+    defaultWidths: { property: 260, description: 360, type: 140, pointsTo: 200, usedBy: 300 },
+    minWidths: { property: 140, description: 140, type: 90, pointsTo: 110, usedBy: 130 },
   });
   readonly columnLabels = COLUMN_LABELS;
   readonly maxUsedBy = MAX_USED_BY;
@@ -828,11 +750,6 @@ export class DataModelPropertiesComponent {
   readonly types = signal(new Set<string>());
   readonly targets = signal(new Set<string>());
   readonly users = signal(new Set<string>());
-  readonly standards = signal(new Set<string>());
-  /** The standard terms the properties map to, as written. */
-  readonly standardOptions = computed(() =>
-    [...new Set(this.state.propertyRows().flatMap(row => row.terms.map(term => term.short)))].sort()
-  );
 
   /** What the search and the filters look for, marked in the names and descriptions. */
   readonly nameTerms = computed(() => [this.query(), this.namedAs()]);
@@ -875,8 +792,7 @@ export class DataModelPropertiesComponent {
       !this.describedAs().trim() &&
       !this.types().size &&
       !this.targets().size &&
-      !this.users().size &&
-      !this.standards().size
+      !this.users().size
   );
   readonly allExpanded = computed(() => this.collapsed().size === 0);
 
@@ -913,7 +829,6 @@ export class DataModelPropertiesComponent {
     const types = this.types();
     const targets = this.targets();
     const users = this.users();
-    const standards = this.standards();
     const shown = this.columns.shown();
     return this.state
       .propertyRows()
@@ -928,7 +843,6 @@ export class DataModelPropertiesComponent {
       .filter(row => !types.size || types.has(row.type))
       .filter(row => !targets.size || targets.has(row.linkTarget ?? NO_TARGET))
       .filter(row => !users.size || row.usedBy.some(user => users.has(user)))
-      .filter(row => !standards.size || row.terms.some(term => standards.has(term.short)))
       .filter(row => !folding || !this._folded(row));
   });
 
@@ -1116,8 +1030,6 @@ export class DataModelPropertiesComponent {
         return !!row.linkTarget && has(this.state.labelOf(row.linkTarget));
       case 'usedBy':
         return row.usedBy.some(iri => has(this.state.labelOf(iri)));
-      case 'standard':
-        return row.terms.some(term => has(term.short) || has(term.vocabulary));
     }
   }
 
