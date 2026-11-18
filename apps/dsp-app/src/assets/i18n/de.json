@@ -894,11 +894,11 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
-      "cardinalityChip": "0–1 / 1–n",
+      "cardinalityChip": "0–1, 0–n, 1, 1–n",
       "cardinalityChipTip": "Die Kardinalität als 0–1, 0–n, 1 oder 1–n, wie bisher",
-      "cardinalityLayout": "Mehrere Werte und Erforderlich anzeigen",
-      "cardinalityColumns": "Spalten",
-      "cardinalityRows": "Auf jeder Zeile",
+      "cardinalityLayout": "Mehrere Werte und Erforderlich",
+      "cardinalityColumns": "Kontrollkästchen in Spalten",
+      "cardinalityRows": "Kontrollkästchen auf jeder Zeile",
       "cardinalityColumnsTip": "Zwei Spalten mit Kontrollkästchen, einmal oben auf jeder Karte benannt",
       "cardinalityRowsTip": "Die zwei Kontrollkästchen mit ihrem Text bei jeder Eigenschaft, wie im Tab Datenmodelle",
       "dataModels": "Datenmodelle",

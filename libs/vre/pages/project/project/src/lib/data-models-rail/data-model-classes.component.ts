@@ -11,12 +11,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultClass, DefaultResourceClasses, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -44,8 +42,6 @@ import { rememberedSignal } from './remembered-signal';
   imports: [
     DataModelClassCardsComponent,
     MatButton,
-    MatButtonToggle,
-    MatButtonToggleGroup,
     MatFormField,
     MatIcon,
     MatInput,
@@ -54,7 +50,6 @@ import { rememberedSignal } from './remembered-signal';
     MatMenuTrigger,
     MatPrefix,
     PropertyPanelComponent,
-    MatTooltip,
     ResourceClassPanelComponent,
     TranslatePipe,
   ],
@@ -100,27 +95,39 @@ import { rememberedSignal } from './remembered-signal';
           </mat-menu>
         }
         <div class="tools">
-          <!-- "Multiple values" and "Required": columns named once, or the words on each row, as in the Data models tab. -->
-          <mat-button-toggle-group
-            class="cardinality-layout"
-            hideSingleSelectionIndicator
-            data-cy="data-model-classes-cardinality-layout"
-            [attr.aria-label]="r + '.cardinalityLayout' | translate"
-            [value]="cardinalityLayout()"
-            (change)="cardinalityLayout.set($event.value)">
-            <mat-button-toggle value="columns" [matTooltip]="r + '.cardinalityColumnsTip' | translate">
-              <mat-icon>view_column</mat-icon>
-              {{ r + '.cardinalityColumns' | translate }}
-            </mat-button-toggle>
-            <mat-button-toggle value="rows" [matTooltip]="r + '.cardinalityRowsTip' | translate">
-              <mat-icon>view_agenda</mat-icon>
-              {{ r + '.cardinalityRows' | translate }}
-            </mat-button-toggle>
-            <mat-button-toggle value="chip" [matTooltip]="r + '.cardinalityChipTip' | translate">
-              <mat-icon>label</mat-icon>
-              {{ r + '.cardinalityChip' | translate }}
-            </mat-button-toggle>
-          </mat-button-toggle-group>
+          <!-- View options, as in the diagram: how the cards show "Multiple values" and "Required". -->
+          <button
+            mat-button
+            type="button"
+            class="view-options"
+            data-cy="data-model-classes-view-options"
+            [matMenuTriggerFor]="viewMenu">
+            <mat-icon>tune</mat-icon>
+            {{ 'pages.dataBrowser.viewOptions.title' | translate }}
+          </button>
+          <mat-menu #viewMenu="matMenu" xPosition="before">
+            <span class="menu-heading">{{ r + '.cardinalityLayout' | translate }}</span>
+            @for (option of cardinalityLayouts; track option.value) {
+              @let chosen = cardinalityLayout() === option.value;
+              <!-- Choosing keeps the menu open, to compare the three. -->
+              <button
+                mat-menu-item
+                type="button"
+                class="view-entry"
+                role="menuitemradio"
+                [attr.aria-checked]="chosen"
+                [attr.data-cy]="'data-model-classes-cardinality-' + option.value"
+                (click)="$event.stopPropagation(); cardinalityLayout.set(option.value)">
+                <mat-icon [class.chosen]="chosen">{{
+                  chosen ? 'radio_button_checked' : 'radio_button_unchecked'
+                }}</mat-icon>
+                <span class="view-item">
+                  <span>{{ r + '.' + option.key | translate }}</span>
+                  <span class="view-hint">{{ r + '.' + option.key + 'Tip' | translate }}</span>
+                </span>
+              </button>
+            }
+          </mat-menu>
           @if (rows().length) {
             <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAllCards()">
               <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
@@ -213,6 +220,51 @@ import { rememberedSignal } from './remembered-signal';
         white-space: nowrap;
       }
 
+      .view-options {
+        height: 36px;
+        font-size: 13px;
+      }
+
+      // View options, as the diagram's: a heading, then each choice with its hint under it.
+      .menu-heading {
+        display: block;
+        padding: 8px 16px 4px;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: $cool_gray_500;
+      }
+
+      .view-entry {
+        --mat-menu-item-label-text-size: 13px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          margin-right: 12px;
+
+          &.chosen {
+            color: $primary;
+          }
+        }
+      }
+
+      .view-item {
+        display: flex;
+        flex-direction: column;
+        max-width: 280px;
+        white-space: normal;
+        line-height: 1.3;
+      }
+
+      .view-hint {
+        font-size: 12px;
+        color: $cool_gray_500;
+      }
+
       // On a narrow screen the search gives room first, down to a usable width.
       .head .search {
         flex: 0 1 280px;
@@ -269,6 +321,12 @@ export class DataModelClassesComponent {
     'columns',
     stored => (stored === 'columns' || stored === 'rows' || stored === 'chip' ? stored : undefined)
   );
+  /** The ways the cards can show it, as View options lists them. */
+  readonly cardinalityLayouts: { value: CardinalityLayout; key: string }[] = [
+    { value: 'columns', key: 'cardinalityColumns' },
+    { value: 'rows', key: 'cardinalityRows' },
+    { value: 'chip', key: 'cardinalityChip' },
+  ];
   /** The cards' least width: room for the checkboxes' words on each row, less for columns, least for the chip. */
   readonly cardWidth = computed(() => ({ rows: 420, columns: 350, chip: 320 })[this.cardinalityLayout()]);
 

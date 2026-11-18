@@ -894,11 +894,11 @@
       "links": "liens"
     },
     "dataModels2": {
-      "cardinalityChip": "0–1 / 1–n",
+      "cardinalityChip": "0–1, 0–n, 1, 1–n",
       "cardinalityChipTip": "La cardinalité en 0–1, 0–n, 1 ou 1–n, comme avant",
-      "cardinalityLayout": "Afficher Valeurs multiples et Obligatoire",
-      "cardinalityColumns": "Colonnes",
-      "cardinalityRows": "Sur chaque ligne",
+      "cardinalityLayout": "Valeurs multiples et Obligatoire",
+      "cardinalityColumns": "Cases en colonnes",
+      "cardinalityRows": "Cases sur chaque ligne",
       "cardinalityColumnsTip": "Deux colonnes de cases à cocher, nommées une fois en haut de chaque carte",
       "cardinalityRowsTip": "Les deux cases avec leur texte sur chaque propriété, comme dans l’onglet Modèles de données",
       "dataModels": "Modèles de données",
