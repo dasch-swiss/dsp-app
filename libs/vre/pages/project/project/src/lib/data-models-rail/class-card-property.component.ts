@@ -30,7 +30,6 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
   host: {
     class: 'prop',
     'data-cy': 'data-model-class-card-property',
-    '[class.link]': 'linkChips() && !!property().linkTarget',
   },
   template: `
     @let r = 'pages.dataModels2';
@@ -42,28 +41,15 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       }
       @if (property.linkTarget; as target) {
         <!-- Opens the target's card when it shows; plain text when the search hides it, or it is in another model. -->
-        @if (linkChips()) {
-          <button
-            type="button"
-            class="target-chip"
-            data-cy="data-model-class-card-target"
-            [class.off]="!reachable()"
-            [disabled]="!reachable()"
-            [style.--c]="targetColor() ?? '#9ca3af'"
-            (click)="goTo.emit(target)">
-            {{ targetLabel() }}
-          </button>
-        } @else {
-          <button
-            type="button"
-            class="target"
-            data-cy="data-model-class-card-target"
-            [class.off]="!reachable()"
-            [disabled]="!reachable()"
-            (click)="goTo.emit(target)">
-            → {{ targetLabel() }}
-          </button>
-        }
+        <button
+          type="button"
+          class="target"
+          data-cy="data-model-class-card-target"
+          [class.off]="!reachable()"
+          [disabled]="!reachable()"
+          (click)="goTo.emit(target)">
+          → {{ targetLabel() }}
+        </button>
       }
     </span>
     <span class="local">
@@ -153,10 +139,6 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         color: $cool_gray_500;
       }
 
-      :host(.link) .type {
-        color: $primary;
-      }
-
       .name {
         min-width: 0;
         overflow: hidden;
@@ -171,8 +153,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         border-radius: 2px;
       }
 
-      .target,
-      .target-chip {
+      .target {
         border: 0;
         font: inherit;
         cursor: pointer;
@@ -190,33 +171,6 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         &:not(.off):hover {
           color: $primary;
           text-decoration: underline;
-        }
-      }
-
-      // A link's target in its family's colour.
-      .target-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        margin-left: 4px;
-        padding: 0 7px 0 5px;
-        border-radius: 99px;
-        background: color-mix(in srgb, var(--c) 22%, white);
-        font-size: 11px;
-        line-height: 16px;
-        color: $cool_gray_900;
-        vertical-align: 1px;
-
-        &::before {
-          content: '';
-          width: 6px;
-          height: 6px;
-          border-radius: 2px;
-          background: var(--c);
-        }
-
-        &:not(.off):hover {
-          box-shadow: 0 0 0 1px var(--c);
         }
       }
 
@@ -352,10 +306,6 @@ export class ClassCardPropertyComponent {
   readonly property = input.required<CardProperty>();
   /** A class's label from its IRI, for the link target. */
   readonly labelOf = input.required<(iri: string) => string>();
-  /** Colour per class, its family's, for the target chip. */
-  readonly colors = input.required<Map<string, string>>();
-  /** Whether the link's target shows as a chip in its family's colour, rather than as "→ class". */
-  readonly linkChips = input(false);
   /** Whether the target's card shows, so the target can open it. */
   readonly reachable = input(false);
   /** The text searched for, marked where it shows. */
@@ -391,10 +341,6 @@ export class ClassCardPropertyComponent {
   readonly targetLabel = computed(() => {
     const target = this.property().linkTarget;
     return target ? this.labelOf()(target) : '';
-  });
-  readonly targetColor = computed(() => {
-    const target = this.property().linkTarget;
-    return target ? this.colors().get(target) : undefined;
   });
   /** The whole line, for when the card is too narrow for it. */
   readonly tip = computed(() => {

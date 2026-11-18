@@ -149,8 +149,6 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                     [cdkDragDisabled]="!drag"
                     [property]="property"
                     [labelOf]="labelOfIri"
-                    [colors]="colors()"
-                    [linkChips]="linkChips()"
                     [reachable]="!!property.linkTarget && isNavigable(property.linkTarget)"
                     [canEdit]="canEdit()"
                     [draggable]="drag"
@@ -166,15 +164,7 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                 }
               </ul>
             </ng-template>
-            <!-- Values, then the links under their own heading, when the cards show them apart. -->
-            @if (groupLinks() && values().length && links().length) {
-              <ng-container *ngTemplateOutlet="ownList; context: { $implicit: values() }" />
-              <div class="links-heading" data-cy="data-model-class-card-links">
-                <mat-icon>link</mat-icon>
-                {{ 'pages.dataModels2.links' | translate }} <span class="n">{{ links().length }}</span>
-              </div>
-              <ng-container *ngTemplateOutlet="ownList; context: { $implicit: links() }" />
-            } @else if (own().length) {
+            @if (own().length) {
               <ng-container *ngTemplateOutlet="ownList; context: { $implicit: own() }" />
             } @else if (!inheritedRows().length) {
               <p class="none">{{ 'pages.dataModels2.noProperties' | translate }}</p>
@@ -200,8 +190,6 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                         appClassCardProperty
                         [property]="property"
                         [labelOf]="labelOfIri"
-                        [colors]="colors()"
-                        [linkChips]="linkChips()"
                         [reachable]="!!property.linkTarget && isNavigable(property.linkTarget)"
                         [canEdit]="canEdit()"
                         (mouseenter)="propertyHovered.emit(property.id)"
@@ -402,33 +390,6 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
         transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
       }
 
-      // "Links" over their group, as on a card.
-      .links-heading {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin: 0 -16px;
-        padding: 4px 16px 2px;
-        border-top: 1px solid $cool_gray_100;
-        background: $cool_gray_50;
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
-
-        .n {
-          font-weight: 400;
-          letter-spacing: 0;
-        }
-
-        mat-icon {
-          font-size: 14px;
-          width: 14px;
-          height: 14px;
-        }
-      }
-
       .inherited {
         margin: 0 -16px;
         background: $cool_gray_50;
@@ -511,10 +472,6 @@ export class ResourceClassPanelComponent {
   private readonly _notification = inject(NotificationService);
   private readonly _translate = inject(TranslateService);
 
-  /** Whether a link's target shows as a chip in its family's colour, as the cards' View options say. */
-  readonly linkChips = input(false);
-  /** Whether the links show apart from the values, under their own heading, as the cards' View options say. */
-  readonly groupLinks = input(false);
   /** The data model the class belongs to. */
   readonly graph = input.required<DataModelGraph>();
   /** IRI of the class to describe. */
@@ -603,8 +560,6 @@ export class ResourceClassPanelComponent {
     }
     return own;
   });
-  readonly values = computed(() => this.own().filter(property => !property.linkTarget));
-  readonly links = computed(() => this.own().filter(property => property.linkTarget));
   /** The properties it has from its superclass, as rows of the cards, folded under one row. */
   readonly inheritedRows = computed(() =>
     this.properties()

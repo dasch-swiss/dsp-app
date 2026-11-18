@@ -15,7 +15,6 @@ import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultClass, DefaultResourceClasses, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -29,9 +28,6 @@ import { DataModelClassCardsComponent, PropertyOrder } from './data-model-class-
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
-import { rememberedSignal } from './remembered-signal';
-
-const STORAGE_KEY = 'dsp-data-models-classes';
 
 /**
  * Data models 2 › Classes: the data model's classes as cards, one per class with its properties, as the Data models tab
@@ -51,7 +47,6 @@ const STORAGE_KEY = 'dsp-data-models-classes';
     MatMenuItem,
     MatMenuTrigger,
     MatPrefix,
-    MatSlideToggle,
     PropertyPanelComponent,
     ResourceClassPanelComponent,
     TranslatePipe,
@@ -103,38 +98,6 @@ const STORAGE_KEY = 'dsp-data-models-classes';
               <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
               {{ (allCardsOpen() ? r + '.collapseAll' : r + '.expandAll') | translate }}
             </button>
-            <!-- How the cards show links: apart from the values, and their targets in colour. -->
-            <button
-              mat-button
-              type="button"
-              class="view-options"
-              data-cy="data-model-class-cards-view-options"
-              [matMenuTriggerFor]="cardsView">
-              <mat-icon>tune</mat-icon>
-              {{ 'pages.dataBrowser.viewOptions.title' | translate }}
-            </button>
-            <mat-menu #cardsView="matMenu" xPosition="before">
-              <div
-                class="cards-view"
-                (click)="$event.stopPropagation()"
-                (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
-                <span class="view-heading">{{ r + '.links' | translate }}</span>
-                <mat-slide-toggle
-                  class="view-toggle"
-                  data-cy="data-model-class-cards-group-links"
-                  [checked]="groupLinks()"
-                  (change)="groupLinks.set($event.checked)">
-                  {{ r + '.groupLinks' | translate }}
-                </mat-slide-toggle>
-                <mat-slide-toggle
-                  class="view-toggle"
-                  data-cy="data-model-class-cards-link-chips"
-                  [checked]="linkChips()"
-                  (change)="linkChips.set($event.checked)">
-                  {{ r + '.linkChips' | translate }}
-                </mat-slide-toggle>
-              </div>
-            </mat-menu>
           }
         </div>
       </div>
@@ -147,8 +110,6 @@ const STORAGE_KEY = 'dsp-data-models-classes';
         [labelOf]="labelOf"
         [selected]="panelIri()"
         [canEdit]="state.canEdit()"
-        [groupLinks]="groupLinks()"
-        [linkChips]="linkChips()"
         [canReorder]="editing.canReorder"
         [query]="query()"
         [(folded)]="foldedCards"
@@ -171,8 +132,6 @@ const STORAGE_KEY = 'dsp-data-models-classes';
             [subclassLabel]="t + '.subclassOf' | translate"
             [canEdit]="state.canEdit()"
             [colors]="state.colors()"
-            [linkChips]="linkChips()"
-            [groupLinks]="groupLinks()"
             (classSelected)="openPanel($event)"
             (closed)="openPanel(undefined)"
             (browse)="browse($event)"
@@ -231,31 +190,6 @@ const STORAGE_KEY = 'dsp-data-models-classes';
         flex: 0 1 280px;
         min-width: 140px;
       }
-
-      .view-heading {
-        padding: 8px 0 4px;
-        font-size: 12px;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
-      }
-
-      .view-toggle {
-        padding: 4px 0 6px;
-        font-size: 13px;
-      }
-
-      .view-options {
-        font-size: 13px;
-      }
-
-      .cards-view {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        min-width: 220px;
-        padding: 4px 12px;
-      }
     `,
   ],
 })
@@ -274,11 +208,6 @@ export class DataModelClassesComponent {
     const rows = this.rows();
     return rows.length > 0 && rows.every(row => !this.foldedCards().has(row.id));
   });
-
-  /** Whether the cards show a class's values, then its links, apart; off at first; remembered in this browser. */
-  readonly groupLinks = rememberedSignal(`${STORAGE_KEY}-group-links`, false, stored => stored === 'true');
-  /** Whether the cards show a link's target as a chip in its family's colour; off at first; remembered. */
-  readonly linkChips = rememberedSignal(`${STORAGE_KEY}-link-chips`, false, stored => stored === 'true');
 
   /** Saves the form order a property was dragged to on a card; the data model is then read again. */
   reorderProperties({ classIri, propertyIris }: PropertyOrder): void {

@@ -42,9 +42,6 @@ const FLASH_MS = 1500;
 interface Card {
   row: ClassRow;
   own: CardProperty[];
-  /** The own properties that hold values, and those that link to a resource, each in form order. */
-  values: CardProperty[];
-  links: CardProperty[];
   inherited: CardProperty[];
   /** The label of the superclass the inherited ones come from, when it is a class of the data model. */
   parent?: string;
@@ -61,8 +58,7 @@ export interface PropertyOrder {
  * file its resources carry, then its properties in their form order, one line each. A subclass
  * lists its own properties; those from its superclass fold into one row. Past {@link CARD_PROPERTIES}, "Show more" opens
  * the rest. A link's target opens its card. The text searched for is marked, and the rows it is in are opened. Editors
- * drag a class's own properties to another place. As view options, the values and the links can show apart, and a
- * link's target as a chip in its family's colour. A card folds to its title. Its menu edits the class, or shows
+ * drag a class's own properties to another place. A card folds to its title. Its menu edits the class, or shows
  * its details in the side panel.
  */
 @Component({
@@ -104,8 +100,6 @@ export interface PropertyOrder {
             [cdkDragDisabled]="!drag"
             [property]="property"
             [labelOf]="labelOf()"
-            [colors]="colors()"
-            [linkChips]="linkChips()"
             [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
             [query]="query()"
             [canEdit]="canEdit()"
@@ -232,17 +226,7 @@ export interface PropertyOrder {
             </button>
           </header>
           @if (open) {
-            <!-- Values, then the links under their own heading, each in form order, when asked apart. -->
-            @if (groupLinks() && card.values.length && card.links.length) {
-              <ng-container
-                *ngTemplateOutlet="capped; context: { $implicit: card.values, key: row.id + ' values', card }" />
-              <div class="group" data-cy="data-model-class-card-links">
-                <mat-icon>link</mat-icon>
-                {{ r + '.links' | translate }} <span class="n">{{ card.links.length }}</span>
-              </div>
-              <ng-container
-                *ngTemplateOutlet="capped; context: { $implicit: card.links, key: row.id + ' links', card }" />
-            } @else if (card.own.length) {
+            @if (card.own.length) {
               <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.own, key: row.id, card }" />
             } @else if (!card.inherited.length) {
               <p class="none">{{ r + '.noProperties' | translate }}</p>
@@ -266,8 +250,6 @@ export interface PropertyOrder {
                         appClassCardProperty
                         [property]="property"
                         [labelOf]="labelOf()"
-                        [colors]="colors()"
-                        [linkChips]="linkChips()"
                         [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
                         [query]="query()"
                         [canEdit]="canEdit()"
@@ -487,32 +469,6 @@ export interface PropertyOrder {
         transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
       }
 
-      // "Links" over their group.
-      .group {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 16px 2px;
-        border-top: 1px solid $cool_gray_100;
-        background: $cool_gray_50;
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
-
-        .n {
-          font-weight: 400;
-          letter-spacing: 0;
-        }
-
-        mat-icon {
-          font-size: 14px;
-          width: 14px;
-          height: 14px;
-        }
-      }
-
       // "Show n more" and the inherited row.
       .more {
         display: flex;
@@ -609,10 +565,6 @@ export class DataModelClassCardsComponent {
   readonly canEdit = input(false);
   /** Whether editors may drag a class's own properties to another place, where the editor can save it. */
   readonly canReorder = input(false);
-  /** Whether a class's own properties show as values, then links, rather than all in form order. */
-  readonly groupLinks = input(false);
-  /** Whether a link's target shows as a chip in its family's colour, rather than as "→ class". */
-  readonly linkChips = input(false);
   /** The text searched for: marked where it shows, and the rows it is in opened. */
   readonly query = input('');
 
@@ -657,8 +609,6 @@ export class DataModelClassCardsComponent {
       return {
         row,
         own,
-        values: own.filter(property => !property.linkTarget),
-        links: own.filter(property => property.linkTarget),
         inherited: row.propertyList.filter(property => fromParent.has(property.id)),
         parent: parent?.label,
       };
@@ -672,17 +622,9 @@ export class DataModelClassCardsComponent {
     if (!query.trim()) return opened;
     const has = (property: CardProperty) =>
       hasText(property.label, query) || hasText(property.id.substring(property.id.lastIndexOf('#') + 1), query);
-    const grouped = this.groupLinks();
     for (const card of this.cards()) {
       const id = card.row.id;
-      const lists: [string, CardProperty[]][] =
-        grouped && card.values.length && card.links.length
-          ? [
-              [`${id} values`, card.values],
-              [`${id} links`, card.links],
-            ]
-          : [[id, card.own]];
-      for (const [key, list] of lists) if (list.slice(CARD_PROPERTIES).some(has)) opened.add(key);
+      if (card.own.slice(CARD_PROPERTIES).some(has)) opened.add(id);
       if (card.inherited.some(has)) opened.add(`${id} inherited`);
     }
     return opened;
