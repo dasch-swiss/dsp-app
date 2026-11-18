@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   signal,
@@ -17,6 +18,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
+import { ActivatedRoute } from '@angular/router';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -24,6 +26,7 @@ import { catchError, filter, forkJoin, map, Observable, of, switchMap } from 'rx
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
+import { VOCABULARY_PARAM } from './data-models-overview.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
@@ -496,6 +499,15 @@ export class DataModelListsComponent {
   constructor() {
     // Arriving on the page, typing finds a vocabulary or a value.
     afterNextRender(() => this._search()?.nativeElement.focus());
+    // Arriving from the Overview, the vocabulary picked there shows unfolded, once read.
+    let opening = inject(ActivatedRoute).snapshot.queryParamMap.get(VOCABULARY_PARAM);
+    effect(() => {
+      const vocabularies = this.vocabularies();
+      if (!opening || !vocabularies) return;
+      const picked = vocabularies.find(vocabulary => vocabulary.id.split('/').pop() === opening);
+      opening = null;
+      if (picked) this.expanded.update(expanded => new Set(expanded).add(picked.id));
+    });
   }
 
   toggle(row: VocabularyRow): void {

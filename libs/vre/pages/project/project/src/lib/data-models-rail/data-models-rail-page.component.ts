@@ -1,13 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatDivider } from '@angular/material/divider';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemMeta, MatNavList } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import {
   ActivatedRoute,
   IsActiveMatchOptions,
+  NavigationEnd,
   Router,
   RouterLink,
   RouterLinkActive,
@@ -16,12 +17,15 @@ import {
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
+import { filter, map, startWith } from 'rxjs';
+import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { DataModelsRailState } from './data-models-rail-state';
 
 /**
- * The Data models 2 tab: a rail to pick a data model and a section of it (the graph, its classes, its properties, the
- * project's lists), the section beside it.
+ * The Data models 2 tab: first the Overview, as the Data models tab's page, then, for a data model opened there, a rail
+ * to go back, pick another data model and a section of it (its classes, its properties, its diagram), the section
+ * beside it. Controlled vocabularies, opened from the Overview, show with the way back only.
  */
 @Component({
   selector: 'app-data-models-rail-page',
@@ -29,8 +33,8 @@ import { DataModelsRailState } from './data-models-rail-state';
   providers: [DataModelsRailState],
   imports: [
     MatButton,
-    MatDivider,
     MatIcon,
+    MatIconButton,
     MatListItem,
     MatListItemIcon,
     MatListItemMeta,
@@ -47,65 +51,106 @@ import { DataModelsRailState } from './data-models-rail-state';
   template: `
     @let r = 'pages.dataModels2';
     <div class="page">
-      <aside class="rail" data-cy="data-models-rail">
-        @if (state.selected(); as selected) {
-          @if (state.ontologies().length > 1) {
-            <button
-              mat-stroked-button
-              class="picker"
-              data-cy="data-models-rail-picker"
-              [attr.aria-label]="'pages.ontologyMap.dataModel' | translate"
-              [matMenuTriggerFor]="models">
-              <b>{{ selected.label }}</b>
-              <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
-            </button>
-            <mat-menu #models="matMenu">
-              @for (ontology of state.ontologies(); track ontology.iri) {
-                <button mat-menu-item (click)="show(ontology.iri)">{{ ontology.label }}</button>
-              }
-            </mat-menu>
-          } @else {
-            <span class="picker static" data-cy="data-models-rail-picker">{{ selected.label }}</span>
-          }
-        }
+      @if (section() !== overview) {
+        <aside class="rail" data-cy="data-models-rail">
+          <!-- Back to every data model and vocabulary of the project. -->
+          <mat-nav-list class="back">
+            <a mat-list-item class="rail-link" data-cy="data-models-rail-back" [routerLink]="overview">
+              <mat-icon matListItemIcon>arrow_back</mat-icon>
+              {{ r + '.backToOverview' | translate }}
+            </a>
+          </mat-nav-list>
 
-        <!-- The picked data model's own views, under its picker. -->
-        <mat-nav-list>
-          @for (section of modelSections(); track section.path) {
-            <ng-container [ngTemplateOutlet]="link" [ngTemplateOutletContext]="{ $implicit: section }" />
-          }
-        </mat-nav-list>
-
-        <!-- What the project's data models share, whichever is picked. -->
-        <mat-divider class="divider" />
-        <span class="heading">{{ r + '.project' | translate }}</span>
-        <mat-nav-list>
-          @for (section of projectSections(); track section.path) {
-            <ng-container [ngTemplateOutlet]="link" [ngTemplateOutletContext]="{ $implicit: section }" />
-          }
-        </mat-nav-list>
-
-        <ng-template #link let-section>
-          <a
-            mat-list-item
-            routerLinkActive
-            #active="routerLinkActive"
-            [routerLinkActiveOptions]="activeOptions"
-            class="rail-link"
-            [class.current]="active.isActive"
-            [activated]="active.isActive"
-            [attr.aria-current]="active.isActive ? 'page' : null"
-            [routerLink]="section.path"
-            [queryParams]="state.modelParam()"
-            [attr.data-cy]="'data-models-rail-' + section.path">
-            <mat-icon matListItemIcon>{{ section.icon }}</mat-icon>
-            {{ r + '.' + section.path | translate }}
-            @if (section.count !== undefined) {
-              <span matListItemMeta class="count">{{ section.count }}</span>
+          @if (section() !== lists) {
+            @if (state.selected(); as selected) {
+              <div class="model">
+                @if (state.ontologies().length > 1) {
+                  <button
+                    mat-stroked-button
+                    class="picker"
+                    data-cy="data-models-rail-picker"
+                    [attr.aria-label]="'pages.ontologyMap.dataModel' | translate"
+                    [matMenuTriggerFor]="models">
+                    <b>{{ selected.label }}</b>
+                    <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+                  </button>
+                  <mat-menu #models="matMenu">
+                    @for (ontology of state.ontologies(); track ontology.iri) {
+                      <button mat-menu-item (click)="show(ontology.iri)">{{ ontology.label }}</button>
+                    }
+                  </mat-menu>
+                } @else {
+                  <span class="picker static" data-cy="data-models-rail-picker">{{ selected.label }}</span>
+                }
+                <!-- For editors: the data model's own label and comment, and deleting it once nothing uses it. -->
+                @if (state.canEdit() && editing.canEditDataModels) {
+                  <button
+                    mat-icon-button
+                    type="button"
+                    class="model-menu"
+                    data-cy="data-models-rail-model-menu"
+                    [attr.aria-label]="r + '.dataModelActions' | translate: { model: selected.label }"
+                    [matMenuTriggerFor]="modelMenu"
+                    (menuOpened)="checkDelete(selected.iri)">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #modelMenu="matMenu">
+                    <button mat-menu-item type="button" data-cy="data-models-rail-edit-model" (click)="editModel()">
+                      <mat-icon>edit</mat-icon>
+                      {{ r + '.editDataModel' | translate }}
+                    </button>
+                    @let check = deleteCheck();
+                    <button
+                      mat-menu-item
+                      type="button"
+                      data-cy="data-models-rail-delete-model"
+                      [disabled]="!check?.canDo"
+                      (click)="deleteModel(selected.iri, selected.label)">
+                      <mat-icon>delete</mat-icon>
+                      <span class="menu-texts">
+                        {{ r + '.deleteDataModel' | translate }}
+                        @if (!check) {
+                          <small>{{ r + '.checkingDelete' | translate }}</small>
+                        } @else if (!check.canDo) {
+                          <small>{{ r + '.cannotDeleteDataModel' | translate }}</small>
+                        }
+                      </span>
+                    </button>
+                  </mat-menu>
+                }
+              </div>
             }
-          </a>
-        </ng-template>
-      </aside>
+
+            <!-- The picked data model's own views, under its picker. -->
+            <mat-nav-list>
+              @for (section of modelSections(); track section.path) {
+                <ng-container [ngTemplateOutlet]="link" [ngTemplateOutletContext]="{ $implicit: section }" />
+              }
+            </mat-nav-list>
+          }
+
+          <ng-template #link let-section>
+            <a
+              mat-list-item
+              routerLinkActive
+              #active="routerLinkActive"
+              [routerLinkActiveOptions]="activeOptions"
+              class="rail-link"
+              [class.current]="active.isActive"
+              [activated]="active.isActive"
+              [attr.aria-current]="active.isActive ? 'page' : null"
+              [routerLink]="section.path"
+              [queryParams]="state.modelParam()"
+              [attr.data-cy]="'data-models-rail-' + section.path">
+              <mat-icon matListItemIcon>{{ section.icon }}</mat-icon>
+              {{ r + '.' + section.path | translate }}
+              @if (section.count !== undefined) {
+                <span matListItemMeta class="count">{{ section.count }}</span>
+              }
+            </a>
+          </ng-template>
+        </aside>
+      }
 
       <main class="content">
         <router-outlet />
@@ -212,17 +257,32 @@ import { DataModelsRailState } from './data-models-rail-state';
         }
       }
 
-      .divider {
-        margin: 12px 4px 0;
+      .back {
+        margin-bottom: 10px;
       }
 
-      .heading {
-        display: block;
-        padding: 12px 12px 4px;
-        font-size: 11px;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
+      // The picker and the data model's menu on one line.
+      .model {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        margin-bottom: 10px;
+
+        .picker {
+          flex: 1;
+          min-width: 0;
+          width: auto;
+          margin: 0 0 0 4px;
+        }
+      }
+
+      .menu-texts {
+        display: flex;
+        flex-direction: column;
+
+        small {
+          color: $cool_gray_500;
+        }
       }
 
       .count {
@@ -253,6 +313,23 @@ export class DataModelsRailPageComponent {
     fragment: 'ignored',
   };
 
+  readonly editing = injectDataModelEditing();
+  private readonly _destroyRef = inject(DestroyRef);
+  readonly overview = RouteConstants.overview;
+  readonly lists = RouteConstants.lists;
+
+  /** The section shown: the Overview, a data model's section, or Controlled vocabularies. */
+  readonly section = toSignal(
+    this._router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      startWith(null),
+      map(() => this._route.firstChild?.snapshot.url[0]?.path)
+    )
+  );
+
+  /** Whether the data model shown can be deleted, asked once its menu opens. */
+  readonly deleteCheck = signal<CanDo | undefined>(undefined);
+
   /**
    * The views of the data model picked: its resource classes first, as the Data models tab lists them, its properties,
    * then its diagram.
@@ -263,10 +340,27 @@ export class DataModelsRailPageComponent {
     { path: RouteConstants.graph, icon: 'hub', count: undefined },
   ]);
 
-  /** The lists belong to the project, not to a data model: every data model of the project can use them. */
-  readonly projectSections = computed(() => [
-    { path: RouteConstants.lists, icon: 'format_list_bulleted', count: this.state.lists()?.length },
-  ]);
+  checkDelete(ontologyIri: string): void {
+    this.deleteCheck.set(undefined);
+    this.editing
+      .canDeleteDataModel(ontologyIri)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(check => this.deleteCheck.set(check));
+  }
+
+  editModel(): void {
+    const selected = this.state.selected();
+    if (!selected) return;
+    this.editing.editDataModel({ ...selected, comment: this.state.commentOf(selected.iri) });
+  }
+
+  /** Deletes the data model once confirmed, then goes back to the Overview. */
+  deleteModel(ontologyIri: string, label: string): void {
+    this.editing
+      .deleteDataModel(ontologyIri, label)
+      .pipe(filter(Boolean), takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => this._router.navigate([RouteConstants.overview], { relativeTo: this._route }));
+  }
 
   /** Shows another data model in the same section, with no panel open and no filter. */
   show(ontologyIri: string): void {

@@ -7,6 +7,7 @@ import {
   KnoraApiConnection,
   ListInfoResponse,
   ListResponse,
+  OntologyMetadata,
   ResourceClassDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -38,6 +39,9 @@ import { DIALOG_LARGE, DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, combineLatest, filter, finalize, map, Observable, of, switchMap, take, takeUntil } from 'rxjs';
 import { OntologyEditService } from '../services/ontology-edit.service';
+import { CreateOntologyFormDialogComponent } from './ontology-form/create-ontology-form-dialog.component';
+import { EditOntologyFormDialogComponent } from './ontology-form/edit-ontology-form-dialog.component';
+import { UpdateOntologyData } from './ontology-form/ontology-form.type';
 import { EditPropertyFormDialogComponent } from './property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData, EditPropertyDialogData } from './property-form/property-form.type';
 import { CreateResourceClassDialogComponent } from './resource-class-form/create-resource-class-dialog.component';
@@ -376,6 +380,59 @@ export class DataModelEditorService implements DataModelEditor {
       .pipe(takeUntil(ref.afterClosed()))
       .subscribe(() => ref.close());
     return ref.afterClosed();
+  }
+
+  createDataModel(): Observable<string | undefined> {
+    return this._closedByClickOnly(
+      this._dialog.open<CreateOntologyFormDialogComponent, null, OntologyMetadata>(
+        CreateOntologyFormDialogComponent,
+        DspDialogConfig.dialogDrawerConfig(null, true)
+      )
+    ).pipe(map(ontology => ontology?.id));
+  }
+
+  editDataModel(model: { iri: string; label: string; comment?: string }): Observable<boolean> {
+    return this._withEditing(model.iri, (editing, injector) =>
+      editing.currentOntology$.pipe(
+        filter(ontology => !!ontology),
+        take(1),
+        switchMap(() =>
+          this._closedByClickOnly(
+            this._dialog.open<EditOntologyFormDialogComponent, UpdateOntologyData, OntologyMetadata>(
+              EditOntologyFormDialogComponent,
+              {
+                ...DspDialogConfig.dialogDrawerConfig(
+                  { id: model.iri, label: model.label, comment: model.comment ?? '' },
+                  true
+                ),
+                injector,
+              }
+            )
+          )
+        )
+      )
+    );
+  }
+
+  canDeleteDataModel(ontologyIri: string): Observable<CanDo> {
+    return this._canDo(this._api.v2.onto.canDeleteOntology(ontologyIri));
+  }
+
+  deleteDataModel(ontologyIri: string, label: string): Observable<boolean> {
+    return this._confirm
+      .afterConfirmation(this._translate.instant('pages.dataModels2.deleteDataModelConfirm', { model: label }))
+      .pipe(
+        switchMap(() =>
+          this._withEditing(ontologyIri, editing =>
+            editing.currentOntology$.pipe(
+              filter(ontology => !!ontology),
+              take(1),
+              switchMap(() => editing.deleteOntology$(ontologyIri)),
+              map(() => true)
+            )
+          )
+        )
+      );
   }
 
   canDeleteClass(classIri: string): Observable<CanDo> {

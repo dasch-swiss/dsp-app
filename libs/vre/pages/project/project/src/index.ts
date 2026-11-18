@@ -20,6 +20,7 @@ export * from './lib/data-models-rail/data-models-rail-page.component';
 export * from './lib/data-models-rail/data-model-classes.component';
 export * from './lib/data-models-rail/data-model-properties.component';
 export * from './lib/data-models-rail/data-model-lists.component';
+export * from './lib/data-models-rail/data-models-overview.component';
 
 // Services used by other libraries
 export * from './lib/project-page.service';

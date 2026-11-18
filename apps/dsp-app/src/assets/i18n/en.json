@@ -894,6 +894,12 @@
       "links": "links"
     },
     "dataModels2": {
+      "backToOverview": "Back to overview",
+      "dataModelActions": "Actions for {{model}}",
+      "editDataModel": "Edit data model",
+      "deleteDataModel": "Delete data model",
+      "cannotDeleteDataModel": "Resources or other data models use it",
+      "deleteDataModelConfirm": "Delete the data model “{{model}}”? This cannot be undone.",
       "cannotDeletePropertyShort": "A class or a value uses it",
       "propertyActions": "Actions for {{property}}",
       "editProperty": "Edit property",
@@ -946,7 +952,6 @@
       "notUsed": "Not used in this data model",
       "graph": "Diagram",
       "classes": "Resource classes",
-      "project": "Project",
       "properties": "Properties",
       "lists": "Controlled vocabularies",
       "findProperty": "Search the table",

@@ -32,6 +32,7 @@ export class RouteConstants {
   static readonly ontologyMap = 'ontology-map';
   static readonly graph = 'graph';
   static readonly lists = 'lists';
+  static readonly overview = 'overview';
   static readonly imageSettings = 'image-settings';
   static readonly legalSettings = 'legal-settings';
   static readonly viewRestrictions = 'view-restrictions';

@@ -894,6 +894,12 @@
       "links": "liens"
     },
     "dataModels2": {
+      "backToOverview": "Retour à la vue d’ensemble",
+      "dataModelActions": "Actions pour {{model}}",
+      "editDataModel": "Modifier le modèle de données",
+      "deleteDataModel": "Supprimer le modèle de données",
+      "cannotDeleteDataModel": "Des ressources ou d’autres modèles de données l’utilisent",
+      "deleteDataModelConfirm": "Supprimer le modèle de données « {{model}} » ? Cette action est irréversible.",
       "cannotDeletePropertyShort": "Une classe ou une valeur l’utilise",
       "propertyActions": "Actions pour {{property}}",
       "editProperty": "Modifier la propriété",
@@ -946,7 +952,6 @@
       "notUsed": "Pas utilisé dans ce modèle de données",
       "graph": "Diagramme",
       "classes": "Classes de ressources",
-      "project": "Projet",
       "properties": "Propriétés",
       "lists": "Vocabulaires contrôlés",
       "findProperty": "Rechercher dans le tableau",

@@ -23,6 +23,7 @@ import {
   DataModelClassesComponent,
   DataModelPropertiesComponent,
   DataModelListsComponent,
+  DataModelsOverviewComponent,
   ProjectAdminGuard,
   ProjectPageComponent,
   ProjectPageGuard,
@@ -77,8 +78,9 @@ export const routes: Routes = [
         path: RouteConstants.dataModels2,
         component: DataModelsRailPageComponent,
         children: [
-          // Opens on Resource classes: the list of classes people know from the Data models tab.
-          { path: '', pathMatch: 'full', redirectTo: RouteConstants.classes },
+          // Opens on the Overview: the project's data models and vocabularies, as the Data models tab lists them.
+          { path: '', pathMatch: 'full', redirectTo: RouteConstants.overview },
+          { path: RouteConstants.overview, component: DataModelsOverviewComponent },
           { path: RouteConstants.graph, component: OntologyMapPageComponent },
           { path: RouteConstants.classes, component: DataModelClassesComponent },
           { path: RouteConstants.properties, component: DataModelPropertiesComponent },

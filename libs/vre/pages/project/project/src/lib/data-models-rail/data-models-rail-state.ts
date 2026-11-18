@@ -60,6 +60,11 @@ export class DataModelsRailState {
     const graph = this.graph();
     return graph ? propertyRows(graph) : [];
   });
+  private readonly _metadata = toSignal(this._project.ontologiesMetadata$);
+  /** The data model's comment, for the dialog editing it. */
+  commentOf(ontologyIri: string): string | undefined {
+    return this._metadata()?.find(meta => meta.id === ontologyIri)?.comment;
+  }
   readonly linkCount = computed(() => this.graph()?.edges.filter(edge => edge.kind === 'link').length ?? 0);
 
   readonly lists = toSignal(

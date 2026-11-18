@@ -62,6 +62,14 @@ export interface DataModelEditor {
   deleteVocabularyValue(value: VocabularyValue): Observable<boolean>;
   /** Moves a vocabulary value to `position` among the values of `parentIri`; `true` once moved. */
   moveVocabularyValue(valueIri: string, parentIri: string, position: number): Observable<boolean>;
+  /** Opens the dialog creating a data model in the project; emits the new data model's IRI if made. */
+  createDataModel(): Observable<string | undefined>;
+  /** Opens the dialog editing a data model's label and comment; `true` once saved. */
+  editDataModel(model: { iri: string; label: string; comment?: string }): Observable<boolean>;
+  /** Whether the data model can be deleted: nothing uses it. */
+  canDeleteDataModel(ontologyIri: string): Observable<CanDo>;
+  /** Asks to confirm, then deletes the data model; `true` once deleted. */
+  deleteDataModel(ontologyIri: string, label: string): Observable<boolean>;
 }
 
 /** Whether an action is possible, and if not, the API's reason. */
@@ -179,6 +187,28 @@ export function injectDataModelEditing() {
       editor ? editor.deleteVocabularyValue(value) : of(false),
     moveVocabularyValue: (valueIri: string, parentIri: string, position: number): Observable<boolean> =>
       editor ? editor.moveVocabularyValue(valueIri, parentIri, position) : of(false),
+    /** Whether data models can be created, edited and deleted here, in the editor's dialogs. */
+    canEditDataModels: !!editor,
+    /** Creates a data model in the project; once made, reads the project again and calls `created` with its IRI. */
+    createDataModel: (created: (iri: string) => void) =>
+      editor
+        ?.createDataModel()
+        .pipe(filter(Boolean), takeUntilDestroyed(destroyRef))
+        .subscribe(iri => {
+          project.reloadProject();
+          created(iri);
+        }),
+    /** Edits the data model's label and comment, then reads the project again. */
+    editDataModel: (model: { iri: string; label: string; comment?: string }) =>
+      editor
+        ?.editDataModel(model)
+        .pipe(filter(Boolean), takeUntilDestroyed(destroyRef))
+        .subscribe(() => project.reloadProject()),
+    canDeleteDataModel: (ontologyIri: string): Observable<CanDo> =>
+      editor ? editor.canDeleteDataModel(ontologyIri) : of({ canDo: false }),
+    /** Deletes the data model once confirmed, then reads the project again. */
+    deleteDataModel: (ontologyIri: string, label: string): Observable<boolean> =>
+      editor ? reloadOnceSaved(editor.deleteDataModel(ontologyIri, label)) : of(false),
     /** Whether classes and properties can be created here, in the editor's dialogs. */
     canCreate: !!editor,
     /**
