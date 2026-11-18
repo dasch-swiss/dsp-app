@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v40.6.1-8-g5a8b56a
+  version: v40.7.0-7-gfaddfd3
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -5533,7 +5533,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       responses:
         '200':
           description: ''
@@ -5601,7 +5601,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       responses:
         '200':
           description: ''
@@ -5669,7 +5669,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       responses:
         '200':
           description: ''
@@ -5860,7 +5860,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       responses:
         '200':
           description: ''
@@ -5927,7 +5927,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       responses:
         '200':
           description: ''
@@ -6131,7 +6131,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6205,7 +6205,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6280,7 +6280,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6354,7 +6354,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6428,7 +6428,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6502,7 +6502,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6576,7 +6576,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       requestBody:
         content:
           application/json:
@@ -6649,7 +6649,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       requestBody:
         content:
           application/json:
@@ -6722,7 +6722,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       requestBody:
         content:
           application/json:
@@ -6795,7 +6795,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/5olv5ulqR66hABfehT6kbw
+        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
       requestBody:
         content:
           application/json:
@@ -7714,7 +7714,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/kb2WXz5BR5uzbL7y29NYsA
+        example: http://rdfh.ch/lists/0001/OZQs9BLjSyegx1OwDRrvxQ
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7842,7 +7842,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/kb2WXz5BR5uzbL7y29NYsA
+        example: http://rdfh.ch/lists/0001/OZQs9BLjSyegx1OwDRrvxQ
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -17435,6 +17435,1444 @@ paths:
                 type: string
         '500':
           description: ''
+  /ingest/info:
+    get:
+      tags:
+      - monitoring
+      description: |-
+        Get build and version information. Publicly accessible.
+
+        Does not require authentication.
+      operationId: getIngestInfo
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoEndpointResponse'
+              example:
+                name: dsp-ingest
+                version: v40.7.0-7-gfaddfd3
+                scalaVersion: 3.8.4
+                sbtVersion: bazel
+                buildTime: dev
+                gitCommit: faddfd3b0c730f84d8cc4b17d569b5ed868991a6
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+  /ingest/health:
+    get:
+      tags:
+      - monitoring
+      description: |-
+        Get health status. Publicly accessible.
+
+        Does not require authentication.
+      operationId: getIngestHealth
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregatedHealth'
+              example:
+                status: UP
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+  /ingest/metrics:
+    get:
+      tags:
+      - monitoring
+      description: |-
+        Get Prometheus metrics. Publicly accessible.
+
+        Does not require authentication.
+      operationId: getIngestMetrics
+      responses:
+        '200':
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+  /ingest/projects:
+    get:
+      tags:
+      - projects
+      description: |-
+        Authorization: admin scope required (SystemAdmins only).
+
+        Requires SystemAdmin permissions.
+      operationId: getIngestProjects
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Range:
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}:
+    get:
+      tags:
+      - projects
+      description: |-
+        Authorization: read:project:1234 scope required (SystemAdmins, and users with ProjectAdminAllPermission, ProjectResourceCreateAllPermission or ProjectResourceCreateRestrictedPermission in the project).
+
+        Requires SystemAdmin, ProjectAdmin or ProjectMember permissions for the project given by the shortcode path parameter.
+      operationId: getIngestProjectsShortcode
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/checksumreport:
+    get:
+      tags:
+      - projects
+      description: |-
+        Authorization: read:project:1234 scope required (SystemAdmins, and users with ProjectAdminAllPermission, ProjectResourceCreateAllPermission or ProjectResourceCreateRestrictedPermission in the project).
+
+        Requires SystemAdmin, ProjectAdmin or ProjectMember permissions for the project given by the shortcode path parameter.
+      operationId: getIngestProjectsShortcodeChecksumreport
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetCheckResultResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/erase:
+    delete:
+      tags:
+      - projects
+      description: |-
+        !ATTENTION! Erase a project with the given shortcode.
+        This will permanently and irrecoverably remove the project and all of its assets.
+        Authorization: admin scope required (SystemAdmins only).
+
+        Requires SystemAdmin permissions.
+      operationId: deleteIngestProjectsShortcodeErase
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/assets/{assetId}:
+    get:
+      tags:
+      - assets
+      description: |-
+        Authorization: read:project:1234 scope required (SystemAdmins, and users with ProjectAdminAllPermission, ProjectResourceCreateAllPermission or ProjectResourceCreateRestrictedPermission in the project).
+
+        Requires SystemAdmin, ProjectAdmin or ProjectMember permissions for the project given by the shortcode path parameter.
+      operationId: getIngestProjectsShortcodeAssetsAssetid
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      - name: assetId
+        in: path
+        description: The id of the asset
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-zA-Z0-9-_]{4,}$
+        example: 5RMOnH7RmAY-qKzgr431bg7
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetInfoResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/assets/{assetId}/original:
+    get:
+      tags:
+      - assets
+      description: |-
+        Offers the original file for download, provided the API permissions allow.
+        Authorization: optional JWT bearer token. The file is offered if the API's access decision
+        for the asset allows it, also to anonymous callers.
+
+        Requires appropriate object access permissions.
+      operationId: getIngestProjectsShortcodeAssetsAssetidOriginal
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      - name: assetId
+        in: path
+        description: The id of the asset
+        required: true
+        schema:
+          type: string
+          pattern: ^[a-zA-Z0-9-_]{4,}$
+        example: 5RMOnH7RmAY-qKzgr431bg7
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Disposition:
+              required: true
+              schema:
+                type: string
+            Content-Type:
+              required: true
+              schema:
+                type: string
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - {}
+      - httpAuth: []
+  /ingest/projects/{shortcode}/assets/ingest/{filename}:
+    post:
+      tags:
+      - assets
+      description: |-
+        Ingest a single asset file to the project. Authorization: write:project:1234 scope required (SystemAdmins, and users with ProjectAdminAllPermission, ProjectResourceCreateAllPermission or ProjectResourceCreateRestrictedPermission in the project).
+
+        Requires SystemAdmin, ProjectAdmin or ProjectMember permissions for the project given by the shortcode path parameter.
+      operationId: postIngestProjectsShortcodeAssetsIngestFilename
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      - name: filename
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetInfoResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/bulk-ingest:
+    post:
+      tags:
+      - bulk-ingest
+      description: |-
+        Triggers an ingest on the project with the given shortcode. The files are expected to be in the `tmp/<project_shortcode>` directory. Will return 409 Conflict if a bulk-ingest is currently running for the project. Authorization: write:project:1234 scope required (SystemAdmins, and users with ProjectAdminAllPermission, ProjectResourceCreateAllPermission or ProjectResourceCreateRestrictedPermission in the project).
+
+        Requires SystemAdmin, ProjectAdmin or ProjectMember permissions for the project given by the shortcode path parameter.
+      operationId: postIngestProjectsShortcodeBulk-ingest
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+              example:
+                id: '0001'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/bulk-ingest/finalize:
+    post:
+      tags:
+      - bulk-ingest
+      description: |-
+        Finalizes the bulk ingest. This will remove the files from the `tmp/<project_shortcode>` directory and the directory itself. This will remove also the mapping.csv file. Will return 409 Conflict if a bulk-ingest is currently running for the project. Authorization: write:project:1234 scope required (SystemAdmins, and users with ProjectAdminAllPermission, ProjectResourceCreateAllPermission or ProjectResourceCreateRestrictedPermission in the project).
+
+        Requires SystemAdmin, ProjectAdmin or ProjectMember permissions for the project given by the shortcode path parameter.
+      operationId: postIngestProjectsShortcodeBulk-ingestFinalize
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+              example:
+                id: '0001'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/bulk-ingest/mapping.csv:
+    get:
+      tags:
+      - bulk-ingest
+      description: |-
+        Get the current result of the bulk ingest. The result is a csv with the following structure: `original,derivative`. Will return 409 Conflict if a bulk-ingest is currently running for the project. Authorization: write:project:1234 scope required (SystemAdmins, and users with ProjectAdminAllPermission, ProjectResourceCreateAllPermission or ProjectResourceCreateRestrictedPermission in the project).
+
+        Requires SystemAdmin, ProjectAdmin or ProjectMember permissions for the project given by the shortcode path parameter.
+      operationId: getIngestProjectsShortcodeBulk-ingestMapping.csv
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Type:
+              required: true
+              schema:
+                type: string
+            Content-Disposition:
+              required: true
+              schema:
+                type: string
+          content:
+            text/csv:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/export:
+    post:
+      tags:
+      - import/export
+      description: |-
+        Authorization: admin scope required (SystemAdmins only).
+
+        Requires SystemAdmin permissions.
+      operationId: postIngestProjectsShortcodeExport
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Disposition:
+              required: true
+              schema:
+                type: string
+            Content-Type:
+              required: true
+              schema:
+                type: string
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/import:
+    post:
+      tags:
+      - import/export
+      description: |-
+        Authorization: admin scope required (SystemAdmins only).
+
+        Requires SystemAdmin permissions.
+      operationId: postIngestProjectsShortcodeImport
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      - name: Content-Type
+        in: header
+        required: true
+        schema:
+          type: string
+        example: application/zip
+      requestBody:
+        content:
+          application/zip:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/projects/{shortcode}/bulk-ingest/ingest/{file}:
+    post:
+      tags:
+      - bulk-ingest
+      description: |-
+        Uploads a file for consumption with the bulk-ingest route. Will return 409 Conflict if a bulk-ingest is currently running for the project. Authorization: write:project:1234 scope required (SystemAdmins, and users with ProjectAdminAllPermission, ProjectResourceCreateAllPermission or ProjectResourceCreateRestrictedPermission in the project).
+
+        Requires SystemAdmin, ProjectAdmin or ProjectMember permissions for the project given by the shortcode path parameter.
+      operationId: postIngestProjectsShortcodeBulk-ingestIngestFile
+      parameters:
+      - name: shortcode
+        in: path
+        description: The shortcode of the project must be an exactly 4 characters
+          long hexadecimal string.
+        required: true
+        schema:
+          type: string
+          pattern: ^\p{XDigit}{4,4}$
+        example: '0001'
+      - name: file
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/maintenance/{name}:
+    post:
+      tags:
+      - maintenance
+      description: |-
+        Authorization: admin scope required (SystemAdmins only).
+
+        Requires SystemAdmin permissions.
+      operationId: postIngestMaintenanceName
+      parameters:
+      - name: name
+        in: path
+        description: The name of the action to be performed
+        required: true
+        schema:
+          $ref: '#/components/schemas/ActionName'
+        example: UpdateAssetMetadata
+      - name: restrictToProjects
+        in: query
+        description: Restrict the action to a list of projects, if no project is given
+          apply the action to all projects.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '202':
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/maintenance/needs-top-left-correction:
+    get:
+      tags:
+      - maintenance
+      description: |-
+        Authorization: admin scope required (SystemAdmins only).
+
+        Requires SystemAdmin permissions.
+      operationId: getIngestMaintenanceNeeds-top-left-correction
+      responses:
+        '202':
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/maintenance/was-top-left-correction-applied:
+    get:
+      tags:
+      - maintenance
+      description: |-
+        Authorization: admin scope required (SystemAdmins only).
+
+        Requires SystemAdmin permissions.
+      operationId: getIngestMaintenanceWas-top-left-correction-applied
+      responses:
+        '202':
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
+  /ingest/report/asset-overview:
+    post:
+      tags:
+      - maintenance
+      description: |-
+        Generate asset overview reports for all projects. Authorization: admin scope required (SystemAdmins only).
+
+        Requires SystemAdmin permissions.
+      operationId: postIngestReportAsset-overview
+      responses:
+        '202':
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest1'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized1'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden1'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound1'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict1'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+        '503':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unhealthy'
+      security:
+      - httpAuth: []
   /version:
     get:
       tags:
@@ -17449,8 +18887,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v40.6.1-8-g5a8b56a
-                buildCommit: 5a8b56af4
+                webapi: v40.7.0-7-gfaddfd3
+                buildCommit: faddfd3b0
                 buildTime: dev
                 fuseki: 6.2.0
                 scala: 3.8.4
@@ -17613,6 +19051,12 @@ paths:
       - httpAuth1: []
 components:
   schemas:
+    ActionName:
+      title: ActionName
+      type: string
+      enum:
+      - ApplyTopLeftCorrection
+      - UpdateAssetMetadata
     AddClassMappingsRequest:
       title: AddClassMappingsRequest
       type: object
@@ -17673,6 +19117,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdministrativePermissionADM'
+    AggregatedHealth:
+      title: AggregatedHealth
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        components:
+          $ref: '#/components/schemas/Map_Health'
+    Argument:
+      title: Argument
+      type: object
+      required:
+      - argument
+      - reason
+      properties:
+        argument:
+          type: string
+        reason:
+          type: string
     AssetAccessResponse:
       title: AssetAccessResponse
       type: object
@@ -17688,6 +19153,92 @@ components:
           type: string
         watermark:
           type: boolean
+    AssetCheckResultEntry:
+      title: AssetCheckResultEntry
+      type: object
+      required:
+      - assetId
+      - originalFilename
+      properties:
+        assetId:
+          type: string
+        originalFilename:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleFileCheckResultResponse'
+    AssetCheckResultResponse:
+      title: AssetCheckResultResponse
+      type: object
+      required:
+      - summary
+      properties:
+        summary:
+          $ref: '#/components/schemas/AssetCheckResultSummary'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetCheckResultEntry'
+    AssetCheckResultSummary:
+      title: AssetCheckResultSummary
+      type: object
+      required:
+      - numberOfAssets
+      - numberOfFiles
+      - numberOfChecksumMatches
+      properties:
+        numberOfAssets:
+          type: integer
+          format: int32
+        numberOfFiles:
+          type: integer
+          format: int32
+        numberOfChecksumMatches:
+          type: integer
+          format: int32
+    AssetInfoResponse:
+      title: AssetInfoResponse
+      type: object
+      required:
+      - internalFilename
+      - originalInternalFilename
+      - originalFilename
+      - checksumOriginal
+      - checksumDerivative
+      properties:
+        internalFilename:
+          type: string
+        originalInternalFilename:
+          type: string
+        originalFilename:
+          type: string
+        checksumOriginal:
+          type: string
+        checksumDerivative:
+          type: string
+        sizeOriginal:
+          type: integer
+          format: int64
+        sizeDerivative:
+          type: integer
+          format: int64
+        width:
+          type: integer
+          format: int32
+        height:
+          type: integer
+          format: int32
+        duration:
+          type: number
+          format: double
+        fps:
+          type: number
+          format: double
+        internalMimeType:
+          type: string
+        originalMimeType:
+          type: string
     AudienceRestrictionCounts:
       title: AudienceRestrictionCounts
       type: object
@@ -17722,6 +19273,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorDetail'
+    BadRequest1:
+      title: BadRequest
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Argument'
     BadRequestException:
       title: BadRequestException
       type: object
@@ -17867,6 +19426,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorDetail'
+    Conflict1:
+      title: Conflict
+      type: object
+      required:
+      - reason
+      properties:
+        reason:
+          type: string
     ConflictException:
       title: ConflictException
       type: object
@@ -17947,6 +19514,9 @@ components:
           type: string
         xml:
           type: string
+    DOWN:
+      title: DOWN
+      type: object
     DataTaskStatusResponse:
       title: DataTaskStatusResponse
       type: object
@@ -18132,6 +19702,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorDetail'
+    Forbidden1:
+      title: Forbidden
+      type: object
+      required:
+      - reason
+      properties:
+        reason:
+          type: string
     ForbiddenException:
       title: ForbiddenException
       type: object
@@ -18241,6 +19819,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Group'
+    Health:
+      title: Health
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
     HealthResponse:
       title: HealthResponse
       type: object
@@ -18257,6 +19843,37 @@ components:
         status:
           type: boolean
         message:
+          type: string
+    InfoEndpointResponse:
+      title: InfoEndpointResponse
+      type: object
+      required:
+      - name
+      - version
+      - scalaVersion
+      - sbtVersion
+      - buildTime
+      - gitCommit
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        scalaVersion:
+          type: string
+        sbtVersion:
+          type: string
+        buildTime:
+          type: string
+        gitCommit:
+          type: string
+    InternalServerError:
+      title: InternalServerError
+      type: object
+      required:
+      - errorMessage
+      properties:
+        errorMessage:
           type: string
     IriPassword:
       title: IriPassword
@@ -18632,6 +20249,11 @@ components:
           format: int32
         message:
           type: string
+    Map_Health:
+      title: Map_Health
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Health'
     Map_Seq_IRI:
       title: Map_Seq_IRI
       type: object
@@ -18689,6 +20311,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorDetail'
+    NotFound1:
+      title: NotFound
+      type: object
+      required:
+      - id
+      - type
+      properties:
+        id:
+          type: string
+        type:
+          type: string
     NotFoundException:
       title: NotFoundException
       type: object
@@ -19059,6 +20692,14 @@ components:
       properties:
         project:
           $ref: '#/components/schemas/Project'
+    ProjectResponse:
+      title: ProjectResponse
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          type: string
     ProjectRestrictedViewSettingsADM:
       title: ProjectRestrictedViewSettingsADM
       type: object
@@ -19417,6 +21058,17 @@ components:
           type: string
         watermark:
           type: boolean
+    SingleFileCheckResultResponse:
+      title: SingleFileCheckResultResponse
+      type: object
+      required:
+      - filename
+      - checksumMatches
+      properties:
+        filename:
+          type: string
+        checksumMatches:
+          type: boolean
     SparqlPassthroughOverloadedException:
       title: SparqlPassthroughOverloadedException
       type: object
@@ -19465,6 +21117,11 @@ components:
       properties:
         message:
           type: string
+    Status:
+      title: Status
+      oneOf:
+      - $ref: '#/components/schemas/DOWN'
+      - $ref: '#/components/schemas/UP'
     StatusChangeRequest:
       title: StatusChangeRequest
       type: object
@@ -19502,6 +21159,9 @@ components:
       properties:
         token:
           type: string
+    UP:
+      title: UP
+      type: object
     Unauthorized:
       title: Unauthorized
       type: object
@@ -19514,6 +21174,32 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorDetail'
+    Unauthorized1:
+      title: Unauthorized
+      type: object
+      required:
+      - reason
+      properties:
+        reason:
+          type: string
+    Unhealthy:
+      title: Unhealthy
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        components:
+          $ref: '#/components/schemas/Map_Health'
+    UploadResponse:
+      title: UploadResponse
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
     UserCreateRequest:
       title: UserCreateRequest
       type: object
