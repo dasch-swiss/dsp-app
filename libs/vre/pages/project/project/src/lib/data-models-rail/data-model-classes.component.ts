@@ -25,7 +25,7 @@ import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component'
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
 import { CardinalityLayout } from './class-card-property.component';
-import { DataModelClassCardsComponent, PropertyOrder } from './data-model-class-cards.component';
+import { DataModelClassCardsComponent, PropertyOrder, InheritedLayout } from './data-model-class-cards.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
@@ -106,6 +106,27 @@ import { rememberedSignal } from './remembered-signal';
             {{ 'pages.dataBrowser.viewOptions.title' | translate }}
           </button>
           <mat-menu #viewMenu="matMenu" xPosition="before">
+            <span class="menu-heading">{{ r + '.inheritedLayout' | translate }}</span>
+            @for (option of inheritedLayouts; track option.value) {
+              @let chosen = inheritedLayout() === option.value;
+              <button
+                mat-menu-item
+                type="button"
+                class="view-entry"
+                role="menuitemradio"
+                [attr.aria-checked]="chosen"
+                [attr.data-cy]="'data-model-classes-inherited-' + option.value"
+                (click)="$event.stopPropagation(); inheritedLayout.set(option.value)">
+                <mat-icon [class.chosen]="chosen">{{
+                  chosen ? 'radio_button_checked' : 'radio_button_unchecked'
+                }}</mat-icon>
+                <span class="view-item">
+                  <span>{{ r + '.' + option.key | translate }}</span>
+                  <span class="view-hint">{{ r + '.' + option.key + 'Tip' | translate }}</span>
+                </span>
+              </button>
+            }
+            <hr class="menu-divider" />
             <span class="menu-heading">{{ r + '.cardinalityLayout' | translate }}</span>
             @for (option of cardinalityLayouts; track option.value) {
               @let chosen = cardinalityLayout() === option.value;
@@ -148,6 +169,7 @@ import { rememberedSignal } from './remembered-signal';
         [canReorder]="editing.canReorder"
         [query]="query()"
         [cardinalityLayout]="cardinalityLayout()"
+        [inheritedLayout]="inheritedLayout()"
         [style.--card-width.px]="cardWidth()"
         [(folded)]="foldedCards"
         (reorder)="reorderProperties($event)"
@@ -235,6 +257,12 @@ import { rememberedSignal } from './remembered-signal';
         color: $cool_gray_500;
       }
 
+      .menu-divider {
+        margin: 4px 0;
+        border: 0;
+        border-top: 1px solid $cool_gray_100;
+      }
+
       .view-entry {
         --mat-menu-item-label-text-size: 13px;
         padding-top: 6px;
@@ -319,16 +347,29 @@ export class DataModelClassesComponent {
   readonly cardinalityLayout = rememberedSignal<CardinalityLayout>(
     'dsp-data-models-cardinality-layout',
     'columns',
-    stored => (stored === 'columns' || stored === 'rows' || stored === 'chip' ? stored : undefined)
+    stored =>
+      ['columns', 'ticked', 'rows', 'chip', 'differs'].includes(stored) ? (stored as CardinalityLayout) : undefined
   );
+  /** How a subclass's card shows its superclass's properties, as the viewer last chose. */
+  readonly inheritedLayout = rememberedSignal<InheritedLayout>('dsp-data-models-inherited-layout', 'grouped', stored =>
+    stored === 'grouped' || stored === 'listed' ? stored : undefined
+  );
+  readonly inheritedLayouts: { value: InheritedLayout; key: string }[] = [
+    { value: 'grouped', key: 'inheritedGrouped' },
+    { value: 'listed', key: 'inheritedListed' },
+  ];
   /** The ways the cards can show it, as View options lists them. */
   readonly cardinalityLayouts: { value: CardinalityLayout; key: string }[] = [
     { value: 'columns', key: 'cardinalityColumns' },
+    { value: 'ticked', key: 'cardinalityTicked' },
     { value: 'rows', key: 'cardinalityRows' },
     { value: 'chip', key: 'cardinalityChip' },
+    { value: 'differs', key: 'cardinalityDiffers' },
   ];
   /** The cards' least width: room for the checkboxes' words on each row, less for columns, least for the chip. */
-  readonly cardWidth = computed(() => ({ rows: 420, columns: 350, chip: 320 })[this.cardinalityLayout()]);
+  readonly cardWidth = computed(
+    () => ({ rows: 420, columns: 350, ticked: 350, chip: 320, differs: 320 })[this.cardinalityLayout()]
+  );
 
   /** The classes whose name, file or properties have the searched text, in any language. */
   readonly rows = computed(() => {

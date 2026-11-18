@@ -35,6 +35,7 @@ type Box = 'multiple' | 'required';
   imports: [MatCheckbox, MatTooltip, TranslatePipe],
   host: {
     '[class.labelled]': 'labelled()',
+    '[class.ticked-only]': 'tickedOnly()',
     '(mouseenter)': 'check()',
     '(focusin)': 'check()',
   },
@@ -42,7 +43,11 @@ type Box = 'multiple' | 'required';
     @let c = 'pages.ontology.cardinality';
     @for (box of boxes; track box) {
       @let label = c + '.' + (box === 'multiple' ? 'multipleValues' : 'required') | translate;
-      <span class="box" [matTooltip]="reasonOf(box) | translate" [matTooltipDisabled]="!reasonOf(box)">
+      <span
+        class="box"
+        [class.unticked]="!state()[box]"
+        [matTooltip]="reasonOf(box) | translate"
+        [matTooltipDisabled]="!reasonOf(box)">
         <mat-checkbox
           color="primary"
           [attr.data-cy]="'cardinality-' + box"
@@ -82,6 +87,16 @@ type Box = 'multiple' | 'required';
         display: inline-flex;
       }
 
+      // Ticked boxes only; the others show while the pointer is on the property's row, or with the focus.
+      :host(.ticked-only) .box.unticked {
+        visibility: hidden;
+      }
+
+      :host-context(.prop:hover) .box.unticked,
+      :host(.ticked-only) .box.unticked:focus-within {
+        visibility: visible;
+      }
+
       mat-checkbox {
         // Material's touch target is wider than a card row; the row stays compact.
         margin: -4px 0;
@@ -100,6 +115,8 @@ export class CardinalityCheckboxesComponent {
   readonly changeable = input(false);
   /** Whether each box carries its words; else the card names the columns. */
   readonly labelled = input(false);
+  /** Whether only the ticked boxes show, the others appearing on hover. */
+  readonly tickedOnly = input(false);
 
   // Only where the app provides the data model editor: without it, nothing here changes.
   private readonly _editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;

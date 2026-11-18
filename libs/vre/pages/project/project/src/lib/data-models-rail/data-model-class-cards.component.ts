@@ -43,6 +43,9 @@ interface Card {
 }
 
 /** A class's own properties in a new form order, to save. */
+/** How a subclass's card shows the properties it has from its superclass. */
+export type InheritedLayout = 'grouped' | 'listed';
+
 export interface PropertyOrder {
   classIri: string;
   propertyIris: string[];
@@ -76,12 +79,32 @@ export interface PropertyOrder {
     @let c = 'pages.ontology.cardinality';
     <!-- With the checkboxes in columns, the columns' names, once, over the properties. -->
     <ng-template #columns>
-      @if (cardinalityLayout() === 'columns') {
+      @if (cardinalityLayout() === 'columns' || cardinalityLayout() === 'ticked') {
         <div class="cardinality-head" aria-hidden="true">
           <span>{{ c + '.multipleValues' | translate }}</span>
           <span>{{ c + '.required' | translate }}</span>
         </div>
       }
+    </ng-template>
+    <!-- The properties a class has from its superclass: they change there, not on this card. -->
+    <ng-template #inheritedRows let-card>
+      @if (!card.own.length) {
+        <ng-container [ngTemplateOutlet]="columns" />
+      }
+      <ul class="props" data-cy="data-model-class-card-inherited-list">
+        @for (property of card.inherited; track property.id) {
+          <li
+            appClassCardProperty
+            [property]="property"
+            [labelOf]="labelOf()"
+            [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
+            [query]="query()"
+            [canEdit]="canEdit()"
+            [cardinalityLayout]="cardinalityLayout()"
+            (edit)="editProperty.emit($event)"
+            (goTo)="goTo($event)"></li>
+        }
+      </ul>
     </ng-template>
     <!-- A class's own properties, or one group of them, up to the cap, then "Show n more"; editors drag them. -->
     <ng-template #capped let-properties let-key="key" let-card="card">
@@ -219,7 +242,10 @@ export interface PropertyOrder {
             } @else if (!card.inherited.length) {
               <p class="none">{{ r + '.noProperties' | translate }}</p>
             }
-            @if (card.inherited.length) {
+            @if (card.inherited.length && inheritedLayout() === 'listed') {
+              <!-- The superclass's properties right after the class's own, as one list. -->
+              <ng-container *ngTemplateOutlet="inheritedRows; context: { $implicit: card }" />
+            } @else if (card.inherited.length) {
               @let inheritedOpen = inheritedShown().has(row.id) || autoOpened().has(row.id + ' inherited');
               <div class="inherited">
                 <button
@@ -232,23 +258,7 @@ export interface PropertyOrder {
                   {{ r + '.inheritedFrom' | translate: { count: card.inherited.length, class: card.parent } }}
                 </button>
                 @if (inheritedOpen) {
-                  @if (!card.own.length) {
-                    <ng-container [ngTemplateOutlet]="columns" />
-                  }
-                  <ul class="props">
-                    @for (property of card.inherited; track property.id) {
-                      <li
-                        appClassCardProperty
-                        [property]="property"
-                        [labelOf]="labelOf()"
-                        [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
-                        [query]="query()"
-                        [canEdit]="canEdit()"
-                        [cardinalityLayout]="cardinalityLayout()"
-                        (edit)="editProperty.emit($event)"
-                        (goTo)="goTo($event)"></li>
-                    }
-                  </ul>
+                  <ng-container *ngTemplateOutlet="inheritedRows; context: { $implicit: card }" />
                 }
               </div>
             }
@@ -571,6 +581,8 @@ export class DataModelClassCardsComponent {
   readonly canReorder = input(false);
   /** The text searched for: marked where it shows, and the rows it is in opened. */
   readonly query = input('');
+  /** Whether a subclass's card groups its superclass's properties under "n from …", or lists them with its own. */
+  readonly inheritedLayout = input<InheritedLayout>('grouped');
   /** Whether the properties' checkboxes carry their words on each row, or are named once as columns. */
   readonly cardinalityLayout = input<CardinalityLayout>('columns');
 

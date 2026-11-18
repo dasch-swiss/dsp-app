@@ -17,7 +17,7 @@ export type CardProperty = ClassRow['propertyList'][number];
  * How a card shows a property's cardinality: "Multiple values" and "Required" as two columns named once, or with their
  * words on each row, as in the Data models tab; or as before, 0-1, 0-n, 1 or 1-n.
  */
-export type CardinalityLayout = 'columns' | 'rows' | 'chip';
+export type CardinalityLayout = 'columns' | 'ticked' | 'rows' | 'chip' | 'differs';
 
 /** A property's cardinality from whether it is required and may hold several values. */
 function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
@@ -44,7 +44,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
   ],
   host: {
     class: 'prop',
-    '[class.chip-layout]': "cardinalityLayout() === 'chip'",
+    '[class.chip-layout]': "cardinalityLayout() === 'chip' || cardinalityLayout() === 'differs'",
     'data-cy': 'data-model-class-card-property',
   },
   template: `
@@ -73,7 +73,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         <span [class.hit]="part.match">{{ part.text }}</span>
       }
     </span>
-    @if (cardinalityLayout() === 'chip') {
+    @if (cardinalityLayout() === 'chip' || cardinalityLayout() === 'differs') {
       <app-cardinality-chip
         class="cardinality"
         data-cy="data-model-class-card-cardinality"
@@ -82,7 +82,8 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         [propertyIri]="property.id"
         [propertyLabel]="property.label"
         [classIri]="classIri()"
-        [changeable]="changeable()" />
+        [changeable]="changeable()"
+        [quietDefault]="cardinalityLayout() === 'differs'" />
     } @else {
       <app-cardinality-checkboxes
         class="cardinality"
@@ -92,7 +93,8 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         [propertyIri]="property.id"
         [classIri]="classIri()"
         [changeable]="changeable()"
-        [labelled]="cardinalityLayout() === 'rows'" />
+        [labelled]="cardinalityLayout() === 'rows'"
+        [tickedOnly]="cardinalityLayout() === 'ticked'" />
     }
     <!-- For editors, on hover: the handle to drag it, the property's dialog, and for the class's own ones, removing it
          from the class. -->

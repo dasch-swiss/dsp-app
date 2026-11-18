@@ -27,6 +27,7 @@ const BOOLEAN_ONE = 'boolean';
   selector: 'app-cardinality-chip',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatMenu, MatMenuItem, MatMenuTrigger, MatTooltip, TranslatePipe],
+  host: { '[class.quiet-default]': 'quietDefault()' },
   template: `
     @let r = 'pages.dataModels2';
     @let current = choiceOf(cardinality());
@@ -35,6 +36,8 @@ const BOOLEAN_ONE = 'boolean';
         type="button"
         class="chip"
         data-cy="cardinality-chip"
+        [class.default]="isDefault()"
+        [class.tinted]="quietDefault() && !isRequired() && !isDefault()"
         [class.required]="isRequired()"
         [attr.aria-label]="
           r + '.changeCardinality' | translate: { property: propertyLabel(), cardinality: current.label }
@@ -74,9 +77,10 @@ const BOOLEAN_ONE = 'boolean';
           </button>
         }
       </mat-menu>
-    } @else {
+    } @else if (!(quietDefault() && isDefault())) {
       <span
         class="chip"
+        [class.tinted]="quietDefault() && !isRequired()"
         data-cy="cardinality-chip"
         [class.required]="isRequired()"
         [matTooltip]="r + '.cardinality.' + current.key | translate"
@@ -112,6 +116,26 @@ const BOOLEAN_ONE = 'boolean';
           border-color: $primary;
           color: white;
         }
+      }
+
+      // Only what differs from 0-1: 0-n tinted, 1 and 1-n filled; a 0-1 shows dashed, only while its row is pointed at.
+      .chip.tinted {
+        border-color: $primary_50;
+        background: $primary_50;
+        color: $primary_700;
+      }
+
+      :host(.quiet-default) .chip.default {
+        visibility: hidden;
+        border-style: dashed;
+        border-color: $primary;
+        color: $primary;
+      }
+
+      :host-context(.prop:hover) .chip.default,
+      :host(.quiet-default) .chip.default[aria-expanded='true'],
+      :host(.quiet-default) .chip.default:focus-visible {
+        visibility: visible;
       }
 
       // One that can change is a button: a ring on hover says so.
@@ -175,6 +199,8 @@ export class CardinalityChipComponent {
   readonly classIri = input<string | undefined>(undefined);
   /** Whether it can change here: for editors, on the class's own properties. */
   readonly changeable = input(false);
+  /** Whether 0-1, the default, goes unshown: dashed while its row is pointed at, to change it; for viewers, nothing. */
+  readonly quietDefault = input(false);
 
   // Only where the app provides the data model editor: without it, nothing here changes.
   private readonly _editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
@@ -187,6 +213,10 @@ export class CardinalityChipComponent {
 
   choiceOf(cardinality: Cardinality) {
     return CARDINALITIES.find(choice => choice.value === cardinality) ?? CARDINALITIES[1];
+  }
+
+  isDefault(): boolean {
+    return this.cardinality() === Cardinality._0_1;
   }
 
   isRequired(): boolean {

@@ -894,6 +894,15 @@
       "links": "liens"
     },
     "dataModels2": {
+      "cardinalityDiffers": "Seulement ce qui diffère de 0–1",
+      "cardinalityDiffersTip": "1, 1–n et 0–n s’affichent ; une ligne 0–1 n’affiche rien tant qu’on ne la survole pas pour la changer",
+      "cardinalityTicked": "Colonnes, cases cochées seules",
+      "cardinalityTickedTip": "Colonnes nommées une fois ; une case apparaît si elle est cochée, les autres au survol de la propriété",
+      "inheritedLayout": "Propriétés de la superclasse",
+      "inheritedGrouped": "Groupées",
+      "inheritedGroupedTip": "Sous « 6 de Commentary Document », ouvertes au besoin",
+      "inheritedListed": "Avec celles de la classe",
+      "inheritedListedTip": "Toutes les propriétés sur la carte, celles de la superclasse après celles de la classe",
       "cardinalityChip": "0–1, 0–n, 1, 1–n",
       "cardinalityChipTip": "La cardinalité en 0–1, 0–n, 1 ou 1–n, comme avant",
       "cardinalityLayout": "Valeurs multiples et Obligatoire",

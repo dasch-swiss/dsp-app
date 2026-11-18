@@ -894,6 +894,15 @@
       "links": "links"
     },
     "dataModels2": {
+      "cardinalityDiffers": "Only what differs from 0–1",
+      "cardinalityDiffersTip": "1, 1–n and 0–n show; a 0–1 row shows nothing until you point at it to change it",
+      "cardinalityTicked": "Columns, ticked boxes only",
+      "cardinalityTickedTip": "Columns named once; a box shows when ticked, the others when you point at the property",
+      "inheritedLayout": "Properties from the superclass",
+      "inheritedGrouped": "Grouped",
+      "inheritedGroupedTip": "Under \"6 from Commentary Document\", opened on demand",
+      "inheritedListed": "With the class’s own",
+      "inheritedListedTip": "Every property listed on the card, the superclass’s after the class’s own",
       "cardinalityChip": "0–1, 0–n, 1, 1–n",
       "cardinalityChipTip": "The cardinality as 0–1, 0–n, 1 or 1–n, as before",
       "cardinalityLayout": "Multiple values and Required",
