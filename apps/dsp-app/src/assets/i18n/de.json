@@ -894,6 +894,12 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "cardinalityMultiple": "Mehrere",
+      "cardinalitySymbols": "Roter Stern und Stapelsymbol",
+      "cardinalitySymbolsTip": "Ein roter Stern nach einer erforderlichen Eigenschaft, ein Stapel für mehrere Werte; zum Ändern auf die Eigenschaft zeigen und ihre Werkzeuge nutzen",
+      "cardinalityWords": "In Worten",
+      "cardinalityWordsTip": "«Erforderlich» und «Mehrere» in Worten, nur wo eine Eigenschaft so ist; zum Ändern auf die Eigenschaft zeigen und ihre Werkzeuge nutzen",
+      "cardinalityRequired": "Erforderlich",
       "cardinalityBar": "Nur Abweichungen, 0–1 in den Werkzeugen",
       "cardinalityBarTip": "Wie oben, doch eine Karte mit nur 0–1 hat keine Spalte; zum Ändern auf die Eigenschaft zeigen und ihre Werkzeuge nutzen",
       "cardinalityDiffers": "Nur was von 0–1 abweicht",

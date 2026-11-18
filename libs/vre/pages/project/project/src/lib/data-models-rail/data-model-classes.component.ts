@@ -348,7 +348,7 @@ export class DataModelClassesComponent {
     'dsp-data-models-cardinality-layout',
     'columns',
     stored =>
-      ['columns', 'ticked', 'rows', 'chip', 'differs', 'bar'].includes(stored)
+      ['columns', 'ticked', 'rows', 'chip', 'differs', 'bar', 'symbols', 'words'].includes(stored)
         ? (stored as CardinalityLayout)
         : undefined
   );
@@ -368,10 +368,15 @@ export class DataModelClassesComponent {
     { value: 'chip', key: 'cardinalityChip' },
     { value: 'differs', key: 'cardinalityDiffers' },
     { value: 'bar', key: 'cardinalityBar' },
+    { value: 'symbols', key: 'cardinalitySymbols' },
+    { value: 'words', key: 'cardinalityWords' },
   ];
   /** The cards' least width: room for the checkboxes' words on each row, less for columns, least for the chip. */
   readonly cardWidth = computed(
-    () => ({ rows: 420, columns: 350, ticked: 350, chip: 320, differs: 320, bar: 300 })[this.cardinalityLayout()]
+    () =>
+      ({ rows: 420, columns: 350, ticked: 350, chip: 320, differs: 320, bar: 300, symbols: 300, words: 380 })[
+        this.cardinalityLayout()
+      ]
   );
 
   /** The classes whose name, file or properties have the searched text, in any language. */

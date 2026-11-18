@@ -585,9 +585,12 @@ export class DataModelClassCardsComponent {
   readonly query = input('');
   /** Whether a subclass's card groups its superclass's properties under "n from …", or lists them with its own. */
   readonly inheritedLayout = input<InheritedLayout>('grouped');
-  /** Whether a card keeps a column for cardinality chips: one of its properties differs from 0-1. */
+  /** Whether a card keeps a column for its cardinalities: one of its properties differs from 0-1, or for the stacks, allows several values. */
   hasChipColumn(card: Card): boolean {
-    return [...card.own, ...card.inherited].some(property => property.required || property.multiple);
+    // With a star and a stack icon, the column holds the stacks only; a star sits after the label.
+    const differs = (property: CardProperty) =>
+      this.cardinalityLayout() === 'symbols' ? property.multiple : property.required || property.multiple;
+    return [...card.own, ...card.inherited].some(differs);
   }
 
   /** Whether the properties' checkboxes carry their words on each row, or are named once as columns. */

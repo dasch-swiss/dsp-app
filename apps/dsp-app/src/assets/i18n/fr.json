@@ -894,6 +894,12 @@
       "links": "liens"
     },
     "dataModels2": {
+      "cardinalityMultiple": "Multiples",
+      "cardinalitySymbols": "Étoile rouge et icône de pile",
+      "cardinalitySymbolsTip": "Une étoile rouge après une propriété obligatoire, une pile pour les valeurs multiples ; survolez une propriété pour la changer depuis ses outils",
+      "cardinalityWords": "En toutes lettres",
+      "cardinalityWordsTip": "« Obligatoire » et « Multiples » en toutes lettres, seulement là où une propriété l’est ; survolez une propriété pour la changer depuis ses outils",
+      "cardinalityRequired": "Obligatoire",
       "cardinalityBar": "Seulement les écarts, 0–1 dans les outils",
       "cardinalityBarTip": "Comme ci-dessus, mais une carte dont toutes les propriétés sont 0–1 n’a pas de colonne ; survolez une propriété pour la changer depuis ses outils",
       "cardinalityDiffers": "Seulement ce qui diffère de 0–1",

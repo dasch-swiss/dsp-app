@@ -894,6 +894,12 @@
       "links": "collegamenti"
     },
     "dataModels2": {
+      "cardinalityMultiple": "Multipli",
+      "cardinalitySymbols": "Stella rossa e icona a pila",
+      "cardinalitySymbolsTip": "Una stella rossa dopo una proprietà obbligatoria, una pila per i valori multipli; punta una proprietà per cambiarla dai suoi strumenti",
+      "cardinalityWords": "A parole",
+      "cardinalityWordsTip": "«Obbligatoria» e «Multipli» a parole, solo dove una proprietà lo è; punta una proprietà per cambiarla dai suoi strumenti",
+      "cardinalityRequired": "Obbligatoria",
       "cardinalityBar": "Solo le differenze, 0–1 negli strumenti",
       "cardinalityBarTip": "Come sopra, ma una scheda con solo proprietà 0–1 non ha la colonna; punta una proprietà per cambiarla dai suoi strumenti",
       "cardinalityDiffers": "Solo ciò che differisce da 0–1",

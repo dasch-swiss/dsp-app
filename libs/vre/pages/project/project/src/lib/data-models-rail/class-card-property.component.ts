@@ -17,7 +17,7 @@ export type CardProperty = ClassRow['propertyList'][number];
  * How a card shows a property's cardinality: "Multiple values" and "Required" as two columns named once, or with their
  * words on each row, as in the Data models tab; or as before, 0-1, 0-n, 1 or 1-n.
  */
-export type CardinalityLayout = 'columns' | 'ticked' | 'rows' | 'chip' | 'differs' | 'bar';
+export type CardinalityLayout = 'columns' | 'ticked' | 'rows' | 'chip' | 'differs' | 'bar' | 'symbols' | 'words';
 
 /** A property's cardinality from whether it is required and may hold several values. */
 function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
@@ -46,7 +46,10 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
     class: 'prop',
     '[class.chip-layout]':
       "cardinalityLayout() === 'chip' || cardinalityLayout() === 'differs' || (cardinalityLayout() === 'bar' && chipColumn())",
-    '[class.no-chip-column]': "cardinalityLayout() === 'bar' && !chipColumn()",
+    '[class.no-chip-column]':
+      "(cardinalityLayout() === 'bar' || cardinalityLayout() === 'symbols' || cardinalityLayout() === 'words') && !chipColumn()",
+    '[class.stack-layout]': "cardinalityLayout() === 'symbols' && chipColumn()",
+    '[class.words-layout]': "cardinalityLayout() === 'words' && chipColumn()",
     'data-cy': 'data-model-class-card-property',
   },
   template: `
@@ -56,6 +59,15 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
     <span class="name" [matTooltip]="tip()" matTooltipShowDelay="600">
       @for (part of label(); track $index) {
         <span [class.hit]="part.match">{{ part.text }}</span>
+      }
+      <!-- A required property, as forms mark one: a red star after its label. -->
+      @if (cardinalityLayout() === 'symbols' && property.required) {
+        <span
+          class="star"
+          [attr.aria-label]="'pages.ontology.cardinality.required' | translate"
+          [matTooltip]="'pages.ontology.cardinality.required' | translate"
+          >*</span
+        >
       }
       @if (property.linkTarget; as target) {
         <!-- Opens the target's card when it shows; plain text when the search hides it, or it is in another model. -->
@@ -86,6 +98,36 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         [classIri]="classIri()"
         [changeable]="changeable()"
         [quietDefault]="cardinalityLayout() === 'differs'" />
+    } @else if (cardinalityLayout() === 'symbols') {
+      <!-- Several values allowed: a stack, in a narrow column the card keeps only when one of its properties has it. -->
+      @if (chipColumn()) {
+        <span class="stack">
+          @if (property.multiple) {
+            <mat-icon
+              data-cy="data-model-class-card-multiple"
+              [attr.aria-label]="'pages.ontology.cardinality.multipleValues' | translate"
+              [matTooltip]="'pages.ontology.cardinality.multipleValues' | translate"
+              >layers</mat-icon
+            >
+          }
+        </span>
+      }
+    } @else if (cardinalityLayout() === 'words') {
+      <!-- In words, only what differs from 0-1: "Required" in red, "Multiple", or both; a card where nothing does
+           keeps no column. -->
+      @if (chipColumn()) {
+        <span class="words" data-cy="data-model-class-card-cardinality">
+          @if (property.required) {
+            <span class="required-word">{{ r + '.cardinalityRequired' | translate }}</span>
+          }
+          @if (property.required && property.multiple) {
+            ·
+          }
+          @if (property.multiple) {
+            {{ r + '.cardinalityMultiple' | translate }}
+          }
+        </span>
+      }
     } @else if (cardinalityLayout() === 'bar') {
       <!-- Only what differs from 0-1; a 0-1 one changes from the hover tools, below. -->
       @if (!isDefault()) {
@@ -153,7 +195,12 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
           </button>
         }
         <!-- A 0-1 cardinality, unshown at rest, changes from here, last of the row's tools. -->
-        @if (cardinalityLayout() === 'bar' && changeable() && isDefault()) {
+        @if (
+          changeable() &&
+          ((cardinalityLayout() === 'bar' && isDefault()) ||
+            cardinalityLayout() === 'symbols' ||
+            cardinalityLayout() === 'words')
+        ) {
           <app-cardinality-chip
             class="bar-chip"
             data-cy="data-model-class-card-cardinality"
@@ -200,6 +247,48 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       :host(.no-chip-column) {
         grid-template-columns: 16px minmax(0, 1fr) auto;
         --actions-right: 8px;
+      }
+
+      // A red star and a stack icon: the stack's narrow column, the tools left of it.
+      :host(.stack-layout) {
+        grid-template-columns: 16px minmax(0, 1fr) auto 18px;
+        --actions-right: 30px;
+      }
+
+      .star {
+        margin-left: 2px;
+        font-weight: 500;
+        color: #b3261e;
+      }
+
+      .stack {
+        display: flex;
+        justify-content: center;
+
+        mat-icon {
+          font-size: 15px;
+          width: 15px;
+          height: 15px;
+          color: $cool_gray_500;
+        }
+      }
+
+      // In words, in a column wide enough for "Optional · many".
+      :host(.words-layout) {
+        grid-template-columns: 16px minmax(0, 1fr) auto 96px;
+        --actions-right: 110px;
+      }
+
+      .words {
+        font-size: 11px;
+        text-align: right;
+        white-space: nowrap;
+        color: $cool_gray_500;
+      }
+
+      .required-word {
+        font-weight: 500;
+        color: #b3261e;
       }
 
       .bar-chip {
