@@ -369,8 +369,15 @@ export type DataModelsLayout = 'top' | 'side';
         color: $cool_gray_500;
       }
 
-      .delete:not([disabled]) {
+      // The data model's pen and bin in the app's blue, as elsewhere; the bin turns red only while pointed at.
+      .model button.hover-action:not([disabled]),
+      .model .delete:not([disabled]) {
+        color: $primary;
+      }
+
+      .model .delete:not([disabled]):hover {
         color: #b3261e;
+        background: #fdecea;
       }
 
       // The sidebar.

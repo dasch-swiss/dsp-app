@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -51,7 +50,6 @@ import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
-import { rememberedSignal } from './remembered-signal';
 import { TableColumns } from './table-columns';
 import { TABLE_STYLES } from './table-styles';
 
@@ -62,7 +60,6 @@ const STORAGE_KEY = 'dsp-data-models-properties';
 const NO_TARGET = 'none';
 
 type Column = 'property' | 'description' | 'type' | 'pointsTo' | 'usedBy';
-type Density = 'condensed' | 'expanded';
 
 /** The translation key of each column's name. */
 const COLUMN_LABELS: Record<Column, string> = {
@@ -74,8 +71,8 @@ const COLUMN_LABELS: Record<Column, string> = {
 };
 
 /**
- * Data models 2 › Properties: every property of the data model in a table, as the Classes table. Condensed, a row is
- * one line and what does not fit is counted; expanded, it shows everything. Each column filters from its header, moves
+ * Data models 2 › Properties: every property of the data model in a table, each row showing all it has. Each column
+ * filters from its header, moves
  * by dragging it and resizes from its edge. A clicked property opens its panel; an editor edits a property's name and
  * description in each language from its cell.
  */
@@ -93,8 +90,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     HighlightPipe,
     LanguageTextsComponent,
     MatButton,
-    MatButtonToggle,
-    MatButtonToggleGroup,
     MatCell,
     MatCellDef,
     MatCheckbox,
@@ -122,7 +117,7 @@ const COLUMN_LABELS: Record<Column, string> = {
   template: `
     @let r = 'pages.dataModels2';
     @let t = 'pages.dataBrowser.dataModelMap';
-    @let expanded = density() === 'expanded';
+    @let expanded = true;
     @let cols = columns;
     <div class="section">
       <div class="head">
@@ -169,28 +164,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         }
         <span class="spacer"></span>
         <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
-        @if (folding() && foldable().size) {
-          <button mat-button type="button" data-cy="data-model-properties-expand" (click)="toggleAllFolds()">
-            <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
-            {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
-          </button>
-        }
-        <mat-button-toggle-group
-          class="density"
-          hideSingleSelectionIndicator
-          data-cy="data-model-properties-density"
-          [attr.aria-label]="r + '.density' | translate"
-          [value]="density()"
-          (change)="density.set($event.value)">
-          <mat-button-toggle value="condensed">
-            <mat-icon>density_small</mat-icon>
-            {{ r + '.condensed' | translate }}
-          </mat-button-toggle>
-          <mat-button-toggle value="expanded">
-            <mat-icon>density_large</mat-icon>
-            {{ r + '.expanded' | translate }}
-          </mat-button-toggle>
-        </mat-button-toggle-group>
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
@@ -259,10 +232,8 @@ const COLUMN_LABELS: Record<Column, string> = {
                     [texts]="row.labels"
                     [shown]="row.label"
                     [owner]="row.label"
-                    [canEdit]="canEditTexts()"
                     [expanded]="expanded"
-                    [highlight]="nameTerms()"
-                    (edit)="editText(row)" />
+                    [highlight]="nameTerms()" />
                   @if (expanded) {
                     <code class="name">
                       @for (part of row.name | highlight: nameTerms(); track $index) {
@@ -406,8 +377,7 @@ const COLUMN_LABELS: Record<Column, string> = {
               <app-class-chips
                 [iris]="row.linkTarget ? [row.linkTarget] : []"
                 [expanded]="expanded"
-                [highlight]="searchTerms()"
-                (classSelected)="showClass($event)" />
+                [highlight]="searchTerms()" />
             </td>
           </ng-container>
           <ng-container matColumnDef="usedBy">
@@ -447,8 +417,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [iris]="row.usedBy"
                 [max]="maxUsedBy"
                 [expanded]="expanded"
-                [highlight]="searchTerms()"
-                (classSelected)="showClass($event)" />
+                [highlight]="searchTerms()" />
             </td>
           </ng-container>
           <!-- Each property's actions, as icons shown on hover, kept in view at the end of the row. -->
@@ -506,10 +475,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             *matRowDef="let row; columns: shownColumns()"
             (mouseenter)="checkDelete(row.id)"
             data-cy="data-model-properties-row"
-            tabindex="0"
-            [class.selected]="row.id === panelIri()"
-            (click)="openPanel(row.id)"
-            (keydown.enter)="openPanel(row.id)"></tr>
+            [class.selected]="row.id === panelIri()"></tr>
         </table>
         @if (rows().length === 0) {
           <p class="empty">{{ r + '.noMatch' | translate }}</p>
@@ -559,6 +525,8 @@ const COLUMN_LABELS: Record<Column, string> = {
         background: white;
       }
 
+      // Hovered or selected, the whole row takes the colour, the frozen cell too.
+      .mat-mdc-row:hover .mat-mdc-cell.frozen,
       .mat-mdc-row.selected .mat-mdc-cell.frozen {
         background: inherit;
       }
@@ -625,6 +593,7 @@ const COLUMN_LABELS: Record<Column, string> = {
         background: white;
       }
 
+      .mat-mdc-row:hover .mat-mdc-cell.actions-cell,
       .mat-mdc-row.selected .mat-mdc-cell.actions-cell {
         background: inherit;
       }
@@ -651,8 +620,19 @@ const COLUMN_LABELS: Record<Column, string> = {
         visibility: visible;
       }
 
-      .delete:not([disabled]) {
+      // A row only shows: clicking it does nothing, only its fold arrow, pen and bin act.
+      .mat-mdc-row {
+        cursor: default;
+      }
+
+      // The pen and the bin in the app's blue, as on the class cards; the bin turns red only while pointed at.
+      .row-actions .mat-mdc-icon-button:not([disabled]) {
+        color: $primary;
+      }
+
+      .row-actions .delete:not([disabled]):hover {
         color: #b3261e;
+        background: #fdecea;
       }
     `,
   ],
@@ -696,10 +676,6 @@ export class DataModelPropertiesComponent {
   readonly maxUsedBy = MAX_USED_BY;
   readonly noTarget = NO_TARGET;
 
-  /** Condensed rows of one line, or expanded rows showing everything; remembered in this browser. */
-  readonly density = rememberedSignal<Density>(`${STORAGE_KEY}-density`, 'condensed', stored =>
-    stored === 'expanded' ? 'expanded' : 'condensed'
-  );
   /** Whether the table is scrolled sideways, which shadows the frozen property column. */
   readonly scrolled = signal(false);
 
@@ -757,7 +733,6 @@ export class DataModelPropertiesComponent {
       !this.targets().size &&
       !this.users().size
   );
-  readonly allExpanded = computed(() => this.collapsed().size === 0);
 
   toggleFold(iri: string): void {
     this.collapsed.update(collapsed => {
@@ -765,10 +740,6 @@ export class DataModelPropertiesComponent {
       if (!next.delete(iri)) next.add(iri);
       return next;
     });
-  }
-
-  toggleAllFolds(): void {
-    this.collapsed.set(this.allExpanded() ? new Set(this.foldable().keys()) : new Set());
   }
 
   /** Whether a folded property is above the row. */

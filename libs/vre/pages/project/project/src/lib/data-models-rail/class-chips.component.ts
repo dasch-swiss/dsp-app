@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
@@ -15,13 +15,7 @@ import { HighlightPipe } from './highlight.pipe';
   template: `
     <span class="cut">
       @for (iri of shown(); track iri) {
-        <button
-          type="button"
-          class="chip"
-          data-cy="class-chip"
-          [class.on]="iri === selected()"
-          (click)="$event.stopPropagation(); classSelected.emit(iri)"
-          (keydown.enter)="$event.stopPropagation()">
+        <span class="chip" data-cy="class-chip">
           <span
             class="tab"
             aria-hidden="true"
@@ -35,7 +29,7 @@ import { HighlightPipe } from './highlight.pipe';
               }
             }
           </span>
-        </button>
+        </span>
       } @empty {
         <span class="none">—</span>
       }
@@ -88,7 +82,6 @@ import { HighlightPipe } from './highlight.pipe';
         font-size: 11px;
         line-height: 16px;
         color: #1f2937;
-        cursor: pointer;
 
         .tab {
           flex: none;
@@ -97,15 +90,6 @@ import { HighlightPipe } from './highlight.pipe';
 
         .label {
           padding: 0 6px;
-        }
-
-        &:hover,
-        &:focus-visible {
-          box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
-        }
-
-        &.on {
-          box-shadow: inset 0 0 0 1.5px $primary;
         }
       }
 
@@ -139,10 +123,6 @@ export class ClassChipsComponent {
   readonly expanded = input(false);
   /** What a search looks for, marked in the class names. */
   readonly highlight = input<readonly string[]>([]);
-  /** The class whose panel is open, its chip outlined. */
-  readonly selected = input<string>();
-
-  readonly classSelected = output<string>();
 
   readonly shown = computed(() => (this.expanded() ? this.iris() : this.iris().slice(0, this.max())));
   readonly hiddenCount = computed(() => this.iris().length - this.shown().length);
