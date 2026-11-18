@@ -53,12 +53,13 @@ import { ColumnsMenuComponent } from './columns-menu.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
-import { LanguageTextsComponent } from './language-texts.component';
+import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
 import { LanguagesMenuComponent, parseLanguages } from './languages-menu.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { rememberedSignal } from './remembered-signal';
 import { TableColumns } from './table-columns';
 import { TABLE_STYLES } from './table-styles';
+import { TextKind } from './text-kind';
 
 /** How many classes a condensed "Used by" shows; the others are counted. */
 const MAX_USED_BY = 3;
@@ -302,7 +303,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                     [canEdit]="canEditTexts()"
                     [expanded]="expanded"
                     [highlight]="nameTerms()"
-                    (edit)="editText(row)" />
+                    (edit)="editText(row, 'label', $event)" />
                   @if (expanded) {
                     <code class="name">
                       @for (part of row.name | highlight: nameTerms(); track $index) {
@@ -358,7 +359,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [canEdit]="canEditTexts()"
                 [expanded]="expanded"
                 [highlight]="descriptionTerms()"
-                (edit)="editText(row)" />
+                (edit)="editText(row, 'description', $event)" />
             </td>
           </ng-container>
           <ng-container matColumnDef="type">
@@ -1046,8 +1047,8 @@ export class DataModelPropertiesComponent {
   }
 
   /** Opens the editor of a property's name or description, on the language asked for. */
-  editText(row: PropertyRow): void {
-    this.editing.editProperty(row.id);
+  editText(row: PropertyRow, kind: TextKind, edit: LanguageTextEdit): void {
+    this.editing.editProperty(row.id, { field: kind, language: edit.language });
   }
 
   /**

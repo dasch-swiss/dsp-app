@@ -8,11 +8,7 @@ import { Constants } from '@dasch-swiss/dsp-js';
 import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { DefaultProperties, LocalizationService, PropertyCategory } from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  MultiLanguageInputComponent,
-  MultiLanguageTextareaComponent,
-  DEFAULT_MULTILANGUAGE_FORM,
-} from '@dasch-swiss/vre/ui/string-literal';
+import { MultiLanguageFieldsComponent, DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
@@ -61,17 +57,20 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
       <app-gui-attr-link data-cy="object-attribute-link" [control]="form.controls.objectType" />
     }
 
-    <app-multi-language-input
+    <app-multi-language-fields
       [formArray]="form.controls.labels"
       [isRequired]="true"
+      [focusLanguage]="propertyData.focus?.field === 'label' ? propertyData.focus?.language : undefined"
       data-cy="label-input"
-      [placeholder]="'pages.ontology.propertyForm.labelPlaceholder' | translate" />
+      [label]="'pages.ontology.propertyForm.labelPlaceholder' | translate" />
 
-    <app-multi-language-textarea
+    <app-multi-language-fields
       [formArray]="form.controls.comments"
       data-cy="comment-textarea"
-      [placeholder]="'pages.ontology.propertyForm.commentPlaceholder' | translate"
-      [isRequired]="true" />
+      [label]="'pages.ontology.propertyForm.commentPlaceholder' | translate"
+      [multiline]="true"
+      [isRequired]="true"
+      [focusLanguage]="propertyData.focus?.field === 'description' ? propertyData.focus?.language : undefined" />
   </form>`,
   imports: [
     CommonInputComponent,
@@ -85,8 +84,7 @@ import { PropertyForm, EditPropertyDialogData } from './property-form.type';
     MatPrefix,
     MatSelect,
     MatSelectTrigger,
-    MultiLanguageInputComponent,
-    MultiLanguageTextareaComponent,
+    MultiLanguageFieldsComponent,
     ReactiveFormsModule,
     TranslatePipe,
   ],

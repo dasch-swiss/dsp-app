@@ -4,11 +4,7 @@ import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/o
 import { existingNamesAsyncValidator } from '@dasch-swiss/vre/pages/user-settings/user';
 import { atLeastOneStringRequired, CustomRegex } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
-import {
-  MultiLanguageInputComponent,
-  MultiLanguageTextareaComponent,
-  DEFAULT_MULTILANGUAGE_FORM,
-} from '@dasch-swiss/vre/ui/string-literal';
+import { MultiLanguageFieldsComponent, DEFAULT_MULTILANGUAGE_FORM } from '@dasch-swiss/vre/ui/string-literal';
 import { CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { OntologyEditService } from '../../services/ontology-edit.service';
@@ -26,31 +22,27 @@ import { ResourceClassForm, ResourceClassFormData } from './resource-class-form.
         [validatorErrors]="[namePatternErrorMsg]"
         prefixIcon="fingerprint" />
 
-      <app-multi-language-input
+      <app-multi-language-fields
         data-cy="label-input"
-        [placeholder]="'pages.ontology.resourceClassForm.labelPlaceholder' | translate"
+        [label]="'pages.ontology.resourceClassForm.labelPlaceholder' | translate"
         [formArray]="form.controls.labels"
         [validators]="labelsValidators"
-        [isRequired]="true" />
+        [isRequired]="true"
+        [focusLanguage]="formData.focus?.field === 'label' ? formData.focus?.language : undefined" />
 
-      <app-multi-language-textarea
+      <app-multi-language-fields
         data-cy="comment-textarea"
-        [placeholder]="'pages.ontology.resourceClassForm.commentPlaceholder' | translate"
+        [label]="'pages.ontology.resourceClassForm.commentPlaceholder' | translate"
         [formArray]="form.controls.comments"
-        [editable]="true"
+        [multiline]="true"
         [validators]="commentsValidators"
-        [isRequired]="true" />
+        [isRequired]="true"
+        [focusLanguage]="formData.focus?.field === 'description' ? formData.focus?.language : undefined" />
     </form>
   `,
   styles: [':host ::ng-deep .name-input .mat-icon { padding-right: 24px; }'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonInputComponent,
-    MultiLanguageInputComponent,
-    MultiLanguageTextareaComponent,
-    ReactiveFormsModule,
-    TranslatePipe,
-  ],
+  imports: [CommonInputComponent, MultiLanguageFieldsComponent, ReactiveFormsModule, TranslatePipe],
 })
 export class ResourceClassFormComponent implements OnInit {
   @Input({ required: true }) formData!: ResourceClassFormData;

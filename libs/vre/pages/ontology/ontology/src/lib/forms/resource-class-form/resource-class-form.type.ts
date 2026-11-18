@@ -8,10 +8,17 @@ export type ResourceClassForm = FormGroup<{
   comments: MultiLanguageFormArray;
 }>;
 
+/** The text an edit dialog opens on, its field focused in that language. */
+export interface TextFocus {
+  field: 'label' | 'description';
+  language: string;
+}
+
 export interface ResourceClassFormData {
   name: string;
   labels: StringLiteral[];
   comments: StringLiteral[];
+  focus?: TextFocus;
 }
 
 export interface UpdateResourceClassData {
