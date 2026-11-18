@@ -47,7 +47,7 @@ What blocks a merge is set by the review prompt in `.github/workflows/claude.yml
 
 ### Tests & stories
 
-- A component that gains an injected dependency: every spec and story that renders it for real provides or stubs the new dependency (`CLAUDE.md` § Storybook Convention).
+- A component that gains an injected dependency: every spec and story that renders it for real provides or stubs the new dependency (`CONVENTIONS.md` § Storybook Convention).
 - No newly skipped spec or Cypress test without a reason in the PR.
 - No new test whose assertion another test already covers, down to a single `it` in a spec or a story's `play()` step.
 
