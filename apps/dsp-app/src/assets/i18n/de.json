@@ -894,6 +894,7 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "classActions": "Aktionen für {{class}}",
       "objectWithoutRepresentation": "Objekt ohne Repräsentation",
       "kindHeading": "Art der Ressourcen",
       "kindForAll": "Für jede Klasse anzeigen",
@@ -950,7 +951,6 @@
       "current": "Aktuell",
       "cardinalityBlocked": "Bestehende Ressourcen passen nicht dazu",
       "booleanOne": "Eine Ja/Nein-Eigenschaft hat einen Wert",
-      "editClass": "Klasse bearbeiten",
       "findInCards": "Klassen und Eigenschaften suchen",
       "dragToReorder": "Ziehen, um die Reihenfolge zu ändern",
       "showMore": "{{count}} weitere anzeigen",

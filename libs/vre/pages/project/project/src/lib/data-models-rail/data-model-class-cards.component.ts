@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import {
@@ -17,14 +18,20 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Router } from '@angular/router';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { CardinalityLayout, CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
+import { DataModelsRailState } from './data-models-rail-state';
 import { hasText, highlighted } from './highlighted';
 
 /** How many of a class's own properties a card shows before "Show more". */
@@ -69,6 +76,9 @@ export interface PropertyOrder {
     CdkDropList,
     ClassCardPropertyComponent,
     MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     MatTooltip,
     NgTemplateOutlet,
     TabShadePipe,
@@ -210,38 +220,66 @@ export interface PropertyOrder {
                 </span>
               }
             </span>
-            <!-- For editors, on hover: the class's pen and its bin. -->
-            @if (canEdit()) {
-              <button
-                type="button"
-                class="icon-button actions"
-                data-cy="data-model-class-card-edit"
-                [attr.aria-label]="r + '.editClass' | translate"
-                [matTooltip]="r + '.editClass' | translate"
-                (click)="editClass.emit(row.id)">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <!-- Deletes once the API says nothing uses the class; why not, on hover, when something does. -->
-              @if (editing.canDelete) {
-                @let check = deleteChecks().get(row.id);
-                <span
-                  class="actions"
-                  [matTooltip]="
-                    (!check ? r + '.checkingDelete' : check.canDo ? r + '.deleteClass' : r + '.cannotDeleteClass')
-                      | translate
-                  ">
-                  <button
-                    type="button"
-                    class="icon-button delete"
-                    data-cy="data-model-class-card-delete"
-                    [attr.aria-label]="r + '.deleteClass' | translate"
-                    [disabled]="!check?.canDo"
-                    (click)="deleteClass(row)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </span>
+            <!-- The class's actions, as in the Data models tab: edit, open its resources, copy its ID, delete. -->
+            @let c = 'pages.ontology.resourceClassInfo';
+            @let check = deleteChecks().get(row.id);
+            <button
+              type="button"
+              class="icon-button menu-button"
+              data-cy="data-model-class-card-menu"
+              [attr.aria-label]="r + '.classActions' | translate: { class: row.label }"
+              [matTooltip]="r + '.classActions' | translate: { class: row.label }"
+              matTooltipShowDelay="600"
+              [matMenuTriggerFor]="classMenu"
+              (menuOpened)="checkDelete(row.id)">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #classMenu="matMenu" xPosition="before">
+              @if (canEdit()) {
+                <button
+                  mat-menu-item
+                  type="button"
+                  data-cy="data-model-class-card-edit"
+                  (click)="editClass.emit(row.id)">
+                  <mat-icon>edit</mat-icon>
+                  {{ c + '.edit' | translate }}
+                </button>
               }
-            }
+              <!-- A class nothing uses has no resources to open. -->
+              <button
+                mat-menu-item
+                type="button"
+                data-cy="data-model-class-card-open-instances"
+                [disabled]="check?.canDo === true"
+                (click)="openInstances(row)">
+                <mat-icon>open_in_new</mat-icon>
+                {{ c + '.openInstances' | translate }}
+              </button>
+              <button mat-menu-item type="button" data-cy="data-model-class-card-copy-id" (click)="copyId(row)">
+                <mat-icon>content_copy</mat-icon>
+                {{ c + '.copyId' | translate }}
+              </button>
+              <!-- Deletes once the API says nothing uses the class; why not, under it, when something does. -->
+              @if (canEdit() && editing.canDelete) {
+                <button
+                  mat-menu-item
+                  type="button"
+                  class="delete"
+                  data-cy="data-model-class-card-delete"
+                  [disabled]="!check?.canDo"
+                  (click)="deleteClass(row)">
+                  <mat-icon>delete</mat-icon>
+                  <span class="menu-text">
+                    {{ c + '.delete' | translate }}
+                    @if (!check) {
+                      <small>{{ r + '.checkingDelete' | translate }}</small>
+                    } @else if (!check.canDo) {
+                      <small>{{ r + '.cannotDeleteClass' | translate }}</small>
+                    }
+                  </span>
+                </button>
+              }
+            </mat-menu>
             <button
               type="button"
               class="icon-button"
@@ -462,8 +500,9 @@ export interface PropertyOrder {
         }
       }
 
-      // The pen and the bin, as small as the arrow looks, shown over the header or with the focus.
-      .actions {
+      // The class's menu: shown over the header, while open or with the focus; its dots drawn smaller, as tall as the
+      // chevron looks.
+      .menu-button {
         visibility: hidden;
 
         mat-icon {
@@ -473,10 +512,9 @@ export interface PropertyOrder {
         }
       }
 
-      // Only over the card's header: working on its properties doesn't bring them up.
-      .card-head:hover .actions,
-      .actions:focus-visible,
-      .actions:focus-within {
+      .card-head:hover .menu-button,
+      .menu-button[aria-expanded='true'],
+      .menu-button:focus-visible {
         visibility: visible;
       }
 
@@ -549,15 +587,12 @@ export interface PropertyOrder {
       }
 
       // Deleting a class, in red, and why it can't be, under it.
-      // The class's pen and bin in the app's blue, as elsewhere; the bin turns red only while pointed at.
-      .card-head .icon-button.actions:not([disabled]),
-      .card-head .delete:not([disabled]) {
-        color: $primary;
-      }
-
-      .card-head .delete:not([disabled]):hover {
-        color: #b3261e;
-        background: #fdecea;
+      // In the class's menu: Delete, and why it can't, under it.
+      .menu-text small {
+        display: block;
+        font-size: 11.5px;
+        line-height: 1.3;
+        color: $cool_gray_500;
       }
 
       // "Add property" under an opened card's properties, as in the Data models tab.
@@ -586,6 +621,28 @@ export class DataModelClassCardsComponent {
   private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly _destroyRef = inject(DestroyRef);
   readonly editing = injectDataModelEditing();
+  private readonly _state = inject(DataModelsRailState);
+  private readonly _router = inject(Router);
+  private readonly _clipboard = inject(Clipboard);
+  private readonly _notification = inject(NotificationService);
+  private readonly _translate = inject(TranslateService);
+
+  /** Opens the class's resources in the Data tab, in a new browser tab, as the Data models tab does. */
+  openInstances(row: ClassRow): void {
+    const [ontologyIri, className] = row.id.split('#');
+    const path = this._state.projectPath(
+      RouteConstants.data,
+      OntologyService.getOntologyNameFromIri(ontologyIri),
+      className
+    );
+    window.open(this._router.serializeUrl(this._router.createUrlTree(path)), '_blank');
+  }
+
+  /** Copies the class's IRI, and says so. */
+  copyId(row: ClassRow): void {
+    this._clipboard.copy(row.id);
+    this._notification.openSnackBar(this._translate.instant('pages.ontology.resourceClassInfo.idCopied'));
+  }
   /** What the API says of deleting each class, once its menu asked; none while it checks. */
   readonly deleteChecks = signal(new Map<string, CanDo>());
   /** The classes whose deletion was asked about, so hovering again asks no more. */
