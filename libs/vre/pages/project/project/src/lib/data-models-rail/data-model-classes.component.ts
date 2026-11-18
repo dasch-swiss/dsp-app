@@ -11,10 +11,12 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultClass, DefaultResourceClasses, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -24,10 +26,12 @@ import { ClassRow, localNameOf } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
+import { CardinalityLayout } from './class-card-property.component';
 import { DataModelClassCardsComponent, PropertyOrder } from './data-model-class-cards.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
+import { rememberedSignal } from './remembered-signal';
 
 /**
  * Data models 2 › Classes: the data model's classes as cards, one per class with its properties, as the Data models tab
@@ -40,6 +44,8 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
   imports: [
     DataModelClassCardsComponent,
     MatButton,
+    MatButtonToggle,
+    MatButtonToggleGroup,
     MatFormField,
     MatIcon,
     MatInput,
@@ -48,6 +54,7 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
     MatMenuTrigger,
     MatPrefix,
     PropertyPanelComponent,
+    MatTooltip,
     ResourceClassPanelComponent,
     TranslatePipe,
   ],
@@ -93,6 +100,27 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
           </mat-menu>
         }
         <div class="tools">
+          <!-- "Multiple values" and "Required": columns named once, or the words on each row, as in the Data models tab. -->
+          <mat-button-toggle-group
+            class="cardinality-layout"
+            hideSingleSelectionIndicator
+            data-cy="data-model-classes-cardinality-layout"
+            [attr.aria-label]="r + '.cardinalityLayout' | translate"
+            [value]="cardinalityLayout()"
+            (change)="cardinalityLayout.set($event.value)">
+            <mat-button-toggle value="columns" [matTooltip]="r + '.cardinalityColumnsTip' | translate">
+              <mat-icon>view_column</mat-icon>
+              {{ r + '.cardinalityColumns' | translate }}
+            </mat-button-toggle>
+            <mat-button-toggle value="rows" [matTooltip]="r + '.cardinalityRowsTip' | translate">
+              <mat-icon>view_agenda</mat-icon>
+              {{ r + '.cardinalityRows' | translate }}
+            </mat-button-toggle>
+            <mat-button-toggle value="chip" [matTooltip]="r + '.cardinalityChipTip' | translate">
+              <mat-icon>label</mat-icon>
+              {{ r + '.cardinalityChip' | translate }}
+            </mat-button-toggle>
+          </mat-button-toggle-group>
           @if (rows().length) {
             <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAllCards()">
               <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
@@ -112,6 +140,8 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
         [canEdit]="state.canEdit()"
         [canReorder]="editing.canReorder"
         [query]="query()"
+        [cardinalityLayout]="cardinalityLayout()"
+        [style.--card-width.px]="cardWidth()"
         [(folded)]="foldedCards"
         (reorder)="reorderProperties($event)"
         (editClass)="edit($event)"
@@ -232,6 +262,15 @@ export class DataModelClassesComponent {
   readonly labelOf = (iri: string) => this.state.labelOf(iri);
 
   readonly query = signal('');
+
+  /** How the cards show "Multiple values" and "Required", as the viewer last chose. */
+  readonly cardinalityLayout = rememberedSignal<CardinalityLayout>(
+    'dsp-data-models-cardinality-layout',
+    'columns',
+    stored => (stored === 'columns' || stored === 'rows' || stored === 'chip' ? stored : undefined)
+  );
+  /** The cards' least width: room for the checkboxes' words on each row, less for columns, least for the chip. */
+  readonly cardWidth = computed(() => ({ rows: 420, columns: 350, chip: 320 })[this.cardinalityLayout()]);
 
   /** The classes whose name, file or properties have the searched text, in any language. */
   readonly rows = computed(() => {

@@ -894,6 +894,13 @@
       "links": "collegamenti"
     },
     "dataModels2": {
+      "cardinalityChip": "0–1 / 1–n",
+      "cardinalityChipTip": "La cardinalità come 0–1, 0–n, 1 o 1–n, come prima",
+      "cardinalityLayout": "Mostra Valori multipli e Obbligatorio",
+      "cardinalityColumns": "Colonne",
+      "cardinalityRows": "Su ogni riga",
+      "cardinalityColumnsTip": "Due colonne di caselle, nominate una volta in cima a ogni scheda",
+      "cardinalityRowsTip": "Le due caselle con il loro testo su ogni proprietà, come nella scheda Modelli di dati",
       "dataModels": "Modelli di dati",
       "createDataModel": "Crea modello di dati",
       "documentation": "Documentazione",

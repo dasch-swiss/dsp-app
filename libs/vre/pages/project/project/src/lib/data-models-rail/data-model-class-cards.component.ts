@@ -24,7 +24,7 @@ import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor
 import { FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
-import { CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
+import { CardinalityLayout, CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
 import { hasText, highlighted } from './highlighted';
 
 /** How many of a class's own properties a card shows before "Show more". */
@@ -73,11 +73,22 @@ export interface PropertyOrder {
   ],
   template: `
     @let r = 'pages.dataModels2';
+    @let c = 'pages.ontology.cardinality';
+    <!-- With the checkboxes in columns, the columns' names, once, over the properties. -->
+    <ng-template #columns>
+      @if (cardinalityLayout() === 'columns') {
+        <div class="cardinality-head" aria-hidden="true">
+          <span>{{ c + '.multipleValues' | translate }}</span>
+          <span>{{ c + '.required' | translate }}</span>
+        </div>
+      }
+    </ng-template>
     <!-- A class's own properties, or one group of them, up to the cap, then "Show n more"; editors drag them. -->
     <ng-template #capped let-properties let-key="key" let-card="card">
       @let all = showAll().has(key) || autoOpened().has(key);
       @let hidden = properties.length - CARD_PROPERTIES;
       @let drag = reorderable();
+      <ng-container [ngTemplateOutlet]="columns" />
       <ul
         class="props"
         cdkDropList
@@ -98,6 +109,7 @@ export interface PropertyOrder {
             [draggable]="drag"
             [classIri]="card.row.id"
             [className]="card.row.label"
+            [cardinalityLayout]="cardinalityLayout()"
             (edit)="editProperty.emit($event)"
             (remove)="removeProperty(card.row, property)"
             (goTo)="goTo($event)">
@@ -220,6 +232,9 @@ export interface PropertyOrder {
                   {{ r + '.inheritedFrom' | translate: { count: card.inherited.length, class: card.parent } }}
                 </button>
                 @if (inheritedOpen) {
+                  @if (!card.own.length) {
+                    <ng-container [ngTemplateOutlet]="columns" />
+                  }
                   <ul class="props">
                     @for (property of card.inherited; track property.id) {
                       <li
@@ -229,6 +244,7 @@ export interface PropertyOrder {
                         [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
                         [query]="query()"
                         [canEdit]="canEdit()"
+                        [cardinalityLayout]="cardinalityLayout()"
                         (edit)="editProperty.emit($event)"
                         (goTo)="goTo($event)"></li>
                     }
@@ -261,7 +277,7 @@ export interface PropertyOrder {
 
       .cards {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(var(--card-width, 400px), 1fr));
         gap: 12px;
         align-items: start;
       }
@@ -432,6 +448,19 @@ export interface PropertyOrder {
         visibility: visible;
       }
 
+      // The checkboxes' columns, named once over the properties, above the two boxes of each row.
+      .cardinality-head {
+        display: grid;
+        grid-template-columns: 64px 64px;
+        justify-content: end;
+        padding: 4px 8px 2px;
+        border-top: 1px solid $cool_gray_100;
+        font-size: 10.5px;
+        line-height: 1.2;
+        text-align: center;
+        color: $cool_gray_500;
+      }
+
       .props {
         list-style: none;
         margin: 0;
@@ -541,6 +570,8 @@ export class DataModelClassCardsComponent {
   readonly canReorder = input(false);
   /** The text searched for: marked where it shows, and the rows it is in opened. */
   readonly query = input('');
+  /** Whether the properties' checkboxes carry their words on each row, or are named once as columns. */
+  readonly cardinalityLayout = input<CardinalityLayout>('columns');
 
   /** "Edit class" was picked: the class's dialog is to open. */
   readonly editClass = output<string>();

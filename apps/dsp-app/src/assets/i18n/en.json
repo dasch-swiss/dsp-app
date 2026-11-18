@@ -894,6 +894,13 @@
       "links": "links"
     },
     "dataModels2": {
+      "cardinalityChip": "0–1 / 1–n",
+      "cardinalityChipTip": "The cardinality as 0–1, 0–n, 1 or 1–n, as before",
+      "cardinalityLayout": "Show Multiple values and Required",
+      "cardinalityColumns": "Columns",
+      "cardinalityRows": "On each row",
+      "cardinalityColumnsTip": "Two columns of checkboxes, named once at the top of each card",
+      "cardinalityRowsTip": "The two checkboxes with their words on each property, as in the Data models tab",
       "dataModels": "Data models",
       "createDataModel": "Create data model",
       "documentation": "Documentation",

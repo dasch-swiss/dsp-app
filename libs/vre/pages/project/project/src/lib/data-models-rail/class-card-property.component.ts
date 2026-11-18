@@ -4,6 +4,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
+import { CardinalityCheckboxesComponent } from '../ontology-map/cardinality-checkboxes.component';
 import { CardinalityChipComponent } from '../ontology-map/cardinality-chip.component';
 import { DATA_MODEL_EDITOR, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
@@ -12,6 +13,12 @@ import { highlighted } from './highlighted';
 
 export type CardProperty = ClassRow['propertyList'][number];
 
+/**
+ * How a card shows a property's cardinality: "Multiple values" and "Required" as two columns named once, or with their
+ * words on each row, as in the Data models tab; or as before, 0-1, 0-n, 1 or 1-n.
+ */
+export type CardinalityLayout = 'columns' | 'rows' | 'chip';
+
 /** A property's cardinality from whether it is required and may hold several values. */
 function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
   if (required) return multiple ? Cardinality._1_n : Cardinality._1;
@@ -19,16 +26,25 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
 }
 
 /**
- * One property of a class card, on one line: value type, label, the class a link points at, local name and cardinality.
+ * One property of a class card, on one line: value type, label, the class a link points at, local name, and its
+ * cardinality as the Data models tab shows it, "Multiple values" and "Required" checkboxes.
  * The link target opens that class's card when it shows. For editors, on hover, a pencil edits the property, and a
  * handle left of it, where the card lets it, drags the property to another place in the form order.
  */
 @Component({
   selector: 'li[appClassCardProperty]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardinalityChipComponent, CdkDragHandle, MatIcon, MatTooltip, TranslatePipe],
+  imports: [
+    CardinalityCheckboxesComponent,
+    CardinalityChipComponent,
+    CdkDragHandle,
+    MatIcon,
+    MatTooltip,
+    TranslatePipe,
+  ],
   host: {
     class: 'prop',
+    '[class.chip-layout]': "cardinalityLayout() === 'chip'",
     'data-cy': 'data-model-class-card-property',
   },
   template: `
@@ -57,15 +73,27 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         <span [class.hit]="part.match">{{ part.text }}</span>
       }
     </span>
-    <app-cardinality-chip
-      class="cardinality"
-      data-cy="data-model-class-card-cardinality"
-      [cardinality]="currentCardinality()"
-      [type]="property.type"
-      [propertyIri]="property.id"
-      [propertyLabel]="property.label"
-      [classIri]="classIri()"
-      [changeable]="changeable()" />
+    @if (cardinalityLayout() === 'chip') {
+      <app-cardinality-chip
+        class="cardinality"
+        data-cy="data-model-class-card-cardinality"
+        [cardinality]="currentCardinality()"
+        [type]="property.type"
+        [propertyIri]="property.id"
+        [propertyLabel]="property.label"
+        [classIri]="classIri()"
+        [changeable]="changeable()" />
+    } @else {
+      <app-cardinality-checkboxes
+        class="cardinality"
+        data-cy="data-model-class-card-cardinality"
+        [cardinality]="currentCardinality()"
+        [type]="property.type"
+        [propertyIri]="property.id"
+        [classIri]="classIri()"
+        [changeable]="changeable()"
+        [labelled]="cardinalityLayout() === 'rows'" />
+    }
     <!-- For editors, on hover: the handle to drag it, the property's dialog, and for the class's own ones, removing it
          from the class. -->
     @if ((canEdit() && editable()) || draggable()) {
@@ -111,11 +139,12 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
     `
       @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
-      // One line: type, label and target, local name, cardinality; the pencil and the handle float over it on hover.
+      // One line: type, label and target, local name, the two checkboxes; the pencil and the handle float over it on hover.
       :host {
         position: relative;
         display: grid;
-        grid-template-columns: 16px minmax(0, 1fr) auto 32px;
+        grid-template-columns: 16px minmax(0, 1fr) auto 128px;
+        --actions-right: 142px;
         gap: 6px;
         align-items: center;
         min-height: 26px;
@@ -126,6 +155,12 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         &:hover {
           background: $cool_gray_50;
         }
+      }
+
+      // As before: the chip in a narrow last column.
+      :host(.chip-layout) {
+        grid-template-columns: 16px minmax(0, 1fr) auto 32px;
+        --actions-right: 46px;
       }
 
       :host + :host {
@@ -194,61 +229,11 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         cursor: grab;
       }
 
-      // A cardinality that can change is a button: a ring on hover says so.
-      button.cardinality {
-        padding: 0;
-        background: white;
-        cursor: pointer;
-
-        &.required {
-          background: $primary;
-        }
-
-        &:hover {
-          box-shadow: 0 0 0 2px $primary_50;
-        }
-      }
-
-      // The cardinalities in the menu: the notation, then what it means and why one is out of reach.
-      .choice {
-        code {
-          display: inline-block;
-          min-width: 30px;
-          margin-right: 10px;
-          padding: 0 4px;
-          border: 1px solid $cool_gray_300;
-          border-radius: 4px;
-          font:
-            500 11.5px 'Roboto Mono',
-            monospace;
-          text-align: center;
-        }
-
-        &.current code {
-          background: $primary;
-          border-color: $primary;
-          color: white;
-        }
-
-        small {
-          display: block;
-          font-size: 11.5px;
-          line-height: 1.3;
-          color: $cool_gray_500;
-        }
-      }
-
-      .choice-text {
-        display: inline-block;
-        vertical-align: middle;
-        line-height: 1.3;
-      }
-
-      // The handle, the pencil and the remove button cover the end of the local name, next to the cardinality, on hover.
+      // The handle, the pencil and the remove button cover the end of the local name, next to the checkboxes, on hover.
       .actions {
         position: absolute;
         top: 50%;
-        right: 46px;
+        right: var(--actions-right);
         transform: translateY(-50%);
         display: flex;
         border-radius: 99px;
@@ -317,6 +302,8 @@ export class ClassCardPropertyComponent {
   readonly classIri = input<string | undefined>(undefined);
   /** That class's label, for the remove button. */
   readonly className = input('');
+  /** Whether the checkboxes carry their words on each row, or the card names their columns once. */
+  readonly cardinalityLayout = input<CardinalityLayout>('columns');
 
   readonly edit = output<string>();
   /** The link target was clicked: its card is to show. */
