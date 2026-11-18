@@ -8,7 +8,6 @@ export * from './lib/time-input/seconds-to-time-string';
 export * from './lib/time-input/time-format.directive';
 export * from './lib/time-input/time-input.component';
 export * from './lib/time-input/time-string-to-seconds';
-export * from './lib/time-input/time-validator';
 export * from './lib/time-format.pipe';
 export * from './lib/ck-editor/ck-editor';
 export * from './lib/ck-editor/ck-editor.component';
@@ -19,7 +18,6 @@ export * from './lib/common-input.component';
 export * from './lib/admin-image/admin-image.directive';
 export * from './lib/centered-layout.component';
 export * from './lib/directives/drag-drop.directive';
-export * from './lib/pipes/isFalsy.piipe';
 export * from './lib/pipes/time.pipe';
 export * from './lib/pipes/formatting/knoradate.pipe';
 export * from './lib/pipes/string-transformation/truncate.pipe';
@@ -32,7 +30,6 @@ export * from './lib/pipes/add-target-blank.pipe';
 export * from './lib/ck-editor/unescape-html';
 export * from './lib/alternated-list.component';
 export * from './lib/app-color-picker.component';
-export * from './lib/human-readable-date.pipe';
 export * from './lib/double-chip-selector.component';
 export * from './lib/centered-box.component';
 export * from './lib/centered-message.component';
@@ -46,9 +43,4 @@ export * from './lib/resource-rights-statement.component';
 export * from './lib/resource-authorship.component';
 export * from './lib/authorship-chip-editor.component';
 export { CalendarMarkerComponent, type CalendarFacts, type CalendarReading } from './lib/calendar-marker.component';
-export {
-  CalendarDateService,
-  WEEKDAY_KEYS,
-  type ConvertedKnoraDate,
-  type MonthGrid,
-} from './lib/calendar-date/calendar-date.service';
+export { CalendarDateService, WEEKDAY_KEYS } from './lib/calendar-date/calendar-date.service';

@@ -1,21 +1,3 @@
-export interface MiscClassResource {
-  label: string;
-  color: string;
-  colorComment: string;
-  book: string;
-  bookComment: string;
-}
-
-export interface SidebandClassResource {
-  label: string;
-  file: string;
-  title: string;
-  titleComment: string;
-  description: string;
-  descriptionComment: string;
-  comments: [Comment];
-}
-
 export interface Comment {
   text: string;
   comment: string;

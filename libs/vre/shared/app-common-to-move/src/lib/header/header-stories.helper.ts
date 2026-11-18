@@ -2,7 +2,7 @@ import { provideRouter } from '@angular/router';
 import { KnoraApiConfig, KnoraApiConnection } from '@dasch-swiss/dsp-js';
 import { AppConfigService, AppConfigToken, DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 
-export const APP_CONFIG_TOKEN_STUB = {
+const APP_CONFIG_TOKEN_STUB = {
   dspRelease: '0.0.0',
   apiProtocol: 'https',
   apiHost: 'api.example.com',

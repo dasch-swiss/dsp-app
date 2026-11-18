@@ -239,8 +239,6 @@ function gregorianDayOfWeek(date: CalendarDate): number {
  *
  * @example
  * ```typescript
- * import { GregorianCalendar } from '@dasch-swiss/vre/shared/calendar';
- *
  * const date = createDate('GREGORIAN', 2024, 1, 15);
  * const jdn = GregorianCalendar.toJDN(date);
  * const daysInMonth = GregorianCalendar.daysInMonth(2024, 2); // 29

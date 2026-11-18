@@ -250,8 +250,6 @@ function islamicDayOfWeek(date: CalendarDate): number {
  *
  * @example
  * ```typescript
- * import { IslamicCalendar } from '@dasch-swiss/vre/shared/calendar';
- *
  * const date = createDate('ISLAMIC', 1445, 7, 4);
  * const jdn = IslamicCalendar.toJDN(date);
  * const daysInMonth = IslamicCalendar.daysInMonth(1445, 12);

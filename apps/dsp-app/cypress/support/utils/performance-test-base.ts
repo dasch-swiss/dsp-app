@@ -177,11 +177,3 @@ export const USER_SERVICE_TEST_PAGES = [
   '/system/projects',
   '/system/users'
 ];
-
-// Performance thresholds for warnings
-export const PERFORMANCE_THRESHOLDS = {
-  MEMORY_GROWTH_WARNING: 50, // percentage
-  MEMORY_GROWTH_CRITICAL: 80, // MB
-  BOOTSTRAP_TIME_CRITICAL: 25000, // ms
-  STATE_UPDATE_CRITICAL: 1500 // ms
-};
