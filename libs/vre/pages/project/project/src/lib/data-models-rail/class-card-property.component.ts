@@ -194,13 +194,20 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
             <mat-icon>remove_circle_outline</mat-icon>
           </button>
         }
-        <!-- A 0-1 cardinality, unshown at rest, changes from here, last of the row's tools. -->
-        @if (
-          changeable() &&
-          ((cardinalityLayout() === 'bar' && isDefault()) ||
-            cardinalityLayout() === 'symbols' ||
-            cardinalityLayout() === 'words')
-        ) {
+        <!-- With the star and the stack: both switch here, last of the row's tools. -->
+        @if (changeable() && cardinalityLayout() === 'symbols') {
+          <app-cardinality-checkboxes
+            class="bar-toggles"
+            data-cy="data-model-class-card-cardinality"
+            appearance="icons"
+            [cardinality]="currentCardinality()"
+            [type]="property.type"
+            [propertyIri]="property.id"
+            [classIri]="classIri()"
+            [changeable]="true" />
+        }
+        <!-- A cardinality not shown at rest (a 0-1, or in words) changes from here, last of the row's tools. -->
+        @if (changeable() && ((cardinalityLayout() === 'bar' && isDefault()) || cardinalityLayout() === 'words')) {
           <app-cardinality-chip
             class="bar-chip"
             data-cy="data-model-class-card-cardinality"
@@ -289,6 +296,10 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       .required-word {
         font-weight: 500;
         color: #b3261e;
+      }
+
+      .bar-toggles {
+        margin: 0 2px 0 2px;
       }
 
       .bar-chip {

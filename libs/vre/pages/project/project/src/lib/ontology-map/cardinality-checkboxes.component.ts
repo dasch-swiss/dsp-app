@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -32,34 +33,61 @@ type Box = 'multiple' | 'required';
 @Component({
   selector: 'app-cardinality-checkboxes',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatCheckbox, MatTooltip, TranslatePipe],
+  imports: [MatCheckbox, MatIcon, MatTooltip, TranslatePipe],
   host: {
     '[class.labelled]': 'labelled()',
     '[class.ticked-only]': 'tickedOnly()',
+    '[class.icons]': "appearance() === 'icons'",
     '(mouseenter)': 'check()',
     '(focusin)': 'check()',
   },
   template: `
     @let c = 'pages.ontology.cardinality';
-    @for (box of boxes; track box) {
-      @let label = c + '.' + (box === 'multiple' ? 'multipleValues' : 'required') | translate;
-      <span
-        class="box"
-        [class.unticked]="!state()[box]"
-        [matTooltip]="reasonOf(box) | translate"
-        [matTooltipDisabled]="!reasonOf(box)">
-        <mat-checkbox
-          color="primary"
-          [attr.data-cy]="'cardinality-' + box"
-          [checked]="state()[box]"
-          [disabled]="!changeable() || saving() || blocked(box)"
-          [aria-label]="label"
-          (change)="toggle(box, $event.source)">
-          @if (labelled()) {
-            {{ label }}
-          }
-        </mat-checkbox>
-      </span>
+    @if (appearance() === 'icons') {
+      <!-- A star for "Required", a stack for "Multiple values": each switches on a click. -->
+      @for (box of iconOrder; track box) {
+        @let label = c + '.' + (box === 'multiple' ? 'multipleValues' : 'required') | translate;
+        @let on = state()[box];
+        <span class="box" [matTooltip]="reasonOf(box) || label | translate">
+          <button
+            type="button"
+            class="icon-toggle"
+            [class.star]="box === 'required'"
+            [class.on]="on"
+            [attr.data-cy]="'cardinality-toggle-' + box"
+            [attr.aria-label]="label"
+            [attr.aria-pressed]="on"
+            [disabled]="!changeable() || saving() || blocked(box)"
+            (click)="toggle(box)">
+            @if (box === 'required') {
+              <span class="star-glyph" aria-hidden="true">*</span>
+            } @else {
+              <mat-icon aria-hidden="true">layers</mat-icon>
+            }
+          </button>
+        </span>
+      }
+    } @else {
+      @for (box of boxes; track box) {
+        @let label = c + '.' + (box === 'multiple' ? 'multipleValues' : 'required') | translate;
+        <span
+          class="box"
+          [class.unticked]="!state()[box]"
+          [matTooltip]="reasonOf(box) | translate"
+          [matTooltipDisabled]="!reasonOf(box)">
+          <mat-checkbox
+            color="primary"
+            [attr.data-cy]="'cardinality-' + box"
+            [checked]="state()[box]"
+            [disabled]="!changeable() || saving() || blocked(box)"
+            [aria-label]="label"
+            (change)="toggle(box, $event.source)">
+            @if (labelled()) {
+              {{ label }}
+            }
+          </mat-checkbox>
+        </span>
+      }
     }
   `,
   styles: [
@@ -85,6 +113,60 @@ type Box = 'multiple' | 'required';
 
       .box {
         display: inline-flex;
+      }
+
+      // The star and the stack, side by side: grey when off, red and blue when on.
+      :host(.icons) {
+        display: inline-flex;
+        gap: 2px;
+      }
+
+      .icon-toggle {
+        display: grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: none;
+        color: $cool_gray_400;
+        cursor: pointer;
+
+        &:hover:not([disabled]) {
+          background: $cool_gray_100;
+        }
+
+        &[disabled] {
+          cursor: default;
+          opacity: 0.4;
+        }
+
+        &.on {
+          color: $primary;
+        }
+
+        &.star.on {
+          color: #b3261e;
+        }
+
+        &:focus-visible {
+          outline: 2px solid $primary;
+          outline-offset: 1px;
+        }
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .star-glyph {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 22px;
+        height: 22px;
       }
 
       // Ticked boxes only; the others show while the pointer is on the property's row, or with the focus.
@@ -115,6 +197,8 @@ export class CardinalityCheckboxesComponent {
   readonly changeable = input(false);
   /** Whether each box carries its words; else the card names the columns. */
   readonly labelled = input(false);
+  /** As checkboxes, or as a star and a stack that switch on a click. */
+  readonly appearance = input<'checkboxes' | 'icons'>('checkboxes');
   /** Whether only the ticked boxes show, the others appearing on hover. */
   readonly tickedOnly = input(false);
 
@@ -123,6 +207,8 @@ export class CardinalityCheckboxesComponent {
   private readonly _destroyRef = inject(DestroyRef);
 
   readonly boxes: Box[] = ['multiple', 'required'];
+  /** The star after a label comes first, as the card reads it; then the stack. */
+  readonly iconOrder: Box[] = ['required', 'multiple'];
   readonly state = computed(() => checkboxesOf(this.cardinality()));
   readonly saving = signal(false);
   /** What the API says of ticking or unticking each box, once asked; per cardinality, so a saved change asks again. */
@@ -181,7 +267,7 @@ export class CardinalityCheckboxesComponent {
    * Saves the cardinality the ticked or unticked box gives, once the API says the existing resources allow it; the data
    * model is then read again. Refused, the box goes back and says why.
    */
-  toggle(box: Box, checkbox: MatCheckbox): void {
+  toggle(box: Box, checkbox?: MatCheckbox): void {
     const classIri = this.classIri();
     const editing = this._editing;
     if (!classIri || !editing) return;
@@ -203,11 +289,11 @@ export class CardinalityCheckboxesComponent {
       )
       .subscribe({
         next: saved => {
-          if (!saved) checkbox.checked = this.state()[box];
+          if (!saved && checkbox) checkbox.checked = this.state()[box];
         },
         complete: () => this.saving.set(false),
         error: () => {
-          checkbox.checked = this.state()[box];
+          if (checkbox) checkbox.checked = this.state()[box];
           this.saving.set(false);
         },
       });
