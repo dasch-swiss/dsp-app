@@ -1,4 +1,3 @@
-import { CdkPortalOutlet } from '@angular/cdk/portal';
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -40,7 +39,6 @@ export type DataModelsLayout = 'top' | 'side';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DataModelsRailState],
   imports: [
-    CdkPortalOutlet,
     MatIcon,
     MatIconButton,
     MatListItem,
@@ -99,9 +97,7 @@ export type DataModelsLayout = 'top' | 'side';
                 }
               </nav>
             }
-            <div class="tools">
-              <ng-template [cdkPortalOutlet]="state.toolbar()" />
-            </div>
+            <span class="spacer"></span>
             <ng-container [ngTemplateOutlet]="toggle" />
           </header>
         } @else {
@@ -263,8 +259,7 @@ export type DataModelsLayout = 'top' | 'side';
         flex: none;
         display: flex;
         align-items: center;
-        flex-wrap: wrap;
-        gap: 0 4px;
+        gap: 4px;
         min-height: 48px;
         padding: 0 8px;
         border-bottom: 1px solid $cool_gray_200;
@@ -295,12 +290,8 @@ export type DataModelsLayout = 'top' | 'side';
         }
       }
 
-      // The section's tools, at the end of the bar; on a line of their own when they don't fit beside the tabs.
-      .tools {
-        flex: 1 0 auto;
-        display: flex;
-        justify-content: flex-end;
-        padding: 6px 0;
+      .spacer {
+        flex: 1;
       }
 
       .count {
@@ -511,8 +502,6 @@ export class DataModelsRailPageComponent {
   readonly deleteCheck = signal<CanDo | undefined>(undefined);
 
   constructor() {
-    // With the bar on top, the section's tools join it; with the sidebar, they stay in the section, under its title.
-    effect(() => this.state.toolbarInBar.set(this.layout() === 'top'));
     // The bin says whether the data model can be deleted as soon as the data model shows.
     effect(() => {
       const iri = this.state.selected()?.iri;

@@ -1,5 +1,5 @@
-import { NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -8,7 +8,6 @@ import {
   inject,
   signal,
   viewChild,
-  TemplateRef,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -29,7 +28,6 @@ import { DataModelClassCardsComponent, PropertyOrder } from './data-model-class-
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
-import { showToolbarInBar } from './section-toolbar';
 
 /**
  * Data models 2 › Classes: the data model's classes as cards, one per class with its properties, as the Data models tab
@@ -40,7 +38,6 @@ import { showToolbarInBar } from './section-toolbar';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'closeOnEscape($event)' },
   imports: [
-    NgTemplateOutlet,
     DataModelClassCardsComponent,
     MatButton,
     MatFormField,
@@ -58,60 +55,52 @@ import { showToolbarInBar } from './section-toolbar';
     @let r = 'pages.dataModels2';
     @let t = 'pages.dataBrowser.dataModelMap';
     <div class="section">
-      <!-- The section's title and tools: here, or in the tab's bar (no title there, its tab names the section). -->
-      @if (!state.toolbarInBar()) {
-        <ng-container [ngTemplateOutlet]="toolbar" />
-      }
-      <ng-template #toolbar>
-        <div class="head">
-          @if (!state.toolbarInBar()) {
-            <h2>{{ r + '.classes' | translate }}</h2>
-          }
-          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
-            <mat-icon matPrefix>search</mat-icon>
-            <input
-              #search
-              matInput
-              data-cy="data-model-classes-search"
-              [placeholder]="r + '.findInCards' | translate"
-              [attr.aria-label]="r + '.findInCards' | translate"
-              (input)="query.set(search.value)" />
-          </mat-form-field>
-          <!-- For editors: a class of the kind picked, made in the data model editor's dialog. -->
-          @if (canCreate()) {
-            <button
-              mat-flat-button
-              color="primary"
-              type="button"
-              class="create"
-              data-cy="data-model-classes-create"
-              [matMenuTriggerFor]="createMenu">
-              <mat-icon>add</mat-icon>
-              {{ r + '.createClass' | translate }}
-            </button>
-            <mat-menu #createMenu="matMenu">
-              @for (kind of classKinds; track kind.iri) {
-                <button
-                  mat-menu-item
-                  type="button"
-                  [attr.data-cy]="'data-model-classes-create-' + kind.label"
-                  (click)="createClass(kind)">
-                  <mat-icon>{{ kind.icon }}</mat-icon>
-                  {{ kind.label }}
-                </button>
-              }
-            </mat-menu>
-          }
-          <div class="tools">
-            @if (rows().length) {
-              <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAllCards()">
-                <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
-                {{ (allCardsOpen() ? r + '.collapseAll' : r + '.expandAll') | translate }}
+      <div class="head">
+        <h2>{{ r + '.classes' | translate }}</h2>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            #search
+            matInput
+            data-cy="data-model-classes-search"
+            [placeholder]="r + '.findInCards' | translate"
+            [attr.aria-label]="r + '.findInCards' | translate"
+            (input)="query.set(search.value)" />
+        </mat-form-field>
+        <!-- For editors: a class of the kind picked, made in the data model editor's dialog. -->
+        @if (canCreate()) {
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            class="create"
+            data-cy="data-model-classes-create"
+            [matMenuTriggerFor]="createMenu">
+            <mat-icon>add</mat-icon>
+            {{ r + '.createClass' | translate }}
+          </button>
+          <mat-menu #createMenu="matMenu">
+            @for (kind of classKinds; track kind.iri) {
+              <button
+                mat-menu-item
+                type="button"
+                [attr.data-cy]="'data-model-classes-create-' + kind.label"
+                (click)="createClass(kind)">
+                <mat-icon>{{ kind.icon }}</mat-icon>
+                {{ kind.label }}
               </button>
             }
-          </div>
+          </mat-menu>
+        }
+        <div class="tools">
+          @if (rows().length) {
+            <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAllCards()">
+              <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+              {{ (allCardsOpen() ? r + '.collapseAll' : r + '.expandAll') | translate }}
+            </button>
+          }
         </div>
-      </ng-template>
+      </div>
 
       <app-data-model-class-cards
         class="cards-box"
@@ -263,10 +252,10 @@ export class DataModelClassesComponent {
   });
 
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
-  private readonly _toolbar = viewChild<TemplateRef<unknown>>('toolbar');
 
   constructor() {
-    showToolbarInBar(this._toolbar, this._search);
+    // Arriving on the page, typing finds what it lists.
+    afterNextRender(() => this._search()?.nativeElement.focus());
   }
 
   /** Esc closes the class's or property's side panel open. */

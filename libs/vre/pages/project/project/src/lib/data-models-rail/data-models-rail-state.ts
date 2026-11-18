@@ -1,5 +1,4 @@
-import { TemplatePortal } from '@angular/cdk/portal';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
@@ -18,11 +17,6 @@ import { DataModelGraphService } from '../sidenav/data-model-map/data-model-grap
  */
 @Injectable()
 export class DataModelsRailState {
-  /** The toolbar of the section shown (its search, create button and view tools), shown in the tab's bar. */
-  readonly toolbar = signal<TemplatePortal | undefined>(undefined);
-  /** Whether the tab shows the section's toolbar in its bar; else the section shows it, under its title. */
-  readonly toolbarInBar = signal(false);
-
   private readonly _router = inject(Router);
   private readonly _graphs = inject(DataModelGraphService);
   private readonly _project = inject(ProjectPageService);

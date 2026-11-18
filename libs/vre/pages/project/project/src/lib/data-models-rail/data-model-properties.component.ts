@@ -1,6 +1,6 @@
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
-import { NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -10,7 +10,6 @@ import {
   signal,
   viewChild,
   WritableSignal,
-  TemplateRef,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -53,7 +52,6 @@ import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { rememberedSignal } from './remembered-signal';
-import { showToolbarInBar } from './section-toolbar';
 import { TableColumns } from './table-columns';
 import { TABLE_STYLES } from './table-styles';
 
@@ -86,7 +84,6 @@ const COLUMN_LABELS: Record<Column, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'closeOnEscape($event)' },
   imports: [
-    NgTemplateOutlet,
     TabShadePipe,
     CdkDrag,
     CdkDropList,
@@ -128,81 +125,73 @@ const COLUMN_LABELS: Record<Column, string> = {
     @let expanded = density() === 'expanded';
     @let cols = columns;
     <div class="section">
-      <!-- The section's title and tools: here, or in the tab's bar (no title there, its tab names the section). -->
-      @if (!state.toolbarInBar()) {
-        <ng-container [ngTemplateOutlet]="toolbar" />
-      }
-      <ng-template #toolbar>
-        <div class="head">
-          @if (!state.toolbarInBar()) {
-            <h2>{{ r + '.properties' | translate }}</h2>
-          }
-          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
-            <mat-icon matPrefix>search</mat-icon>
-            <input
-              #search
-              matInput
-              data-cy="data-model-properties-search"
-              [placeholder]="r + '.findProperty' | translate"
-              [attr.aria-label]="r + '.findProperty' | translate"
-              (input)="query.set(search.value)" />
-          </mat-form-field>
-          <!-- For editors: a property of the type picked, for no class yet, made in the data model editor's dialog. -->
-          @if (canCreate()) {
-            <button
-              mat-flat-button
-              color="primary"
-              type="button"
-              class="create"
-              data-cy="data-model-properties-create"
-              [matMenuTriggerFor]="createMenu">
-              <mat-icon>add</mat-icon>
-              {{ r + '.createProperty' | translate }}
-            </button>
-            <mat-menu #createMenu="matMenu">
-              @for (category of propertyTypes; track category.group) {
-                <button mat-menu-item type="button" [matMenuTriggerFor]="typeMenu">{{ category.group }}</button>
-                <mat-menu #typeMenu="matMenu">
-                  @for (type of category.elements; track type.label) {
-                    <button
-                      mat-menu-item
-                      type="button"
-                      [attr.data-cy]="'data-model-properties-create-' + type.label"
-                      (click)="createProperty(type)">
-                      <mat-icon>{{ type.icon }}</mat-icon>
-                      {{ type.label }}
-                    </button>
-                  }
-                </mat-menu>
-              }
-            </mat-menu>
-          }
-          <span class="spacer"></span>
-          <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
-          @if (folding() && foldable().size) {
-            <button mat-button type="button" data-cy="data-model-properties-expand" (click)="toggleAllFolds()">
-              <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
-              {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
-            </button>
-          }
-          <mat-button-toggle-group
-            class="density"
-            hideSingleSelectionIndicator
-            data-cy="data-model-properties-density"
-            [attr.aria-label]="r + '.density' | translate"
-            [value]="density()"
-            (change)="density.set($event.value)">
-            <mat-button-toggle value="condensed">
-              <mat-icon>density_small</mat-icon>
-              {{ r + '.condensed' | translate }}
-            </mat-button-toggle>
-            <mat-button-toggle value="expanded">
-              <mat-icon>density_large</mat-icon>
-              {{ r + '.expanded' | translate }}
-            </mat-button-toggle>
-          </mat-button-toggle-group>
-        </div>
-      </ng-template>
+      <div class="head">
+        <h2>{{ r + '.properties' | translate }}</h2>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            #search
+            matInput
+            data-cy="data-model-properties-search"
+            [placeholder]="r + '.findProperty' | translate"
+            [attr.aria-label]="r + '.findProperty' | translate"
+            (input)="query.set(search.value)" />
+        </mat-form-field>
+        <!-- For editors: a property of the type picked, for no class yet, made in the data model editor's dialog. -->
+        @if (canCreate()) {
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            class="create"
+            data-cy="data-model-properties-create"
+            [matMenuTriggerFor]="createMenu">
+            <mat-icon>add</mat-icon>
+            {{ r + '.createProperty' | translate }}
+          </button>
+          <mat-menu #createMenu="matMenu">
+            @for (category of propertyTypes; track category.group) {
+              <button mat-menu-item type="button" [matMenuTriggerFor]="typeMenu">{{ category.group }}</button>
+              <mat-menu #typeMenu="matMenu">
+                @for (type of category.elements; track type.label) {
+                  <button
+                    mat-menu-item
+                    type="button"
+                    [attr.data-cy]="'data-model-properties-create-' + type.label"
+                    (click)="createProperty(type)">
+                    <mat-icon>{{ type.icon }}</mat-icon>
+                    {{ type.label }}
+                  </button>
+                }
+              </mat-menu>
+            }
+          </mat-menu>
+        }
+        <span class="spacer"></span>
+        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
+        @if (folding() && foldable().size) {
+          <button mat-button type="button" data-cy="data-model-properties-expand" (click)="toggleAllFolds()">
+            <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+            {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
+          </button>
+        }
+        <mat-button-toggle-group
+          class="density"
+          hideSingleSelectionIndicator
+          data-cy="data-model-properties-density"
+          [attr.aria-label]="r + '.density' | translate"
+          [value]="density()"
+          (change)="density.set($event.value)">
+          <mat-button-toggle value="condensed">
+            <mat-icon>density_small</mat-icon>
+            {{ r + '.condensed' | translate }}
+          </mat-button-toggle>
+          <mat-button-toggle value="expanded">
+            <mat-icon>density_large</mat-icon>
+            {{ r + '.expanded' | translate }}
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
         <table
@@ -833,10 +822,10 @@ export class DataModelPropertiesComponent {
   });
 
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
-  private readonly _toolbar = viewChild<TemplateRef<unknown>>('toolbar');
 
   constructor() {
-    showToolbarInBar(this._toolbar, this._search);
+    // Arriving on the page, typing finds what it lists.
+    afterNextRender(() => this._search()?.nativeElement.focus());
   }
 
   onScroll(event: Event): void {
