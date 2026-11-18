@@ -894,7 +894,26 @@
       "links": "collegamenti"
     },
     "dataModels2": {
-      "cannotDeletePropertyShort": "Una classe o un valore la usa",
+      "cannotDeleteClassHelp": "Qualcosa la usa: vedi cosa e come risolvere",
+      "deleteBlockers": {
+        "introProperty": "Risolvi prima questi punti, poi elimina la proprietà.",
+        "usedBy": "Usata da {{class}}",
+        "title": "«{{name}}» non può ancora essere eliminata",
+        "intro": "Risolvi prima questi punti, poi elimina la classe.",
+        "unusedLink": "Il collegamento «{{property}}» punta a essa",
+        "unusedLinkHint": "Nessuna classe la usa: elimina la proprietà.",
+        "link": "«{{property}}» in {{class}} punta a essa",
+        "linkHint": "Rimuovila da {{class}}.",
+        "subclass": "Sottoclasse {{class}}",
+        "subclassHint": "Elimina prima la sottoclasse.",
+        "resources": "{{count}} risorse di questa classe",
+        "resourcesHint": "Eliminale prima.",
+        "done": "Fatto",
+        "removeFrom": "Rimuovi da {{class}}",
+        "open": "Apri",
+        "browse": "Sfoglia le risorse",
+        "apiReason": "Il server rifiuta ancora l’eliminazione:"
+      },
       "propertyActions": "Azioni per {{property}}",
       "editProperty": "Modifica proprietà",
       "addToClass": "Aggiungi a una classe",

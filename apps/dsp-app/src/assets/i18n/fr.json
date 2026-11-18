@@ -894,7 +894,26 @@
       "links": "liens"
     },
     "dataModels2": {
-      "cannotDeletePropertyShort": "Une classe ou une valeur l’utilise",
+      "cannotDeleteClassHelp": "Quelque chose l’utilise : voir quoi et comment y remédier",
+      "deleteBlockers": {
+        "introProperty": "Réglez d’abord ces points, puis supprimez la propriété.",
+        "usedBy": "Utilisée par {{class}}",
+        "title": "« {{name}} » ne peut pas encore être supprimée",
+        "intro": "Réglez d’abord ces points, puis supprimez la classe.",
+        "unusedLink": "Le lien « {{property}} » pointe vers elle",
+        "unusedLinkHint": "Aucune classe ne l’utilise : supprimez la propriété.",
+        "link": "« {{property}} » de {{class}} pointe vers elle",
+        "linkHint": "Retirez-la de {{class}}.",
+        "subclass": "Sous-classe {{class}}",
+        "subclassHint": "Supprimez d’abord la sous-classe.",
+        "resources": "{{count}} ressources de cette classe",
+        "resourcesHint": "Supprimez-les d’abord.",
+        "done": "Fait",
+        "removeFrom": "Retirer de {{class}}",
+        "open": "Ouvrir",
+        "browse": "Parcourir les ressources",
+        "apiReason": "Le serveur refuse encore la suppression :"
+      },
       "propertyActions": "Actions pour {{property}}",
       "editProperty": "Modifier la propriété",
       "addToClass": "Ajouter à une classe",

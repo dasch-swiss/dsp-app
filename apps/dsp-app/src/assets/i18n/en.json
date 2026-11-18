@@ -894,7 +894,26 @@
       "links": "links"
     },
     "dataModels2": {
-      "cannotDeletePropertyShort": "A class or a value uses it",
+      "cannotDeleteClassHelp": "Something uses it: see what and how to clear it",
+      "deleteBlockers": {
+        "introProperty": "Clear these first, then delete the property.",
+        "usedBy": "Used by {{class}}",
+        "title": "“{{name}}” can't be deleted yet",
+        "intro": "Clear these first, then delete the class.",
+        "unusedLink": "The link “{{property}}” points to it",
+        "unusedLinkHint": "No class uses it: delete the property.",
+        "link": "“{{property}}” on {{class}} points to it",
+        "linkHint": "Remove it from {{class}}.",
+        "subclass": "Subclass {{class}}",
+        "subclassHint": "Delete the subclass first.",
+        "resources": "{{count}} resources of this class",
+        "resourcesHint": "Delete them first.",
+        "done": "Done",
+        "removeFrom": "Remove from {{class}}",
+        "open": "Open",
+        "browse": "Browse resources",
+        "apiReason": "The server still refuses to delete it:"
+      },
       "propertyActions": "Actions for {{property}}",
       "editProperty": "Edit property",
       "addToClass": "Add to class",
