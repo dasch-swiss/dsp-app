@@ -152,8 +152,8 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: `//libs/vre/core/session`
 - **Paths**: `libs/vre/core/session/**`
 - **Purpose**: Owns the JWT lifecycle: storage, expiry checking, login and logout orchestration, auto-login at boot, and the current-user stream.
-- **Key entities**: `AccessTokenService`, `AuthService`, `AutoLoginService`, `LocalStorageWatcherService`, `UserService`, `hasCheckedCredentials$`, `afterSuccessfulLogin$`, `isSysAdmin$`, `AuthError`
-- **Public interface**: Seven named exports from `src/index.ts`, no `export *`. `apiConnectionTokenProvider` is one of them and is registered at `apps/dsp-app/src/app/app.config.ts:55`.
+- **Key entities**: `AccessTokenService`, `AuthService`, `AutoLoginService`, `LocalStorageWatcherService`, `UserService`, `hasCheckedCredentials$`, `afterSuccessfulLogin$`, `isSysAdmin$`
+- **Public interface**: Six named exports from `src/index.ts`, no `export *`. `apiConnectionTokenProvider` is one of them and is registered at `apps/dsp-app/src/app/app.config.ts:55`.
 - **Local-context kit**: `src/lib/access-token.service.ts`, `src/lib/auth.service.ts`, `src/lib/auto-login.service.ts`, `src/lib/user.service.ts`, `apps/dsp-app/src/app/main/http-interceptors/auth.interceptor.fn.ts`, `src/lib/api-connection-token.provider.ts`, `apps/dsp-app/src/app/app.component.ts`
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/analytics`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/error-handler`, `vre/shared/app-common`, `vre/shared/app-helper-services`
 - **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`
@@ -171,8 +171,8 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: `//libs/vre/core/error-handler`
 - **Paths**: `libs/vre/core/error-handler/**`
 - **Purpose**: The global Angular `ErrorHandler`. Turns dsp-api, dsp-js and HTTP failures into user-facing snackbars and, separately, into Sentry and Faro telemetry.
-- **Key entities**: `AppErrorHandler`, `provideAppErrorHandler`, `ErrorReportingService`, `reasonFromErrorBody`, `declaredMessageOf`, `AppError`, `UserFeedbackError`, `JsLibParsedError`, `DEDUP_WINDOW_MS`
-- **Public interface**: The nine symbols above, from `src/index.ts`.
+- **Key entities**: `AppErrorHandler`, `provideAppErrorHandler`, `ErrorReportingService`, `reasonFromErrorBody`, `declaredMessageOf`, `AppError`, `UserFeedbackError`, `DEDUP_WINDOW_MS`
+- **Public interface**: The eight symbols above, from `src/index.ts`.
 - **Local-context kit**: `src/lib/app-error-handler.ts`, `src/lib/api-error-reason.ts`, `src/lib/error-reporting.service.ts`, `src/lib/app-error-handler.providers.ts`, `src/lib/app-error-handler.spec.ts`, `apps/dsp-app/src/assets/i18n/en.json`, `libs/vre/3rd-party-services/analytics/src/lib/grafana-faro.service.ts`
 - **Depends on**: `dsp-js`, `vre/core/config`, `vre/ui/notification`
 - **Used by**: `dsp-app`, `vre/core/session`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/resource-editor/resource-editor`
@@ -189,7 +189,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Paths**: `libs/vre/ui/ui/**`
 - **Purpose**: The shared component kit: dialogs, form controls, layout primitives, pipes and directives. It also carries a tail of page-shaped and domain-specific components that do not belong in a kit.
 - **Key entities**: `DialogService`, `ConfirmDialogComponent`, `DialogHeaderComponent`, `CkEditorComponent`, `CommonInputComponent`, `ChipListInputComponent`, `TimeInputComponent`, `PagerComponent`, `KnoraDatePipe`, `HumanReadableErrorPipe`, `AdminImageDirective`, `NotAllowedPageComponent`, `NoResultsFoundPageComponent`, `ResourceRightsStatementComponent`, `CalendarMarkerComponent`, `CalendarDateService`
-- **Public interface**: 46 `export *` lines from `src/index.ts`, plus one curated named export (`CalendarMarkerComponent`).
+- **Public interface**: 44 `export *` lines from `src/index.ts`, plus one curated named export (`CalendarMarkerComponent`).
 - **Local-context kit**: `src/index.ts`, `src/lib/dialog/dialog.service.ts`, `src/lib/dialog/confirm-dialog.component.ts`, `src/lib/common-input.component.ts`, `src/lib/pipes/formatting/knoradate.pipe.ts`, `src/lib/search-failed.component.ts`
 - **Depends on**: `dsp-js`, `vre/shared/app-common`, `vre/shared/calendar`, `vre/ui/styles`
 - **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/search/search-filters`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/ui/date-picker`, `vre/ui/string-literal`
@@ -206,7 +206,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Paths**: `libs/vre/ui/date-picker/**`
 - **Purpose**: The date editor: a calendar choice, a picker that picks a date in the calendar it is told, and a form control for a DSP date value — one date or a period, edited against what is stored. It orchestrates; the calendar rules it applies live in `CalendarDateService` (`vre/ui/ui`).
 - **Key entities**: `CalendarSelectorComponent`, `DatePickerComponent`, `DateValueComponent`
-- **Public interface**: `CalendarSelectorComponent`, `DatePickerComponent` and `DateValueComponent`, from `src/index.ts`.
+- **Public interface**: `DatePickerComponent` and `DateValueComponent`, from `src/index.ts`.
 - **Local-context kit**: `src/index.ts`, `src/lib/date-value/date-value.component.ts`, `src/lib/date-picker/date-picker.component.ts`, `src/lib/calendar-selector/calendar-selector.component.ts`, `src/lib/date-value/date-value.host.spec.ts`, `../ui/src/lib/calendar-date/calendar-date.service.ts`
 - **Depends on**: `dsp-js`, `vre/shared/calendar`, `vre/ui/ui`
 - **Used by**: `vre/pages/search/search-filters`, `vre/resource-editor/resource-editor`
@@ -365,7 +365,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: `//libs/vre/shared/calendar`
 - **Paths**: `libs/vre/shared/calendar/**`
 - **Purpose**: A framework-free multi-calendar date library (Gregorian, Julian, Islamic) using the Julian Day Number as the conversion pivot, with comparison and period validation.
-- **Key entities**: `CalendarSystem`, `CALENDAR_SYSTEMS`, `Era`, `ERAS`, `DatePrecision`, `CalendarDate`, `CalendarPeriod`, `CalendarOperations`, `CalendarError`, `createDate`, `convertCalendar`, `compareDates`, `isPeriodOutOfOrder`, `validatePeriod`, `GregorianCalendar`, `JulianCalendar`, `IslamicCalendar`, `getCalendar`, `convertCalendarResult`, `ConversionResult`, `ConversionRefusalReason`, `ISLAMIC_EPOCH_JDN`
+- **Key entities**: `CalendarSystem`, `CALENDAR_SYSTEMS`, `Era`, `DatePrecision`, `CalendarDate`, `CalendarPeriod`, `CalendarOperations`, `CalendarError`, `createDate`, `convertCalendar`, `compareDates`, `isPeriodOutOfOrder`, `validatePeriod`, `GregorianCalendar`, `JulianCalendar`, `IslamicCalendar`, `getCalendar`, `convertCalendarResult`, `ConversionResult`, `ConversionRefusalReason`, `ISLAMIC_EPOCH_JDN`
 - **Public interface**: The only hand-curated barrel in the repository: named `export` and `export type` blocks with a `@packageDocumentation` usage example, no `export *`.
 - **Local-context kit**: `src/index.ts`, `src/lib/types/calendar.types.ts`, `src/lib/factories/calendar.factory.ts`, `src/lib/factories/date.factory.ts`, `src/lib/converters/calendar.converter.ts`, `src/lib/calendars/gregorian.calendar.ts`, `README.md`
 - **Depends on**: none
@@ -534,7 +534,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: `//libs/vre/pages/user-settings/user`
 - **Paths**: `libs/vre/pages/user-settings/user/**`
 - **Purpose**: Nominally the account area. It also owns the public landing page and the application-wide `AllProjectsService`, neither of which is user settings.
-- **Key entities**: `UserComponent`, `ProfileComponent`, `AccountComponent`, `EditUserDialogComponent`, `EditPasswordDialogComponent`, `ProjectOverviewComponent`, `ProjectCardComponent`, `AllProjectsService`, `existingNamesValidator`
+- **Key entities**: `UserComponent`, `ProfileComponent`, `AccountComponent`, `EditUserDialogComponent`, `EditPasswordDialogComponent`, `ProjectOverviewComponent`, `ProjectCardComponent`, `AllProjectsService`, `existingNamesAsyncValidator`
 - **Public interface**: 11 `export *` lines from `src/index.ts`.
 - **Local-context kit**: `src/lib/user.component.ts`, `src/lib/account/account.component.ts`, `src/lib/profile/profile.component.ts`, `src/lib/project-overview/project-overview.component.ts`, `src/lib/project-overview/all-projects.service.ts`, `src/index.ts`
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/session`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/styles`, `vre/ui/ui`
