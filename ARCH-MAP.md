@@ -714,7 +714,7 @@ ADR-0001's type and scope rules are Bazel `visibility`, derived from `LIBRARIES`
 | Type tiers: `ui` depends on `ui` and `util`, `data-access` on `data-access` and `util`, `util` on `util`. **Four exceptions**, all into `ui/string-literal` or `ui/ui`: from `core/config`, `shared/app-common`, `shared/app-helper-services` and `3rd-party-services/open-api` (ADR-0001 decision 7, DEV-7552). `dsp-js` is visible to every library (ADR-0001 decision 8). | `structure` |
 | `pages/*` libraries of different scopes do not depend on each other. **Seven exceptions**: `project/project` is visible to `ontology/list`, `ontology/ontology` and `search/advanced-search`; `user-settings/user` to `ontology/ontology`, `project/project` and `system/system`; `system/system` to `project/project` (ADR-0004, DEV-7555). | `structure` |
 
-Each exception is an `extra_visibility` entry on the target library with a comment naming the ADR and the issue; removing it is part of the change that moves the code. `just visibility-check` seeds one forbidden edge per tier rule and asserts the build rejects it.
+Each exception is an `extra_visibility` entry on the target library with a comment naming the ADR and the issue; removing it is part of the change that moves the code. `just visibility-check` seeds one forbidden edge per tier rule and asserts the build rejects it; it also fails on a library target made public by hand and on an `extra_visibility` entry the tree analyses without.
 
 ### Wiring
 

@@ -303,7 +303,8 @@ playwright-version-check:
     done
     echo "playwright $driver"
 
-# Check that Bazel visibility rejects a seeded forbidden dependency for each ADR-0001 tier rule
+# Check that Bazel visibility rejects a seeded forbidden dependency for each ADR-0001 tier rule, that
+# no library target is public by hand, and that no extra_visibility entry is stale
 visibility-check:
     scripts/visibility-check.sh
 

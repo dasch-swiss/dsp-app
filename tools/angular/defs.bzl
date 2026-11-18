@@ -115,7 +115,8 @@ def eslint_config():
         name = "eslintrc",
         srcs = ["eslint.config.mjs"] + native.glob(["package.json", "tsconfig*.json"], allow_empty = True),
         deps = [Label("//:eslintrc")],
-        # Not the library's visibility: the aspect reads every package's config.
+        # Not the library's visibility: the aspect reads every package's config. The public-target
+        # check in scripts/visibility-check.sh allows this name.
         visibility = ["//visibility:public"],
     )
 
