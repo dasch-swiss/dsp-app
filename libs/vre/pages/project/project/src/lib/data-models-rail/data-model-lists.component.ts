@@ -27,9 +27,7 @@ import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
-import { LanguagesMenuComponent, parseLanguages } from './languages-menu.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
-import { rememberedSignal } from './remembered-signal';
 import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabularyUses } from './vocabulary-tree';
 
 /**
@@ -44,7 +42,6 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
   imports: [
     TabShadePipe,
     HighlightPipe,
-    LanguagesMenuComponent,
     LanguageTextsComponent,
     MatButton,
     MatDivider,
@@ -89,7 +86,6 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
           </button>
         }
         <span class="spacer"></span>
-        <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-lists" />
         <button mat-button type="button" data-cy="data-model-lists-expand" (click)="toggleAll()">
           <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
           {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
@@ -145,7 +141,6 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                       [kind]="row.depth === 0 ? 'label' : 'description'"
                       [texts]="textsOf(row.node.labels)"
                       [shown]="row.label"
-                      [languages]="languages()"
                       [highlight]="[query()]" />
                     @if (row.count) {
                       <span class="count">{{ row.count }}</span>
@@ -158,8 +153,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                       kind="description"
                       cyPrefix="data-model-lists"
                       [texts]="textsOf(row.node.comments)"
-                      [shown]="row.description"
-                      [languages]="languages()" />
+                      [shown]="row.description" />
                   } @else if (row.depth === 0) {
                     <span class="none">—</span>
                   }
@@ -462,8 +456,6 @@ export class DataModelListsComponent {
   private readonly _reload = signal(0);
 
   readonly query = signal('');
-  /** The languages names and descriptions show in, as in the other tables: the app's, or all. */
-  readonly languages = rememberedSignal<string[] | null>('dsp-data-models-languages', null, parseLanguages);
   /** The vocabularies and values opened, by IRI. */
   readonly expanded = signal(new Set<string>());
 

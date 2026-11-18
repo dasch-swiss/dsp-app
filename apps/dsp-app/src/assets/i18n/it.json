@@ -953,8 +953,6 @@
       "createClass": "Crea classe di risorsa",
       "createProperty": "Crea proprietà",
       "noProperties": "Ancora nessuna proprietà",
-      "currentLanguage": "Lingua attuale",
-      "allLanguages": "Tutte le lingue",
       "valueActions": "Azioni per {{value}}",
       "addValueInside": "Aggiungi un valore dentro",
       "addValueAfter": "Aggiungi un valore dopo",
@@ -999,9 +997,7 @@
         "add": "Aggiungi una descrizione ({{language}}) a {{class}}",
         "editLabel": "Modifica l'etichetta ({{language}}) di {{class}}",
         "addLabel": "Aggiungi un'etichetta ({{language}}) a {{class}}"
-      },
-      "languages": "Lingue",
-      "allLanguagesShort": "Tutte"
+      }
     }
   },
   "resourceEditor": {

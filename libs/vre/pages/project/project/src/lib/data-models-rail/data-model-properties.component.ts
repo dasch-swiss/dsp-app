@@ -54,7 +54,6 @@ import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
-import { LanguagesMenuComponent, parseLanguages } from './languages-menu.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { rememberedSignal } from './remembered-signal';
 import { TableColumns } from './table-columns';
@@ -62,8 +61,6 @@ import { TABLE_STYLES } from './table-styles';
 
 /** How many classes a condensed "Used by" shows; the others are counted. */
 const MAX_USED_BY = 3;
-/** Where the languages the Data models 2 tables show in are remembered, the same for both. */
-const LANGUAGES_KEY = 'dsp-data-models-languages';
 const STORAGE_KEY = 'dsp-data-models-properties';
 /** The Points to filter's value for properties that are not links. */
 const NO_TARGET = 'none';
@@ -98,7 +95,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     ColumnHeaderComponent,
     ColumnsMenuComponent,
     HighlightPipe,
-    LanguagesMenuComponent,
     LanguageTextsComponent,
     MatButton,
     MatButtonToggle,
@@ -179,7 +175,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         }
         <span class="spacer"></span>
         <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
-        <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-properties" />
         @if (folding() && foldable().size) {
           <button mat-button type="button" data-cy="data-model-properties-expand" (click)="toggleAllFolds()">
             <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
@@ -270,7 +265,6 @@ const COLUMN_LABELS: Record<Column, string> = {
                     [texts]="row.labels"
                     [shown]="row.label"
                     [owner]="row.label"
-                    [languages]="languages()"
                     [canEdit]="canEditTexts()"
                     [expanded]="expanded"
                     [highlight]="nameTerms()"
@@ -326,7 +320,6 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [texts]="row.descriptions"
                 [shown]="row.description"
                 [owner]="row.label"
-                [languages]="languages()"
                 [canEdit]="canEditTexts()"
                 [expanded]="expanded"
                 [highlight]="descriptionTerms()"
@@ -735,8 +728,6 @@ export class DataModelPropertiesComponent {
   readonly density = rememberedSignal<Density>(`${STORAGE_KEY}-density`, 'condensed', stored =>
     stored === 'expanded' ? 'expanded' : 'condensed'
   );
-  /** The languages names and descriptions show in; none chosen follows the app language. Shared by both tables. */
-  readonly languages = rememberedSignal<string[] | null>(LANGUAGES_KEY, null, parseLanguages);
   /** Whether the table is scrolled sideways, which shadows the frozen property column. */
   readonly scrolled = signal(false);
 

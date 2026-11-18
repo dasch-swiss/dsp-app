@@ -953,8 +953,6 @@
       "createClass": "Create resource class",
       "createProperty": "Create property",
       "noProperties": "No properties yet",
-      "currentLanguage": "Current language",
-      "allLanguages": "All languages",
       "valueActions": "Actions for {{value}}",
       "addValueInside": "Add a value inside",
       "addValueAfter": "Add a value after",
@@ -999,9 +997,7 @@
         "add": "Add a {{language}} description to {{class}}",
         "editLabel": "Edit the {{language}} label of {{class}}",
         "addLabel": "Add a {{language}} label to {{class}}"
-      },
-      "languages": "Languages",
-      "allLanguagesShort": "All"
+      }
     }
   },
   "resourceEditor": {
