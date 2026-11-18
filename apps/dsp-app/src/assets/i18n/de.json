@@ -894,6 +894,10 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
+      "objectWithoutRepresentation": "Objekt ohne Repräsentation",
+      "kindHeading": "Art der Ressourcen",
+      "kindForAll": "Für jede Klasse anzeigen",
+      "kindForAllHint": "Auch Klassen ohne Datei, als «Objekt ohne Repräsentation»",
       "cardinalityMultiple": "Mehrere",
       "cardinalitySymbols": "Roter Stern und Stapelsymbol",
       "cardinalitySymbolsTip": "Ein roter Stern nach einer erforderlichen Eigenschaft, ein Stapel für mehrere Werte; zum Ändern auf die Eigenschaft zeigen und ihre Werkzeuge nutzen",

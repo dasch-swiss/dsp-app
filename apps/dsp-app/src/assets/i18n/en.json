@@ -894,6 +894,10 @@
       "links": "links"
     },
     "dataModels2": {
+      "objectWithoutRepresentation": "Object without representation",
+      "kindHeading": "Kind of resources",
+      "kindForAll": "Show it for every class",
+      "kindForAllHint": "Classes without a file too, as \"Object without representation\"",
       "cardinalityMultiple": "Multiple",
       "cardinalitySymbols": "Red star and a stack icon",
       "cardinalitySymbolsTip": "A red star after a required property, a stack for multiple values; point at a property to change it from its tools",

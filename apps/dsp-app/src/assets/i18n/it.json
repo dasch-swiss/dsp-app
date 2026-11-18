@@ -894,6 +894,10 @@
       "links": "collegamenti"
     },
     "dataModels2": {
+      "objectWithoutRepresentation": "Oggetto senza rappresentazione",
+      "kindHeading": "Tipo di risorse",
+      "kindForAll": "Mostrarlo per ogni classe",
+      "kindForAllHint": "Anche le classi senza file, come «Oggetto senza rappresentazione»",
       "cardinalityMultiple": "Multipli",
       "cardinalitySymbols": "Stella rossa e icona a pila",
       "cardinalitySymbolsTip": "Una stella rossa dopo una proprietà obbligatoria, una pila per i valori multipli; punta una proprietà per cambiarla dai suoi strumenti",

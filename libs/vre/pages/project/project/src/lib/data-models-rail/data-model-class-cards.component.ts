@@ -176,25 +176,39 @@ export interface PropertyOrder {
                   <mat-icon>subdirectory_arrow_right</mat-icon>{{ labelOf()(row.superclass) }}
                 </span>
               }
+              <ng-template #className>
+                <small>
+                  @for (part of mark(row.name); track $index) {
+                    <span [class.hit]="part.match">{{ part.text }}</span>
+                  }
+                </small>
+              </ng-template>
               <span class="title">
                 <b>
                   @for (part of mark(row.label); track $index) {
                     <span [class.hit]="part.match">{{ part.text }}</span>
                   }
                 </b>
-                <small>
-                  @for (part of mark(row.name); track $index) {
-                    <span [class.hit]="part.match">{{ part.text }}</span>
-                  }
-                </small>
-                <!-- The kind of file the class's resources carry. -->
-                @if (row.representation; as representation) {
-                  <span class="file" data-cy="data-model-class-card-file">
-                    <mat-icon>{{ fileIcon(representation) }}</mat-icon>
-                    {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
-                  </span>
+                <!-- A plain object: its name beside its label, nothing more, unless every class says its kind. -->
+                @if (!row.representation && !kindForAll()) {
+                  <ng-container [ngTemplateOutlet]="className" />
                 }
               </span>
+              <!-- A class whose resources carry a file: its name, then the kind of file, under the label, as the Data
+                   models tab writes it. -->
+              @if (row.representation || kindForAll()) {
+                <span class="kind-line" data-cy="data-model-class-card-file">
+                  <ng-container [ngTemplateOutlet]="className" />
+                  <span aria-hidden="true">·</span>
+                  @if (row.representation; as representation) {
+                    <mat-icon>{{ fileIcon(representation) }}</mat-icon>
+                    {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
+                  } @else {
+                    <mat-icon>person_outline</mat-icon>
+                    {{ 'pages.dataModels2.objectWithoutRepresentation' | translate }}
+                  }
+                </span>
+              }
             </span>
             <!-- For editors, on hover: the class's pen and its bin. -->
             @if (canEdit()) {
@@ -399,24 +413,29 @@ export interface PropertyOrder {
         }
       }
 
-      // The kind of file, after the names.
-      .file {
-        display: inline-flex;
+      // Under the label of a class with a file: its name, then the kind of file with its icon.
+      .kind-line {
+        display: flex;
         align-items: center;
-        gap: 3px;
-        align-self: center;
-        padding: 0 7px 0 4px;
-        border: 1px solid $cool_gray_300;
-        border-radius: 99px;
-        font-size: 11px;
+        gap: 4px;
+        min-width: 0;
+        font-size: 12px;
         line-height: 16px;
-        color: $cool_gray_600;
+        color: $cool_gray_500;
         white-space: nowrap;
 
+        small {
+          font-family: 'Roboto Mono', monospace;
+          font-size: 11px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
         mat-icon {
-          font-size: 13px;
-          width: 13px;
-          height: 13px;
+          flex: none;
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
         }
       }
 
@@ -530,9 +549,15 @@ export interface PropertyOrder {
       }
 
       // Deleting a class, in red, and why it can't be, under it.
-      .delete:not([disabled]),
-      .delete:not([disabled]) mat-icon {
+      // The class's pen and bin in the app's blue, as elsewhere; the bin turns red only while pointed at.
+      .card-head .icon-button.actions:not([disabled]),
+      .card-head .delete:not([disabled]) {
+        color: $primary;
+      }
+
+      .card-head .delete:not([disabled]):hover {
         color: #b3261e;
+        background: #fdecea;
       }
 
       // "Add property" under an opened card's properties, as in the Data models tab.
@@ -583,6 +608,8 @@ export class DataModelClassCardsComponent {
   readonly canReorder = input(false);
   /** The text searched for: marked where it shows, and the rows it is in opened. */
   readonly query = input('');
+  /** Whether every class says its kind under its label, a plain object too; else only a class with a file does. */
+  readonly kindForAll = input(false);
   /** Whether a subclass's card groups its superclass's properties under "n from …", or lists them with its own. */
   readonly inheritedLayout = input<InheritedLayout>('grouped');
   /** Whether a card keeps a column for its cardinalities: one of its properties differs from 0-1, or for the stacks, allows several values. */

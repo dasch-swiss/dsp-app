@@ -894,6 +894,10 @@
       "links": "liens"
     },
     "dataModels2": {
+      "objectWithoutRepresentation": "Objet sans représentation",
+      "kindHeading": "Type de ressources",
+      "kindForAll": "L’afficher pour chaque classe",
+      "kindForAllHint": "Aussi les classes sans fichier, comme « Objet sans représentation »",
       "cardinalityMultiple": "Multiples",
       "cardinalitySymbols": "Étoile rouge et icône de pile",
       "cardinalitySymbolsTip": "Une étoile rouge après une propriété obligatoire, une pile pour les valeurs multiples ; survolez une propriété pour la changer depuis ses outils",

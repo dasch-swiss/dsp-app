@@ -15,6 +15,7 @@ import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultClass, DefaultResourceClasses, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -50,6 +51,7 @@ import { rememberedSignal } from './remembered-signal';
     MatMenuTrigger,
     MatPrefix,
     PropertyPanelComponent,
+    MatSlideToggle,
     ResourceClassPanelComponent,
     TranslatePipe,
   ],
@@ -106,6 +108,20 @@ import { rememberedSignal } from './remembered-signal';
             {{ 'pages.dataBrowser.viewOptions.title' | translate }}
           </button>
           <mat-menu #viewMenu="matMenu" xPosition="before">
+            <span class="menu-heading">{{ r + '.kindHeading' | translate }}</span>
+            <!-- A switch keeps the menu open, to see the cards change behind it. -->
+            <div class="menu-toggle" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+              <mat-slide-toggle
+                data-cy="data-model-classes-kind-for-all"
+                [checked]="kindForAll()"
+                (change)="kindForAll.set($event.checked)">
+                <span class="view-item">
+                  <span>{{ r + '.kindForAll' | translate }}</span>
+                  <span class="view-hint">{{ r + '.kindForAllHint' | translate }}</span>
+                </span>
+              </mat-slide-toggle>
+            </div>
+            <hr class="menu-divider" />
             <span class="menu-heading">{{ r + '.inheritedLayout' | translate }}</span>
             @for (option of inheritedLayouts; track option.value) {
               @let chosen = inheritedLayout() === option.value;
@@ -170,6 +186,7 @@ import { rememberedSignal } from './remembered-signal';
         [query]="query()"
         [cardinalityLayout]="cardinalityLayout()"
         [inheritedLayout]="inheritedLayout()"
+        [kindForAll]="kindForAll()"
         [style.--card-width.px]="cardWidth()"
         [(folded)]="foldedCards"
         (reorder)="reorderProperties($event)"
@@ -255,6 +272,11 @@ import { rememberedSignal } from './remembered-signal';
         letter-spacing: 0.04em;
         text-transform: uppercase;
         color: $cool_gray_500;
+      }
+
+      .menu-toggle {
+        padding: 2px 16px 8px;
+        font-size: 13px;
       }
 
       .menu-divider {
@@ -352,6 +374,8 @@ export class DataModelClassesComponent {
         ? (stored as CardinalityLayout)
         : undefined
   );
+  /** Whether every class's card says its kind, "Object without representation" too; else only a class with a file. */
+  readonly kindForAll = rememberedSignal<boolean>('dsp-data-models-kind-for-all', false, stored => stored === 'true');
   /** How a subclass's card shows its superclass's properties, as the viewer last chose. */
   readonly inheritedLayout = rememberedSignal<InheritedLayout>('dsp-data-models-inherited-layout', 'grouped', stored =>
     stored === 'grouped' || stored === 'listed' ? stored : undefined
