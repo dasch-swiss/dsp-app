@@ -1385,6 +1385,12 @@
     }
   },
   "ui": {
+    "multiLanguage": {
+      "languages": "Sprachen",
+      "oneAtATime": "Einzeln",
+      "allLanguages": "Alle Sprachen",
+      "filled": "{{count}} von {{total}}"
+    },
     "common": {
       "actions": {
         "cancel": "Abbrechen",

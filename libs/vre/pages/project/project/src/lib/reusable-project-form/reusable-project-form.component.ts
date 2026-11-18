@@ -4,8 +4,8 @@ import { AllProjectsService } from '@dasch-swiss/vre/pages/user-settings/user';
 import { atLeastOneStringRequired } from '@dasch-swiss/vre/shared/app-common';
 import {
   DEFAULT_MULTILANGUAGE_FORM,
+  MultiLanguageFieldsComponent,
   MultiLanguages,
-  MultiLanguageTextareaComponent,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { ChipListInputComponent, CommonInputComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -35,10 +35,11 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
           [label]="'pages.project.reusableProjectForm.longname' | translate"
           [control]="form.controls.longname"
           data-cy="longname-input" />
-        <app-multi-language-textarea
-          [placeholder]="'ui.common.fields.description' | translate"
+        <app-multi-language-fields
+          [label]="'ui.common.fields.description' | translate"
           [formArray]="form.controls.description"
           [validators]="descriptionValidators"
+          [multiline]="true"
           [isRequired]="true"
           data-cy="description-input" />
         <app-chip-list-input
@@ -52,7 +53,7 @@ import { shortcodeExistsValidator } from './shortcode-exists.validator';
     ReactiveFormsModule,
     TranslatePipe,
     CommonInputComponent,
-    MultiLanguageTextareaComponent,
+    MultiLanguageFieldsComponent,
     ChipListInputComponent,
   ],
 })

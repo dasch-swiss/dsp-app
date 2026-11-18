@@ -23,8 +23,8 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import {
   DEFAULT_MULTILANGUAGE_FORM,
-  MultiLanguageInputComponent,
-  MultiLanguageTextareaComponent,
+  MultiLanguageFieldsComponent,
+  MultiLanguageModeSwitchComponent,
   StringifyStringLiteralPipe,
 } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
@@ -39,19 +39,21 @@ import { ListInfoForm } from './list-info-form.type';
       [title]="data ? (data.labels | appStringifyStringLiteral) : title"
       [subtitle]="data ? title : undefined" />
     <div mat-dialog-content>
-      <app-multi-language-input
+      <app-multi-language-fields
         [formArray]="form.controls.labels"
-        [placeholder]="_translate.instant('pages.ontology.list.listInfoForm.labelPlaceholder')"
+        [label]="'pages.ontology.list.listInfoForm.labelPlaceholder' | translate"
         [isRequired]="true"
         data-cy="label-input" />
 
-      <app-multi-language-textarea
+      <app-multi-language-fields
         [formArray]="form.controls.comments"
-        [placeholder]="_translate.instant('pages.ontology.list.listInfoForm.commentPlaceholder')"
+        [label]="'pages.ontology.list.listInfoForm.commentPlaceholder' | translate"
+        [multiline]="true"
         [isRequired]="true"
         data-cy="comments-input" />
     </div>
     <div mat-dialog-actions align="end">
+      <app-multi-language-mode-switch />
       <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button
         mat-raised-button
@@ -73,8 +75,8 @@ import { ListInfoForm } from './list-info-form.type';
     MatDialogContent,
     TranslatePipe,
     DialogHeaderComponent,
-    MultiLanguageInputComponent,
-    MultiLanguageTextareaComponent,
+    MultiLanguageFieldsComponent,
+    MultiLanguageModeSwitchComponent,
     LoadingButtonDirective,
     StringifyStringLiteralPipe,
   ],
