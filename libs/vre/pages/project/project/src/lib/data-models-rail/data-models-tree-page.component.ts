@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemMeta, MatNavList } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -42,6 +43,7 @@ const MODEL_SECTIONS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DataModelsRailState],
   imports: [
+    MatDivider,
     MatIcon,
     MatIconButton,
     MatListItem,
@@ -185,6 +187,8 @@ const MODEL_SECTIONS = [
             </a>
           }
           @if (state.canEdit()) {
+            <!-- A line sets the documentation apart from the project's vocabularies. -->
+            <mat-divider class="docs-divider" />
             <a mat-list-item class="rail-link docs" [href]="docs" target="_blank" rel="noopener">
               <mat-icon matListItemIcon>open_in_new</mat-icon>
               {{ r + '.documentation' | translate }}
@@ -366,6 +370,12 @@ const MODEL_SECTIONS = [
         font-size: 12px;
         font-weight: 400;
         color: $cool_gray_500;
+      }
+
+      // As the line over "Controlled vocabularies".
+      .docs-divider {
+        margin: 8px 0;
+        border-top-color: $cool_gray_200;
       }
 
       .main {
