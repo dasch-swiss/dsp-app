@@ -953,6 +953,8 @@
       "createClass": "Ressourcenklasse erstellen",
       "createProperty": "Eigenschaft erstellen",
       "noProperties": "Noch keine Eigenschaften",
+      "currentLanguage": "Aktuelle Sprache",
+      "allLanguages": "Alle Sprachen",
       "valueActions": "Aktionen für {{value}}",
       "addValueInside": "Wert darin hinzufügen",
       "addValueAfter": "Wert danach hinzufügen",
@@ -997,7 +999,9 @@
         "add": "Beschreibung ({{language}}) zu {{class}} hinzufügen",
         "editLabel": "Bezeichnung ({{language}}) von {{class}} bearbeiten",
         "addLabel": "Bezeichnung ({{language}}) zu {{class}} hinzufügen"
-      }
+      },
+      "languages": "Sprachen",
+      "allLanguagesShort": "Alle"
     }
   },
   "resourceEditor": {
