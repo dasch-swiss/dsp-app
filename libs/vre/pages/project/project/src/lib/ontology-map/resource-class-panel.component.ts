@@ -8,7 +8,6 @@ import {
   DestroyRef,
   effect,
   inject,
-  Injector,
   input,
   output,
   signal,
@@ -16,7 +15,6 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
@@ -28,7 +26,6 @@ import { representationIcon } from '../sidenav/resource-class-sidenav/representa
 import { AddPropertyMenuComponent } from './add-property-menu.component';
 import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
-import { openDeleteBlockersDialog } from './delete-blockers-dialog.component';
 import { dataModelNameOf, localNameOf } from './ontology-graph-elements';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
@@ -219,17 +216,20 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
             </button>
             @if (editing?.canDelete) {
               @let check = deleteCheck();
-              <!-- Once the API has answered: deletes the class, or says what is in the way and how to clear it. -->
-              <button
-                mat-stroked-button
-                class="delete"
-                data-cy="class-panel-delete"
-                [class.blocked]="check?.canDo === false"
-                [disabled]="!check"
-                (click)="check?.canDo ? deleteClass(node) : openDeleteHelp(node)">
-                <mat-icon>delete</mat-icon>
-                {{ 'ui.common.actions.delete' | translate }}
-              </button>
+              <!-- Only once the API says nothing uses the class; why not, on hover, when something does. -->
+              <span
+                [matTooltip]="(check?.canDo ? '' : 'pages.dataModels2.cannotDeleteClass') | translate"
+                [matTooltipDisabled]="!check || check.canDo">
+                <button
+                  mat-stroked-button
+                  class="delete"
+                  data-cy="class-panel-delete"
+                  [disabled]="!check?.canDo"
+                  (click)="deleteClass(node)">
+                  <mat-icon>delete</mat-icon>
+                  {{ 'ui.common.actions.delete' | translate }}
+                </button>
+              </span>
             }
           }
           <span class="spacer"></span>
@@ -446,7 +446,7 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
         border-top: 1px solid $cool_gray_200;
 
         // Deleting, in red, once possible.
-        .delete:not([disabled]):not(.blocked) {
+        .delete:not([disabled]) {
           color: #b3261e;
           border-color: #b3261e;
         }
@@ -467,8 +467,6 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
 })
 export class ResourceClassPanelComponent {
   private readonly _clipboard = inject(Clipboard);
-  private readonly _dialog = inject(MatDialog);
-  private readonly _injector = inject(Injector);
   private readonly _notification = inject(NotificationService);
   private readonly _translate = inject(TranslateService);
 
@@ -591,18 +589,6 @@ export class ResourceClassPanelComponent {
       ?.removeProperty(node.id, property.id, { property: property.label, class: node.label })
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe();
-  }
-
-  /** The checklist of what keeps the class from being deleted, each with the action that clears it. */
-  openDeleteHelp(node: { id: string; label: string }): void {
-    openDeleteBlockersDialog(this._dialog, this._injector, {
-      kind: 'class',
-      iri: node.id,
-      label: node.label,
-      graph: this.graph,
-      open: iri => this.showClass(iri),
-      browse: iri => this.browse.emit(iri),
-    });
   }
 
   /** Deletes the class once confirmed, then closes the panel. */
