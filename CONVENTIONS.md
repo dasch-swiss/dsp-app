@@ -140,6 +140,7 @@ These must be clean:
 
 - No bot updates dependencies: Renovate is disabled, library updates are analysed and made by hand, security advisories still arrive as Dependabot PRs. `renovate.json`'s rules record why packages are coupled; read them before a bump.
 - Change a dependency with `pnpm` inside the dev shell and commit `package.json` with `pnpm-lock.yaml`. A pnpm change needs no `MODULE.bazel.lock` refresh; `just lock-update` is for a Bazel module bump and refreshes both.
+- `just knip` fails on a dependency nothing imports. One only Bazel, the justfile or a peer requirement uses goes in `knip.jsonc`'s `ignoreDependencies` with a comment naming that user; never delete it on knip's word alone.
 - Bazel modules, the `rules_angular` and `rules_sass` commit pins, `.bazelversion`, `flake.nix`, `flake.lock`, the GitHub Actions versions and the image's nginx base digest are bumped by hand; Dependabot is configured for npm security advisories only. After a `flake.lock` bump run `just node-version-check` and `just playwright-version-check`.
 
 ## Where to Go for Depth

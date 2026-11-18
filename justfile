@@ -6,8 +6,8 @@
 #   just test [TARGETS...]            every Bazel test target, or the named ones
 #   just test-files -- PATHS...       the Jest targets that depend on those files
 #   just lint                         ESLint: the Bazel aspect, pnpm for what it does not see
-#   just ci                           the gate: build, test, lint, Storybook, the Cypress type-check,
-#                                     the version checks and the visibility check
+#   just ci                           the gate: build, test, lint, knip, Storybook, the Cypress
+#                                     type-check, the version checks and the visibility check
 #
 # An argument starting with `//` is a target list; anything else is a configuration name. Every
 # Bazel call appends $BAZEL_FLAGS, which CI sets to the remote flags plus --lockfile_mode=error,
@@ -208,8 +208,12 @@ lint-selftest:
     done
     echo "lint-selftest: just lint rejected the seeded violation with" $rules
 
+# Unused files, dependencies and exports (knip.jsonc); unused exports only warn for now
+knip: install openapi-generate
+    pnpm exec knip --tsConfig tsconfig.base.json
+
 # The gate CI runs
-ci: build test lint node-version-check playwright-version-check tsconfig-paths-check storybook-build typecheck-e2e visibility-check
+ci: build test lint knip node-version-check playwright-version-check tsconfig-paths-check storybook-build typecheck-e2e visibility-check
 
 # Type-check the Cypress suite, its own project (ADR-0006); its specs import the generated client
 typecheck-e2e: install openapi-generate
