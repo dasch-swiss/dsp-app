@@ -44,11 +44,6 @@ export interface DataModelEditor {
   canDeleteProperty(propertyIri: string): Observable<CanDo>;
   /** Checks whether the property can be deleted, saying why not, then asks to confirm and deletes it; `true` once deleted. */
   deleteProperty(propertyIri: string, label: string): Observable<boolean>;
-  /**
-   * Checks which of the properties can be deleted, saying how many cannot, then asks once to confirm and deletes the
-   * others; `true` once deleted.
-   */
-  deleteProperties(properties: { iri: string; label: string }[]): Observable<boolean>;
   /** Whether the class's property can take that cardinality, given the resources there are. */
   canSetCardinality(classIri: string, propertyIri: string, cardinality: Cardinality): Observable<CanDo>;
   /** Gives the class's property that cardinality; `true` once saved. */
@@ -164,9 +159,6 @@ export function injectDataModelEditing() {
     /** Deletes the property once checked and confirmed, then reads the project again. */
     deleteProperty: (propertyIri: string, label: string): Observable<boolean> =>
       editor ? reloadOnceSaved(editor.deleteProperty(propertyIri, label)) : of(false),
-    /** Deletes those of the properties that can be, once confirmed, then reads the project again. */
-    deleteProperties: (properties: { iri: string; label: string }[]): Observable<boolean> =>
-      editor ? reloadOnceSaved(editor.deleteProperties(properties)) : of(false),
     canSetCardinality: (classIri: string, propertyIri: string, cardinality: Cardinality): Observable<CanDo> =>
       editor ? editor.canSetCardinality(classIri, propertyIri, cardinality) : of({ canDo: false }),
     /** Gives the class's property that cardinality, then reads the project again. */

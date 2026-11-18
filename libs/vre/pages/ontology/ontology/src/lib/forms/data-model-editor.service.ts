@@ -36,21 +36,7 @@ import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DIALOG_LARGE, DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  catchError,
-  combineLatest,
-  concatMap,
-  filter,
-  finalize,
-  from,
-  map,
-  Observable,
-  of,
-  switchMap,
-  take,
-  takeUntil,
-  toArray,
-} from 'rxjs';
+import { catchError, combineLatest, filter, finalize, map, Observable, of, switchMap, take, takeUntil } from 'rxjs';
 import { OntologyEditService } from '../services/ontology-edit.service';
 import { EditPropertyFormDialogComponent } from './property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData, EditPropertyDialogData } from './property-form/property-form.type';
@@ -482,49 +468,6 @@ export class DataModelEditorService implements DataModelEditor {
                   filter(ontology => !!ontology?.properties[propertyIri]),
                   take(1),
                   switchMap(() => editing.deleteProperty$(propertyIri)),
-                  map(() => true)
-                )
-              )
-            )
-          );
-      })
-    );
-  }
-
-  deleteProperties(properties: { iri: string; label: string }[]): Observable<boolean> {
-    if (!properties.length) return of(false);
-    // One check at a time: the API refuses several at once.
-    return from(properties).pipe(
-      concatMap(property => this.canDeleteProperty(property.iri).pipe(map(check => ({ ...property, check })))),
-      toArray(),
-      switchMap(checked => {
-        const deletable = checked.filter(property => property.check.canDo);
-        const kept = checked.length - deletable.length;
-        if (kept) {
-          this._notify(this._translate.instant('pages.dataModels2.cannotDeleteSome', { count: kept }));
-        }
-        if (!deletable.length) return of(false);
-        const first = deletable[0].iri;
-        return this._confirm
-          .afterConfirmation(
-            this._translate.instant('pages.dataModels2.deletePropertiesConfirm', {
-              count: deletable.length,
-              properties: deletable.map(property => property.label).join(', '),
-            })
-          )
-          .pipe(
-            switchMap(() =>
-              this._withEditing(first, editing =>
-                editing.currentOntology$.pipe(
-                  filter(ontology => !!ontology?.properties[first]),
-                  take(1),
-                  // In turn: each deletion gives the data model the date the next one needs.
-                  switchMap(() =>
-                    from(deletable).pipe(
-                      concatMap(property => editing.deleteProperty$(property.iri)),
-                      toArray()
-                    )
-                  ),
                   map(() => true)
                 )
               )

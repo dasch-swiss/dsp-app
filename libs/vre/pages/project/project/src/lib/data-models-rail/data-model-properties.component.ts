@@ -205,33 +205,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         </mat-button-toggle-group>
       </div>
 
-      <!-- For editors: the data model's properties no class uses, which a link among them keeps its target from being
-           deleted; shown on their own, or deleted together. -->
-      @if (canEdit() && unused().length; as count) {
-        <div class="unused-note" data-cy="data-model-properties-unused-note">
-          <mat-icon>info</mat-icon>
-          <span class="unused-text">{{ r + '.unusedNote' | translate: { count } }}</span>
-          <button
-            mat-stroked-button
-            type="button"
-            data-cy="data-model-properties-unused-show"
-            (click)="unusedOnly.set(!unusedOnly())">
-            {{ (unusedOnly() ? r + '.showAllProperties' : r + '.showUnused') | translate }}
-          </button>
-          @if (editing.canDelete) {
-            <button
-              mat-stroked-button
-              type="button"
-              class="delete"
-              data-cy="data-model-properties-unused-delete"
-              (click)="deleteUnused()">
-              <mat-icon>delete</mat-icon>
-              {{ r + '.deleteAllUnused' | translate: { count } }}
-            </button>
-          }
-        </div>
-      }
-
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
         <table
           mat-table
@@ -783,32 +756,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         background: inherit;
       }
 
-      // The data model's properties no class uses, above the table.
-      .unused-note {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 8px 12px;
-        margin-bottom: 12px;
-        padding: 8px 12px 8px 16px;
-        border-radius: 8px;
-        background: #fff4dc;
-        color: #6b4a00;
-
-        > mat-icon {
-          flex: none;
-        }
-
-        button {
-          --mat-button-outlined-container-height: 32px;
-          background: white;
-        }
-      }
-
-      .unused-text {
-        flex: 1 1 280px;
-      }
-
       // Deleting, in red, and why it can't be, under it.
       .delete:not([disabled]):not(.blocked),
       .delete:not([disabled]):not(.blocked) mat-icon {
@@ -841,13 +788,6 @@ export class DataModelPropertiesComponent {
 
   /** What the API says of deleting each property whose menu was opened. */
   readonly deleteChecks = signal(new Map<string, CanDo>());
-  /** The data model's own properties no class uses. */
-  readonly unused = computed(() => {
-    const ontologyIri = this.state.selected()?.iri;
-    return this.state.propertyRows().filter(row => row.unused && !!ontologyIri && row.id.startsWith(`${ontologyIri}#`));
-  });
-  /** Whether the table shows only those. */
-  readonly unusedOnly = signal(false);
   /** The value types of a property to create, by group, as the data model editor offers them. */
   readonly propertyTypes = DefaultProperties.data;
   /** Whether "Create property" shows: for editors, where the editor's dialogs are at hand. */
@@ -936,8 +876,7 @@ export class DataModelPropertiesComponent {
       !this.types().size &&
       !this.targets().size &&
       !this.users().size &&
-      !this.standards().size &&
-      !this.unusedOnly()
+      !this.standards().size
   );
   readonly allExpanded = computed(() => this.collapsed().size === 0);
 
@@ -975,7 +914,6 @@ export class DataModelPropertiesComponent {
     const targets = this.targets();
     const users = this.users();
     const standards = this.standards();
-    const unused = this.unusedOnly() ? new Set(this.unused().map(row => row.id)) : undefined;
     const shown = this.columns.shown();
     return this.state
       .propertyRows()
@@ -991,7 +929,6 @@ export class DataModelPropertiesComponent {
       .filter(row => !targets.size || targets.has(row.linkTarget ?? NO_TARGET))
       .filter(row => !users.size || row.usedBy.some(user => users.has(user)))
       .filter(row => !standards.size || row.terms.some(term => standards.has(term.short)))
-      .filter(row => !unused || unused.has(row.id))
       .filter(row => !folding || !this._folded(row));
   });
 
@@ -1143,14 +1080,6 @@ export class DataModelPropertiesComponent {
       open: iri => this.showClass(iri),
       browse: () => undefined,
     });
-  }
-
-  /** Deletes the data model's properties no class uses, those the API lets go, once confirmed. */
-  deleteUnused(): void {
-    this.editing
-      .deleteProperties(this.unused().map(row => ({ iri: row.id, label: row.label })))
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(deleted => deleted && this.unusedOnly.set(false));
   }
 
   /** The classes of the data model the property can be given to: those that don't have it. */
