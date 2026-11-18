@@ -894,7 +894,26 @@
       "links": "Verknüpfungen"
     },
     "dataModels2": {
-      "cannotDeletePropertyShort": "Eine Klasse oder ein Wert verwendet sie",
+      "cannotDeleteClassHelp": "Etwas verwendet sie: sehen, was und wie man es behebt",
+      "deleteBlockers": {
+        "introProperty": "Beheben Sie zuerst diese Punkte und löschen Sie dann die Eigenschaft.",
+        "usedBy": "Verwendet von {{class}}",
+        "title": "„{{name}}“ kann noch nicht gelöscht werden",
+        "intro": "Beheben Sie zuerst diese Punkte und löschen Sie dann die Klasse.",
+        "unusedLink": "Die Verknüpfung „{{property}}“ zeigt auf sie",
+        "unusedLinkHint": "Keine Klasse verwendet sie: Eigenschaft löschen.",
+        "link": "„{{property}}“ in {{class}} zeigt auf sie",
+        "linkHint": "Entfernen Sie sie aus {{class}}.",
+        "subclass": "Unterklasse {{class}}",
+        "subclassHint": "Löschen Sie zuerst die Unterklasse.",
+        "resources": "{{count}} Ressourcen dieser Klasse",
+        "resourcesHint": "Löschen Sie sie zuerst.",
+        "done": "Erledigt",
+        "removeFrom": "Aus {{class}} entfernen",
+        "open": "Öffnen",
+        "browse": "Ressourcen durchsuchen",
+        "apiReason": "Der Server verweigert das Löschen weiterhin:"
+      },
       "propertyActions": "Aktionen für {{property}}",
       "editProperty": "Eigenschaft bearbeiten",
       "addToClass": "Zu Klasse hinzufügen",

@@ -114,6 +114,8 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
         [query]="query()"
         [(folded)]="foldedCards"
         (reorder)="reorderProperties($event)"
+        [graph]="state.graph()"
+        (browse)="browse($event)"
         (editClass)="edit($event)"
         (editProperty)="editing.editProperty($event)" />
       @if (rows().length === 0) {
