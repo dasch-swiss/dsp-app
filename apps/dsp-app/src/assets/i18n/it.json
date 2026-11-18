@@ -1385,12 +1385,6 @@
     }
   },
   "ui": {
-    "multiLanguage": {
-      "languages": "Lingue",
-      "oneAtATime": "Una alla volta",
-      "allLanguages": "Tutte le lingue",
-      "filled": "{{count}} su {{total}}"
-    },
     "common": {
       "actions": {
         "cancel": "Annulla",

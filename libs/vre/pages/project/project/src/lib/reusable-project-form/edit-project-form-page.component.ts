@@ -7,7 +7,6 @@ import { ensureWithDefaultLanguage } from '@dasch-swiss/vre/3rd-party-services/o
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { MultiLanguageModeSwitchComponent } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map, switchMap, take } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
@@ -26,7 +25,6 @@ import { ReusableProjectFormComponent } from './reusable-project-form.component'
          build, leaving a lone Submit button over empty content. See DEV-6746. -->
     @if (form) {
       <div style="display: flex; justify-content: space-between">
-        <app-multi-language-mode-switch />
         <button
           mat-raised-button
           type="submit"
@@ -40,14 +38,7 @@ import { ReusableProjectFormComponent } from './reusable-project-form.component'
       </div>
     }
   `,
-  imports: [
-    MultiLanguageModeSwitchComponent,
-    AsyncPipe,
-    MatButton,
-    TranslatePipe,
-    LoadingButtonDirective,
-    ReusableProjectFormComponent,
-  ],
+  imports: [AsyncPipe, MatButton, TranslatePipe, LoadingButtonDirective, ReusableProjectFormComponent],
 })
 export class EditProjectFormPageComponent {
   form!: ProjectForm;

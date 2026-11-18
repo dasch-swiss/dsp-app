@@ -12,14 +12,10 @@ import { ProjectPageService } from '../project-page.service';
  * the ontology pages, which depend on this library, so the app provides them here; see `app.routes.ts`.
  */
 export interface DataModelEditor {
-  /**
-   * Opens the class's dialog, on `focus` when given; emits once it closes, `true` if it was saved.
-   */
-  editClass(classIri: string, focus?: TextFocus): Observable<boolean>;
-  /**
-   * Opens the property's dialog, on `focus` when given; emits once it closes, `true` if it was saved.
-   */
-  editProperty(propertyIri: string, focus?: TextFocus): Observable<boolean>;
+  /** Opens the class's dialog, for its labels and description; emits once it closes, `true` if it was saved. */
+  editClass(classIri: string): Observable<boolean>;
+  /** Opens the property's dialog, for its labels and description; emits once it closes, `true` if it was saved. */
+  editProperty(propertyIri: string): Observable<boolean>;
   /** The project's properties the class does not have yet, by data model. */
   availableProperties(classIri: string): Observable<AvailableProperties[]>;
   /** Gives the class an existing property, optional and single; emits `true` once saved. */
@@ -102,12 +98,6 @@ export interface AvailableProperties {
     /** The labels of the classes that already use it: what tells same-named properties apart. */
     usedBy: string[];
   }[];
-}
-
-/** The text an edit dialog opens on: its label or description, the field of that language focused. */
-export interface TextFocus {
-  field: 'label' | 'description';
-  language: string;
 }
 
 /** The data model editor, if the app provides one; without it, editing opens the data model editor page instead. */
@@ -229,11 +219,7 @@ export function injectDataModelEditing() {
           project.reloadProject();
           created(iri);
         }),
-    /** Edits the class in the editor's dialog, opened on `focus` when given. */
-    editClass: (iri: string, focus?: TextFocus) =>
-      edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i, focus))),
-    /** Edits the property in the editor's dialog, opened on `focus` when given. */
-    editProperty: (iri: string, focus?: TextFocus) =>
-      edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i, focus))),
+    editClass: (iri: string) => edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i))),
+    editProperty: (iri: string) => edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i))),
   };
 }

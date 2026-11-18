@@ -8,7 +8,6 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { ProjectService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { MultiLanguageModeSwitchComponent } from '@dasch-swiss/vre/ui/string-literal';
 import { CenteredLayoutComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
@@ -34,7 +33,6 @@ import { ReusableProjectFormComponent } from './reusable-project-form.component'
           {{ 'ui.common.actions.cancel' | translate }}
         </button>
 
-        <app-multi-language-mode-switch />
         <button
           mat-raised-button
           type="submit"
@@ -49,14 +47,7 @@ import { ReusableProjectFormComponent } from './reusable-project-form.component'
       </div>
     </app-centered-layout>
   `,
-  imports: [
-    MultiLanguageModeSwitchComponent,
-    MatButton,
-    TranslatePipe,
-    LoadingButtonDirective,
-    CenteredLayoutComponent,
-    ReusableProjectFormComponent,
-  ],
+  imports: [MatButton, TranslatePipe, LoadingButtonDirective, CenteredLayoutComponent, ReusableProjectFormComponent],
 })
 export class CreateProjectFormPageComponent {
   form!: ProjectForm;

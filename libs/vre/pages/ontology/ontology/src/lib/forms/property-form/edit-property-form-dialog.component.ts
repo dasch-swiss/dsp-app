@@ -9,7 +9,6 @@ import {
 } from '@angular/material/dialog';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { MultiLanguageModeSwitchComponent } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
@@ -28,7 +27,6 @@ import {
   template: ` <app-dialog-header [title]="title" [subtitle]="data.propType.group + ': ' + data.propType.label || ''" />
     <app-property-form mat-dialog-content (afterFormInit)="form = $event" [propertyData]="data" />
     <div mat-dialog-actions align="end">
-      <app-multi-language-mode-switch />
       <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button
         mat-raised-button
@@ -42,7 +40,6 @@ import {
       </button>
     </div>`,
   imports: [
-    MultiLanguageModeSwitchComponent,
     DialogHeaderComponent,
     LoadingButtonDirective,
     MatButton,

@@ -10,25 +10,17 @@ import {
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
-import { MultiLanguageModeSwitchComponent } from '@dasch-swiss/vre/ui/string-literal';
 import { MultiLanguages, StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { OntologyEditService } from '../../services/ontology-edit.service';
 import { ResourceClassFormComponent } from './resource-class-form.component';
-import {
-  ResourceClassForm,
-  ResourceClassFormData,
-  TextFocus,
-  UpdateResourceClassData,
-} from './resource-class-form.type';
+import { ResourceClassForm, ResourceClassFormData, UpdateResourceClassData } from './resource-class-form.type';
 
 export interface EditResourceClassDialogProps {
   labels: StringLiteralV2[];
   data: UpdateResourceClassData;
-  /** The text to open on, focused. */
-  focus?: TextFocus;
 }
 
 @Component({
@@ -41,7 +33,6 @@ export interface EditResourceClassDialogProps {
       <app-resource-class-form [formData]="formData" (afterFormInit)="afterFormInit($event)" />
     </div>
     <div mat-dialog-actions align="end">
-      <app-multi-language-mode-switch />
       <button data-cy="cancel-button" mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
       <button
         data-cy="submit-button"
@@ -57,7 +48,6 @@ export interface EditResourceClassDialogProps {
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MultiLanguageModeSwitchComponent,
     DialogHeaderComponent,
     LoadingButtonDirective,
     MatButton,
@@ -87,7 +77,6 @@ export class EditResourceClassDialogComponent implements OnInit {
       name: OntologyService.getNameFromIri(this.data.data.id),
       labels: this.data.data.labels as MultiLanguages,
       comments: this.data.data.comments as MultiLanguages,
-      focus: this.data.focus,
     };
   }
 
