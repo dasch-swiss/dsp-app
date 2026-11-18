@@ -57,6 +57,4 @@
       "apps/dsp-app/cypress/models/payload-parameters.ts",
     ],
   },
-  // Unused exports only warn until DEV-7917 clears them.
-  "rules": { "exports": "warn", "types": "warn", "enumMembers": "warn" },
 }

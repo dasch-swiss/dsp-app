@@ -208,7 +208,7 @@ lint-selftest:
     done
     echo "lint-selftest: just lint rejected the seeded violation with" $rules
 
-# Unused files, dependencies and exports (knip.jsonc); unused exports only warn for now
+# Unused files, dependencies and exports (knip.jsonc)
 knip: install openapi-generate
     pnpm exec knip --tsConfig tsconfig.base.json
 
