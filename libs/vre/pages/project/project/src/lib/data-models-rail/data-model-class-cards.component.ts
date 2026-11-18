@@ -431,7 +431,7 @@ export interface PropertyOrder {
         }
       }
 
-      // The pen and the bin, as small as the arrow looks, shown on hover, while open or with the focus.
+      // The pen and the bin, as small as the arrow looks, shown over the header or with the focus.
       .actions {
         visibility: hidden;
 
@@ -442,7 +442,8 @@ export interface PropertyOrder {
         }
       }
 
-      .card:hover .actions,
+      // Only over the card's header: working on its properties doesn't bring them up.
+      .card-head:hover .actions,
       .actions:focus-visible,
       .actions:focus-within {
         visibility: visible;
