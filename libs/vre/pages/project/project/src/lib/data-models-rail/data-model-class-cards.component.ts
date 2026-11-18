@@ -29,7 +29,6 @@ import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.comp
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
-import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { CardinalityLayout, CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { hasText, highlighted } from './highlighted';
@@ -81,7 +80,6 @@ export interface PropertyOrder {
     MatMenuTrigger,
     MatTooltip,
     NgTemplateOutlet,
-    TabShadePipe,
     TranslatePipe,
   ],
   template: `
@@ -176,7 +174,7 @@ export interface PropertyOrder {
           [class.selected]="row.id === selected()"
           [class.flash]="row.id === flashed()"
           [class.no-colour]="!showColours()"
-          [style.--tab]="colors().get(row.id) | tabShade: '#FFFFFF'">
+          [style.--tab]="colors().get(row.id) ?? '#FFFFFF'">
           <header class="card-head" (mouseenter)="checkDelete(row.id)">
             <span class="texts">
               @if (row.superclass) {
@@ -356,7 +354,7 @@ export interface PropertyOrder {
         scroll-margin: 16px;
         transition: box-shadow 0.2s;
 
-        // The family's colour as a tab, as the class chips and the graph show it.
+        // The family's colour as a tab, exactly as the diagram draws the class.
         &::before {
           content: '';
           position: absolute;
@@ -441,7 +439,7 @@ export interface PropertyOrder {
         margin-bottom: 2px;
         padding: 0 8px 0 4px;
         border-radius: 99px;
-        background: color-mix(in srgb, var(--tab) 25%, white);
+        background: var(--tab);
         font-size: 11px;
         font-weight: 500;
         color: $cool_gray_900;

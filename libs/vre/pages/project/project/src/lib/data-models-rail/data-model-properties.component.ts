@@ -42,7 +42,6 @@ import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component'
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
-import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { ClassChipsComponent } from './class-chips.component';
 import { ColumnHeaderComponent } from './column-header.component';
 import { ColumnsMenuComponent } from './columns-menu.component';
@@ -83,7 +82,6 @@ const COLUMN_LABELS: Record<Column, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'closeOnEscape($event)' },
   imports: [
-    TabShadePipe,
     CdkDrag,
     CdkDropList,
     ClassChipsComponent,
@@ -382,7 +380,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                     } @else {
                       <!-- In the class's color, as in the column. -->
                       <span class="chip"
-                        ><span class="tab" [style.background]="state.colors().get(option) | tabShade: '#F3F4F6'"></span
+                        ><span class="tab" [style.background]="state.colors().get(option) ?? '#F3F4F6'"></span
                         ><span class="chip-label">{{ state.labelOf(option) }}</span></span
                       >
                     }

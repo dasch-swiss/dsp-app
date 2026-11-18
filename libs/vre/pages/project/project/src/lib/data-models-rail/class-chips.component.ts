@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
 
@@ -10,17 +9,14 @@ import { HighlightPipe } from './highlight.pipe';
  */
 @Component({
   selector: 'app-class-chips',
-  imports: [TabShadePipe, HighlightPipe],
+  imports: [HighlightPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <span class="cut">
       @for (iri of shown(); track iri) {
         <span class="chip" data-cy="class-chip">
           @if (showColours()) {
-            <span
-              class="tab"
-              aria-hidden="true"
-              [style.background]="state.colors().get(iri) | tabShade: '#F3F4F6'"></span>
+            <span class="tab" aria-hidden="true" [style.background]="state.colors().get(iri) ?? '#F3F4F6'"></span>
           }
           <span class="label">
             @for (part of state.labelOf(iri) | highlight: highlight(); track $index) {
