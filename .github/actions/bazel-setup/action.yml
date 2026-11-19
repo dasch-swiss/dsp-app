@@ -38,9 +38,18 @@ runs:
       run: echo "CYPRESS_INSTALL_BINARY=0" >> "$GITHUB_ENV"
     - name: Install Nix
       uses: DeterminateSystems/determinate-nix-action@v3
-    # pnpm's default store on Linux; `just install` otherwise downloads every package.
-    - name: Cache the pnpm store
+    # pnpm's default store on Linux; `just install` otherwise downloads every package. Like the
+    # disk cache, only main saves it; a branch restores main's and never writes one of its own.
+    - name: Restore and save the pnpm store
+      if: github.ref == 'refs/heads/main'
       uses: actions/cache@v6
+      with:
+        path: ~/.local/share/pnpm/store
+        key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: pnpm-store-${{ runner.os }}-
+    - name: Restore the pnpm store
+      if: github.ref != 'refs/heads/main'
+      uses: actions/cache/restore@v6
       with:
         path: ~/.local/share/pnpm/store
         key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
