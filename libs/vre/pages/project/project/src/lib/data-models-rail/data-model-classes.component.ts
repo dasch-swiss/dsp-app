@@ -382,18 +382,18 @@ export class DataModelClassesComponent {
   /** How the cards show "Multiple values" and "Required", as the viewer last chose. */
   readonly cardinalityLayout = rememberedSignal<CardinalityLayout>(
     'dsp-data-models-cardinality-layout',
-    'columns',
+    'rows',
     stored =>
       ['columns', 'ticked', 'rows', 'chip', 'differs', 'bar', 'symbols', 'words'].includes(stored)
         ? (stored as CardinalityLayout)
         : undefined
   );
   /** Whether the cards show their family's colour on their left edge, as the viewer last chose. */
-  readonly showColours = rememberedSignal<boolean>('dsp-data-models-card-colours', true, stored => stored !== 'false');
+  readonly showColours = rememberedSignal<boolean>('dsp-data-models-card-colours', false, stored => stored === 'true');
   /** Whether every class's card says its kind, "Object without representation" too; else only a class with a file. */
-  readonly kindForAll = rememberedSignal<boolean>('dsp-data-models-kind-for-all', false, stored => stored === 'true');
+  readonly kindForAll = rememberedSignal<boolean>('dsp-data-models-kind-for-all', true, stored => stored !== 'false');
   /** How a subclass's card shows its superclass's properties, as the viewer last chose. */
-  readonly inheritedLayout = rememberedSignal<InheritedLayout>('dsp-data-models-inherited-layout', 'grouped', stored =>
+  readonly inheritedLayout = rememberedSignal<InheritedLayout>('dsp-data-models-inherited-layout', 'listed', stored =>
     stored === 'grouped' || stored === 'listed' ? stored : undefined
   );
   readonly inheritedLayouts: { value: InheritedLayout; key: string }[] = [
@@ -402,9 +402,9 @@ export class DataModelClassesComponent {
   ];
   /** The ways the cards can show it, as View options lists them. */
   readonly cardinalityLayouts: { value: CardinalityLayout; key: string }[] = [
+    { value: 'rows', key: 'cardinalityRows' },
     { value: 'columns', key: 'cardinalityColumns' },
     { value: 'ticked', key: 'cardinalityTicked' },
-    { value: 'rows', key: 'cardinalityRows' },
     { value: 'chip', key: 'cardinalityChip' },
     { value: 'differs', key: 'cardinalityDiffers' },
     { value: 'bar', key: 'cardinalityBar' },
