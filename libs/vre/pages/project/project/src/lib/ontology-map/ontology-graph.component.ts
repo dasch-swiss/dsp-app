@@ -1189,15 +1189,17 @@ export class OntologyGraphComponent {
           .filter(edge => edge.data('property') === property)
           .addClass('same-property');
     });
-    // A new size rescales in place: classes stay where they are, only boxes, text and lines grow or shrink. The size
-    // the graph starts with is already the one it is laid out at.
+    // A new size only grows or shrinks text, boxes and lines, by as much as the text size changes: every class stays
+    // where it is, and the view too; only the links are routed again round the new boxes. The size the graph starts
+    // with is already the one it is laid out at.
     let sizeShown = untracked(() => this.size());
     effect(() => {
       const cy = this._cy();
       const size = this.size();
       if (!cy || size === sizeShown) return;
+      const ratio = GRAPH_TEXT_SIZE[size] / GRAPH_TEXT_SIZE[sizeShown];
       sizeShown = size;
-      this._rescale(cy);
+      untracked(() => this._grow(cy, ratio));
     });
     // New texts restyle in place: classes stay where they are, their boxes fitting the new texts, and the labels clear
     // of each other again.
@@ -1323,6 +1325,14 @@ export class OntologyGraphComponent {
     });
     this._route(cy, new Set(links.map(link => link.data.id as string)));
     this._linksChanged.update(n => n + 1);
+  }
+
+  /** Draws text, boxes and lines `ratio` times as big, every class where it is; the links routed round the new boxes. */
+  private _grow(cy: Core, ratio: number): void {
+    if (cy.elements().empty() || !Number.isFinite(ratio) || ratio <= 0) return;
+    this._scale *= ratio;
+    cy.style(this._style(this._scale));
+    this._route(cy);
   }
 
   /** Lays the classes out over the whole box and fits them in it; dragged places are forgotten. */
