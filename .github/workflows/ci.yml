@@ -19,6 +19,7 @@ jobs:
     outputs:
       automation_skip: ${{ steps.detect.outputs.automation_skip }}
       only_workflows: ${{ steps.detect.outputs.only_workflows }}
+      docs_only: ${{ steps.detect.outputs.docs_only }}
       bot_push: ${{ steps.detect.outputs.bot_push }}
     steps:
       - uses: actions/checkout@v7
@@ -67,6 +68,7 @@ jobs:
           # Tag and direct-main pushes: full pipeline (no path-based skip).
           if [[ "$GH_REF" == refs/tags/* ]] || [ "$GH_REF" = "refs/heads/main" ]; then
             echo "only_workflows=false" >> "$GITHUB_OUTPUT"
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -77,6 +79,7 @@ jobs:
           if ! git fetch --no-tags origin main 2>/dev/null; then
             echo "::warning::could not fetch origin/main; running full pipeline"
             echo "only_workflows=false" >> "$GITHUB_OUTPUT"
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -84,6 +87,7 @@ jobs:
           if [ -z "$DIFF" ]; then
             # No diff (rare for push events) — fail-safe.
             echo "only_workflows=false" >> "$GITHUB_OUTPUT"
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -106,6 +110,15 @@ jobs:
           fi
 
           echo "only_workflows=$only_workflows" >> "$GITHUB_OUTPUT"
+
+          # docs_only: every changed file is on a list of paths the built app never reads, so E2E
+          # skips. An allow-list, not "nothing under apps/ or libs/": the lockfile, MODULE.bazel,
+          # the justfile, flake.nix, tools/ and .storybook all change what E2E runs against.
+          if echo "$DIFF" | grep -qvE '^(docs/|k6/|\.claude/|[^/]+\.md$)'; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "docs_only=true" >> "$GITHUB_OUTPUT"
+          fi
 
   lint:
     name: DSP-APP Linting
@@ -197,7 +210,8 @@ jobs:
     if: |
       needs.changes.result == 'success' &&
       needs.changes.outputs.automation_skip == 'false' &&
-      needs.changes.outputs.only_workflows == 'false'
+      needs.changes.outputs.only_workflows == 'false' &&
+      needs.changes.outputs.docs_only == 'false'
     runs-on: ubuntu-latest
     permissions:
       contents: read
