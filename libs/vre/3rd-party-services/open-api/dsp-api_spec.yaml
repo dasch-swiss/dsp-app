@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v40.7.0-7-gfaddfd3
+  version: v40.7.0-9-g65d173f
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -5533,7 +5533,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       responses:
         '200':
           description: ''
@@ -5601,7 +5601,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       responses:
         '200':
           description: ''
@@ -5669,7 +5669,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       responses:
         '200':
           description: ''
@@ -5860,7 +5860,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       responses:
         '200':
           description: ''
@@ -5927,7 +5927,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       responses:
         '200':
           description: ''
@@ -6131,7 +6131,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6205,7 +6205,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6280,7 +6280,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6354,7 +6354,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6428,7 +6428,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6502,7 +6502,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6576,7 +6576,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       requestBody:
         content:
           application/json:
@@ -6649,7 +6649,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       requestBody:
         content:
           application/json:
@@ -6722,7 +6722,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       requestBody:
         content:
           application/json:
@@ -6795,7 +6795,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/PtQAfnvRTkuXToXbWDP7Mw
+        example: http://rdfh.ch/users/IFcErn6BS16_MNj27XV8Kg
       requestBody:
         content:
           application/json:
@@ -7714,7 +7714,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/OZQs9BLjSyegx1OwDRrvxQ
+        example: http://rdfh.ch/lists/0001/CE1ltOOhR3O-oMASqypJLw
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7842,7 +7842,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/OZQs9BLjSyegx1OwDRrvxQ
+        example: http://rdfh.ch/lists/0001/CE1ltOOhR3O-oMASqypJLw
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -17453,11 +17453,11 @@ paths:
                 $ref: '#/components/schemas/InfoEndpointResponse'
               example:
                 name: dsp-ingest
-                version: v40.7.0-7-gfaddfd3
+                version: v40.7.0-9-g65d173f
                 scalaVersion: 3.8.4
                 sbtVersion: bazel
                 buildTime: dev
-                gitCommit: faddfd3b0c730f84d8cc4b17d569b5ed868991a6
+                gitCommit: 65d173f414e50e3d451a4ce88cc81ff1ca453c45
         '400':
           description: ''
           content:
@@ -18887,8 +18887,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v40.7.0-7-gfaddfd3
-                buildCommit: faddfd3b0
+                webapi: v40.7.0-9-g65d173f
+                buildCommit: 65d173f41
                 buildTime: dev
                 fuseki: 6.2.0
                 scala: 3.8.4
