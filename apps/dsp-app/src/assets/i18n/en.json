@@ -748,7 +748,6 @@
         "many": "many",
         "oneOrMore": "one or more",
         "none": "None",
-        "browse": "Browse resources",
         "edit": "Edit",
         "filter": "Filter",
         "filterHint": "Show the graph with only this class and the classes it is linked with",

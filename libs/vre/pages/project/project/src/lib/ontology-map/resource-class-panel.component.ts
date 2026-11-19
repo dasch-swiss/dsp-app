@@ -225,8 +225,8 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
           <span class="spacer"></span>
           @if (!elsewhere()) {
             <button mat-stroked-button data-cy="class-panel-browse" (click)="browse.emit(classIri())">
-              <mat-icon>view_list</mat-icon>
-              {{ t + '.browse' | translate }}
+              <mat-icon>open_in_new</mat-icon>
+              {{ 'pages.ontology.resourceClassInfo.openInstances' | translate }}
             </button>
           } @else if (canOpenModel()) {
             <button
