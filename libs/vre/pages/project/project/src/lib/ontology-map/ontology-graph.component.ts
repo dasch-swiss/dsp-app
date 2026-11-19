@@ -1362,13 +1362,14 @@ export class OntologyGraphComponent {
     const legend = options.legend === false ? undefined : this._legendTexts();
     const title = options.title;
     if (!legend && !title) return png;
-    // The legend's and the title's text as big in the image as the class names: image pixels per graph unit, times
-    // their size.
+    // What is in view: the legend and the title as big as on screen, however far the graph is zoomed, such as onto
+    // the few classes a filter leaves. The whole model: their text as big in the image as the class names, image
+    // pixels per graph unit times their size, as that image is as big as the model needs.
     const model = cy.elements().boundingBox({});
-    const scaleFor = (width: number) => {
-      const perUnit = area === 'whole' ? width / model.w : scale * cy.zoom();
-      return Math.max(scale, (BASE_FONT_SIZE * this._scale * perUnit) / LEGEND_TEXT_SIZE);
-    };
+    const scaleFor = (width: number) =>
+      area === 'whole'
+        ? Math.max(scale, (BASE_FONT_SIZE * this._scale * (width / model.w)) / LEGEND_TEXT_SIZE)
+        : scale;
     return png.then(async image => {
       const width = (await createImageBitmap(image)).width;
       const withItsLegend = legend ? await withLegend(image, legend, scaleFor, EXPORT_BACKGROUND) : image;
