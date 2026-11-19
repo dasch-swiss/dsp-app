@@ -8,12 +8,17 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { EXPORT_CANVAS_LIMIT, GraphExportArea, GraphExportOptions } from './ontology-graph.component';
+import {
+  EXPORT_CANVAS_LIMIT,
+  GraphExportArea,
+  GraphExportFormat,
+  GraphExportOptions,
+} from './ontology-graph.component';
 
 export interface ExportPreviewData {
   /** Draws the graph as a PNG: the part in view or every class, at a resolution, with its legend or not. */
   render: (area: GraphExportArea, options: GraphExportOptions) => Promise<Blob> | undefined;
-  /** The downloaded file's name without `.png`, such as `beol_ontology-map`. */
+  /** The downloaded file's name without its extension, such as `beol_ontology-map`. */
   fileName: string;
   /** The data model's name, written over the image when chosen. */
   title: string;
@@ -74,7 +79,7 @@ interface Rendered {
           {{ e + (area() === 'whole' ? '.previewWhole' : '.previewView') | translate }}
           @if (rendered(); as image) {
             <span class="dims" data-cy="export-preview-dims"
-              >· {{ image.width }} × {{ image.height }} px · {{ megabytes(image.bytes) }} MB</span
+              >· {{ image.width }} × {{ image.height }} px · {{ fileSize(image.bytes) }}</span
             >
           }
         </div>
@@ -124,20 +129,35 @@ interface Rendered {
           </div>
 
           <div class="setting">
-            <span class="heading" id="export-scale">{{ e + '.resolution' | translate }}</span>
+            <span class="heading" id="export-format">{{ e + '.format' | translate }}</span>
             <mat-button-toggle-group
-              aria-labelledby="export-scale"
-              data-cy="export-preview-scale"
+              aria-labelledby="export-format"
+              data-cy="export-preview-format"
               hideSingleSelectionIndicator
-              [value]="level()"
-              (change)="level.set($event.value)">
-              @for (option of levels; track option.key) {
-                <mat-button-toggle [value]="option" [matTooltip]="levelHint(option)">{{
-                  e + '.' + option.key | translate
-                }}</mat-button-toggle>
-              }
+              [value]="format()"
+              (change)="format.set($event.value)">
+              <mat-button-toggle value="png" [matTooltip]="e + '.pngHint' | translate">PNG</mat-button-toggle>
+              <mat-button-toggle value="svg" [matTooltip]="e + '.svgHint' | translate">SVG</mat-button-toggle>
             </mat-button-toggle-group>
           </div>
+
+          @if (format() === 'png') {
+            <div class="setting">
+              <span class="heading" id="export-scale">{{ e + '.resolution' | translate }}</span>
+              <mat-button-toggle-group
+                aria-labelledby="export-scale"
+                data-cy="export-preview-scale"
+                hideSingleSelectionIndicator
+                [value]="level()"
+                (change)="level.set($event.value)">
+                @for (option of levels; track option.key) {
+                  <mat-button-toggle [value]="option" [matTooltip]="levelHint(option)">{{
+                    e + '.' + option.key | translate
+                  }}</mat-button-toggle>
+                }
+              </mat-button-toggle-group>
+            </div>
+          }
 
           <div class="setting">
             <span class="heading">{{ e + '.include' | translate }}</span>
@@ -172,7 +192,7 @@ interface Rendered {
             [disabled]="failed()"
             (click)="download()">
             <mat-icon>download</mat-icon>
-            {{ e + '.download' | translate }}
+            {{ e + '.download' | translate: { format: format().toUpperCase() } }}
           </button>
         </div>
       </div>
@@ -368,6 +388,7 @@ export class ExportPreviewDialogComponent {
 
   readonly levels = LEVELS;
   readonly area = signal<GraphExportArea>('view');
+  readonly format = signal<GraphExportFormat>('png');
   readonly level = signal<Level>(LEVELS[1]);
   readonly legend = signal(true);
   /** Whether the data model's name is written over the image. */
@@ -383,9 +404,12 @@ export class ExportPreviewDialogComponent {
     let made = 0;
     effect(() => {
       const area = this.area();
-      const scale = this.level().scale;
+      const format = this.format();
+      // An SVG has no resolution: its size is the graph's, in screen pixels.
+      const scale = format === 'svg' ? 1 : this.level().scale;
       const titled = this.title();
-      const options = {
+      const options: GraphExportOptions = {
+        format,
         scale,
         legend: this.legend(),
         title: titled ? this._data.title : undefined,
@@ -405,12 +429,16 @@ export class ExportPreviewDialogComponent {
       }
       png
         .then(async blob => {
-          const bitmap = await createImageBitmap(blob);
-          if (turn !== made) return;
+          const url = URL.createObjectURL(blob);
+          const size = await sizeOf(url).catch(() => ({ width: 0, height: 0 }));
+          if (turn !== made) {
+            URL.revokeObjectURL(url);
+            return;
+          }
           this._show({
-            url: URL.createObjectURL(blob),
-            width: bitmap.width,
-            height: bitmap.height,
+            url,
+            width: size.width,
+            height: size.height,
             bytes: blob.size,
             scale,
           });
@@ -434,15 +462,23 @@ export class ExportPreviewDialogComponent {
     return `${level.scale}× · ${Math.round(image.width * ratio)} px`;
   }
 
-  megabytes(bytes: number): string {
-    return (bytes / 1_000_000).toFixed(1);
+  /** The file's size, in KB under a tenth of a MB, such as an SVG's often is, else in MB. */
+  fileSize(bytes: number): string {
+    return bytes < 100_000 ? `${Math.max(1, Math.round(bytes / 1000))} KB` : `${(bytes / 1_000_000).toFixed(1)} MB`;
   }
 
   copy(): void {
     const png = this._png;
     if (!png) return;
-    // The promise itself goes to the clipboard, so Safari keeps the click's permission while the image is drawn.
-    navigator.clipboard.write([new ClipboardItem({ 'image/png': png })]).then(
+    // The promise itself goes to the clipboard, so Safari keeps the click's permission while the image is drawn. An
+    // SVG goes as its markup too, which design tools and editors paste, where the browser cannot copy it as an image.
+    const item: Record<string, Promise<Blob>> = this.format() === 'svg'
+      ? {
+          'text/plain': png.then(async blob => new Blob([await blob.text()], { type: 'text/plain' })),
+          ...(ClipboardItem.supports?.('image/svg+xml') ? { 'image/svg+xml': png } : {}),
+        }
+      : { 'image/png': png };
+    navigator.clipboard.write([new ClipboardItem(item)]).then(
       () => this._notify('imageCopied'),
       () => this._notify('exportFailed', 'error')
     );
@@ -454,7 +490,11 @@ export class ExportPreviewDialogComponent {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${this._data.fileName}${this.area() === 'whole' ? '_whole' : ''}_${this.level().key}.png`;
+        const whole = this.area() === 'whole' ? '_whole' : '';
+        link.download =
+          this.format() === 'svg'
+            ? `${this._data.fileName}${whole}.svg`
+            : `${this._data.fileName}${whole}_${this.level().key}.png`;
         link.click();
         URL.revokeObjectURL(url);
       },
@@ -471,4 +511,14 @@ export class ExportPreviewDialogComponent {
   private _notify(key: string, type: 'success' | 'error' = 'success'): void {
     this._notification.openSnackBar(this._translate.instant(`pages.ontologyMap.exportMenu.${key}`), type);
   }
+}
+
+/** An image's own width and height, a PNG's or an SVG's, read as the browser shows it. */
+function sizeOf(url: string): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+    image.onerror = reject;
+    image.src = url;
+  });
 }

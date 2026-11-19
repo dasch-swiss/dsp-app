@@ -838,14 +838,17 @@
         "resolution": "Résolution",
         "legend": "Légende",
         "copy": "Copier",
-        "download": "Télécharger en PNG",
+        "download": "Télécharger en {{format}}",
         "close": "Fermer",
         "modelName": "Nom du modèle de données",
         "include": "Inclure",
         "filteredOn": "Filtré sur : {{filter}}",
         "low": "Basse",
         "standard": "Standard",
-        "high": "Haute"
+        "high": "Haute",
+        "format": "Format",
+        "pngHint": "Une image en pixels, pour des diapositives et des documents",
+        "svgHint": "Des vecteurs, nets à toute taille, à modifier ou imprimer"
       },
       "labelsMenu": {
         "heading": "Écrire sur les classes et les liens",

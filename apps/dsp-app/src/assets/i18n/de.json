@@ -838,14 +838,17 @@
         "resolution": "Auflösung",
         "legend": "Legende",
         "copy": "Kopieren",
-        "download": "Als PNG herunterladen",
+        "download": "Als {{format}} herunterladen",
         "close": "Schliessen",
         "modelName": "Name des Datenmodells",
         "include": "Einschliessen",
         "filteredOn": "Gefiltert nach: {{filter}}",
         "low": "Niedrig",
         "standard": "Standard",
-        "high": "Hoch"
+        "high": "Hoch",
+        "format": "Format",
+        "pngHint": "Ein Bild aus Pixeln, für Folien und Dokumente",
+        "svgHint": "Vektoren, in jeder Grösse scharf, zum Bearbeiten oder Drucken"
       },
       "labelsMenu": {
         "heading": "Auf Klassen und Verknüpfungen",

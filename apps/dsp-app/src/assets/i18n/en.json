@@ -838,14 +838,17 @@
         "resolution": "Resolution",
         "legend": "Legend",
         "copy": "Copy",
-        "download": "Download as PNG",
+        "download": "Download as {{format}}",
         "close": "Close",
         "modelName": "Data model name",
         "include": "Include",
         "filteredOn": "Filtered on: {{filter}}",
         "low": "Low",
         "standard": "Standard",
-        "high": "High"
+        "high": "High",
+        "format": "Format",
+        "pngHint": "An image of pixels, for slides and documents",
+        "svgHint": "Vectors, sharp at any size, to edit or print"
       },
       "labelsMenu": {
         "heading": "Write on classes and links",

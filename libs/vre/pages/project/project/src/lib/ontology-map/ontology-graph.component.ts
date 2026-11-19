@@ -33,7 +33,7 @@ import {
   TAB_WIDTH,
   TEXTURE_TILE,
 } from './islands';
-import { LegendTexts, withLegend, withTitle } from './legend-image';
+import { framedSvg, LegendTexts, withLegend, withTitle } from './legend-image';
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
@@ -63,8 +63,13 @@ const edgeKey = (edge: DataModelGraph['edges'][number]) => `${edge.source}>${edg
 /** What a PNG of the graph covers: the part in view, or every class shown. */
 export type GraphExportArea = 'view' | 'whole';
 
+/** The kinds of image the graph exports to: pixels, or vectors that stay sharp at any size. */
+export type GraphExportFormat = 'png' | 'svg';
+
 /** How an exported image is made: image pixels per screen pixel (2 by default), with the legend or not, and a title. */
 export interface GraphExportOptions {
+  /** PNG unless SVG; an SVG has no resolution, `scale` aside. */
+  format?: GraphExportFormat;
   scale?: number;
   legend?: boolean;
   /** The data model's name, written over the image; none without it. */
@@ -83,6 +88,16 @@ const EXPORT_MAX_SIZE = 8000;
 export const EXPORT_CANVAS_LIMIT = 16000;
 /** Size of the legend's text at scale 1, as on screen and in an exported image; see `withLegend`. */
 const LEGEND_TEXT_SIZE = 12.5;
+
+let svgExtension: Promise<void> | undefined;
+
+/** Registers cytoscape-svg once, loaded only when a graph is first exported as SVG. */
+function withSvgExtension(cytoscape: CytoscapeFactory): Promise<void> {
+  svgExtension ??= import('cytoscape-svg').then(({ default: register }) => {
+    (cytoscape as unknown as { use: (extension: unknown) => void }).use(register);
+  });
+  return svgExtension;
+}
 
 /** How far apart, at most, classes are spread to fill the box; past it, links grow too long to follow. */
 const MAX_SPREAD = 2.5;
@@ -1376,6 +1391,42 @@ export class OntologyGraphComponent {
       return title
         ? withTitle(withItsLegend, title, options.subtitle, scaleFor(width), EXPORT_BACKGROUND)
         : withItsLegend;
+    });
+  }
+
+  /** The graph as an exported image, a PNG or an SVG as `options.format` says; see `png` and `svg`. */
+  image(area: GraphExportArea, options: GraphExportOptions = {}): Promise<Blob> | undefined {
+    return options.format === 'svg' ? this.svg(area, options) : this.png(area, options);
+  }
+
+  /**
+   * The graph as an SVG, all of it vectors: the part in view, or every class shown, with the legend and title as a
+   * PNG has them; `undefined` before the graph has loaded.
+   */
+  svg(area: GraphExportArea, options: GraphExportOptions = {}): Promise<Blob> | undefined {
+    const cy = this._cy();
+    if (!cy || !this._cytoscape) return undefined;
+    const legend = options.legend === false ? undefined : this._legendTexts();
+    // As a PNG at scale 1: what is in view keeps its legend and title as on screen; the whole model grows them as
+    // its class names, which the SVG draws in graph units.
+    const model = cy.elements().boundingBox({});
+    const scaleFor = (width: number) =>
+      area === 'whole' ? Math.max(1, (BASE_FONT_SIZE * this._scale * (width / model.w)) / LEGEND_TEXT_SIZE) : 1;
+    return withSvgExtension(this._cytoscape).then(async () => {
+      const graph = (cy as Core & { svg: (options: Record<string, unknown>) => string }).svg({
+        full: area === 'whole',
+        // cytoscape-svg multiplies by the screen's pixel ratio: the SVG's size is in CSS pixels.
+        scale: 1 / (window.devicePixelRatio || 1),
+        bg: EXPORT_BACKGROUND,
+      });
+      const svg = await framedSvg(graph, {
+        legend,
+        title: options.title,
+        subtitle: options.subtitle,
+        scaleFor,
+        background: EXPORT_BACKGROUND,
+      });
+      return new Blob([svg], { type: 'image/svg+xml' });
     });
   }
 

@@ -95,6 +95,8 @@ const PANEL_WIDTH = 440;
 /** How long the arrow keys rest on a search result before its panel shows. */
 const PREVIEW_DELAY_MS = 150;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
+/** The smallest box, in CSS px, the whole model's copy is laid out in for an export; see `_wholeModel`. */
+const WHOLE_MODEL_MIN = { w: 1200, h: 800 };
 /** The widest screen, in CSS px, on which the graph uses the whole width; see `fullWidth`. */
 const FULL_WIDTH_UP_TO = 2560;
 const LABELS_KEY = 'dsp-ontology-map-labels';
@@ -404,9 +406,7 @@ const WHOLE_MODEL_TIMEOUT_MS = 15000;
                       </button>
                     }
                     @for (
-                      option of [
-                        { section: 'links', key: 'levelLabels', cy: 'level-labels', on: levelLabels() },
-                      ];
+                      option of [{ section: 'links', key: 'levelLabels', cy: 'level-labels', on: levelLabels() }];
                       track option.key
                     ) {
                       <hr class="menu-divider" />
@@ -1568,8 +1568,8 @@ export class OntologyMapPageComponent {
       exportPreviewDialogConfig({
         render: (area, options) =>
           area === 'view'
-            ? this.graphView()?.png('view', options)
-            : this._wholeModel().then(view => view.png('whole', options)!),
+            ? this.graphView()?.image('view', options)
+            : this._wholeModel().then(view => view.image('whole', options)!),
         fileName: `${name}_ontology-map`,
         title: this.selected()?.label ?? name,
         filter: this._filterLine(),
@@ -1590,7 +1590,11 @@ export class OntologyMapPageComponent {
   private _wholeModel(): Promise<OntologyGraphComponent> {
     if (!this.exportSize()) {
       const box = this._mainGraphBox()?.nativeElement.getBoundingClientRect();
-      this.exportSize.set({ w: Math.round(box?.width || 1200), h: Math.round(box?.height || 800) });
+      // No smaller than a laptop's graph: on a narrow screen, the whole model would be laid out in a sliver.
+      this.exportSize.set({
+        w: Math.round(Math.max(box?.width ?? 0, WHOLE_MODEL_MIN.w)),
+        h: Math.round(Math.max(box?.height ?? 0, WHOLE_MODEL_MIN.h)),
+      });
     }
     return new Promise((resolve, reject) => {
       const started = Date.now();
