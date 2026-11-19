@@ -613,53 +613,42 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     @if (islandsLegend(); as legend) {
       <div #islandsLegend class="islands-legend" role="region" [attr.aria-label]="i + '.legend' | translate">
         <span class="legend-title">{{ i + '.legend' | translate }}</span>
-        @if (legendOpen()) {
-          @if (legend.shapes) {
-            <span class="divider"></span>
-            <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
-          }
-          @if (legend.families && treeLines()) {
-            <span class="shape"
-              ><svg class="tree-line" width="22" height="12" aria-hidden="true">
-                <path d="M4 0V6H18V12" fill="none" stroke="currentColor" stroke-width="1.6" /></svg
-              >{{ i + '.subclass' | translate }}</span
+        @if (legend.shapes) {
+          <span class="divider"></span>
+          <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
+        }
+        @if (legend.families && treeLines()) {
+          <span class="shape"
+            ><svg class="tree-line" width="22" height="12" aria-hidden="true">
+              <path d="M4 0V6H18V12" fill="none" stroke="currentColor" stroke-width="1.6" /></svg
+            >{{ i + '.subclass' | translate }}</span
+          >
+        }
+        @if (legend.other) {
+          <span class="shape"
+            ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
+          >
+        }
+        @if (legend.link) {
+          <span class="shape">
+            <svg width="22" height="8" viewBox="0 0 28 8" aria-hidden="true">
+              <path class="legend-line" d="M 0 4 L 22 4" />
+              <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
+            </svg>
+            {{ i + '.link' | translate }}
+          </span>
+        }
+        @if (legend.files.length) {
+          <span class="divider"></span>
+          <span class="legend-heading">{{ i + '.files' | translate }}</span>
+          @for (file of legend.files; track file.representation) {
+            <span class="file"
+              ><span class="file-icon"
+                ><mat-icon>{{ file.icon }}</mat-icon></span
+              >{{ i + '.fileKinds.' + file.representation | translate }}</span
             >
-          }
-          @if (legend.other) {
-            <span class="shape"
-              ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
-            >
-          }
-          @if (legend.link) {
-            <span class="shape">
-              <svg width="22" height="8" viewBox="0 0 28 8" aria-hidden="true">
-                <path class="legend-line" d="M 0 4 L 22 4" />
-                <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
-              </svg>
-              {{ i + '.link' | translate }}
-            </span>
-          }
-          @if (legend.files.length) {
-            <span class="divider"></span>
-            <span class="legend-heading">{{ i + '.files' | translate }}</span>
-            @for (file of legend.files; track file.representation) {
-              <span class="file"
-                ><span class="file-icon"
-                  ><mat-icon>{{ file.icon }}</mat-icon></span
-                >{{ i + '.fileKinds.' + file.representation | translate }}</span
-              >
-            }
           }
         }
-        <button
-          type="button"
-          class="legend-toggle"
-          data-cy="islands-legend-toggle"
-          [attr.aria-expanded]="legendOpen()"
-          [attr.aria-label]="i + (legendOpen() ? '.collapse' : '.expand') | translate"
-          (click)="legendOpen.set(!legendOpen())">
-          <mat-icon>{{ legendOpen() ? 'chevron_left' : 'chevron_right' }}</mat-icon>
-        </button>
       </div>
     } @else {
       <div class="legend" aria-hidden="true">
@@ -795,31 +784,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         width: 1px;
         height: 20px;
         background: $cool_gray_200;
-      }
-
-      .legend-toggle {
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: -8px;
-        padding: 0;
-        border: 0;
-        border-radius: 14px;
-        background: transparent;
-        color: $cool_gray_500;
-        cursor: pointer;
-
-        &:hover {
-          background: $cool_gray_100;
-        }
-
-        mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-        }
       }
 
       .legend-heading {
@@ -984,8 +948,6 @@ export class OntologyGraphComponent {
   /** The hint over a link standing for several, where the pointer is: how many it stands for. */
   readonly linksHint = signal<{ x: number; y: number; count: number } | undefined>(undefined);
 
-  /** Whether the Islands view's legend is open. */
-  readonly legendOpen = signal(true);
   private readonly _legend = viewChild<ElementRef<HTMLElement>>('islandsLegend');
 
   /**

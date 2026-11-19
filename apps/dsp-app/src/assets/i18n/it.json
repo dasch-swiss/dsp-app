@@ -859,8 +859,6 @@
       "nameCopied": "Nome copiato",
       "islands": {
         "legend": "Legenda",
-        "collapse": "Nascondi la legenda",
-        "expand": "Mostra la legenda",
         "files": "File",
         "shapes": "Forme",
         "subclass": "Sottoclasse, sotto la sua classe madre",

@@ -586,10 +586,14 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
           white-space: nowrap;
         }
 
+        // A small pill, so the way back reads as an action of the note, not a page's main button.
         button.mat-mdc-unelevated-button {
+          --mat-button-filled-container-height: 26px;
+          --mat-button-filled-horizontal-padding: 10px;
+          --mat-button-filled-label-text-size: 12px;
           flex: none;
-          height: 30px;
-          border-radius: 15px;
+          height: 26px;
+          border-radius: 13px;
           background-color: #6b4a00;
           color: #fff4dc;
         }
