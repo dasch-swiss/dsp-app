@@ -18,7 +18,6 @@ import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import {
   MatCell,
   MatCellDef,
@@ -50,7 +49,6 @@ import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
-import { rememberedSignal } from './remembered-signal';
 import { TableColumns } from './table-columns';
 import { TABLE_STYLES } from './table-styles';
 
@@ -109,7 +107,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatRow,
     MatRowDef,
     MatTable,
-    MatSlideToggle,
     MatTooltip,
     PropertyPanelComponent,
     ResourceClassPanelComponent,
@@ -164,21 +161,7 @@ const COLUMN_LABELS: Record<Column, string> = {
           </mat-menu>
         }
         <span class="spacer"></span>
-        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties">
-          <!-- Under the columns: the class chips' colours, as the Resource classes cards offer. -->
-          <hr class="menu-divider" />
-          <span class="menu-heading">{{ r + '.coloursHeading' | translate }}</span>
-          <mat-slide-toggle
-            class="colours-toggle"
-            data-cy="data-model-properties-colours"
-            [checked]="showColours()"
-            (change)="showColours.set($event.checked)">
-            <span class="view-item">
-              <span>{{ r + '.coloursToggle' | translate }}</span>
-              <span class="view-hint">{{ r + '.chipColoursHint' | translate }}</span>
-            </span>
-          </mat-slide-toggle>
-        </app-columns-menu>
+        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
@@ -636,40 +619,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         visibility: visible;
       }
 
-      // The colours switch in View options, under the columns.
-      .menu-divider {
-        margin: 8px 0 4px;
-        border: 0;
-        border-top: 1px solid $cool_gray_100;
-      }
-
-      .menu-heading {
-        display: block;
-        padding: 4px 0;
-        font-size: 12px;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
-      }
-
-      .colours-toggle {
-        padding: 2px 0 6px;
-        font-size: 13px;
-      }
-
-      .view-item {
-        display: flex;
-        flex-direction: column;
-        max-width: 240px;
-        white-space: normal;
-        line-height: 1.3;
-      }
-
-      .view-hint {
-        font-size: 12px;
-        color: $cool_gray_500;
-      }
-
       // A row only shows: clicking it does nothing, only its fold arrow, pen and bin act.
       .mat-mdc-row {
         cursor: default;
@@ -726,8 +675,8 @@ export class DataModelPropertiesComponent {
   readonly maxUsedBy = MAX_USED_BY;
   readonly noTarget = NO_TARGET;
 
-  /** Whether the class chips show their family's colour, as the viewer last chose. */
-  readonly showColours = rememberedSignal<boolean>(`${STORAGE_KEY}-colours`, true, stored => stored !== 'false');
+  /** The class chips show no family colour. */
+  readonly showColours = signal(false).asReadonly();
   /** Whether the table is scrolled sideways, which shadows the frozen property column. */
   readonly scrolled = signal(false);
 

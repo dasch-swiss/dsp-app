@@ -15,7 +15,6 @@ import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { DefaultClass, DefaultResourceClasses, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -51,7 +50,6 @@ import { rememberedSignal } from './remembered-signal';
     MatMenuTrigger,
     MatPrefix,
     PropertyPanelComponent,
-    MatSlideToggle,
     ResourceClassPanelComponent,
     TranslatePipe,
   ],
@@ -97,7 +95,7 @@ import { rememberedSignal } from './remembered-signal';
           </mat-menu>
         }
         <div class="tools">
-          <!-- View options, as in the diagram: how the cards show "Multiple values" and "Required". -->
+          <!-- View options: how the cards show "Multiple values" and "Required". -->
           <button
             mat-button
             type="button"
@@ -108,54 +106,6 @@ import { rememberedSignal } from './remembered-signal';
             {{ 'pages.dataBrowser.viewOptions.title' | translate }}
           </button>
           <mat-menu #viewMenu="matMenu" xPosition="before">
-            <span class="menu-heading">{{ r + '.kindHeading' | translate }}</span>
-            <!-- A switch keeps the menu open, to see the cards change behind it. -->
-            <div class="menu-toggle" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
-              <mat-slide-toggle
-                data-cy="data-model-classes-kind-for-all"
-                [checked]="kindForAll()"
-                (change)="kindForAll.set($event.checked)">
-                <span class="view-item">
-                  <span>{{ r + '.kindForAll' | translate }}</span>
-                  <span class="view-hint">{{ r + '.kindForAllHint' | translate }}</span>
-                </span>
-              </mat-slide-toggle>
-            </div>
-            <hr class="menu-divider" />
-            <span class="menu-heading">{{ r + '.coloursHeading' | translate }}</span>
-            <div class="menu-toggle" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
-              <mat-slide-toggle
-                data-cy="data-model-classes-colours"
-                [checked]="showColours()"
-                (change)="showColours.set($event.checked)">
-                <span class="view-item">
-                  <span>{{ r + '.coloursToggle' | translate }}</span>
-                  <span class="view-hint">{{ r + '.coloursToggleHint' | translate }}</span>
-                </span>
-              </mat-slide-toggle>
-            </div>
-            <hr class="menu-divider" />
-            <span class="menu-heading">{{ r + '.inheritedLayout' | translate }}</span>
-            @for (option of inheritedLayouts; track option.value) {
-              @let chosen = inheritedLayout() === option.value;
-              <button
-                mat-menu-item
-                type="button"
-                class="view-entry"
-                role="menuitemradio"
-                [attr.aria-checked]="chosen"
-                [attr.data-cy]="'data-model-classes-inherited-' + option.value"
-                (click)="$event.stopPropagation(); inheritedLayout.set(option.value)">
-                <mat-icon [class.chosen]="chosen">{{
-                  chosen ? 'radio_button_checked' : 'radio_button_unchecked'
-                }}</mat-icon>
-                <span class="view-item">
-                  <span>{{ r + '.' + option.key | translate }}</span>
-                  <span class="view-hint">{{ r + '.' + option.key + 'Tip' | translate }}</span>
-                </span>
-              </button>
-            }
-            <hr class="menu-divider" />
             <span class="menu-heading">{{ r + '.cardinalityLayout' | translate }}</span>
             @for (option of cardinalityLayouts; track option.value) {
               @let chosen = cardinalityLayout() === option.value;
@@ -287,17 +237,6 @@ import { rememberedSignal } from './remembered-signal';
         color: $cool_gray_500;
       }
 
-      .menu-toggle {
-        padding: 2px 16px 8px;
-        font-size: 13px;
-      }
-
-      .menu-divider {
-        margin: 4px 0;
-        border: 0;
-        border-top: 1px solid $cool_gray_100;
-      }
-
       .view-entry {
         --mat-menu-item-label-text-size: 13px;
         padding-top: 6px;
@@ -387,18 +326,12 @@ export class DataModelClassesComponent {
         ? (stored as CardinalityLayout)
         : undefined
   );
-  /** Whether the cards show their family's colour on their left edge, as the viewer last chose. */
-  readonly showColours = rememberedSignal<boolean>('dsp-data-models-card-colours', false, stored => stored === 'true');
-  /** Whether every class's card says its kind, "Object without representation" too; else only a class with a file. */
-  readonly kindForAll = rememberedSignal<boolean>('dsp-data-models-kind-for-all', true, stored => stored !== 'false');
-  /** How a subclass's card shows its superclass's properties, as the viewer last chose. */
-  readonly inheritedLayout = rememberedSignal<InheritedLayout>('dsp-data-models-inherited-layout', 'listed', stored =>
-    stored === 'grouped' || stored === 'listed' ? stored : undefined
-  );
-  readonly inheritedLayouts: { value: InheritedLayout; key: string }[] = [
-    { value: 'grouped', key: 'inheritedGrouped' },
-    { value: 'listed', key: 'inheritedListed' },
-  ];
+  /** The cards show no family colour on their left edge. */
+  readonly showColours = signal(false).asReadonly();
+  /** Every class's card says its kind, "Object without representation" too. */
+  readonly kindForAll = signal(true).asReadonly();
+  /** A subclass's card lists its superclass's properties after the class's own. */
+  readonly inheritedLayout = signal<InheritedLayout>('listed').asReadonly();
   /** The ways the cards can show it, as View options lists them. */
   readonly cardinalityLayouts: { value: CardinalityLayout; key: string }[] = [
     { value: 'rows', key: 'cardinalityRows' },

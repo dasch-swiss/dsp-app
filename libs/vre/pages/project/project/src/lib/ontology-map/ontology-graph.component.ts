@@ -99,6 +99,53 @@ function withSvgExtension(cytoscape: CytoscapeFactory): Promise<void> {
   return svgExtension;
 }
 
+/** What `withOutlines` uses of cytoscape-svg's drawing context, canvas2svg's: its element being drawn and path. */
+interface SvgContext {
+  __currentElement: Element;
+  __currentDefaultPath: string;
+  fill: (...args: unknown[]) => void;
+  stroke: (...args: unknown[]) => void;
+}
+
+/**
+ * Draws the graph as SVG, `draw` calling cytoscape-svg, with each class box's border. Cytoscape fills a box, draws its
+ * tab and file icon, then strokes the box's outline, still its path on a canvas; canvas2svg has moved on to the images
+ * by then and draws no border. So a stroke with no path draws the last filled outline again, over the images.
+ */
+function withOutlines(cy: Core, draw: () => string): string {
+  type Renderer = { drawElements: (ctx: SvgContext, ...rest: unknown[]) => void };
+  const renderer = (cy as unknown as { renderer: () => Renderer }).renderer();
+  const own = Object.prototype.hasOwnProperty.call(renderer, 'drawElements');
+  const drawElements = renderer.drawElements;
+  renderer.drawElements = function (ctx, ...rest) {
+    let outline: { path: Element; d: string } | undefined;
+    const { fill, stroke } = ctx;
+    ctx.fill = function (...args) {
+      fill.apply(this, args);
+      if (this.__currentElement.nodeName === 'path')
+        outline = { path: this.__currentElement, d: this.__currentDefaultPath };
+    };
+    ctx.stroke = function (...args) {
+      if (this.__currentElement.nodeName !== 'path' && outline) {
+        const again = outline.path.cloneNode() as Element;
+        again.setAttribute('fill', 'none');
+        again.removeAttribute('fill-opacity');
+        outline.path.parentNode?.appendChild(again);
+        this.__currentElement = again;
+        this.__currentDefaultPath = outline.d;
+      }
+      stroke.apply(this, args);
+    };
+    return drawElements.call(this, ctx, ...rest);
+  };
+  try {
+    return draw();
+  } finally {
+    if (own) renderer.drawElements = drawElements;
+    else delete (renderer as Partial<Renderer>).drawElements;
+  }
+}
+
 /** How far apart, at most, classes are spread to fill the box; past it, links grow too long to follow. */
 const MAX_SPREAD = 2.5;
 
@@ -1413,12 +1460,14 @@ export class OntologyGraphComponent {
     const scaleFor = (width: number) =>
       area === 'whole' ? Math.max(1, (BASE_FONT_SIZE * this._scale * (width / model.w)) / LEGEND_TEXT_SIZE) : 1;
     return withSvgExtension(this._cytoscape).then(async () => {
-      const graph = (cy as Core & { svg: (options: Record<string, unknown>) => string }).svg({
-        full: area === 'whole',
-        // cytoscape-svg multiplies by the screen's pixel ratio: the SVG's size is in CSS pixels.
-        scale: 1 / (window.devicePixelRatio || 1),
-        bg: EXPORT_BACKGROUND,
-      });
+      const graph = withOutlines(cy, () =>
+        (cy as Core & { svg: (options: Record<string, unknown>) => string }).svg({
+          full: area === 'whole',
+          // cytoscape-svg multiplies by the screen's pixel ratio: the SVG's size is in CSS pixels.
+          scale: 1 / (window.devicePixelRatio || 1),
+          bg: EXPORT_BACKGROUND,
+        })
+      );
       const svg = await framedSvg(graph, {
         legend,
         title: options.title,

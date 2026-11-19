@@ -177,24 +177,24 @@ interface Rendered {
             >
           </div>
         </div>
+      </div>
 
-        <!-- The two ways out, as pills: downloading shows first. -->
-        <div class="actions">
-          <button mat-stroked-button type="button" data-cy="export-preview-copy" [disabled]="failed()" (click)="copy()">
-            <mat-icon>content_copy</mat-icon>
-            {{ e + '.copy' | translate }}
-          </button>
-          <button
-            mat-flat-button
-            color="primary"
-            type="button"
-            data-cy="export-preview-download"
-            [disabled]="failed()"
-            (click)="download()">
-            <mat-icon>download</mat-icon>
-            {{ e + '.download' | translate: { format: format().toUpperCase() } }}
-          </button>
-        </div>
+      <!-- The two ways out, side by side across the dialog's foot, downloading last as the main one. -->
+      <div class="actions">
+        <button mat-stroked-button type="button" data-cy="export-preview-copy" [disabled]="failed()" (click)="copy()">
+          <mat-icon>content_copy</mat-icon>
+          {{ e + '.copy' | translate }}
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          data-cy="export-preview-download"
+          [disabled]="failed()"
+          (click)="download()">
+          <mat-icon>download</mat-icon>
+          {{ e + '.download' | translate: { format: format().toUpperCase() } }}
+        </button>
       </div>
     </div>
   `,
@@ -205,6 +205,7 @@ interface Rendered {
       .dialog {
         display: grid;
         grid-template-columns: minmax(0, 1fr) 240px;
+        grid-template-rows: minmax(0, 1fr) auto;
         max-height: 90vh;
         font-size: 13px;
       }
@@ -338,32 +339,15 @@ interface Rendered {
         }
       }
 
-      // As the Diagram's pills: 32 px high and round.
-      // One under the other, the download first, so their words fit on one line in every language.
+      // The app's own buttons, side by side at the right of a foot across the whole dialog, as its other dialogs'.
       .actions {
+        grid-column: 1 / -1;
         display: flex;
-        flex-direction: column-reverse;
+        flex-wrap: wrap;
+        justify-content: flex-end;
         gap: 8px;
-        margin-top: auto;
         padding: 12px 16px;
         border-top: 1px solid $cool_gray_100;
-
-        button {
-          --mat-button-filled-container-height: 32px;
-          --mat-button-outlined-container-height: 32px;
-          --mat-button-filled-container-shape: 16px;
-          --mat-button-outlined-container-shape: 16px;
-          --mat-button-filled-label-text-size: 13px;
-          --mat-button-outlined-label-text-size: 13px;
-          --mat-button-filled-horizontal-padding: 10px;
-          --mat-button-outlined-horizontal-padding: 10px;
-
-          mat-icon {
-            font-size: 16px;
-            width: 16px;
-            height: 16px;
-          }
-        }
       }
 
       @media (max-width: 760px) {
