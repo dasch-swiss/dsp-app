@@ -1,17 +1,20 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatOptgroup } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatOption, MatSelect } from '@angular/material/select';
+import { MatOption, MatSelect, MatSelectTrigger } from '@angular/material/select';
 import {
   KnoraApiConnection,
+  ListNodeV2,
   ReadResource,
   ReadResourceSequence,
   ResourcePropertyDefinition,
@@ -21,13 +24,31 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { catchError, concatMap, finalize, from, map, Observable, of, Subject, takeUntil, toArray } from 'rxjs';
 import {
+  catchError,
+  concatMap,
+  distinctUntilChanged,
+  finalize,
+  from,
+  map,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  takeUntil,
+  toArray,
+} from 'rxjs';
+import {
+  BULK_EDIT_OPERATIONS,
   BulkEditChange,
-  bulkEditableProperties,
+  BulkEditListOption,
   BulkEditOperation,
+  BulkEditOperationKind,
   BulkEditPlan,
   bulkEditRequest,
+  BulkEditTarget,
+  bulkEditTargets,
+  flattenList,
   planBulkEdit,
 } from './bulk-edit-plan';
 
@@ -42,14 +63,44 @@ type Step = 'loading' | 'loadFailed' | 'edit' | 'applying' | 'done';
 
 interface FormValue {
   property: string | null;
-  operation: BulkEditOperation['kind'];
+  operation: BulkEditOperationKind;
   text: string;
   position: 'before' | 'after';
   find: string;
   replaceWith: string;
   wholeValue: boolean;
   matchCase: boolean;
+  listFrom: string | null;
+  listTo: string | null;
 }
+
+const OPERATION_INFO: Record<BulkEditOperationKind, { labelKey: string; hintKey: string }> = {
+  addText: { labelKey: 'pages.dataBrowser.bulkEdit.addText', hintKey: 'pages.dataBrowser.bulkEdit.addTextHint' },
+  replace: { labelKey: 'pages.dataBrowser.bulkEdit.replace', hintKey: 'pages.dataBrowser.bulkEdit.replaceHint' },
+  setValue: { labelKey: 'pages.dataBrowser.bulkEdit.setValue', hintKey: 'pages.dataBrowser.bulkEdit.setValueHint' },
+  defaultValue: {
+    labelKey: 'pages.dataBrowser.bulkEdit.defaultValue',
+    hintKey: 'pages.dataBrowser.bulkEdit.defaultValueHint',
+  },
+  replaceListValue: {
+    labelKey: 'pages.dataBrowser.bulkEdit.replace',
+    hintKey: 'pages.dataBrowser.bulkEdit.replaceListValueHint',
+  },
+  setListValue: {
+    labelKey: 'pages.dataBrowser.bulkEdit.setValue',
+    hintKey: 'pages.dataBrowser.bulkEdit.setListValueHint',
+  },
+  defaultListValue: {
+    labelKey: 'pages.dataBrowser.bulkEdit.defaultValue',
+    hintKey: 'pages.dataBrowser.bulkEdit.defaultListValueHint',
+  },
+};
+
+const TARGET_GROUPS: { kind: BulkEditTarget['kind']; labelKey: string }[] = [
+  { kind: 'label', labelKey: 'pages.dataBrowser.bulkEdit.groupResource' },
+  { kind: 'text', labelKey: 'pages.dataBrowser.bulkEdit.groupText' },
+  { kind: 'list', labelKey: 'pages.dataBrowser.bulkEdit.groupList' },
+];
 
 /** dsp-api reads at most this many resources in one request. */
 const READ_CHUNK_SIZE = 25;
@@ -85,15 +136,18 @@ const READ_CHUNK_SIZE = 25;
           <p class="error" data-cy="bulk-edit-load-failed">{{ 'pages.dataBrowser.bulkEdit.loadFailed' | translate }}</p>
         }
         @case ('edit') {
-          @if (properties().length === 0) {
-            <p data-cy="bulk-edit-no-properties">{{ 'pages.dataBrowser.bulkEdit.noProperties' | translate }}</p>
-          } @else {
+          @if (target(); as currentTarget) {
             <form [formGroup]="form" class="form">
               <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label>{{ 'pages.dataBrowser.bulkEdit.property' | translate }}</mat-label>
+                <mat-icon matPrefix class="kind-icon">{{ kindIcons[currentTarget.kind] }}</mat-icon>
                 <mat-select formControlName="property" data-cy="bulk-edit-property">
-                  @for (property of properties(); track property.id) {
-                    <mat-option [value]="property.id">{{ property.label }}</mat-option>
+                  @for (group of targetGroups(); track group.kind) {
+                    <mat-optgroup [label]="group.labelKey | translate">
+                      @for (option of group.targets; track option.id) {
+                        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+                      }
+                    </mat-optgroup>
                   }
                 </mat-select>
               </mat-form-field>
@@ -104,11 +158,9 @@ const READ_CHUNK_SIZE = 25;
                   class="operations"
                   hideSingleSelectionIndicator
                   [attr.aria-label]="'pages.dataBrowser.bulkEdit.operation' | translate">
-                  @for (operation of operations; track operation.kind) {
-                    <mat-button-toggle
-                      [value]="operation.kind"
-                      [attr.data-cy]="'bulk-edit-operation-' + operation.kind">
-                      {{ operation.labelKey | translate }}
+                  @for (operation of operations(); track operation) {
+                    <mat-button-toggle [value]="operation" [attr.data-cy]="'bulk-edit-operation-' + operation">
+                      {{ operationInfo[operation].labelKey | translate }}
                     </mat-button-toggle>
                   }
                 </mat-button-toggle-group>
@@ -157,8 +209,61 @@ const READ_CHUNK_SIZE = 25;
                     <input matInput formControlName="text" data-cy="bulk-edit-default-value" />
                   </mat-form-field>
                 }
+                @case ('setValue') {
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <mat-label>{{ 'pages.dataBrowser.bulkEdit.value' | translate }}</mat-label>
+                    <input matInput formControlName="text" data-cy="bulk-edit-set-value" />
+                  </mat-form-field>
+                }
+                @case ('replaceListValue') {
+                  <div class="row">
+                    <ng-container
+                      [ngTemplateOutlet]="listSelect"
+                      [ngTemplateOutletContext]="{
+                        control: form.controls.listFrom,
+                        labelKey: 'pages.dataBrowser.bulkEdit.listFrom',
+                        cy: 'bulk-edit-list-from',
+                      }" />
+                    <mat-icon aria-hidden="true" class="arrow">arrow_forward</mat-icon>
+                    <ng-container
+                      [ngTemplateOutlet]="listSelect"
+                      [ngTemplateOutletContext]="{
+                        control: form.controls.listTo,
+                        labelKey: 'pages.dataBrowser.bulkEdit.listTo',
+                        cy: 'bulk-edit-list-to',
+                      }" />
+                  </div>
+                }
+                @default {
+                  <ng-container
+                    [ngTemplateOutlet]="listSelect"
+                    [ngTemplateOutletContext]="{
+                      control: form.controls.listTo,
+                      labelKey: 'pages.dataBrowser.bulkEdit.value',
+                      cy: 'bulk-edit-list-value',
+                    }" />
+                }
+              }
+              @if (listLoadFailed()) {
+                <p class="error" data-cy="bulk-edit-list-load-failed">
+                  {{ 'pages.dataBrowser.bulkEdit.listLoadFailed' | translate }}
+                </p>
               }
             </form>
+
+            <ng-template #listSelect let-control="control" let-labelKey="labelKey" let-cy="cy">
+              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="list-field">
+                <mat-label>{{ labelKey | translate }}</mat-label>
+                <mat-select [formControl]="control" [attr.data-cy]="cy">
+                  <mat-select-trigger>{{ listOptionPath(control.value) }}</mat-select-trigger>
+                  @for (option of listOptions(); track option.id) {
+                    <mat-option [value]="option.id" [style.padding-left.px]="16 + option.depth * 20">
+                      {{ option.label }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </ng-template>
 
             <section class="preview" [attr.aria-label]="'pages.dataBrowser.bulkEdit.preview' | translate">
               <div class="preview-header">
@@ -182,10 +287,10 @@ const READ_CHUNK_SIZE = 25;
                         @if (change.before === null) {
                           <span class="empty">{{ 'pages.dataBrowser.bulkEdit.empty' | translate }}</span>
                         } @else {
-                          <del>{{ change.before }}</del>
+                          <del [class.chip]="isList()">{{ change.before }}</del>
                         }
                         <mat-icon aria-hidden="true">arrow_forward</mat-icon>
-                        <ins>{{ change.after }}</ins>
+                        <ins [class.chip]="isList()">{{ change.after }}</ins>
                       </div>
                     </div>
                   } @empty {
@@ -263,7 +368,7 @@ const READ_CHUNK_SIZE = 25;
         @case ('edit') {
           <span class="footer-hint">{{ 'pages.dataBrowser.bulkEdit.liveHint' | translate }}</span>
           <button mat-button type="button" (click)="close()">{{ 'ui.common.actions.cancel' | translate }}</button>
-          @if (properties().length) {
+          @if (target()) {
             <button
               mat-flat-button
               color="primary"
@@ -439,6 +544,24 @@ const READ_CHUNK_SIZE = 25;
         color: #115e59; /* $green-800 */
         font-weight: 500;
       }
+      .chip {
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 13px;
+      }
+      del.chip {
+        background: #fdecef;
+      }
+      ins.chip {
+        background: #e6f4f1;
+      }
+      .kind-icon {
+        padding: 0 4px 0 12px;
+        color: #6b7280; /* $cool-gray-500 */
+      }
+      .list-field {
+        width: 100%;
+      }
       .empty {
         font-style: italic;
         color: #9ca3af; /* $cool-gray-400 */
@@ -484,6 +607,7 @@ const READ_CHUNK_SIZE = 25;
     `,
   ],
   imports: [
+    NgTemplateOutlet,
     ReactiveFormsModule,
     MatButton,
     MatButtonToggle,
@@ -494,9 +618,12 @@ const READ_CHUNK_SIZE = 25;
     MatIconButton,
     MatInput,
     MatLabel,
+    MatOptgroup,
     MatOption,
+    MatPrefix,
     MatProgressBar,
     MatSelect,
+    MatSelectTrigger,
     TranslatePipe,
     AppProgressIndicatorComponent,
   ],
@@ -510,58 +637,52 @@ export class BulkEditDialogComponent {
   private readonly _translateService = inject(TranslateService);
   private readonly _destroyRef = inject(DestroyRef);
 
-  readonly operations = [
-    {
-      kind: 'addText',
-      labelKey: 'pages.dataBrowser.bulkEdit.addText',
-      hintKey: 'pages.dataBrowser.bulkEdit.addTextHint',
-    },
-    {
-      kind: 'replace',
-      labelKey: 'pages.dataBrowser.bulkEdit.replace',
-      hintKey: 'pages.dataBrowser.bulkEdit.replaceHint',
-    },
-    {
-      kind: 'defaultValue',
-      labelKey: 'pages.dataBrowser.bulkEdit.defaultValue',
-      hintKey: 'pages.dataBrowser.bulkEdit.defaultValueHint',
-    },
-  ] as const;
+  readonly operationInfo = OPERATION_INFO;
+  readonly kindIcons: Record<BulkEditTarget['kind'], string> = { label: 'label', text: 'notes', list: 'account_tree' };
 
   readonly form = new FormGroup({
     property: new FormControl<string | null>(null),
-    operation: new FormControl<BulkEditOperation['kind']>('replace', { nonNullable: true }),
+    operation: new FormControl<BulkEditOperationKind>('replace', { nonNullable: true }),
     text: new FormControl('', { nonNullable: true }),
     position: new FormControl<'before' | 'after'>('after', { nonNullable: true }),
     find: new FormControl('', { nonNullable: true }),
     replaceWith: new FormControl('', { nonNullable: true }),
     wholeValue: new FormControl(false, { nonNullable: true }),
     matchCase: new FormControl(false, { nonNullable: true }),
+    listFrom: new FormControl<string | null>(null),
+    listTo: new FormControl<string | null>(null),
   });
 
   readonly formValue = toSignal(this.form.valueChanges.pipe(map(() => this.form.getRawValue())), {
     initialValue: this.form.getRawValue(),
   });
 
-  readonly operationHintKey = computed(
-    () => this.operations.find(operation => operation.kind === this.formValue().operation)!.hintKey
-  );
-
   readonly step = signal<Step>('loading');
   private readonly _resources = signal<ReadResource[]>([]);
   readonly resourceCount = computed(() => this._resources().length);
-  readonly properties = computed(() => {
+  readonly targets = computed(() => {
     const [first] = this._resources();
-    return first
-      ? bulkEditableProperties(first).map(propDef => ({ id: propDef.id, label: this._labelOf(propDef) }))
-      : [];
+    return first ? bulkEditTargets(first).map(target => ({ ...target, label: this._labelOf(target) })) : [];
   });
+  readonly targetGroups = computed(() =>
+    TARGET_GROUPS.map(group => ({
+      ...group,
+      targets: this.targets().filter(target => target.kind === group.kind),
+    })).filter(group => group.targets.length)
+  );
+  readonly target = computed(() => this.targets().find(target => target.id === this.formValue().property) ?? null);
+  readonly isList = computed(() => this.target()?.kind === 'list');
+  readonly operations = computed(() => BULK_EDIT_OPERATIONS[this.target()?.kind ?? 'text']);
+  readonly operationHintKey = computed(() => OPERATION_INFO[this.formValue().operation].hintKey);
+
+  readonly listOptions = signal<BulkEditListOption[]>([]);
+  readonly listLoadFailed = signal(false);
 
   /** Null until the form says what to change. */
   readonly plan = computed<BulkEditPlan | null>(() => {
-    const value = this.formValue();
-    const operation = _operationOf(value);
-    return value.property && operation ? planBulkEdit(this._resources(), value.property, operation) : null;
+    const target = this.target();
+    const operation = _operationOf(this.formValue(), this.listOptions());
+    return target && operation ? planBulkEdit(this._resources(), target, operation) : null;
   });
   readonly changedResourceCount = computed(
     () => new Set(this.plan()?.changes.map(change => change.resource.id) ?? []).size
@@ -574,9 +695,8 @@ export class BulkEditDialogComponent {
   readonly progress = computed(() => (this.running().length ? (this.processed() / this.running().length) * 100 : 0));
   readonly skippedCount = computed(() => (this.step() === 'done' ? this.running().length - this.processed() : 0));
   readonly summary = computed(() => {
-    const property = this.properties().find(prop => prop.id === this.formValue().property);
-    const operation = this.operations.find(op => op.kind === this.formValue().operation)!;
-    return `${property?.label ?? ''} · ${this._translateService.instant(operation.labelKey)}`;
+    const operation = OPERATION_INFO[this.formValue().operation];
+    return `${this.target()?.label ?? ''} · ${this._translateService.instant(operation.labelKey)}`;
   });
 
   private readonly _changedIris = new Set<string>();
@@ -584,10 +704,15 @@ export class BulkEditDialogComponent {
 
   constructor() {
     this._loadResources();
+    this._followTarget();
+  }
+
+  listOptionPath(id: string | null): string {
+    return this.listOptions().find(option => option.id === id)?.path ?? '';
   }
 
   apply(changes: BulkEditChange[]) {
-    const propertyIri = this.form.getRawValue().property!;
+    const target = this.target()!;
     this.running.set(changes);
     this.processed.set(0);
     this.succeeded.set([]);
@@ -598,7 +723,7 @@ export class BulkEditDialogComponent {
     from(changes)
       .pipe(
         concatMap(change =>
-          this._write(change, propertyIri).pipe(
+          this._write(change, target).pipe(
             map(() => ({ change, ok: true })),
             catchError(() => of({ change, ok: false }))
           )
@@ -635,11 +760,47 @@ export class BulkEditDialogComponent {
     this._dialogRef.close([...this._changedIris]);
   }
 
-  private _write(change: BulkEditChange, propertyIri: string): Observable<unknown> {
-    const request = bulkEditRequest(change, propertyIri);
-    return request.kind === 'update'
-      ? this._dspApiConnection.v2.values.updateValue(request.payload)
-      : this._dspApiConnection.v2.values.createValue(request.payload);
+  private _write(change: BulkEditChange, target: BulkEditTarget): Observable<unknown> {
+    const request = bulkEditRequest(change, target);
+    switch (request.kind) {
+      case 'label':
+        return this._dspApiConnection.v2.res.updateResourceMetadata(request.payload);
+      case 'update':
+        return this._dspApiConnection.v2.values.updateValue(request.payload);
+      case 'create':
+        return this._dspApiConnection.v2.values.createValue(request.payload);
+    }
+  }
+
+  /** Keeps the operation valid for the chosen property and loads the list of a list property. */
+  private _followTarget() {
+    this.form.controls.property.valueChanges
+      .pipe(
+        // The form's own value (and so target()) is updated only after this control emits.
+        map(id => this.targets().find(target => target.id === id) ?? null),
+        distinctUntilChanged((a, b) => a?.id === b?.id),
+        switchMap(target => {
+          const operations = BULK_EDIT_OPERATIONS[target?.kind ?? 'text'];
+          if (!operations.includes(this.form.controls.operation.value)) {
+            this.form.controls.operation.setValue(operations[target?.kind === 'list' ? 0 : 1]);
+          }
+          this.form.patchValue({ listFrom: null, listTo: null });
+          this.listOptions.set([]);
+          this.listLoadFailed.set(false);
+          if (target?.kind !== 'list') {
+            return of([]);
+          }
+          return this._dspApiConnection.v2.list.getList(target.listRootIri).pipe(
+            map(root => flattenList(root as ListNodeV2)),
+            catchError(() => {
+              this.listLoadFailed.set(true);
+              return of([]);
+            })
+          );
+        }),
+        takeUntilDestroyed(this._destroyRef)
+      )
+      .subscribe(options => this.listOptions.set(options));
   }
 
   /** The selection may be stale, so the plan is computed from freshly read resources. */
@@ -661,9 +822,10 @@ export class BulkEditDialogComponent {
       .subscribe({
         next: resources => {
           this._resources.set(resources);
-          const [first] = this.properties();
-          if (first && !this.form.controls.property.value) {
-            this.form.controls.property.setValue(first.id);
+          // A property is preselected rather than the label, which matters more to get wrong.
+          const preselected = this.targets().find(target => target.kind !== 'label') ?? this.targets()[0];
+          if (preselected && !this.form.controls.property.value) {
+            this.form.controls.property.setValue(preselected.id);
           }
           this.step.set('edit');
         },
@@ -671,7 +833,11 @@ export class BulkEditDialogComponent {
       });
   }
 
-  private _labelOf(propDef: ResourcePropertyDefinition): string {
+  private _labelOf(target: BulkEditTarget): string {
+    if (target.kind === 'label') {
+      return this._translateService.instant('pages.dataBrowser.bulkEdit.label');
+    }
+    const propDef: ResourcePropertyDefinition = target.propertyDefinition;
     if (propDef instanceof ResourcePropertyDefinitionWithAllLanguages && propDef.labels.length) {
       return this._stringifyStringLiteral.transform(propDef.labels);
     }
@@ -679,8 +845,17 @@ export class BulkEditDialogComponent {
   }
 }
 
-function _operationOf(value: FormValue): BulkEditOperation | null {
+function _operationOf(value: FormValue, listOptions: BulkEditListOption[]): BulkEditOperation | null {
+  const to = listOptions.find(option => option.id === value.listTo);
   switch (value.operation) {
+    case 'setValue':
+      return value.text.trim() ? { kind: 'setValue', text: value.text } : null;
+    case 'replaceListValue':
+      return value.listFrom && to ? { kind: 'replaceListValue', from: value.listFrom, to } : null;
+    case 'setListValue':
+      return to ? { kind: 'setListValue', to } : null;
+    case 'defaultListValue':
+      return to ? { kind: 'defaultListValue', to } : null;
     case 'addText':
       return value.text ? { kind: 'addText', text: value.text, position: value.position } : null;
     case 'replace':

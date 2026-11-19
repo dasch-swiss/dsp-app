@@ -590,7 +590,6 @@
         "title": "Bulk edit",
         "subtitle": "{{count}} selected resources",
         "loadFailed": "The selected resources could not be loaded.",
-        "noProperties": "These resources have no plain-text property you can edit.",
         "property": "Property",
         "addText": "Add text",
         "addTextHint": "Add text before or after existing values",
@@ -623,7 +622,19 @@
         "result": "Result",
         "couldNotUpdate": "Could not be updated",
         "retryFailed": "Retry failed",
-        "editAgain": "Edit again"
+        "editAgain": "Edit again",
+        "label": "Label",
+        "groupResource": "Resource",
+        "groupText": "Text",
+        "groupList": "List",
+        "setValue": "Set value",
+        "setValueHint": "Give every resource this label",
+        "replaceListValueHint": "Swap one list value for another; other values stay",
+        "setListValueHint": "Give every resource this list value, replacing the one it has",
+        "defaultListValueHint": "Set this list value only where the property is empty",
+        "listFrom": "Replace",
+        "listTo": "With",
+        "listLoadFailed": "The list could not be loaded."
       },
       "resourcesList": {
         "resultsCount": "{{count}} results",

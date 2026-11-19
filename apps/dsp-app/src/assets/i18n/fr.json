@@ -590,7 +590,6 @@
         "title": "Modifier en masse",
         "subtitle": "{{count}} ressources sélectionnées",
         "loadFailed": "Les ressources sélectionnées n’ont pas pu être chargées.",
-        "noProperties": "Ces ressources n’ont aucune propriété texte simple modifiable.",
         "property": "Propriété",
         "addText": "Ajouter du texte",
         "addTextHint": "Ajouter du texte avant ou après les valeurs existantes",
@@ -623,7 +622,19 @@
         "result": "Résultat",
         "couldNotUpdate": "N’a pas pu être mise à jour",
         "retryFailed": "Réessayer les échecs",
-        "editAgain": "Modifier à nouveau"
+        "editAgain": "Modifier à nouveau",
+        "label": "Libellé",
+        "groupResource": "Ressource",
+        "groupText": "Texte",
+        "groupList": "Liste",
+        "setValue": "Définir la valeur",
+        "setValueHint": "Donner ce libellé à chaque ressource",
+        "replaceListValueHint": "Remplacer une valeur de liste par une autre ; les autres valeurs restent",
+        "setListValueHint": "Donner cette valeur de liste à chaque ressource, en remplaçant l’actuelle",
+        "defaultListValueHint": "Définir cette valeur de liste seulement là où la propriété est vide",
+        "listFrom": "Remplacer",
+        "listTo": "Par",
+        "listLoadFailed": "La liste n’a pas pu être chargée."
       },
       "resourcesList": {
         "resultsCount": "{{count}} résultats",

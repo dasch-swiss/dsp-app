@@ -590,7 +590,6 @@
         "title": "Mehrfach bearbeiten",
         "subtitle": "{{count}} ausgewählte Ressourcen",
         "loadFailed": "Die ausgewählten Ressourcen konnten nicht geladen werden.",
-        "noProperties": "Diese Ressourcen haben keine bearbeitbare Klartext-Eigenschaft.",
         "property": "Eigenschaft",
         "addText": "Text hinzufügen",
         "addTextHint": "Text vor oder nach bestehenden Werten einfügen",
@@ -623,7 +622,19 @@
         "result": "Ergebnis",
         "couldNotUpdate": "Konnte nicht aktualisiert werden",
         "retryFailed": "Fehlgeschlagene wiederholen",
-        "editAgain": "Erneut bearbeiten"
+        "editAgain": "Erneut bearbeiten",
+        "label": "Bezeichnung",
+        "groupResource": "Ressource",
+        "groupText": "Text",
+        "groupList": "Liste",
+        "setValue": "Wert setzen",
+        "setValueHint": "Allen Ressourcen diese Bezeichnung geben",
+        "replaceListValueHint": "Einen Listenwert durch einen anderen ersetzen; andere Werte bleiben",
+        "setListValueHint": "Allen Ressourcen diesen Listenwert geben und den bisherigen ersetzen",
+        "defaultListValueHint": "Diesen Listenwert nur setzen, wo die Eigenschaft leer ist",
+        "listFrom": "Ersetzen",
+        "listTo": "Durch",
+        "listLoadFailed": "Die Liste konnte nicht geladen werden."
       },
       "resourcesList": {
         "resultsCount": "{{count}} Ergebnisse",

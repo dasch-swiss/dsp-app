@@ -590,7 +590,6 @@
         "title": "Modifica multipla",
         "subtitle": "{{count}} risorse selezionate",
         "loadFailed": "Non è stato possibile caricare le risorse selezionate.",
-        "noProperties": "Queste risorse non hanno proprietà di testo semplice modificabili.",
         "property": "Proprietà",
         "addText": "Aggiungi testo",
         "addTextHint": "Aggiungi testo prima o dopo i valori esistenti",
@@ -623,7 +622,19 @@
         "result": "Risultato",
         "couldNotUpdate": "Non è stato possibile aggiornare",
         "retryFailed": "Riprova i falliti",
-        "editAgain": "Modifica di nuovo"
+        "editAgain": "Modifica di nuovo",
+        "label": "Etichetta",
+        "groupResource": "Risorsa",
+        "groupText": "Testo",
+        "groupList": "Lista",
+        "setValue": "Imposta valore",
+        "setValueHint": "Dai questa etichetta a ogni risorsa",
+        "replaceListValueHint": "Sostituisci un valore di lista con un altro; gli altri valori restano",
+        "setListValueHint": "Dai questo valore di lista a ogni risorsa, sostituendo quello attuale",
+        "defaultListValueHint": "Imposta questo valore di lista solo dove la proprietà è vuota",
+        "listFrom": "Sostituisci",
+        "listTo": "Con",
+        "listLoadFailed": "Non è stato possibile caricare la lista."
       },
       "resourcesList": {
         "resultsCount": "{{count}} risultati",
