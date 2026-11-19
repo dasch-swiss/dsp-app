@@ -217,7 +217,6 @@ import { rememberedSignal } from './remembered-signal';
             [graph]="graph"
             [classIri]="iri"
             [anyResourceLabel]="t + '.anyResource' | translate"
-            [subclassLabel]="t + '.subclassOf' | translate"
             [canEdit]="state.canEdit()"
             [colors]="state.colors()"
             (classSelected)="openPanel($event)"

@@ -24,7 +24,6 @@ import { CardProperty, ClassCardPropertyComponent } from '../data-models-rail/cl
 import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/data-model-graph';
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
 import { AddPropertyMenuComponent } from './add-property-menu.component';
-import { ClassConnection, ClassConnectionsComponent } from './class-connections.component';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 import { dataModelNameOf, localNameOf } from './ontology-graph-elements';
 
@@ -60,7 +59,6 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
     CdkDragPlaceholder,
     CdkDropList,
     ClassCardPropertyComponent,
-    ClassConnectionsComponent,
     NgTemplateOutlet,
     MatButton,
     MatIcon,
@@ -116,14 +114,6 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
         } @else if (node.description) {
           <p class="description">{{ node.description }}</p>
         }
-
-        <app-class-connections
-          [classIri]="classIri()"
-          [classLabel]="node.label"
-          [incoming]="incoming()"
-          [outgoing]="outgoing()"
-          [colors]="colors()"
-          (classSelected)="showClass($event)" />
 
         @if (!elsewhere()) {
           <div class="group">
@@ -476,8 +466,6 @@ export class ResourceClassPanelComponent {
   readonly classIri = input.required<string>();
   /** Label of the card for links that point at any resource, in the current language. */
   readonly anyResourceLabel = input('Any resource');
-  /** Label of a relation between a class and its superclass or subclass. */
-  readonly subclassLabel = input('subclass of');
   /** Whether "Edit class" is offered. */
   readonly canEdit = input(false);
   /** A CSS background per class, for the map of its links; see `familyColors`. */
@@ -610,9 +598,6 @@ export class ResourceClassPanelComponent {
   /** Whether its data model is one of the project's, so it can be opened there. */
   readonly canOpenModel = computed(() => !this.builtIn() && this.models().includes(this.model()));
 
-  readonly incoming = computed(() => this._connections('incoming'));
-  readonly outgoing = computed(() => this._connections('outgoing'));
-
   showClass(iri: string): void {
     if (this.isNavigable(iri)) {
       this.classSelected.emit(iri);
@@ -630,27 +615,6 @@ export class ResourceClassPanelComponent {
 
   cardinalityKey(property: DataModelProperty): string {
     return CARDINALITY_KEY[property.cardinality];
-  }
-
-  /** The classes on one side, each once, with the properties joining them. */
-  private _connections(direction: 'incoming' | 'outgoing'): ClassConnection[] {
-    const iri = this.classIri();
-    const via = new Map<string, string[]>();
-    for (const edge of this.graph().edges) {
-      if (edge.source === edge.target) continue;
-      const [near, other] = direction === 'incoming' ? [edge.target, edge.source] : [edge.source, edge.target];
-      if (near !== iri) continue;
-      const label = edge.kind === 'subclass' ? this.subclassLabel() : edge.label;
-      const labels = via.get(other) ?? [];
-      if (!labels.includes(label)) labels.push(label);
-      via.set(other, labels);
-    }
-    return [...via].map(([id, labels]) => ({
-      id,
-      label: this.labelOf(id),
-      navigable: this.isNavigable(id),
-      via: labels.join(', '),
-    }));
   }
 
   /** The name in the data model, such as `linkToVideo`; for a class of another one, prefixed, as `biblio:Book`. */

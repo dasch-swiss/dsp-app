@@ -712,7 +712,6 @@
       },
       "dataModelMap": {
         "anyResource": "Toute ressource",
-        "subclassOf": "sous-classe de",
         "legendLink": "propriété de lien, pointe vers la classe liée"
       }
     },
@@ -748,15 +747,10 @@
         "optional": "facultative",
         "many": "plusieurs",
         "oneOrMore": "une ou plusieurs",
-        "linksTo": "Liée à",
-        "linkedFrom": "Liée depuis",
-        "via": "via {{property}}",
         "none": "Aucune",
         "browse": "Parcourir les ressources",
         "edit": "Modifier",
         "filter": "Filtrer",
-        "more": "+{{count}} autres",
-        "noConnections": "Liée à aucune autre classe",
         "filterHint": "Montrer dans le graphe seulement cette classe et les classes liées",
         "editProperty": "Modifier la propriété {{property}}"
       },
@@ -826,8 +820,7 @@
         "inheritedFrom": "héritée de {{class}}",
         "filter": "Afficher seulement ces liens",
         "edit": "Modifier la propriété",
-        "type": "Type",
-        "from": "De"
+        "type": "Type"
       },
       "zoom": "Zoom",
       "zoomIn": "Zoom avant",

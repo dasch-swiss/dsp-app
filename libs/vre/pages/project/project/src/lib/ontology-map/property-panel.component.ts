@@ -21,7 +21,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 import { localNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
-import { PropertyLinkEnd, PropertyLinksComponent } from './property-links.component';
 import { typeIconOf, typeNameOf } from './property-types';
 import { TabShadePipe } from './tab-shade.pipe';
 
@@ -46,7 +45,7 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
 @Component({
   selector: 'app-property-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TabShadePipe, MatButton, MatIcon, MatIconButton, MatTooltip, PropertyLinksComponent, TranslatePipe],
+  imports: [TabShadePipe, MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.propertyPanel';
@@ -132,14 +131,6 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
               </span>
             }
           </div>
-        }
-
-        @if (usage.pairs.length) {
-          <app-property-links
-            [links]="usage.pairs"
-            [ends]="ends()"
-            [colors]="colors()"
-            (classSelected)="classSelected.emit($event)" />
         }
 
         <div class="facts">
@@ -676,15 +667,6 @@ export class PropertyPanelComponent {
     const subs = rows.filter(other => other.parent === row.id);
     if (!parent && !terms.length && !subs.length) return undefined;
     return { parent, terms, subs };
-  });
-
-  /** The classes at either end of the property's links, for its map. */
-  readonly ends = computed(() => {
-    const ends = new Map<string, PropertyLinkEnd>();
-    for (const { source, target } of this.usage()?.pairs ?? []) {
-      for (const id of [source, target]) ends.set(id, { id, label: this.labelOf(id), navigable: this.isNavigable(id) });
-    }
-    return ends;
   });
 
   isNavigable(iri: string): boolean {

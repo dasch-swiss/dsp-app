@@ -712,7 +712,6 @@
       },
       "dataModelMap": {
         "anyResource": "Beliebige Ressource",
-        "subclassOf": "Unterklasse von",
         "legendLink": "Verknüpfungseigenschaft, zeigt auf die verknüpfte Klasse"
       }
     },
@@ -748,15 +747,10 @@
         "optional": "optional",
         "many": "mehrere",
         "oneOrMore": "eine oder mehrere",
-        "linksTo": "Verknüpft mit",
-        "linkedFrom": "Verknüpft von",
-        "via": "über {{property}}",
         "none": "Keine",
         "browse": "Ressourcen anzeigen",
         "edit": "Bearbeiten",
         "filter": "Filtern",
-        "more": "+{{count}} weitere",
-        "noConnections": "Mit keiner anderen Klasse verknüpft",
         "filterHint": "Im Graphen nur diese Klasse und die mit ihr verknüpften Klassen zeigen",
         "editProperty": "Eigenschaft {{property}} bearbeiten"
       },
@@ -826,8 +820,7 @@
         "inheritedFrom": "geerbt von {{class}}",
         "filter": "Nur diese Verknüpfungen zeigen",
         "edit": "Eigenschaft bearbeiten",
-        "type": "Typ",
-        "from": "Von"
+        "type": "Typ"
       },
       "zoom": "Zoom",
       "zoomIn": "Vergrössern",

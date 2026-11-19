@@ -45,7 +45,6 @@ export const resourceClassDialogConfig = (data: ResourceClassDialogData): MatDia
         [graph]="graph"
         [classIri]="classIri()"
         [anyResourceLabel]="t + '.anyResource' | translate"
-        [subclassLabel]="t + '.subclassOf' | translate"
         [canEdit]="canEdit()"
         [colors]="colors()"
         (classSelected)="classIri.set($event)"

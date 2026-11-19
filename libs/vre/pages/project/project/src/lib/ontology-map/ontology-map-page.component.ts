@@ -499,7 +499,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [graph]="graph"
                   [classIri]="openIri"
                   [anyResourceLabel]="t + '.anyResource' | translate"
-                  [subclassLabel]="t + '.subclassOf' | translate"
                   [colors]="colors()"
                   [currentModel]="selectedName()"
                   [models]="modelNames()"

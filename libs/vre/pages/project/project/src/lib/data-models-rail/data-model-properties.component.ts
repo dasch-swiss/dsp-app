@@ -507,7 +507,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             [graph]="graph"
             [classIri]="iri"
             [anyResourceLabel]="t + '.anyResource' | translate"
-            [subclassLabel]="t + '.subclassOf' | translate"
             [canEdit]="state.canEdit()"
             [colors]="state.colors()"
             (classSelected)="showClass($event)"
