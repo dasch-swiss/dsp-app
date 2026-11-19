@@ -304,6 +304,7 @@ jobs:
       - name: Check Docker Container Logs
         if: failure()
         run: |
+          cat "$RUNNER_TEMP/e2e-stack.log" || true
           docker ps
           docker ps -q | xargs -I {} docker logs {}
 
