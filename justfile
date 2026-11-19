@@ -59,8 +59,7 @@ storybook:
     trap 'kill $!' EXIT
     {{ static_server }} --port 4400 "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/storybook"
 
-# Run the interaction tests against the Bazel-built Storybook with the dev shell's browsers; extra
-# arguments go to the test runner (`just storybook-test --shard=1/2`)
+# Run the interaction tests against the Bazel-built Storybook with the dev shell's browsers; arguments go to test-storybook
 storybook-test *ARGS: install
     #!/usr/bin/env bash
     set -euo pipefail
