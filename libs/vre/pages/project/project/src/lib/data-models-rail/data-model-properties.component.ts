@@ -43,7 +43,6 @@ import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
 import { ClassChipsComponent } from './class-chips.component';
 import { ColumnHeaderComponent } from './column-header.component';
-import { ColumnsMenuComponent } from './columns-menu.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
@@ -84,7 +83,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     CdkDropList,
     ClassChipsComponent,
     ColumnHeaderComponent,
-    ColumnsMenuComponent,
     HighlightPipe,
     LanguageTextsComponent,
     MatButton,
@@ -160,8 +158,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             }
           </mat-menu>
         }
-        <span class="spacer"></span>
-        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
@@ -630,7 +626,6 @@ export class DataModelPropertiesComponent {
     columns: ['property', 'description', 'type', 'pointsTo', 'usedBy'],
     defaultWidths: { property: 260, description: 360, type: 140, pointsTo: 200, usedBy: 300 },
     minWidths: { property: 140, description: 140, type: 90, pointsTo: 110, usedBy: 130 },
-    defaultHidden: ['description'],
   });
   readonly columnLabels = COLUMN_LABELS;
   readonly maxUsedBy = MAX_USED_BY;
@@ -707,6 +702,8 @@ export class DataModelPropertiesComponent {
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
 
   constructor() {
+    // Every column shows: with no columns menu, one hidden before in this browser could not be shown again.
+    this.columns.showAll(true);
     // Arriving on the page, typing finds what it lists.
     afterNextRender(() => this._search()?.nativeElement.focus());
   }
