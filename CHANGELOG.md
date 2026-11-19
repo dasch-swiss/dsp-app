@@ -1,5 +1,22 @@
 # Changelog
 
+## [14.2.0](https://github.com/dasch-swiss/dsp-app/compare/v14.1.4...v14.2.0) (2026-11-19)
+
+
+### Enhancements
+
+* reach ingest under /ingest on the API host ([#3582](https://github.com/dasch-swiss/dsp-app/issues/3582)) ([8775bba](https://github.com/dasch-swiss/dsp-app/commit/8775bbabbc927a46437b41039728f6f3029df3b1))
+
+
+### Maintenances
+
+* AI-readiness follow-ups on the Bazel build: strict shell, visibility checks, knip (DEV-7868) ([#3622](https://github.com/dasch-swiss/dsp-app/issues/3622)) ([4f9571c](https://github.com/dasch-swiss/dsp-app/commit/4f9571c0a594adea414eb79861a65b93b9de6751))
+* clear knip's unused exports and make them fail CI (DEV-7917) ([#3624](https://github.com/dasch-swiss/dsp-app/issues/3624)) ([bd427e6](https://github.com/dasch-swiss/dsp-app/commit/bd427e68492e30961e7bbede1780ec32bcac46da))
+* **open-api:** bump dsp-api spec v40.6.1-8-g5a8b56a → v40.7.0-7-gfaddfd3 ([#3623](https://github.com/dasch-swiss/dsp-app/issues/3623)) ([f6eaed4](https://github.com/dasch-swiss/dsp-app/commit/f6eaed4e9545f6f97ecdcb07dfd1463a94d24d7e))
+* **open-api:** bump dsp-api spec v40.7.0-7-gfaddfd3 → v40.7.0-9-g65d173f ([#3631](https://github.com/dasch-swiss/dsp-app/issues/3631)) ([1ba684e](https://github.com/dasch-swiss/dsp-app/commit/1ba684ea1578d84dfbfde31a0fd6a95f480beb05))
+* replace Nx with Bazel as the build system (DEV-7767) ([#3605](https://github.com/dasch-swiss/dsp-app/issues/3605)) ([7fefc32](https://github.com/dasch-swiss/dsp-app/commit/7fefc32c84880e78400e6e8409f2e74113a6e11b))
+* shorten dsp-app PR feedback and make CI red mean something (DEV-7918) ([#3630](https://github.com/dasch-swiss/dsp-app/issues/3630)) ([2d5a723](https://github.com/dasch-swiss/dsp-app/commit/2d5a7230b8aed66b8c89e21a268fbe6314c9022c))
+
 ## [14.1.4](https://github.com/dasch-swiss/dsp-app/compare/v14.1.3...v14.1.4) (2026-11-12)
 
 
