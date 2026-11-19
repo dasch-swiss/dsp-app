@@ -327,7 +327,7 @@ jobs:
           fi
 
   storybook-tests:
-    name: Storybook Interaction Tests (${{ matrix.shard }}/2)
+    name: Storybook Interaction Tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [changes]
     if: |
       needs.changes.result == 'success' &&
@@ -354,11 +354,12 @@ jobs:
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
-      # storybook-test builds //:storybook; Gate builds the breakpoint stories Pixeleye captures.
+      # No `just storybook-build` step: storybook-test builds //:storybook itself, and the breakpoint
+      # stories that recipe adds are built by the `Gate (just ci)` job.
       - name: Run interaction tests
         env:
           BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-storybook-test.json
-          SHARD: ${{ matrix.shard }}/2
+          SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
         run: nix develop --command just storybook-test "--shard=$SHARD"
       - name: Upload the build event logs
         if: always()
