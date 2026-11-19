@@ -326,7 +326,7 @@ jobs:
           fi
 
   storybook-tests:
-    name: Storybook Interaction Tests
+    name: Storybook Interaction Tests (${{ matrix.shard }}/2)
     needs: [changes]
     if: |
       needs.changes.result == 'success' &&
@@ -335,6 +335,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -349,21 +353,37 @@ jobs:
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
-      - name: Build Storybook
-        env:
-          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-storybook-build.json
-        run: nix develop --command just storybook-build
+      # storybook-test builds //:storybook; Gate builds the breakpoint stories Pixeleye captures.
       - name: Run interaction tests
         env:
           BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-storybook-test.json
-        run: nix develop --command just storybook-test
+          SHARD: ${{ matrix.shard }}/2
+        run: nix develop --command just storybook-test "--shard=$SHARD"
       - name: Upload the build event logs
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: bep-storybook
+          name: bep-storybook-${{ matrix.shard }}
           path: ${{ runner.temp }}/bep-*.json
           if-no-files-found: ignore
+
+  storybook-tests-status:
+    name: Storybook Interaction Tests
+    needs: [changes, storybook-tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify CI integrity and aggregate matrix result
+        run: |
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "::error::changes job failed (${{ needs.changes.result }}); refusing to report green"
+            exit 1
+          fi
+          result="${{ needs.storybook-tests.result }}"
+          if [ "$result" != "success" ] && [ "$result" != "skipped" ]; then
+            echo "One or more Storybook shards failed (result: $result)"
+            exit 1
+          fi
 
   pixeleye:
     name: Pixeleye Snapshots

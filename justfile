@@ -59,8 +59,9 @@ storybook:
     trap 'kill $!' EXIT
     {{ static_server }} --port 4400 "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/storybook"
 
-# Run the interaction tests against the Bazel-built Storybook with the dev shell's browsers
-storybook-test: install
+# Run the interaction tests against the Bazel-built Storybook with the dev shell's browsers; extra
+# arguments go to the test runner (`just storybook-test --shard=1/2`)
+storybook-test *ARGS: install
     #!/usr/bin/env bash
     set -euo pipefail
     bazel build //:storybook $BAZEL_FLAGS
@@ -69,7 +70,7 @@ storybook-test: install
     trap 'kill $!' EXIT
     timeout 60 bash -c 'until curl -sf -o /dev/null http://127.0.0.1:6006/index.json; do sleep 0.5; done'
     # Keep two workers: in band the runner runs out of heap, with four it hits ChunkLoadError.
-    pnpm exec test-storybook -c .storybook --url=http://127.0.0.1:6006 --index-json --ci --maxWorkers=2
+    pnpm exec test-storybook -c .storybook --url=http://127.0.0.1:6006 --index-json --ci --maxWorkers=2 {{ ARGS }}
 
 # Capture the stories with Pixeleye and upload them (PIXELEYE_TOKEN, PIXELEYE_ENDPOINT); `breakpoints`
 # captures the breakpoint stories into their own project (PIXELEYE_BREAKPOINTS_TOKEN)
