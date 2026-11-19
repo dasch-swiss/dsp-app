@@ -109,7 +109,7 @@ import { rememberedSignal } from './remembered-signal';
             <span class="menu-heading">{{ r + '.cardinalityLayout' | translate }}</span>
             @for (option of cardinalityLayouts; track option.value) {
               @let chosen = cardinalityLayout() === option.value;
-              <!-- Choosing keeps the menu open, to compare the three. -->
+              <!-- Choosing keeps the menu open, to compare the two. -->
               <button
                 mat-menu-item
                 type="button"
@@ -321,10 +321,7 @@ export class DataModelClassesComponent {
   readonly cardinalityLayout = rememberedSignal<CardinalityLayout>(
     'dsp-data-models-cardinality-layout',
     'rows',
-    stored =>
-      ['columns', 'ticked', 'rows', 'chip', 'differs', 'bar', 'symbols', 'words'].includes(stored)
-        ? (stored as CardinalityLayout)
-        : undefined
+    stored => (['rows', 'symbols'].includes(stored) ? (stored as CardinalityLayout) : undefined)
   );
   /** The cards show no family colour on their left edge. */
   readonly showColours = signal(false).asReadonly();
@@ -335,13 +332,7 @@ export class DataModelClassesComponent {
   /** The ways the cards can show it, as View options lists them. */
   readonly cardinalityLayouts: { value: CardinalityLayout; key: string }[] = [
     { value: 'rows', key: 'cardinalityRows' },
-    { value: 'columns', key: 'cardinalityColumns' },
-    { value: 'ticked', key: 'cardinalityTicked' },
-    { value: 'chip', key: 'cardinalityChip' },
-    { value: 'differs', key: 'cardinalityDiffers' },
-    { value: 'bar', key: 'cardinalityBar' },
     { value: 'symbols', key: 'cardinalitySymbols' },
-    { value: 'words', key: 'cardinalityWords' },
   ];
   /** The cards' least width: room for the checkboxes' words on each row, less for columns, least for the chip. */
   readonly cardWidth = computed(
