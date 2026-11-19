@@ -397,8 +397,6 @@ jobs:
       cancel-in-progress: false
     permissions:
       contents: read
-    env:
-      PIXELEYE_BROWSERS_PATH: ${{ github.workspace }}/../pixeleye-browsers
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -421,6 +419,9 @@ jobs:
           ca-cert: ${{ secrets.REMOTEBUILD_CA_CERT }}
           client-cert: ${{ secrets.REMOTEBUILD_CLIENT_CERT }}
           client-key: ${{ secrets.REMOTEBUILD_CLIENT_KEY }}
+      # actions/cache rejects a path containing `..`, and a job's `env:` cannot read runner.temp.
+      - name: Point Pixeleye's browsers at the runner's temp directory
+        run: echo "PIXELEYE_BROWSERS_PATH=$RUNNER_TEMP/pixeleye-browsers" >> "$GITHUB_ENV"
       - name: Cache Pixeleye's browsers
         # The frozen CLI downloads Playwright 1.59.0's browsers on every start, and the headless
         # shell the capture launches goes there too; `just pixeleye` points both at this directory.
