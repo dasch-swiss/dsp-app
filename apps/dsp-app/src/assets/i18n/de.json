@@ -960,6 +960,15 @@
         "add": "Beschreibung ({{language}}) zu {{class}} hinzufügen",
         "editLabel": "Bezeichnung ({{language}}) von {{class}} bearbeiten",
         "addLabel": "Bezeichnung ({{language}}) zu {{class}} hinzufügen"
+      },
+      "density": {
+        "title": "Dichte",
+        "compact": "Kompakt",
+        "compactHint": "Die meisten Eigenschaften im Blick",
+        "comfortable": "Komfortabel",
+        "comfortableHint": "Mehr Abstand zwischen den Eigenschaften, grössere Schrift",
+        "spacious": "Grosszügig",
+        "spaciousHint": "Am meisten Abstand, grösste Schrift und Kontrollkästchen"
       }
     }
   },

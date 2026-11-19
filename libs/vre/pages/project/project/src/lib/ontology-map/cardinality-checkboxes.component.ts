@@ -101,13 +101,14 @@ type Box = 'multiple' | 'required';
         grid-template-columns: 52px 52px;
         align-items: center;
         justify-items: center;
-        --mat-checkbox-state-layer-size: 22px;
-        --mat-checkbox-label-text-size: 10.5px;
-        --mat-checkbox-label-text-line-height: 14px;
+        // Sizes from the class cards' density, as compact as can be when none is set.
+        --mat-checkbox-state-layer-size: var(--density-check-layer, 22px);
+        --mat-checkbox-label-text-size: var(--density-check-label, 10.5px);
+        --mat-checkbox-label-text-line-height: calc(var(--density-check-label, 10.5px) + 3.5px);
       }
 
       :host(.labelled) {
-        grid-template-columns: 100px;
+        grid-template-columns: var(--density-check-col, 100px);
         justify-items: start;
         row-gap: 0;
       }
@@ -186,7 +187,7 @@ type Box = 'multiple' | 'required';
 
         // Material draws an 18 px box: drawn at 14 px, in the room its smaller state layer leaves.
         ::ng-deep .mdc-checkbox {
-          transform: scale(0.78);
+          transform: scale(var(--density-check-scale, 0.78));
         }
 
         ::ng-deep .mdc-label {

@@ -960,6 +960,15 @@
         "add": "Ajouter une description ({{language}}) à {{class}}",
         "editLabel": "Modifier le libellé ({{language}}) de {{class}}",
         "addLabel": "Ajouter un libellé ({{language}}) à {{class}}"
+      },
+      "density": {
+        "title": "Densité",
+        "compact": "Compacte",
+        "compactHint": "Le plus de propriétés en vue",
+        "comfortable": "Confortable",
+        "comfortableHint": "Plus d’espace entre les propriétés, texte plus grand",
+        "spacious": "Aérée",
+        "spaciousHint": "Le plus d’espace, le texte et les cases les plus grands"
       }
     }
   },

@@ -960,6 +960,15 @@
         "add": "Add a {{language}} description to {{class}}",
         "editLabel": "Edit the {{language}} label of {{class}}",
         "addLabel": "Add a {{language}} label to {{class}}"
+      },
+      "density": {
+        "title": "Density",
+        "compact": "Compact",
+        "compactHint": "The most properties in view",
+        "comfortable": "Comfortable",
+        "comfortableHint": "More room between properties, bigger text",
+        "spacious": "Spacious",
+        "spaciousHint": "The most room, the biggest text and checkboxes"
       }
     }
   },

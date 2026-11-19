@@ -233,13 +233,14 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       :host {
         position: relative;
         display: grid;
-        grid-template-columns: 16px minmax(0, 1fr) 104px;
-        --actions-right: 118px;
+        // Sizes from the cards' density (see DataModelClassesComponent), as compact as can be when none is set.
+        grid-template-columns: 16px minmax(0, 1fr) calc(var(--density-check-col, 100px) + 4px);
+        --actions-right: calc(var(--density-check-col, 100px) + 18px);
         gap: 6px;
         align-items: center;
-        min-height: 26px;
-        padding: 1px 8px 1px 16px;
-        font-size: 12.5px;
+        min-height: var(--density-row, 26px);
+        padding: var(--density-pad, 1px) 8px var(--density-pad, 1px) 16px;
+        font-size: var(--density-label, 12.5px);
         background: white;
 
         &:hover {
@@ -323,6 +324,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       .texts {
         display: flex;
         flex-direction: column;
+        gap: var(--density-texts-gap, 0px);
         min-width: 0;
         padding: 2px 0;
       }
@@ -368,7 +370,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         text-overflow: ellipsis;
         white-space: nowrap;
         font-family: 'Roboto Mono', monospace;
-        font-size: 11px;
+        font-size: var(--density-name, 11px);
         line-height: 1.3;
         color: $primary;
       }

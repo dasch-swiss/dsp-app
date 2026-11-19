@@ -960,6 +960,15 @@
         "add": "Aggiungi una descrizione ({{language}}) a {{class}}",
         "editLabel": "Modifica l'etichetta ({{language}}) di {{class}}",
         "addLabel": "Aggiungi un'etichetta ({{language}}) a {{class}}"
+      },
+      "density": {
+        "title": "Densità",
+        "compact": "Compatta",
+        "compactHint": "Il maggior numero di proprietà in vista",
+        "comfortable": "Comoda",
+        "comfortableHint": "Più spazio tra le proprietà, testo più grande",
+        "spacious": "Spaziosa",
+        "spaciousHint": "Il massimo spazio, testo e caselle più grandi"
       }
     }
   },
