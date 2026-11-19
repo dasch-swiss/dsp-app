@@ -1,4 +1,4 @@
-"""Libraries compiled with the Angular CLI app program's flags instead of the strict family.
+"""Libraries compiled without the strict family of flags.
 
 A closed list: `vre_library` forces `strict`, `noImplicitOverride`,
 `noPropertyAccessFromIndexSignature`, `noImplicitReturns` and `strictTemplates` on for every other

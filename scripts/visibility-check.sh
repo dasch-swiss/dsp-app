@@ -5,6 +5,10 @@
 # checkout, and the analysis must fail with the visibility error for exactly that edge, matched on
 # Bazel's message text. Feature and app libraries may depend on every type, so only the scope rule
 # has seeds for them.
+#
+# Two ways around the tier rules pass that analysis, so two more checks follow: a library target
+# made public by hand, and an extra_visibility entry the tree no longer needs. Each is then shown
+# to fail on a planted case.
 set -euo pipefail
 
 REPO="$(git rev-parse --show-toplevel)"
@@ -100,5 +104,98 @@ for seed in "${SEEDS[@]}"; do
   fi
   cp -- "$REPO/$build" "$build"
 done
+
+LIBRARY_PACKAGES="$(sed -nE 's|^    "//(libs/[^"]+)": struct\(.*$|\1|p' "$REPO/tools/angular/visibility.bzl")"
+
+# Prints every target in a library package that any package may depend on. vre_library makes only
+# the lint config and Jest's helper targets public, and no library imports those.
+public_library_targets() {
+  local all
+  all="$(sed 's|^|//|; s|$|:all|' <<<"$LIBRARY_PACKAGES" | paste -sd+ -)"
+  if ! bazel query "attr(visibility, '//visibility:public', $all) except attr(name, '^(eslintrc|_test_bazel_.*)\$', $all)" 2>query.log; then
+    cat query.log >&2
+    echo "visibility-check: the public-target query failed" >&2
+    return 1
+  fi
+}
+
+# Prints "<library> <entry>" for each extra_visibility entry the tree analyses without: its package
+# no longer depends on the library, or ADR-0001 allows the edge anyway. Each entry is removed in
+# the scratch copy only, one at a time. Takes library packages, every library by default.
+stale_extra_visibility() {
+  local lib build entry libs=("$@")
+  # shellcheck disable=SC2206 # One package per line, no whitespace in a package.
+  [ "$#" -gt 0 ] || libs=($LIBRARY_PACKAGES)
+  for lib in "${libs[@]}"; do
+    build="$lib/BUILD.bazel"
+    if grep -qE 'extra_visibility = \[.' "$build"; then
+      echo "visibility-check: $build: write extra_visibility one entry per line" >&2
+      return 1
+    fi
+    # shellcheck disable=SC2013 # Labels hold no whitespace, and a read loop would feed bazel's stdin.
+    for entry in $(awk '/^    extra_visibility = \[$/ { inside = 1; next } inside && /^    \],?$/ { inside = 0 }
+        inside && match($0, /"[^"]+"/) { print substr($0, RSTART + 1, RLENGTH - 2) }' "$build"); do
+      if [[ "$entry" != //*:__pkg__ ]]; then
+        echo "visibility-check: $build: extra_visibility entry $entry is not a //<package>:__pkg__" >&2
+        return 1
+      fi
+      if ! grep -qxF "        \"$entry\"," "$build"; then
+        echo "visibility-check: $build: write extra_visibility entry $entry on its own line as \"<label>\"," >&2
+        return 1
+      fi
+      cp -- "$build" "$build.orig"
+      grep -vxF "        \"$entry\"," "$build.orig" >"$build" || true
+      # shellcheck disable=SC2086
+      if log="$(bazel build --nobuild "${entry%:__pkg__}:all" ${BAZEL_FLAGS:-} 2>&1)"; then
+        echo "//$lib $entry"
+      elif ! grep -qF "target '//$lib:" <<<"$log" || ! grep -qF "is not visible from" <<<"$log"; then
+        mv -- "$build.orig" "$build"
+        echo "$log" >&2
+        echo "visibility-check: ${entry%:__pkg__} failed without $entry, but not with a visibility error for //$lib" >&2
+        return 1
+      fi
+      mv -- "$build.orig" "$build"
+    done
+  done
+}
+
+if ! public="$(public_library_targets)"; then
+  failed=1
+elif [ -n "$public" ]; then
+  echo "$public" >&2
+  echo "visibility-check: these library targets are public; a library takes package_visibility() and extra_visibility only" >&2
+  failed=1
+fi
+if ! stale="$(stale_extra_visibility)"; then
+  failed=1
+elif [ -n "$stale" ]; then
+  echo "$stale" >&2
+  echo "visibility-check: these extra_visibility entries are stale (no direct dependency, or ADR-0001 allows it); remove them" >&2
+  failed=1
+fi
+
+# Plant one of each in a library with no extra_visibility and expect the check above to report it.
+plant=libs/vre/ui/progress-indicator
+build="$plant/BUILD.bazel"
+plant_extra_visibility() {
+  awk -v entry="$1" '!done && /^    name = / { print; print "    extra_visibility = ["; print "        \"" entry "\","; print "    ],"; done = 1; next } { print }' \
+    "$REPO/$build" >"$build"
+}
+plant_extra_visibility "//visibility:public"
+if grep -qx "//$plant:${plant##*/}" <<<"$(public_library_targets)"; then
+  echo "visibility-check: a hand-set //visibility:public on //$plant is reported"
+else
+  echo "visibility-check: a hand-set //visibility:public on //$plant went unreported" >&2
+  failed=1
+fi
+# system/system is a feature library: ADR-0001 already lets it depend on a shared ui library.
+plant_extra_visibility "//libs/vre/pages/system/system:__pkg__"
+if grep -qxF "//$plant //libs/vre/pages/system/system:__pkg__" <<<"$(stale_extra_visibility "$plant" 2>/dev/null)"; then
+  echo "visibility-check: a stale extra_visibility entry on //$plant is reported"
+else
+  echo "visibility-check: a stale extra_visibility entry on //$plant went unreported" >&2
+  failed=1
+fi
+cp -- "$REPO/$build" "$build"
 
 exit "$failed"

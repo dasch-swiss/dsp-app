@@ -95,11 +95,25 @@ Per-environment settings live in `apps/dsp-app/src/config/config.*.json` and rea
 
 ## Testing Conventions
 
-- Tested means: a Jest spec beside the file (`*.spec.ts`) for logic and component behaviour, and a Storybook story with a `play()` assertion for a UI component (see "Storybook Convention" in [`CLAUDE.md`](CLAUDE.md)). Cypress e2e lives in its own project ([ADR 0006](docs/adr/0006-the-e2e-suite-is-its-own-project.md)), type-checked by `just typecheck-e2e`.
+- Tested means: a Jest spec beside the file (`*.spec.ts`) for logic and component behaviour, and a Storybook story with a `play()` assertion for a UI component (see [Storybook Convention](#storybook-convention)). Cypress e2e lives in its own project ([ADR 0006](docs/adr/0006-the-e2e-suite-is-its-own-project.md)), type-checked by `just typecheck-e2e`.
 - Each library's specs run in its Bazel `jest_test` target, on sources with the SWC preset; `just test-files -- <spec>` runs the one library's target.
 - Component specs use `TestBed.configureTestingModule()` with `imports: [TheComponent]`, `CUSTOM_ELEMENTS_SCHEMA` for child elements, `.overrideComponent()` to stub a template, and `provideTranslateService()`.
 - Type mocks as `jest.Mocked<Partial<Service>>` and provide them with `useValue`. Clear mocks in `afterEach()`.
 - Do not commit a focused test (`fdescribe`, `fit`, `.only`). Lint rejects it.
+
+## Storybook Convention
+
+- Stories live alongside their component file as `<component>.stories.ts`
+- Story titles follow the format: `Feature Area / Component / Scenario`
+  - e.g. `UI / Pager / Pagination`, `Resource Editor / Property Form / Validation`
+- Story export names encode acceptance criteria in plain language:
+  - e.g. `ShowsErrorWhenRequiredFieldIsEmpty`, `DisablesSubmitWhileLoading`
+- Use `storyName` when the export name would be awkward
+- Every story must have at least one `play()` function asserting a user-visible outcome
+- `argTypes` must include a `description` for every `@Input()` and `@Output()`
+- Run Storybook locally: `just storybook` (http://localhost:4400)
+- Run interaction tests: `just storybook-test`
+- **Stories that render a real container break when its DI changes.** Some stories mount the actual container component (others mock it) — adding a service injection to a container breaks exactly those stories, not the mocked ones. When you add a dependency to a component that appears in stories, check which stories render it for real and stub the new providers there (e.g. `provideRouter([])`, service stubs).
 
 ## Commit Conventions
 
@@ -126,6 +140,7 @@ These must be clean:
 
 - No bot updates dependencies: Renovate is disabled, library updates are analysed and made by hand, security advisories still arrive as Dependabot PRs. `renovate.json`'s rules record why packages are coupled; read them before a bump.
 - Change a dependency with `pnpm` inside the dev shell and commit `package.json` with `pnpm-lock.yaml`. A pnpm change needs no `MODULE.bazel.lock` refresh; `just lock-update` is for a Bazel module bump and refreshes both.
+- `just knip` fails on a dependency nothing imports. One only Bazel, the justfile or a peer requirement uses goes in `knip.jsonc`'s `ignoreDependencies` with a comment naming that user; never delete it on knip's word alone.
 - Bazel modules, the `rules_angular` and `rules_sass` commit pins, `.bazelversion`, `flake.nix`, `flake.lock`, the GitHub Actions versions and the image's nginx base digest are bumped by hand; Dependabot is configured for npm security advisories only. After a `flake.lock` bump run `just node-version-check` and `just playwright-version-check`.
 
 ## Where to Go for Depth

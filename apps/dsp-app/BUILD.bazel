@@ -52,7 +52,6 @@ vre_application(
             "src/**/*.spec.ts",
             "src/environments/**",
             "src/test-setup.ts",
-            "src/test.config.ts",
         ],
     ),
     environments = ENVIRONMENTS,

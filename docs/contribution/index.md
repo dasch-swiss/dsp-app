@@ -13,7 +13,7 @@ dev shell, which provides Bazel, `just`, pnpm, Node and Playwright's browsers. T
 
 ```shell
 just install   # the npm dependencies from pnpm-lock.yaml
-just ci        # the gate: build, tests, lint, Storybook build, e2e type-check, visibility and version checks
+just ci        # the gate: build, tests, lint, knip, Storybook build, e2e type-check, visibility and version checks
 just help      # every recipe
 ```
 

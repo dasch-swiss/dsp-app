@@ -115,7 +115,8 @@ def eslint_config():
         name = "eslintrc",
         srcs = ["eslint.config.mjs"] + native.glob(["package.json", "tsconfig*.json"], allow_empty = True),
         deps = [Label("//:eslintrc")],
-        # Not the library's visibility: the aspect reads every package's config.
+        # Not the library's visibility: the aspect reads every package's config. The public-target
+        # check in scripts/visibility-check.sh allows this name.
         visibility = ["//visibility:public"],
     )
 
@@ -258,7 +259,7 @@ def vre_library(
 
     css = _stylesheets(stylesheets, sass_deps)
 
-    # A loose library mirrors the Angular CLI's app program, which compiles every library unstrict.
+    # A loose library compiles without the strict flags until its LOOSE_LIBRARIES issue removes it.
     strict = package not in LOOSE_LIBRARIES
     _bazel_tsconfig("tsconfig_bazel", "tsconfig.bazel.json", "./tsconfig.lib.json", srcs, deps, strict)
 
@@ -386,8 +387,7 @@ def vre_application(
         "./tsconfig.app.json",
         srcs + ["src/environments/environment.ts"],
         deps,
-        # The Angular CLI compiled the shell unstrict, as tsconfig.json says.
-        strict = False,
+        strict = True,
     )
     ng_project(
         name = "app",

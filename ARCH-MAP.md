@@ -81,10 +81,10 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Bazel package**: `//libs/vre/3rd-party-services/api`
 - **Paths**: `libs/vre/3rd-party-services/api/**`
-- **Purpose**: Hand-written Angular services over DSP-API REST endpoints, plus hand-written TypeScript interfaces for v2 ontology JSON-LD payloads.
+- **Purpose**: Hand-written Angular services over DSP-API REST endpoints.
 - **Key entities**: `BaseApi`, `ProjectApiService`, `UserApiService`, `ListApiService`, `LegalInfoApiService`, `ResourceLegalV2ApiService`, `ProjectIdentifier`
-- **Public interface**: Five `export *` from `src/index.ts`, one per service. `BaseApi` and the v2 payload interfaces are internal.
-- **Local-context kit**: `src/index.ts`, `src/lib/services/base-api.ts`, `src/lib/services/admin/project-api.service.ts`, `src/lib/services/admin/legal-info-api.service.ts`, `src/lib/services/v2/resource-legal-v2-api.service.ts`, `src/lib/services/v2/ontology/read-ontology.interface.ts`, the root `CLAUDE.md` (the dual-client rule)
+- **Public interface**: Five `export *` from `src/index.ts`, one per service. `BaseApi` is internal.
+- **Local-context kit**: `src/index.ts`, `src/lib/services/base-api.ts`, `src/lib/services/admin/project-api.service.ts`, `src/lib/services/admin/legal-info-api.service.ts`, `src/lib/services/v2/resource-legal-v2-api.service.ts`, the root `CLAUDE.md` (the dual-client rule)
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/open-api`, `vre/core/config`
 - **Used by**: `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`
 - **Boundary rules**:
@@ -574,7 +574,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 ### build-tooling
 
 - **Bazel package**: none
-- **Paths**: `tools/**`, `scripts/**`, `.storybook/**`, `types/**`, `mocks/**`, `nix/**`, `platforms/**`, `MODULE.bazel`, `MODULE.bazel.lock`, `BUILD.bazel`, `.bazelrc`, `.bazelversion`, `.bazelignore`, `justfile`, `flake.nix`, `flake.lock`, `.envrc`, `angular.json`, `tsconfig.base.json`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.npmrc`, `vendor/**`, `eslint.config.mjs`, `eslint.config.angular.mjs`, `jest.preset.js`, `jest.resolver.js`, `.babelrc`, `.editorconfig`, `.prettierrc`, `.prettierignore`, `.markdownlint.json`, `.remarkrc.json`, `.kodus-readiness.yml`, `.gitignore`, `pixeleye.config.ts`, `pixeleye.breakpoints.config.ts`, `pixeleye/**`, `libs/.gitkeep`
+- **Paths**: `tools/**`, `scripts/**`, `.storybook/**`, `types/**`, `mocks/**`, `nix/**`, `platforms/**`, `MODULE.bazel`, `MODULE.bazel.lock`, `BUILD.bazel`, `.bazelrc`, `.bazelversion`, `.bazelignore`, `justfile`, `flake.nix`, `flake.lock`, `.envrc`, `angular.json`, `tsconfig.base.json`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.npmrc`, `vendor/**`, `eslint.config.mjs`, `eslint.config.angular.mjs`, `jest.preset.js`, `jest.resolver.js`, `.editorconfig`, `.prettierrc`, `.prettierignore`, `.markdownlint.json`, `.remarkrc.json`, `.kodus-readiness.yml`, `knip.jsonc`, `.gitignore`, `pixeleye.config.ts`, `pixeleye.breakpoints.config.ts`, `pixeleye/**`, `libs/.gitkeep`
 - **Purpose**: The Bazel module, the `vre_library` and `vre_application` macros, the `just` recipes, the Nix dev shell, and the lint, test, Storybook and Pixeleye configuration for the whole workspace, plus ambient type declarations and test mocks.
 - **Key entities**: `vre_library`, `vre_application`, `vre_jest_test`, `LIBRARIES`, `APPLICATIONS`, `TYPE_MAY_DEPEND_ON`, `package_visibility`, `extra_visibility`, `LOOSE_LIBRARIES`, `visibility-check.sh`, `check-openapi-sync.sh`
 - **Public interface**: The `just` recipes (`just help`); `vre_library` in `tools/angular/defs.bzl` for a library's `BUILD.bazel`; `LIBRARIES` in `tools/angular/visibility.bzl` for its type and scope. `tsconfig.base.json` `paths` stays the list of aliases the IDE and the ESLint rules read; the build generates each library's own tsconfig.
@@ -714,7 +714,7 @@ ADR-0001's type and scope rules are Bazel `visibility`, derived from `LIBRARIES`
 | Type tiers: `ui` depends on `ui` and `util`, `data-access` on `data-access` and `util`, `util` on `util`. **Four exceptions**, all into `ui/string-literal` or `ui/ui`: from `core/config`, `shared/app-common`, `shared/app-helper-services` and `3rd-party-services/open-api` (ADR-0001 decision 7, DEV-7552). `dsp-js` is visible to every library (ADR-0001 decision 8). | `structure` |
 | `pages/*` libraries of different scopes do not depend on each other. **Seven exceptions**: `project/project` is visible to `ontology/list`, `ontology/ontology` and `search/advanced-search`; `user-settings/user` to `ontology/ontology`, `project/project` and `system/system`; `system/system` to `project/project` (ADR-0004, DEV-7555). | `structure` |
 
-Each exception is an `extra_visibility` entry on the target library with a comment naming the ADR and the issue; removing it is part of the change that moves the code. `just visibility-check` seeds one forbidden edge per tier rule and asserts the build rejects it.
+Each exception is an `extra_visibility` entry on the target library with a comment naming the ADR and the issue; removing it is part of the change that moves the code. `just visibility-check` seeds one forbidden edge per tier rule and asserts the build rejects it; it also fails on a library target made public by hand and on an `extra_visibility` entry the tree analyses without.
 
 ### Wiring
 
