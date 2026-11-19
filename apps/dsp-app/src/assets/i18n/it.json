@@ -851,14 +851,13 @@
         "view": "Ciò che vedi",
         "whole": "Intero modello",
         "resolution": "Risoluzione",
-        "resolutionHint": "2× è nitido su diapositive e schermi. 4× è per la stampa e i poster.",
         "legend": "Legenda",
-        "yes": "Sì",
-        "no": "No",
-        "copy": "Copia negli appunti",
-        "download": "Scarica PNG",
+        "copy": "Copia",
+        "download": "Scarica come PNG",
         "close": "Chiudi",
-        "modelName": "Nome del modello di dati"
+        "modelName": "Nome del modello di dati",
+        "include": "Includi",
+        "filteredOn": "Filtrato su: {{filter}}"
       },
       "labelsMenu": {
         "heading": "Scrivere su classi e collegamenti",

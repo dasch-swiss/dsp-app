@@ -851,14 +851,13 @@
         "view": "Was Sie sehen",
         "whole": "Ganzes Modell",
         "resolution": "Auflösung",
-        "resolutionHint": "2× ist scharf auf Folien und Bildschirmen. 4× ist für Druck und Poster.",
         "legend": "Legende",
-        "yes": "Ja",
-        "no": "Nein",
-        "copy": "In die Zwischenablage kopieren",
-        "download": "PNG herunterladen",
+        "copy": "Kopieren",
+        "download": "Als PNG herunterladen",
         "close": "Schliessen",
-        "modelName": "Name des Datenmodells"
+        "modelName": "Name des Datenmodells",
+        "include": "Einschliessen",
+        "filteredOn": "Gefiltert nach: {{filter}}"
       },
       "labelsMenu": {
         "heading": "Auf Klassen und Verknüpfungen",

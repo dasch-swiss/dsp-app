@@ -21,7 +21,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
@@ -1001,6 +1001,7 @@ export class OntologyMapPageComponent {
   private readonly _route = inject(ActivatedRoute);
   private readonly _graphs = inject(DataModelGraphService);
   private readonly _dialog = inject(MatDialog);
+  private readonly _translate = inject(TranslateService);
 
   private readonly _projectOntologies = toSignal(
     combineLatest([this._graphs.projectOntologies$, inject(LocalizationService).currentLanguage$]).pipe(
@@ -1608,9 +1609,18 @@ export class OntologyMapPageComponent {
             : this._wholeModel().then(view => view.png('whole', options)!),
         fileName: `${name}_ontology-map`,
         title: this.selected()?.label ?? name,
+        filter: this._filterLine(),
       })
     );
     dialog.afterClosed().subscribe(() => this.exportSize.set(undefined));
+  }
+
+  /** What the graph is filtered on, as its banner says it, for the exported image; none unfiltered. */
+  private _filterLine(): string | undefined {
+    const note = this.filterNote();
+    if (!note) return undefined;
+    const filter = this._translate.instant(`pages.ontologyMap.filterNote.${note.key}`, note.params);
+    return this._translate.instant('pages.ontologyMap.exportDialog.filteredOn', { filter });
   }
 
   /** The unfiltered copy of the graph once laid out, drawn first at the graph's size; see `exportSize`. */

@@ -15,7 +15,15 @@ describe('ExportPreviewDialogComponent', () => {
       imports: [ExportPreviewDialogComponent],
       providers: [
         provideTranslateService(),
-        { provide: MAT_DIALOG_DATA, useValue: { render, fileName: 'beol_ontology-map', title: 'The BEOL ontology' } },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
+            render,
+            fileName: 'beol_ontology-map',
+            title: 'The BEOL ontology',
+            filter: 'Filtered on: Only Person',
+          },
+        },
         { provide: MatDialogRef, useValue: { close: jest.fn() } },
         { provide: NotificationService, useValue: { openSnackBar: jest.fn() } },
       ],
@@ -26,7 +34,12 @@ describe('ExportPreviewDialogComponent', () => {
   });
 
   it('draws what is in view, at 2x, with the legend and the data model name, at first', () => {
-    expect(render).toHaveBeenCalledWith('view', { scale: 2, legend: true, title: 'The BEOL ontology' });
+    expect(render).toHaveBeenCalledWith('view', {
+      scale: 2,
+      legend: true,
+      title: 'The BEOL ontology',
+      subtitle: 'Filtered on: Only Person',
+    });
   });
 
   it('draws it again when a setting changes', () => {
@@ -36,7 +49,12 @@ describe('ExportPreviewDialogComponent', () => {
     component.title.set(false);
     fixture.detectChanges();
 
-    expect(render).toHaveBeenLastCalledWith('whole', { scale: 4, legend: false, title: undefined });
+    expect(render).toHaveBeenLastCalledWith('whole', {
+      scale: 4,
+      legend: false,
+      title: undefined,
+      subtitle: undefined,
+    });
   });
 
   it('says it failed when nothing can be drawn', () => {

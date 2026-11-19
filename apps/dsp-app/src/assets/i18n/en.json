@@ -851,14 +851,13 @@
         "view": "What you see",
         "whole": "Whole model",
         "resolution": "Resolution",
-        "resolutionHint": "2× is sharp on slides and screens. 4× is for print and posters.",
         "legend": "Legend",
-        "yes": "Yes",
-        "no": "No",
-        "copy": "Copy to clipboard",
-        "download": "Download PNG",
+        "copy": "Copy",
+        "download": "Download as PNG",
         "close": "Close",
-        "modelName": "Data model name"
+        "modelName": "Data model name",
+        "include": "Include",
+        "filteredOn": "Filtered on: {{filter}}"
       },
       "labelsMenu": {
         "heading": "Write on classes and links",

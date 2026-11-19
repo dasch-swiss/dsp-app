@@ -4,6 +4,7 @@ import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { GraphExportArea, GraphExportOptions } from './ontology-graph.component';
@@ -15,12 +16,14 @@ export interface ExportPreviewData {
   fileName: string;
   /** The data model's name, written over the image when chosen. */
   title: string;
+  /** What the graph is filtered on, written under the name in an image of what is in view; none unfiltered. */
+  filter?: string;
 }
 
-/** How the preview opens: large, the image on the left and its settings on the right. */
+/** How the preview opens: the image on the left, its settings in a narrow column on the right. */
 export const exportPreviewDialogConfig = (data: ExportPreviewData): MatDialogConfig<ExportPreviewData> => ({
   data,
-  width: '1040px',
+  width: '920px',
   maxWidth: '95vw',
   autoFocus: false,
   panelClass: 'export-preview-dialog',
@@ -51,6 +54,7 @@ interface Rendered {
     MatIcon,
     MatIconButton,
     MatProgressSpinner,
+    MatSlideToggle,
     TranslatePipe,
   ],
   template: `
@@ -58,10 +62,10 @@ interface Rendered {
     <div class="dialog" data-cy="export-preview">
       <div class="stage">
         <div class="stage-top">
-          <span>{{ e + (area() === 'whole' ? '.previewWhole' : '.previewView') | translate }}</span>
+          {{ e + (area() === 'whole' ? '.previewWhole' : '.previewView') | translate }}
           @if (rendered(); as image) {
             <span class="dims" data-cy="export-preview-dims"
-              >{{ image.width }} × {{ image.height }} px · {{ megabytes(image.bytes) }} MB</span
+              >· {{ image.width }} × {{ image.height }} px · {{ megabytes(image.bytes) }} MB</span
             >
           }
         </div>
@@ -75,19 +79,21 @@ interface Rendered {
               [alt]="e + '.previewAlt' | translate" />
           }
           @if (busy()) {
-            <mat-spinner class="spinner" diameter="36" />
+            <mat-spinner class="spinner" diameter="32" />
           } @else if (failed()) {
             <p class="failed">{{ 'pages.ontologyMap.exportMenu.exportFailed' | translate }}</p>
           }
         </div>
       </div>
 
+      <!-- The settings, as the View options menu shows its own: small headings, toggles and switches. -->
       <div class="side">
         <div class="side-head">
           <h2>{{ e + '.title' | translate }}</h2>
           <button
             mat-icon-button
             type="button"
+            class="close"
             [attr.aria-label]="e + '.close' | translate"
             (click)="dialogRef.close()">
             <mat-icon>close</mat-icon>
@@ -117,59 +123,39 @@ interface Rendered {
               [value]="scale()"
               (change)="scale.set($event.value)">
               @for (option of scales; track option) {
-                <mat-button-toggle [value]="option">
-                  <span class="toggle-text">
-                    {{ option }}×
-                    @if (widthAt(option); as width) {
-                      <small>{{ width }} px</small>
-                    }
-                  </span>
-                </mat-button-toggle>
+                <mat-button-toggle [value]="option">{{ option }}×</mat-button-toggle>
               }
             </mat-button-toggle-group>
-            <span class="hint">{{ e + '.resolutionHint' | translate }}</span>
           </div>
 
           <div class="setting">
-            <span class="heading" id="export-legend">{{ e + '.legend' | translate }}</span>
-            <mat-button-toggle-group
-              aria-labelledby="export-legend"
-              data-cy="export-preview-legend"
-              hideSingleSelectionIndicator
-              [value]="legend()"
-              (change)="legend.set($event.value)">
-              <mat-button-toggle [value]="true">{{ e + '.yes' | translate }}</mat-button-toggle>
-              <mat-button-toggle [value]="false">{{ e + '.no' | translate }}</mat-button-toggle>
-            </mat-button-toggle-group>
-          </div>
-
-          <div class="setting">
-            <span class="heading" id="export-title">{{ e + '.modelName' | translate }}</span>
-            <mat-button-toggle-group
-              aria-labelledby="export-title"
+            <span class="heading">{{ e + '.include' | translate }}</span>
+            <mat-slide-toggle
+              labelPosition="before"
               data-cy="export-preview-title"
-              hideSingleSelectionIndicator
-              [value]="title()"
-              (change)="title.set($event.value)">
-              <mat-button-toggle [value]="true">{{ e + '.yes' | translate }}</mat-button-toggle>
-              <mat-button-toggle [value]="false">{{ e + '.no' | translate }}</mat-button-toggle>
-            </mat-button-toggle-group>
+              [checked]="title()"
+              (change)="title.set($event.checked)"
+              >{{ e + '.modelName' | translate }}</mat-slide-toggle
+            >
+            <mat-slide-toggle
+              labelPosition="before"
+              data-cy="export-preview-legend"
+              [checked]="legend()"
+              (change)="legend.set($event.checked)"
+              >{{ e + '.legend' | translate }}</mat-slide-toggle
+            >
           </div>
         </div>
 
+        <!-- The two ways out, as pills: downloading shows first. -->
         <div class="actions">
-          <button
-            mat-flat-button
-            color="primary"
-            type="button"
-            data-cy="export-preview-copy"
-            [disabled]="failed()"
-            (click)="copy()">
+          <button mat-stroked-button type="button" data-cy="export-preview-copy" [disabled]="failed()" (click)="copy()">
             <mat-icon>content_copy</mat-icon>
             {{ e + '.copy' | translate }}
           </button>
           <button
-            mat-stroked-button
+            mat-flat-button
+            color="primary"
             type="button"
             data-cy="export-preview-download"
             [disabled]="failed()"
@@ -187,23 +173,21 @@ interface Rendered {
 
       .dialog {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 300px;
+        grid-template-columns: minmax(0, 1fr) 240px;
         max-height: 90vh;
+        font-size: 13px;
       }
 
       .stage {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         min-width: 0;
-        padding: 20px;
+        padding: 16px;
         background: $cool_gray_200;
       }
 
       .stage-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
         font-size: 12px;
         color: $cool_gray_600;
       }
@@ -218,7 +202,7 @@ interface Rendered {
         flex: 1;
         align-items: center;
         justify-content: center;
-        min-height: 360px;
+        min-height: 320px;
       }
 
       .paper {
@@ -227,7 +211,7 @@ interface Rendered {
         max-height: 70vh;
         object-fit: contain;
         background: white;
-        box-shadow: 0 2px 10px rgb(0 0 0 / 18%);
+        box-shadow: 0 2px 8px rgb(0 0 0 / 16%);
         transition: opacity 0.15s;
 
         &.busy {
@@ -253,39 +237,53 @@ interface Rendered {
       .side-head {
         display: flex;
         align-items: center;
-        gap: 2px;
-        padding: 12px 8px 4px 20px;
+        padding: 8px 4px 4px 16px;
 
         h2 {
           flex: 1;
           margin: 0;
-          font-size: 18px;
+          font-size: 15px;
           font-weight: 500;
+        }
+
+        .close {
+          --mat-icon-button-state-layer-size: 32px;
+          padding: 4px;
+
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
         }
       }
 
       .settings {
         display: flex;
         flex-direction: column;
-        gap: 18px;
-        padding: 8px 20px 16px;
+        gap: 14px;
+        padding: 4px 16px 12px;
       }
 
       .setting {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
       }
 
+      // As the View options menu's headings.
       .heading {
         font-size: 12px;
-        font-weight: 500;
         letter-spacing: 0.04em;
         text-transform: uppercase;
         color: $cool_gray_500;
       }
 
+      // As the View options menu's text sizes: 30 px high, 13 px text, each choice as wide as the others.
       mat-button-toggle-group {
+        --mat-button-toggle-height: 30px;
+        --mat-button-toggle-label-text-size: 13px;
+        --mat-button-toggle-shape: 15px;
         display: flex;
 
         mat-button-toggle {
@@ -293,31 +291,48 @@ interface Rendered {
         }
       }
 
-      .toggle-text {
-        display: inline-flex;
-        flex-direction: column;
-        line-height: 1.2;
-        padding: 4px 0;
+      // Its words on the left, its switch at the right edge.
+      mat-slide-toggle {
+        --mat-slide-toggle-label-text-size: 13px;
+        display: block;
 
-        small {
-          font-size: 11px;
-          color: $cool_gray_500;
-          font-variant-numeric: tabular-nums;
+        ::ng-deep .mdc-form-field {
+          display: flex;
+          justify-content: space-between;
+          width: 100%;
+
+          .mdc-label {
+            margin-left: 0;
+          }
         }
       }
 
-      .hint {
-        font-size: 12px;
-        color: $cool_gray_500;
-      }
-
+      // As the Diagram's pills: 32 px high and round.
+      // One under the other, the download first, so their words fit on one line in every language.
       .actions {
         display: flex;
-        flex-direction: column;
+        flex-direction: column-reverse;
         gap: 8px;
         margin-top: auto;
-        padding: 14px 20px 18px;
+        padding: 12px 16px;
         border-top: 1px solid $cool_gray_100;
+
+        button {
+          --mat-button-filled-container-height: 32px;
+          --mat-button-outlined-container-height: 32px;
+          --mat-button-filled-container-shape: 16px;
+          --mat-button-outlined-container-shape: 16px;
+          --mat-button-filled-label-text-size: 13px;
+          --mat-button-outlined-label-text-size: 13px;
+          --mat-button-filled-horizontal-padding: 10px;
+          --mat-button-outlined-horizontal-padding: 10px;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
       }
 
       @media (max-width: 760px) {
@@ -352,15 +367,20 @@ export class ExportPreviewDialogComponent {
   readonly rendered = signal<Rendered | undefined>(undefined);
   readonly busy = signal(true);
   readonly failed = signal(false);
-  /** The settings the shown image was made with, to tell each resolution's width from it. */
-  private readonly _renderedScale = signal<Scale>(2);
 
   constructor() {
     let made = 0;
     effect(() => {
       const area = this.area();
       const scale = this.scale();
-      const options = { scale, legend: this.legend(), title: this.title() ? this._data.title : undefined };
+      const titled = this.title();
+      const options = {
+        scale,
+        legend: this.legend(),
+        title: titled ? this._data.title : undefined,
+        // The whole model is never filtered: only what is in view says what it is filtered on.
+        subtitle: titled && area === 'view' ? this._data.filter : undefined,
+      };
       // Drawing may set up what it draws from, such as the whole model's copy: not part of what this effect follows.
       const png = untracked(() => this._data.render(area, options));
       this._png = png;
@@ -377,7 +397,6 @@ export class ExportPreviewDialogComponent {
           const bitmap = await createImageBitmap(blob);
           if (turn !== made) return;
           this._show({ url: URL.createObjectURL(blob), width: bitmap.width, height: bitmap.height, bytes: blob.size });
-          this._renderedScale.set(scale);
           this.busy.set(false);
         })
         .catch(() => {
@@ -387,12 +406,6 @@ export class ExportPreviewDialogComponent {
         });
     });
     inject(DestroyRef).onDestroy(() => this._show(undefined));
-  }
-
-  /** The image's width at another resolution, from the one shown. */
-  widthAt(scale: Scale): number | undefined {
-    const image = this.rendered();
-    return image ? Math.round((image.width / this._renderedScale()) * scale) : undefined;
   }
 
   megabytes(bytes: number): string {

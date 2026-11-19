@@ -69,6 +69,8 @@ export interface GraphExportOptions {
   legend?: boolean;
   /** The data model's name, written over the image; none without it. */
   title?: string;
+  /** What the graph is filtered on, written under the title. */
+  subtitle?: string;
 }
 
 /** PNGs are drawn at twice the screen's resolution, sharp on slides and in print. */
@@ -1367,13 +1369,13 @@ export class OntologyGraphComponent {
     // pixels per graph unit times their size, as that image is as big as the model needs.
     const model = cy.elements().boundingBox({});
     const scaleFor = (width: number) =>
-      area === 'whole'
-        ? Math.max(scale, (BASE_FONT_SIZE * this._scale * (width / model.w)) / LEGEND_TEXT_SIZE)
-        : scale;
+      area === 'whole' ? Math.max(scale, (BASE_FONT_SIZE * this._scale * (width / model.w)) / LEGEND_TEXT_SIZE) : scale;
     return png.then(async image => {
       const width = (await createImageBitmap(image)).width;
       const withItsLegend = legend ? await withLegend(image, legend, scaleFor, EXPORT_BACKGROUND) : image;
-      return title ? withTitle(withItsLegend, title, scaleFor(width), EXPORT_BACKGROUND) : withItsLegend;
+      return title
+        ? withTitle(withItsLegend, title, options.subtitle, scaleFor(width), EXPORT_BACKGROUND)
+        : withItsLegend;
     });
   }
 

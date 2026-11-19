@@ -851,14 +851,13 @@
         "view": "Ce que vous voyez",
         "whole": "Tout le modèle",
         "resolution": "Résolution",
-        "resolutionHint": "2× est net sur les diapositives et les écrans. 4× est pour l’impression et les affiches.",
         "legend": "Légende",
-        "yes": "Oui",
-        "no": "Non",
-        "copy": "Copier dans le presse-papiers",
+        "copy": "Copier",
         "download": "Télécharger en PNG",
         "close": "Fermer",
-        "modelName": "Nom du modèle de données"
+        "modelName": "Nom du modèle de données",
+        "include": "Inclure",
+        "filteredOn": "Filtré sur : {{filter}}"
       },
       "labelsMenu": {
         "heading": "Écrire sur les classes et les liens",
