@@ -285,10 +285,10 @@ const MODEL_SECTIONS = [
         font-size: 14px;
         font-weight: 500;
         color: $cool_gray_900;
+        // A long name wraps onto a second line rather than being cut short, whatever the rail's width.
         text-align: left;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
         cursor: pointer;
       }
 

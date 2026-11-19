@@ -505,6 +505,8 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'loop-direction': '90deg',
       'loop-sweep': '-50deg',
       'control-point-step-size': 76 * f,
+      // Level, in the column beside the loops; turned along the loop, it would stand on end.
+      'text-rotation': 'none',
     },
   },
   // A link that would pass through a class's box bends round it; see `routeEdges`.

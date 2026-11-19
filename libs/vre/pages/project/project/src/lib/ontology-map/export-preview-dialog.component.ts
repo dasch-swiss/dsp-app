@@ -29,7 +29,7 @@ export interface ExportPreviewData {
 /** How the preview opens: the image on the left, its settings in a narrow column on the right. */
 export const exportPreviewDialogConfig = (data: ExportPreviewData): MatDialogConfig<ExportPreviewData> => ({
   data,
-  width: '920px',
+  width: '1100px',
   maxWidth: '95vw',
   autoFocus: false,
   panelClass: 'export-preview-dialog',
@@ -177,24 +177,24 @@ interface Rendered {
             >
           </div>
         </div>
-      </div>
 
-      <!-- The two ways out, side by side across the dialog's foot, downloading last as the main one. -->
-      <div class="actions">
-        <button mat-stroked-button type="button" data-cy="export-preview-copy" [disabled]="failed()" (click)="copy()">
-          <mat-icon>content_copy</mat-icon>
-          {{ e + '.copy' | translate }}
-        </button>
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          data-cy="export-preview-download"
-          [disabled]="failed()"
-          (click)="download()">
-          <mat-icon>download</mat-icon>
-          {{ e + '.download' | translate: { format: format().toUpperCase() } }}
-        </button>
+        <!-- The two ways out, side by side at the column's foot, downloading last as the main one. -->
+        <div class="actions">
+          <button mat-stroked-button type="button" data-cy="export-preview-copy" [disabled]="failed()" (click)="copy()">
+            <mat-icon>content_copy</mat-icon>
+            {{ e + '.copy' | translate }}
+          </button>
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            data-cy="export-preview-download"
+            [disabled]="failed()"
+            (click)="download()">
+            <mat-icon>download</mat-icon>
+            {{ e + '.download' | translate: { format: format().toUpperCase() } }}
+          </button>
+        </div>
       </div>
     </div>
   `,
@@ -204,8 +204,7 @@ interface Rendered {
 
       .dialog {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 240px;
-        grid-template-rows: minmax(0, 1fr) auto;
+        grid-template-columns: minmax(0, 1fr) 420px;
         max-height: 90vh;
         font-size: 13px;
       }
@@ -280,6 +279,8 @@ interface Rendered {
 
         .close {
           --mat-icon-button-state-layer-size: 32px;
+          // Its touch area would reach past the dialog's edge, and give the dialog a scrollbar.
+          --mat-icon-button-touch-target-display: none;
           padding: 4px;
 
           mat-icon {
@@ -339,13 +340,13 @@ interface Rendered {
         }
       }
 
-      // The app's own buttons, side by side at the right of a foot across the whole dialog, as its other dialogs'.
+      // The app's own buttons, side by side at the foot of the settings, the download at the right.
       .actions {
-        grid-column: 1 / -1;
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-end;
         gap: 8px;
+        margin-top: auto;
         padding: 12px 16px;
         border-top: 1px solid $cool_gray_100;
       }
