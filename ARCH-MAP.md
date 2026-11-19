@@ -69,7 +69,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Depends on**: none in the build graph. The specs import `dsp-js` and `vre/3rd-party-services/open-api` type-only, through their `@dasch-swiss/*` aliases; those edges are not Bazel deps, so the two entries do not list this one under Used by.
 - **Used by**: none
 - **Boundary rules**:
-  - The suite is no Bazel target: Cypress, its browser and the dsp-api stack are not hermetic. `just e2e <specs>` builds `//apps/dsp-app:dist` with Bazel, serves it on port 4200, runs `pnpm exec cypress run` over the specs and stops the server; `just e2e-stack-up` brings up the stack from `DSP_API_DIR`. CI's `dsp-app-e2e-tests` job runs those recipes as a two-runner matrix (`heavy` and `rest`). See ADR-0006. `structure`
+  - The suite is no Bazel target: Cypress, its browser and the dsp-api stack are not hermetic. `just e2e <specs>` builds `//apps/dsp-app:dist` with Bazel, serves it on port 4200, runs `pnpm exec cypress run` over the specs and stops the server; `just e2e-stack-up` brings up the stack from `DSP_API_DIR`. `just e2e-stack-up` is `just e2e-stack-start` then `just e2e-stack-wait`; CI's `dsp-app-e2e-tests` job runs the start in the background, type-checks and builds meanwhile, and waits for the API before `just e2e`, as a two-runner matrix (`heavy` and `rest`). See ADR-0006. `structure`
   - The matrix mixes two styles: `project-member`, `logged-out-user` and `performance` are globbed, while the `system-admin` specs are enumerated one by one. A new `system-admin` spec will not run until the matrix is edited, and nothing reports that omission. `docs-only`
   - `dsp-app-e2e-tests-status` is the required gate that aggregates the matrix. `static-analysis`
   - `just typecheck-e2e` (`tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json`) type-checks the suite and is part of `just ci`. Before a type-check existed, Cypress bundled the specs transpile-only, five files imported from two deleted libraries, and the suite stayed green (#3434, DEV-7251). `static-analysis`
@@ -596,7 +596,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: none
 - **Paths**: `.github/**`, `renovate.json`, `release-please-config.json`, `.release-please-manifest.json`, `CHANGELOG.md`
 - **Purpose**: Continuous integration workflows, the disabled Renovate configuration, and release automation for both the application and the published `dsp-js` package.
-- **Key entities**: `release-dsp-js.yml`, `check-openapi-sync`, `release-please`
+- **Key entities**: `release-dsp-js.yml`, `openapi-sync.yml`, `check-openapi-sync`, `release-please`
 - **Public interface**: None.
 - **Local-context kit**: `.github/workflows/`, `release-please-config.json`, `.release-please-manifest.json`
 - **Depends on**: none
@@ -606,8 +606,9 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Every job runs `nix develop --command just <recipe>`; `.github/actions/bazel-setup` sets up Nix, the Bazel caches and the NativeLink remote flags in `BAZEL_FLAGS`. `structure`
   - Renovate is disabled (`enabled: false`); dependency updates are made by hand, and Dependabot opens security PRs only. `docs-only`
   - `dsp-js` publishes to NPM on `dsp-js-v*` tags via `.github/workflows/release-dsp-js.yml`. `docs-only`
-  - `check-openapi-sync` runs on every push and opens an auto-bump PR on mismatch. A red check is expected while a dsp-api change is undeployed. `static-analysis`
-  - `ci.yml` runs the Cypress suite as the `dsp-app-e2e-tests` matrix, gated by the required `dsp-app-e2e-tests-status` job. `static-analysis`
+  - `check-openapi-sync` (`openapi-sync.yml`) runs on `main` pushes, the spec-bump branches and a weekday schedule, never on feature branches, and opens an auto-bump PR on mismatch. A red check is expected while a dsp-api change is undeployed. `static-analysis`
+  - `ci.yml` runs the Cypress suite as the `dsp-app-e2e-tests` matrix, gated by the required `dsp-app-e2e-tests-status` job. The matrix skips when the `changes` job's `docs_only` is true: every changed file is under `docs/`, `k6/` or `.claude/`, or a root `*.md`. Add a path to that list only if nothing the built app or the E2E run reads lives there. `static-analysis`
+  - The E2E jobs run in `.#e2e`, which is `flake.nix`'s `base` package list plus Chromium; a tool they call goes in `base`. `review`
 - **Durable state**: `.release-please-manifest.json`, the released version of record.
 - **Fingerprint**: `f7c7c0204b21`
 
