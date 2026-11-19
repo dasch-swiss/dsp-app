@@ -52,6 +52,11 @@ export interface GraphElementOptions {
   linksLabel?: string;
   /** Set for the Islands view: classes are grouped in islands and families, and show the file they carry. */
   islands?: IslandElementOptions;
+  /**
+   * The pairs of classes, as `pairOf` writes them, whose many links are drawn one by one all the same, the user having
+   * opened them: each keeps the merged link's ID as `merged`, so a search finds them as it finds it.
+   */
+  expanded?: ReadonlySet<string>;
 }
 
 export interface IslandElementOptions {
@@ -139,19 +144,21 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
       between.set(`${edge.source}\n${edge.target}`, (between.get(`${edge.source}\n${edge.target}`) ?? 0) + 1);
   }
   const merged = new Set<string>();
-  const edges: ElementDefinition[] = drawn.flatMap(edge => {
+  const edges: ElementDefinition[] = drawn.flatMap((edge): ElementDefinition[] => {
     const pair = `${edge.source}\n${edge.target}`;
     const count = edge.kind === 'link' ? (between.get(pair) ?? 0) : 0;
-    if (count <= MAX_PARALLEL_LINKS) {
+    const opened = count > MAX_PARALLEL_LINKS && !!options.expanded?.has(pair);
+    if (count <= MAX_PARALLEL_LINKS || opened) {
       return [
         {
           group: 'edges',
           data: {
-            id: edgeIdOf(edge, count),
+            id: edgeIdOf(edge, opened ? 1 : count),
             source: edge.source,
             target: edge.target,
             ...texts(edge.label, edge.property, propertyNameOf(edge.property, home)),
             property: edge.property,
+            ...(opened ? { merged: edgeIdOf(edge, count) } : {}),
           },
           classes: [edge.kind, familyLink(edge) ? 'family-link' : ''].filter(Boolean).join(' '),
         },
@@ -170,6 +177,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
           label,
           name: label,
           both: label,
+          count,
         },
         classes: ['links', familyLink(edge) ? 'family-link' : ''].filter(Boolean).join(' '),
       },

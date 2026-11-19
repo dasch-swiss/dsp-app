@@ -596,6 +596,11 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     @let t = 'pages.dataBrowser.dataModelMap';
     @let i = 'pages.ontologyMap.islands';
     <div #canvas class="canvas" data-cy="ontology-graph" [class.hidden]="!laidOut()"></div>
+    @if (linksHint(); as hint) {
+      <div class="links-hint" role="tooltip" [style.left.px]="hint.x" [style.top.px]="hint.y">
+        {{ 'pages.ontologyMap.expandLinks' | translate: { count: hint.count } }}
+      </div>
+    }
     @if (!laidOut() && !failed()) {
       <mat-progress-spinner class="laying-out" mode="indeterminate" diameter="32" />
     }
@@ -686,6 +691,20 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         &.hidden {
           visibility: hidden;
         }
+      }
+
+      // As Material's tooltips: dark, small, just above the pointer.
+      .links-hint {
+        position: absolute;
+        z-index: 2;
+        transform: translate(-50%, calc(-100% - 12px));
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: rgb(97 97 97 / 92%);
+        color: white;
+        font-size: 12px;
+        white-space: nowrap;
+        pointer-events: none;
       }
 
       .laying-out {
@@ -952,8 +971,15 @@ export class OntologyGraphComponent {
       anyResourceLabel: this.anyResourceLabel(),
       linksLabel: this.linksLabel(),
       islands: this._islands(),
+      expanded: this._expanded(),
     })
   );
+  /** The pairs of classes whose many links the user opened, one by one; see `expandLinks`. */
+  private readonly _expanded = signal<ReadonlySet<string>>(new Set());
+  /** Counts the links replaced in place, so what marks links marks the new ones too. */
+  private readonly _linksChanged = signal(0);
+  /** The hint over a link standing for several, where the pointer is: how many it stands for. */
+  readonly linksHint = signal<{ x: number; y: number; count: number } | undefined>(undefined);
 
   /** Whether the Islands view's legend is open. */
   readonly legendOpen = signal(true);
@@ -1023,6 +1049,11 @@ export class OntologyGraphComponent {
           if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
         cy.on('tap', 'edge.link', event => this.propertySelected.emit(event.target.data('property')));
+        // A link standing for several opens into them, one by one, in place.
+        cy.on('tap', 'edge.links', event => {
+          this.linksHint.set(undefined);
+          this._expandLinks(cy, event.target.source().id(), event.target.target().id());
+        });
         // Links follow a dragged class as they will lie once it is dropped: routed round the boxes, a few times a
         // second, and once more on the drop, the same way. Only the links the drag reaches are routed again: those
         // of the class, and those passing where it was or is, which may bend or straighten.
@@ -1076,11 +1107,16 @@ export class OntologyGraphComponent {
         });
         // Hovering a link highlights every link through the same property, wherever it is used; a click opens it.
         cy.on('mouseover', 'edge', event => {
+          if (event.target.hasClass('links')) {
+            const at = event.renderedPosition;
+            this.linksHint.set({ x: at.x, y: at.y, count: event.target.data('count') });
+          }
           this._hoveredProperty.set(event.target.data('property'));
           event.target.source().ancestors('.island').addClass('hovered');
           container.style.cursor = 'pointer';
         });
         cy.on('mouseout', 'edge', () => {
+          this.linksHint.set(undefined);
           this._hoveredProperty.set(undefined);
           cy.nodes('.island.hovered').removeClass('hovered');
           container.style.cursor = '';
@@ -1132,6 +1168,8 @@ export class OntologyGraphComponent {
       // The layout left is kept, to come back to: the classes shown before another filter, say.
       untracked(() => this._keep(cy));
       this._shown = shown;
+      // Other classes: their links are grouped again.
+      this._expanded.set(new Set());
       cy.elements().remove();
       cy.add(withLabelsOnTop(untracked(() => this._elements())));
       measureIconBoxes(cy);
@@ -1229,6 +1267,7 @@ export class OntologyGraphComponent {
       const cy = this._cy();
       const search = this.search();
       this.graph();
+      this._linksChanged();
       if (!cy) return;
       cy.batch(() => {
         cy.elements().removeClass('faded search-hit');
@@ -1237,7 +1276,12 @@ export class OntologyGraphComponent {
         classes.filter(node => search.hitClasses.has(node.id())).addClass('search-hit');
         classes.filter(node => !search.classes.has(node.id())).addClass('faded');
         // A label is drawn on a copy of its link; see `withLabelsOnTop`.
-        const linkOf = (edge: EdgeSingular) => (edge.data('labelOf') as string | undefined) ?? edge.id();
+        // A link opened from several is found as the one that stood for them; see `_expandLinks`.
+        const linkOf = (edge: EdgeSingular) =>
+          (edge.data('merged') as string | undefined) ??
+          (edge.data('labelOf') ? cy.getElementById(edge.data('labelOf')).data('merged') : undefined) ??
+          (edge.data('labelOf') as string | undefined) ??
+          edge.id();
         cy.edges()
           .filter(edge => search.hitLinks.has(linkOf(edge)))
           .addClass('search-hit');
@@ -1253,6 +1297,29 @@ export class OntologyGraphComponent {
           });
       });
     });
+  }
+
+  /**
+   * Draws the links from `source` to `target`, which one link stood for, one by one in its place: routed round the
+   * boxes and their labels slid clear, every class where it is.
+   */
+  private _expandLinks(cy: Core, source: string, target: string): void {
+    const pair = `${source}\n${target}`;
+    if (this._expanded().has(pair)) return;
+    this._expanded.update(pairs => new Set([...pairs, pair]));
+    const between = (edge: { data: Record<string, unknown> }) =>
+      edge.data['source'] === source && edge.data['target'] === target && !edge.data['tree'];
+    const links = withLabelsOnTop(
+      untracked(() => this._elements()).filter(element => element.group === 'edges' && between(element))
+    );
+    cy.batch(() => {
+      cy.edges()
+        .filter(edge => edge.source().id() === source && edge.target().id() === target && !edge.data('tree'))
+        .remove();
+      cy.add(links);
+    });
+    this._route(cy, new Set(links.map(link => link.data.id as string)));
+    this._linksChanged.update(n => n + 1);
   }
 
   /** Lays the classes out over the whole box and fits them in it; dragged places are forgotten. */

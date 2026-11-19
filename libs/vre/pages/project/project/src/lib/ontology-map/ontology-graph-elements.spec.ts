@@ -103,6 +103,17 @@ describe('toGraphElements with many links between two classes', () => {
 
     expect(edges.map(e => e.data['label'])).toEqual(['5 links', 'Link 0', 'Link 1']);
     expect(edges[0].classes).toBe('links');
+    expect(edges[0].data['count']).toBe(5);
+  });
+
+  it('draws them one by one once opened, each found as the link that stood for them', () => {
+    const edges = toGraphElements(
+      { nodes: graph.nodes, edges: links(5, 'Film', 'Person') },
+      { colors: new Map(), anyResourceLabel: 'Any resource', expanded: new Set(['Film\nPerson']) }
+    ).filter(e => e.group === 'edges');
+
+    expect(edges.map(e => e.data['label'])).toEqual(['Link 0', 'Link 1', 'Link 2', 'Link 3', 'Link 4']);
+    expect(new Set(edges.map(e => e.data['merged']))).toEqual(new Set(['Film links Person']));
   });
 });
 

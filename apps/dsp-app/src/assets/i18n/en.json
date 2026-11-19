@@ -879,7 +879,8 @@
           "DDDRepresentation": "3D model"
         }
       },
-      "links": "links"
+      "links": "links",
+      "expandLinks": "Click to show the {{count}} links"
     },
     "dataModels2": {
       "classActions": "Actions for {{class}}",

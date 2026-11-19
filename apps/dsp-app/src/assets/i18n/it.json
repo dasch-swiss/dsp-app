@@ -879,7 +879,8 @@
           "DDDRepresentation": "Modello 3D"
         }
       },
-      "links": "collegamenti"
+      "links": "collegamenti",
+      "expandLinks": "Clicca per mostrare i {{count}} collegamenti"
     },
     "dataModels2": {
       "classActions": "Azioni per {{class}}",
