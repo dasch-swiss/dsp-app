@@ -95,18 +95,19 @@ type Box = 'multiple' | 'required';
       @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
       // Two columns, or with their words, the two boxes one above the other, as in the Data models tab.
+      // Small boxes and words, so a card's properties stay what reads first.
       :host {
         display: grid;
-        grid-template-columns: 64px 64px;
+        grid-template-columns: 52px 52px;
         align-items: center;
         justify-items: center;
-        --mat-checkbox-state-layer-size: 28px;
-        --mat-checkbox-label-text-size: 12px;
-        --mat-checkbox-label-text-line-height: 16px;
+        --mat-checkbox-state-layer-size: 22px;
+        --mat-checkbox-label-text-size: 10.5px;
+        --mat-checkbox-label-text-line-height: 14px;
       }
 
       :host(.labelled) {
-        grid-template-columns: 128px;
+        grid-template-columns: 100px;
         justify-items: start;
         row-gap: 0;
       }
@@ -181,7 +182,16 @@ type Box = 'multiple' | 'required';
 
       mat-checkbox {
         // Material's touch target is wider than a card row; the row stays compact.
-        margin: -4px 0;
+        margin: -3px 0;
+
+        // Material draws an 18 px box: drawn at 14 px, in the room its smaller state layer leaves.
+        ::ng-deep .mdc-checkbox {
+          transform: scale(0.78);
+        }
+
+        ::ng-deep .mdc-label {
+          padding-left: 0;
+        }
       }
     `,
   ],

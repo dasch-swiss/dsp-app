@@ -233,8 +233,8 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       :host {
         position: relative;
         display: grid;
-        grid-template-columns: 16px minmax(0, 1fr) 128px;
-        --actions-right: 142px;
+        grid-template-columns: 16px minmax(0, 1fr) 104px;
+        --actions-right: 118px;
         gap: 6px;
         align-items: center;
         min-height: 26px;

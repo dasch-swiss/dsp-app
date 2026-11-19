@@ -527,11 +527,11 @@ export interface PropertyOrder {
       // The checkboxes' columns, named once over the properties, above the two boxes of each row.
       .cardinality-head {
         display: grid;
-        grid-template-columns: 64px 64px;
+        grid-template-columns: 52px 52px;
         justify-content: end;
         padding: 4px 8px 2px;
         border-top: 1px solid $cool_gray_100;
-        font-size: 10.5px;
+        font-size: 10px;
         line-height: 1.2;
         text-align: center;
         color: $cool_gray_500;
