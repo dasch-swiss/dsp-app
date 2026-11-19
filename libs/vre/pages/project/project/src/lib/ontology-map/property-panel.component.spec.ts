@@ -46,9 +46,8 @@ describe('PropertyPanelComponent', () => {
     fixture.detectChanges();
   });
 
-  it('shows the property, the class it points at and the classes that have it', () => {
+  it('shows the property and the classes that have it', () => {
     expect(text('[data-cy="property-panel-title"]')).toEqual(['Director']);
-    expect(text('[data-cy="property-panel-target"]')[0]).toContain('Person');
     expect(text('[data-cy="property-panel-user"] .class-link')).toEqual(['Film', 'Short']);
     expect(fixture.nativeElement.querySelectorAll('.inherited')).toHaveLength(1);
   });
@@ -76,14 +75,5 @@ describe('PropertyPanelComponent', () => {
 
     expect(text('[data-cy="property-panel-type"]')[0]).toContain('Date');
     expect(text('[data-cy="property-panel-user"] .class-link')).toEqual(['Person']);
-  });
-
-  it('opens a class the property points at', () => {
-    const selected = jest.fn();
-    component.classSelected.subscribe(selected);
-
-    fixture.nativeElement.querySelector('[data-cy="property-panel-target"]').click();
-
-    expect(selected).toHaveBeenCalledWith('Person');
   });
 });

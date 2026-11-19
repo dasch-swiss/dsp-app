@@ -22,7 +22,6 @@ import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 import { localNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
 import { typeIconOf, typeNameOf } from './property-types';
-import { TabShadePipe } from './tab-shade.pipe';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1]: 'required',
@@ -45,7 +44,7 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
 @Component({
   selector: 'app-property-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TabShadePipe, MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
+  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.propertyPanel';
@@ -133,35 +132,8 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
           </div>
         }
 
-        <div class="facts">
-          @if (usage.type === 'Link') {
-            <div class="fact">
-              <h3>{{ t + '.pointsTo' | translate }}</h3>
-              <span class="targets">
-                @for (target of usage.targets; track target) {
-                  <button
-                    type="button"
-                    class="chip"
-                    data-cy="property-panel-target"
-                    [disabled]="!isNavigable(target)"
-                    (click)="classSelected.emit(target)">
-                    <span
-                      class="tab"
-                      aria-hidden="true"
-                      [style.background]="colors().get(target) | tabShade: 'white'"></span>
-                    <span class="chip-label">{{ labelOf(target) }}</span>
-                    @if (isNavigable(target)) {
-                      <mat-icon>chevron_right</mat-icon>
-                    }
-                  </button>
-                }
-              </span>
-            </div>
-            <div class="fact">
-              <h3>{{ t + '.inModel' | translate }}</h3>
-              <span class="count">{{ t + '.links' | translate: { count: usage.links } }}</span>
-            </div>
-          } @else {
+        @if (usage.type !== 'Link') {
+          <div class="facts">
             <div class="fact" data-cy="property-panel-type">
               <h3>{{ t + '.type' | translate }}</h3>
               <span class="type" [attr.data-type]="usage.type">
@@ -169,8 +141,8 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
                 >{{ typeName(usage.type) }}
               </span>
             </div>
-          }
-        </div>
+          </div>
+        }
 
         <div class="group">
           <h3>{{ t + '.usedBy' | translate: { count: usage.users.length } }}</h3>
@@ -430,56 +402,6 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
         h3 {
           padding-bottom: 6px;
         }
-      }
-
-      .targets {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
-
-      // A class as the Diagram draws it: white, a slate border, its colour in a tab at the left.
-      .chip {
-        display: flex;
-        align-items: stretch;
-        gap: 2px;
-        padding: 0 6px 0 0;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        overflow: hidden;
-        background: white;
-        font: inherit;
-        font-weight: 500;
-        color: #1f2937;
-        cursor: pointer;
-
-        .tab {
-          flex: none;
-          width: 12px;
-        }
-
-        .chip-label {
-          display: flex;
-          align-items: center;
-          padding: 2px 0 2px 8px;
-        }
-
-        &:disabled {
-          padding-right: 10px;
-          cursor: default;
-        }
-
-        mat-icon {
-          align-self: center;
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-        }
-      }
-
-      .count {
-        font-size: 15px;
-        font-weight: 500;
       }
 
       .group {
