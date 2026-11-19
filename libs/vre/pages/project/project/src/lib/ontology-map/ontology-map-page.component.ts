@@ -27,7 +27,6 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
-import { injectDataModelEditing } from './data-model-editor';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
 import { graphSearchResults, GraphSearchResultsComponent, SearchResult } from './graph-search-results.component';
 import { classFamilies, familyColors } from './islands';
@@ -501,7 +500,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [classIri]="openIri"
                   [anyResourceLabel]="t + '.anyResource' | translate"
                   [subclassLabel]="t + '.subclassOf' | translate"
-                  [canEdit]="canEdit() ?? false"
                   [colors]="colors()"
                   [currentModel]="selectedName()"
                   [models]="modelNames()"
@@ -509,9 +507,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   (closed)="openPanel(undefined)"
                   (openInModel)="openInModel($event)"
                   (browse)="open($event)"
-                  (propertyHovered)="hoveredProperty.set($event)"
-                  (edit)="edit($event)"
-                  (editProperty)="editProperty($event)" />
+                  (propertyHovered)="hoveredProperty.set($event)" />
               } @else if (propertyPanelIri(); as propertyIri) {
                 <app-property-panel
                   class="panel"
@@ -519,11 +515,9 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [propertyIri]="propertyIri"
                   [colors]="colors()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
-                  [canEdit]="canEdit() ?? false"
                   (classSelected)="openPanel($event)"
                   (closed)="openPanel(undefined)"
-                  (propertySelected)="openPropertyPanel($event)"
-                  (edit)="editProperty($event)" />
+                  (propertySelected)="openPropertyPanel($event)" />
               }
             </div>
           }
@@ -1004,7 +998,6 @@ export class OntologyMapPageComponent {
   private readonly _clipboard = inject(Clipboard);
   private readonly _notification = inject(NotificationService);
   private readonly _translate = inject(TranslateService);
-  private readonly _editing = injectDataModelEditing();
 
   private readonly _projectOntologies = toSignal(
     combineLatest([this._graphs.projectOntologies$, inject(LocalizationService).currentLanguage$]).pipe(
@@ -1018,7 +1011,6 @@ export class OntologyMapPageComponent {
   readonly ontologies = computed(() => this._projectOntologies() ?? []);
   readonly ontologiesLoaded = computed(() => this._projectOntologies() !== undefined);
   private readonly _projectPage = inject(ProjectPageService);
-  readonly canEdit = toSignal(this._projectPage.hasProjectAdminRights$);
 
   private readonly _graphsByIri = toSignal(this._graphs.graphs$);
   private readonly _params = toSignal(this._route.queryParamMap);
@@ -1645,16 +1637,6 @@ export class OntologyMapPageComponent {
     this._router.navigate(
       this._projectPath(RouteConstants.data, OntologyService.getOntologyNameFromIri(ontologyIri), className)
     );
-  }
-
-  /** Edits the class in the data model editor's dialog; see `injectDataModelEditing`. */
-  edit(iri: string): void {
-    this._editing.editClass(iri);
-  }
-
-  /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
-  editProperty(iri: string): void {
-    this._editing.editProperty(iri);
   }
 
   /** The path to a page of the project from the app's root: this page sits at different depths. */
