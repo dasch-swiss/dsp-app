@@ -56,36 +56,39 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
     @let r = 'pages.dataModels2';
     @let property = this.property();
     <mat-icon class="type" [attr.aria-label]="typeName()">{{ typeIcon() }}</mat-icon>
-    <span class="name" [matTooltip]="tip()" matTooltipShowDelay="600">
-      @for (part of label(); track $index) {
-        <span [class.hit]="part.match">{{ part.text }}</span>
-      }
-      <!-- A required property, as forms mark one: a red star after its label. -->
-      @if (cardinalityLayout() === 'symbols' && property.required) {
-        <span
-          class="star"
-          [attr.aria-label]="'pages.ontology.cardinality.required' | translate"
-          [matTooltip]="'pages.ontology.cardinality.required' | translate"
-          >*</span
-        >
-      }
-      @if (property.linkTarget; as target) {
-        <!-- Opens the target's card when it shows; plain text when the search hides it, or it is in another model. -->
-        <button
-          type="button"
-          class="target"
-          data-cy="data-model-class-card-target"
-          [class.off]="!reachable()"
-          [disabled]="!reachable()"
-          (click)="goTo.emit(target)">
-          → {{ targetLabel() }}
-        </button>
-      }
-    </span>
-    <span class="local">
-      @for (part of local(); track $index) {
-        <span [class.hit]="part.match">{{ part.text }}</span>
-      }
+    <!-- The label, its link target after it, and the name under it. -->
+    <span class="texts">
+      <span class="name" [matTooltip]="tip()" matTooltipShowDelay="600">
+        @for (part of label(); track $index) {
+          <span [class.hit]="part.match">{{ part.text }}</span>
+        }
+        <!-- A required property, as forms mark one: a red star after its label. -->
+        @if (cardinalityLayout() === 'symbols' && property.required) {
+          <span
+            class="star"
+            [attr.aria-label]="'pages.ontology.cardinality.required' | translate"
+            [matTooltip]="'pages.ontology.cardinality.required' | translate"
+            >*</span
+          >
+        }
+        @if (property.linkTarget; as target) {
+          <!-- Opens the target's card when it shows; plain text when the search hides it, or it is in another model. -->
+          <button
+            type="button"
+            class="target"
+            data-cy="data-model-class-card-target"
+            [class.off]="!reachable()"
+            [disabled]="!reachable()"
+            (click)="goTo.emit(target)">
+            → {{ targetLabel() }}
+          </button>
+        }
+      </span>
+      <span class="local">
+        @for (part of local(); track $index) {
+          <span [class.hit]="part.match">{{ part.text }}</span>
+        }
+      </span>
     </span>
     @if (cardinalityLayout() === 'chip' || cardinalityLayout() === 'differs') {
       <app-cardinality-chip
@@ -230,7 +233,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       :host {
         position: relative;
         display: grid;
-        grid-template-columns: 16px minmax(0, 1fr) auto 128px;
+        grid-template-columns: 16px minmax(0, 1fr) 128px;
         --actions-right: 142px;
         gap: 6px;
         align-items: center;
@@ -246,19 +249,19 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
 
       // As before: the chip in a narrow last column.
       :host(.chip-layout) {
-        grid-template-columns: 16px minmax(0, 1fr) auto 32px;
+        grid-template-columns: 16px minmax(0, 1fr) 32px;
         --actions-right: 46px;
       }
 
-      // A card whose properties are all 0-1: no chip column, the local name to the edge, the tools over its end.
+      // A card whose properties are all 0-1: no chip column, the texts to the edge, the tools over its end.
       :host(.no-chip-column) {
-        grid-template-columns: 16px minmax(0, 1fr) auto;
+        grid-template-columns: 16px minmax(0, 1fr);
         --actions-right: 8px;
       }
 
       // A red star and a stack icon: the stack's narrow column, the tools left of it.
       :host(.stack-layout) {
-        grid-template-columns: 16px minmax(0, 1fr) auto 18px;
+        grid-template-columns: 16px minmax(0, 1fr) 18px;
         --actions-right: 30px;
       }
 
@@ -282,7 +285,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
 
       // In words, in a column wide enough for "Optional · many".
       :host(.words-layout) {
-        grid-template-columns: 16px minmax(0, 1fr) auto 96px;
+        grid-template-columns: 16px minmax(0, 1fr) 96px;
         --actions-right: 110px;
       }
 
@@ -315,6 +318,13 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         width: 15px;
         height: 15px;
         color: $cool_gray_500;
+      }
+
+      .texts {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        padding: 2px 0;
       }
 
       .name {
@@ -353,12 +363,13 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
       }
 
       .local {
-        max-width: 120px;
+        min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         font-family: 'Roboto Mono', monospace;
-        font-size: 10.5px;
+        font-size: 11px;
+        line-height: 1.3;
         color: $primary;
       }
 

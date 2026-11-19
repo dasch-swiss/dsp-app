@@ -283,10 +283,8 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [texts]="row.descriptions"
                 [shown]="row.description"
                 [owner]="row.label"
-                [canEdit]="canEditTexts()"
                 [expanded]="expanded"
-                [highlight]="descriptionTerms()"
-                (edit)="editText(row)" />
+                [highlight]="descriptionTerms()" />
             </td>
           </ng-container>
           <ng-container matColumnDef="type">
@@ -680,9 +678,6 @@ export class DataModelPropertiesComponent {
   /** Whether the table is scrolled sideways, which shadows the frozen property column. */
   readonly scrolled = signal(false);
 
-  /** The property names and descriptions edited from their cells. */
-  readonly canEditTexts = computed(() => this.state.canEdit() && this.editing.canEditInPlace);
-
   readonly query = signal('');
   /** The column filters; an empty set or text filters nothing. */
   readonly namedAs = signal('');
@@ -829,11 +824,6 @@ export class DataModelPropertiesComponent {
 
   typeName(type: string): string {
     return typeNameOf(type);
-  }
-
-  /** Opens the editor of a property's name or description, on the language asked for. */
-  editText(row: PropertyRow): void {
-    this.editing.editProperty(row.id);
   }
 
   /**
