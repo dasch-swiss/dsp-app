@@ -1,7 +1,7 @@
 name: bazel-setup
 description: >
-  Install Nix, restore the Bazel repository and disk caches, and configure the NativeLink RBE
-  backend. Emits the flags every `nix develop --command just <recipe>` step passes in BAZEL_FLAGS.
+  Install Nix, restore the pnpm store and the Bazel repository and disk caches, and configure the
+  NativeLink RBE backend. Emits the flags every `nix develop --command just <recipe>` step passes in BAZEL_FLAGS.
   Runs after actions/checkout, since it reads the lock files and the local bazel-rbe action.
 
 inputs:
@@ -38,6 +38,13 @@ runs:
       run: echo "CYPRESS_INSTALL_BINARY=0" >> "$GITHUB_ENV"
     - name: Install Nix
       uses: DeterminateSystems/determinate-nix-action@v3
+    # pnpm's default store on Linux; `just install` otherwise downloads every package.
+    - name: Cache the pnpm store
+      uses: actions/cache@v6
+      with:
+        path: ~/.local/share/pnpm/store
+        key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: pnpm-store-${{ runner.os }}-
     - name: Restore Bazel repository cache
       uses: actions/cache@v6
       with:
