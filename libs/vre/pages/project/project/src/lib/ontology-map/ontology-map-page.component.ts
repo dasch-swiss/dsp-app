@@ -13,8 +13,8 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -26,6 +26,7 @@ import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
+import { ExportPreviewDialogComponent, exportPreviewDialogConfig } from './export-preview-dialog.component';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
 import { graphSearchResults, GraphSearchResultsComponent, SearchResult } from './graph-search-results.component';
 import { classFamilies, familyColors } from './islands';
@@ -44,7 +45,6 @@ import {
   withoutClasses,
   withoutProperties,
 } from './ontology-graph-elements';
-import { ExportPreviewDialogComponent, exportPreviewDialogConfig } from './export-preview-dialog.component';
 import { OntologyGraphComponent } from './ontology-graph.component';
 import { PropertyPanelComponent } from './property-panel.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
