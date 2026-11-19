@@ -44,13 +44,13 @@ describe('ExportPreviewDialogComponent', () => {
 
   it('draws it again when a setting changes', () => {
     component.area.set('whole');
-    component.scale.set(4);
+    component.level.set(component.levels[2]);
     component.legend.set(false);
     component.title.set(false);
     fixture.detectChanges();
 
     expect(render).toHaveBeenLastCalledWith('whole', {
-      scale: 4,
+      scale: 8,
       legend: false,
       title: undefined,
       subtitle: undefined,
@@ -59,7 +59,7 @@ describe('ExportPreviewDialogComponent', () => {
 
   it('says it failed when nothing can be drawn', () => {
     render.mockReturnValue(undefined);
-    component.scale.set(1);
+    component.level.set(component.levels[0]);
     fixture.detectChanges();
 
     expect(component.failed()).toBe(true);

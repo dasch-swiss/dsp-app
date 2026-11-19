@@ -731,7 +731,6 @@
         "linksAllButMany": "Every link but {{count}} kinds",
         "showAll": "Back to the full diagram"
       },
-      "showProperties": "Show properties",
       "dataModels": "Data models",
       "noDataModels": "This project does not have any data model yet.",
       "classPanel": {
@@ -787,24 +786,10 @@
       "allProperties": "All properties",
       "propertiesChosen": "{{count}} properties",
       "levelLabels": "Horizontal link labels",
-      "islandsToggle": "Highlight and move islands",
-      "colourTab": "Colour as a tab",
-      "fullWidth": "Use the whole width",
-      "treeLines": "Lines to subclasses",
       "viewMenu": {
-        "classProperties": "Classes",
-        "showPropertiesHint": "List each class's properties in its box, as in the Data models tab",
         "textSize": "Text size",
         "links": "Links",
-        "islands": "Islands",
-        "colours": "Colours",
-        "subclasses": "Subclasses",
-        "panel": "Side panel",
-        "fullWidthHint": "The panel covers the graph, which slides to keep its class in view",
-        "treeLinesHint": "A line from each parent class down to its subclasses",
-        "levelLabelsHint": "Easier to read than along the line",
-        "islandsToggleHint": "Frame an island on hover, drag it with its classes",
-        "colourTabHint": "White boxes, the colour as a tab on the left"
+        "levelLabelsHint": "Easier to read than along the line"
       },
       "propertyPanel": {
         "close": "Close the property details",
@@ -857,7 +842,10 @@
         "close": "Close",
         "modelName": "Data model name",
         "include": "Include",
-        "filteredOn": "Filtered on: {{filter}}"
+        "filteredOn": "Filtered on: {{filter}}",
+        "low": "Low",
+        "standard": "Standard",
+        "high": "High"
       },
       "labelsMenu": {
         "heading": "Write on classes and links",

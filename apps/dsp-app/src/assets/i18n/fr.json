@@ -731,7 +731,6 @@
         "linksAllButMany": "Tous les liens sauf {{count}} sortes",
         "showAll": "Retour au diagramme complet"
       },
-      "showProperties": "Afficher les propriétés",
       "dataModels": "Modèles de données",
       "noDataModels": "Ce projet n'a pas encore de modèle de données.",
       "classPanel": {
@@ -787,24 +786,10 @@
       "allProperties": "Toutes les propriétés",
       "propertiesChosen": "{{count}} propriétés",
       "levelLabels": "Libellés des liens à l’horizontale",
-      "islandsToggle": "Mettre en évidence et déplacer les îlots",
-      "colourTab": "Couleur en onglet",
-      "fullWidth": "Utiliser toute la largeur",
-      "treeLines": "Lignes vers les sous-classes",
       "viewMenu": {
-        "classProperties": "Classes",
-        "showPropertiesHint": "Lister les propriétés de chaque classe dans sa boîte, comme dans l'onglet Modèles de données",
         "textSize": "Taille du texte",
         "links": "Liens",
-        "islands": "Îlots",
-        "colours": "Couleurs",
-        "subclasses": "Sous-classes",
-        "panel": "Panneau latéral",
-        "fullWidthHint": "Le panneau couvre le graphe, qui glisse pour garder sa classe visible",
-        "treeLinesHint": "Une ligne de chaque classe parente vers ses sous-classes",
-        "levelLabelsHint": "Plus lisibles que le long de la ligne",
-        "islandsToggleHint": "Encadrer un îlot au survol, le déplacer avec ses classes",
-        "colourTabHint": "Cases blanches, la couleur en onglet à gauche"
+        "levelLabelsHint": "Plus lisibles que le long de la ligne"
       },
       "propertyPanel": {
         "close": "Fermer les détails de la propriété",
@@ -857,7 +842,10 @@
         "close": "Fermer",
         "modelName": "Nom du modèle de données",
         "include": "Inclure",
-        "filteredOn": "Filtré sur : {{filter}}"
+        "filteredOn": "Filtré sur : {{filter}}",
+        "low": "Basse",
+        "standard": "Standard",
+        "high": "Haute"
       },
       "labelsMenu": {
         "heading": "Écrire sur les classes et les liens",

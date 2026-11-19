@@ -80,7 +80,7 @@ const EXPORT_BACKGROUND = '#F9FAFB';
 /** The whole model of a big data model is drawn no bigger than this, in px each way. */
 const EXPORT_MAX_SIZE = 8000;
 /** The longest side a browser's canvas reliably draws, in pixels. */
-const EXPORT_CANVAS_LIMIT = 16000;
+export const EXPORT_CANVAS_LIMIT = 16000;
 /** Size of the legend's text at scale 1, as on screen and in an exported image; see `withLegend`. */
 const LEGEND_TEXT_SIZE = 12.5;
 

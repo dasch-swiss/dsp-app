@@ -95,12 +95,7 @@ const PANEL_WIDTH = 440;
 /** How long the arrow keys rest on a search result before its panel shows. */
 const PREVIEW_DELAY_MS = 150;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
-const ISLANDS_KEY = 'dsp-ontology-map-islands';
-const COLOUR_TAB_KEY = 'dsp-ontology-map-colour-tab';
-const TREE_LINES_KEY = 'dsp-ontology-map-tree-lines';
-const SHOW_PROPERTIES_KEY = 'dsp-ontology-map-show-properties';
-const FULL_WIDTH_KEY = 'dsp-ontology-map-full-width';
-/** The widest screen, in CSS px, on which the graph uses the whole width until the user chooses; see `fullWidth`. */
+/** The widest screen, in CSS px, on which the graph uses the whole width; see `fullWidth`. */
 const FULL_WIDTH_UP_TO = 2560;
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
@@ -411,16 +406,6 @@ const WHOLE_MODEL_TIMEOUT_MS = 15000;
                     @for (
                       option of [
                         { section: 'links', key: 'levelLabels', cy: 'level-labels', on: levelLabels() },
-                        { section: 'islands', key: 'islandsToggle', cy: 'islands', on: islands() },
-                        { section: 'subclasses', key: 'treeLines', cy: 'tree-lines', on: treeLines() },
-                        {
-                          section: 'classProperties',
-                          key: 'showProperties',
-                          cy: 'show-properties',
-                          on: showProperties(),
-                        },
-                        { section: 'colours', key: 'colourTab', cy: 'colour-tab', on: colourTab() },
-                        { section: 'panel', key: 'fullWidth', cy: 'full-width', on: fullWidth() },
                       ];
                       track option.key
                     ) {
@@ -1042,21 +1027,21 @@ export class OntologyMapPageComponent {
   readonly size = signal<GraphSize>(SIZES.find(size => size === readStored(SIZE_KEY)) ?? 'normal');
   /** Whether the graph draws link labels level, rather than along their line; remembered in this browser. */
   readonly levelLabels = signal(readStored(LEVEL_LABELS_KEY) === 'true');
-  /** Whether an island shows its frame on hover and can be dragged; off unless turned on. */
-  readonly islands = signal(readStored(ISLANDS_KEY) === 'true');
-  /** Whether a family's colour shows as a tab at the left of white boxes, rather than as their fill; on unless turned off. */
-  readonly colourTab = signal(readStored(COLOUR_TAB_KEY) !== 'false');
-  /** Whether a line joins each parent to its subclasses; on unless turned off. */
-  readonly treeLines = signal(readStored(TREE_LINES_KEY) !== 'false');
-  /** Whether each class box lists its properties, as the Data models tab shows a class; off unless turned on. */
-  readonly showProperties = signal(readStored(SHOW_PROPERTIES_KEY) === 'true');
+  /** Islands show no frame on hover and cannot be dragged. */
+  readonly islands = signal(false).asReadonly();
+  /** A family's colour shows as a tab at the left of white boxes, rather than as their fill. */
+  readonly colourTab = signal(true).asReadonly();
+  /** A line joins each parent to its subclasses. */
+  readonly treeLines = signal(true).asReadonly();
+  /** Class boxes do not list their properties. */
+  readonly showProperties = signal(false).asReadonly();
 
   /**
    * Whether the graph spreads over the whole width, an open panel covering its right, rather than keeping clear of
-   * where the panel opens. Until the user chooses, it does on screens up to `FULL_WIDTH_UP_TO` wide, where the room
-   * kept for the panel would make the graph small; on wider ones there is room to spare for it.
+   * where the panel opens. It does on screens up to `FULL_WIDTH_UP_TO` wide, where the room kept for the panel would
+   * make the graph small; on wider ones there is room to spare for it.
    */
-  readonly fullWidth = signal((readStored(FULL_WIDTH_KEY) ?? String(window.innerWidth <= FULL_WIDTH_UP_TO)) === 'true');
+  readonly fullWidth = signal(window.innerWidth <= FULL_WIDTH_UP_TO).asReadonly();
   readonly labelOptions = LABEL_OPTIONS;
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
@@ -1570,31 +1555,9 @@ export class OntologyMapPageComponent {
     store(LEVEL_LABELS_KEY, String(level));
   }
 
-  setIslands(islands: boolean): void {
-    this.islands.set(islands);
-    store(ISLANDS_KEY, String(islands));
-  }
-
   /** A switch of the View options menu. */
   setViewOption(key: string, on: boolean): void {
     if (key === 'levelLabels') this.setLevelLabels(on);
-    else if (key === 'islandsToggle') this.setIslands(on);
-    else if (key === 'colourTab') this.setColourTab(on);
-    else if (key === 'showProperties') {
-      this.showProperties.set(on);
-      store(SHOW_PROPERTIES_KEY, String(on));
-    } else if (key === 'treeLines') {
-      this.treeLines.set(on);
-      store(TREE_LINES_KEY, String(on));
-    } else if (key === 'fullWidth') {
-      this.fullWidth.set(on);
-      store(FULL_WIDTH_KEY, String(on));
-    }
-  }
-
-  setColourTab(colourTab: boolean): void {
-    this.colourTab.set(colourTab);
-    store(COLOUR_TAB_KEY, String(colourTab));
   }
 
   /** Opens the export preview: the image as it will be, its settings, then copied or downloaded. */

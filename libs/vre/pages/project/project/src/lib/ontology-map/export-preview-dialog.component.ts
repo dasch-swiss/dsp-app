@@ -5,9 +5,10 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/materia
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { GraphExportArea, GraphExportOptions } from './ontology-graph.component';
+import { EXPORT_CANVAS_LIMIT, GraphExportArea, GraphExportOptions } from './ontology-graph.component';
 
 export interface ExportPreviewData {
   /** Draws the graph as a PNG: the part in view or every class, at a resolution, with its legend or not. */
@@ -29,8 +30,13 @@ export const exportPreviewDialogConfig = (data: ExportPreviewData): MatDialogCon
   panelClass: 'export-preview-dialog',
 });
 
-const SCALES = [1, 2, 4] as const;
-type Scale = (typeof SCALES)[number];
+/** The resolutions offered, by name: each draws the graph at a scale. */
+const LEVELS = [
+  { key: 'low', scale: 1 },
+  { key: 'standard', scale: 2 },
+  { key: 'high', scale: 8 },
+] as const;
+type Level = (typeof LEVELS)[number];
 
 /** The image as made: its pixels each way, and its size in bytes. */
 interface Rendered {
@@ -38,6 +44,8 @@ interface Rendered {
   width: number;
   height: number;
   bytes: number;
+  /** The scale it was drawn at, to tell each other resolution's width from it. */
+  scale: number;
 }
 
 /**
@@ -55,6 +63,7 @@ interface Rendered {
     MatIconButton,
     MatProgressSpinner,
     MatSlideToggle,
+    MatTooltip,
     TranslatePipe,
   ],
   template: `
@@ -120,10 +129,12 @@ interface Rendered {
               aria-labelledby="export-scale"
               data-cy="export-preview-scale"
               hideSingleSelectionIndicator
-              [value]="scale()"
-              (change)="scale.set($event.value)">
-              @for (option of scales; track option) {
-                <mat-button-toggle [value]="option">{{ option }}×</mat-button-toggle>
+              [value]="level()"
+              (change)="level.set($event.value)">
+              @for (option of levels; track option.key) {
+                <mat-button-toggle [value]="option" [matTooltip]="levelHint(option)">{{
+                  e + '.' + option.key | translate
+                }}</mat-button-toggle>
               }
             </mat-button-toggle-group>
           </div>
@@ -355,9 +366,9 @@ export class ExportPreviewDialogComponent {
   private readonly _notification = inject(NotificationService);
   private readonly _translate = inject(TranslateService);
 
-  readonly scales = SCALES;
+  readonly levels = LEVELS;
   readonly area = signal<GraphExportArea>('view');
-  readonly scale = signal<Scale>(2);
+  readonly level = signal<Level>(LEVELS[1]);
   readonly legend = signal(true);
   /** Whether the data model's name is written over the image. */
   readonly title = signal(true);
@@ -372,7 +383,7 @@ export class ExportPreviewDialogComponent {
     let made = 0;
     effect(() => {
       const area = this.area();
-      const scale = this.scale();
+      const scale = this.level().scale;
       const titled = this.title();
       const options = {
         scale,
@@ -396,7 +407,13 @@ export class ExportPreviewDialogComponent {
         .then(async blob => {
           const bitmap = await createImageBitmap(blob);
           if (turn !== made) return;
-          this._show({ url: URL.createObjectURL(blob), width: bitmap.width, height: bitmap.height, bytes: blob.size });
+          this._show({
+            url: URL.createObjectURL(blob),
+            width: bitmap.width,
+            height: bitmap.height,
+            bytes: blob.size,
+            scale,
+          });
           this.busy.set(false);
         })
         .catch(() => {
@@ -406,6 +423,15 @@ export class ExportPreviewDialogComponent {
         });
     });
     inject(DestroyRef).onDestroy(() => this._show(undefined));
+  }
+
+  /** A resolution's scale, and its width once the shown image is drawn, such as `2× · 3200 px`. */
+  levelHint(level: Level): string {
+    const image = this.rendered();
+    if (!image) return `${level.scale}×`;
+    // No side is drawn wider than the canvas allows, whatever the scale.
+    const ratio = Math.min(level.scale / image.scale, EXPORT_CANVAS_LIMIT / Math.max(image.width, image.height));
+    return `${level.scale}× · ${Math.round(image.width * ratio)} px`;
   }
 
   megabytes(bytes: number): string {
@@ -428,7 +454,7 @@ export class ExportPreviewDialogComponent {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${this._data.fileName}${this.area() === 'whole' ? '_whole' : ''}_${this.scale()}x.png`;
+        link.download = `${this._data.fileName}${this.area() === 'whole' ? '_whole' : ''}_${this.level().key}.png`;
         link.click();
         URL.revokeObjectURL(url);
       },

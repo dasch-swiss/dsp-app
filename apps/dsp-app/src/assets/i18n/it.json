@@ -731,7 +731,6 @@
         "linksAllButMany": "Tutti i collegamenti tranne {{count}} tipi",
         "showAll": "Torna al diagramma completo"
       },
-      "showProperties": "Mostra le proprietà",
       "dataModels": "Modelli di dati",
       "noDataModels": "Questo progetto non ha ancora un modello di dati.",
       "classPanel": {
@@ -787,24 +786,10 @@
       "allProperties": "Tutte le proprietà",
       "propertiesChosen": "{{count}} proprietà",
       "levelLabels": "Etichette dei collegamenti orizzontali",
-      "islandsToggle": "Evidenzia e sposta le isole",
-      "colourTab": "Colore come linguetta",
-      "fullWidth": "Usa tutta la larghezza",
-      "treeLines": "Linee verso le sottoclassi",
       "viewMenu": {
-        "classProperties": "Classi",
-        "showPropertiesHint": "Elencare le proprietà di ogni classe nel suo riquadro, come nella scheda Modelli di dati",
         "textSize": "Dimensione del testo",
         "links": "Collegamenti",
-        "islands": "Isole",
-        "colours": "Colori",
-        "subclasses": "Sottoclassi",
-        "panel": "Pannello laterale",
-        "fullWidthHint": "Il pannello copre il grafo, che scorre per mantenere visibile la sua classe",
-        "treeLinesHint": "Una linea da ogni classe madre verso le sue sottoclassi",
-        "levelLabelsHint": "Più leggibili che lungo la linea",
-        "islandsToggleHint": "Evidenzia un'isola al passaggio, spostala con le sue classi",
-        "colourTabHint": "Riquadri bianchi, il colore come linguetta a sinistra"
+        "levelLabelsHint": "Più leggibili che lungo la linea"
       },
       "propertyPanel": {
         "close": "Chiudi i dettagli della proprietà",
@@ -857,7 +842,10 @@
         "close": "Chiudi",
         "modelName": "Nome del modello di dati",
         "include": "Includi",
-        "filteredOn": "Filtrato su: {{filter}}"
+        "filteredOn": "Filtrato su: {{filter}}",
+        "low": "Bassa",
+        "standard": "Standard",
+        "high": "Alta"
       },
       "labelsMenu": {
         "heading": "Scrivere su classi e collegamenti",
