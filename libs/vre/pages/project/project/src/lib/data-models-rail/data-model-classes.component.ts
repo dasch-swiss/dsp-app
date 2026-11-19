@@ -29,6 +29,7 @@ import { DataModelClassCardsComponent, PropertyOrder, InheritedLayout } from './
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
+import { rememberedSignal } from './remembered-signal';
 
 /**
  * Data models 2 › Classes: the data model's classes as cards, one per class with its properties, as the Data models tab
@@ -94,6 +95,39 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
           </mat-menu>
         }
         <div class="tools">
+          <!-- View options: how the cards show "Multiple values" and "Required". -->
+          <button
+            mat-button
+            type="button"
+            class="view-options"
+            data-cy="data-model-classes-view-options"
+            [matMenuTriggerFor]="viewMenu">
+            <mat-icon>tune</mat-icon>
+            {{ 'pages.dataBrowser.viewOptions.title' | translate }}
+          </button>
+          <mat-menu #viewMenu="matMenu" xPosition="before">
+            <span class="menu-heading">{{ r + '.cardinalityLayout' | translate }}</span>
+            @for (option of cardinalityLayouts; track option.value) {
+              @let chosen = cardinalityLayout() === option.value;
+              <!-- Choosing keeps the menu open, to compare the two. -->
+              <button
+                mat-menu-item
+                type="button"
+                class="view-entry"
+                role="menuitemradio"
+                [attr.aria-checked]="chosen"
+                [attr.data-cy]="'data-model-classes-cardinality-' + option.value"
+                (click)="$event.stopPropagation(); cardinalityLayout.set(option.value)">
+                <mat-icon [class.chosen]="chosen">{{
+                  chosen ? 'radio_button_checked' : 'radio_button_unchecked'
+                }}</mat-icon>
+                <span class="view-item">
+                  <span>{{ r + '.' + option.key | translate }}</span>
+                  <span class="view-hint">{{ r + '.' + option.key + 'Tip' | translate }}</span>
+                </span>
+              </button>
+            }
+          </mat-menu>
           @if (rows().length) {
             <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAllCards()">
               <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
@@ -188,6 +222,51 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
         white-space: nowrap;
       }
 
+      .view-options {
+        height: 36px;
+        font-size: 13px;
+      }
+
+      // View options, as the diagram's: a heading, then each choice with its hint under it.
+      .menu-heading {
+        display: block;
+        padding: 8px 16px 4px;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: $cool_gray_500;
+      }
+
+      .view-entry {
+        --mat-menu-item-label-text-size: 13px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          margin-right: 12px;
+
+          &.chosen {
+            color: $primary;
+          }
+        }
+      }
+
+      .view-item {
+        display: flex;
+        flex-direction: column;
+        max-width: 280px;
+        white-space: normal;
+        line-height: 1.3;
+      }
+
+      .view-hint {
+        font-size: 12px;
+        color: $cool_gray_500;
+      }
+
       // On a narrow screen the search gives room first, down to a usable width.
       .head .search {
         flex: 0 1 280px;
@@ -238,14 +317,23 @@ export class DataModelClassesComponent {
 
   readonly query = signal('');
 
-  /** The cards show "Multiple values" and "Required" as the two checkboxes with their words on each row. */
-  readonly cardinalityLayout = signal<CardinalityLayout>('rows').asReadonly();
+  /** How the cards show "Multiple values" and "Required", as the viewer last chose. */
+  readonly cardinalityLayout = rememberedSignal<CardinalityLayout>(
+    'dsp-data-models-cardinality-layout',
+    'rows',
+    stored => (['rows', 'symbols'].includes(stored) ? (stored as CardinalityLayout) : undefined)
+  );
   /** The cards show no family colour on their left edge. */
   readonly showColours = signal(false).asReadonly();
   /** Every class's card says its kind, "Object without representation" too. */
   readonly kindForAll = signal(true).asReadonly();
   /** A subclass's card lists its superclass's properties after the class's own. */
   readonly inheritedLayout = signal<InheritedLayout>('listed').asReadonly();
+  /** The ways the cards can show it, as View options lists them. */
+  readonly cardinalityLayouts: { value: CardinalityLayout; key: string }[] = [
+    { value: 'rows', key: 'cardinalityRows' },
+    { value: 'symbols', key: 'cardinalitySymbols' },
+  ];
   /** The cards' least width: room for the checkboxes' words on each row, less for columns, least for the chip. */
   readonly cardWidth = computed(
     () =>
