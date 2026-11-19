@@ -62,7 +62,7 @@ export interface PropertyOrder {
 }
 
 /**
- * Data models 2 › Classes as cards, the way the Data models tab shows a data model: one box per class, with the kind of
+ * Data models 3 › Resource classes as cards, the way the Data models tab shows a data model: one box per class, with the kind of
  * file its resources carry, then its properties in their form order, one line each. A subclass
  * lists its own properties; those from its superclass fold into one row. Past {@link CARD_PROPERTIES}, "Show more" opens
  * the rest. A link's target opens its card. The text searched for is marked, and the rows it is in are opened. Editors

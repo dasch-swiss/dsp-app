@@ -495,7 +495,7 @@ export class DataModelsTreePageComponent {
   private readonly _checked = new Set<string>();
 
   constructor() {
-    // The sections' links and "Open in…" lead to this tab, not to Data models 2.
+    // The sections' links and "Open in…" lead to this tab.
     this.state.tab = RouteConstants.dataModels3;
     // The data model shown folds open when it changes; folding it again is the viewer's choice.
     effect(() => {

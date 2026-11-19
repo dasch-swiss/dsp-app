@@ -887,9 +887,6 @@
       "createDataModel": "Create data model",
       "documentation": "Documentation",
       "showSections": "Show or hide the sections of {{model}}",
-      "layoutSide": "Show the sections on the left",
-      "layoutTop": "Show the sections on top",
-      "backToOverview": "Back to overview",
       "editDataModel": "Edit data model",
       "deleteDataModel": "Delete data model",
       "cannotDeleteDataModel": "Resources or other data models use it",
@@ -1490,7 +1487,6 @@
         "data": "Data",
         "dataModels": "Data models",
         "settings": "Settings",
-        "dataModels2": "Data models 2",
         "dataModels3": "Data models 3"
       }
     },

@@ -26,15 +26,17 @@ import { catchError, filter, forkJoin, map, Observable, of, switchMap } from 'rx
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
-import { VOCABULARY_PARAM } from './data-models-overview.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabularyUses } from './vocabulary-tree';
 
+/** The query parameter naming the controlled vocabulary to open on arriving at Controlled vocabularies. */
+export const VOCABULARY_PARAM = 'vocabulary';
+
 /**
- * Data models 2 › Controlled vocabularies: the project's vocabularies in one tree table, each a line to open on its
+ * Controlled vocabularies: the project's vocabularies in one tree table, each a line to open on its
  * values, and the values on theirs. A vocabulary names where the data model uses it. The search finds vocabularies and
  * values, opening what leads to them. To those who may edit, each line's menu adds, edits, moves and deletes values, in
  * the old list editor's dialogs.

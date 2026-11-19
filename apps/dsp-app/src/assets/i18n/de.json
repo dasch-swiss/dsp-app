@@ -887,9 +887,6 @@
       "createDataModel": "Datenmodell erstellen",
       "documentation": "Dokumentation",
       "showSections": "Bereiche von {{model}} ein- oder ausblenden",
-      "layoutSide": "Bereiche links anzeigen",
-      "layoutTop": "Bereiche oben anzeigen",
-      "backToOverview": "Zurück zur Übersicht",
       "editDataModel": "Datenmodell bearbeiten",
       "deleteDataModel": "Datenmodell löschen",
       "cannotDeleteDataModel": "Ressourcen oder andere Datenmodelle verwenden es",
@@ -1490,7 +1487,6 @@
         "data": "Daten",
         "dataModels": "Datenmodelle",
         "settings": "Einstellungen",
-        "dataModels2": "Datenmodelle 2",
         "dataModels3": "Datenmodelle 3"
       }
     },

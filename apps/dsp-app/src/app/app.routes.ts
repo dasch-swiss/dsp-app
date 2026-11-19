@@ -19,11 +19,9 @@ import {
   ImageSettingsComponent,
   LegalSettingsComponent,
   OntologyMapPageComponent,
-  DataModelsRailPageComponent,
   DataModelClassesComponent,
   DataModelPropertiesComponent,
   DataModelListsComponent,
-  DataModelsOverviewComponent,
   DataModelsTreePageComponent,
   ProjectAdminGuard,
   ProjectPageComponent,
@@ -75,19 +73,10 @@ export const routes: Routes = [
         path: RouteConstants.dataModels,
         component: DataModelsPageComponent,
       },
-      {
-        path: RouteConstants.dataModels2,
-        component: DataModelsRailPageComponent,
-        children: [
-          // Opens on the Overview: the project's data models and vocabularies, as the Data models tab lists them.
-          { path: '', pathMatch: 'full', redirectTo: RouteConstants.overview },
-          { path: RouteConstants.overview, component: DataModelsOverviewComponent },
-          { path: RouteConstants.graph, component: OntologyMapPageComponent },
-          { path: RouteConstants.classes, component: DataModelClassesComponent },
-          { path: RouteConstants.properties, component: DataModelPropertiesComponent },
-          { path: RouteConstants.lists, component: DataModelListsComponent },
-        ],
-      },
+      // Data models 2 is gone: its links, with their query, land on the same section of Data models 3.
+      { path: `${RouteConstants.dataModels2}/${RouteConstants.overview}`, redirectTo: RouteConstants.dataModels3 },
+      { path: `${RouteConstants.dataModels2}/:section`, redirectTo: `${RouteConstants.dataModels3}/:section` },
+      { path: RouteConstants.dataModels2, redirectTo: RouteConstants.dataModels3 },
       // The same sections under a rail listing every data model, each folding open on its sections; no overview.
       {
         path: RouteConstants.dataModels3,
@@ -105,10 +94,10 @@ export const routes: Routes = [
           },
         ],
       },
-      // The Ontology map tab became Data models 2 › Graph; links to it, with their query, land there.
+      // The Ontology map tab became the Diagram of Data models 3; links to it, with their query, land there.
       {
         path: RouteConstants.ontologyMap,
-        redirectTo: `${RouteConstants.dataModels2}/${RouteConstants.graph}`,
+        redirectTo: `${RouteConstants.dataModels3}/${RouteConstants.graph}`,
       },
       {
         path: RouteConstants.ontologyEditorRelative,

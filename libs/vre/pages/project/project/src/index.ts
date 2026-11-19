@@ -16,11 +16,9 @@ export * from './lib/data-browser-page.component';
 export * from './lib/data-class-view.component';
 export * from './lib/data-overview.component';
 export * from './lib/ontology-map/ontology-map-page.component';
-export * from './lib/data-models-rail/data-models-rail-page.component';
 export * from './lib/data-models-rail/data-model-classes.component';
 export * from './lib/data-models-rail/data-model-properties.component';
 export * from './lib/data-models-rail/data-model-lists.component';
-export * from './lib/data-models-rail/data-models-overview.component';
 export * from './lib/data-models-rail/data-models-tree-page.component';
 
 // Services used by other libraries

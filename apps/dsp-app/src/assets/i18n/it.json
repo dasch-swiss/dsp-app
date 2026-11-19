@@ -887,9 +887,6 @@
       "createDataModel": "Crea modello di dati",
       "documentation": "Documentazione",
       "showSections": "Mostra o nascondi le sezioni di {{model}}",
-      "layoutSide": "Mostra le sezioni a sinistra",
-      "layoutTop": "Mostra le sezioni in alto",
-      "backToOverview": "Torna alla panoramica",
       "editDataModel": "Modifica modello di dati",
       "deleteDataModel": "Elimina modello di dati",
       "cannotDeleteDataModel": "Risorse o altri modelli di dati lo usano",
@@ -1490,7 +1487,6 @@
         "data": "Dati",
         "dataModels": "Modelli di dati",
         "settings": "Impostazioni",
-        "dataModels2": "Modelli di dati 2",
         "dataModels3": "Modelli di dati 3"
       }
     },

@@ -70,7 +70,7 @@ const COLUMN_LABELS: Record<Column, string> = {
 };
 
 /**
- * Data models 2 › Properties: every property of the data model in a table, each row showing all it has. Each column
+ * Data models 3 › Properties: every property of the data model in a table, each row showing all it has. Each column
  * filters from its header, moves
  * by dragging it and resizes from its edge. A clicked property opens its panel; an editor edits a property's name and
  * description in each language from its cell.

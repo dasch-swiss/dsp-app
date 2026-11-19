@@ -30,7 +30,7 @@ export const resourceClassDialogConfig = (data: ResourceClassDialogData): MatDia
 });
 
 /**
- * The class panel of the Data models 2 pages, opened over another page such as the Data tab: a class clicked in it is
+ * The class panel of the Data models 3 pages, opened over another page such as the Data tab: a class clicked in it is
  * described instead, Browse opens it in the Data tab, Filter in the graph, Edit in the data model editor's dialogs.
  */
 @Component({
@@ -105,7 +105,7 @@ export class ResourceClassDialogComponent {
   /** Shows the class with the classes it is linked with, in the graph. */
   filterOn(iri: string): void {
     const [ontologyIri] = iri.split('#');
-    this._router.navigate(this._path(RouteConstants.dataModels2, RouteConstants.graph), {
+    this._router.navigate(this._path(RouteConstants.dataModels3, RouteConstants.graph), {
       queryParams: {
         [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri),
         [ONTOLOGY_MAP_PARAM.filter]: localNameOf(iri),
