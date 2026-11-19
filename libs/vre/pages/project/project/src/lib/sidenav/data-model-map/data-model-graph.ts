@@ -225,13 +225,15 @@ function ownProperties(
     [...classDef.propertiesList]
       // rdfs:label is every class's resource label, not a property the project declares.
       .filter(has => !has.propertyIndex.startsWith(Constants.KnoraApiV2) && has.propertyIndex !== Constants.Label)
-      .sort((a, b) => (a.guiOrder ?? Infinity) - (b.guiOrder ?? Infinity))
       .flatMap(has => {
         const property = properties[has.propertyIndex] as ResourcePropertyDefinition | undefined;
         if (!property || property.isLinkValueProperty || seen.has(property.id)) return [];
         seen.add(property.id);
-        return [describe(property, has.cardinality, labelOf)];
+        return [{ order: has.guiOrder ?? Infinity, described: describe(property, has.cardinality, labelOf) }];
       })
+      // As the data model editor lists them: by place in the form, those at the same place by label.
+      .sort((a, b) => a.order - b.order || a.described.label.localeCompare(b.described.label))
+      .map(({ described }) => described)
   );
 }
 

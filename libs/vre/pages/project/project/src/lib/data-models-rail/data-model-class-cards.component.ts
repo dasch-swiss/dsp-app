@@ -39,11 +39,15 @@ export const CARD_PROPERTIES = 8;
 /** How long a card opened from a link target stays outlined. */
 const FLASH_MS = 1500;
 
-/** A class as its card shows it: its own properties, and those it has from its superclass, apart. */
+/** A class as its card shows it: its own properties, and those it has from its superclass, apart and together. */
 interface Card {
   row: ClassRow;
   own: CardProperty[];
   inherited: CardProperty[];
+  /** Every property, own and inherited, in the class's form order, as the data model editor lists them. */
+  all: CardProperty[];
+  /** Which of them are the class's own: those change on this card. */
+  ownIds: ReadonlySet<string>;
   /** The label of the superclass the inherited ones come from, when it is a class of the data model. */
   parent?: string;
 }
@@ -128,20 +132,21 @@ export interface PropertyOrder {
         [cdkDropListDisabled]="!drag"
         (cdkDropListDropped)="dropped(card, properties, $event)">
         @for (property of all ? properties : properties.slice(0, CARD_PROPERTIES); track property.id) {
+          @let own = card.ownIds.has(property.id);
           <li
             appClassCardProperty
             cdkDrag
             cdkDragLockAxis="y"
             cdkDragBoundary=".props"
-            [cdkDragDisabled]="!drag"
+            [cdkDragDisabled]="!drag || !own"
             [homeIri]="card.row.id"
             [property]="property"
             [labelOf]="labelOf()"
             [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
             [query]="query()"
             [canEdit]="canEdit()"
-            [draggable]="drag"
-            [classIri]="card.row.id"
+            [draggable]="drag && own"
+            [classIri]="own ? card.row.id : undefined"
             [className]="card.row.label"
             [cardinalityLayout]="cardinalityLayout()"
             [chipColumn]="hasChipColumn(card)"
@@ -292,15 +297,20 @@ export interface PropertyOrder {
             </button>
           </header>
           @if (open) {
-            @if (card.own.length) {
+            @if (inheritedLayout() === 'listed') {
+              <!-- Own and inherited properties together, in the class's form order, as the data model editor lists
+                   them; only the class's own change here. -->
+              @if (card.all.length) {
+                <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.all, key: row.id, card }" />
+              } @else {
+                <p class="none">{{ r + '.noProperties' | translate }}</p>
+              }
+            } @else if (card.own.length) {
               <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.own, key: row.id, card }" />
             } @else if (!card.inherited.length) {
               <p class="none">{{ r + '.noProperties' | translate }}</p>
             }
-            @if (card.inherited.length && inheritedLayout() === 'listed') {
-              <!-- The superclass's properties right after the class's own, as one list. -->
-              <ng-container *ngTemplateOutlet="inheritedRows; context: { $implicit: card }" />
-            } @else if (card.inherited.length) {
+            @if (card.inherited.length && inheritedLayout() !== 'listed') {
               @let inheritedOpen = inheritedShown().has(row.id) || autoOpened().has(row.id + ' inherited');
               <div class="inherited">
                 <button
@@ -722,10 +732,14 @@ export class DataModelClassCardsComponent {
       let own = row.propertyList.filter(property => !fromParent.has(property.id));
       const order = dragged.get(row.id);
       if (order) own = [...own].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+      const ownIds = new Set(own.map(property => property.id));
+      const ownInOrder = [...own];
       return {
         row,
         own,
         inherited: row.propertyList.filter(property => fromParent.has(property.id)),
+        all: row.propertyList.map(property => (ownIds.has(property.id) ? ownInOrder.shift()! : property)),
+        ownIds,
         parent: parent?.label,
       };
     });
@@ -806,15 +820,17 @@ export class DataModelClassCardsComponent {
   }
 
   /**
-   * A property of `list`, the class's own ones or one group of them, was dropped elsewhere in it: the class's own
-   * properties take the new order, the other group's keeping their places, and it is shown at once, then saved.
+   * A property of `list`, the class's own ones, one group of them, or all its properties with the inherited ones, was
+   * dropped elsewhere in it: the class's own properties take the new order, the others keeping their places, and it
+   * is shown at once, then saved.
    */
   dropped(card: Card, list: CardProperty[], event: CdkDragDrop<unknown>): void {
     if (event.previousIndex === event.currentIndex) return;
     const moved = [...list];
     moveItemInArray(moved, event.previousIndex, event.currentIndex);
     const inList = new Set(list.map(property => property.id));
-    const next = [...moved];
+    // Inherited properties in the list keep their places: only the class's own are ordered.
+    const next = moved.filter(property => card.ownIds.has(property.id));
     const order = card.own.map(property => (inList.has(property.id) ? next.shift()!.id : property.id));
     this._dragged.update(dragged => new Map(dragged).set(card.row.id, order));
     this.reorder.emit({ classIri: card.row.id, propertyIris: order });
