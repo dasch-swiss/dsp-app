@@ -207,22 +207,7 @@ const COLUMN_LABELS: Record<Column, string> = {
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row" class="frozen" [title]="row.name">
-              <span class="labelled" [style.padding-left.px]="folding() ? row.depth * indent : 0">
-                @if (folding()) {
-                  @if (foldable().has(row.id)) {
-                    <button
-                      type="button"
-                      class="toggle"
-                      data-cy="data-model-properties-toggle"
-                      [attr.aria-expanded]="!collapsed().has(row.id)"
-                      [attr.aria-label]="(collapsed().has(row.id) ? r + '.expandRow' : r + '.collapseRow') | translate"
-                      (click)="$event.stopPropagation(); toggleFold(row.id)">
-                      <mat-icon>{{ collapsed().has(row.id) ? 'chevron_right' : 'expand_more' }}</mat-icon>
-                    </button>
-                  } @else if (foldable().size) {
-                    <span class="leaf" aria-hidden="true"></span>
-                  }
-                }
+              <span class="labelled">
                 <span class="texts">
                   <app-language-texts
                     kind="label"
@@ -559,28 +544,6 @@ const COLUMN_LABELS: Record<Column, string> = {
         min-width: 0;
       }
 
-      .toggle {
-        flex: none;
-        display: flex;
-        width: 24px;
-        height: 24px;
-        padding: 0;
-        border: 0;
-        border-radius: 4px;
-        background: none;
-        color: $cool_gray_600;
-        cursor: pointer;
-
-        &:hover {
-          background: $cool_gray_100;
-        }
-      }
-
-      .leaf {
-        flex: none;
-        width: 24px;
-      }
-
       .none {
         color: $cool_gray_400;
       }
@@ -704,55 +667,8 @@ export class DataModelPropertiesComponent {
   });
   readonly userOptions = computed(() => this._byLabel(this.state.propertyRows().flatMap(row => row.usedBy)));
 
-  /** How far a level of sub-properties is indented, in px: one chevron's width. */
-  readonly indent = 24;
-  /** The properties folded, their sub-properties hidden. */
-  readonly collapsed = signal(new Set<string>());
-  /** Each property with sub-properties, and how many it has. */
-  readonly foldable = computed(() => {
-    const counts = new Map<string, number>();
-    for (const row of this.state.propertyRows()) {
-      if (row.parent) counts.set(row.parent, (counts.get(row.parent) ?? 0) + 1);
-    }
-    return counts;
-  });
-  /**
-   * Whether the table shows the properties as a tree, sub-properties under their parent, folding: nothing searched or
-   * filtered. A search or a filter lists what it finds wherever it is.
-   */
-  readonly folding = computed(
-    () =>
-      !this.query().trim() &&
-      !this.namedAs().trim() &&
-      !this.describedAs().trim() &&
-      !this.types().size &&
-      !this.targets().size &&
-      !this.users().size
-  );
-
-  toggleFold(iri: string): void {
-    this.collapsed.update(collapsed => {
-      const next = new Set(collapsed);
-      if (!next.delete(iri)) next.add(iri);
-      return next;
-    });
-  }
-
-  /** Whether a folded property is above the row. */
-  private _folded(row: PropertyRow): boolean {
-    const collapsed = this.collapsed();
-    if (!collapsed.size) return false;
-    const parentOf = new Map(this.state.propertyRows().map(other => [other.id, other.parent]));
-    const seen = new Set<string>();
-    for (let up = row.parent; up && !seen.has(up); up = parentOf.get(up)) {
-      if (collapsed.has(up)) return true;
-      seen.add(up);
-    }
-    return false;
-  }
-
+  /** The properties, one per row, by label: a sub-property among the others, not under its parent. */
   readonly rows = computed(() => {
-    const folding = this.folding();
     const query = this.query().trim().toLowerCase();
     const namedAs = this.namedAs().trim().toLowerCase();
     const describedAs = this.describedAs().trim().toLowerCase();
@@ -773,7 +689,7 @@ export class DataModelPropertiesComponent {
       .filter(row => !types.size || types.has(row.type))
       .filter(row => !targets.size || targets.has(row.linkTarget ?? NO_TARGET))
       .filter(row => !users.size || row.usedBy.some(user => users.has(user)))
-      .filter(row => !folding || !this._folded(row));
+      .sort((a, b) => a.label.localeCompare(b.label) || a.name.localeCompare(b.name));
   });
 
   /** The property whose panel is open, named in the URL like in the graph. */
