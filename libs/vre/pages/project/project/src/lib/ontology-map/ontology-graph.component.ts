@@ -442,6 +442,15 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     selector: 'edge.label-only[shiftX]',
     style: { 'text-margin-x': 'data(shiftX)' as never, 'text-margin-y': 'data(shiftY)' as never },
   },
+  // A class's link to itself: a loop off the box's right side, wide enough for its label beside it.
+  {
+    selector: 'edge:loop',
+    style: {
+      'loop-direction': '90deg',
+      'loop-sweep': '-50deg',
+      'control-point-step-size': 76 * f,
+    },
+  },
   // A link that would pass through a class's box bends round it; see `routeEdges`.
   {
     selector: 'edge[bend]',

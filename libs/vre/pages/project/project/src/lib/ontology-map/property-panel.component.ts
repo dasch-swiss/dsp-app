@@ -20,7 +20,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
-import { localNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
+import { homeOf, propertyNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
 import { typeIconOf, typeNameOf } from './property-types';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
@@ -623,11 +623,11 @@ export class PropertyPanelComponent {
 
   /** The name in the data model, such as `linkToVideo`. */
   nameOf(iri: string): string {
-    return localNameOf(iri);
+    return propertyNameOf(iri, homeOf(this.graph()));
   }
 
   copyName(iri: string): void {
-    this._clipboard.copy(localNameOf(iri));
+    this._clipboard.copy(this.nameOf(iri));
     this._notification.openSnackBar(this._translate.instant('pages.ontologyMap.nameCopied'));
   }
 }

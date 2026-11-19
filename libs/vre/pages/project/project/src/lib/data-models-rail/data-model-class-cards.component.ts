@@ -103,6 +103,7 @@ export interface PropertyOrder {
         @for (property of card.inherited; track property.id) {
           <li
             appClassCardProperty
+            [homeIri]="card.row.id"
             [property]="property"
             [labelOf]="labelOf()"
             [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
@@ -133,6 +134,7 @@ export interface PropertyOrder {
             cdkDragLockAxis="y"
             cdkDragBoundary=".props"
             [cdkDragDisabled]="!drag"
+            [homeIri]="card.row.id"
             [property]="property"
             [labelOf]="labelOf()"
             [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"

@@ -135,6 +135,7 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                     cdkDragBoundary=".props"
                     [cdkDragDisabled]="!drag"
                     [property]="property"
+                    [homeIri]="node.id"
                     [labelOf]="labelOfIri"
                     [reachable]="!!property.linkTarget && isNavigable(property.linkTarget)"
                     [canEdit]="canEdit()"
@@ -176,6 +177,7 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                       <li
                         appClassCardProperty
                         [property]="property"
+                        [homeIri]="classIri()"
                         [labelOf]="labelOfIri"
                         [reachable]="!!property.linkTarget && isNavigable(property.linkTarget)"
                         [canEdit]="canEdit()"

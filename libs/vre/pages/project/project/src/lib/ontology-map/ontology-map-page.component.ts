@@ -34,7 +34,9 @@ import {
   GraphSize,
   linkedWith,
   dataModelNameOf,
+  homeOf,
   localNameOf,
+  propertyNameOf,
   focusGraph,
   searchGraph,
   throughProperties,
@@ -1093,7 +1095,7 @@ export class OntologyMapPageComponent {
   readonly propertyOptions = computed(() => {
     const options = new Map<string, { id: string; label: string; links: number }>();
     for (const edge of this._graphLinks()?.edges ?? []) {
-      if (edge.kind !== 'link' || edge.source === edge.target) continue;
+      if (edge.kind !== 'link') continue;
       const option = options.get(edge.property) ?? { id: edge.property, label: edge.label, links: 0 };
       option.links++;
       options.set(edge.property, option);
@@ -1111,7 +1113,7 @@ export class OntologyMapPageComponent {
     this.propertyOptions().map(option => ({
       id: option.id,
       label: option.label,
-      name: localNameOf(option.id),
+      name: propertyNameOf(option.id, homeOf(this._graphLinks() ?? { nodes: [], edges: [] })),
       count: option.links,
     }))
   );

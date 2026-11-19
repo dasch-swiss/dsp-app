@@ -15,7 +15,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HighlightPipe } from '../data-models-rail/highlight.pipe';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { localNameOf } from './ontology-graph-elements';
+import { homeOf, localNameOf, propertyNameOf } from './ontology-graph-elements';
 
 /**
  * A class the search found: how many subclasses it has, and how deep it sits under its parents when every class is
@@ -99,13 +99,15 @@ export function graphSearchResults(
     if (edge.kind === 'link') users.set(edge.property, (users.get(edge.property) ?? new Set()).add(edge.source));
   }
   const properties = new Map<string, PropertyResult>();
+  // Named as in the data model shown: another data model's property with that model's name before it.
+  const home = homeOf(graph);
   for (const edge of graph.edges) {
     if (edge.kind !== 'link' || properties.has(edge.property) || !holds(edge.label, edge.property)) continue;
     properties.set(edge.property, {
       kind: 'property',
       iri: edge.property,
       label: edge.label,
-      name: localNameOf(edge.property),
+      name: propertyNameOf(edge.property, home),
       nameMatch: !inLabel(edge.label),
       classes: users.get(edge.property)?.size ?? 0,
     });

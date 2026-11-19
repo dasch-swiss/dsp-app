@@ -7,7 +7,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { CardinalityCheckboxesComponent } from '../ontology-map/cardinality-checkboxes.component';
 import { CardinalityChipComponent } from '../ontology-map/cardinality-chip.component';
 import { DATA_MODEL_EDITOR, injectDataModelEditing } from '../ontology-map/data-model-editor';
-import { ClassRow } from '../ontology-map/ontology-graph-elements';
+import { ClassRow, propertyNameOf } from '../ontology-map/ontology-graph-elements';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { highlighted } from './highlighted';
 
@@ -445,6 +445,8 @@ export class ClassCardPropertyComponent {
   readonly draggable = input(false);
   /** The class the row is on, when it is the class's own property: its cardinality and removal can change then. */
   readonly classIri = input<string | undefined>(undefined);
+  /** The class whose card or panel the row is on, own property or inherited, to tell another data model's by. */
+  readonly homeIri = input<string | undefined>(undefined);
   /** That class's label, for the remove button. */
   readonly className = input('');
   /** Whether the checkboxes carry their words on each row, or the card names their columns once. */
@@ -467,10 +469,8 @@ export class ClassCardPropertyComponent {
   readonly currentCardinality = computed(() => cardinalityOf(this.property()));
   readonly isDefault = computed(() => this.currentCardinality() === Cardinality._0_1);
 
-  readonly localName = computed(() => {
-    const iri = this.property().id;
-    return iri.substring(iri.lastIndexOf('#') + 1);
-  });
+  /** Its name, prefixed by its data model's when that is not the card's class's, as `biblio:hasTitle`. */
+  readonly localName = computed(() => propertyNameOf(this.property().id, this.homeIri()));
   readonly label = computed(() => highlighted(this.property().label, this.query()));
   readonly local = computed(() => highlighted(this.localName(), this.query()));
   readonly targetLabel = computed(() => {
