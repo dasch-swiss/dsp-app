@@ -140,7 +140,8 @@ function withItalicNames(cy: Core, both: () => boolean): void {
         draw.call(this, text, x, y, ...more);
         this.font = font;
       };
-    const own = { fill: Object.hasOwn(context, 'fillText'), stroke: Object.hasOwn(context, 'strokeText') };
+    const hasOwn = (key: keyof Context) => Object.prototype.hasOwnProperty.call(context, key);
+    const own = { fill: hasOwn('fillText'), stroke: hasOwn('strokeText') };
     const { fillText, strokeText } = context;
     context.fillText = italic(fillText);
     context.strokeText = italic(strokeText);
