@@ -62,7 +62,18 @@ const MODEL_SECTIONS = [
     <div class="page">
       <aside class="rail" data-cy="data-models-tree">
         <div class="heading">
-          <span>{{ r + '.dataModels' | translate }}</span>
+          <!-- What a data model is, as the Data models tab says it. -->
+          <span class="title">
+            {{ r + '.dataModels' | translate }}
+            <mat-icon
+              class="info"
+              tabindex="0"
+              data-cy="data-models-tree-info"
+              [attr.aria-label]="'pages.ontology.dataModels.info' | translate"
+              [matTooltip]="'pages.ontology.dataModels.info' | translate"
+              >info_outline</mat-icon
+            >
+          </span>
           @if (editor) {
             <button
               mat-icon-button
@@ -156,7 +167,17 @@ const MODEL_SECTIONS = [
 
         <!-- The project's controlled vocabularies, which all its data models can use; each opens as in the Data models tab. -->
         <div class="heading project">
-          <span>{{ r + '.lists' | translate }}</span>
+          <span class="title">
+            {{ r + '.lists' | translate }}
+            <mat-icon
+              class="info"
+              tabindex="0"
+              data-cy="data-models-tree-vocabularies-info"
+              [attr.aria-label]="'pages.ontology.dataModels.vocabularies.info' | translate"
+              [matTooltip]="'pages.ontology.dataModels.vocabularies.info' | translate"
+              >info_outline</mat-icon
+            >
+          </span>
           @if (state.canEdit() && editing.canCreate) {
             <button
               mat-icon-button
@@ -245,6 +266,33 @@ const MODEL_SECTIONS = [
           padding-top: 12px;
           border-top: 1px solid $cool_gray_200;
         }
+
+        .title {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        // A discreet outlined "i", grey as the heading: what the heading's items are, on hover or focus.
+        .info {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+          color: $cool_gray_400;
+          cursor: help;
+          border-radius: 50%;
+          transition: color 0.15s;
+
+          &:hover,
+          &:focus-visible {
+            color: $cool_gray_700;
+          }
+
+          &:focus-visible {
+            outline: 2px solid $primary;
+            outline-offset: 1px;
+          }
+        }
       }
 
       // A data model's line: fold, name, and on hover its pen and bin.
@@ -292,9 +340,12 @@ const MODEL_SECTIONS = [
         cursor: pointer;
       }
 
+      // Sized by Material's own tokens, so the icon sits in the middle of its round hover: set apart, the button's
+      // text size stays 24 px and its line pushes the smaller icon down.
       .small.mat-mdc-icon-button {
-        width: 32px;
-        height: 32px;
+        --mat-icon-button-state-layer-size: 32px;
+        --mat-icon-button-icon-size: 18px;
+        // A global rule gives icon buttons 12 px around their icon, which would push it off centre.
         padding: 7px;
 
         mat-icon {
