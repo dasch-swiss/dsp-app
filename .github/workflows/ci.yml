@@ -255,14 +255,34 @@ jobs:
           ref: main
           path: dsp-api
           persist-credentials: false
-      - name: Start API
+      # The install, type-check and build below run while the stack starts; `Wait for the API`
+      # joins it before Cypress. A background process outlives its step, not its job.
+      - name: Start the API in the background
         env:
           DSP_API_DIR: dsp-api
-        run: nix develop .#e2e --command just e2e-stack-up
+        run: |
+          (rc=0; nix develop .#e2e --command just e2e-stack-start || rc=$?; echo "$rc" >"$RUNNER_TEMP/e2e-stack.status") \
+            </dev/null >"$RUNNER_TEMP/e2e-stack.log" 2>&1 &
       - name: Type-check e2e specs
         env:
           BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-e2e-typecheck.json
         run: nix develop .#e2e --command just typecheck-e2e
+      - name: Build the app
+        env:
+          BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-e2e-build.json
+        run: nix develop .#e2e --command just build //apps/dsp-app:dist
+      - name: Wait for the API
+        env:
+          DSP_API_DIR: dsp-api
+        run: |
+          status_file="$RUNNER_TEMP/e2e-stack.status"
+          for _ in $(seq 300); do [ ! -f "$status_file" ] || break; sleep 2; done
+          echo "::group::just e2e-stack-start"
+          cat "$RUNNER_TEMP/e2e-stack.log"
+          echo "::endgroup::"
+          [ -f "$status_file" ] || { echo "::error::just e2e-stack-start did not finish within 10 minutes"; exit 1; }
+          [ "$(cat "$status_file")" = 0 ] || { echo "::error::just e2e-stack-start failed"; exit 1; }
+          nix develop .#e2e --command just e2e-stack-wait
       - name: Run e2e tests
         env:
           BAZEL_FLAGS: ${{ steps.bazel.outputs.flags }} --build_event_json_file=${{ runner.temp }}/bep-e2e.json
