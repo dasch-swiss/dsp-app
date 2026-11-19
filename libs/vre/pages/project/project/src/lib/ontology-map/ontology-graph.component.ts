@@ -114,6 +114,47 @@ function withSvgExtension(cytoscape: CytoscapeFactory): Promise<void> {
   return svgExtension;
 }
 
+/**
+ * Writes names in italic under labels, when `both` says the graph writes both: a class's or a link's name, on the
+ * line after its label. Cytoscape draws a label in one font, line by line; so while it draws an element's label, the
+ * line that is its name is drawn in the italic of that font. On screen, in a PNG and in an SVG alike, which all draw
+ * through the same step.
+ */
+function withItalicNames(cy: Core, both: () => boolean): void {
+  type Draw = (text: string, x: number, y: number, ...rest: unknown[]) => void;
+  type Context = { font: string; fillText: Draw; strokeText: Draw };
+  type Renderer = { drawText: (context: Context, ele: EdgeSingular | NodeSingular, ...rest: unknown[]) => void };
+  const renderer = (cy as unknown as { renderer: () => Renderer }).renderer();
+  const drawText = renderer.drawText;
+  renderer.drawText = function (context, ele, ...rest) {
+    const label = String(ele.data('label') ?? '').trim();
+    const name = String(ele.data('name') ?? '').trim();
+    // A count of links has no name of its own: its name is its label.
+    if (!both() || !name || name === label) return drawText.call(this, context, ele, ...rest);
+    const names = new Set(name.split('\n').map(line => line.trim()));
+    const italic = (draw: Draw): Draw =>
+      function (this: Context, text, x, y, ...more) {
+        if (!names.has(text.trim())) return draw.call(this, text, x, y, ...more);
+        const font = this.font;
+        this.font = `italic ${font.replace(/^(normal|italic|oblique)\s+/, '')}`;
+        draw.call(this, text, x, y, ...more);
+        this.font = font;
+      };
+    const own = { fill: Object.hasOwn(context, 'fillText'), stroke: Object.hasOwn(context, 'strokeText') };
+    const { fillText, strokeText } = context;
+    context.fillText = italic(fillText);
+    context.strokeText = italic(strokeText);
+    try {
+      return drawText.call(this, context, ele, ...rest);
+    } finally {
+      if (own.fill) context.fillText = fillText;
+      else delete (context as Partial<Context>).fillText;
+      if (own.stroke) context.strokeText = strokeText;
+      else delete (context as Partial<Context>).strokeText;
+    }
+  };
+}
+
 /** What `withOutlines` uses of cytoscape-svg's drawing context, canvas2svg's: its element being drawn and path. */
 interface SvgContext {
   __currentElement: Element;
@@ -969,6 +1010,7 @@ export class OntologyGraphComponent {
           maxZoom: 3,
           wheelSensitivity: 0.3,
         });
+        withItalicNames(cy, () => untracked(() => this.labels()) === 'both');
         cy.on('tap', event => {
           if (event.target === cy) this.backgroundClicked.emit();
         });
