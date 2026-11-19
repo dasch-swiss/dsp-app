@@ -22,7 +22,8 @@
       devShells = forEachSystem (
         pkgs:
         let
-          # What building, testing and serving the app needs; both shells carry it.
+          # What building, testing and serving the app needs: all `.#e2e` has besides Chromium, so a
+          # tool the E2E jobs call belongs here, not in `default`.
           base = [
             # bazelisk reads .bazelversion. Wrapped rather than added whole: the package also
             # ships a `sha256sum` that shadows coreutils' (scripts/tree-hash.sh).
@@ -73,7 +74,8 @@
           # Cypress on Linux runs Chrome from here; on macOS it uses its bundled Electron. Not built
           # on `default`: the E2E jobs use neither the docs tooling nor Playwright's browsers.
           e2e = pkgs.mkShell {
-            packages = base ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.chromium ];
+            packages =
+              base ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [ pkgs.chromium ];
             shellHook = pkgs.lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
               export CHROME_BIN=${pkgs.chromium}/bin/chromium
             '';
