@@ -957,7 +957,6 @@
       "noTarget": "Not a link",
       "clearFilter": "Clear",
       "contains": "Contains…",
-      "subclassOf": "Subclass of {{class}}",
       "selectAll": "Select all",
       "deselectAll": "Deselect all",
       "resizeColumn": "Resize the column",

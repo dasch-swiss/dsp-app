@@ -957,7 +957,6 @@
       "noTarget": "Keine Verknüpfung",
       "clearFilter": "Zurücksetzen",
       "contains": "Enthält…",
-      "subclassOf": "Unterklasse von {{class}}",
       "selectAll": "Alle auswählen",
       "deselectAll": "Alle abwählen",
       "resizeColumn": "Spaltenbreite ändern",

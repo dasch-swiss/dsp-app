@@ -184,14 +184,6 @@ export interface PropertyOrder {
           [style.--tab]="colors().get(row.id) ?? '#FFFFFF'">
           <header class="card-head" (mouseenter)="checkDelete(row.id)">
             <span class="texts">
-              @if (row.superclass) {
-                <span
-                  class="parent"
-                  data-cy="data-model-class-card-parent"
-                  [matTooltip]="r + '.subclassOf' | translate: { class: labelOf()(row.superclass) }">
-                  <mat-icon>subdirectory_arrow_right</mat-icon>{{ labelOf()(row.superclass) }}
-                </span>
-              }
               <ng-template #className>
                 <small>
                   @for (part of mark(row.name); track $index) {
@@ -443,30 +435,6 @@ export interface PropertyOrder {
       }
 
       // The superclass, in the family's colour, above the name.
-      .parent {
-        display: inline-flex;
-        align-items: center;
-        gap: 2px;
-        max-width: 100%;
-        margin-bottom: 2px;
-        padding: 0 8px 0 4px;
-        border-radius: 99px;
-        background: var(--tab);
-        font-size: 11px;
-        font-weight: 500;
-        color: $cool_gray_900;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        mat-icon {
-          font-size: 14px;
-          width: 14px;
-          height: 14px;
-          flex: none;
-        }
-      }
-
       // Under the label of a class with a file: its name, then the kind of file with its icon.
       .kind-line {
         display: flex;
