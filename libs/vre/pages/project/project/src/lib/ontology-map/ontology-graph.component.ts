@@ -89,6 +89,21 @@ export const EXPORT_CANVAS_LIMIT = 16000;
 /** Size of the legend's text at scale 1, as on screen and in an exported image; see `withLegend`. */
 const LEGEND_TEXT_SIZE = 12.5;
 
+/** A layout as left: each class's place, how big things are drawn, and the view. */
+interface KeptLayout {
+  positions: Map<string, { x: number; y: number }>;
+  scale: number;
+  zoom: number;
+  pan: { x: number; y: number };
+  dragged: boolean;
+}
+
+/**
+ * The diagram's layouts as last left, by the classes shown and how; see `remember`. Only in memory: a page reload
+ * starts afresh.
+ */
+const KEPT_LAYOUTS = new Map<string, KeptLayout>();
+
 let svgExtension: Promise<void> | undefined;
 
 /** Registers cytoscape-svg once, loaded only when a graph is first exported as SVG. */
@@ -834,6 +849,11 @@ export class OntologyGraphComponent {
    * sideways only to bring `panelFocus` out from under it; see `_keepInView`.
    */
   readonly fullWidth = input(false);
+  /**
+   * Whether the graph keeps its layout, places and view, for when it shows the same classes again, as after a visit to
+   * another tab; only in memory, so reloading the page lays it out afresh. The diagram's, not a copy drawn to export.
+   */
+  readonly remember = input(false);
   /** What the open panel is about, a class or a link property, kept clear of the panel. */
   readonly panelFocus = input<{ kind: 'class' | 'property'; iri: string } | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
@@ -859,8 +879,10 @@ export class OntologyGraphComponent {
   private readonly _cy = signal<Core | undefined>(undefined);
   readonly failed = signal(false);
   private readonly _hoveredProperty = signal<string | undefined>(undefined);
-  /** Whether the user moved classes since the last layout; their places then survive a resize. */
+  /** Whether the user moved classes since the last layout. */
   private _dragged = false;
+  /** Whether the layout shown was kept from before, rather than made; see `remember`. */
+  private _restored = false;
   /** The classes and links last laid out, to tell a new model from the same one handed over again. */
   private _shown = '';
   /** The Cytoscape factory, once loaded, for layouts run apart from the graph shown. */
@@ -1022,16 +1044,18 @@ export class OntologyGraphComponent {
           container.style.cursor = '';
         });
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
-        // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
-        // user has dragged some, whose places are then kept and only fitted. The first size, once the box has one,
-        // lays out the classes for the first time.
+        // opens beside it. While the box settles, each size lays the classes out again over it, unless they are a
+        // layout kept from before, whose view stands. Once shown, the layout stays: a new size only fits it.
         let frame = 0;
         const observer = new ResizeObserver(() => {
           cancelAnimationFrame(frame);
           frame = requestAnimationFrame(() => {
+            const first = !this._sized;
             this._sized = true;
             cy.resize();
-            if (this._dragged) {
+            if (first && this._restore(cy)) return;
+            if (this._restored && !this.laidOut()) return;
+            if (this._dragged || this.laidOut()) {
               this._fit(cy);
             } else {
               this._arrange(cy);
@@ -1040,6 +1064,7 @@ export class OntologyGraphComponent {
         });
         observer.observe(this._canvas().nativeElement);
         destroyRef.onDestroy(() => {
+          this._keep(cy);
           cancelAnimationFrame(frame);
           clearTimeout(routing);
           clearTimeout(this._reveal);
@@ -1062,12 +1087,14 @@ export class OntologyGraphComponent {
       // Labels count too, so a class renamed in the edit dialog is drawn with its new name.
       const shown = `${graph.nodes.map(node => `${node.id}\t${node.label}`).join(' ')} ${graph.edges.map(edgeKey).join(' ')}`;
       if (shown === this._shown) return;
+      // The layout left is kept, to come back to: the classes shown before another filter, say.
+      untracked(() => this._keep(cy));
       this._shown = shown;
       cy.elements().remove();
       cy.add(withLabelsOnTop(untracked(() => this._elements())));
       measureIconBoxes(cy);
       // Before the box has its size, the first size lays them out; laid out now, they would be again then.
-      if (this._sized) this._arrange(cy);
+      if (this._sized) untracked(() => this._restore(cy) || this._arrange(cy));
     });
     effect(() => {
       const cy = this._cy();
@@ -1127,7 +1154,7 @@ export class OntologyGraphComponent {
       const fullWidth = this.fullWidth();
       if (!cy || fullWidth === fullWidthShown) return;
       fullWidthShown = fullWidth;
-      untracked(() => (this._dragged ? this._fit(cy) : this._arrange(cy)));
+      untracked(() => (this._dragged || this.laidOut() ? this._fit(cy) : this._arrange(cy)));
     });
     // Listing the properties in the boxes, or no longer, changes their size by far: the classes are laid out again,
     // dragged places forgotten, as they would overlap.
@@ -1193,7 +1220,62 @@ export class OntologyGraphComponent {
     cy.style(this._style(1));
     arrangeIslands(cy, this._cytoscape!, 1, this._aspect(cy), this._labelWidth());
     this._dragged = false;
+    this._restored = false;
     this._rescale(cy);
+  }
+
+  /** What `_keep` keeps the layout under: the classes and links shown, and the texts and size they are drawn with. */
+  private _layoutKey(): string {
+    return [this._shown, this.size(), this.labels(), this.levelLabels(), this.showProperties()].join('|');
+  }
+
+  /** Keeps the layout shown, places, scale and view, in memory for `_restore`; see `remember`. */
+  private _keep(cy: Core): void {
+    if (!untracked(() => this.remember()) || !this.laidOut() || cy.elements().empty()) return;
+    const positions = new Map<string, { x: number; y: number }>();
+    cy.nodes()
+      .filter(node => !node.isParent())
+      .forEach(node => {
+        positions.set(node.id(), { ...node.position() });
+      });
+    KEPT_LAYOUTS.set(
+      untracked(() => this._layoutKey()),
+      {
+        positions,
+        scale: this._scale,
+        zoom: cy.zoom(),
+        // Without the sideways pan made for the panel, which is made again for it if it is open.
+        pan: { x: cy.pan().x - this._panned, y: cy.pan().y },
+        dragged: this._dragged,
+      }
+    );
+  }
+
+  /** Shows the layout kept for the classes shown, if any, as it was left; `false` without one. */
+  private _restore(cy: Core): boolean {
+    if (!untracked(() => this.remember())) return false;
+    const kept = KEPT_LAYOUTS.get(untracked(() => this._layoutKey()));
+    const classes = cy.nodes().filter(node => !node.isParent());
+    if (!kept || classes.toArray().some(node => !kept.positions.has(node.id()))) return false;
+    this._scale = kept.scale;
+    cy.style(this._style(kept.scale));
+    cy.batch(() =>
+      cy
+        .nodes()
+        .filter(node => !node.isParent())
+        .forEach(node => {
+          node.position(kept.positions.get(node.id())!);
+        })
+    );
+    this._route(cy);
+    cy.stop(true, false);
+    cy.viewport({ zoom: kept.zoom, pan: kept.pan });
+    this._panned = 0;
+    this._keepInView(cy, false);
+    this._dragged = kept.dragged;
+    this._restored = true;
+    this._revealWhenSettled();
+    return true;
   }
 
   /**

@@ -150,6 +150,7 @@ const WHOLE_MODEL_TIMEOUT_MS = 15000;
               <app-ontology-graph
                 #mainGraph
                 class="view"
+                [remember]="true"
                 [graph]="graphShown() ?? graph"
                 [selectedIri]="classIri()"
                 [size]="size()"
