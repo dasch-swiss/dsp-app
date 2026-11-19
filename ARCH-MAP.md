@@ -596,7 +596,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: none
 - **Paths**: `.github/**`, `renovate.json`, `release-please-config.json`, `.release-please-manifest.json`, `CHANGELOG.md`
 - **Purpose**: Continuous integration workflows, the disabled Renovate configuration, and release automation for both the application and the published `dsp-js` package.
-- **Key entities**: `release-dsp-js.yml`, `check-openapi-sync`, `release-please`
+- **Key entities**: `release-dsp-js.yml`, `openapi-sync.yml`, `check-openapi-sync`, `release-please`
 - **Public interface**: None.
 - **Local-context kit**: `.github/workflows/`, `release-please-config.json`, `.release-please-manifest.json`
 - **Depends on**: none
@@ -607,7 +607,8 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Renovate is disabled (`enabled: false`); dependency updates are made by hand, and Dependabot opens security PRs only. `docs-only`
   - `dsp-js` publishes to NPM on `dsp-js-v*` tags via `.github/workflows/release-dsp-js.yml`. `docs-only`
   - `check-openapi-sync` (`openapi-sync.yml`) runs on `main` pushes, the spec-bump branches and a weekday schedule, never on feature branches, and opens an auto-bump PR on mismatch. A red check is expected while a dsp-api change is undeployed. `static-analysis`
-  - `ci.yml` runs the Cypress suite as the `dsp-app-e2e-tests` matrix, gated by the required `dsp-app-e2e-tests-status` job. `static-analysis`
+  - `ci.yml` runs the Cypress suite as the `dsp-app-e2e-tests` matrix, gated by the required `dsp-app-e2e-tests-status` job. The matrix skips when the `changes` job's `docs_only` is true: every changed file is under `docs/`, `k6/` or `.claude/`, or a root `*.md`. Add a path to that list only if nothing the built app or the E2E run reads lives there. `static-analysis`
+  - The E2E jobs run in `.#e2e`, which is `flake.nix`'s `base` package list plus Chromium; a tool they call goes in `base`. `review`
 - **Durable state**: `.release-please-manifest.json`, the released version of record.
 - **Fingerprint**: `f7c7c0204b21`
 
