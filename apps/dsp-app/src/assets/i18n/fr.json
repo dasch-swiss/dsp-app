@@ -758,7 +758,9 @@
       "copyrightHolder": "Titulaire des droits d'auteur",
       "authorship": "Auteur·ice",
       "license": "Licence",
-      "placeholder": "Espace réservé"
+      "placeholder": "Espace réservé",
+      "notSpecified": "Non spécifié",
+      "notApplicable": "Non applicable"
     },
     "navigation": {
       "firstPage": "Première page",

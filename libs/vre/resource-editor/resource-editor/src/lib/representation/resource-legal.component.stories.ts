@@ -83,14 +83,61 @@ export const WithCopyrightAndAuthorship: Story = {
   },
 };
 
+const fieldText = (canvasElement: HTMLElement, name: string) =>
+  (canvasElement.querySelector(`[data-cy="legal-${name}"]`)?.textContent ?? '').trim();
+
 export const WithoutLegalInfo: Story = {
-  name: 'Renders nothing when no copyright or authorship is set',
+  name: 'Shows "Not specified" for every field when nothing is recorded',
   args: {
     fileValue: makeFileValue({ copyrightHolder: null, authorship: [], license: null }),
   },
   play: async ({ canvasElement, step }) => {
-    await step('No legal block is rendered', async () => {
-      await expect(canvasElement.textContent?.trim()).toBe('');
+    await step('The legal panel is rendered with all three rows', async () => {
+      await expect(fieldText(canvasElement, 'copyright-holder')).toBe('Not specified');
+      await expect(fieldText(canvasElement, 'authorship')).toBe('Not specified');
+      await expect(fieldText(canvasElement, 'license')).toBe('Not specified');
+    });
+  },
+};
+
+export const PublicDomainWithoutHolder: Story = {
+  name: 'Shows "Not applicable" for the holder of a public-domain file',
+  args: {
+    fileValue: makeFileValue({
+      copyrightHolder: null,
+      authorship: [],
+      license: { id: 'http://rdfh.ch/licenses/public-domain' },
+    }),
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('The holder does not apply; authorship is optional and stays "Not specified"', async () => {
+      await expect(fieldText(canvasElement, 'copyright-holder')).toBe('Not applicable');
+      await expect(fieldText(canvasElement, 'authorship')).toBe('Not specified');
+    });
+  },
+};
+
+export const AiGeneratedNothingElseRecorded: Story = {
+  name: 'Shows "Not applicable" for holder and authorship of an AI-generated file',
+  args: {
+    fileValue: makeFileValue({ copyrightHolder: null, authorship: [], license: { id: LONG_LICENSE_ID } }),
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('Neither a holder nor an author applies', async () => {
+      await expect(fieldText(canvasElement, 'copyright-holder')).toBe('Not applicable');
+      await expect(fieldText(canvasElement, 'authorship')).toBe('Not applicable');
+    });
+  },
+};
+
+export const LicenseNotInCatalog: Story = {
+  name: 'Shows the license IRI when the project catalog does not list it',
+  args: {
+    fileValue: makeFileValue({ license: { id: 'http://rdfh.ch/licenses/boris' } }),
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('The recorded IRI is shown, never "Not specified"', async () => {
+      await expect(fieldText(canvasElement, 'license')).toBe('http://rdfh.ch/licenses/boris');
     });
   },
 };

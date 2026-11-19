@@ -958,7 +958,9 @@
       "copyrightHolder": "Urheberrechtsinhaber",
       "authorship": "Autorenschaft",
       "license": "Lizenz",
-      "placeholder": "Platzhalter"
+      "placeholder": "Platzhalter",
+      "notSpecified": "Nicht angegeben",
+      "notApplicable": "Nicht anwendbar"
     },
     "navigation": {
       "firstPage": "Erste Seite",
