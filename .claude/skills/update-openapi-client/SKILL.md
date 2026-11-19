@@ -22,7 +22,8 @@ Run inside the Nix dev shell (direnv loads it):
 
 **Deploy coupling — when a red check is expected:** the sync check compares the vendored spec
 against the **live dev API** (`https://api.dev.dasch.swiss/api/docs/docs.yaml`), not against a
-dsp-api branch. A PR that consumes dsp-api changes which are merged but **not yet deployed to dev**
+dsp-api branch. A spec that consumes dsp-api changes which are merged but **not yet deployed to dev**
 will therefore fail `check-openapi-sync` (and dev-server E2E) **by design** until the API deploy
-lands. Do not "fix" the spec to silence it. Sequence for stacked cross-repo changes:
+lands. The check runs on `main`, the spec-bump branches and a weekday schedule
+(`.github/workflows/openapi-sync.yml`), not on feature branches. Do not "fix" the spec to silence it. Sequence for stacked cross-repo changes:
 merge the dsp-api PR → wait for the dev deploy → run `just openapi-update` → CI turns green.

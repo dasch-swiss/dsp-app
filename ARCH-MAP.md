@@ -606,7 +606,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Every job runs `nix develop --command just <recipe>`; `.github/actions/bazel-setup` sets up Nix, the Bazel caches and the NativeLink remote flags in `BAZEL_FLAGS`. `structure`
   - Renovate is disabled (`enabled: false`); dependency updates are made by hand, and Dependabot opens security PRs only. `docs-only`
   - `dsp-js` publishes to NPM on `dsp-js-v*` tags via `.github/workflows/release-dsp-js.yml`. `docs-only`
-  - `check-openapi-sync` runs on every push and opens an auto-bump PR on mismatch. A red check is expected while a dsp-api change is undeployed. `static-analysis`
+  - `check-openapi-sync` (`openapi-sync.yml`) runs on `main` pushes, the spec-bump branches and a weekday schedule, never on feature branches, and opens an auto-bump PR on mismatch. A red check is expected while a dsp-api change is undeployed. `static-analysis`
   - `ci.yml` runs the Cypress suite as the `dsp-app-e2e-tests` matrix, gated by the required `dsp-app-e2e-tests-status` job. `static-analysis`
 - **Durable state**: `.release-please-manifest.json`, the released version of record.
 - **Fingerprint**: `f7c7c0204b21`

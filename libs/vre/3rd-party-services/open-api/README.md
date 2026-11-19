@@ -46,8 +46,8 @@ git commit -m "chore(open-api): bump dsp-api spec <old-version> → <new-version
 
 The GitHub Actions workflow includes two jobs:
 
-- **`check-openapi-sync`**: Downloads the latest spec from `https://api.dev.dasch.swiss/api/docs/docs.yaml`, uses smart diff ignoring metadata, and runs on every push. Retries the download up to 3 times (30s apart) to tolerate DEV deployments. On spec mismatch it exits 1 and triggers the auto-update steps within the same job.
-- **Auto-update steps**: Run when a spec mismatch is detected on any branch. Compares the full version string (e.g. `v35.3.0-4-g5c5a4bb`) between local and remote — only opens a PR if the version changed and no open PR already exists for that version.
+- **`check-openapi-sync`**: Downloads the latest spec from `https://api.dev.dasch.swiss/api/docs/docs.yaml`, uses smart diff ignoring metadata, and runs on `main` pushes, on the spec-bump branches (`chore/update-dsp-api-openapi-spec-*`) and on a weekday schedule (`.github/workflows/openapi-sync.yml`), not on feature branches. Retries the download up to 3 times (30s apart) to tolerate DEV deployments. On spec mismatch it exits 1 and triggers the auto-update steps within the same job.
+- **Auto-update steps**: Run when a spec mismatch is detected. Compares the full version string (e.g. `v35.3.0-4-g5c5a4bb`) between local and remote — only opens a PR if the version changed and no open PR already exists for that version.
 
 **Smart Diff Logic:**
 Both local and CI use the same `scripts/check-openapi-sync.sh` script that:
