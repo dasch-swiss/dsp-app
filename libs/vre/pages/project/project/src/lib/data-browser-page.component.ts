@@ -13,7 +13,7 @@ import { ProjectSidenavComponent } from './sidenav/project-sidenav.component';
  * The sidebar's default width from each breakpoint up, widest first. The min-widths are the md–xxl
  * tokens of `libs/vre/ui/styles/_responsive.scss` (DEV-7494).
  */
-export const SIDEBAR_WIDTHS: readonly (readonly [minWidth: number, width: number])[] = [
+const SIDEBAR_WIDTHS: readonly (readonly [minWidth: number, width: number])[] = [
   [2560, 360],
   [1920, 320],
   [1536, 280],
@@ -21,7 +21,7 @@ export const SIDEBAR_WIDTHS: readonly (readonly [minWidth: number, width: number
 ];
 
 /** Below the md breakpoint (1280). */
-export const SIDEBAR_WIDTH_BELOW_MD = 170;
+const SIDEBAR_WIDTH_BELOW_MD = 170;
 
 const QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}px)`);
 

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { AppConfigService } from '@dasch-swiss/vre/core/config';
 import { catchError, map, Observable, shareReplay } from 'rxjs';
 
-export interface GIS {
+interface GIS {
   longitude: number;
   latitude: number;
 }
@@ -26,7 +26,7 @@ export interface SearchPlace {
   locationType: string;
 }
 
-export interface GeonameData {
+interface GeonameData {
   geonameId: string;
   name: string;
   asciiName: string;
@@ -36,7 +36,7 @@ export interface GeonameData {
   fclName: string;
 }
 
-export interface GeonameResponse {
+interface GeonameResponse {
   geonames: GeonameData[];
 }
 

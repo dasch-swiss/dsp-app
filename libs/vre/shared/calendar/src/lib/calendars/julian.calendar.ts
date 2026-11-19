@@ -180,8 +180,6 @@ function julianDayOfWeek(date: CalendarDate): number {
  *
  * @example
  * ```typescript
- * import { JulianCalendar } from '@dasch-swiss/vre/shared/calendar';
- *
  * const date = createDate('JULIAN', 2024, 1, 15);
  * const jdn = JulianCalendar.toJDN(date);
  * const daysInMonth = JulianCalendar.daysInMonth(2024, 2); // 29

@@ -7,56 +7,30 @@
  *
  * @example
  * ```typescript
- * import { createDate, convertCalendar, compareDates } from '@dasch-swiss/vre/shared/calendar';
+ * import { createDate, convertCalendarResult, isEqual } from '@dasch-swiss/vre/shared/calendar';
  *
  * // Create a date
  * const gregorianDate = createDate('GREGORIAN', 2024, 1, 15);
  *
- * // Convert to another calendar
- * const julianDate = convertCalendar(gregorianDate, 'JULIAN');
+ * // Convert to another calendar: an exact date, a span, or a refusal
+ * const result = convertCalendarResult(gregorianDate, 'JULIAN');
  *
  * // Compare dates
- * const isEarlier = compareDates(gregorianDate, julianDate) < 0;
+ * const same = result.kind === 'exact' && isEqual(result.date, gregorianDate);
  * ```
  *
  * @packageDocumentation
  */
 
 // Types
-export type {
-  CalendarSystem,
-  Era,
-  DatePrecision,
-  CalendarDate,
-  CalendarPeriod,
-  CalendarOperations,
-  DateFormat,
-  DateFormatOptions,
-  ConversionResult,
-  ConversionRefusalReason,
-} from './lib/types/calendar.types';
+export type { CalendarSystem, CalendarDate } from './lib/types/calendar.types';
 
-export { CalendarError, CALENDAR_SYSTEMS, ERAS, DATE_PRECISIONS } from './lib/types/calendar.types';
+export { CALENDAR_SYSTEMS } from './lib/types/calendar.types';
 
 // Factories
-export { createDate, createPeriod, createToday, isCalendarDate, isCalendarPeriod } from './lib/factories/date.factory';
+export { createDate } from './lib/factories/date.factory';
 
 export { getCalendar } from './lib/factories/calendar.factory';
 
-// Calendars
-export { GregorianCalendar } from './lib/calendars/gregorian.calendar';
-export { JulianCalendar } from './lib/calendars/julian.calendar';
-export { IslamicCalendar, ISLAMIC_EPOCH_JDN } from './lib/calendars/islamic.calendar';
-
 // Converters
-export {
-  convertCalendar,
-  convertCalendarResult,
-  compareDates,
-  isBefore,
-  isAfter,
-  isEqual,
-  isPeriodOutOfOrder,
-  jdnRange,
-  validatePeriod,
-} from './lib/converters/calendar.converter';
+export { convertCalendarResult, isEqual, isPeriodOutOfOrder, jdnRange } from './lib/converters/calendar.converter';

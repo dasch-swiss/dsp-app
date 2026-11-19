@@ -65,7 +65,7 @@ export const makeOntologyPageServiceStub = (partial: Record<string, unknown> = {
   ...partial,
 });
 
-export const makeResourceClassDefinition = (): ResourceClassDefinitionWithAllLanguages => {
+const makeResourceClassDefinition = (): ResourceClassDefinitionWithAllLanguages => {
   const def = new ResourceClassDefinitionWithAllLanguages();
   def.id = 'http://0.0.0.0:3333/ontology/0001/test/v2#TestClass';
   def.label = 'Test Class';

@@ -19,7 +19,7 @@ import { StringLiteralV2 } from '../string-literal-v2';
  * @category Internal
  */
 @JsonConverter
-export class SubListNodeConverter implements JsonCustomConvert<ListNodeV2[]> {
+class SubListNodeConverter implements JsonCustomConvert<ListNodeV2[]> {
   static jsonConvert: JsonConvert = new JsonConvert(
     OperationMode.ENABLE,
     ValueCheckingMode.DISALLOW_NULL,
@@ -46,7 +46,7 @@ export class SubListNodeConverter implements JsonCustomConvert<ListNodeV2[]> {
  * @category Internal
  */
 @JsonConverter
-export class SubListNodeWithAllLanguagesConverter implements JsonCustomConvert<ListNodeV2WithAllLanguages[]> {
+class SubListNodeWithAllLanguagesConverter implements JsonCustomConvert<ListNodeV2WithAllLanguages[]> {
   static jsonConvert: JsonConvert = new JsonConvert(
     OperationMode.ENABLE,
     ValueCheckingMode.DISALLOW_NULL,
