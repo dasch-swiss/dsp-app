@@ -88,6 +88,18 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
         @for (part of local(); track $index) {
           <span [class.hit]="part.match">{{ part.text }}</span>
         }
+        <!-- Its description, as the Data models tab gives it: an "i" after the name, while the row is pointed at. -->
+        @if (property.description) {
+          <mat-icon
+            class="info"
+            tabindex="0"
+            data-cy="data-model-class-card-property-info"
+            [attr.aria-label]="property.description"
+            [matTooltip]="property.description"
+            matTooltipPosition="above"
+            >info</mat-icon
+          >
+        }
       </span>
     </span>
     @if (cardinalityLayout() === 'chip' || cardinalityLayout() === 'differs') {
@@ -362,6 +374,29 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
           color: $primary;
           text-decoration: underline;
         }
+      }
+
+      // The description's "i" after the name, shown while the row is pointed at, as in the Data models tab.
+      .info {
+        margin-left: 4px;
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        vertical-align: -2px;
+        color: $primary;
+        cursor: help;
+        visibility: hidden;
+        border-radius: 50%;
+
+        &:focus-visible {
+          visibility: visible;
+          outline: 2px solid $primary;
+          outline-offset: 1px;
+        }
+      }
+
+      :host(:hover) .info {
+        visibility: visible;
       }
 
       .local {

@@ -471,6 +471,8 @@ export interface ClassRow {
     label: string;
     type: string;
     linkTarget?: string;
+    /** Its description in the current language; empty without one. */
+    description?: string;
     multiple: boolean;
     required: boolean;
   }[];
@@ -518,11 +520,12 @@ export function classRows(graph: DataModelGraph): ClassRow[] {
         ? node.representationClass
         : undefined,
     properties: node.propertyDetails?.length ?? 0,
-    propertyList: (node.propertyDetails ?? []).map(({ id, label, type, linkTarget, cardinality }) => ({
+    propertyList: (node.propertyDetails ?? []).map(({ id, label, type, linkTarget, cardinality, description }) => ({
       id,
       label,
       type,
       ...(linkTarget ? { linkTarget } : {}),
+      ...(description ? { description } : {}),
       multiple: cardinality === Cardinality._0_n || cardinality === Cardinality._1_n,
       required: cardinality === Cardinality._1 || cardinality === Cardinality._1_n,
     })),
