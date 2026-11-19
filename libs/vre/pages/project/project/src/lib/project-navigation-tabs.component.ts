@@ -30,9 +30,9 @@ import { ProjectPageService } from './project-page.service';
         <mat-icon class="tab-icon">lan</mat-icon>
         {{ 'shared.header.projectTabs.dataModels' | translate }}
       </a>
-      <a mat-tab-link [routerLink]="[DATA_MODELS_3]" routerLinkActive="active-link" data-cy="data-models-3-tab">
+      <a mat-tab-link [routerLink]="[DATA_MODELS_2]" routerLinkActive="active-link" data-cy="data-models-2-tab">
         <mat-icon class="tab-icon">account_tree</mat-icon>
-        {{ 'shared.header.projectTabs.dataModels3' | translate }}
+        {{ 'shared.header.projectTabs.dataModels2' | translate }}
       </a>
       @if (projectPageService.hasProjectAdminRights$ | async) {
         <a mat-tab-link [routerLink]="[SETTINGS]" routerLinkActive="active-link">
@@ -64,7 +64,7 @@ import { ProjectPageService } from './project-page.service';
 export class ProjectNavigationTabsComponent {
   readonly DATA = RouteConstants.data;
   readonly DATA_MODELS = RouteConstants.dataModels;
-  readonly DATA_MODELS_3 = RouteConstants.dataModels3;
+  readonly DATA_MODELS_2 = RouteConstants.dataModels2;
   readonly SETTINGS = RouteConstants.settings;
   readonly SEARCH = RouteConstants.advancedSearch;
   readonly DESCRIPTION = RouteConstants.projectDescription;

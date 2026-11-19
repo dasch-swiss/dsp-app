@@ -1,4 +1,4 @@
-/** Styles the sections of the Data models 3 tab share: the head, the search, the table box, chips and the panel. */
+/** Styles the sections of the Data models 2 tab share: the head, the search, the table box, chips and the panel. */
 export const RAIL_SECTION_STYLES = `
   @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
 

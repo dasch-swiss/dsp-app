@@ -29,6 +29,7 @@ export class RouteConstants {
   static readonly ontology = 'ontology';
   static readonly dataModels = 'data-models';
   static readonly dataModels2 = 'data-models-2';
+  /** Data models 2's former path, when it was Data models 3: its links are redirected. */
   static readonly dataModels3 = 'data-models-3';
   static readonly ontologyMap = 'ontology-map';
   static readonly graph = 'graph';

@@ -73,7 +73,7 @@ interface CreateResourceDialogProps {
           }
         </div>
         <div class="actions">
-          <!-- The class as the Data models 3 pages describe it: its links, its properties, editing. -->
+          <!-- The class as the Data models 2 pages describe it: its links, its properties, editing. -->
           <button mat-stroked-button (click)="openClassDetails()" data-cy="class-details-btn">
             <mat-icon>info_outline</mat-icon>
             {{ 'pages.dataBrowser.dataClassHeader.classDetails' | translate }}
@@ -261,7 +261,7 @@ export class DataClassHeaderComponent {
       });
   }
 
-  /** Opens the class's details over the right of the page, as the Data models 3 pages show them. */
+  /** Opens the class's details over the right of the page, as the Data models 2 pages show them. */
   openClassDetails() {
     this._dialog.open(ResourceClassDialogComponent, {
       ...resourceClassDialogConfig({ classIri: this.classSelected.resClass.id }),

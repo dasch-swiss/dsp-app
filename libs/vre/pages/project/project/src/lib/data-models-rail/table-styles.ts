@@ -1,5 +1,5 @@
 /**
- * Styles the Data models 3 tables share, as the Data tab's table: fixed, resizable and movable columns with borders, a
+ * Styles the Data models 2 tables share, as the Data tab's table: fixed, resizable and movable columns with borders, a
  * frozen first column, uppercase headers with filters, one line per row condensed, everything expanded. The toolbar's
  * density toggle too.
  */

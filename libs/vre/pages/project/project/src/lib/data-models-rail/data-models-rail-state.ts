@@ -12,7 +12,7 @@ import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 
 /**
- * What the Data models 3 tab's sections share: the data models of the project, the one the URL names, its graph,
+ * What the Data models 2 tab's sections share: the data models of the project, the one the URL names, its graph,
  * tables and colours, and the project's lists. Provided by the tab, so every section reads the same.
  */
 @Injectable()
@@ -43,8 +43,8 @@ export class DataModelsRailState {
     return ontologies.find(o => OntologyService.getOntologyNameFromIri(o.iri) === name) ?? ontologies[0];
   });
   private readonly _graphsByIri = toSignal(this._graphs.graphs$);
-  /** The tab whose sections these are: Data models 3. */
-  tab: string = RouteConstants.dataModels3;
+  /** The tab whose sections these are: Data models 2. */
+  tab: string = RouteConstants.dataModels2;
   /** How many classes and properties each data model has, by its IRI, once read. */
   readonly counts = computed(() => {
     const counts = new Map<string, { classes: number; properties: number }>();

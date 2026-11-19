@@ -107,7 +107,7 @@ export interface AvailableProperties {
 export const DATA_MODEL_EDITOR = new InjectionToken<DataModelEditor>('DataModelEditor');
 
 /**
- * Editing classes and properties from a component of the Data models 3 pages: in the editor's dialog when the app
+ * Editing classes and properties from a component of the Data models 2 pages: in the editor's dialog when the app
  * provides it, a saved change then read again with the whole project so every section shows it; else on the data model
  * editor page. Call in an injection context.
  */

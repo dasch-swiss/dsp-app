@@ -19,7 +19,7 @@ export default meta;
 type Story = StoryObj<ProjectNavigationTabsComponent>;
 
 export const RegularMember: Story = {
-  name: 'Shows Data, Search, Data Models and Data models 3 tabs for a regular member',
+  name: 'Shows Data, Search, Data Models and Data models 2 tabs for a regular member',
   decorators: [
     applicationConfig({
       providers: [
@@ -40,9 +40,9 @@ export const RegularMember: Story = {
     await step('Data models tab is visible', async () => {
       await expect(canvas.getByText('Data models')).toBeInTheDocument();
     });
-    await step('Data models 3 tab is visible, and no Data models 2 tab', async () => {
-      await expect(canvas.getByText('Data models 3')).toBeInTheDocument();
-      await expect(canvas.queryByText('Data models 2')).toBeNull();
+    await step('Data models 2 tab is visible, and no Data models 3 tab', async () => {
+      await expect(canvas.getByText('Data models 2')).toBeInTheDocument();
+      await expect(canvas.queryByText('Data models 3')).toBeNull();
     });
     await step('Settings tab is not shown for non-admin', async () => {
       await expect(canvas.queryByText('Settings')).toBeNull();

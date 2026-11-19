@@ -31,7 +31,7 @@ import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 
 /**
- * Data models 3 › Resource classes: the data model's classes as cards, one per class with its properties, as the Data models tab
+ * Data models 2 › Resource classes: the data model's classes as cards, one per class with its properties, as the Data models tab
  * shows them. A search finds a class by its name, its file or its properties.
  */
 @Component({

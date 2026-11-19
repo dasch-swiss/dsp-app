@@ -32,7 +32,7 @@ const MODEL_SECTIONS = [
 ] as const;
 
 /**
- * The Data models 3 tab: a rail listing every data model of the project as a group that folds open on its sections
+ * The Data models 2 tab: a rail listing every data model of the project as a group that folds open on its sections
  * (its classes, its properties, its diagram), then the project's controlled vocabularies by name, each opening as in
  * the Data models tab, and the documentation; what is picked beside it. No overview: the tab opens on the first data
  * model's classes. Editors create a data model or a vocabulary from the "+" by each heading, and edit or delete a data
@@ -496,7 +496,7 @@ export class DataModelsTreePageComponent {
 
   constructor() {
     // The sections' links and "Open in…" lead to this tab.
-    this.state.tab = RouteConstants.dataModels3;
+    this.state.tab = RouteConstants.dataModels2;
     // The data model shown folds open when it changes; folding it again is the viewer's choice.
     effect(() => {
       const iri = this.state.selected()?.iri;
