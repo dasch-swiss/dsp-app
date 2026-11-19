@@ -1,5 +1,5 @@
-import { Clipboard } from '@angular/cdk/clipboard';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -7,6 +7,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
+import { ExportPreviewDialogComponent } from './export-preview-dialog.component';
 import { OntologyMapPageComponent } from './ontology-map-page.component';
 
 const BEOL = 'http://0.0.0.0:3333/ontology/0801/beol/v2';
@@ -163,12 +164,15 @@ describe('OntologyMapPageComponent', () => {
     );
   });
 
-  it('copies the link to the view, data model, filters and panel included', () => {
-    const copy = jest.spyOn(TestBed.inject(Clipboard), 'copy').mockReturnValue(true);
+  it('opens the export preview, which draws the graph and names the file after the data model', () => {
+    const open = jest.spyOn(TestBed.inject(MatDialog), 'open').mockReturnValue({} as never);
 
-    component.export('copyLink');
+    component.openExport();
 
-    expect(copy).toHaveBeenCalledWith(window.location.href);
+    expect(open).toHaveBeenCalledWith(
+      ExportPreviewDialogComponent,
+      expect.objectContaining({ data: expect.objectContaining({ fileName: expect.stringMatching(/_ontology-map$/) }) })
+    );
   });
 
   it('keeps the filtered graph when only the open panel changes, so the view stays', () => {

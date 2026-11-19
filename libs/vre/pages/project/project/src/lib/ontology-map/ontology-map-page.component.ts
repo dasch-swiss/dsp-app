@@ -1,4 +1,3 @@
-import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import {
   ChangeDetectionStrategy,
@@ -15,14 +14,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
@@ -43,7 +42,8 @@ import {
   withoutClasses,
   withoutProperties,
 } from './ontology-graph-elements';
-import { GraphExportArea, OntologyGraphComponent } from './ontology-graph.component';
+import { ExportPreviewDialogComponent, exportPreviewDialogConfig } from './export-preview-dialog.component';
+import { OntologyGraphComponent } from './ontology-graph.component';
 import { PropertyPanelComponent } from './property-panel.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
@@ -107,15 +107,6 @@ const LABELS_KEY = 'dsp-ontology-map-labels';
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
 
 const SIZES: GraphSize[] = ['small', 'normal', 'large'];
-
-type ExportKey = 'viewPng' | 'wholePng' | 'copyImage' | 'copyLink';
-
-const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
-  { key: 'viewPng', icon: 'image' },
-  { key: 'wholePng', icon: 'zoom_out_map' },
-  { key: 'copyImage', icon: 'content_copy' },
-  { key: 'copyLink', icon: 'link' },
-];
 
 /**
  * The Ontology map tab: the map of one data model of the project, drawn large across the page, with a toolbar to
@@ -429,29 +420,10 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                     [attr.aria-label]="m + '.export' | translate"
                     [matTooltip]="m + '.export' | translate"
                     [matTooltipDisabled]="!panelOpen()"
-                    [matMenuTriggerFor]="exportMenu">
+                    (click)="openExport()">
                     <mat-icon>ios_share</mat-icon>
                     <span class="button-text">{{ m + '.export' | translate }}</span>
-                    <mat-icon class="drop">arrow_drop_down</mat-icon>
                   </button>
-                  <mat-menu #exportMenu="matMenu" xPosition="before" class="export-menu">
-                    @for (item of exportItems; track item.key) {
-                      @if (item.key === 'copyLink') {
-                        <hr class="menu-divider" />
-                      }
-                      <button
-                        class="export-entry"
-                        mat-menu-item
-                        [attr.data-cy]="'ontology-map-export-' + item.key"
-                        (click)="export(item.key)">
-                        <mat-icon>{{ item.icon }}</mat-icon>
-                        <span class="export-item">
-                          <span>{{ m + '.exportMenu.' + item.key | translate }}</span>
-                          <span class="export-hint">{{ m + '.exportMenu.' + item.key + 'Hint' | translate }}</span>
-                        </span>
-                      </button>
-                    }
-                  </mat-menu>
                 </div>
               </div>
 
@@ -994,9 +966,7 @@ export class OntologyMapPageComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _graphs = inject(DataModelGraphService);
-  private readonly _clipboard = inject(Clipboard);
-  private readonly _notification = inject(NotificationService);
-  private readonly _translate = inject(TranslateService);
+  private readonly _dialog = inject(MatDialog);
 
   private readonly _projectOntologies = toSignal(
     combineLatest([this._graphs.projectOntologies$, inject(LocalizationService).currentLanguage$]).pipe(
@@ -1030,7 +1000,6 @@ export class OntologyMapPageComponent {
     return graph ? withInheritedLinks(graph, false) : undefined;
   });
 
-  readonly exportItems = EXPORT_ITEMS;
   readonly sizes = SIZES;
   /** How big the graph draws boxes, text and lines; remembered in this browser. */
   readonly size = signal<GraphSize>(SIZES.find(size => size === readStored(SIZE_KEY)) ?? 'normal');
@@ -1586,49 +1555,16 @@ export class OntologyMapPageComponent {
     store(COLOUR_TAB_KEY, String(colourTab));
   }
 
-  /** Runs an Export menu item: a PNG downloaded or copied, or the link to this view copied. */
-  export(key: ExportKey): void {
-    switch (key) {
-      case 'viewPng':
-      case 'wholePng':
-        return this._downloadPng(key === 'viewPng' ? 'view' : 'whole');
-      case 'copyImage':
-        return this._copyImage();
-      case 'copyLink':
-        this._clipboard.copy(window.location.href);
-        return this._notify('linkCopied');
-    }
-  }
-
-  private _downloadPng(area: GraphExportArea): void {
-    const png = this.graphView()?.png(area);
-    if (!png) return;
+  /** Opens the export preview: the image as it will be, its settings, then copied or downloaded. */
+  openExport(): void {
     const name = OntologyService.getOntologyNameFromIri(this.selected()?.iri ?? '') || 'data-model';
-    png.then(
-      blob => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${name}_ontology-map${area === 'whole' ? '_whole' : ''}.png`;
-        link.click();
-        URL.revokeObjectURL(url);
-      },
-      () => this._notify('exportFailed', 'error')
+    this._dialog.open(
+      ExportPreviewDialogComponent,
+      exportPreviewDialogConfig({
+        render: (area, options) => this.graphView()?.png(area, options),
+        fileName: `${name}_ontology-map`,
+      })
     );
-  }
-
-  private _copyImage(): void {
-    const png = this.graphView()?.png('view');
-    if (!png) return;
-    // The promise itself goes to the clipboard, so Safari keeps the click's permission while the image is drawn.
-    navigator.clipboard.write([new ClipboardItem({ 'image/png': png })]).then(
-      () => this._notify('imageCopied'),
-      () => this._notify('exportFailed', 'error')
-    );
-  }
-
-  private _notify(key: string, type: 'success' | 'error' = 'success'): void {
-    this._notification.openSnackBar(this._translate.instant(`pages.ontologyMap.exportMenu.${key}`), type);
   }
 
   /** Opens the class in the Data tab. */

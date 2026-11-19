@@ -63,12 +63,20 @@ const edgeKey = (edge: DataModelGraph['edges'][number]) => `${edge.source}>${edg
 /** What a PNG of the graph covers: the part in view, or every class shown. */
 export type GraphExportArea = 'view' | 'whole';
 
+/** How an exported image is made: how many image pixels per screen pixel (2 by default), and with the legend or not. */
+export interface GraphExportOptions {
+  scale?: number;
+  legend?: boolean;
+}
+
 /** PNGs are drawn at twice the screen's resolution, sharp on slides and in print. */
 const EXPORT_SCALE = 2;
 /** The graph's background, as on screen; a transparent PNG would lose the link labels' backing. */
 const EXPORT_BACKGROUND = '#F9FAFB';
 /** The whole model of a big data model is drawn no bigger than this, in px each way. */
 const EXPORT_MAX_SIZE = 8000;
+/** The longest side a browser's canvas reliably draws, in pixels. */
+const EXPORT_CANVAS_LIMIT = 16000;
 /** Size of the legend's text at scale 1, as on screen and in an exported image; see `withLegend`. */
 const LEGEND_TEXT_SIZE = 12.5;
 
@@ -1334,24 +1342,27 @@ export class OntologyGraphComponent {
    * The graph as a PNG at twice the screen's resolution, on the graph's background, its legend under it: the part in
    * view, or every class shown; `undefined` before the graph has loaded.
    */
-  png(area: GraphExportArea): Promise<Blob> | undefined {
+  png(area: GraphExportArea, options: GraphExportOptions = {}): Promise<Blob> | undefined {
+    const scale = options.scale ?? EXPORT_SCALE;
+    // The whole model's longest side grows with the resolution, up to what a browser's canvas can hold.
+    const maxSize = Math.min(EXPORT_MAX_SIZE * (scale / EXPORT_SCALE), EXPORT_CANVAS_LIMIT);
     const png = this._cy()?.png({
       output: 'blob-promise',
       full: area === 'whole',
       // Cytoscape already draws at the screen's pixel ratio; the scale is against CSS pixels.
-      scale: EXPORT_SCALE / (window.devicePixelRatio || 1),
+      scale: scale / (window.devicePixelRatio || 1),
       bg: EXPORT_BACKGROUND,
-      maxWidth: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
-      maxHeight: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
+      maxWidth: area === 'whole' ? maxSize : undefined,
+      maxHeight: area === 'whole' ? maxSize : undefined,
     });
     const cy = this._cy();
-    const legend = this._legendTexts();
+    const legend = options.legend === false ? undefined : this._legendTexts();
     if (!png || !cy || !legend) return png;
     // The legend's text as big in the image as the class names: image pixels per graph unit, times their size.
     const model = cy.elements().boundingBox({});
     const scaleFor = (width: number) => {
-      const perUnit = area === 'whole' ? width / model.w : EXPORT_SCALE * cy.zoom();
-      return Math.max(EXPORT_SCALE, (BASE_FONT_SIZE * this._scale * perUnit) / LEGEND_TEXT_SIZE);
+      const perUnit = area === 'whole' ? width / model.w : scale * cy.zoom();
+      return Math.max(scale, (BASE_FONT_SIZE * this._scale * perUnit) / LEGEND_TEXT_SIZE);
     };
     return png.then(image => withLegend(image, legend, scaleFor, EXPORT_BACKGROUND));
   }
