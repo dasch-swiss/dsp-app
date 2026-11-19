@@ -165,7 +165,9 @@ describe('OntologyMapPageComponent', () => {
   });
 
   it('opens the export preview, which draws the graph and names the file after the data model', () => {
-    const open = jest.spyOn(TestBed.inject(MatDialog), 'open').mockReturnValue({} as never);
+    const open = jest
+      .spyOn(TestBed.inject(MatDialog), 'open')
+      .mockReturnValue({ afterClosed: () => of(undefined) } as never);
 
     component.openExport();
 

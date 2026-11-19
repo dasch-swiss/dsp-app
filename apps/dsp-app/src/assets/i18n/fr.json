@@ -857,8 +857,8 @@
         "no": "Non",
         "copy": "Copier dans le presse-papiers",
         "download": "Télécharger en PNG",
-        "cancel": "Annuler",
-        "close": "Fermer"
+        "close": "Fermer",
+        "modelName": "Nom du modèle de données"
       },
       "labelsMenu": {
         "heading": "Écrire sur les classes et les liens",

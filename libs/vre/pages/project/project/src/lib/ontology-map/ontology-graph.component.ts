@@ -33,7 +33,7 @@ import {
   TAB_WIDTH,
   TEXTURE_TILE,
 } from './islands';
-import { LegendTexts, withLegend } from './legend-image';
+import { LegendTexts, withLegend, withTitle } from './legend-image';
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
@@ -63,10 +63,12 @@ const edgeKey = (edge: DataModelGraph['edges'][number]) => `${edge.source}>${edg
 /** What a PNG of the graph covers: the part in view, or every class shown. */
 export type GraphExportArea = 'view' | 'whole';
 
-/** How an exported image is made: how many image pixels per screen pixel (2 by default), and with the legend or not. */
+/** How an exported image is made: image pixels per screen pixel (2 by default), with the legend or not, and a title. */
 export interface GraphExportOptions {
   scale?: number;
   legend?: boolean;
+  /** The data model's name, written over the image; none without it. */
+  title?: string;
 }
 
 /** PNGs are drawn at twice the screen's resolution, sharp on slides and in print. */
@@ -1356,15 +1358,22 @@ export class OntologyGraphComponent {
       maxHeight: area === 'whole' ? maxSize : undefined,
     });
     const cy = this._cy();
+    if (!png || !cy) return png;
     const legend = options.legend === false ? undefined : this._legendTexts();
-    if (!png || !cy || !legend) return png;
-    // The legend's text as big in the image as the class names: image pixels per graph unit, times their size.
+    const title = options.title;
+    if (!legend && !title) return png;
+    // The legend's and the title's text as big in the image as the class names: image pixels per graph unit, times
+    // their size.
     const model = cy.elements().boundingBox({});
     const scaleFor = (width: number) => {
       const perUnit = area === 'whole' ? width / model.w : scale * cy.zoom();
       return Math.max(scale, (BASE_FONT_SIZE * this._scale * perUnit) / LEGEND_TEXT_SIZE);
     };
-    return png.then(image => withLegend(image, legend, scaleFor, EXPORT_BACKGROUND));
+    return png.then(async image => {
+      const width = (await createImageBitmap(image)).width;
+      const withItsLegend = legend ? await withLegend(image, legend, scaleFor, EXPORT_BACKGROUND) : image;
+      return title ? withTitle(withItsLegend, title, scaleFor(width), EXPORT_BACKGROUND) : withItsLegend;
+    });
   }
 
   /** The legend's texts and file icons in the current language, as the export draws them; none without a legend. */

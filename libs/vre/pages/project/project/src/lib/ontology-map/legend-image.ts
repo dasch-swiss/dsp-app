@@ -188,3 +188,28 @@ export async function withLegend(
     canvas.toBlob(blob => (blob ? resolve(blob) : reject(new Error('The legend could not be drawn.'))), 'image/png')
   );
 }
+
+/** The data model's name over the exported graph: a strip across the top, its name at the left, on `background`. */
+export async function withTitle(png: Blob, title: string, scale: number, background: string): Promise<Blob> {
+  const graph = await createImageBitmap(png);
+  const font = '500 18px Roboto, sans-serif';
+  const strip = 48;
+  const side = LOOK.side;
+  const measure = document.createElement('canvas').getContext('2d')!;
+  measure.font = font;
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(graph.width, Math.ceil((measure.measureText(title).width + 2 * side) * scale));
+  canvas.height = graph.height + Math.ceil(strip * scale);
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(graph, 0, Math.ceil(strip * scale));
+  ctx.scale(scale, scale);
+  ctx.font = font;
+  ctx.fillStyle = LOOK.title.color;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(title, side, strip / 2 + 4);
+  return new Promise((resolve, reject) =>
+    canvas.toBlob(blob => (blob ? resolve(blob) : reject(new Error('The title could not be drawn.'))), 'image/png')
+  );
+}

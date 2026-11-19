@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal, untracked } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
@@ -13,6 +13,8 @@ export interface ExportPreviewData {
   render: (area: GraphExportArea, options: GraphExportOptions) => Promise<Blob> | undefined;
   /** The downloaded file's name without `.png`, such as `beol_ontology-map`. */
   fileName: string;
+  /** The data model's name, written over the image when chosen. */
+  title: string;
 }
 
 /** How the preview opens: large, the image on the left and its settings on the right. */
@@ -140,6 +142,19 @@ interface Rendered {
               <mat-button-toggle [value]="false">{{ e + '.no' | translate }}</mat-button-toggle>
             </mat-button-toggle-group>
           </div>
+
+          <div class="setting">
+            <span class="heading" id="export-title">{{ e + '.modelName' | translate }}</span>
+            <mat-button-toggle-group
+              aria-labelledby="export-title"
+              data-cy="export-preview-title"
+              hideSingleSelectionIndicator
+              [value]="title()"
+              (change)="title.set($event.value)">
+              <mat-button-toggle [value]="true">{{ e + '.yes' | translate }}</mat-button-toggle>
+              <mat-button-toggle [value]="false">{{ e + '.no' | translate }}</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
         </div>
 
         <div class="actions">
@@ -162,7 +177,6 @@ interface Rendered {
             <mat-icon>download</mat-icon>
             {{ e + '.download' | translate }}
           </button>
-          <button mat-button type="button" (click)="dialogRef.close()">{{ e + '.cancel' | translate }}</button>
         </div>
       </div>
     </div>
@@ -330,11 +344,11 @@ export class ExportPreviewDialogComponent {
   readonly area = signal<GraphExportArea>('view');
   readonly scale = signal<Scale>(2);
   readonly legend = signal(true);
+  /** Whether the data model's name is written over the image. */
+  readonly title = signal(true);
 
   /** The image for the settings chosen, being made: copying or downloading waits for it. */
-  private readonly _png = computed(() =>
-    this._data.render(this.area(), { scale: this.scale(), legend: this.legend() })
-  );
+  private _png: Promise<Blob> | undefined;
   readonly rendered = signal<Rendered | undefined>(undefined);
   readonly busy = signal(true);
   readonly failed = signal(false);
@@ -344,8 +358,12 @@ export class ExportPreviewDialogComponent {
   constructor() {
     let made = 0;
     effect(() => {
-      const png = this._png();
+      const area = this.area();
       const scale = this.scale();
+      const options = { scale, legend: this.legend(), title: this.title() ? this._data.title : undefined };
+      // Drawing may set up what it draws from, such as the whole model's copy: not part of what this effect follows.
+      const png = untracked(() => this._data.render(area, options));
+      this._png = png;
       const turn = ++made;
       this.busy.set(true);
       this.failed.set(false);
@@ -382,7 +400,7 @@ export class ExportPreviewDialogComponent {
   }
 
   copy(): void {
-    const png = this._png();
+    const png = this._png;
     if (!png) return;
     // The promise itself goes to the clipboard, so Safari keeps the click's permission while the image is drawn.
     navigator.clipboard.write([new ClipboardItem({ 'image/png': png })]).then(
@@ -392,7 +410,7 @@ export class ExportPreviewDialogComponent {
   }
 
   download(): void {
-    this._png()?.then(
+    this._png?.then(
       blob => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');

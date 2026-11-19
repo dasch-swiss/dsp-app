@@ -857,8 +857,8 @@
         "no": "No",
         "copy": "Copy to clipboard",
         "download": "Download PNG",
-        "cancel": "Cancel",
-        "close": "Close"
+        "close": "Close",
+        "modelName": "Data model name"
       },
       "labelsMenu": {
         "heading": "Write on classes and links",

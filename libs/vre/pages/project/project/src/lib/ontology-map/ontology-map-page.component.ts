@@ -108,6 +108,9 @@ const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
 
 const SIZES: GraphSize[] = ['small', 'normal', 'large'];
 
+/** How long Export waits for the whole model to be laid out before it gives up. */
+const WHOLE_MODEL_TIMEOUT_MS = 15000;
+
 /**
  * The Ontology map tab: the map of one data model of the project, drawn large across the page, with a toolbar to
  * pick the data model and how much each card shows. A class clicked on it opens its details in a panel docked at
@@ -146,6 +149,7 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
           @if (graph(); as graph) {
             <div class="body">
               <app-ontology-graph
+                #mainGraph
                 class="view"
                 [graph]="graphShown() ?? graph"
                 [selectedIri]="classIri()"
@@ -170,6 +174,29 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
                 (classFiltered)="filterOn($event)"
                 (propertySelected)="openPropertyPanel($event)"
                 (backgroundClicked)="(panelIri() || propertyPanelIri()) && openPanel(undefined)" />
+              <!-- While Export makes the whole model: the data model with nothing filtered, faded or picked, drawn out of
+                sight at the graph's size, so the image is the graph as it shows when nothing is filtered. -->
+              @if (exportSize(); as box) {
+                <app-ontology-graph
+                  #wholeGraph
+                  class="export-copy"
+                  aria-hidden="true"
+                  [style.width.px]="box.w"
+                  [style.height.px]="box.h"
+                  [graph]="unfiltered() ?? graph"
+                  [size]="size()"
+                  [levelLabels]="levelLabels()"
+                  [labels]="labels()"
+                  [islands]="islands()"
+                  [colourTab]="colourTab()"
+                  [treeLines]="treeLines()"
+                  [showProperties]="showProperties()"
+                  [fullWidth]="true"
+                  [colors]="colors()"
+                  [families]="families()"
+                  [anyResourceLabel]="t + '.anyResource' | translate"
+                  [linksLabel]="'pages.ontologyMap.links' | translate" />
+              }
               <!-- One bar along the top, left of an open panel; on a narrow screen its two halves wrap. -->
               <div class="top-bar" [class.beside-panel]="panelOpen()">
                 <!-- What to show, on the left: the search, and the filters beside it. -->
@@ -945,6 +972,13 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
         min-width: 0;
       }
 
+      .export-copy {
+        position: fixed;
+        top: 0;
+        left: -100000px;
+        pointer-events: none;
+      }
+
       // The panel floats over the graph, which keeps its size, so opening a class moves nothing.
       .panel {
         position: absolute;
@@ -995,6 +1029,8 @@ export class OntologyMapPageComponent {
     return iri ? this._graphsByIri()?.get(iri) : undefined;
   });
   /** The data model as the graph draws it: links only, with no subclass arrows and no inherited links. */
+  /** The data model as the graph draws it with nothing filtered; Export draws the whole model from it. */
+  readonly unfiltered = computed(() => this._graphLinks());
   private readonly _graphLinks = computed(() => {
     const graph = this.graph();
     return graph ? withInheritedLinks(graph, false) : undefined;
@@ -1023,7 +1059,12 @@ export class OntologyMapPageComponent {
   readonly labelOptions = LABEL_OPTIONS;
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
-  readonly graphView = viewChild(OntologyGraphComponent);
+  readonly graphView = viewChild('mainGraph', { read: OntologyGraphComponent });
+  private readonly _mainGraphBox = viewChild('mainGraph', { read: ElementRef<HTMLElement> });
+  /** The unfiltered copy of the graph the export draws the whole model from; only while it does. */
+  private readonly _wholeView = viewChild('wholeGraph', { read: OntologyGraphComponent });
+  /** The graph's size while Export draws the whole model, for its copy out of sight; none otherwise. */
+  readonly exportSize = signal<{ w: number; h: number } | undefined>(undefined);
   private readonly _searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
   /** The family of every class of the data model, which the Islands view groups and colours classes by. */
@@ -1558,13 +1599,37 @@ export class OntologyMapPageComponent {
   /** Opens the export preview: the image as it will be, its settings, then copied or downloaded. */
   openExport(): void {
     const name = OntologyService.getOntologyNameFromIri(this.selected()?.iri ?? '') || 'data-model';
-    this._dialog.open(
+    const dialog = this._dialog.open(
       ExportPreviewDialogComponent,
       exportPreviewDialogConfig({
-        render: (area, options) => this.graphView()?.png(area, options),
+        render: (area, options) =>
+          area === 'view'
+            ? this.graphView()?.png('view', options)
+            : this._wholeModel().then(view => view.png('whole', options)!),
         fileName: `${name}_ontology-map`,
+        title: this.selected()?.label ?? name,
       })
     );
+    dialog.afterClosed().subscribe(() => this.exportSize.set(undefined));
+  }
+
+  /** The unfiltered copy of the graph once laid out, drawn first at the graph's size; see `exportSize`. */
+  private _wholeModel(): Promise<OntologyGraphComponent> {
+    if (!this.exportSize()) {
+      const box = this._mainGraphBox()?.nativeElement.getBoundingClientRect();
+      this.exportSize.set({ w: Math.round(box?.width || 1200), h: Math.round(box?.height || 800) });
+    }
+    return new Promise((resolve, reject) => {
+      const started = Date.now();
+      const check = () => {
+        const view = this._wholeView();
+        if (view?.laidOut()) resolve(view);
+        else if (Date.now() - started > WHOLE_MODEL_TIMEOUT_MS)
+          reject(new Error('The whole model could not be drawn.'));
+        else setTimeout(check, 100);
+      };
+      check();
+    });
   }
 
   /** Opens the class in the Data tab. */

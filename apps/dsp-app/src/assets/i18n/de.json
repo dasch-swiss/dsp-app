@@ -857,8 +857,8 @@
         "no": "Nein",
         "copy": "In die Zwischenablage kopieren",
         "download": "PNG herunterladen",
-        "cancel": "Abbrechen",
-        "close": "Schliessen"
+        "close": "Schliessen",
+        "modelName": "Name des Datenmodells"
       },
       "labelsMenu": {
         "heading": "Auf Klassen und Verknüpfungen",
