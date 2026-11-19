@@ -830,11 +830,7 @@
       "exportDialog": {
         "title": "Esporta l'immagine",
         "previewView": "Anteprima: ciò che vedi",
-        "previewWhole": "Anteprima: l'intero modello, adattato",
         "previewAlt": "Anteprima dell'immagine esportata",
-        "area": "Area",
-        "view": "Ciò che vedi",
-        "whole": "Intero modello",
         "resolution": "Risoluzione",
         "legend": "Legenda",
         "copy": "Copia negli appunti",

@@ -34,7 +34,7 @@ describe('ExportPreviewDialogComponent', () => {
   });
 
   it('draws what is in view, at 2x, with the legend and the data model name, at first', () => {
-    expect(render).toHaveBeenCalledWith('view', {
+    expect(render).toHaveBeenCalledWith({
       format: 'png',
       scale: 2,
       legend: true,
@@ -44,13 +44,12 @@ describe('ExportPreviewDialogComponent', () => {
   });
 
   it('draws it again when a setting changes', () => {
-    component.area.set('whole');
     component.level.set(component.levels[2]);
     component.legend.set(false);
     component.title.set(false);
     fixture.detectChanges();
 
-    expect(render).toHaveBeenLastCalledWith('whole', {
+    expect(render).toHaveBeenLastCalledWith({
       format: 'png',
       scale: 8,
       legend: false,
@@ -63,7 +62,7 @@ describe('ExportPreviewDialogComponent', () => {
     component.format.set('svg');
     fixture.detectChanges();
 
-    expect(render).toHaveBeenLastCalledWith('view', expect.objectContaining({ format: 'svg', scale: 1 }));
+    expect(render).toHaveBeenLastCalledWith(expect.objectContaining({ format: 'svg', scale: 1 }));
     expect(fixture.nativeElement.querySelector('[data-cy=export-preview-scale]')).toBeNull();
   });
 

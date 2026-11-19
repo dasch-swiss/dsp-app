@@ -830,11 +830,7 @@
       "exportDialog": {
         "title": "Exporter l'image",
         "previewView": "Aperçu : ce que vous voyez",
-        "previewWhole": "Aperçu : tout le modèle, ajusté",
         "previewAlt": "Aperçu de l'image exportée",
-        "area": "Zone",
-        "view": "Ce que vous voyez",
-        "whole": "Tout le modèle",
         "resolution": "Résolution",
         "legend": "Légende",
         "copy": "Copier dans le presse-papiers",

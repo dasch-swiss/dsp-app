@@ -8,16 +8,11 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import {
-  EXPORT_CANVAS_LIMIT,
-  GraphExportArea,
-  GraphExportFormat,
-  GraphExportOptions,
-} from './ontology-graph.component';
+import { EXPORT_CANVAS_LIMIT, GraphExportFormat, GraphExportOptions } from './ontology-graph.component';
 
 export interface ExportPreviewData {
-  /** Draws the graph as a PNG: the part in view or every class, at a resolution, with its legend or not. */
-  render: (area: GraphExportArea, options: GraphExportOptions) => Promise<Blob> | undefined;
+  /** Draws the graph as it is in view, as a PNG or an SVG, at a resolution, with its legend or not. */
+  render: (options: GraphExportOptions) => Promise<Blob> | undefined;
   /** The downloaded file's name without its extension, such as `beol_ontology-map`. */
   fileName: string;
   /** The data model's name, written over the image when chosen. */
@@ -54,8 +49,8 @@ interface Rendered {
 }
 
 /**
- * The Diagram's Export: a preview of the image as it will be, what is in view or the whole model, at 1×, 2× or 4× and
- * with its legend or not; then copied to the clipboard or downloaded.
+ * The Diagram's Export: a preview of the image as it will be, what is in view, as a PNG at a resolution or an SVG, with
+ * its legend and the data model's name or not; then copied to the clipboard or downloaded.
  */
 @Component({
   selector: 'app-export-preview-dialog',
@@ -76,7 +71,7 @@ interface Rendered {
     <div class="dialog" data-cy="export-preview">
       <div class="stage">
         <div class="stage-top">
-          {{ e + (area() === 'whole' ? '.previewWhole' : '.previewView') | translate }}
+          {{ e + '.previewView' | translate }}
           @if (rendered(); as image) {
             <span class="dims" data-cy="export-preview-dims"
               >· {{ image.width }} × {{ image.height }} px · {{ fileSize(image.bytes) }}</span
@@ -115,19 +110,6 @@ interface Rendered {
         </div>
 
         <div class="settings">
-          <div class="setting">
-            <span class="heading" id="export-area">{{ e + '.area' | translate }}</span>
-            <mat-button-toggle-group
-              aria-labelledby="export-area"
-              data-cy="export-preview-area"
-              hideSingleSelectionIndicator
-              [value]="area()"
-              (change)="area.set($event.value)">
-              <mat-button-toggle value="view">{{ e + '.view' | translate }}</mat-button-toggle>
-              <mat-button-toggle value="whole">{{ e + '.whole' | translate }}</mat-button-toggle>
-            </mat-button-toggle-group>
-          </div>
-
           <div class="setting">
             <span class="heading" id="export-format">{{ e + '.format' | translate }}</span>
             <mat-button-toggle-group
@@ -372,7 +354,6 @@ export class ExportPreviewDialogComponent {
   private readonly _translate = inject(TranslateService);
 
   readonly levels = LEVELS;
-  readonly area = signal<GraphExportArea>('view');
   readonly format = signal<GraphExportFormat>('png');
   readonly level = signal<Level>(LEVELS[1]);
   readonly legend = signal(true);
@@ -388,7 +369,6 @@ export class ExportPreviewDialogComponent {
   constructor() {
     let made = 0;
     effect(() => {
-      const area = this.area();
       const format = this.format();
       // An SVG has no resolution: its size is the graph's, in screen pixels.
       const scale = format === 'svg' ? 1 : this.level().scale;
@@ -398,11 +378,10 @@ export class ExportPreviewDialogComponent {
         scale,
         legend: this.legend(),
         title: titled ? this._data.title : undefined,
-        // The whole model is never filtered: only what is in view says what it is filtered on.
-        subtitle: titled && area === 'view' ? this._data.filter : undefined,
+        subtitle: titled ? this._data.filter : undefined,
       };
-      // Drawing may set up what it draws from, such as the whole model's copy: not part of what this effect follows.
-      const png = untracked(() => this._data.render(area, options));
+      // What drawing reads is not part of what this effect follows: only the settings are.
+      const png = untracked(() => this._data.render(options));
       this._png = png;
       const turn = ++made;
       this.busy.set(true);
@@ -475,11 +454,8 @@ export class ExportPreviewDialogComponent {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        const whole = this.area() === 'whole' ? '_whole' : '';
         link.download =
-          this.format() === 'svg'
-            ? `${this._data.fileName}${whole}.svg`
-            : `${this._data.fileName}${whole}_${this.level().key}.png`;
+          this.format() === 'svg' ? `${this._data.fileName}.svg` : `${this._data.fileName}_${this.level().key}.png`;
         link.click();
         URL.revokeObjectURL(url);
       },
