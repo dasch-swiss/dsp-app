@@ -5,6 +5,7 @@ import { MultipleViewerService } from '@dasch-swiss/vre/pages/data-browser';
 import { StatementDraftStore } from '@dasch-swiss/vre/pages/search/search-filters';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, NEVER } from 'rxjs';
+import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassUrlStateService, DataClassView } from './data-class-url-state.service';
 import { DataClassViewComponent } from './data-class-view.component';
 import { ProjectPageService } from './project-page.service';
@@ -34,6 +35,7 @@ const viewIn = (window: ReturnType<typeof windowOf>, view: DataClassView = 'list
       { provide: BreakpointObserver, useValue: window.observer },
       { provide: DataClassUrlStateService, useValue: urlState },
       { provide: MultipleViewerService, useValue: { selectedResources$: NEVER } },
+      { provide: DataBrowserPageService, useValue: { reloadNavigation: () => {} } },
     ],
   });
   const projectPageService = { currentProject$: NEVER, ontologies$: NEVER } as unknown as ProjectPageService;

@@ -1,14 +1,20 @@
 import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
+import {
+  BulkEditDialogComponent,
+  BulkEditDialogProps,
+  BulkEditDialogResult,
+} from '../bulk-edit/bulk-edit-dialog.component';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource-link-dialog.component';
 
@@ -20,6 +26,22 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
         <div>
           {{ 'pages.dataBrowser.resourceListSelection.resourcesSelected' | translate: { count: count$ | async } }}
         </div>
+        @if ((canEdit$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
+          @let sameClass = isSameClass(selectedResources);
+          <div
+            style="display: inline-block"
+            [matTooltip]="'pages.dataBrowser.resourceListSelection.bulkEditSameClass' | translate"
+            [matTooltipDisabled]="sameClass">
+            <button
+              mat-flat-button
+              data-cy="bulk-edit-btn"
+              [disabled]="!sameClass"
+              (click)="openBulkEditDialog(selectedResources)">
+              <mat-icon>edit_note</mat-icon>
+              {{ 'pages.dataBrowser.resourceListSelection.bulkEdit' | translate }}
+            </button>
+          </div>
+        }
         @if ((showCreateLink$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
           @if (isCreateLinkButtonDisabled$ | async; as disabledState) {
             <div
@@ -45,6 +67,9 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
   imports: [AsyncPipe, MatButton, MatIconButton, MatIcon, MatTooltip, TranslatePipe],
 })
 export class ResourceListSelectionComponent {
+  /** Emits once a bulk edit has written values, so the host can reload its results. */
+  @Output() bulkEdited = new EventEmitter<string[]>();
+
   count$ = this.multipleViewerService.selectedResources$.pipe(map(resources => resources.length));
   showCreateLink$ = combineLatest([
     this.count$,
@@ -68,6 +93,19 @@ export class ResourceListSelectionComponent {
       // Check if user has Project Member OR Project Admin rights on ANY of the projects
       // This allows the button to show (possibly disabled) to provide feedback
       return projectUuids.some(projectUuid => UserPermissions.hasProjectMemberRights(user, projectUuid));
+    })
+  );
+
+  /** Bulk edit needs write access; dsp-api still checks each value. */
+  canEdit$ = combineLatest([
+    this.multipleViewerService.selectedResources$,
+    this._userService.user$,
+    this._userService.isSysAdmin$,
+  ]).pipe(
+    map(([resources, user, isSysAdmin]) => {
+      if (!user || resources.length === 0) return false;
+      if (isSysAdmin) return true;
+      return resources.every(r => UserPermissions.hasProjectMemberRights(user, r.attachedToProject));
     })
   );
 
@@ -103,6 +141,28 @@ export class ResourceListSelectionComponent {
 
   reset() {
     this.multipleViewerService.reset();
+  }
+
+  /** The edited property comes from the class, so every resource must share it. */
+  isSameClass(resources: ReadResource[]): boolean {
+    return resources.every(resource => resource.type === resources[0].type);
+  }
+
+  openBulkEditDialog(resources: ReadResource[]): void {
+    this._dialog
+      .open<BulkEditDialogComponent, BulkEditDialogProps, BulkEditDialogResult>(BulkEditDialogComponent, {
+        ...DspDialogConfig.dialogDrawerConfig({ resourceIris: resources.map(resource => resource.id) }, true),
+        width: '600px',
+        maxWidth: '100vw',
+        minWidth: 0,
+        autoFocus: false,
+      })
+      .afterClosed()
+      .subscribe(changedIris => {
+        if (!changedIris?.length) return;
+        changedIris.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
+        this.bulkEdited.emit(changedIris);
+      });
   }
 
   openCreateLinkDialog(resources: ReadResource[]): void {
