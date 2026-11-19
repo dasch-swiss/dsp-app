@@ -1146,13 +1146,14 @@ export class OntologyMapPageComponent {
   /**
    * The search in the classes and links drawn; see `searchGraph`. While a class or property of its list is gone
    * through, searched or browsed, only that one stands out, with what it links, the rest fading; see `focusGraph`.
-   * "All results" shows the whole search again.
+   * "All results" shows the whole search again. A class or property whose panel is open, clicked in the graph or
+   * elsewhere, stands out the same way.
    */
   readonly search = computed(() => {
     const graph = this.graphShown() ?? this.graph();
     if (!graph) return undefined;
-    const browsed = this.searchDropdownOpen() ? this.browsed() : undefined;
-    return browsed ? focusGraph(graph, browsed) : searchGraph(graph, this.searchText());
+    const focused = this.searchDropdownOpen() ? this.browsed() : this.panelFocus();
+    return focused ? focusGraph(graph, focused) : searchGraph(graph, this.searchText());
   });
   /** The classes and link properties the search found, each property once, as its results list them. */
   readonly searchMatches = computed(() => {
