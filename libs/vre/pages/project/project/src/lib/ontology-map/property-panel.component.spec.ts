@@ -33,14 +33,12 @@ const graph: DataModelGraph = {
 
 describe('PropertyPanelComponent', () => {
   let fixture: ComponentFixture<PropertyPanelComponent>;
-  let component: PropertyPanelComponent;
   const text = (selector: string) =>
     Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll(selector)).map(e => e.textContent?.trim());
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [PropertyPanelComponent], providers: [provideTranslateService()] });
     fixture = TestBed.createComponent(PropertyPanelComponent);
-    component = fixture.componentInstance;
     fixture.componentRef.setInput('graph', graph);
     fixture.componentRef.setInput('propertyIri', 'director');
     fixture.detectChanges();
