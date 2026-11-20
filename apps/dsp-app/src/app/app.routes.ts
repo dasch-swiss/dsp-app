@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
+import { LIST_PAGE_BACK, ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
 import {
   DataModelsPageComponent,
   OntologyEditorPageComponent,
@@ -19,10 +19,10 @@ import {
   ImageSettingsComponent,
   LegalSettingsComponent,
   OntologyMapPageComponent,
-  DataModelsRailPageComponent,
   DataModelClassesComponent,
   DataModelPropertiesComponent,
   DataModelListsComponent,
+  DataModelsTreePageComponent,
   ProjectAdminGuard,
   ProjectPageComponent,
   ProjectPageGuard,
@@ -73,18 +73,33 @@ export const routes: Routes = [
         path: RouteConstants.dataModels,
         component: DataModelsPageComponent,
       },
+      // Data models 2 was Data models 3: its former links, with their query, land on the same section.
+      {
+        path: `${RouteConstants.dataModels3}/${RouteConstants.list}/:${RouteConstants.listParameter}`,
+        redirectTo: `${RouteConstants.dataModels2}/${RouteConstants.list}/:${RouteConstants.listParameter}`,
+      },
+      { path: `${RouteConstants.dataModels3}/:section`, redirectTo: `${RouteConstants.dataModels2}/:section` },
+      { path: RouteConstants.dataModels3, redirectTo: RouteConstants.dataModels2 },
+      // The same sections under a rail listing every data model, each folding open on its sections; no overview.
       {
         path: RouteConstants.dataModels2,
-        component: DataModelsRailPageComponent,
+        component: DataModelsTreePageComponent,
         children: [
-          { path: '', pathMatch: 'full', redirectTo: RouteConstants.graph },
+          { path: '', pathMatch: 'full', redirectTo: RouteConstants.classes },
+          // The Overview of the former Data models 2 is gone: its links open the classes.
+          { path: RouteConstants.overview, redirectTo: RouteConstants.classes },
           { path: RouteConstants.graph, component: OntologyMapPageComponent },
           { path: RouteConstants.classes, component: DataModelClassesComponent },
           { path: RouteConstants.properties, component: DataModelPropertiesComponent },
           { path: RouteConstants.lists, component: DataModelListsComponent },
+          {
+            path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
+            component: ListPageComponent,
+            data: { [LIST_PAGE_BACK]: RouteConstants.dataModels2 },
+          },
         ],
       },
-      // The Ontology map tab became Data models 2 › Graph; links to it, with their query, land there.
+      // The Ontology map tab became the Diagram of Data models 2; links to it, with their query, land there.
       {
         path: RouteConstants.ontologyMap,
         redirectTo: `${RouteConstants.dataModels2}/${RouteConstants.graph}`,

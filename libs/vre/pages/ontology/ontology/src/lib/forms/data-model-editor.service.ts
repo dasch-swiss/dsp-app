@@ -1,30 +1,50 @@
 import { createEnvironmentInjector, EnvironmentInjector, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import {
+  ApiResponseError,
+  CanDoResponse,
+  Cardinality,
+  KnoraApiConnection,
+  ListInfoResponse,
+  ListResponse,
+  OntologyMetadata,
+  ResourceClassDefinitionWithAllLanguages,
+} from '@dasch-swiss/dsp-js';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
-import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
   CreateListItemDialogComponent,
   CreateListItemDialogProps,
   EditListItemDialogComponent,
   EditListItemDialogProps,
+  ListInfoFormComponent,
 } from '@dasch-swiss/vre/pages/ontology/list';
 import {
   AvailableProperties,
+  CanDo,
   DataModelEditor,
   ProjectPageService,
-  TextsToSave,
   VocabularyValue,
 } from '@dasch-swiss/vre/pages/project/project';
-import { DefaultProperty, LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import {
+  DefaultClass,
+  DefaultProperty,
+  LocalizationService,
+  OntologyService,
+} from '@dasch-swiss/vre/shared/app-helper-services';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DIALOG_LARGE, DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, filter, finalize, map, Observable, of, switchMap, take, takeUntil } from 'rxjs';
+import { catchError, combineLatest, filter, finalize, map, Observable, of, switchMap, take, takeUntil } from 'rxjs';
 import { OntologyEditService } from '../services/ontology-edit.service';
+import { CreateOntologyFormDialogComponent } from './ontology-form/create-ontology-form-dialog.component';
+import { EditOntologyFormDialogComponent } from './ontology-form/edit-ontology-form-dialog.component';
+import { UpdateOntologyData } from './ontology-form/ontology-form.type';
 import { EditPropertyFormDialogComponent } from './property-form/edit-property-form-dialog.component';
 import { CreatePropertyDialogData, EditPropertyDialogData } from './property-form/property-form.type';
+import { CreateResourceClassDialogComponent } from './resource-class-form/create-resource-class-dialog.component';
 import {
   EditResourceClassDialogComponent,
   EditResourceClassDialogProps,
@@ -45,6 +65,8 @@ export class DataModelEditorService implements DataModelEditor {
   private readonly _listApi = inject(ListApiService);
   private readonly _confirm = inject(DialogService);
   private readonly _translate = inject(TranslateService);
+  private readonly _api = inject<KnoraApiConnection>(DspApiConnectionToken);
+  private readonly _notification = inject(NotificationService);
 
   editClass(classIri: string): Observable<boolean> {
     return this._withEditing(classIri, (editing, injector) =>
@@ -60,8 +82,6 @@ export class DataModelEditorService implements DataModelEditor {
                 ...DspDialogConfig.mediumDialog({
                   labels: resourceClass.labels,
                   data: resourceClass as unknown as UpdateResourceClassData,
-                  // Data models 2 shows every language of the label and description at once.
-                  layout: 'stacked',
                 }),
                 injector,
               }
@@ -89,8 +109,6 @@ export class DataModelEditorService implements DataModelEditor {
             guiElement: propDef.guiElement || propType.guiElement,
             guiAttribute: propDef.guiAttributes[0],
             objectType: propDef.objectType,
-            // Data models 2 shows every language of the label and description at once.
-            layout: 'stacked',
           };
           return this._closedByClickOnly(
             this._dialog.open(EditPropertyFormDialogComponent, {
@@ -99,28 +117,6 @@ export class DataModelEditorService implements DataModelEditor {
             })
           );
         })
-      )
-    );
-  }
-
-  saveClassTexts(classIri: string, { labels, descriptions }: TextsToSave): Observable<boolean> {
-    return this._withEditing(classIri, editing =>
-      editing.currentOntology$.pipe(
-        filter(ontology => !!ontology?.classes[classIri]),
-        take(1),
-        switchMap(() => editing.updateResourceClass$({ id: classIri, labels, comments: descriptions })),
-        map(() => true)
-      )
-    );
-  }
-
-  savePropertyTexts(propertyIri: string, { labels, descriptions }: TextsToSave): Observable<boolean> {
-    return this._withEditing(propertyIri, editing =>
-      editing.currentOntology$.pipe(
-        filter(ontology => !!ontology?.properties[propertyIri]),
-        take(1),
-        switchMap(() => editing.updateProperty$({ id: propertyIri, labels, comment: descriptions })),
-        map(() => true)
       )
     );
   }
@@ -135,6 +131,11 @@ export class DataModelEditorService implements DataModelEditor {
       take(1),
       map(([ontology, properties]) => {
         const used = new Set(ontology!.classes[classIri].propertiesList.map(property => property.propertyIndex));
+        // Whether a superclass of the class, at any depth in this data model, is among `classes`.
+        const hasAncestorIn = (iri: string, classes: Set<string>, seen = new Set<string>()): boolean =>
+          (ontology!.classes[iri]?.subClassOf ?? []).some(
+            parent => !seen.has(parent) && (classes.has(parent) || hasAncestorIn(parent, classes, seen.add(parent)))
+          );
         const byOntology = new Map<string, AvailableProperties>();
         for (const property of properties) {
           if (used.has(property.propDef.id)) continue;
@@ -147,6 +148,17 @@ export class DataModelEditorService implements DataModelEditor {
             label: stringify.transform(property.propDef.labels) || property.propDef.label || '',
             icon: property.propType?.icon ?? 'label',
             description: stringify.transform(property.propDef.comments) || '',
+            name: property.propDef.id.substring(property.propDef.id.lastIndexOf('#') + 1),
+            isLink: property.propDef.isLinkProperty,
+            type: property.propDef.isLinkProperty
+              ? stringify.transform(property.objectLabels) ||
+                (property.propDef.objectType ?? '').substring((property.propDef.objectType ?? '').lastIndexOf('#') + 1)
+              : (property.propType?.label ?? ''),
+            // The topmost classes using it: their subclasses, which have it too, would only repeat them.
+            usedBy: property.usedByClasses
+              .filter(used => !hasAncestorIn(used.id, new Set(property.usedByClasses.map(other => other.id))))
+              .map(used => stringify.transform(used.labels))
+              .filter(Boolean),
           });
           byOntology.set(property.baseOntologyId, group);
         }
@@ -186,16 +198,119 @@ export class DataModelEditorService implements DataModelEditor {
         take(1),
         switchMap(ontology =>
           this._closedByClickOnly(
-            this._dialog.open<EditPropertyFormDialogComponent, CreatePropertyDialogData>(
+            this._dialog.open<EditPropertyFormDialogComponent, CreatePropertyDialogData, string>(
               EditPropertyFormDialogComponent,
-              { data: { propType: type, assignToClass: ontology!.classes[classIri], layout: 'stacked' }, injector }
+              { data: { propType: type, assignToClass: ontology!.classes[classIri] }, injector }
             )
           )
         ),
-        // The dialog closes without a result either way; the project is read again to show a property created.
+        // The dialog closes with the new property's name once it exists, but the class gets it only after: saved
+        // once the data model, read again, gives the class the property; nothing to wait for when cancelled.
+        switchMap(name => {
+          if (!name) return of(false);
+          const propertyIri = `${classIri.split('#')[0]}#${name}`;
+          return editing.currentOntology$.pipe(
+            filter(
+              read => !!read?.classes[classIri]?.propertiesList.some(property => property.propertyIndex === propertyIri)
+            ),
+            take(1),
+            map(() => true)
+          );
+        })
+      )
+    );
+  }
+
+  reorderProperties(classIri: string, propertyIris: string[]): Observable<boolean> {
+    return this._withEditing(classIri, editing =>
+      editing.currentOntology$.pipe(
+        filter(ontology => !!ontology?.classes[classIri]),
+        take(1),
+        switchMap(ontology => {
+          // The class's properties in form order; its own ones take the new order, in the places they had.
+          const current = [...ontology!.classes[classIri].propertiesList].sort(
+            (a, b) => (a.guiOrder ?? 0) - (b.guiOrder ?? 0)
+          );
+          const moved = new Set(propertyIris);
+          const next = [...propertyIris];
+          const ordered = current.map(property => {
+            if (!moved.has(property.propertyIndex)) return property;
+            return current.find(own => own.propertyIndex === next.shift())!;
+          });
+          const saved = ordered.map((property, index) => ({ ...property, guiOrder: index + 1 }));
+          editing.updateGuiOrderOfClassProperties(classIri, saved);
+          // Saved once the data model, read again, has the class's properties in that order.
+          const order = (properties: { propertyIndex: string; guiOrder?: number }[]) =>
+            properties
+              .filter(property => moved.has(property.propertyIndex))
+              .sort((a, b) => (a.guiOrder ?? 0) - (b.guiOrder ?? 0))
+              .map(property => property.propertyIndex)
+              .join(' ');
+          return editing.currentOntology$.pipe(
+            filter(
+              read =>
+                !!read?.classes[classIri] && order(read.classes[classIri].propertiesList) === propertyIris.join(' ')
+            ),
+            take(1)
+          );
+        }),
         map(() => true)
       )
     );
+  }
+
+  createClass(ontologyIri: string, kind: DefaultClass): Observable<string | undefined> {
+    return this._created(ontologyIri, (editing, injector) =>
+      this._closedByClickOnly(
+        this._dialog.open<CreateResourceClassDialogComponent, DefaultClass, string>(
+          CreateResourceClassDialogComponent,
+          {
+            ...DspDialogConfig.mediumDialog(kind),
+            injector,
+          }
+        )
+      )
+    );
+  }
+
+  createProperty(ontologyIri: string, type: DefaultProperty): Observable<string | undefined> {
+    return this._created(ontologyIri, (editing, injector) =>
+      this._closedByClickOnly(
+        this._dialog.open<EditPropertyFormDialogComponent, CreatePropertyDialogData, string>(
+          EditPropertyFormDialogComponent,
+          { data: { propType: type }, injector }
+        )
+      )
+    );
+  }
+
+  /**
+   * Opens a create dialog with an editing service on the data model, once it is read, dropped once the dialog closes;
+   * emits the IRI of what was made, from the name the dialog closes with, or nothing if it was cancelled.
+   */
+  private _created(
+    ontologyIri: string,
+    open: (editing: OntologyEditService, injector: EnvironmentInjector) => Observable<string | undefined>
+  ): Observable<string | undefined> {
+    const injector = createEnvironmentInjector([OntologyEditService], this._injector);
+    const editing = injector.get(OntologyEditService);
+    editing.initOntologyByLabel(OntologyService.getOntologyNameFromIri(ontologyIri));
+    return editing.currentOntology$.pipe(
+      filter(ontology => !!ontology),
+      take(1),
+      switchMap(() => open(editing, injector)),
+      map(name => (name ? `${ontologyIri}#${name}` : undefined)),
+      finalize(() => injector.destroy())
+    );
+  }
+
+  createVocabulary(): Observable<string | undefined> {
+    return this._closedByClickOnly(
+      this._dialog.open<ListInfoFormComponent, null, ListResponse | ListInfoResponse>(
+        ListInfoFormComponent,
+        DspDialogConfig.dialogDrawerConfig(null, true)
+      )
+    ).pipe(map(response => (response && 'list' in response ? response.list.listinfo.id : undefined)));
   }
 
   addVocabularyValue(parentIri: string, position: number): Observable<boolean> {
@@ -228,8 +343,6 @@ export class DataModelEditorService implements DataModelEditor {
                   labels: value.labels as MultiLanguages,
                   comments: (value.comments ?? []) as MultiLanguages,
                 },
-                // Data models 2 shows every language of the label and description at once.
-                layout: 'stacked',
               },
               true
             )
@@ -267,6 +380,207 @@ export class DataModelEditorService implements DataModelEditor {
       .pipe(takeUntil(ref.afterClosed()))
       .subscribe(() => ref.close());
     return ref.afterClosed();
+  }
+
+  createDataModel(): Observable<string | undefined> {
+    return this._closedByClickOnly(
+      this._dialog.open<CreateOntologyFormDialogComponent, null, OntologyMetadata>(
+        CreateOntologyFormDialogComponent,
+        DspDialogConfig.dialogDrawerConfig(null, true)
+      )
+    ).pipe(map(ontology => ontology?.id));
+  }
+
+  editDataModel(model: { iri: string; label: string; comment?: string }): Observable<boolean> {
+    return this._withEditing(model.iri, (editing, injector) =>
+      editing.currentOntology$.pipe(
+        filter(ontology => !!ontology),
+        take(1),
+        switchMap(() =>
+          this._closedByClickOnly(
+            this._dialog.open<EditOntologyFormDialogComponent, UpdateOntologyData, OntologyMetadata>(
+              EditOntologyFormDialogComponent,
+              {
+                ...DspDialogConfig.dialogDrawerConfig(
+                  { id: model.iri, label: model.label, comment: model.comment ?? '' },
+                  true
+                ),
+                injector,
+              }
+            )
+          )
+        )
+      )
+    );
+  }
+
+  canDeleteDataModel(ontologyIri: string): Observable<CanDo> {
+    return this._canDo(this._api.v2.onto.canDeleteOntology(ontologyIri));
+  }
+
+  deleteDataModel(ontologyIri: string, label: string): Observable<boolean> {
+    return this._confirm
+      .afterConfirmation(this._translate.instant('pages.dataModels2.deleteDataModelConfirm', { model: label }))
+      .pipe(
+        switchMap(() =>
+          this._withEditing(ontologyIri, editing =>
+            editing.currentOntology$.pipe(
+              filter(ontology => !!ontology),
+              take(1),
+              switchMap(() => editing.deleteOntology$(ontologyIri)),
+              map(() => true)
+            )
+          )
+        )
+      );
+  }
+
+  canDeleteClass(classIri: string): Observable<CanDo> {
+    return this._canDo(this._api.v2.onto.canDeleteResourceClass(classIri));
+  }
+
+  deleteClass(classIri: string, label: string): Observable<boolean> {
+    return this._confirm
+      .afterConfirmation(this._translate.instant('pages.dataModels2.deleteClassConfirm', { class: label }))
+      .pipe(
+        switchMap(() =>
+          this._withEditing(classIri, editing =>
+            editing.currentOntology$.pipe(
+              filter(ontology => !!ontology?.classes[classIri]),
+              take(1),
+              switchMap(() => editing.deleteResourceClass$(classIri)),
+              map(() => true)
+            )
+          )
+        )
+      );
+  }
+
+  removeProperty(
+    classIri: string,
+    propertyIri: string,
+    labels: { property: string; class: string }
+  ): Observable<boolean> {
+    return this._withEditing(classIri, editing =>
+      editing.currentOntology$.pipe(
+        filter(ontology => !!ontology?.classes[classIri]),
+        take(1),
+        switchMap(ontology => {
+          const card = ontology!.classes[classIri].propertiesList.find(
+            property => property.propertyIndex === propertyIri
+          );
+          if (!card) return of(false);
+          return editing.propertyCanBeRemovedFromClass$(card, classIri).pipe(
+            switchMap(check => {
+              if (!check.canDo) {
+                this._notify(this._translate.instant('pages.dataModels2.cannotRemove', labels), check.cannotDoReason);
+                return of(false);
+              }
+              return this._confirm
+                .afterConfirmation(this._translate.instant('pages.dataModels2.removeFromClassConfirm', labels))
+                .pipe(
+                  switchMap(() => {
+                    editing.removePropertyFromClass(card, classIri);
+                    // Saved once the data model, read again, no longer gives the class the property.
+                    return editing.currentOntology$.pipe(
+                      filter(
+                        read =>
+                          !!read?.classes[classIri] &&
+                          !read.classes[classIri].propertiesList.some(
+                            property => property.propertyIndex === propertyIri
+                          )
+                      ),
+                      take(1),
+                      map(() => true)
+                    );
+                  })
+                );
+            })
+          );
+        })
+      )
+    );
+  }
+
+  canDeleteProperty(propertyIri: string): Observable<CanDo> {
+    return this._canDo(this._api.v2.onto.canDeleteResourceProperty(propertyIri));
+  }
+
+  deleteProperty(propertyIri: string, label: string): Observable<boolean> {
+    return this.canDeleteProperty(propertyIri).pipe(
+      switchMap(check => {
+        if (!check.canDo) {
+          this._notify(
+            this._translate.instant('pages.dataModels2.cannotDeleteProperty', { property: label }),
+            check.reason
+          );
+          return of(false);
+        }
+        return this._confirm
+          .afterConfirmation(this._translate.instant('pages.dataModels2.deletePropertyConfirm', { property: label }))
+          .pipe(
+            switchMap(() =>
+              this._withEditing(propertyIri, editing =>
+                editing.currentOntology$.pipe(
+                  filter(ontology => !!ontology?.properties[propertyIri]),
+                  take(1),
+                  switchMap(() => editing.deleteProperty$(propertyIri)),
+                  map(() => true)
+                )
+              )
+            )
+          );
+      })
+    );
+  }
+
+  canSetCardinality(classIri: string, propertyIri: string, cardinality: Cardinality): Observable<CanDo> {
+    return this._canDo(this._api.v2.onto.canReplaceCardinalityOfResourceClassWith(classIri, propertyIri, cardinality));
+  }
+
+  setCardinality(classIri: string, propertyIri: string, cardinality: Cardinality): Observable<boolean> {
+    return this._withEditing(classIri, editing =>
+      editing.currentOntology$.pipe(
+        filter(ontology => !!ontology?.classes[classIri]),
+        take(1),
+        switchMap(ontology => {
+          // The class's own properties, as the API replaces them all; this one with its new cardinality.
+          const own = ontology!.classes[classIri].propertiesList.filter(property => !property.isInherited);
+          if (!own.some(property => property.propertyIndex === propertyIri)) return of(false);
+          editing.updatePropertiesOfResourceClass(
+            classIri,
+            own.map(property => (property.propertyIndex === propertyIri ? { ...property, cardinality } : property))
+          );
+          return editing.currentOntology$.pipe(
+            filter(
+              read =>
+                read?.classes[classIri]?.propertiesList.find(property => property.propertyIndex === propertyIri)
+                  ?.cardinality === cardinality
+            ),
+            take(1),
+            map(() => true)
+          );
+        })
+      )
+    );
+  }
+
+  /** Whether the API allows it, and why not; an error answer counts as not, with its message. */
+  private _canDo(check: Observable<CanDoResponse | ApiResponseError>): Observable<CanDo> {
+    return check.pipe(
+      take(1),
+      map(response =>
+        response instanceof ApiResponseError
+          ? { canDo: false, reason: response.error instanceof Error ? response.error.message : String(response.error) }
+          : { canDo: response.canDo, reason: response.cannotDoReason }
+      ),
+      catchError(() => of({ canDo: false }))
+    );
+  }
+
+  /** Says why an action could not be done, with the API's reason when there is one. */
+  private _notify(message: string, reason?: string): void {
+    this._notification.openSnackBar(reason ? `${message} ${reason}` : message, 'error');
   }
 
   /** Runs `open` with an editing service on the data model of `iri`, dropped once the dialog closes. */

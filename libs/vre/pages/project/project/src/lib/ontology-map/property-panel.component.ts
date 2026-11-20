@@ -1,5 +1,17 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  untracked,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -7,16 +19,22 @@ import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
-import { localNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
-import { PropertyLinkEnd, PropertyLinksComponent } from './property-links.component';
+import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
+import { homeOf, propertyNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
 import { typeIconOf, typeNameOf } from './property-types';
-import { TabShadePipe } from './tab-shade.pipe';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1]: 'required',
   [Cardinality._0_1]: 'optional',
   [Cardinality._0_n]: 'many',
   [Cardinality._1_n]: 'oneOrMore',
+};
+
+const CARDINALITY_NOTATION: Record<Cardinality, string> = {
+  [Cardinality._1]: '1',
+  [Cardinality._0_1]: '0-1',
+  [Cardinality._0_n]: '0-n',
+  [Cardinality._1_n]: '1-n',
 };
 
 /**
@@ -26,7 +44,7 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 @Component({
   selector: 'app-property-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TabShadePipe, MatButton, MatIcon, MatIconButton, MatTooltip, PropertyLinksComponent, TranslatePipe],
+  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.propertyPanel';
@@ -114,43 +132,8 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
           </div>
         }
 
-        @if (usage.pairs.length) {
-          <app-property-links
-            [links]="usage.pairs"
-            [ends]="ends()"
-            [colors]="colors()"
-            (classSelected)="classSelected.emit($event)" />
-        }
-
-        <div class="facts">
-          @if (usage.type === 'Link') {
-            <div class="fact">
-              <h3>{{ t + '.pointsTo' | translate }}</h3>
-              <span class="targets">
-                @for (target of usage.targets; track target) {
-                  <button
-                    type="button"
-                    class="chip"
-                    data-cy="property-panel-target"
-                    [disabled]="!isNavigable(target)"
-                    (click)="classSelected.emit(target)">
-                    <span
-                      class="tab"
-                      aria-hidden="true"
-                      [style.background]="colors().get(target) | tabShade: 'white'"></span>
-                    <span class="chip-label">{{ labelOf(target) }}</span>
-                    @if (isNavigable(target)) {
-                      <mat-icon>chevron_right</mat-icon>
-                    }
-                  </button>
-                }
-              </span>
-            </div>
-            <div class="fact">
-              <h3>{{ t + '.inModel' | translate }}</h3>
-              <span class="count">{{ t + '.links' | translate: { count: usage.links } }}</span>
-            </div>
-          } @else {
+        @if (usage.type !== 'Link') {
+          <div class="facts">
             <div class="fact" data-cy="property-panel-type">
               <h3>{{ t + '.type' | translate }}</h3>
               <span class="type" [attr.data-type]="usage.type">
@@ -158,8 +141,8 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                 >{{ typeName(usage.type) }}
               </span>
             </div>
-          }
-        </div>
+          </div>
+        }
 
         <div class="group">
           <h3>{{ t + '.usedBy' | translate: { count: usage.users.length } }}</h3>
@@ -177,29 +160,45 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
                 <span class="inherited">{{ t + '.inheritedFrom' | translate: { class: labelOf(from) } }}</span>
               }
               @if (user.cardinality !== undefined) {
-                <span class="cardinality">{{ c + '.' + cardinalityKey(user.cardinality) | translate }}</span>
+                <!-- As on the class cards: 1, 0-1, 1-n or 0-n, filled when required; in words on hover. -->
+                <span
+                  class="cardinality"
+                  data-cy="property-panel-cardinality"
+                  [class.required]="isRequired(user.cardinality)"
+                  [matTooltip]="c + '.' + cardinalityKey(user.cardinality) | translate"
+                  >{{ cardinalityNotation(user.cardinality) }}</span
+                >
               }
             </div>
           }
         </div>
 
-        <div class="actions">
-          @if (usage.type === 'Link') {
-            <button
-              mat-flat-button
-              color="primary"
-              data-cy="property-panel-filter"
-              (click)="filter.emit(propertyIri())">
-              <mat-icon>filter_alt</mat-icon>
-              {{ t + '.filter' | translate }}
-            </button>
-          }
-          @if (canEdit()) {
-            <button mat-stroked-button data-cy="property-panel-edit" (click)="edit.emit(propertyIri())">
+        <!-- Kept in view at the bottom of the panel, as in the class panel. -->
+        @if (canEdit()) {
+          <div class="actions">
+            <button mat-flat-button color="primary" data-cy="property-panel-edit" (click)="edit.emit(propertyIri())">
+              <mat-icon>edit</mat-icon>
               {{ t + '.edit' | translate }}
             </button>
-          }
-        </div>
+            @if (editing?.canDelete) {
+              @let check = deleteCheck();
+              <!-- Only once the API says no class or value uses the property; why not, on hover, otherwise. -->
+              <span
+                [matTooltip]="'pages.dataModels2.cannotDeleteProperty' | translate: { property: usage.label }"
+                [matTooltipDisabled]="!check || check.canDo">
+                <button
+                  mat-stroked-button
+                  class="delete"
+                  data-cy="property-panel-delete"
+                  [disabled]="!check?.canDo"
+                  (click)="deleteProperty(usage.label)">
+                  <mat-icon>delete</mat-icon>
+                  {{ 'ui.common.actions.delete' | translate }}
+                </button>
+              </span>
+            }
+          </div>
+        }
       </section>
     }
   `,
@@ -405,56 +404,6 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
         }
       }
 
-      .targets {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
-
-      // A class as the Overview draws it: white, a slate border, its colour in a tab at the left.
-      .chip {
-        display: flex;
-        align-items: stretch;
-        gap: 2px;
-        padding: 0 6px 0 0;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        overflow: hidden;
-        background: white;
-        font: inherit;
-        font-weight: 500;
-        color: #1f2937;
-        cursor: pointer;
-
-        .tab {
-          flex: none;
-          width: 12px;
-        }
-
-        .chip-label {
-          display: flex;
-          align-items: center;
-          padding: 2px 0 2px 8px;
-        }
-
-        &:disabled {
-          padding-right: 10px;
-          cursor: default;
-        }
-
-        mat-icon {
-          align-self: center;
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-        }
-      }
-
-      .count {
-        font-size: 15px;
-        font-weight: 500;
-      }
-
       .group {
         display: flex;
         flex-direction: column;
@@ -509,14 +458,49 @@ const CARDINALITY_KEY: Record<Cardinality, string> = {
 
       .cardinality {
         flex: none;
-        font-size: 12px;
-        color: $cool_gray_500;
+        min-width: 32px;
+        padding: 0 4px;
+        border: 1px solid $cool_gray_300;
+        border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 500;
+        line-height: 16px;
+        text-align: center;
+        color: $cool_gray_600;
+
+        &.required {
+          background: $primary;
+          border-color: $primary;
+          color: white;
+        }
       }
 
+      // A footer across the panel, against its padding: pushed down when the panel is short, stuck to the bottom when
+      // it scrolls; as in the class panel.
       .actions {
+        position: sticky;
+        bottom: -20px;
+        margin: auto -24px -20px;
+        padding: 12px 24px;
         display: flex;
+        align-items: center;
         gap: 8px;
-        padding-top: 4px;
+        background: white;
+        border-top: 1px solid $cool_gray_200;
+
+        // Deleting, in red, once possible.
+        .delete:not([disabled]) {
+          color: #b3261e;
+          border-color: #b3261e;
+        }
+
+        button {
+          --mat-button-filled-container-height: 36px;
+          --mat-button-outlined-container-height: 36px;
+          flex: none;
+          white-space: nowrap;
+        }
       }
     `,
   ],
@@ -541,12 +525,43 @@ export class PropertyPanelComponent {
   readonly closed = output<void>();
   /** A class was clicked; emits its IRI, to describe it instead. */
   readonly classSelected = output<string>();
-  /** "Show only these links" was clicked; emits the property IRI. */
-  readonly filter = output<string>();
   /** "Edit property" was clicked; emits the property IRI. */
   readonly edit = output<string>();
 
   readonly usage = computed(() => propertyUsage(this.graph(), this.propertyIri()));
+
+  // Only where the app provides the data model editor: without it, nothing here edits.
+  readonly editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
+  private readonly _destroyRef = inject(DestroyRef);
+  /** What the API says of deleting the property shown; none while it checks. */
+  readonly deleteCheck = signal<CanDo | undefined>(undefined);
+
+  constructor() {
+    // Each property shown, for editors, is checked once: Delete is offered only when nothing uses it.
+    effect(() => {
+      const iri = this.propertyIri();
+      const editing = this.editing;
+      const check = this.canEdit() && !!editing?.canDelete;
+      untracked(() => {
+        this.deleteCheck.set(undefined);
+        if (!check || !editing) return;
+        editing
+          .canDeleteProperty(iri)
+          .pipe(takeUntilDestroyed(this._destroyRef))
+          .subscribe(result => {
+            if (this.propertyIri() === iri) this.deleteCheck.set(result);
+          });
+      });
+    });
+  }
+
+  /** Deletes the property once confirmed, then closes the panel. */
+  deleteProperty(label: string): void {
+    this.editing
+      ?.deleteProperty(this.propertyIri(), label)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(deleted => deleted && this.closed.emit());
+  }
 
   /** A property named in the panel was clicked, its parent or a sub-property; emits its IRI, to show it instead. */
   readonly propertySelected = output<string>();
@@ -576,15 +591,6 @@ export class PropertyPanelComponent {
     return { parent, terms, subs };
   });
 
-  /** The classes at either end of the property's links, for its map. */
-  readonly ends = computed(() => {
-    const ends = new Map<string, PropertyLinkEnd>();
-    for (const { source, target } of this.usage()?.pairs ?? []) {
-      for (const id of [source, target]) ends.set(id, { id, label: this.labelOf(id), navigable: this.isNavigable(id) });
-    }
-    return ends;
-  });
-
   isNavigable(iri: string): boolean {
     return this.graph().nodes.some(node => node.id === iri && node.kind === 'class');
   }
@@ -606,13 +612,22 @@ export class PropertyPanelComponent {
     return CARDINALITY_KEY[cardinality];
   }
 
+  /** The cardinality as the data model writes it, as the class cards show it. */
+  cardinalityNotation(cardinality: Cardinality): string {
+    return CARDINALITY_NOTATION[cardinality];
+  }
+
+  isRequired(cardinality: Cardinality): boolean {
+    return cardinality === Cardinality._1 || cardinality === Cardinality._1_n;
+  }
+
   /** The name in the data model, such as `linkToVideo`. */
   nameOf(iri: string): string {
-    return localNameOf(iri);
+    return propertyNameOf(iri, homeOf(this.graph()));
   }
 
   copyName(iri: string): void {
-    this._clipboard.copy(localNameOf(iri));
+    this._clipboard.copy(this.nameOf(iri));
     this._notification.openSnackBar(this._translate.instant('pages.ontologyMap.nameCopied'));
   }
 }

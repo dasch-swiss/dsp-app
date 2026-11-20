@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   signal,
@@ -11,10 +12,13 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
+import { ActivatedRoute } from '@angular/router';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -25,13 +29,14 @@ import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelsRailState } from './data-models-rail-state';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
-import { LanguagesMenuComponent, parseLanguages } from './languages-menu.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
-import { rememberedSignal } from './remembered-signal';
 import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabularyUses } from './vocabulary-tree';
 
+/** The query parameter naming the controlled vocabulary to open on arriving at Controlled vocabularies. */
+export const VOCABULARY_PARAM = 'vocabulary';
+
 /**
- * Data models 2 › Controlled vocabularies: the project's vocabularies in one tree table, each a line to open on its
+ * Controlled vocabularies: the project's vocabularies in one tree table, each a line to open on its
  * values, and the values on theirs. A vocabulary names where the data model uses it. The search finds vocabularies and
  * values, opening what leads to them. To those who may edit, each line's menu adds, edits, moves and deletes values, in
  * the old list editor's dialogs.
@@ -42,9 +47,9 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
   imports: [
     TabShadePipe,
     HighlightPipe,
-    LanguagesMenuComponent,
     LanguageTextsComponent,
     MatButton,
+    MatDivider,
     MatFormField,
     MatIcon,
     MatIconButton,
@@ -54,6 +59,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
     MatMenuItem,
     MatMenuTrigger,
     MatPrefix,
+    MatTooltip,
     TranslatePipe,
   ],
   template: `
@@ -71,8 +77,20 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
             [attr.aria-label]="r + '.findList' | translate"
             (input)="query.set(search.value)" />
         </mat-form-field>
+        <!-- For editors: a new vocabulary, made in the data model editor's dialog, then shown opened. -->
+        @if (canCreate()) {
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            class="create"
+            data-cy="data-model-lists-create"
+            (click)="createVocabulary()">
+            <mat-icon>add</mat-icon>
+            {{ r + '.createVocabulary' | translate }}
+          </button>
+        }
         <span class="spacer"></span>
-        <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-lists" />
         <button mat-button type="button" data-cy="data-model-lists-expand" (click)="toggleAll()">
           <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
           {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
@@ -85,12 +103,18 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
             <col class="name-column" />
             <col />
             <col class="used-column" />
+            @if (canEdit()) {
+              <col class="actions-column" />
+            }
           </colgroup>
           <thead>
             <tr>
               <th>{{ r + '.colVocabulary' | translate }}</th>
               <th>{{ r + '.colDescription' | translate }}</th>
               <th>{{ r + '.colUsedBy' | translate }}</th>
+              @if (canEdit()) {
+                <th class="actions-cell"></th>
+              }
             </tr>
           </thead>
           <tbody>
@@ -122,23 +146,9 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                       [kind]="row.depth === 0 ? 'label' : 'description'"
                       [texts]="textsOf(row.node.labels)"
                       [shown]="row.label"
-                      [languages]="languages()"
                       [highlight]="[query()]" />
                     @if (row.count) {
                       <span class="count">{{ row.count }}</span>
-                    }
-                    @if (canEdit()) {
-                      <span class="row-spacer"></span>
-                      <button
-                        mat-icon-button
-                        type="button"
-                        class="row-menu"
-                        data-cy="data-model-lists-row-menu"
-                        [attr.aria-label]="r + '.valueActions' | translate: { value: row.label }"
-                        [matMenuTriggerFor]="actions"
-                        [matMenuTriggerData]="{ row }">
-                        <mat-icon>more_vert</mat-icon>
-                      </button>
                     }
                   </span>
                 </td>
@@ -148,8 +158,7 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                       kind="description"
                       cyPrefix="data-model-lists"
                       [texts]="textsOf(row.node.comments)"
-                      [shown]="row.description"
-                      [languages]="languages()" />
+                      [shown]="row.description" />
                   } @else if (row.depth === 0) {
                     <span class="none">—</span>
                   }
@@ -173,12 +182,34 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
                     </span>
                   }
                 </td>
+                <!-- The row's actions, in a menu at the end of the row, as in the Classes and Properties tables. -->
+                @if (canEdit()) {
+                  <td class="actions-cell">
+                    <button
+                      mat-icon-button
+                      type="button"
+                      class="row-menu"
+                      data-cy="data-model-lists-row-menu"
+                      [attr.aria-label]="r + '.valueActions' | translate: { value: row.label }"
+                      [matTooltip]="r + '.valueActions' | translate: { value: row.label }"
+                      matTooltipShowDelay="600"
+                      [matMenuTriggerFor]="actions"
+                      [matMenuTriggerData]="{ row }">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                  </td>
+                }
               </tr>
             }
           </tbody>
         </table>
         <mat-menu #actions="matMenu">
           <ng-template matMenuContent let-row="row">
+            @if (row.depth > 0) {
+              <button mat-menu-item data-cy="data-model-lists-edit" (click)="editValue(row)">
+                <mat-icon>edit</mat-icon>{{ r + '.editValue' | translate }}
+              </button>
+            }
             <button mat-menu-item data-cy="data-model-lists-add-inside" (click)="addInside(row)">
               <mat-icon>subdirectory_arrow_right</mat-icon>{{ r + '.addValueInside' | translate }}
             </button>
@@ -186,15 +217,13 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
               <button mat-menu-item data-cy="data-model-lists-add-after" (click)="addAfter(row)">
                 <mat-icon>playlist_add</mat-icon>{{ r + '.addValueAfter' | translate }}
               </button>
-              <button mat-menu-item data-cy="data-model-lists-edit" (click)="editValue(row)">
-                <mat-icon>edit</mat-icon>{{ r + '.editValue' | translate }}
-              </button>
               <button mat-menu-item [disabled]="row.position === 0" (click)="move(row, -1)">
                 <mat-icon>arrow_upward</mat-icon>{{ r + '.moveUp' | translate }}
               </button>
               <button mat-menu-item [disabled]="row.position === row.siblings - 1" (click)="move(row, 1)">
                 <mat-icon>arrow_downward</mat-icon>{{ r + '.moveDown' | translate }}
               </button>
+              <mat-divider />
               <button mat-menu-item class="delete" data-cy="data-model-lists-delete" (click)="deleteValue(row)">
                 <mat-icon>delete</mat-icon>{{ r + '.deleteValue' | translate }}
               </button>
@@ -226,6 +255,10 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
 
         .used-column {
           width: 30%;
+        }
+
+        .actions-column {
+          width: 48px;
         }
 
         th {
@@ -320,30 +353,29 @@ import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabular
         text-overflow: ellipsis;
       }
 
-      .row-spacer {
-        flex: 1;
+      // The row's menu, at the end, as in the other tables: shown on the hovered or focused row, and while open.
+      .tree .actions-cell {
+        padding: 0 4px;
+        text-align: right;
       }
 
-      // The row's menu shows on the hovered or focused row, and while open.
       .row-menu {
-        --mat-icon-button-state-layer-size: 28px;
-        flex: none;
-        width: 28px;
-        height: 28px;
-        padding: 2px;
-        opacity: 0;
+        --mat-icon-button-state-layer-size: 32px;
+        padding: 4px;
+        color: $cool_gray_500;
+        visibility: hidden;
 
         mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
         }
       }
 
       tr:hover .row-menu,
       tr:focus-within .row-menu,
       .row-menu[aria-expanded='true'] {
-        opacity: 1;
+        visibility: visible;
       }
 
       .delete {
@@ -414,12 +446,21 @@ export class DataModelListsComponent {
   private readonly _editing = injectDataModelEditing();
   /** Whether values can be added, edited, moved and deleted here. */
   readonly canEdit = computed(() => this.state.canEdit() && this._editing.canEditVocabularies);
+  /** Whether "Create controlled vocabulary" shows: for editors, where the editor's dialogs are at hand. */
+  readonly canCreate = computed(() => this.state.canEdit() && this._editing.canCreate);
+
+  /** Creates a vocabulary in the project, then shows it opened, ready for its first values. */
+  createVocabulary(): void {
+    this._editing.createVocabulary(iri => {
+      this.expanded.update(expanded => new Set(expanded).add(iri));
+      this._reload.update(count => count + 1);
+    });
+  }
+
   /** Read the vocabularies again, once a value changed. */
   private readonly _reload = signal(0);
 
   readonly query = signal('');
-  /** The languages names and descriptions show in, as in the other tables: the app's, or all. */
-  readonly languages = rememberedSignal<string[] | null>('dsp-data-models-languages', null, parseLanguages);
   /** The vocabularies and values opened, by IRI. */
   readonly expanded = signal(new Set<string>());
 
@@ -458,8 +499,17 @@ export class DataModelListsComponent {
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
 
   constructor() {
-    // Arriving on the page, typing finds a vocabulary or a value.
+    // Arriving on the page, typing finds what it lists.
     afterNextRender(() => this._search()?.nativeElement.focus());
+    // Arriving from the Overview, the vocabulary picked there shows unfolded, once read.
+    let opening = inject(ActivatedRoute).snapshot.queryParamMap.get(VOCABULARY_PARAM);
+    effect(() => {
+      const vocabularies = this.vocabularies();
+      if (!opening || !vocabularies) return;
+      const picked = vocabularies.find(vocabulary => vocabulary.id.split('/').pop() === opening);
+      opening = null;
+      if (picked) this.expanded.update(expanded => new Set(expanded).add(picked.id));
+    });
   }
 
   toggle(row: VocabularyRow): void {

@@ -210,7 +210,7 @@ export function buildDataModelGraph(
   return {
     nodes: [...nodes.values()],
     edges: [...edges.values()],
-    unusedProperties: unusedParents([...nodes.values()], properties, labelOf),
+    unusedProperties: unusedProperties([...nodes.values()], ontology.ontology.iri, properties, labelOf),
   };
 }
 
@@ -225,13 +225,15 @@ function ownProperties(
     [...classDef.propertiesList]
       // rdfs:label is every class's resource label, not a property the project declares.
       .filter(has => !has.propertyIndex.startsWith(Constants.KnoraApiV2) && has.propertyIndex !== Constants.Label)
-      .sort((a, b) => (a.guiOrder ?? Infinity) - (b.guiOrder ?? Infinity))
       .flatMap(has => {
         const property = properties[has.propertyIndex] as ResourcePropertyDefinition | undefined;
         if (!property || property.isLinkValueProperty || seen.has(property.id)) return [];
         seen.add(property.id);
-        return [describe(property, has.cardinality, labelOf)];
+        return [{ order: has.guiOrder ?? Infinity, described: describe(property, has.cardinality, labelOf) }];
       })
+      // As the data model editor lists them: by place in the form, those at the same place by label.
+      .sort((a, b) => a.order - b.order || a.described.label.localeCompare(b.described.label))
+      .map(({ described }) => described)
   );
 }
 
@@ -257,17 +259,20 @@ function describe(
 }
 
 /**
- * The parents of the classes' properties, and their parents in turn, that no class has: declared in a data model,
- * not in knora-api, not a link value.
+ * The properties no class has: those of the data model shown, such as one taken off its last class, which still
+ * points at its target and keeps that class from being deleted; and the parents of the classes' properties, and
+ * their parents in turn, declared in a data model. Not knora-api's, not link values.
  */
-function unusedParents(
+function unusedProperties(
   nodes: DataModelNode[],
+  ontologyIri: string,
   properties: Record<string, PropertyDefinition>,
   labelOf: (labels: Labels) => string
 ): DataModelProperty[] {
   const used = new Map(nodes.flatMap(node => node.propertyDetails ?? []).map(property => [property.id, property]));
   const unused = new Map<string, DataModelProperty>();
-  const queue = [...used.values()].flatMap(property => property.superProperties ?? []);
+  const own = Object.keys(properties).filter(iri => iri.startsWith(`${ontologyIri}#`));
+  const queue = [...own, ...[...used.values()].flatMap(property => property.superProperties ?? [])];
   while (queue.length) {
     const iri = queue.shift()!;
     if (used.has(iri) || unused.has(iri)) continue;

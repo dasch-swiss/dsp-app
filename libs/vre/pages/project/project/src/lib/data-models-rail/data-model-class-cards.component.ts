@@ -1,0 +1,806 @@
+import { Clipboard } from '@angular/cdk/clipboard';
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { NgTemplateOutlet } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+  untracked,
+  WritableSignal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
+import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
+import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { FILE_KINDS } from '../ontology-map/islands';
+import { ClassRow } from '../ontology-map/ontology-graph-elements';
+import { CardinalityLayout, CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
+import { DataModelsRailState } from './data-models-rail-state';
+import { hasText, highlighted } from './highlighted';
+
+/** How many of a class's own properties a card shows before "Show more". */
+export const CARD_PROPERTIES = 8;
+
+/** How long a card opened from a link target stays outlined. */
+const FLASH_MS = 1500;
+
+/** A class as its card shows it: its own properties, and those it has from its superclass, apart and together. */
+interface Card {
+  row: ClassRow;
+  own: CardProperty[];
+  inherited: CardProperty[];
+  /** Every property, own and inherited, in the class's form order, as the data model editor lists them. */
+  all: CardProperty[];
+  /** Which of them are the class's own: those change on this card. */
+  ownIds: ReadonlySet<string>;
+  /** The label of the superclass the inherited ones come from, when it is a class of the data model. */
+  parent?: string;
+}
+
+/** How a subclass's card shows the properties it has from its superclass. */
+export type InheritedLayout = 'grouped' | 'listed';
+
+/** A class's own properties in a new form order, to save. */
+export interface PropertyOrder {
+  classIri: string;
+  propertyIris: string[];
+}
+
+/**
+ * Data models 2 › Resource classes as cards, the way the Data models tab shows a data model: one box per class, with the kind of
+ * file its resources carry, then its properties in their form order, one line each. A subclass
+ * lists its own properties; those from its superclass fold into one row. Past {@link CARD_PROPERTIES}, "Show more" opens
+ * the rest. A link's target opens its card. The text searched for is marked, and the rows it is in are opened. Editors
+ * drag a class's own properties to another place. A card folds to its title. Its menu edits the class, or shows
+ * its details in the side panel.
+ */
+@Component({
+  selector: 'app-data-model-class-cards',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    AddPropertyMenuComponent,
+    CdkDrag,
+    CdkDragPlaceholder,
+    CdkDropList,
+    ClassCardPropertyComponent,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatTooltip,
+    NgTemplateOutlet,
+    TranslatePipe,
+  ],
+  template: `
+    @let r = 'pages.dataModels2';
+    @let c = 'pages.ontology.cardinality';
+    <!-- With the checkboxes in columns, the columns' names, once, over the properties. -->
+    <ng-template #columns>
+      @if (cardinalityLayout() === 'columns' || cardinalityLayout() === 'ticked') {
+        <div class="cardinality-head" aria-hidden="true">
+          <span>{{ c + '.multipleValues' | translate }}</span>
+          <span>{{ c + '.required' | translate }}</span>
+        </div>
+      }
+    </ng-template>
+    <!-- The properties a class has from its superclass: they change there, not on this card. -->
+    <ng-template #inheritedRows let-card>
+      @if (!card.own.length) {
+        <ng-container [ngTemplateOutlet]="columns" />
+      }
+      <ul class="props" data-cy="data-model-class-card-inherited-list">
+        @for (property of card.inherited; track property.id) {
+          <li
+            appClassCardProperty
+            [homeIri]="card.row.id"
+            [property]="property"
+            [labelOf]="labelOf()"
+            [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
+            [query]="query()"
+            [canEdit]="canEdit()"
+            [cardinalityLayout]="cardinalityLayout()"
+            [chipColumn]="hasChipColumn(card)"
+            (edit)="editProperty.emit($event)"
+            (goTo)="goTo($event)"></li>
+        }
+      </ul>
+    </ng-template>
+    <!-- A class's own properties, or one group of them, up to the cap, then "Show n more"; editors drag them. -->
+    <ng-template #capped let-properties let-key="key" let-card="card">
+      @let all = showAll().has(key) || autoOpened().has(key);
+      @let hidden = properties.length - CARD_PROPERTIES;
+      @let drag = reorderable();
+      <ng-container [ngTemplateOutlet]="columns" />
+      <ul
+        class="props"
+        cdkDropList
+        [cdkDropListDisabled]="!drag"
+        (cdkDropListDropped)="dropped(card, properties, $event)">
+        @for (property of all ? properties : properties.slice(0, CARD_PROPERTIES); track property.id) {
+          @let own = card.ownIds.has(property.id);
+          <li
+            appClassCardProperty
+            cdkDrag
+            cdkDragLockAxis="y"
+            cdkDragBoundary=".props"
+            [cdkDragDisabled]="!drag || !own"
+            [homeIri]="card.row.id"
+            [property]="property"
+            [labelOf]="labelOf()"
+            [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
+            [query]="query()"
+            [canEdit]="canEdit()"
+            [draggable]="drag && own"
+            [classIri]="own ? card.row.id : undefined"
+            [className]="card.row.label"
+            [cardinalityLayout]="cardinalityLayout()"
+            [chipColumn]="hasChipColumn(card)"
+            (edit)="editProperty.emit($event)"
+            (remove)="removeProperty(card.row, property)"
+            (goTo)="goTo($event)">
+            <div class="drop-line" *cdkDragPlaceholder></div>
+          </li>
+        }
+      </ul>
+      @if (hidden > 0) {
+        <button
+          type="button"
+          class="more"
+          data-cy="data-model-class-card-more"
+          [attr.aria-expanded]="all"
+          (click)="toggle(showAll, key)">
+          <mat-icon>{{ all ? 'expand_less' : 'expand_more' }}</mat-icon>
+          {{ all ? (r + '.showLess' | translate) : (r + '.showMore' | translate: { count: hidden }) }}
+        </button>
+      }
+    </ng-template>
+
+    <div class="cards" data-cy="data-model-class-cards">
+      @for (card of cards(); track card.row.id) {
+        @let row = card.row;
+        @let open = !folded().has(row.id);
+        <article
+          class="card"
+          data-cy="data-model-class-card"
+          [attr.data-iri]="row.id"
+          [class.selected]="row.id === selected()"
+          [class.flash]="row.id === flashed()"
+          [class.no-colour]="!showColours()"
+          [style.--tab]="colors().get(row.id) ?? '#FFFFFF'">
+          <header class="card-head" (mouseenter)="checkDelete(row.id)">
+            <span class="texts">
+              <ng-template #className>
+                <small>
+                  @for (part of mark(row.name); track $index) {
+                    <span [class.hit]="part.match">{{ part.text }}</span>
+                  }
+                </small>
+              </ng-template>
+              <span class="title">
+                <b>
+                  @for (part of mark(row.label); track $index) {
+                    <span [class.hit]="part.match">{{ part.text }}</span>
+                  }
+                </b>
+                <!-- A plain object: its name beside its label, nothing more, unless every class says its kind. -->
+                @if (!row.representation && !kindForAll()) {
+                  <ng-container [ngTemplateOutlet]="className" />
+                }
+              </span>
+              <!-- A class whose resources carry a file: its name, then the kind of file, under the label, as the Data
+                   models tab writes it. -->
+              @if (row.representation || kindForAll()) {
+                <span class="kind-line" data-cy="data-model-class-card-file">
+                  <ng-container [ngTemplateOutlet]="className" />
+                  <span aria-hidden="true">·</span>
+                  @if (row.representation; as representation) {
+                    <mat-icon>{{ fileIcon(representation) }}</mat-icon>
+                    {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
+                  } @else {
+                    <mat-icon>person_outline</mat-icon>
+                    {{ 'pages.dataModels2.objectWithoutRepresentation' | translate }}
+                  }
+                </span>
+              }
+            </span>
+            <!-- The class's actions, as in the Data models tab: edit, open its resources, copy its ID, delete. -->
+            @let c = 'pages.ontology.resourceClassInfo';
+            @let check = deleteChecks().get(row.id);
+            <button
+              type="button"
+              class="icon-button menu-button"
+              data-cy="data-model-class-card-menu"
+              [attr.aria-label]="r + '.classActions' | translate: { class: row.label }"
+              [matTooltip]="r + '.classActions' | translate: { class: row.label }"
+              matTooltipShowDelay="600"
+              [matMenuTriggerFor]="classMenu"
+              (menuOpened)="checkDelete(row.id)">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #classMenu="matMenu" xPosition="before">
+              @if (canEdit()) {
+                <button
+                  mat-menu-item
+                  type="button"
+                  data-cy="data-model-class-card-edit"
+                  (click)="editClass.emit(row.id)">
+                  <mat-icon>edit</mat-icon>
+                  {{ c + '.edit' | translate }}
+                </button>
+              }
+              <!-- A class nothing uses has no resources to open. -->
+              <button
+                mat-menu-item
+                type="button"
+                data-cy="data-model-class-card-open-instances"
+                [disabled]="check?.canDo === true"
+                (click)="openInstances(row)">
+                <mat-icon>open_in_new</mat-icon>
+                {{ c + '.openInstances' | translate }}
+              </button>
+              <button mat-menu-item type="button" data-cy="data-model-class-card-copy-id" (click)="copyId(row)">
+                <mat-icon>content_copy</mat-icon>
+                {{ c + '.copyId' | translate }}
+              </button>
+              <!-- Deletes once the API says nothing uses the class; why not, under it, when something does. -->
+              @if (canEdit() && editing.canDelete) {
+                <button
+                  mat-menu-item
+                  type="button"
+                  class="delete"
+                  data-cy="data-model-class-card-delete"
+                  [disabled]="!check?.canDo"
+                  (click)="deleteClass(row)">
+                  <mat-icon>delete</mat-icon>
+                  <span class="menu-text">
+                    {{ c + '.delete' | translate }}
+                    @if (!check) {
+                      <small>{{ r + '.checkingDelete' | translate }}</small>
+                    } @else if (!check.canDo) {
+                      <small>{{ r + '.cannotDeleteClass' | translate }}</small>
+                    }
+                  </span>
+                </button>
+              }
+            </mat-menu>
+            <button
+              type="button"
+              class="icon-button"
+              data-cy="data-model-class-card-toggle"
+              [attr.aria-expanded]="open"
+              [attr.aria-label]="(open ? r + '.collapseRow' : r + '.expandRow') | translate"
+              (click)="$event.stopPropagation(); toggle(folded, row.id)">
+              <mat-icon>{{ open ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+          </header>
+          @if (open) {
+            @if (inheritedLayout() === 'listed') {
+              <!-- Own and inherited properties together, in the class's form order, as the data model editor lists
+                   them; only the class's own change here. -->
+              @if (card.all.length) {
+                <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.all, key: row.id, card }" />
+              } @else {
+                <p class="none">{{ r + '.noProperties' | translate }}</p>
+              }
+            } @else if (card.own.length) {
+              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.own, key: row.id, card }" />
+            } @else if (!card.inherited.length) {
+              <p class="none">{{ r + '.noProperties' | translate }}</p>
+            }
+            @if (card.inherited.length && inheritedLayout() !== 'listed') {
+              @let inheritedOpen = inheritedShown().has(row.id) || autoOpened().has(row.id + ' inherited');
+              <div class="inherited">
+                <button
+                  type="button"
+                  class="more"
+                  data-cy="data-model-class-card-inherited"
+                  [attr.aria-expanded]="inheritedOpen"
+                  (click)="toggle(inheritedShown, row.id)">
+                  <mat-icon>{{ inheritedOpen ? 'expand_less' : 'chevron_right' }}</mat-icon>
+                  {{ r + '.inheritedFrom' | translate: { count: card.inherited.length, class: card.parent } }}
+                </button>
+                @if (inheritedOpen) {
+                  <ng-container *ngTemplateOutlet="inheritedRows; context: { $implicit: card }" />
+                }
+              </div>
+            }
+            <!-- For editors: a new property of a type, or one the project has, as in the class's panel. -->
+            @if (canEdit()) {
+              <div class="add-property">
+                <app-add-property-menu [classIri]="row.id" [row]="true" />
+              </div>
+            }
+          }
+        </article>
+      }
+    </div>
+  `,
+  styles: [
+    `
+      @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+      // Fills the section under its head and scrolls on its own, as the table does.
+      :host {
+        display: block;
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(var(--card-width, 400px), 1fr));
+        gap: 12px;
+        align-items: start;
+      }
+
+      .card {
+        background: white;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+        scroll-margin: 16px;
+        transition: box-shadow 0.2s;
+
+        // The family's colour as a tab, exactly as the diagram draws the class.
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 6px;
+          background: var(--tab);
+          z-index: 1;
+        }
+
+        // Without colours, as the viewer chose: no tab.
+        &.no-colour::before {
+          display: none;
+        }
+
+        &.selected,
+        &.flash {
+          border-color: $primary;
+          box-shadow: 0 0 0 1px $primary;
+        }
+
+        &.flash {
+          box-shadow: 0 0 0 3px rgba(51, 103, 144, 0.35);
+        }
+      }
+
+      .card-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 2px;
+        padding: 6px 4px 6px 16px;
+
+        .texts {
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .title {
+          display: flex;
+          align-items: baseline;
+          flex-wrap: wrap;
+          column-gap: 6px;
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        b {
+          font-weight: 500;
+          font-size: 14px;
+          color: $cool_gray_900;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        small {
+          font-family: 'Roboto Mono', monospace;
+          font-size: 11px;
+          color: $cool_gray_500;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .hit {
+        background: #fde68a;
+        color: inherit;
+        border-radius: 2px;
+      }
+
+      // The superclass, in the family's colour, above the name.
+      // Under the label of a class with a file: its name, then the kind of file with its icon.
+      .kind-line {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-width: 0;
+        font-size: 12px;
+        line-height: 16px;
+        color: $cool_gray_500;
+        white-space: nowrap;
+
+        small {
+          font-family: 'Roboto Mono', monospace;
+          font-size: 11px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        mat-icon {
+          flex: none;
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+        }
+      }
+
+      // The actions menu and the fold button, round and grey.
+      .icon-button {
+        flex: none;
+        border: 0;
+        background: none;
+        color: $cool_gray_500;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+
+        &:hover:not([disabled]) {
+          background: $cool_gray_100;
+        }
+
+        &[disabled] {
+          cursor: default;
+          color: $cool_gray_300;
+        }
+      }
+
+      // The class's menu: shown over the header, while open or with the focus; its dots drawn smaller, as tall as the
+      // chevron looks.
+      .menu-button {
+        visibility: hidden;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .card-head:hover .menu-button,
+      .menu-button[aria-expanded='true'],
+      .menu-button:focus-visible {
+        visibility: visible;
+      }
+
+      // The checkboxes' columns, named once over the properties, above the two boxes of each row.
+      .cardinality-head {
+        display: grid;
+        grid-template-columns: 52px 52px;
+        justify-content: end;
+        padding: 4px 8px 2px;
+        border-top: 1px solid $cool_gray_100;
+        font-size: 10px;
+        line-height: 1.2;
+        text-align: center;
+        color: $cool_gray_500;
+      }
+
+      .props {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid $cool_gray_100;
+      }
+
+      // Where a dragged property lands.
+      .drop-line {
+        height: 2px;
+        background: $primary;
+      }
+
+      .cdk-drag-animating,
+      .props.cdk-drop-list-dragging .prop:not(.cdk-drag-placeholder) {
+        transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
+      // "Show n more" and the inherited row.
+      .more {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+        padding: 3px 16px;
+        border: 0;
+        border-top: 1px solid $cool_gray_100;
+        background: none;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 500;
+        color: $primary;
+        text-align: left;
+        cursor: pointer;
+
+        &:hover {
+          background: $cool_gray_100;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .inherited {
+        background: $cool_gray_50;
+
+        .more {
+          font-weight: 400;
+          color: $cool_gray_600;
+        }
+      }
+
+      // Deleting a class, in red, and why it can't be, under it.
+      // In the class's menu: Delete, and why it can't, under it.
+      .menu-text small {
+        display: block;
+        font-size: 11.5px;
+        line-height: 1.3;
+        color: $cool_gray_500;
+      }
+
+      // "Add property" under an opened card's properties, as in the Data models tab.
+      .add-property {
+        display: block;
+        border-top: 1px solid $cool_gray_100;
+      }
+
+      .none {
+        margin: 0;
+        padding: 6px 16px 8px;
+        border-top: 1px solid $cool_gray_100;
+        font-size: 12.5px;
+        color: $cool_gray_500;
+      }
+
+      [tabindex='0']:focus-visible,
+      button:focus-visible {
+        outline: 2px solid $primary;
+        outline-offset: -2px;
+      }
+    `,
+  ],
+})
+export class DataModelClassCardsComponent {
+  private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly _destroyRef = inject(DestroyRef);
+  readonly editing = injectDataModelEditing();
+  private readonly _state = inject(DataModelsRailState);
+  private readonly _router = inject(Router);
+  private readonly _clipboard = inject(Clipboard);
+  private readonly _notification = inject(NotificationService);
+  private readonly _translate = inject(TranslateService);
+
+  /** Opens the class's resources in the Data tab, in a new browser tab, as the Data models tab does. */
+  openInstances(row: ClassRow): void {
+    const [ontologyIri, className] = row.id.split('#');
+    const path = this._state.projectPath(
+      RouteConstants.data,
+      OntologyService.getOntologyNameFromIri(ontologyIri),
+      className
+    );
+    window.open(this._router.serializeUrl(this._router.createUrlTree(path)), '_blank');
+  }
+
+  /** Copies the class's IRI, and says so. */
+  copyId(row: ClassRow): void {
+    this._clipboard.copy(row.id);
+    this._notification.openSnackBar(this._translate.instant('pages.ontology.resourceClassInfo.idCopied'));
+  }
+  /** What the API says of deleting each class, once its menu asked; none while it checks. */
+  readonly deleteChecks = signal(new Map<string, CanDo>());
+  /** The classes whose deletion was asked about, so hovering again asks no more. */
+  private readonly _checked = new Set<string>();
+
+  readonly CARD_PROPERTIES = CARD_PROPERTIES;
+
+  readonly rows = input.required<ClassRow[]>();
+  /** Every class of the data model, the search aside: where a subclass finds its superclass's properties. */
+  readonly classes = input<ClassRow[]>();
+  /** Colour per class, its family's. */
+  readonly colors = input.required<Map<string, string>>();
+  /** A class's label from its IRI, for superclasses and link targets. */
+  readonly labelOf = input.required<(iri: string) => string>();
+  /** The class whose panel is open. */
+  readonly selected = input<string | undefined>(undefined);
+  /** Whether an opened card offers "Add property": for those who may edit the data model. */
+  readonly canEdit = input(false);
+  /** Whether editors may drag a class's own properties to another place, where the editor can save it. */
+  readonly canReorder = input(false);
+  /** The text searched for: marked where it shows, and the rows it is in opened. */
+  readonly query = input('');
+  /** Whether each card shows its family's colour as a tab on its left edge. */
+  readonly showColours = input(true);
+  /** Whether every class says its kind under its label, a plain object too; else only a class with a file does. */
+  readonly kindForAll = input(false);
+  /** Whether a subclass's card groups its superclass's properties under "n from …", or lists them with its own. */
+  readonly inheritedLayout = input<InheritedLayout>('grouped');
+  /** Whether a card keeps a column for its cardinalities: one of its properties differs from 0-1, or for the stacks, allows several values. */
+  hasChipColumn(card: Card): boolean {
+    // With a star and a stack icon, the column holds the stacks only; a star sits after the label.
+    const differs = (property: CardProperty) =>
+      this.cardinalityLayout() === 'symbols' ? property.multiple : property.required || property.multiple;
+    return [...card.own, ...card.inherited].some(differs);
+  }
+
+  /** Whether the properties' checkboxes carry their words on each row, or are named once as columns. */
+  readonly cardinalityLayout = input<CardinalityLayout>('columns');
+
+  /** "Edit class" was picked: the class's dialog is to open. */
+  readonly editClass = output<string>();
+  /** A property's pencil was clicked: its dialog is to open. */
+  readonly editProperty = output<string>();
+  /** A property was dragged to another place: the class's own properties in their new order, to save. */
+  readonly reorder = output<PropertyOrder>();
+
+  /** The cards folded to their title; the others show their properties. */
+  readonly folded = model(new Set<string>());
+  /** The cards showing all their own properties, past the first {@link CARD_PROPERTIES}. */
+  readonly showAll = signal(new Set<string>());
+  /** The cards showing the properties their class has from its superclass. */
+  readonly inheritedShown = signal(new Set<string>());
+  /** The card a link target just opened, outlined a moment. */
+  readonly flashed = signal<string | undefined>(undefined);
+  private _flashTimer?: ReturnType<typeof setTimeout>;
+
+  /** The orders dragged but not read back yet, by class: shown at once, until the data model is read again. */
+  private readonly _dragged = signal(new Map<string, string[]>());
+
+  readonly reorderable = computed(() => this.canEdit() && this.canReorder());
+
+  /** The classes whose cards show, for link targets to open. */
+  readonly shown = computed(() => new Set(this.rows().map(row => row.id)));
+
+  readonly cards = computed<Card[]>(() => {
+    const byId = new Map((this.classes() ?? this.rows()).map(row => [row.id, row]));
+    const dragged = this._dragged();
+    return this.rows().map(row => {
+      const parent = row.superclass ? byId.get(row.superclass) : undefined;
+      const fromParent = new Set(parent?.propertyList.map(property => property.id));
+      let own = row.propertyList.filter(property => !fromParent.has(property.id));
+      const order = dragged.get(row.id);
+      if (order) own = [...own].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+      const ownIds = new Set(own.map(property => property.id));
+      const ownInOrder = [...own];
+      return {
+        row,
+        own,
+        inherited: row.propertyList.filter(property => fromParent.has(property.id)),
+        all: row.propertyList.map(property => (ownIds.has(property.id) ? ownInOrder.shift()! : property)),
+        ownIds,
+        parent: parent?.label,
+      };
+    });
+  });
+
+  /** The lists opened for the search: past "Show more", or the inherited row, where a property has the text. */
+  readonly autoOpened = computed(() => {
+    const query = this.query();
+    const opened = new Set<string>();
+    if (!query.trim()) return opened;
+    const has = (property: CardProperty) =>
+      hasText(property.label, query) || hasText(property.id.substring(property.id.lastIndexOf('#') + 1), query);
+    for (const card of this.cards()) {
+      const id = card.row.id;
+      if (card.own.slice(CARD_PROPERTIES).some(has)) opened.add(id);
+      if (card.inherited.some(has)) opened.add(`${id} inherited`);
+    }
+    return opened;
+  });
+
+  constructor() {
+    // The data model read again has the dragged orders, or not if saving failed: either way it is what shows.
+    effect(() => {
+      this.classes();
+      untracked(() => this._dragged.set(new Map()));
+    });
+  }
+
+  /** Asks the API whether the class can be deleted, for its bin to say so; once per class. */
+  checkDelete(classIri: string): void {
+    if (!this.canEdit() || !this.editing.canDelete || this._checked.has(classIri)) return;
+    this._checked.add(classIri);
+    this.editing
+      .canDeleteClass(classIri)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(check => this.deleteChecks.update(checks => new Map(checks).set(classIri, check)));
+  }
+
+  /** Deletes the class once confirmed; the data model is then read again. */
+  deleteClass(row: ClassRow): void {
+    this.editing.deleteClass(row.id, row.label).pipe(takeUntilDestroyed(this._destroyRef)).subscribe();
+  }
+
+  /** Takes the property off the class once checked and confirmed; the data model is then read again. */
+  removeProperty(row: ClassRow, property: CardProperty): void {
+    this.editing
+      .removeProperty(row.id, property.id, { property: property.label, class: row.label })
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe();
+  }
+
+  toggle(set: WritableSignal<Set<string>>, iri: string): void {
+    const next = new Set(set());
+    if (!next.delete(iri)) next.add(iri);
+    set.set(next);
+  }
+
+  /** The text cut where it has the searched text, to mark it. */
+  mark(text: string) {
+    return highlighted(text, this.query());
+  }
+
+  fileIcon(representation: string): string {
+    return FILE_KINDS.find(kind => kind.representation === representation)?.icon ?? 'insert_drive_file';
+  }
+
+  /** Brings the class's card into view and outlines it a moment. */
+  goTo(iri: string): void {
+    const card = Array.from(this._host.nativeElement.querySelectorAll<HTMLElement>('[data-iri]')).find(
+      element => element.dataset['iri'] === iri
+    );
+    if (!card) return;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    card.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    this.flashed.set(iri);
+    clearTimeout(this._flashTimer);
+    this._flashTimer = setTimeout(() => this.flashed.set(undefined), FLASH_MS);
+  }
+
+  /**
+   * A property of `list`, the class's own ones, one group of them, or all its properties with the inherited ones, was
+   * dropped elsewhere in it: the class's own properties take the new order, the others keeping their places, and it
+   * is shown at once, then saved.
+   */
+  dropped(card: Card, list: CardProperty[], event: CdkDragDrop<unknown>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    const moved = [...list];
+    moveItemInArray(moved, event.previousIndex, event.currentIndex);
+    const inList = new Set(list.map(property => property.id));
+    // Inherited properties in the list keep their places: only the class's own are ordered.
+    const next = moved.filter(property => card.ownIds.has(property.id));
+    const order = card.own.map(property => (inList.has(property.id) ? next.shift()!.id : property.id));
+    this._dragged.update(dragged => new Map(dragged).set(card.row.id, order));
+    this.reorder.emit({ classIri: card.row.id, propertyIris: order });
+  }
+}

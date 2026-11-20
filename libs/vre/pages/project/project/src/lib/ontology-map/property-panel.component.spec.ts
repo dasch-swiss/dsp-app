@@ -33,22 +33,19 @@ const graph: DataModelGraph = {
 
 describe('PropertyPanelComponent', () => {
   let fixture: ComponentFixture<PropertyPanelComponent>;
-  let component: PropertyPanelComponent;
   const text = (selector: string) =>
     Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll(selector)).map(e => e.textContent?.trim());
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [PropertyPanelComponent], providers: [provideTranslateService()] });
     fixture = TestBed.createComponent(PropertyPanelComponent);
-    component = fixture.componentInstance;
     fixture.componentRef.setInput('graph', graph);
     fixture.componentRef.setInput('propertyIri', 'director');
     fixture.detectChanges();
   });
 
-  it('shows the property, the class it points at and the classes that have it', () => {
+  it('shows the property and the classes that have it', () => {
     expect(text('[data-cy="property-panel-title"]')).toEqual(['Director']);
-    expect(text('[data-cy="property-panel-target"]')[0]).toContain('Person');
     expect(text('[data-cy="property-panel-user"] .class-link')).toEqual(['Film', 'Short']);
     expect(fixture.nativeElement.querySelectorAll('.inherited')).toHaveLength(1);
   });
@@ -57,7 +54,7 @@ describe('PropertyPanelComponent', () => {
     expect(text('[data-cy="property-panel-name"]')).toEqual(['director']);
   });
 
-  it('shows the type of a value property, with no links to filter on', () => {
+  it('shows the type of a value property', () => {
     fixture.componentRef.setInput('graph', {
       ...graph,
       nodes: graph.nodes.map(node =>
@@ -76,15 +73,5 @@ describe('PropertyPanelComponent', () => {
 
     expect(text('[data-cy="property-panel-type"]')[0]).toContain('Date');
     expect(text('[data-cy="property-panel-user"] .class-link')).toEqual(['Person']);
-    expect(fixture.nativeElement.querySelector('[data-cy="property-panel-filter"]')).toBeNull();
-  });
-
-  it('opens a class the property points at', () => {
-    const selected = jest.fn();
-    component.classSelected.subscribe(selected);
-
-    fixture.nativeElement.querySelector('[data-cy="property-panel-target"]').click();
-
-    expect(selected).toHaveBeenCalledWith('Person');
   });
 });

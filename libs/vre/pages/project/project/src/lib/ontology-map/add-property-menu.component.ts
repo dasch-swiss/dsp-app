@@ -25,6 +25,7 @@ import { AvailableProperties, DATA_MODEL_EDITOR, injectDataModelEditing } from '
         type="button"
         class="add"
         data-cy="class-panel-add-property"
+        [class.row]="row()"
         [matMenuTriggerFor]="menu"
         (menuOpened)="opened.set(true)">
         <mat-icon>add</mat-icon>
@@ -62,15 +63,30 @@ import { AvailableProperties, DATA_MODEL_EDITOR, injectDataModelEditing } from '
           <button mat-menu-item [disabled]="!group.properties.length" [matMenuTriggerFor]="ofModel">
             {{ group.ontologyLabel }}
           </button>
-          <mat-menu #ofModel="matMenu">
+          <mat-menu #ofModel="matMenu" class="existing-properties">
             @for (property of group.properties; track property.iri) {
+              <!-- A second line tells properties with the same label apart: what it holds, who uses it, its name. -->
               <button
                 mat-menu-item
+                class="existing"
+                data-cy="class-panel-existing-property"
                 [matTooltip]="property.description"
                 matTooltipPosition="after"
                 (click)="addExisting(property.iri)">
                 <mat-icon>{{ property.icon }}</mat-icon>
-                {{ property.label }}
+                <span class="texts">
+                  <span class="label">{{ property.label }}</span>
+                  <span class="details">
+                    {{ property.isLink ? '→ ' + property.type : property.type }}
+                    ·
+                    @if (property.usedBy.length) {
+                      {{ a + '.usedBy' | translate: { classes: property.usedBy.join(', ') } }}
+                    } @else {
+                      {{ a + '.notUsed' | translate }}
+                    }
+                    · <code>{{ property.name }}</code>
+                  </span>
+                </span>
               </button>
             }
           </mat-menu>
@@ -85,6 +101,56 @@ import { AvailableProperties, DATA_MODEL_EDITOR, injectDataModelEditing } from '
         height: 32px;
         font-size: 13px;
       }
+
+      // An existing property on two lines: its label, then what tells it apart from others with the same label.
+      .existing {
+        --mat-menu-item-label-text-line-height: 1.3;
+        min-height: 52px;
+        padding-block: 6px;
+      }
+
+      .texts {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .label,
+      .details {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .details {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+
+        code {
+          font-family: 'Roboto Mono', monospace;
+          font-size: 11.5px;
+          color: #336790;
+        }
+      }
+
+      // As a card's last row: the whole line is the button, square, its text at the start.
+      .add.row {
+        width: 100%;
+        margin: 0;
+        height: 28px;
+        padding: 0 16px;
+        justify-content: flex-start;
+        border-radius: 0;
+        font-size: 12.5px;
+        --mat-button-text-container-shape: 0;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          margin-right: 4px;
+        }
+      }
     `,
   ],
 })
@@ -95,6 +161,8 @@ export class AddPropertyMenuComponent {
   private readonly _editing = this.canAdd ? injectDataModelEditing() : undefined;
 
   readonly classIri = input.required<string>();
+  /** Whether the button spans its whole line, as a card's last row, rather than sitting under the panel's list. */
+  readonly row = input(false);
 
   readonly categories: PropertyCategory[] = DefaultProperties.data;
 

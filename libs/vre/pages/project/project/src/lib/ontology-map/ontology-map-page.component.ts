@@ -1,4 +1,3 @@
-import { Clipboard } from '@angular/cdk/clipboard';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import {
   ChangeDetectionStrategy,
@@ -12,7 +11,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -20,13 +21,12 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
-import { injectDataModelEditing } from './data-model-editor';
+import { ExportPreviewDialogComponent, exportPreviewDialogConfig } from './export-preview-dialog.component';
 import { FilterMenuComponent, FilterOption } from './filter-menu.component';
 import { graphSearchResults, GraphSearchResultsComponent, SearchResult } from './graph-search-results.component';
 import { classFamilies, familyColors } from './islands';
@@ -35,7 +35,9 @@ import {
   GraphSize,
   linkedWith,
   dataModelNameOf,
+  homeOf,
   localNameOf,
+  propertyNameOf,
   focusGraph,
   searchGraph,
   throughProperties,
@@ -43,7 +45,7 @@ import {
   withoutClasses,
   withoutProperties,
 } from './ontology-graph-elements';
-import { GraphExportArea, OntologyGraphComponent } from './ontology-graph.component';
+import { OntologyGraphComponent } from './ontology-graph.component';
 import { PropertyPanelComponent } from './property-panel.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
@@ -85,6 +87,9 @@ const sameFilter = (a: ListFilter, b: ListFilter) =>
 
 const classNameOf = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
 
+/** How many classes or properties the filter banner names; past that, it counts them. */
+const MAX_NAMED = 3;
+
 // Renamed when the sizes moved up a step, so a size chosen before starts again from the new normal, the old large.
 const SIZE_KEY = 'dsp-ontology-map-text-size';
 /** How wide a class or property panel is, at most half the page; its styles say the same. */
@@ -92,26 +97,13 @@ const PANEL_WIDTH = 440;
 /** How long the arrow keys rest on a search result before its panel shows. */
 const PREVIEW_DELAY_MS = 150;
 const LEVEL_LABELS_KEY = 'dsp-ontology-map-level-labels';
-const ISLANDS_KEY = 'dsp-ontology-map-islands';
-const COLOUR_TAB_KEY = 'dsp-ontology-map-colour-tab';
-const TREE_LINES_KEY = 'dsp-ontology-map-tree-lines';
-const FULL_WIDTH_KEY = 'dsp-ontology-map-full-width';
-/** The widest screen, in CSS px, on which the graph uses the whole width until the user chooses; see `fullWidth`. */
+/** The widest screen, in CSS px, on which the graph uses the whole width; see `fullWidth`. */
 const FULL_WIDTH_UP_TO = 2560;
 const LABELS_KEY = 'dsp-ontology-map-labels';
 
 const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
 
 const SIZES: GraphSize[] = ['small', 'normal', 'large'];
-
-type ExportKey = 'viewPng' | 'wholePng' | 'copyImage' | 'copyLink';
-
-const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
-  { key: 'viewPng', icon: 'image' },
-  { key: 'wholePng', icon: 'zoom_out_map' },
-  { key: 'copyImage', icon: 'content_copy' },
-  { key: 'copyLink', icon: 'link' },
-];
 
 /**
  * The Ontology map tab: the map of one data model of the project, drawn large across the page, with a toolbar to
@@ -132,6 +124,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
     MatMenuContent,
     MatMenuItem,
     MatMenuTrigger,
+    MatButton,
     MatButtonToggle,
     MatButtonToggleGroup,
     MatSlideToggle,
@@ -150,7 +143,9 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
           @if (graph(); as graph) {
             <div class="body">
               <app-ontology-graph
+                #mainGraph
                 class="view"
+                [remember]="true"
                 [graph]="graphShown() ?? graph"
                 [selectedIri]="classIri()"
                 [size]="size()"
@@ -159,6 +154,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                 [islands]="islands()"
                 [colourTab]="colourTab()"
                 [treeLines]="treeLines()"
+                [showProperties]="showProperties()"
                 [highlightedProperty]="hoveredProperty() ?? propertyPanelIri()"
                 [picked]="picked()"
                 [fullWidth]="fullWidth()"
@@ -312,6 +308,17 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       </ng-template>
                     </mat-menu>
                   </div>
+                  <!-- While a filter narrows the graph, right of the filters: what it shows, and the way back. -->
+                  @if (filterNote(); as note) {
+                    <div class="filter-note" role="status" data-cy="ontology-map-filter-note">
+                      <mat-icon>filter_alt</mat-icon>
+                      @let noteText = m + '.filterNote.' + note.key | translate: note.params;
+                      <span class="note-text" [title]="noteText">{{ noteText }}</span>
+                      <button mat-flat-button type="button" data-cy="ontology-map-show-all" (click)="clearFilters()">
+                        {{ m + '.filterNote.showAll' | translate }}
+                      </button>
+                    </div>
+                  }
                 </div>
 
                 <!-- How to show it, and the Export menu: top right, left of an open panel. -->
@@ -374,13 +381,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                       </button>
                     }
                     @for (
-                      option of [
-                        { section: 'links', key: 'levelLabels', cy: 'level-labels', on: levelLabels() },
-                        { section: 'islands', key: 'islandsToggle', cy: 'islands', on: islands() },
-                        { section: 'subclasses', key: 'treeLines', cy: 'tree-lines', on: treeLines() },
-                        { section: 'colours', key: 'colourTab', cy: 'colour-tab', on: colourTab() },
-                        { section: 'panel', key: 'fullWidth', cy: 'full-width', on: fullWidth() },
-                      ];
+                      option of [{ section: 'links', key: 'levelLabels', cy: 'level-labels', on: levelLabels() }];
                       track option.key
                     ) {
                       <hr class="menu-divider" />
@@ -406,29 +407,10 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                     [attr.aria-label]="m + '.export' | translate"
                     [matTooltip]="m + '.export' | translate"
                     [matTooltipDisabled]="!panelOpen()"
-                    [matMenuTriggerFor]="exportMenu">
+                    (click)="openExport()">
                     <mat-icon>ios_share</mat-icon>
                     <span class="button-text">{{ m + '.export' | translate }}</span>
-                    <mat-icon class="drop">arrow_drop_down</mat-icon>
                   </button>
-                  <mat-menu #exportMenu="matMenu" xPosition="before" class="export-menu">
-                    @for (item of exportItems; track item.key) {
-                      @if (item.key === 'copyLink') {
-                        <hr class="menu-divider" />
-                      }
-                      <button
-                        class="export-entry"
-                        mat-menu-item
-                        [attr.data-cy]="'ontology-map-export-' + item.key"
-                        (click)="export(item.key)">
-                        <mat-icon>{{ item.icon }}</mat-icon>
-                        <span class="export-item">
-                          <span>{{ m + '.exportMenu.' + item.key | translate }}</span>
-                          <span class="export-hint">{{ m + '.exportMenu.' + item.key + 'Hint' | translate }}</span>
-                        </span>
-                      </button>
-                    }
-                  </mat-menu>
                 </div>
               </div>
 
@@ -476,8 +458,6 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [graph]="graph"
                   [classIri]="openIri"
                   [anyResourceLabel]="t + '.anyResource' | translate"
-                  [subclassLabel]="t + '.subclassOf' | translate"
-                  [canEdit]="canEdit() ?? false"
                   [colors]="colors()"
                   [currentModel]="selectedName()"
                   [models]="modelNames()"
@@ -485,10 +465,7 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   (closed)="openPanel(undefined)"
                   (openInModel)="openInModel($event)"
                   (browse)="open($event)"
-                  (filter)="filterOn($event)"
-                  (propertyHovered)="hoveredProperty.set($event)"
-                  (edit)="edit($event)"
-                  (editProperty)="editProperty($event)" />
+                  (propertyHovered)="hoveredProperty.set($event)" />
               } @else if (propertyPanelIri(); as propertyIri) {
                 <app-property-panel
                   class="panel"
@@ -496,12 +473,9 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
                   [propertyIri]="propertyIri"
                   [colors]="colors()"
                   [anyResourceLabel]="t + '.anyResource' | translate"
-                  [canEdit]="canEdit() ?? false"
                   (classSelected)="openPanel($event)"
                   (closed)="openPanel(undefined)"
-                  (filter)="setPropertyFilter([$event])"
-                  (propertySelected)="openPropertyPanel($event)"
-                  (edit)="editProperty($event)" />
+                  (propertySelected)="openPropertyPanel($event)" />
               }
             </div>
           }
@@ -580,7 +554,55 @@ const EXPORT_ITEMS: { key: ExportKey; icon: string }[] = [
         padding-left: 14px;
       }
 
+      // Right of the filters, as tall as them: what the filter shows, and the way back.
+      .filter-note {
+        // Shrinks, its text cut short, before it wraps under the filters.
+        flex: 1 1 0;
+        min-width: 360px;
+        max-width: max-content;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-sizing: border-box;
+        height: 42px;
+        padding: 0 6px 0 12px;
+        border-radius: 24px;
+        background: #fff4dc;
+        color: #6b4a00;
+        font-size: 13px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+
+        mat-icon {
+          flex: none;
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+        .note-text {
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        // A small pill, so the way back reads as an action of the note, not a page's main button.
+        button.mat-mdc-unelevated-button {
+          --mat-button-filled-container-height: 26px;
+          --mat-button-filled-horizontal-padding: 10px;
+          --mat-button-filled-label-text-size: 12px;
+          flex: none;
+          height: 26px;
+          border-radius: 13px;
+          background-color: #6b4a00;
+          color: #fff4dc;
+        }
+      }
+
       .top-left {
+        // Takes the room left of the top right, for the filter note to use.
+        flex: 1 1 0;
+        min-width: 0;
         display: flex;
         flex-wrap: wrap;
         align-items: flex-start;
@@ -935,10 +957,8 @@ export class OntologyMapPageComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _graphs = inject(DataModelGraphService);
-  private readonly _clipboard = inject(Clipboard);
-  private readonly _notification = inject(NotificationService);
+  private readonly _dialog = inject(MatDialog);
   private readonly _translate = inject(TranslateService);
-  private readonly _editing = injectDataModelEditing();
 
   private readonly _projectOntologies = toSignal(
     combineLatest([this._graphs.projectOntologies$, inject(LocalizationService).currentLanguage$]).pipe(
@@ -952,7 +972,6 @@ export class OntologyMapPageComponent {
   readonly ontologies = computed(() => this._projectOntologies() ?? []);
   readonly ontologiesLoaded = computed(() => this._projectOntologies() !== undefined);
   private readonly _projectPage = inject(ProjectPageService);
-  readonly canEdit = toSignal(this._projectPage.hasProjectAdminRights$);
 
   private readonly _graphsByIri = toSignal(this._graphs.graphs$);
   private readonly _params = toSignal(this._route.queryParamMap);
@@ -973,28 +992,30 @@ export class OntologyMapPageComponent {
     return graph ? withInheritedLinks(graph, false) : undefined;
   });
 
-  readonly exportItems = EXPORT_ITEMS;
   readonly sizes = SIZES;
   /** How big the graph draws boxes, text and lines; remembered in this browser. */
   readonly size = signal<GraphSize>(SIZES.find(size => size === readStored(SIZE_KEY)) ?? 'normal');
   /** Whether the graph draws link labels level, rather than along their line; remembered in this browser. */
   readonly levelLabels = signal(readStored(LEVEL_LABELS_KEY) === 'true');
-  /** Whether an island shows its frame on hover and can be dragged; off unless turned on. */
-  readonly islands = signal(readStored(ISLANDS_KEY) === 'true');
-  /** Whether a family's colour shows as a tab at the left of white boxes, rather than as their fill; on unless turned off. */
-  readonly colourTab = signal(readStored(COLOUR_TAB_KEY) !== 'false');
-  /** Whether a line joins each parent to its subclasses; on unless turned off. */
-  readonly treeLines = signal(readStored(TREE_LINES_KEY) !== 'false');
+  /** Islands show no frame on hover and cannot be dragged. */
+  readonly islands = signal(false).asReadonly();
+  /** A family's colour shows as a tab at the left of white boxes, rather than as their fill. */
+  readonly colourTab = signal(true).asReadonly();
+  /** A line joins each parent to its subclasses. */
+  readonly treeLines = signal(true).asReadonly();
+  /** Class boxes do not list their properties. */
+  readonly showProperties = signal(false).asReadonly();
+
   /**
    * Whether the graph spreads over the whole width, an open panel covering its right, rather than keeping clear of
-   * where the panel opens. Until the user chooses, it does on screens up to `FULL_WIDTH_UP_TO` wide, where the room
-   * kept for the panel would make the graph small; on wider ones there is room to spare for it.
+   * where the panel opens. It does on screens up to `FULL_WIDTH_UP_TO` wide, where the room kept for the panel would
+   * make the graph small; on wider ones there is room to spare for it.
    */
-  readonly fullWidth = signal((readStored(FULL_WIDTH_KEY) ?? String(window.innerWidth <= FULL_WIDTH_UP_TO)) === 'true');
+  readonly fullWidth = signal(window.innerWidth <= FULL_WIDTH_UP_TO).asReadonly();
   readonly labelOptions = LABEL_OPTIONS;
   /** Whether the graph writes labels, names or both; remembered in this browser. */
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
-  readonly graphView = viewChild(OntologyGraphComponent);
+  readonly graphView = viewChild('mainGraph', { read: OntologyGraphComponent });
   private readonly _searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
   /** The family of every class of the data model, which the Islands view groups and colours classes by. */
@@ -1037,7 +1058,7 @@ export class OntologyMapPageComponent {
   readonly propertyOptions = computed(() => {
     const options = new Map<string, { id: string; label: string; links: number }>();
     for (const edge of this._graphLinks()?.edges ?? []) {
-      if (edge.kind !== 'link' || edge.source === edge.target) continue;
+      if (edge.kind !== 'link') continue;
       const option = options.get(edge.property) ?? { id: edge.property, label: edge.label, links: 0 };
       option.links++;
       options.set(edge.property, option);
@@ -1055,7 +1076,7 @@ export class OntologyMapPageComponent {
     this.propertyOptions().map(option => ({
       id: option.id,
       label: option.label,
-      name: localNameOf(option.id),
+      name: propertyNameOf(option.id, homeOf(this._graphLinks() ?? { nodes: [], edges: [] })),
       count: option.links,
     }))
   );
@@ -1086,13 +1107,14 @@ export class OntologyMapPageComponent {
   /**
    * The search in the classes and links drawn; see `searchGraph`. While a class or property of its list is gone
    * through, searched or browsed, only that one stands out, with what it links, the rest fading; see `focusGraph`.
-   * "All results" shows the whole search again.
+   * "All results" shows the whole search again. A class or property whose panel is open, clicked in the graph or
+   * elsewhere, stands out the same way.
    */
   readonly search = computed(() => {
     const graph = this.graphShown() ?? this.graph();
     if (!graph) return undefined;
-    const browsed = this.searchDropdownOpen() ? this.browsed() : undefined;
-    return browsed ? focusGraph(graph, browsed) : searchGraph(graph, this.searchText());
+    const focused = this.searchDropdownOpen() ? this.browsed() : this.panelFocus();
+    return focused ? focusGraph(graph, focused) : searchGraph(graph, this.searchText());
   });
   /** The classes and link properties the search found, each property once, as its results list them. */
   readonly searchMatches = computed(() => {
@@ -1104,6 +1126,27 @@ export class OntologyMapPageComponent {
   readonly narrowed = computed(() => {
     const graph = this._graphLinks();
     return !!graph && this.graphShown() !== graph;
+  });
+
+  /**
+   * What the banner over a narrowed graph says, under `filterNote` in the translations: only some classes with those
+   * they link to, all but some, only some links, or all but some links. The property filter wins, as in `graphShown`.
+   */
+  readonly filterNote = computed<{ key: string; params: Record<string, string | number> } | undefined>(() => {
+    if (!this.narrowed()) return undefined;
+    const named = (iris: string[], options: readonly { id: string; label: string }[]) =>
+      iris.length > MAX_NAMED
+        ? undefined
+        : iris.map(iri => options.find(option => option.id === iri)?.label ?? classNameOf(iri)).join(', ');
+    const note = (filter: ListFilter, options: readonly { id: string; label: string }[], kind: 'classes' | 'links') => {
+      const names = named(filter.iris, options);
+      const key = `${kind}${filter.mode === 'only' ? 'Only' : 'AllBut'}${names ? (filter.iris.length === 1 ? 'One' : 'Named') : 'Many'}`;
+      return { key, params: { names: names ?? '', count: filter.iris.length } };
+    };
+    const properties = this.propertyFilter();
+    if (properties.mode) return note(properties, this.propertyOptions(), 'links');
+    const classes = this.classFilter();
+    return classes.mode ? note(classes, this.classOptions(), 'classes') : undefined;
   });
 
   /** Whether ↓ in the empty search opened the list of every class and property; typing, or clearing, ends it. */
@@ -1477,73 +1520,31 @@ export class OntologyMapPageComponent {
     store(LEVEL_LABELS_KEY, String(level));
   }
 
-  setIslands(islands: boolean): void {
-    this.islands.set(islands);
-    store(ISLANDS_KEY, String(islands));
-  }
-
   /** A switch of the View options menu. */
   setViewOption(key: string, on: boolean): void {
     if (key === 'levelLabels') this.setLevelLabels(on);
-    else if (key === 'islandsToggle') this.setIslands(on);
-    else if (key === 'colourTab') this.setColourTab(on);
-    else if (key === 'treeLines') {
-      this.treeLines.set(on);
-      store(TREE_LINES_KEY, String(on));
-    } else if (key === 'fullWidth') {
-      this.fullWidth.set(on);
-      store(FULL_WIDTH_KEY, String(on));
-    }
   }
 
-  setColourTab(colourTab: boolean): void {
-    this.colourTab.set(colourTab);
-    store(COLOUR_TAB_KEY, String(colourTab));
-  }
-
-  /** Runs an Export menu item: a PNG downloaded or copied, or the link to this view copied. */
-  export(key: ExportKey): void {
-    switch (key) {
-      case 'viewPng':
-      case 'wholePng':
-        return this._downloadPng(key === 'viewPng' ? 'view' : 'whole');
-      case 'copyImage':
-        return this._copyImage();
-      case 'copyLink':
-        this._clipboard.copy(window.location.href);
-        return this._notify('linkCopied');
-    }
-  }
-
-  private _downloadPng(area: GraphExportArea): void {
-    const png = this.graphView()?.png(area);
-    if (!png) return;
+  /** Opens the export preview: the image as it will be, its settings, then copied or downloaded. */
+  openExport(): void {
     const name = OntologyService.getOntologyNameFromIri(this.selected()?.iri ?? '') || 'data-model';
-    png.then(
-      blob => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${name}_ontology-map${area === 'whole' ? '_whole' : ''}.png`;
-        link.click();
-        URL.revokeObjectURL(url);
-      },
-      () => this._notify('exportFailed', 'error')
+    this._dialog.open(
+      ExportPreviewDialogComponent,
+      exportPreviewDialogConfig({
+        render: options => this.graphView()?.image('view', options),
+        fileName: `${name}_ontology-map`,
+        title: this.selected()?.label ?? name,
+        filter: this._filterLine(),
+      })
     );
   }
 
-  private _copyImage(): void {
-    const png = this.graphView()?.png('view');
-    if (!png) return;
-    // The promise itself goes to the clipboard, so Safari keeps the click's permission while the image is drawn.
-    navigator.clipboard.write([new ClipboardItem({ 'image/png': png })]).then(
-      () => this._notify('imageCopied'),
-      () => this._notify('exportFailed', 'error')
-    );
-  }
-
-  private _notify(key: string, type: 'success' | 'error' = 'success'): void {
-    this._notification.openSnackBar(this._translate.instant(`pages.ontologyMap.exportMenu.${key}`), type);
+  /** What the graph is filtered on, as its banner says it, for the exported image; none unfiltered. */
+  private _filterLine(): string | undefined {
+    const note = this.filterNote();
+    if (!note) return undefined;
+    const filter = this._translate.instant(`pages.ontologyMap.filterNote.${note.key}`, note.params);
+    return this._translate.instant('pages.ontologyMap.exportDialog.filteredOn', { filter });
   }
 
   /** Opens the class in the Data tab. */
@@ -1552,16 +1553,6 @@ export class OntologyMapPageComponent {
     this._router.navigate(
       this._projectPath(RouteConstants.data, OntologyService.getOntologyNameFromIri(ontologyIri), className)
     );
-  }
-
-  /** Edits the class in the data model editor's dialog; see `injectDataModelEditing`. */
-  edit(iri: string): void {
-    this._editing.editClass(iri);
-  }
-
-  /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
-  editProperty(iri: string): void {
-    this._editing.editProperty(iri);
   }
 
   /** The path to a page of the project from the app's root: this page sits at different depths. */

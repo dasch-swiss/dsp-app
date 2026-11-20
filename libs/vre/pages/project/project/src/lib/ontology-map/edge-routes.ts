@@ -1,4 +1,4 @@
-import type { Core, EdgeSingular, ElementDefinition } from 'cytoscape';
+import type { Core, EdgeCollection, EdgeSingular, ElementDefinition } from 'cytoscape';
 
 /** A point on the graph. */
 export interface Point {
@@ -166,6 +166,43 @@ const LABEL_ROUNDS = 40;
 const LABEL_SLIDE = 0.35;
 
 /**
+ * Lists the labels of a class's links to itself in a column right of its loops, one above the other, the innermost
+ * loop's on top, the column centred on the loops. Each label's copy is a loop too, which the graph draws outside the
+ * real ones, so the labels are placed by the real loops' lines.
+ */
+function stackLoopLabels(loops: EdgeCollection, scale: number): void {
+  const byClass = new Map<string, EdgeSingular[]>();
+  loops.forEach(edge => {
+    byClass.set(edge.source().id(), [...(byClass.get(edge.source().id()) ?? []), edge]);
+  });
+  for (const copies of byClass.values()) {
+    const placed = copies.map(copy => {
+      copy.boundingBox({ includeLabels: true });
+      const drawn = (copy as unknown as { _private: { rscratch: Record<string, number> } })._private.rscratch;
+      const line = copy.cy().getElementById(copy.data('labelOf')).boundingBox({
+        includeLabels: false,
+        includeOverlays: false,
+      });
+      return {
+        copy,
+        line,
+        x: drawn['labelX'] ?? 0,
+        y: drawn['labelY'] ?? 0,
+        halfW: (drawn['labelWidth'] ?? 0) / 2,
+        h: drawn['labelHeight'] ?? 0,
+      };
+    });
+    placed.sort((a, b) => a.line.x2 - b.line.x2);
+    const height = Math.max(...placed.map(label => label.h)) + 2 * scale;
+    const left = Math.max(...placed.map(label => label.line.x2)) + 6 * scale;
+    const middle = placed.reduce((sum, label) => sum + (label.line.y1 + label.line.y2) / 2, 0) / placed.length;
+    placed.forEach(({ copy, x, y, halfW }, i) => {
+      copy.data({ shiftX: left + halfW - x, shiftY: middle + (i - (placed.length - 1) / 2) * height - y });
+    });
+  }
+}
+
+/**
  * Slides overlapping labels apart, each along its own link, so no two labels cover each other: in rounds, each pair
  * that overlaps moves apart a little, each label as far from the middle of its link as `LABEL_SLIDE` allows. With
  * `only`, the labels of those links alone are placed again; the others stay where they are, in their way.
@@ -174,6 +211,10 @@ export function separateLabels(cy: Core, scale: number, only?: ReadonlySet<strin
   const copies = cy.edges('.label-only');
   const movable = (edge: EdgeSingular) => !only || only.has(edge.data('labelOf'));
   cy.batch(() => copies.filter(movable).data({ shiftX: 0, shiftY: 0 }));
+  stackLoopLabels(
+    copies.filter(edge => edge.isLoop()),
+    scale
+  );
   const labels = copies.toArray().flatMap(edge => {
     edge.boundingBox({ includeLabels: true });
     // Where and how big the graph draws the label, kept among its own drawing data.

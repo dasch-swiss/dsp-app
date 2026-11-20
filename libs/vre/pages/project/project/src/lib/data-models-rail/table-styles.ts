@@ -178,4 +178,33 @@ export const TABLE_STYLES = `
     vertical-align: top;
     white-space: normal;
   }
+
+  // Each row's menu, in a column kept in view at the end; shown while the row is hovered or focused, or the menu open.
+  .actions-cell {
+    padding: 0 4px;
+    text-align: right;
+  }
+
+  .mat-mdc-cell.actions-cell {
+    background: inherit;
+  }
+
+  .row-menu {
+    --mat-icon-button-state-layer-size: 32px;
+    padding: 4px;
+    color: $cool_gray_500;
+    visibility: hidden;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .mat-mdc-row:hover .row-menu,
+  .mat-mdc-row:focus-within .row-menu,
+  .row-menu[aria-expanded='true'] {
+    visibility: visible;
+  }
 `;

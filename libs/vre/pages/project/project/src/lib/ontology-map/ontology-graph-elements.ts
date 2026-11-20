@@ -26,7 +26,7 @@ export type GraphLabels = 'labels' | 'names' | 'both';
 export const localNameOf = (iri: string) => iri.substring(Math.max(iri.lastIndexOf('#'), iri.lastIndexOf('/')) + 1);
 
 /** On-screen size of class names, in px, per size setting. */
-export const GRAPH_TEXT_SIZE: Record<GraphSize, number> = { small: 14, normal: 18, large: 23 };
+export const GRAPH_TEXT_SIZE: Record<GraphSize, number> = { small: 18, normal: 23, large: 29 };
 
 /** Class names' font size at scale 1; boxes, text and lines are drawn at a multiple of it. */
 export const BASE_FONT_SIZE = 15;
@@ -52,6 +52,11 @@ export interface GraphElementOptions {
   linksLabel?: string;
   /** Set for the Islands view: classes are grouped in islands and families, and show the file they carry. */
   islands?: IslandElementOptions;
+  /**
+   * The pairs of classes, as `pairOf` writes them, whose many links are drawn one by one all the same, the user having
+   * opened them: each keeps the merged link's ID as `merged`, so a search finds them as it finds it.
+   */
+  expanded?: ReadonlySet<string>;
 }
 
 export interface IslandElementOptions {
@@ -69,19 +74,24 @@ export interface IslandElementOptions {
 export function toGraphElements(graph: DataModelGraph, options: GraphElementOptions): ElementDefinition[] {
   const islands = options.islands;
   const parents = islands ? islandParents(graph, islands) : undefined;
+  const labels = new Map(graph.nodes.map(node => [node.id, node.label]));
+  const labelOf = (iri: string) => labels.get(iri) ?? localNameOf(iri);
+  // Properties are named as in the data model shown: another data model's with that model's name before it.
+  const home = homeOf(graph);
   const nodes: ElementDefinition[] = graph.nodes.map(node => {
     const family = islands?.families.get(node.id);
     const hue = family && familyHue(family.index);
     const texture = family && familyTexture(family.index);
     const icon = islands && hue ? fileIconImage(node.representationClass, hue.dark) : undefined;
     const label = node.kind === 'generic' && node.id === Constants.Resource ? options.anyResourceLabel : node.label;
+    const own =
+      node.kind !== 'class' && node.id !== Constants.Resource ? externalTexts(label, node.id) : texts(label, node.id);
     return {
       group: 'nodes',
       data: {
         id: node.id,
-        ...(node.kind !== 'class' && node.id !== Constants.Resource
-          ? externalTexts(label, node.id)
-          : texts(label, node.id)),
+        ...own,
+        ...withProperties(own, node.propertyDetails ?? [], labelOf, home),
         color: family ? familyColor(family) : (options.colors.get(node.id) ?? '#FFFFFF'),
         ...(hue && texture ? { dark: hue.dark, texture: textureImage(texture, hue.dark, family.sub), icon } : {}),
         // In the Colour tab look, every class of the data model shows its family's colour as a tab.
@@ -127,26 +137,28 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
   const inFamily = (iri: string) => !!parents?.get(iri)?.startsWith(FAMILY_PREFIX);
   const familyLink = (edge: { source: string; target: string }) => inFamily(edge.source) || inFamily(edge.target);
   // More than a few links from one class to another are drawn as one, which says how many they are.
-  const drawn = graph.edges.filter(edge => edge.source !== edge.target);
+  const drawn = graph.edges.filter(isDrawn);
   const between = new Map<string, number>();
   for (const edge of drawn) {
     if (edge.kind === 'link')
       between.set(`${edge.source}\n${edge.target}`, (between.get(`${edge.source}\n${edge.target}`) ?? 0) + 1);
   }
   const merged = new Set<string>();
-  const edges: ElementDefinition[] = drawn.flatMap(edge => {
+  const edges: ElementDefinition[] = drawn.flatMap((edge): ElementDefinition[] => {
     const pair = `${edge.source}\n${edge.target}`;
     const count = edge.kind === 'link' ? (between.get(pair) ?? 0) : 0;
-    if (count <= MAX_PARALLEL_LINKS) {
+    const opened = count > MAX_PARALLEL_LINKS && !!options.expanded?.has(pair);
+    if (count <= MAX_PARALLEL_LINKS || opened) {
       return [
         {
           group: 'edges',
           data: {
-            id: edgeIdOf(edge, count),
+            id: edgeIdOf(edge, opened ? 1 : count),
             source: edge.source,
             target: edge.target,
-            ...texts(edge.label, edge.property),
+            ...texts(edge.label, edge.property, propertyNameOf(edge.property, home)),
             property: edge.property,
+            ...(opened ? { merged: edgeIdOf(edge, count) } : {}),
           },
           classes: [edge.kind, familyLink(edge) ? 'family-link' : ''].filter(Boolean).join(' '),
         },
@@ -165,6 +177,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
           label,
           name: label,
           both: label,
+          count,
         },
         classes: ['links', familyLink(edge) ? 'family-link' : ''].filter(Boolean).join(' '),
       },
@@ -177,10 +190,49 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
 export const MAX_PARALLEL_LINKS = 4;
 
 /** An element's texts, one per `GraphLabels`: its label, its name, and both on two lines. */
-function texts(label: string, iri: string): { label: string; name: string; both: string } {
-  const name = localNameOf(iri);
+function texts(label: string, iri: string, name = localNameOf(iri)): { label: string; name: string; both: string } {
   return { label, name, both: `${label}\n${name}` };
 }
+
+/** The texts of a frame, which is not named: every text the graph may write, empty. */
+const NO_TEXTS = { label: '', name: '', both: '', labelProps: '', nameProps: '', bothProps: '' };
+
+/**
+ * An element's texts with its properties listed under them, one per line in their form order, as the "Show properties"
+ * view option draws a class: each by label, name, or both as the texts are, a link with the class it points at. A class
+ * without properties keeps its texts as they are.
+ */
+function withProperties(
+  own: { label: string; name: string; both: string },
+  properties: readonly { id: string; label: string; linkTarget?: string }[],
+  labelOf: (iri: string) => string,
+  homeIri: string | undefined
+): { labelProps: string; nameProps: string; bothProps: string } {
+  const lines = (text: (property: (typeof properties)[number]) => string) =>
+    properties.length ? `\n\n${properties.map(property => `· ${text(property)}`).join('\n')}` : '';
+  const target = (property: (typeof properties)[number], of: (iri: string) => string) =>
+    property.linkTarget ? ` → ${of(property.linkTarget)}` : '';
+  return {
+    labelProps: own.label + lines(p => p.label + target(p, labelOf)),
+    nameProps: own.name + lines(p => propertyNameOf(p.id, homeIri) + target(p, localNameOf)),
+    bothProps: own.both + lines(p => `${p.label} (${propertyNameOf(p.id, homeIri)})${target(p, labelOf)}`),
+  };
+}
+
+/**
+ * A property's name as shown with a class of `homeIri`'s data model: its name, prefixed by its own data model's when
+ * it comes from another, as `biblio:hasTitle`.
+ */
+export function propertyNameOf(propertyIri: string, homeIri?: string): string {
+  const name = localNameOf(propertyIri);
+  const model = dataModelNameOf(propertyIri);
+  return model && homeIri && ontologyOf(propertyIri) !== ontologyOf(homeIri) ? `${model}:${name}` : name;
+}
+
+const ontologyOf = (iri: string) => iri.split('#')[0];
+
+/** A class of the data model the graph shows, to tell a property of another data model by; see `propertyNameOf`. */
+export const homeOf = (graph: DataModelGraph) => graph.nodes.find(node => node.kind === 'class')?.id;
 
 /** The data model a class IRI belongs to, by name, as in `…/ontology/0801/biblio/v2#Book`; none if not of that form. */
 export function dataModelNameOf(iri: string): string | undefined {
@@ -247,7 +299,7 @@ function islandNodes(graph: DataModelGraph, options: IslandElementOptions): Elem
   for (const { id, iris } of groups) {
     elements.push({
       group: 'nodes',
-      data: { id, label: '', name: '', both: '' },
+      data: { id, ...NO_TEXTS },
       classes: [
         'island',
         id === UNLINKED_ISLAND ? 'unlinked' : '',
@@ -265,9 +317,7 @@ function islandNodes(graph: DataModelGraph, options: IslandElementOptions): Elem
           id: parent!,
           parent: id,
           // A family's frame and hue group its classes; it is not named.
-          label: '',
-          name: '',
-          both: '',
+          ...NO_TEXTS,
           tint: familyTint(hue.base),
           dark: hue.dark,
         },
@@ -285,9 +335,7 @@ function islandNodes(graph: DataModelGraph, options: IslandElementOptions): Elem
 export function linkedWith(graph: DataModelGraph, classIris: readonly string[]): DataModelGraph {
   const chosen = new Set(classIris.filter(iri => graph.nodes.some(node => node.id === iri)));
   if (chosen.size === 0) return graph;
-  const edges = graph.edges.filter(
-    edge => edge.source !== edge.target && (chosen.has(edge.target) || chosen.has(edge.source))
-  );
+  const edges = graph.edges.filter(edge => isDrawn(edge) && (chosen.has(edge.target) || chosen.has(edge.source)));
   const kept = new Set([...chosen, ...edges.flatMap(edge => [edge.source, edge.target])]);
   return { nodes: graph.nodes.filter(node => kept.has(node.id)), edges };
 }
@@ -296,9 +344,7 @@ export function linkedWith(graph: DataModelGraph, classIris: readonly string[]):
 export function throughProperties(graph: DataModelGraph, propertyIris: readonly string[]): DataModelGraph {
   if (propertyIris.length === 0) return graph;
   const chosen = new Set(propertyIris);
-  const edges = graph.edges.filter(
-    edge => edge.kind === 'link' && edge.source !== edge.target && chosen.has(edge.property)
-  );
+  const edges = graph.edges.filter(edge => edge.kind === 'link' && chosen.has(edge.property));
   const kept = new Set(edges.flatMap(edge => [edge.source, edge.target]));
   return { nodes: graph.nodes.filter(node => kept.has(node.id)), edges };
 }
@@ -416,8 +462,20 @@ export interface ClassRow {
   representation?: RepresentationClass;
   /** How many properties it has, inherited ones included. */
   properties: number;
-  /** Its properties in their form order: label, value type, and the class a link points at. */
-  propertyList: { id: string; label: string; type: string; linkTarget?: string }[];
+  /**
+   * Its properties in their form order: label, value type, the class a link points at, and whether a resource may have
+   * several values of it and must have one.
+   */
+  propertyList: {
+    id: string;
+    label: string;
+    type: string;
+    linkTarget?: string;
+    /** Its description in the current language; empty without one. */
+    description?: string;
+    multiple: boolean;
+    required: boolean;
+  }[];
   /** The classes it links to, each once, its superclasses' links included. */
   linksTo: string[];
   /** The classes that link to it, each once, their superclasses' links included. */
@@ -462,11 +520,14 @@ export function classRows(graph: DataModelGraph): ClassRow[] {
         ? node.representationClass
         : undefined,
     properties: node.propertyDetails?.length ?? 0,
-    propertyList: (node.propertyDetails ?? []).map(({ id, label, type, linkTarget }) => ({
+    propertyList: (node.propertyDetails ?? []).map(({ id, label, type, linkTarget, cardinality, description }) => ({
       id,
       label,
       type,
       ...(linkTarget ? { linkTarget } : {}),
+      ...(description ? { description } : {}),
+      multiple: cardinality === Cardinality._0_n || cardinality === Cardinality._1_n,
+      required: cardinality === Cardinality._1 || cardinality === Cardinality._1_n,
     })),
     // Links only: a superclass shows as "Subclass of".
     linksTo: [
@@ -554,13 +615,14 @@ export function standardTermOf(iri: string): StandardTerm {
  */
 export function propertyRows(graph: DataModelGraph): PropertyRow[] {
   const rows = new Map<string, PropertyRow>();
+  const home = homeOf(graph);
   const classes = graph.nodes.filter(node => node.kind === 'class').sort((a, b) => a.label.localeCompare(b.label));
   for (const node of classes) {
     for (const property of node.propertyDetails ?? []) {
       const row = rows.get(property.id) ?? {
         id: property.id,
         label: property.label,
-        name: localNameOf(property.id),
+        name: propertyNameOf(property.id, home),
         description: property.description,
         labels: property.labels ?? [],
         descriptions: property.descriptions ?? [],
@@ -581,7 +643,7 @@ export function propertyRows(graph: DataModelGraph): PropertyRow[] {
     rows.set(property.id, {
       id: property.id,
       label: property.label,
-      name: localNameOf(property.id),
+      name: propertyNameOf(property.id, home),
       description: property.description,
       labels: property.labels ?? [],
       descriptions: property.descriptions ?? [],
@@ -674,7 +736,7 @@ function matchGraph(
   classMatches: (node: DataModelGraph['nodes'][number]) => boolean,
   linkMatches: (edge: DataModelEdge) => boolean
 ): GraphSearch {
-  const drawn = graph.edges.filter(edge => edge.source !== edge.target);
+  const drawn = graph.edges.filter(isDrawn);
   const between = new Map<string, number>();
   for (const edge of drawn) {
     if (edge.kind === 'link') between.set(pairOf(edge), (between.get(pairOf(edge)) ?? 0) + 1);
@@ -692,6 +754,12 @@ function matchGraph(
   }
   return search;
 }
+
+/**
+ * Whether the graph draws an edge: every link, a class's link to itself as a loop; a subclass edge only between two
+ * classes.
+ */
+export const isDrawn = (edge: DataModelEdge) => edge.kind === 'link' || edge.source !== edge.target;
 
 const pairOf = (edge: DataModelEdge) => `${edge.source}\n${edge.target}`;
 

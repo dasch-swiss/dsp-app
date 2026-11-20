@@ -31,7 +31,7 @@ import { ProjectPageService } from './project-page.service';
         {{ 'shared.header.projectTabs.dataModels' | translate }}
       </a>
       <a mat-tab-link [routerLink]="[DATA_MODELS_2]" routerLinkActive="active-link" data-cy="data-models-2-tab">
-        <mat-icon class="tab-icon">hub</mat-icon>
+        <mat-icon class="tab-icon">account_tree</mat-icon>
         {{ 'shared.header.projectTabs.dataModels2' | translate }}
       </a>
       @if (projectPageService.hasProjectAdminRights$ | async) {

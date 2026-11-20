@@ -40,6 +40,69 @@ export const RAIL_SECTION_STYLES = `
     flex: 1;
   }
 
+  // On two lines, as the data browser's head: the title and the create button on white, then the search and the
+  // tools on the page's grey between two rules, each band from edge to edge.
+  .head.two-lines {
+    display: grid;
+    grid-template-columns: 12px minmax(140px, 280px) minmax(0, 1fr) 12px;
+    grid-template-areas:
+      '. title create .'
+      '. search tools .';
+    gap: 0 12px;
+    margin: -16px -24px 0;
+    align-items: stretch;
+
+    &::before,
+    &::after {
+      align-self: stretch;
+    }
+
+    &::before {
+      content: '';
+      grid-row: 1;
+      grid-column: 1 / -1;
+      background: white;
+      border-bottom: 1px solid $cool_gray_200;
+    }
+
+    &::after {
+      content: '';
+      grid-row: 2;
+      grid-column: 1 / -1;
+      border-bottom: 1px solid $cool_gray_200;
+    }
+
+    h2 {
+      grid-area: title;
+      align-self: center;
+      padding: 18px 0;
+    }
+
+    .create {
+      grid-area: create;
+      justify-self: end;
+      align-self: center;
+    }
+
+    .search {
+      grid-area: search;
+      width: auto;
+      margin: 12px 0;
+      align-self: center;
+    }
+
+    .tools {
+      grid-area: tools;
+      align-self: center;
+    }
+  }
+
+  // A section's create button after the search, compact like the other header controls.
+  .create {
+    --mat-button-filled-container-height: 36px;
+    flex: none;
+  }
+
   .search {
     --mat-form-field-container-height: 36px;
     --mat-form-field-container-vertical-padding: 6px;
@@ -136,7 +199,7 @@ export const RAIL_SECTION_STYLES = `
     gap: 4px;
   }
 
-  // A class as a chip: white, a slate border, its colour in a narrow tab at the left, as the Overview draws it.
+  // A class as a chip: white, a slate border, its colour in a narrow tab at the left, as the Diagram draws it.
   .chip {
     display: inline-flex;
     align-items: stretch;

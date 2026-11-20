@@ -6,6 +6,7 @@ import {
   focusGraph,
   graphScale,
   linkedWith,
+  propertyNameOf,
   propertyRows,
   propertyUsage,
   searchGraph,
@@ -66,12 +67,13 @@ describe('toGraphElements', () => {
     expect(node(Constants.Resource).classes).toBe('external');
   });
 
-  it('draws an edge per link, labelled with its property, without links to the class itself', () => {
+  it('draws an edge per link, labelled with its property, a link to the class itself too', () => {
     const edges = elements.filter(e => e.group === 'edges').map(e => [e.data.source, e.data.target, e.data['label']]);
 
     expect(edges).toEqual([
       ['Film', 'Person', 'Director'],
       ['Film', 'Person', 'Writer'],
+      ['Film', 'Film', 'Sequel'],
       ['Person', Constants.Resource, 'Mentions'],
     ]);
   });
@@ -101,6 +103,17 @@ describe('toGraphElements with many links between two classes', () => {
 
     expect(edges.map(e => e.data['label'])).toEqual(['5 links', 'Link 0', 'Link 1']);
     expect(edges[0].classes).toBe('links');
+    expect(edges[0].data['count']).toBe(5);
+  });
+
+  it('draws them one by one once opened, each found as the link that stood for them', () => {
+    const edges = toGraphElements(
+      { nodes: graph.nodes, edges: links(5, 'Film', 'Person') },
+      { colors: new Map(), anyResourceLabel: 'Any resource', expanded: new Set(['Film\nPerson']) }
+    ).filter(e => e.group === 'edges');
+
+    expect(edges.map(e => e.data['label'])).toEqual(['Link 0', 'Link 1', 'Link 2', 'Link 3', 'Link 4']);
+    expect(new Set(edges.map(e => e.data['merged']))).toEqual(new Set(['Film links Person']));
   });
 });
 
@@ -184,11 +197,11 @@ describe('linkedWith', () => {
     expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer', 'mentions']);
   });
 
-  it('keeps the classes a class links to even when nothing links to it, without its links to itself', () => {
+  it('keeps the classes a class links to even when nothing links to it, with its links to itself', () => {
     const focused = linkedWith(graph, ['Film']);
 
     expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person']);
-    expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer']);
+    expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer', 'sequel']);
   });
 
   it('keeps the whole model when no class, or an unknown one, is given', () => {
@@ -200,7 +213,7 @@ describe('linkedWith', () => {
     const focused = linkedWith(graph, ['Film', 'Lonely']);
 
     expect(focused.nodes.map(n => n.id)).toEqual(['Film', 'Person', 'Lonely']);
-    expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer']);
+    expect(focused.edges.map(e => e.property)).toEqual(['director', 'writer', 'sequel']);
   });
 });
 
@@ -387,8 +400,15 @@ describe('classRows and propertyRows', () => {
         representation: 'MovingImageRepresentation',
         properties: 2,
         propertyList: [
-          { id: 'x#title', label: 'Title', type: 'Text' },
-          { id: 'x#director', label: 'Director', type: 'Link', linkTarget: 'x#Person' },
+          { id: 'x#title', label: 'Title', type: 'Text', multiple: false, required: true },
+          {
+            id: 'x#director',
+            label: 'Director',
+            type: 'Link',
+            linkTarget: 'x#Person',
+            multiple: true,
+            required: false,
+          },
         ],
         linksTo: ['x#Person'],
         linkedFrom: [],
@@ -403,7 +423,7 @@ describe('classRows and propertyRows', () => {
         labels: [],
         representation: undefined,
         properties: 1,
-        propertyList: [{ id: 'x#title', label: 'Title', type: 'Text' }],
+        propertyList: [{ id: 'x#title', label: 'Title', type: 'Text', multiple: false, required: false }],
         linksTo: [],
         linkedFrom: ['x#Film'],
         depth: 0,
@@ -527,5 +547,22 @@ describe('classRows and propertyRows', () => {
       ['Date', 0, true, 0],
       ['Edition date', 1, false, 1],
     ]);
+  });
+});
+
+describe('propertyNameOf', () => {
+  const beol = 'http://api.dasch.swiss/ontology/0801/beol/v2#';
+  const biblio = 'http://api.dasch.swiss/ontology/0801/biblio/v2#';
+
+  it('writes a property of the same data model by its name alone', () => {
+    expect(propertyNameOf(`${beol}hasAuthor`, `${beol}Letter`)).toBe('hasAuthor');
+  });
+
+  it("prefixes a property of another data model with that data model's name", () => {
+    expect(propertyNameOf(`${biblio}hasTitle`, `${beol}Letter`)).toBe('biblio:hasTitle');
+  });
+
+  it('writes the name alone when there is no class to tell it by', () => {
+    expect(propertyNameOf(`${biblio}hasTitle`)).toBe('hasTitle');
   });
 });

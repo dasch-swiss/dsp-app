@@ -43,11 +43,21 @@ export class DataModelsRailState {
     return ontologies.find(o => OntologyService.getOntologyNameFromIri(o.iri) === name) ?? ontologies[0];
   });
   private readonly _graphsByIri = toSignal(this._graphs.graphs$);
+  /** The tab whose sections these are: Data models 2. */
+  tab: string = RouteConstants.dataModels2;
+  /** How many classes and properties each data model has, by its IRI, once read. */
+  readonly counts = computed(() => {
+    const counts = new Map<string, { classes: number; properties: number }>();
+    this._graphsByIri()?.forEach((graph, iri) =>
+      counts.set(iri, { classes: classRows(graph).length, properties: propertyRows(graph).length })
+    );
+    return counts;
+  });
   readonly graph = computed(() => {
     const iri = this.selected()?.iri;
     return iri ? this._graphsByIri()?.get(iri) : undefined;
   });
-  /** A colour per class, its family's, as the Overview graph draws it. */
+  /** A colour per class, its family's, as the Diagram draws it. */
   readonly colors = computed(() => {
     const graph = this.graph();
     return graph ? familyColors(graph) : new Map<string, string>();
@@ -60,6 +70,11 @@ export class DataModelsRailState {
     const graph = this.graph();
     return graph ? propertyRows(graph) : [];
   });
+  private readonly _metadata = toSignal(this._project.ontologiesMetadata$);
+  /** The data model's comment, for the dialog editing it. */
+  commentOf(ontologyIri: string): string | undefined {
+    return this._metadata()?.find(meta => meta.id === ontologyIri)?.comment;
+  }
   readonly linkCount = computed(() => this.graph()?.edges.filter(edge => edge.kind === 'link').length ?? 0);
 
   readonly lists = toSignal(
@@ -81,7 +96,7 @@ export class DataModelsRailState {
 
   /** Opens a section of the tab, keeping the data model; `params` add to it. */
   openSection(section: string, params: Record<string, string> = {}): void {
-    this._router.navigate(this.projectPath(RouteConstants.dataModels2, section), {
+    this._router.navigate(this.projectPath(this.tab, section), {
       queryParams: { ...this.modelParam(), ...params },
     });
   }

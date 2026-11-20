@@ -86,7 +86,8 @@ export class CreateResourceClassDialogComponent {
       )
       .subscribe(() => {
         this.loading = false;
-        this.dialogRef.close();
+        // Closing with its name tells whoever opened the dialog which class was made.
+        this.dialogRef.close(this.form.controls.name.value);
       });
   }
 }

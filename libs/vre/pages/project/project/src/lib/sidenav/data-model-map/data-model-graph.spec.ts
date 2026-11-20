@@ -185,4 +185,19 @@ describe('buildDataModelGraph', () => {
     expect(graph.nodes[0].propertyDetails?.map(property => property.label)).toEqual(['author(s)', 'Topic']);
     expect(graph.edges[0].label).toBe('author(s)');
   });
+
+  it("lists the data model's properties no class has, such as a link taken off its last class, but no link value", () => {
+    const graph = build([
+      definition({ [`${ONTO}#Slide`]: { props: [{ propertyIndex: `${ONTO}#topic` }] } }, [
+        { id: `${ONTO}#topic` },
+        { id: `${ONTO}#author`, objectType: `${ONTO}#Author`, isLinkProperty: true },
+        { id: `${ONTO}#authorValue`, isLinkValueProperty: true },
+        { id: `${OTHER}#placeName` },
+      ]),
+    ]);
+
+    expect(graph.unusedProperties?.map(property => [property.id, property.linkTarget])).toEqual([
+      [`${ONTO}#author`, `${ONTO}#Author`],
+    ]);
+  });
 });

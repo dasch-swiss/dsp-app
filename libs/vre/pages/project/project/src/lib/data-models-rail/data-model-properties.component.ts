@@ -4,19 +4,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   signal,
   viewChild,
   WritableSignal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import {
   MatCell,
   MatCellDef,
@@ -29,40 +30,34 @@ import {
   MatRowDef,
   MatTable,
 } from '@angular/material/table';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { DefaultProperties, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
-import { injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
-import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
+import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
 import { ClassChipsComponent } from './class-chips.component';
 import { ColumnHeaderComponent } from './column-header.component';
-import { ColumnsMenuComponent } from './columns-menu.component';
 import { DataModelsRailState } from './data-models-rail-state';
-import { TextKind } from './description-editor.component';
 import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
-import { LanguageTextEdit, LanguageTextsComponent } from './language-texts.component';
-import { LanguagesMenuComponent, parseLanguages } from './languages-menu.component';
+import { LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
-import { rememberedSignal } from './remembered-signal';
 import { TableColumns } from './table-columns';
 import { TABLE_STYLES } from './table-styles';
-import { TextEditing, TextEditorPopoverComponent } from './text-editor-popover.component';
 
 /** How many classes a condensed "Used by" shows; the others are counted. */
 const MAX_USED_BY = 3;
-/** Where the languages the Data models 2 tables show in are remembered, the same for both. */
-const LANGUAGES_KEY = 'dsp-data-models-languages';
 const STORAGE_KEY = 'dsp-data-models-properties';
 /** The Points to filter's value for properties that are not links. */
 const NO_TARGET = 'none';
 
-type Column = 'property' | 'description' | 'type' | 'pointsTo' | 'usedBy' | 'standard';
-type Density = 'condensed' | 'expanded';
+type Column = 'property' | 'description' | 'type' | 'pointsTo' | 'usedBy';
 
 /** The translation key of each column's name. */
 const COLUMN_LABELS: Record<Column, string> = {
@@ -71,12 +66,11 @@ const COLUMN_LABELS: Record<Column, string> = {
   type: 'pages.dataModels2.colType',
   pointsTo: 'pages.dataModels2.colPointsTo',
   usedBy: 'pages.dataModels2.colUsedBy',
-  standard: 'pages.dataModels2.colStandard',
 };
 
 /**
- * Data models 2 › Properties: every property of the data model in a table, as the Classes table. Condensed, a row is
- * one line and what does not fit is counted; expanded, it shows everything. Each column filters from its header, moves
+ * Data models 2 › Properties: every property of the data model in a table, each row showing all it has. Each column
+ * filters from its header, moves
  * by dragging it and resizes from its edge. A clicked property opens its panel; an editor edits a property's name and
  * description in each language from its cell.
  */
@@ -85,18 +79,13 @@ const COLUMN_LABELS: Record<Column, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'closeOnEscape($event)' },
   imports: [
-    TabShadePipe,
     CdkDrag,
     CdkDropList,
     ClassChipsComponent,
     ColumnHeaderComponent,
-    ColumnsMenuComponent,
     HighlightPipe,
-    LanguagesMenuComponent,
     LanguageTextsComponent,
     MatButton,
-    MatButtonToggle,
-    MatButtonToggleGroup,
     MatCell,
     MatCellDef,
     MatCheckbox,
@@ -107,19 +96,24 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatHeaderRow,
     MatHeaderRowDef,
     MatIcon,
+    MatIconButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     MatInput,
     MatPrefix,
     MatRow,
     MatRowDef,
     MatTable,
+    MatTooltip,
     PropertyPanelComponent,
-    TextEditorPopoverComponent,
+    ResourceClassPanelComponent,
     TranslatePipe,
   ],
   template: `
     @let r = 'pages.dataModels2';
     @let t = 'pages.dataBrowser.dataModelMap';
-    @let expanded = density() === 'expanded';
+    @let expanded = true;
     @let cols = columns;
     <div class="section">
       <div class="head">
@@ -134,31 +128,37 @@ const COLUMN_LABELS: Record<Column, string> = {
             [attr.aria-label]="r + '.findProperty' | translate"
             (input)="query.set(search.value)" />
         </mat-form-field>
-        <span class="spacer"></span>
-        <app-columns-menu [columns]="cols" [labels]="columnLabels" cyPrefix="data-model-properties" />
-        <app-languages-menu [(chosen)]="languages" cyPrefix="data-model-properties" />
-        @if (folding() && foldable().size) {
-          <button mat-button type="button" data-cy="data-model-properties-expand" (click)="toggleAllFolds()">
-            <mat-icon>{{ allExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
-            {{ (allExpanded() ? r + '.collapseAll' : r + '.expandAll') | translate }}
+        <!-- For editors, at the head's right end: a property of the type picked, for no class yet, made in the data model
+             editor's dialog. -->
+        @if (canCreate()) {
+          <button
+            mat-flat-button
+            color="primary"
+            type="button"
+            class="create"
+            data-cy="data-model-properties-create"
+            [matMenuTriggerFor]="createMenu">
+            <mat-icon>add</mat-icon>
+            {{ r + '.createProperty' | translate }}
           </button>
+          <mat-menu #createMenu="matMenu">
+            @for (category of propertyTypes; track category.group) {
+              <button mat-menu-item type="button" [matMenuTriggerFor]="typeMenu">{{ category.group }}</button>
+              <mat-menu #typeMenu="matMenu">
+                @for (type of category.elements; track type.label) {
+                  <button
+                    mat-menu-item
+                    type="button"
+                    [attr.data-cy]="'data-model-properties-create-' + type.label"
+                    (click)="createProperty(type)">
+                    <mat-icon>{{ type.icon }}</mat-icon>
+                    {{ type.label }}
+                  </button>
+                }
+              </mat-menu>
+            }
+          </mat-menu>
         }
-        <mat-button-toggle-group
-          class="density"
-          hideSingleSelectionIndicator
-          data-cy="data-model-properties-density"
-          [attr.aria-label]="r + '.density' | translate"
-          [value]="density()"
-          (change)="density.set($event.value)">
-          <mat-button-toggle value="condensed">
-            <mat-icon>density_small</mat-icon>
-            {{ r + '.condensed' | translate }}
-          </mat-button-toggle>
-          <mat-button-toggle value="expanded">
-            <mat-icon>density_large</mat-icon>
-            {{ r + '.expanded' | translate }}
-          </mat-button-toggle>
-        </mat-button-toggle-group>
       </div>
 
       <div class="table-box" [class.scrolled]="scrolled()" (scroll)="onScroll($event)">
@@ -167,7 +167,7 @@ const COLUMN_LABELS: Record<Column, string> = {
           [dataSource]="rows()"
           data-cy="data-model-properties"
           [class.expanded]="expanded"
-          [style.width.px]="cols.tableWidth()"
+          [style.width.px]="cols.tableWidth() + actionsWidth()"
           cdkDropList
           cdkDropListOrientation="horizontal"
           cdkDropListElementContainer="thead tr"
@@ -204,22 +204,7 @@ const COLUMN_LABELS: Record<Column, string> = {
               </app-column-header>
             </th>
             <td mat-cell *matCellDef="let row" class="frozen" [title]="row.name">
-              <span class="labelled" [style.padding-left.px]="folding() ? row.depth * indent : 0">
-                @if (folding()) {
-                  @if (foldable().has(row.id)) {
-                    <button
-                      type="button"
-                      class="toggle"
-                      data-cy="data-model-properties-toggle"
-                      [attr.aria-expanded]="!collapsed().has(row.id)"
-                      [attr.aria-label]="(collapsed().has(row.id) ? r + '.expandRow' : r + '.collapseRow') | translate"
-                      (click)="$event.stopPropagation(); toggleFold(row.id)">
-                      <mat-icon>{{ collapsed().has(row.id) ? 'chevron_right' : 'expand_more' }}</mat-icon>
-                    </button>
-                  } @else if (foldable().size) {
-                    <span class="leaf" aria-hidden="true"></span>
-                  }
-                }
+              <span class="labelled">
                 <span class="texts">
                   <app-language-texts
                     kind="label"
@@ -227,12 +212,8 @@ const COLUMN_LABELS: Record<Column, string> = {
                     [texts]="row.labels"
                     [shown]="row.label"
                     [owner]="row.label"
-                    [languages]="languages()"
-                    [canEdit]="canEditTexts()"
-                    [activeLanguage]="textEditing.activeLanguage(row.id, 'label')"
                     [expanded]="expanded"
-                    [highlight]="nameTerms()"
-                    (edit)="editText(row, 'label', $event)" />
+                    [highlight]="nameTerms()" />
                   @if (expanded) {
                     <code class="name">
                       @for (part of row.name | highlight: nameTerms(); track $index) {
@@ -284,12 +265,8 @@ const COLUMN_LABELS: Record<Column, string> = {
                 [texts]="row.descriptions"
                 [shown]="row.description"
                 [owner]="row.label"
-                [languages]="languages()"
-                [canEdit]="canEditTexts()"
-                [activeLanguage]="textEditing.activeLanguage(row.id, 'description')"
                 [expanded]="expanded"
-                [highlight]="descriptionTerms()"
-                (edit)="editText(row, 'description', $event)" />
+                [highlight]="descriptionTerms()" />
             </td>
           </ng-container>
           <ng-container matColumnDef="type">
@@ -366,7 +343,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                     } @else {
                       <!-- In the class's color, as in the column. -->
                       <span class="chip"
-                        ><span class="tab" [style.background]="state.colors().get(option) | tabShade: '#F3F4F6'"></span
+                        ><span class="tab" [style.background]="state.colors().get(option) ?? '#F3F4F6'"></span
                         ><span class="chip-label">{{ state.labelOf(option) }}</span></span
                       >
                     }
@@ -377,9 +354,9 @@ const COLUMN_LABELS: Record<Column, string> = {
             <td mat-cell *matCellDef="let row">
               <app-class-chips
                 [iris]="row.linkTarget ? [row.linkTarget] : []"
+                [showColours]="showColours()"
                 [expanded]="expanded"
-                [highlight]="searchTerms()"
-                (classSelected)="showClass($event)" />
+                [highlight]="searchTerms()" />
             </td>
           </ng-container>
           <ng-container matColumnDef="usedBy">
@@ -417,80 +394,90 @@ const COLUMN_LABELS: Record<Column, string> = {
               }
               <app-class-chips
                 [iris]="row.usedBy"
+                [showColours]="showColours()"
                 [max]="maxUsedBy"
                 [expanded]="expanded"
-                [highlight]="searchTerms()"
-                (classSelected)="showClass($event)" />
+                [highlight]="searchTerms()" />
             </td>
           </ng-container>
-          <ng-container matColumnDef="standard">
-            <th
-              mat-header-cell
-              *matHeaderCellDef
-              class="movable"
-              cdkDrag
-              [style.width.px]="cols.widthOf('standard')"
-              [class.filtered]="standards().size">
-              <app-column-header
-                [columns]="cols"
-                column="standard"
-                [label]="columnLabels.standard"
-                [filtered]="!!standards().size"
-                menuPosition="before"
-                filterCy="data-model-properties-filter-standard"
-                resizeCy="data-model-properties-resize">
-                <span class="filter-head">
-                  <span class="filter-heading">{{ columnLabels.standard | translate }}</span>
-                  <button mat-button type="button" class="filter-all" (click)="toggleAll(standards, standardOptions())">
-                    {{ (allOn(standards(), standardOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+          <!-- Each property's actions, as icons shown on hover, kept in view at the end of the row. -->
+          <ng-container matColumnDef="actions" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef class="actions-cell" [style.width.px]="actionsWidth()"></th>
+            <td
+              mat-cell
+              *matCellDef="let row"
+              class="actions-cell"
+              (click)="$event.stopPropagation()"
+              (keydown.enter)="$event.stopPropagation()">
+              <span class="row-actions">
+                @if (canEdit()) {
+                  <button
+                    mat-icon-button
+                    type="button"
+                    data-cy="data-model-properties-edit"
+                    [attr.aria-label]="r + '.editProperty' | translate"
+                    [matTooltip]="r + '.editProperty' | translate"
+                    (click)="edit(row.id)">
+                    <mat-icon>edit</mat-icon>
                   </button>
-                </span>
-                @for (option of standardOptions(); track option) {
-                  <mat-checkbox [checked]="standards().has(option)" (change)="toggle(standards, option)">{{
-                    option
-                  }}</mat-checkbox>
                 }
-              </app-column-header>
-            </th>
-            <td mat-cell *matCellDef="let row">
-              <!-- The terms of standard vocabularies the property maps to; the vocabulary's name on hover. -->
-              <span class="terms">
-                @for (term of row.terms; track term.iri) {
-                  <span class="term" data-cy="data-model-properties-term" [title]="term.vocabulary + ' · ' + term.iri">
-                    <mat-icon>public</mat-icon>
-                    @for (part of term.short | highlight: searchTerms(); track $index) {
-                      @if (part.match) {
-                        <mark>{{ part.text }}</mark>
-                      } @else {
-                        <span>{{ part.text }}</span>
-                      }
-                    }
+                <!-- Deletes once the API says nothing uses the property; why not, on hover, otherwise. -->
+                @if (canEdit() && editing.canDelete) {
+                  @let check = deleteChecks().get(row.id);
+                  <span
+                    (mouseenter)="checkDelete(row.id)"
+                    [matTooltip]="
+                      (!check
+                        ? r + '.checkingDelete'
+                        : check.canDo
+                          ? r + '.deleteProperty'
+                          : r + '.cannotDeletePropertyShort'
+                      ) | translate
+                    ">
+                    <button
+                      mat-icon-button
+                      type="button"
+                      class="delete"
+                      data-cy="data-model-properties-delete"
+                      [attr.aria-label]="r + '.deleteProperty' | translate"
+                      [disabled]="!check?.canDo"
+                      (click)="deleteProperty(row)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
                   </span>
-                } @empty {
-                  <span class="none">–</span>
                 }
               </span>
             </td>
           </ng-container>
-          <tr mat-header-row *matHeaderRowDef="cols.shown(); sticky: true"></tr>
+          <tr mat-header-row *matHeaderRowDef="shownColumns(); sticky: true"></tr>
           <tr
             mat-row
-            *matRowDef="let row; columns: cols.shown()"
+            *matRowDef="let row; columns: shownColumns()"
+            (mouseenter)="checkDelete(row.id)"
             data-cy="data-model-properties-row"
-            tabindex="0"
-            [class.selected]="row.id === panelIri()"
-            (click)="openPanel(row.id)"
-            (keydown.enter)="openPanel(row.id)"></tr>
+            [class.selected]="row.id === panelIri()"></tr>
         </table>
         @if (rows().length === 0) {
           <p class="empty">{{ r + '.noMatch' | translate }}</p>
         }
       </div>
 
-      <app-text-editor-popover [editing]="textEditing" />
-
       @if (state.graph(); as graph) {
-        @if (panelIri(); as iri) {
+        <!-- A class clicked in the table or the property's panel, described here, over the property's panel. -->
+        @if (classPanelIri(); as iri) {
+          <app-resource-class-panel
+            class="panel"
+            [graph]="graph"
+            [classIri]="iri"
+            [anyResourceLabel]="t + '.anyResource' | translate"
+            [canEdit]="state.canEdit()"
+            [colors]="state.colors()"
+            (classSelected)="showClass($event)"
+            (closed)="closeClass()"
+            (browse)="browse($event)"
+            (edit)="editing.editClass($event)"
+            (editProperty)="edit($event)" />
+        } @else if (panelIri(); as iri) {
           <app-property-panel
             class="panel"
             [graph]="graph"
@@ -501,7 +488,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             (classSelected)="showClass($event)"
             (closed)="openPanel(undefined)"
             (propertySelected)="openPanel($event)"
-            (filter)="filterOn($event)"
             (edit)="edit($event)" />
         }
       }
@@ -513,11 +499,18 @@ const COLUMN_LABELS: Record<Column, string> = {
     `
       @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
+      // Create property at the head's right end, away from the search.
+      .head .create {
+        margin-left: auto;
+      }
+
       // A frozen cell takes the row's background, which plain rows leave transparent.
       .mat-mdc-cell.frozen {
         background: white;
       }
 
+      // Hovered or selected, the whole row takes the colour, the frozen cell too.
+      .mat-mdc-row:hover .mat-mdc-cell.frozen,
       .mat-mdc-row.selected .mat-mdc-cell.frozen {
         background: inherit;
       }
@@ -553,58 +546,55 @@ const COLUMN_LABELS: Record<Column, string> = {
         min-width: 0;
       }
 
-      .toggle {
-        flex: none;
-        display: flex;
-        width: 24px;
-        height: 24px;
-        padding: 0;
-        border: 0;
-        border-radius: 4px;
-        background: none;
-        color: $cool_gray_600;
-        cursor: pointer;
-
-        &:hover {
-          background: $cool_gray_100;
-        }
-      }
-
-      .leaf {
-        flex: none;
-        width: 24px;
-      }
-
-      // A standard term, as it is commonly written.
-      .terms {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
-
-      .term {
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-        padding: 0 7px;
-        border: 1px solid $cool_gray_300;
-        border-radius: 10px;
-        background: $cool_gray_50;
-        font-family: 'Roboto Mono', ui-monospace, monospace;
-        font-size: 11.5px;
-        line-height: 18px;
-        color: $cool_gray_700;
-
-        mat-icon {
-          font-size: 12px;
-          width: 12px;
-          height: 12px;
-          color: $cool_gray_500;
-        }
-      }
-
       .none {
         color: $cool_gray_400;
+      }
+
+      // The menu column on white, as the frozen one.
+      .mat-mdc-cell.actions-cell {
+        background: white;
+      }
+
+      .mat-mdc-row:hover .mat-mdc-cell.actions-cell,
+      .mat-mdc-row.selected .mat-mdc-cell.actions-cell {
+        background: inherit;
+      }
+
+      // The row's icons, small, shown on hover or with the focus.
+      .row-actions {
+        display: inline-flex;
+        visibility: hidden;
+        .mat-mdc-icon-button {
+          width: 32px;
+          height: 32px;
+          padding: 7px;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .mat-mdc-row:hover .row-actions,
+      .row-actions:focus-within {
+        visibility: visible;
+      }
+
+      // A row only shows: clicking it does nothing, only its fold arrow, pen and bin act.
+      .mat-mdc-row {
+        cursor: default;
+      }
+
+      // The pen and the bin in the app's blue, as on the class cards; the bin turns red only while pointed at.
+      .row-actions .mat-mdc-icon-button:not([disabled]) {
+        color: $primary;
+      }
+
+      .row-actions .delete:not([disabled]):hover {
+        color: #b3261e;
+        background: #fdecea;
       }
     `,
   ],
@@ -614,32 +604,43 @@ export class DataModelPropertiesComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _params = toSignal(this._route.queryParamMap);
-  private readonly _editing = injectDataModelEditing();
+  readonly editing = injectDataModelEditing();
+  private readonly _destroyRef = inject(DestroyRef);
+  readonly canEdit = this.state.canEdit;
+  /** The width of the actions column, past the columns shown: the pen, and the bin where deleting is possible. */
+  readonly actionsWidth = computed(() => (this.canEdit() ? (this.editing.canDelete ? 2 : 1) * 32 + 16 : 0));
+  /** The columns shown, then, for editors, the actions'. */
+  readonly shownColumns = computed(() => [...this.columns.shown(), ...(this.canEdit() ? ['actions'] : [])]);
+
+  /** What the API says of deleting each property whose menu was opened. */
+  readonly deleteChecks = signal(new Map<string, CanDo>());
+  /** The properties whose deletion was asked about, so hovering again asks no more. */
+  private readonly _checked = new Set<string>();
+  /** The value types of a property to create, by group, as the data model editor offers them. */
+  readonly propertyTypes = DefaultProperties.data;
+  /** Whether "Create property" shows: for editors, where the editor's dialogs are at hand. */
+  readonly canCreate = computed(() => this.state.canEdit() && this.editing.canCreate);
+
+  /** Creates a property of that type in the data model shown, for no class yet, then opens it in the panel. */
+  createProperty(type: DefaultProperty): void {
+    const ontologyIri = this.state.selected()?.iri;
+    if (ontologyIri) this.editing.createProperty(ontologyIri, type, iri => this.openPanel(iri));
+  }
 
   readonly columns = new TableColumns<Column>({
     storageKey: STORAGE_KEY,
-    columns: ['property', 'description', 'type', 'pointsTo', 'usedBy', 'standard'],
-    defaultWidths: { property: 260, description: 360, type: 140, pointsTo: 200, usedBy: 300, standard: 180 },
-    minWidths: { property: 140, description: 140, type: 90, pointsTo: 110, usedBy: 130, standard: 110 },
+    columns: ['property', 'description', 'type', 'pointsTo', 'usedBy'],
+    defaultWidths: { property: 260, description: 360, type: 140, pointsTo: 200, usedBy: 300 },
+    minWidths: { property: 140, description: 140, type: 90, pointsTo: 110, usedBy: 130 },
   });
   readonly columnLabels = COLUMN_LABELS;
   readonly maxUsedBy = MAX_USED_BY;
   readonly noTarget = NO_TARGET;
 
-  /** Condensed rows of one line, or expanded rows showing everything; remembered in this browser. */
-  readonly density = rememberedSignal<Density>(`${STORAGE_KEY}-density`, 'condensed', stored =>
-    stored === 'expanded' ? 'expanded' : 'condensed'
-  );
-  /** The languages names and descriptions show in; none chosen follows the app language. Shared by both tables. */
-  readonly languages = rememberedSignal<string[] | null>(LANGUAGES_KEY, null, parseLanguages);
+  /** The class chips show no family colour. */
+  readonly showColours = signal(false).asReadonly();
   /** Whether the table is scrolled sideways, which shadows the frozen property column. */
   readonly scrolled = signal(false);
-
-  /** The property names and descriptions edited from their cells. */
-  readonly textEditing = new TextEditing((target, texts) =>
-    this._editing.savePropertyTexts(target.id, target.kind === 'label' ? { labels: texts } : { descriptions: texts })
-  );
-  readonly canEditTexts = computed(() => this.state.canEdit() && this._editing.canSaveInPlace);
 
   readonly query = signal('');
   /** The column filters; an empty set or text filters nothing. */
@@ -648,11 +649,6 @@ export class DataModelPropertiesComponent {
   readonly types = signal(new Set<string>());
   readonly targets = signal(new Set<string>());
   readonly users = signal(new Set<string>());
-  readonly standards = signal(new Set<string>());
-  /** The standard terms the properties map to, as written. */
-  readonly standardOptions = computed(() =>
-    [...new Set(this.state.propertyRows().flatMap(row => row.terms.map(term => term.short)))].sort()
-  );
 
   /** What the search and the filters look for, marked in the names and descriptions. */
   readonly nameTerms = computed(() => [this.query(), this.namedAs()]);
@@ -672,68 +668,14 @@ export class DataModelPropertiesComponent {
   });
   readonly userOptions = computed(() => this._byLabel(this.state.propertyRows().flatMap(row => row.usedBy)));
 
-  /** How far a level of sub-properties is indented, in px: one chevron's width. */
-  readonly indent = 24;
-  /** The properties folded, their sub-properties hidden. */
-  readonly collapsed = signal(new Set<string>());
-  /** Each property with sub-properties, and how many it has. */
-  readonly foldable = computed(() => {
-    const counts = new Map<string, number>();
-    for (const row of this.state.propertyRows()) {
-      if (row.parent) counts.set(row.parent, (counts.get(row.parent) ?? 0) + 1);
-    }
-    return counts;
-  });
-  /**
-   * Whether the table shows the properties as a tree, sub-properties under their parent, folding: nothing searched or
-   * filtered. A search or a filter lists what it finds wherever it is.
-   */
-  readonly folding = computed(
-    () =>
-      !this.query().trim() &&
-      !this.namedAs().trim() &&
-      !this.describedAs().trim() &&
-      !this.types().size &&
-      !this.targets().size &&
-      !this.users().size &&
-      !this.standards().size
-  );
-  readonly allExpanded = computed(() => this.collapsed().size === 0);
-
-  toggleFold(iri: string): void {
-    this.collapsed.update(collapsed => {
-      const next = new Set(collapsed);
-      if (!next.delete(iri)) next.add(iri);
-      return next;
-    });
-  }
-
-  toggleAllFolds(): void {
-    this.collapsed.set(this.allExpanded() ? new Set(this.foldable().keys()) : new Set());
-  }
-
-  /** Whether a folded property is above the row. */
-  private _folded(row: PropertyRow): boolean {
-    const collapsed = this.collapsed();
-    if (!collapsed.size) return false;
-    const parentOf = new Map(this.state.propertyRows().map(other => [other.id, other.parent]));
-    const seen = new Set<string>();
-    for (let up = row.parent; up && !seen.has(up); up = parentOf.get(up)) {
-      if (collapsed.has(up)) return true;
-      seen.add(up);
-    }
-    return false;
-  }
-
+  /** The properties, one per row, by label: a sub-property among the others, not under its parent. */
   readonly rows = computed(() => {
-    const folding = this.folding();
     const query = this.query().trim().toLowerCase();
     const namedAs = this.namedAs().trim().toLowerCase();
     const describedAs = this.describedAs().trim().toLowerCase();
     const types = this.types();
     const targets = this.targets();
     const users = this.users();
-    const standards = this.standards();
     const shown = this.columns.shown();
     return this.state
       .propertyRows()
@@ -748,8 +690,7 @@ export class DataModelPropertiesComponent {
       .filter(row => !types.size || types.has(row.type))
       .filter(row => !targets.size || targets.has(row.linkTarget ?? NO_TARGET))
       .filter(row => !users.size || row.usedBy.some(user => users.has(user)))
-      .filter(row => !standards.size || row.terms.some(term => standards.has(term.short)))
-      .filter(row => !folding || !this._folded(row));
+      .sort((a, b) => a.label.localeCompare(b.label) || a.name.localeCompare(b.name));
   });
 
   /** The property whose panel is open, named in the URL like in the graph. */
@@ -758,10 +699,18 @@ export class DataModelPropertiesComponent {
     return name ? this.state.propertyRows().find(row => row.name === name)?.id : undefined;
   });
 
+  /** The class whose panel is open over the property's, from a click on its chip; named in the URL. */
+  readonly classPanelIri = computed(() => {
+    const name = this._params()?.get(ONTOLOGY_MAP_PARAM.panel);
+    return name ? this.state.classRows().find(row => row.name === name)?.id : undefined;
+  });
+
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
 
   constructor() {
-    // Arriving on the page, typing finds a property.
+    // Every column shows: with no columns menu, one hidden before in this browser could not be shown again.
+    this.columns.showAll(true);
+    // Arriving on the page, typing finds what it lists.
     afterNextRender(() => this._search()?.nativeElement.focus());
   }
 
@@ -796,24 +745,14 @@ export class DataModelPropertiesComponent {
     return typeNameOf(type);
   }
 
-  /** Opens the editor of a property's name or description, on the language asked for. */
-  editText(row: PropertyRow, kind: TextKind, edit: LanguageTextEdit): void {
-    this.textEditing.open({
-      ...edit,
-      id: row.id,
-      label: row.label,
-      kind,
-      texts: kind === 'label' ? row.labels : row.descriptions,
-    });
-  }
-
   /**
    * Esc closes the property's side panel open. Not the name or description editor, which edits: Esc never drops an edit,
    * and leaves the panel under it open too.
    */
   closeOnEscape(event: Event): void {
-    if (!escapeClosesPanel(event) || this.textEditing.target()) return;
-    if (this.panelIri()) this.openPanel(undefined);
+    if (!escapeClosesPanel(event)) return;
+    if (this.classPanelIri()) this.closeClass();
+    else if (this.panelIri()) this.openPanel(undefined);
   }
 
   /** Opens the property's panel, or closes it; a step in the browser history. */
@@ -824,23 +763,65 @@ export class DataModelPropertiesComponent {
       queryParams: {
         ...this.state.modelParam(),
         [ONTOLOGY_MAP_PARAM.propertyPanel]: propertyIri ? localNameOf(propertyIri) : null,
+        [ONTOLOGY_MAP_PARAM.panel]: null,
       },
     });
   }
 
-  /** Opens a class the panel names, in the Classes section. */
+  /**
+   * Opens a class of the data model in its panel, here, a step in the browser history; one of another data model in
+   * the Classes section, where its data model shows.
+   */
   showClass(iri: string): void {
-    this.state.openSection(RouteConstants.classes, { [ONTOLOGY_MAP_PARAM.panel]: localNameOf(iri) });
+    if (!this.state.classRows().some(row => row.id === iri)) {
+      this.state.openSection(RouteConstants.classes, { [ONTOLOGY_MAP_PARAM.panel]: localNameOf(iri) });
+      return;
+    }
+    this._router.navigate([], {
+      relativeTo: this._route,
+      queryParamsHandling: 'merge',
+      queryParams: { ...this.state.modelParam(), [ONTOLOGY_MAP_PARAM.panel]: localNameOf(iri) },
+    });
   }
 
-  /** Shows only the links through the property, in the graph. */
-  filterOn(iri: string): void {
-    this.state.openSection(RouteConstants.graph, { [ONTOLOGY_MAP_PARAM.property]: localNameOf(iri) });
+  /** Closes the class's panel, back to the property's if one was open. */
+  closeClass(): void {
+    this._router.navigate([], {
+      relativeTo: this._route,
+      queryParamsHandling: 'merge',
+      queryParams: { [ONTOLOGY_MAP_PARAM.panel]: null },
+    });
+  }
+
+  /** Browses the class's resources. */
+  browse(iri: string): void {
+    const [ontologyIri, className] = iri.split('#');
+    this._router.navigate(
+      this.state.projectPath(RouteConstants.data, OntologyService.getOntologyNameFromIri(ontologyIri), className)
+    );
+  }
+
+  /** Asks the API whether the property can be deleted, for its bin to say so; once per property. */
+  checkDelete(propertyIri: string): void {
+    if (!this.canEdit() || !this.editing.canDelete || this._checked.has(propertyIri)) return;
+    this._checked.add(propertyIri);
+    this.editing
+      .canDeleteProperty(propertyIri)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(check => this.deleteChecks.update(checks => new Map(checks).set(propertyIri, check)));
+  }
+
+  /** Deletes the property once confirmed, closing its panel; the data model is then read again. */
+  deleteProperty(row: PropertyRow): void {
+    this.editing
+      .deleteProperty(row.id, row.label)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(deleted => deleted && this.panelIri() === row.id && this.openPanel(undefined));
   }
 
   /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
   edit(iri: string): void {
-    this._editing.editProperty(iri);
+    this.editing.editProperty(iri);
   }
 
   /** Whether what a column shows of a property has the searched text, in any language. */
@@ -857,8 +838,6 @@ export class DataModelPropertiesComponent {
         return !!row.linkTarget && has(this.state.labelOf(row.linkTarget));
       case 'usedBy':
         return row.usedBy.some(iri => has(this.state.labelOf(iri)));
-      case 'standard':
-        return row.terms.some(term => has(term.short) || has(term.vocabulary));
     }
   }
 

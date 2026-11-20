@@ -33,7 +33,7 @@ import {
   TAB_WIDTH,
   TEXTURE_TILE,
 } from './islands';
-import { LegendTexts, withLegend } from './legend-image';
+import { framedSvg, LegendTexts, withLegend, withTitle } from './legend-image';
 import {
   BASE_FONT_SIZE,
   GRAPH_TEXT_SIZE,
@@ -63,14 +63,145 @@ const edgeKey = (edge: DataModelGraph['edges'][number]) => `${edge.source}>${edg
 /** What a PNG of the graph covers: the part in view, or every class shown. */
 export type GraphExportArea = 'view' | 'whole';
 
+/** The kinds of image the graph exports to: pixels, or vectors that stay sharp at any size. */
+export type GraphExportFormat = 'png' | 'svg';
+
+/** How an exported image is made: image pixels per screen pixel (2 by default), with the legend or not, and a title. */
+export interface GraphExportOptions {
+  /** PNG unless SVG; an SVG has no resolution, `scale` aside. */
+  format?: GraphExportFormat;
+  scale?: number;
+  legend?: boolean;
+  /** The data model's name, written over the image; none without it. */
+  title?: string;
+  /** What the graph is filtered on, written under the title. */
+  subtitle?: string;
+}
+
 /** PNGs are drawn at twice the screen's resolution, sharp on slides and in print. */
 const EXPORT_SCALE = 2;
 /** The graph's background, as on screen; a transparent PNG would lose the link labels' backing. */
 const EXPORT_BACKGROUND = '#F9FAFB';
 /** The whole model of a big data model is drawn no bigger than this, in px each way. */
 const EXPORT_MAX_SIZE = 8000;
+/** The longest side a browser's canvas reliably draws, in pixels. */
+export const EXPORT_CANVAS_LIMIT = 16000;
 /** Size of the legend's text at scale 1, as on screen and in an exported image; see `withLegend`. */
 const LEGEND_TEXT_SIZE = 12.5;
+
+/** A layout as left: each class's place, how big things are drawn, and the view. */
+interface KeptLayout {
+  positions: Map<string, { x: number; y: number }>;
+  scale: number;
+  zoom: number;
+  pan: { x: number; y: number };
+  dragged: boolean;
+}
+
+/**
+ * The diagram's layouts as last left, by the classes shown and how; see `remember`. Only in memory: a page reload
+ * starts afresh.
+ */
+const KEPT_LAYOUTS = new Map<string, KeptLayout>();
+
+let svgExtension: Promise<void> | undefined;
+
+/** Registers cytoscape-svg once, loaded only when a graph is first exported as SVG. */
+function withSvgExtension(cytoscape: CytoscapeFactory): Promise<void> {
+  svgExtension ??= import('cytoscape-svg').then(({ default: register }) => {
+    (cytoscape as unknown as { use: (extension: unknown) => void }).use(register);
+  });
+  return svgExtension;
+}
+
+/**
+ * Writes names in italic under labels, when `both` says the graph writes both: a class's or a link's name, on the
+ * line after its label. Cytoscape draws a label in one font, line by line; so while it draws an element's label, the
+ * line that is its name is drawn in the italic of that font. On screen, in a PNG and in an SVG alike, which all draw
+ * through the same step.
+ */
+function withItalicNames(cy: Core, both: () => boolean): void {
+  type Draw = (text: string, x: number, y: number, ...rest: unknown[]) => void;
+  type Context = { font: string; fillText: Draw; strokeText: Draw };
+  type Renderer = { drawText: (context: Context, ele: EdgeSingular | NodeSingular, ...rest: unknown[]) => void };
+  const renderer = (cy as unknown as { renderer: () => Renderer }).renderer();
+  const drawText = renderer.drawText;
+  renderer.drawText = function (context, ele, ...rest) {
+    const label = String(ele.data('label') ?? '').trim();
+    const name = String(ele.data('name') ?? '').trim();
+    // A count of links has no name of its own: its name is its label.
+    if (!both() || !name || name === label) return drawText.call(this, context, ele, ...rest);
+    const names = new Set(name.split('\n').map(line => line.trim()));
+    const italic = (draw: Draw): Draw =>
+      function (this: Context, text, x, y, ...more) {
+        if (!names.has(text.trim())) return draw.call(this, text, x, y, ...more);
+        const font = this.font;
+        this.font = `italic ${font.replace(/^(normal|italic|oblique)\s+/, '')}`;
+        draw.call(this, text, x, y, ...more);
+        this.font = font;
+      };
+    const hasOwn = (key: keyof Context) => Object.prototype.hasOwnProperty.call(context, key);
+    const own = { fill: hasOwn('fillText'), stroke: hasOwn('strokeText') };
+    const { fillText, strokeText } = context;
+    context.fillText = italic(fillText);
+    context.strokeText = italic(strokeText);
+    try {
+      return drawText.call(this, context, ele, ...rest);
+    } finally {
+      if (own.fill) context.fillText = fillText;
+      else delete (context as Partial<Context>).fillText;
+      if (own.stroke) context.strokeText = strokeText;
+      else delete (context as Partial<Context>).strokeText;
+    }
+  };
+}
+
+/** What `withOutlines` uses of cytoscape-svg's drawing context, canvas2svg's: its element being drawn and path. */
+interface SvgContext {
+  __currentElement: Element;
+  __currentDefaultPath: string;
+  fill: (...args: unknown[]) => void;
+  stroke: (...args: unknown[]) => void;
+}
+
+/**
+ * Draws the graph as SVG, `draw` calling cytoscape-svg, with each class box's border. Cytoscape fills a box, draws its
+ * tab and file icon, then strokes the box's outline, still its path on a canvas; canvas2svg has moved on to the images
+ * by then and draws no border. So a stroke with no path draws the last filled outline again, over the images.
+ */
+function withOutlines(cy: Core, draw: () => string): string {
+  type Renderer = { drawElements: (ctx: SvgContext, ...rest: unknown[]) => void };
+  const renderer = (cy as unknown as { renderer: () => Renderer }).renderer();
+  const own = Object.prototype.hasOwnProperty.call(renderer, 'drawElements');
+  const drawElements = renderer.drawElements;
+  renderer.drawElements = function (ctx, ...rest) {
+    let outline: { path: Element; d: string } | undefined;
+    const { fill, stroke } = ctx;
+    ctx.fill = function (...args) {
+      fill.apply(this, args);
+      if (this.__currentElement.nodeName === 'path')
+        outline = { path: this.__currentElement, d: this.__currentDefaultPath };
+    };
+    ctx.stroke = function (...args) {
+      if (this.__currentElement.nodeName !== 'path' && outline) {
+        const again = outline.path.cloneNode() as Element;
+        again.setAttribute('fill', 'none');
+        again.removeAttribute('fill-opacity');
+        outline.path.parentNode?.appendChild(again);
+        this.__currentElement = again;
+        this.__currentDefaultPath = outline.d;
+      }
+      stroke.apply(this, args);
+    };
+    return drawElements.call(this, ctx, ...rest);
+  };
+  try {
+    return draw();
+  } finally {
+    if (own) renderer.drawElements = drawElements;
+    else delete (renderer as Partial<Renderer>).drawElements;
+  }
+}
 
 /** How far apart, at most, classes are spread to fill the box; past it, links grow too long to follow. */
 const MAX_SPREAD = 2.5;
@@ -119,10 +250,13 @@ function measureIconBoxes(cy: Core): void {
     const icon = node.data('icon') ? ICON.room : 0;
     for (const key of ['labels', 'names', 'both'] as const) {
       const font = `${weight} ${BASE_FONT_SIZE}px ${key === 'names' ? FONT.names : FONT.labels}`;
-      const text = textWidth(node.data(DATA_KEY[key]) ?? '', font);
-      node.data(`${key}Width`, text + icon);
-      // In the Colour tab look, a class with a tab is widened for it too.
-      node.data(`${key}TabWidth`, text + icon + (node.data('tab') ? TAB_WIDTH : 0));
+      // Its texts alone, and with its properties under them; see `GraphTextOptions.properties`.
+      for (const props of ['', 'Props']) {
+        const text = textWidth(node.data(`${DATA_KEY[key]}${props}`) ?? '', font);
+        node.data(`${key}${props}Width`, text + icon);
+        // In the Colour tab look, a class with a tab is widened for it too.
+        node.data(`${key}${props}TabWidth`, text + icon + (node.data('tab') ? TAB_WIDTH : 0));
+      }
     }
   });
 }
@@ -132,6 +266,22 @@ const DATA_KEY: Record<GraphLabels, string> = { labels: 'label', names: 'name', 
 
 /** The element data each `GraphLabels` writes. */
 const LABEL_DATA: Record<GraphLabels, string> = { labels: 'data(label)', names: 'data(name)', both: 'data(both)' };
+
+/** A class box's text: its label, name or both, with its properties under them when they are shown. */
+const nodeLabel = (text: GraphTextOptions) =>
+  text.properties ? `data(${DATA_KEY[text.labels]}Props)` : LABEL_DATA[text.labels];
+
+/** The data a class box's width at scale 1 is stored under, for the texts it writes; see `measureIconBoxes`. */
+const widthKey = (text: GraphTextOptions) => `${text.labels}${text.properties ? 'Props' : ''}`;
+
+/**
+ * How tall a box's background images are drawn, its tab or stripes, and where its file icon sits: with properties
+ * listed the box grows tall, so the images reach its whole height and the icon stays beside the class's name.
+ */
+const imageSize = (f: number, properties: boolean) => ({
+  'background-height': `${(properties ? 5 : 1) * TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
+  'background-position-y': (properties ? `50% ${ICON.inset * f}px` : `50% 50%`) as never,
+});
 
 /** How the graph writes and turns its texts. */
 export interface GraphTextOptions {
@@ -144,13 +294,15 @@ export interface GraphTextOptions {
   colourTab: boolean;
   /** Whether a line joins each parent to its subclasses. */
   treeLines: boolean;
+  /** Whether each class box lists its properties under its name. */
+  properties: boolean;
 }
 
 /**
  * The Colour tab look: every class box white, with slate borders, its label always on white; every class shows its
  * family's hue as a tab at the box's left, stronger on a top class than on its subclasses. No stripes behind a label.
  */
-const colourTabStyle = (f: number, labels: GraphLabels): StylesheetJson => [
+const colourTabStyle = (f: number, labels: string, properties: boolean): StylesheetJson => [
   { selector: 'node.family-member', style: { 'background-color': '#FFFFFF', 'border-color': TAB_LINE } },
   {
     selector: 'node[icon], node[texture], node[tab]',
@@ -160,11 +312,10 @@ const colourTabStyle = (f: number, labels: GraphLabels): StylesheetJson => [
       'background-fit': 'none none' as never,
       'background-clip': 'node none' as never,
       'background-width': `${TAB_WIDTH * f}px ${ICON.size * f}px` as never,
-      'background-height': `${TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
       // The tab at the very left; a file icon right of it.
       'background-position-x': ((node: NodeSingular) =>
         `0px ${(ICON.inset + (node.data('tab') ? TAB_WIDTH : 0)) * f}px`) as never,
-      'background-position-y': `50% 50%` as never,
+      ...imageSize(f, properties),
     },
   },
   {
@@ -188,11 +339,13 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     selector: 'node',
     style: {
       shape: 'round-rectangle',
-      label: LABEL_DATA[text.labels],
+      label: nodeLabel(text),
       'text-wrap': 'wrap',
       'text-max-width': '1000px',
       'text-valign': 'center',
       'text-halign': 'center',
+      // A list of properties reads down its left edge.
+      'text-justification': text.properties ? 'left' : 'center',
       'font-family': text.labels === 'names' ? FONT.names : FONT.labels,
       'font-size': BASE_FONT_SIZE * f,
       'font-weight': 500,
@@ -225,7 +378,7 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     selector: 'node[icon]',
     style: {
       // Its width at scale 1, from `measureIconBoxes`, times `f`.
-      width: `mapData(${text.labels}Width, 0, 10000, 0, ${10000 * f})`,
+      width: `mapData(${widthKey(text)}Width, 0, 10000, 0, ${10000 * f})`,
       'text-margin-x': (ICON.room * f) / 2,
     },
   },
@@ -238,13 +391,12 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
       'background-clip': 'node none' as never,
       // The stripes grow with the graph, so they stay as visible as its texts.
       'background-width': `${TEXTURE_TILE.width * f}px ${ICON.size * f}px` as never,
-      'background-height': `${TEXTURE_TILE.height * f}px ${ICON.size * f}px` as never,
       // From the box's left edge, about as far as from its top.
       'background-position-x': `50% ${ICON.inset * f}px` as never,
-      'background-position-y': `50% 50%` as never,
+      ...imageSize(f, text.properties),
     },
   },
-  ...(text.colourTab ? colourTabStyle(f, text.labels) : []),
+  ...(text.colourTab ? colourTabStyle(f, widthKey(text), text.properties) : []),
   // An island's frame shows only while hovered.
   {
     selector: 'node.island',
@@ -347,6 +499,17 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     selector: 'edge.label-only[shiftX]',
     style: { 'text-margin-x': 'data(shiftX)' as never, 'text-margin-y': 'data(shiftY)' as never },
   },
+  // A class's link to itself: a loop off the box's right side, wide enough for its label beside it.
+  {
+    selector: 'edge:loop',
+    style: {
+      'loop-direction': '90deg',
+      'loop-sweep': '-50deg',
+      'control-point-step-size': 76 * f,
+      // Level, in the column beside the loops; turned along the loop, it would stand on end.
+      'text-rotation': 'none',
+    },
+  },
   // A link that would pass through a class's box bends round it; see `routeEdges`.
   {
     selector: 'edge[bend]',
@@ -436,6 +599,11 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     @let t = 'pages.dataBrowser.dataModelMap';
     @let i = 'pages.ontologyMap.islands';
     <div #canvas class="canvas" data-cy="ontology-graph" [class.hidden]="!laidOut()"></div>
+    @if (linksHint(); as hint) {
+      <div class="links-hint" role="tooltip" [style.left.px]="hint.x" [style.top.px]="hint.y">
+        {{ 'pages.ontologyMap.expandLinks' | translate: { count: hint.count } }}
+      </div>
+    }
     @if (!laidOut() && !failed()) {
       <mat-progress-spinner class="laying-out" mode="indeterminate" diameter="32" />
     }
@@ -445,53 +613,42 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
     @if (islandsLegend(); as legend) {
       <div #islandsLegend class="islands-legend" role="region" [attr.aria-label]="i + '.legend' | translate">
         <span class="legend-title">{{ i + '.legend' | translate }}</span>
-        @if (legendOpen()) {
-          @if (legend.shapes) {
-            <span class="divider"></span>
-            <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
-          }
-          @if (legend.families && treeLines()) {
-            <span class="shape"
-              ><svg class="tree-line" width="22" height="12" aria-hidden="true">
-                <path d="M4 0V6H18V12" fill="none" stroke="currentColor" stroke-width="1.6" /></svg
-              >{{ i + '.subclass' | translate }}</span
+        @if (legend.shapes) {
+          <span class="divider"></span>
+          <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
+        }
+        @if (legend.families && treeLines()) {
+          <span class="shape"
+            ><svg class="tree-line" width="22" height="12" aria-hidden="true">
+              <path d="M4 0V6H18V12" fill="none" stroke="currentColor" stroke-width="1.6" /></svg
+            >{{ i + '.subclass' | translate }}</span
+          >
+        }
+        @if (legend.other) {
+          <span class="shape"
+            ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
+          >
+        }
+        @if (legend.link) {
+          <span class="shape">
+            <svg width="22" height="8" viewBox="0 0 28 8" aria-hidden="true">
+              <path class="legend-line" d="M 0 4 L 22 4" />
+              <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
+            </svg>
+            {{ i + '.link' | translate }}
+          </span>
+        }
+        @if (legend.files.length) {
+          <span class="divider"></span>
+          <span class="legend-heading">{{ i + '.files' | translate }}</span>
+          @for (file of legend.files; track file.representation) {
+            <span class="file"
+              ><span class="file-icon"
+                ><mat-icon>{{ file.icon }}</mat-icon></span
+              >{{ i + '.fileKinds.' + file.representation | translate }}</span
             >
-          }
-          @if (legend.other) {
-            <span class="shape"
-              ><span class="shape-box other"></span>{{ 'pages.ontologyMap.legendDashed' | translate }}</span
-            >
-          }
-          @if (legend.link) {
-            <span class="shape">
-              <svg width="22" height="8" viewBox="0 0 28 8" aria-hidden="true">
-                <path class="legend-line" d="M 0 4 L 22 4" />
-                <path class="arrowhead" d="M 21 1 L 27 4 L 21 7 Z" />
-              </svg>
-              {{ i + '.link' | translate }}
-            </span>
-          }
-          @if (legend.files.length) {
-            <span class="divider"></span>
-            <span class="legend-heading">{{ i + '.files' | translate }}</span>
-            @for (file of legend.files; track file.representation) {
-              <span class="file"
-                ><span class="file-icon"
-                  ><mat-icon>{{ file.icon }}</mat-icon></span
-                >{{ i + '.fileKinds.' + file.representation | translate }}</span
-              >
-            }
           }
         }
-        <button
-          type="button"
-          class="legend-toggle"
-          data-cy="islands-legend-toggle"
-          [attr.aria-expanded]="legendOpen()"
-          [attr.aria-label]="i + (legendOpen() ? '.collapse' : '.expand') | translate"
-          (click)="legendOpen.set(!legendOpen())">
-          <mat-icon>{{ legendOpen() ? 'chevron_left' : 'chevron_right' }}</mat-icon>
-        </button>
       </div>
     } @else {
       <div class="legend" aria-hidden="true">
@@ -526,6 +683,20 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         &.hidden {
           visibility: hidden;
         }
+      }
+
+      // As Material's tooltips: dark, small, just above the pointer.
+      .links-hint {
+        position: absolute;
+        z-index: 2;
+        transform: translate(-50%, calc(-100% - 12px));
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: rgb(97 97 97 / 92%);
+        color: white;
+        font-size: 12px;
+        white-space: nowrap;
+        pointer-events: none;
       }
 
       .laying-out {
@@ -615,31 +786,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         background: $cool_gray_200;
       }
 
-      .legend-toggle {
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: -8px;
-        padding: 0;
-        border: 0;
-        border-radius: 14px;
-        background: transparent;
-        color: $cool_gray_500;
-        cursor: pointer;
-
-        &:hover {
-          background: $cool_gray_100;
-        }
-
-        mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-        }
-      }
-
       .legend-heading {
         font-size: 10.5px;
         font-weight: 600;
@@ -713,6 +859,8 @@ export class OntologyGraphComponent {
   readonly colourTab = input(false);
   /** Whether a line joins each parent to its subclasses, as in a family tree. */
   readonly treeLines = input(true);
+  /** Whether each class box lists its properties under its name, as the Data models tab shows a class. */
+  readonly showProperties = input(false);
   /** A property to highlight every link of, such as one hovered in the class panel. */
   readonly highlightedProperty = input<string | undefined>(undefined);
   /** A class, or a property's links, picked out in orange, as the search's results are gone through. */
@@ -728,6 +876,11 @@ export class OntologyGraphComponent {
    * sideways only to bring `panelFocus` out from under it; see `_keepInView`.
    */
   readonly fullWidth = input(false);
+  /**
+   * Whether the graph keeps its layout, places and view, for when it shows the same classes again, as after a visit to
+   * another tab; only in memory, so reloading the page lays it out afresh. The diagram's, not a copy drawn to export.
+   */
+  readonly remember = input(false);
   /** What the open panel is about, a class or a link property, kept clear of the panel. */
   readonly panelFocus = input<{ kind: 'class' | 'property'; iri: string } | undefined>(undefined);
   /** Label for knora-api's "any resource" node, in the current language. */
@@ -753,8 +906,10 @@ export class OntologyGraphComponent {
   private readonly _cy = signal<Core | undefined>(undefined);
   readonly failed = signal(false);
   private readonly _hoveredProperty = signal<string | undefined>(undefined);
-  /** Whether the user moved classes since the last layout; their places then survive a resize. */
+  /** Whether the user moved classes since the last layout. */
   private _dragged = false;
+  /** Whether the layout shown was kept from before, rather than made; see `remember`. */
+  private _restored = false;
   /** The classes and links last laid out, to tell a new model from the same one handed over again. */
   private _shown = '';
   /** The Cytoscape factory, once loaded, for layouts run apart from the graph shown. */
@@ -783,11 +938,16 @@ export class OntologyGraphComponent {
       anyResourceLabel: this.anyResourceLabel(),
       linksLabel: this.linksLabel(),
       islands: this._islands(),
+      expanded: this._expanded(),
     })
   );
+  /** The pairs of classes whose many links the user opened, one by one; see `expandLinks`. */
+  private readonly _expanded = signal<ReadonlySet<string>>(new Set());
+  /** Counts the links replaced in place, so what marks links marks the new ones too. */
+  private readonly _linksChanged = signal(0);
+  /** The hint over a link standing for several, where the pointer is: how many it stands for. */
+  readonly linksHint = signal<{ x: number; y: number; count: number } | undefined>(undefined);
 
-  /** Whether the Islands view's legend is open. */
-  readonly legendOpen = signal(true);
   private readonly _legend = viewChild<ElementRef<HTMLElement>>('islandsLegend');
 
   /**
@@ -841,6 +1001,7 @@ export class OntologyGraphComponent {
           maxZoom: 3,
           wheelSensitivity: 0.3,
         });
+        withItalicNames(cy, () => untracked(() => this.labels()) === 'both');
         cy.on('tap', event => {
           if (event.target === cy) this.backgroundClicked.emit();
         });
@@ -853,6 +1014,11 @@ export class OntologyGraphComponent {
           if (this._navigable().has(id)) this.classFiltered.emit(id);
         });
         cy.on('tap', 'edge.link', event => this.propertySelected.emit(event.target.data('property')));
+        // A link standing for several opens into them, one by one, in place.
+        cy.on('tap', 'edge.links', event => {
+          this.linksHint.set(undefined);
+          this._expandLinks(cy, event.target.source().id(), event.target.target().id());
+        });
         // Links follow a dragged class as they will lie once it is dropped: routed round the boxes, a few times a
         // second, and once more on the drop, the same way. Only the links the drag reaches are routed again: those
         // of the class, and those passing where it was or is, which may bend or straighten.
@@ -906,26 +1072,33 @@ export class OntologyGraphComponent {
         });
         // Hovering a link highlights every link through the same property, wherever it is used; a click opens it.
         cy.on('mouseover', 'edge', event => {
+          if (event.target.hasClass('links')) {
+            const at = event.renderedPosition;
+            this.linksHint.set({ x: at.x, y: at.y, count: event.target.data('count') });
+          }
           this._hoveredProperty.set(event.target.data('property'));
           event.target.source().ancestors('.island').addClass('hovered');
           container.style.cursor = 'pointer';
         });
         cy.on('mouseout', 'edge', () => {
+          this.linksHint.set(undefined);
           this._hoveredProperty.set(undefined);
           cy.nodes('.island.hovered').removeClass('hovered');
           container.style.cursor = '';
         });
         // The canvas follows its box, which settles after the page first renders and narrows when the class panel
-        // opens beside it. Layouts spread the classes over the box, so a new size lays them out again, unless the
-        // user has dragged some, whose places are then kept and only fitted. The first size, once the box has one,
-        // lays out the classes for the first time.
+        // opens beside it. While the box settles, each size lays the classes out again over it, unless they are a
+        // layout kept from before, whose view stands. Once shown, the layout stays: a new size only fits it.
         let frame = 0;
         const observer = new ResizeObserver(() => {
           cancelAnimationFrame(frame);
           frame = requestAnimationFrame(() => {
+            const first = !this._sized;
             this._sized = true;
             cy.resize();
-            if (this._dragged) {
+            if (first && this._restore(cy)) return;
+            if (this._restored && !this.laidOut()) return;
+            if (this._dragged || this.laidOut()) {
               this._fit(cy);
             } else {
               this._arrange(cy);
@@ -934,6 +1107,7 @@ export class OntologyGraphComponent {
         });
         observer.observe(this._canvas().nativeElement);
         destroyRef.onDestroy(() => {
+          this._keep(cy);
           cancelAnimationFrame(frame);
           clearTimeout(routing);
           clearTimeout(this._reveal);
@@ -956,12 +1130,16 @@ export class OntologyGraphComponent {
       // Labels count too, so a class renamed in the edit dialog is drawn with its new name.
       const shown = `${graph.nodes.map(node => `${node.id}\t${node.label}`).join(' ')} ${graph.edges.map(edgeKey).join(' ')}`;
       if (shown === this._shown) return;
+      // The layout left is kept, to come back to: the classes shown before another filter, say.
+      untracked(() => this._keep(cy));
       this._shown = shown;
+      // Other classes: their links are grouped again.
+      this._expanded.set(new Set());
       cy.elements().remove();
       cy.add(withLabelsOnTop(untracked(() => this._elements())));
       measureIconBoxes(cy);
       // Before the box has its size, the first size lays them out; laid out now, they would be again then.
-      if (this._sized) this._arrange(cy);
+      if (this._sized) untracked(() => this._restore(cy) || this._arrange(cy));
     });
     effect(() => {
       const cy = this._cy();
@@ -973,15 +1151,17 @@ export class OntologyGraphComponent {
           .filter(edge => edge.data('property') === property)
           .addClass('same-property');
     });
-    // A new size rescales in place: classes stay where they are, only boxes, text and lines grow or shrink. The size
-    // the graph starts with is already the one it is laid out at.
+    // A new size only grows or shrinks text, boxes and lines, by as much as the text size changes: every class stays
+    // where it is, and the view too; only the links are routed again round the new boxes. The size the graph starts
+    // with is already the one it is laid out at.
     let sizeShown = untracked(() => this.size());
     effect(() => {
       const cy = this._cy();
       const size = this.size();
       if (!cy || size === sizeShown) return;
+      const ratio = GRAPH_TEXT_SIZE[size] / GRAPH_TEXT_SIZE[sizeShown];
       sizeShown = size;
-      this._rescale(cy);
+      untracked(() => this._grow(cy, ratio));
     });
     // New texts restyle in place: classes stay where they are, their boxes fitting the new texts, and the labels clear
     // of each other again.
@@ -993,6 +1173,7 @@ export class OntologyGraphComponent {
         islands: this.islands(),
         colourTab: this.colourTab(),
         treeLines: this.treeLines(),
+        properties: this.showProperties(),
       };
       if (!cy) return;
       cy.style(styleFor(this._scale, text));
@@ -1020,7 +1201,17 @@ export class OntologyGraphComponent {
       const fullWidth = this.fullWidth();
       if (!cy || fullWidth === fullWidthShown) return;
       fullWidthShown = fullWidth;
-      untracked(() => (this._dragged ? this._fit(cy) : this._arrange(cy)));
+      untracked(() => (this._dragged || this.laidOut() ? this._fit(cy) : this._arrange(cy)));
+    });
+    // Listing the properties in the boxes, or no longer, changes their size by far: the classes are laid out again,
+    // dragged places forgotten, as they would overlap.
+    let propertiesShown = untracked(() => this.showProperties());
+    effect(() => {
+      const cy = this._cy();
+      const properties = this.showProperties();
+      if (!cy || properties === propertiesShown) return;
+      propertiesShown = properties;
+      untracked(() => this._arrange(cy));
     });
     // Opening a panel, or showing another class or link in it, pans the graph sideways only when what it is about lies
     // under it; closing it pans back. Before the graph is shown, fitting it does the same, without the motion.
@@ -1043,6 +1234,7 @@ export class OntologyGraphComponent {
       const cy = this._cy();
       const search = this.search();
       this.graph();
+      this._linksChanged();
       if (!cy) return;
       cy.batch(() => {
         cy.elements().removeClass('faded search-hit');
@@ -1051,7 +1243,12 @@ export class OntologyGraphComponent {
         classes.filter(node => search.hitClasses.has(node.id())).addClass('search-hit');
         classes.filter(node => !search.classes.has(node.id())).addClass('faded');
         // A label is drawn on a copy of its link; see `withLabelsOnTop`.
-        const linkOf = (edge: EdgeSingular) => (edge.data('labelOf') as string | undefined) ?? edge.id();
+        // A link opened from several is found as the one that stood for them; see `_expandLinks`.
+        const linkOf = (edge: EdgeSingular) =>
+          (edge.data('merged') as string | undefined) ??
+          (edge.data('labelOf') ? cy.getElementById(edge.data('labelOf')).data('merged') : undefined) ??
+          (edge.data('labelOf') as string | undefined) ??
+          edge.id();
         cy.edges()
           .filter(edge => search.hitLinks.has(linkOf(edge)))
           .addClass('search-hit');
@@ -1069,6 +1266,37 @@ export class OntologyGraphComponent {
     });
   }
 
+  /**
+   * Draws the links from `source` to `target`, which one link stood for, one by one in its place: routed round the
+   * boxes and their labels slid clear, every class where it is.
+   */
+  private _expandLinks(cy: Core, source: string, target: string): void {
+    const pair = `${source}\n${target}`;
+    if (this._expanded().has(pair)) return;
+    this._expanded.update(pairs => new Set([...pairs, pair]));
+    const between = (edge: { data: Record<string, unknown> }) =>
+      edge.data['source'] === source && edge.data['target'] === target && !edge.data['tree'];
+    const links = withLabelsOnTop(
+      untracked(() => this._elements()).filter(element => element.group === 'edges' && between(element))
+    );
+    cy.batch(() => {
+      cy.edges()
+        .filter(edge => edge.source().id() === source && edge.target().id() === target && !edge.data('tree'))
+        .remove();
+      cy.add(links);
+    });
+    this._route(cy, new Set(links.map(link => link.data.id as string)));
+    this._linksChanged.update(n => n + 1);
+  }
+
+  /** Draws text, boxes and lines `ratio` times as big, every class where it is; the links routed round the new boxes. */
+  private _grow(cy: Core, ratio: number): void {
+    if (cy.elements().empty() || !Number.isFinite(ratio) || ratio <= 0) return;
+    this._scale *= ratio;
+    cy.style(this._style(this._scale));
+    this._route(cy);
+  }
+
   /** Lays the classes out over the whole box and fits them in it; dragged places are forgotten. */
   private _arrange(cy: Core): void {
     if (cy.elements().empty()) return;
@@ -1076,7 +1304,62 @@ export class OntologyGraphComponent {
     cy.style(this._style(1));
     arrangeIslands(cy, this._cytoscape!, 1, this._aspect(cy), this._labelWidth());
     this._dragged = false;
+    this._restored = false;
     this._rescale(cy);
+  }
+
+  /** What `_keep` keeps the layout under: the classes and links shown, and the texts and size they are drawn with. */
+  private _layoutKey(): string {
+    return [this._shown, this.size(), this.labels(), this.levelLabels(), this.showProperties()].join('|');
+  }
+
+  /** Keeps the layout shown, places, scale and view, in memory for `_restore`; see `remember`. */
+  private _keep(cy: Core): void {
+    if (!untracked(() => this.remember()) || !this.laidOut() || cy.elements().empty()) return;
+    const positions = new Map<string, { x: number; y: number }>();
+    cy.nodes()
+      .filter(node => !node.isParent())
+      .forEach(node => {
+        positions.set(node.id(), { ...node.position() });
+      });
+    KEPT_LAYOUTS.set(
+      untracked(() => this._layoutKey()),
+      {
+        positions,
+        scale: this._scale,
+        zoom: cy.zoom(),
+        // Without the sideways pan made for the panel, which is made again for it if it is open.
+        pan: { x: cy.pan().x - this._panned, y: cy.pan().y },
+        dragged: this._dragged,
+      }
+    );
+  }
+
+  /** Shows the layout kept for the classes shown, if any, as it was left; `false` without one. */
+  private _restore(cy: Core): boolean {
+    if (!untracked(() => this.remember())) return false;
+    const kept = KEPT_LAYOUTS.get(untracked(() => this._layoutKey()));
+    const classes = cy.nodes().filter(node => !node.isParent());
+    if (!kept || classes.toArray().some(node => !kept.positions.has(node.id()))) return false;
+    this._scale = kept.scale;
+    cy.style(this._style(kept.scale));
+    cy.batch(() =>
+      cy
+        .nodes()
+        .filter(node => !node.isParent())
+        .forEach(node => {
+          node.position(kept.positions.get(node.id())!);
+        })
+    );
+    this._route(cy);
+    cy.stop(true, false);
+    cy.viewport({ zoom: kept.zoom, pan: kept.pan });
+    this._panned = 0;
+    this._keepInView(cy, false);
+    this._dragged = kept.dragged;
+    this._restored = true;
+    this._revealWhenSettled();
+    return true;
   }
 
   /**
@@ -1291,6 +1574,7 @@ export class OntologyGraphComponent {
         islands: this.islands(),
         colourTab: this.colourTab(),
         treeLines: this.treeLines(),
+        properties: this.showProperties(),
       }))
     );
   }
@@ -1299,26 +1583,75 @@ export class OntologyGraphComponent {
    * The graph as a PNG at twice the screen's resolution, on the graph's background, its legend under it: the part in
    * view, or every class shown; `undefined` before the graph has loaded.
    */
-  png(area: GraphExportArea): Promise<Blob> | undefined {
+  png(area: GraphExportArea, options: GraphExportOptions = {}): Promise<Blob> | undefined {
+    const scale = options.scale ?? EXPORT_SCALE;
+    // The whole model's longest side grows with the resolution, up to what a browser's canvas can hold.
+    const maxSize = Math.min(EXPORT_MAX_SIZE * (scale / EXPORT_SCALE), EXPORT_CANVAS_LIMIT);
     const png = this._cy()?.png({
       output: 'blob-promise',
       full: area === 'whole',
       // Cytoscape already draws at the screen's pixel ratio; the scale is against CSS pixels.
-      scale: EXPORT_SCALE / (window.devicePixelRatio || 1),
+      scale: scale / (window.devicePixelRatio || 1),
       bg: EXPORT_BACKGROUND,
-      maxWidth: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
-      maxHeight: area === 'whole' ? EXPORT_MAX_SIZE : undefined,
+      maxWidth: area === 'whole' ? maxSize : undefined,
+      maxHeight: area === 'whole' ? maxSize : undefined,
     });
     const cy = this._cy();
-    const legend = this._legendTexts();
-    if (!png || !cy || !legend) return png;
-    // The legend's text as big in the image as the class names: image pixels per graph unit, times their size.
+    if (!png || !cy) return png;
+    const legend = options.legend === false ? undefined : this._legendTexts();
+    const title = options.title;
+    if (!legend && !title) return png;
+    // What is in view: the legend and the title as big as on screen, however far the graph is zoomed, such as onto
+    // the few classes a filter leaves. The whole model: their text as big in the image as the class names, image
+    // pixels per graph unit times their size, as that image is as big as the model needs.
     const model = cy.elements().boundingBox({});
-    const scaleFor = (width: number) => {
-      const perUnit = area === 'whole' ? width / model.w : EXPORT_SCALE * cy.zoom();
-      return Math.max(EXPORT_SCALE, (BASE_FONT_SIZE * this._scale * perUnit) / LEGEND_TEXT_SIZE);
-    };
-    return png.then(image => withLegend(image, legend, scaleFor, EXPORT_BACKGROUND));
+    const scaleFor = (width: number) =>
+      area === 'whole' ? Math.max(scale, (BASE_FONT_SIZE * this._scale * (width / model.w)) / LEGEND_TEXT_SIZE) : scale;
+    return png.then(async image => {
+      const width = (await createImageBitmap(image)).width;
+      const withItsLegend = legend ? await withLegend(image, legend, scaleFor, EXPORT_BACKGROUND) : image;
+      return title
+        ? withTitle(withItsLegend, title, options.subtitle, scaleFor(width), EXPORT_BACKGROUND)
+        : withItsLegend;
+    });
+  }
+
+  /** The graph as an exported image, a PNG or an SVG as `options.format` says; see `png` and `svg`. */
+  image(area: GraphExportArea, options: GraphExportOptions = {}): Promise<Blob> | undefined {
+    return options.format === 'svg' ? this.svg(area, options) : this.png(area, options);
+  }
+
+  /**
+   * The graph as an SVG, all of it vectors: the part in view, or every class shown, with the legend and title as a
+   * PNG has them; `undefined` before the graph has loaded.
+   */
+  svg(area: GraphExportArea, options: GraphExportOptions = {}): Promise<Blob> | undefined {
+    const cy = this._cy();
+    if (!cy || !this._cytoscape) return undefined;
+    const legend = options.legend === false ? undefined : this._legendTexts();
+    // As a PNG at scale 1: what is in view keeps its legend and title as on screen; the whole model grows them as
+    // its class names, which the SVG draws in graph units.
+    const model = cy.elements().boundingBox({});
+    const scaleFor = (width: number) =>
+      area === 'whole' ? Math.max(1, (BASE_FONT_SIZE * this._scale * (width / model.w)) / LEGEND_TEXT_SIZE) : 1;
+    return withSvgExtension(this._cytoscape).then(async () => {
+      const graph = withOutlines(cy, () =>
+        (cy as Core & { svg: (options: Record<string, unknown>) => string }).svg({
+          full: area === 'whole',
+          // cytoscape-svg multiplies by the screen's pixel ratio: the SVG's size is in CSS pixels.
+          scale: 1 / (window.devicePixelRatio || 1),
+          bg: EXPORT_BACKGROUND,
+        })
+      );
+      const svg = await framedSvg(graph, {
+        legend,
+        title: options.title,
+        subtitle: options.subtitle,
+        scaleFor,
+        background: EXPORT_BACKGROUND,
+      });
+      return new Blob([svg], { type: 'image/svg+xml' });
+    });
   }
 
   /** The legend's texts and file icons in the current language, as the export draws them; none without a legend. */
