@@ -116,7 +116,8 @@ const COLUMN_LABELS: Record<Column, string> = {
     @let expanded = true;
     @let cols = columns;
     <div class="section">
-      <div class="head">
+      <!-- On two lines, as Resource classes: the title and Create property on white, then the search. -->
+      <div class="head two-lines">
         <h2>{{ r + '.properties' | translate }}</h2>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
           <mat-icon matPrefix>search</mat-icon>
