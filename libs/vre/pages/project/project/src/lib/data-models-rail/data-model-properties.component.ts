@@ -116,8 +116,7 @@ const COLUMN_LABELS: Record<Column, string> = {
     @let expanded = true;
     @let cols = columns;
     <div class="section">
-      <!-- On two lines, as Resource classes: the title and Create property on white, then the search. -->
-      <div class="head two-lines">
+      <div class="head">
         <h2>{{ r + '.properties' | translate }}</h2>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
           <mat-icon matPrefix>search</mat-icon>
@@ -129,7 +128,8 @@ const COLUMN_LABELS: Record<Column, string> = {
             [attr.aria-label]="r + '.findProperty' | translate"
             (input)="query.set(search.value)" />
         </mat-form-field>
-        <!-- For editors: a property of the type picked, for no class yet, made in the data model editor's dialog. -->
+        <!-- For editors, at the head's right end: a property of the type picked, for no class yet, made in the data model
+             editor's dialog. -->
         @if (canCreate()) {
           <button
             mat-flat-button
@@ -498,6 +498,11 @@ const COLUMN_LABELS: Record<Column, string> = {
     TABLE_STYLES,
     `
       @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+      // Create property at the head's right end, away from the search.
+      .head .create {
+        margin-left: auto;
+      }
 
       // A frozen cell takes the row's background, which plain rows leave transparent.
       .mat-mdc-cell.frozen {
