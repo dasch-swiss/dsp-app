@@ -31,6 +31,10 @@ import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { rememberedSignal } from './remembered-signal';
 
+/** The head's layout: the title alone on a first line with the create button, or everything on one line. */
+type Header = 'twoLines' | 'oneLine';
+const HEADERS: readonly Header[] = ['twoLines', 'oneLine'];
+
 /** How much room the cards give each property: as compact as can be, or roomier for reading. */
 type Density = 'compact' | 'comfortable' | 'spacious';
 const DENSITIES: readonly Density[] = ['compact', 'comfortable', 'spacious'];
@@ -63,7 +67,8 @@ const DENSITY_EXTRA_WIDTH: Record<Density, number> = { compact: 0, comfortable: 
     @let r = 'pages.dataModels2';
     @let t = 'pages.dataBrowser.dataModelMap';
     <div class="section">
-      <div class="head">
+      <!-- On two lines unless chosen otherwise: the title and the create button, then the search and the tools. -->
+      <div class="head" [class.two-lines]="header() === 'twoLines'" [class.one-line]="header() === 'oneLine'">
         <h2>{{ r + '.classes' | translate }}</h2>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
           <mat-icon matPrefix>search</mat-icon>
@@ -130,6 +135,26 @@ const DENSITY_EXTRA_WIDTH: Record<Density, number> = { compact: 0, comfortable: 
                 <span class="view-item">
                   <span>{{ r + '.density.' + option | translate }}</span>
                   <span class="view-hint">{{ r + '.density.' + option + 'Hint' | translate }}</span>
+                </span>
+              </button>
+            }
+            <span class="menu-heading">{{ r + '.header.title' | translate }}</span>
+            @for (option of headers; track option) {
+              @let chosen = header() === option;
+              <button
+                mat-menu-item
+                type="button"
+                class="view-entry"
+                role="menuitemradio"
+                [attr.aria-checked]="chosen"
+                [attr.data-cy]="'data-model-classes-header-' + option"
+                (click)="$event.stopPropagation(); header.set(option)">
+                <mat-icon [class.chosen]="chosen">{{
+                  chosen ? 'radio_button_checked' : 'radio_button_unchecked'
+                }}</mat-icon>
+                <span class="view-item">
+                  <span>{{ r + '.header.' + option | translate }}</span>
+                  <span class="view-hint">{{ r + '.header.' + option + 'Hint' | translate }}</span>
                 </span>
               </button>
             }
@@ -221,6 +246,110 @@ const DENSITY_EXTRA_WIDTH: Record<Density, number> = { compact: 0, comfortable: 
         > * {
           flex: none;
           white-space: nowrap;
+        }
+      }
+
+      // On two lines, as the data browser's head: the title and the create button on white, then the search and the
+      // tools on the page's grey between two rules, each band from edge to edge.
+      .head.two-lines {
+        display: grid;
+        grid-template-columns: 12px minmax(140px, 280px) minmax(0, 1fr) 12px;
+        grid-template-areas:
+          '. title create .'
+          '. search tools .';
+        gap: 0 12px;
+        margin: -16px -24px 0;
+        align-items: stretch;
+
+        &::before,
+        &::after {
+          align-self: stretch;
+        }
+
+        &::before {
+          content: '';
+          grid-row: 1;
+          grid-column: 1 / -1;
+          background: white;
+          border-bottom: 1px solid $cool_gray_200;
+        }
+
+        &::after {
+          content: '';
+          grid-row: 2;
+          grid-column: 1 / -1;
+          border-bottom: 1px solid $cool_gray_200;
+        }
+
+        h2 {
+          grid-area: title;
+          align-self: center;
+          padding: 18px 0;
+        }
+
+        .create {
+          grid-area: create;
+          justify-self: end;
+          align-self: center;
+        }
+
+        .search {
+          grid-area: search;
+          width: auto;
+          margin: 12px 0;
+          align-self: center;
+        }
+
+        .tools {
+          grid-area: tools;
+          align-self: center;
+        }
+      }
+
+      // On one line: the title, the search and the create button at the right end; the tools, very small, on a line
+      // of their own under it, at the right.
+      .head.one-line {
+        display: grid;
+        grid-template-columns: auto minmax(140px, 280px) minmax(0, 1fr) auto;
+        grid-template-areas:
+          'title search . create'
+          'tools tools tools tools';
+        // The tools nearer the cards they act on than the button above them.
+        gap: 12px;
+        margin-bottom: -10px;
+
+        h2 {
+          grid-area: title;
+        }
+
+        .search {
+          grid-area: search;
+          width: auto;
+        }
+
+        .create {
+          grid-area: create;
+        }
+
+        .tools {
+          grid-area: tools;
+          gap: 2px;
+
+          .mat-mdc-button {
+            --mat-button-text-container-height: 24px;
+            --mat-button-text-label-text-size: 11px;
+            --mat-button-text-horizontal-padding: 6px;
+            --mat-button-text-icon-spacing: 4px;
+            --mat-button-text-label-text-color: #{$cool_gray_500};
+            height: 24px;
+            font-size: 11px;
+
+            mat-icon {
+              font-size: 14px;
+              width: 14px;
+              height: 14px;
+            }
+          }
         }
       }
 
@@ -357,6 +486,11 @@ export class DataModelClassesComponent {
   readonly kindForAll = signal(true).asReadonly();
   /** A subclass's card lists its superclass's properties after the class's own. */
   readonly inheritedLayout = signal<InheritedLayout>('listed').asReadonly();
+  readonly headers = HEADERS;
+  /** The head's layout, as the viewer last chose: on two lines unless chosen otherwise. */
+  readonly header = rememberedSignal<Header>('dsp-data-models-classes-header', 'twoLines', stored =>
+    HEADERS.find(header => header === stored)
+  );
   readonly densities = DENSITIES;
   /** How much room each card's properties take, as the viewer last chose: compact unless chosen otherwise. */
   readonly density = rememberedSignal<Density>('dsp-data-models-card-density', 'compact', stored =>

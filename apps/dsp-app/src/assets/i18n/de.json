@@ -969,6 +969,13 @@
         "comfortableHint": "Mehr Abstand zwischen den Eigenschaften, grössere Schrift",
         "spacious": "Grosszügig",
         "spaciousHint": "Am meisten Abstand, grösste Schrift und Kontrollkästchen"
+      },
+      "header": {
+        "title": "Kopfzeile",
+        "twoLines": "Zwei Zeilen",
+        "twoLinesHint": "Titel und Ressourcenklasse erstellen in der ersten Zeile, die Suche darunter",
+        "oneLine": "Eine Zeile",
+        "oneLineHint": "Titel, Suche und Ressourcenklasse erstellen nebeneinander"
       }
     }
   },
