@@ -493,7 +493,9 @@ export class ResourceClassPanelComponent {
   /** All its properties, as rows of the cards, in its form order: its own in the dragged order, if any. */
   readonly all = computed(() => {
     const own = [...this.own()];
-    return this.properties().map(property => (this.ownIds().has(property.id) ? own.shift()! : cardPropertyOf(property)));
+    return this.properties().map(property =>
+      this.ownIds().has(property.id) ? own.shift()! : cardPropertyOf(property)
+    );
   });
   /** For editors, where the editor can save a new order. */
   readonly reorderable = computed(() => this.canEdit() && !!this.editing?.canReorder);

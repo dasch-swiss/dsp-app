@@ -14,13 +14,13 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Constants } from '@dasch-swiss/dsp-js';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs';
 import type { Core, EdgeSingular, NodeSingular, StylesheetJson } from 'cytoscape';
+import { map } from 'rxjs';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
 import { routeEdges, separateLabels, withLabelsOnTop } from './edge-routes';
@@ -1331,7 +1331,14 @@ export class OntologyGraphComponent {
 
   /** What `_keep` keeps the layout under: the classes and links shown, and the texts and size they are drawn with. */
   private _layoutKey(): string {
-    return [this._shown, this.size(), this._screenScale(), this.labels(), this.levelLabels(), this.showProperties()].join('|');
+    return [
+      this._shown,
+      this.size(),
+      this._screenScale(),
+      this.labels(),
+      this.levelLabels(),
+      this.showProperties(),
+    ].join('|');
   }
 
   /** Keeps the layout shown, places, scale and view, in memory for `_restore`; see `remember`. */
@@ -1428,11 +1435,7 @@ export class OntologyGraphComponent {
     const screen = this._room(cy);
     const before = cy.elements().boundingBox({});
     // The zoom the model is fitted at, at most the one that draws names at the chosen size.
-    const zoom = Math.min(
-      this._textSize() / (BASE_FONT_SIZE * this._scale),
-      screen.w / before.w,
-      screen.h / before.h
-    );
+    const zoom = Math.min(this._textSize() / (BASE_FONT_SIZE * this._scale), screen.w / before.w, screen.h / before.h);
     const room = { w: screen.w / zoom, h: screen.h / zoom };
     const units = new Map<string, NodeSingular[]>();
     cy.nodes()
