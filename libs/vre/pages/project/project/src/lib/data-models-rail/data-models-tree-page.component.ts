@@ -1,3 +1,4 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,6 +21,7 @@ import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, startWith } from 'rxjs';
+import { SIDEBAR_WIDTHS } from '../data-browser-page.component';
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { DataModelsRailState } from './data-models-rail-state';
@@ -30,6 +32,10 @@ const MODEL_SECTIONS = [
   { path: RouteConstants.properties, icon: 'label' },
   { path: RouteConstants.graph, icon: 'hub' },
 ] as const;
+
+/** The rail's least width: below it, its headings and the data models' names would crowd. */
+const RAIL_MIN_WIDTH = 220;
+const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}px)`);
 
 /**
  * The Data models 2 tab: a rail listing every data model of the project as a group that folds open on its sections
@@ -60,7 +66,7 @@ const MODEL_SECTIONS = [
     @let r = 'pages.dataModels2';
     @let editor = state.canEdit() && editing.canEditDataModels;
     <div class="page">
-      <aside class="rail" data-cy="data-models-tree">
+      <aside class="rail" data-cy="data-models-tree" [style.width.px]="railWidth()">
         <div class="heading">
           <!-- What a data model is, as the Data models tab says it. -->
           <span class="title">
@@ -241,7 +247,6 @@ const MODEL_SECTIONS = [
 
       .rail {
         flex: none;
-        width: 264px;
         box-sizing: border-box;
         padding: 8px 8px 16px;
         border-right: 1px solid $cool_gray_200;
@@ -458,6 +463,12 @@ export class DataModelsTreePageComponent {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly _breakpoints = inject(BreakpointObserver);
+
+  /** The rail's width, as the Data tab's sidebar at each breakpoint, but never under 220px. */
+  readonly railWidth = toSignal(this._breakpoints.observe(RAIL_QUERIES).pipe(map(() => this._railWidthForScreen())), {
+    initialValue: this._railWidthForScreen(),
+  });
 
   readonly sections = MODEL_SECTIONS;
   readonly classes = RouteConstants.classes;
@@ -560,5 +571,10 @@ export class DataModelsTreePageComponent {
     this.editing.createVocabulary(iri =>
       this._router.navigate([RouteConstants.list, this.nameOf(iri)], { relativeTo: this._route })
     );
+  }
+
+  private _railWidthForScreen(): number {
+    const match = SIDEBAR_WIDTHS.find((_, index) => this._breakpoints.isMatched(RAIL_QUERIES[index]));
+    return Math.max(match ? match[1] : 0, RAIL_MIN_WIDTH);
   }
 }
