@@ -353,7 +353,6 @@
       },
       "list": {
         "deleteList": "Elimina vocabolario controllato",
-        "backToDataModels": "Torna ai modelli di dati",
         "editInfo": "Modifica info del vocabolario controllato",
         "deleteConfirmation": "Vuoi eliminare questo vocabolario controllato?",
         "actionBubble": {
@@ -385,60 +384,14 @@
         }
       },
       "dataModels": {
-        "title": "Tutti i modelli di dati",
         "info": "Un modello di dati organizza gli elementi di dati e specifica come si relazionano tra loro e da quali proprietà sono descritti.",
-        "createNew": "Crea nuovo",
-        "documentation": "Leggi la documentazione su come creare modelli di dati",
         "vocabularies": {
-          "title": "Vocabolari controllati",
-          "info": "I vocabolari controllati sono lessici gerarchici o non gerarchici di termini di riferimento. Grazie alla loro natura normativa o standardizzata, i vocabolari controllati migliorano la qualità dei dati e rendono la ricerca nel database più efficiente rispetto ai campi di testo libero.",
-          "createNew": "Crea nuovo"
+          "info": "I vocabolari controllati sono lessici gerarchici o non gerarchici di termini di riferimento. Grazie alla loro natura normativa o standardizzata, i vocabolari controllati migliorano la qualità dei dati e rendono la ricerca nel database più efficiente rispetto ai campi di testo libero."
         }
-      },
-      "editor": {
-        "backToDataModels": "Torna ai modelli di dati",
-        "updatedOn": "Aggiornato il:",
-        "editInfo": "Modifica info del modello di dati",
-        "deleteTooltip": "Elimina modello di dati",
-        "cannotDelete": "Questo modello di dati non può essere eliminato perché è in uso!",
-        "deleteConfirmation": "Vuoi eliminare questo modello di dati?"
-      },
-      "sidenav": {
-        "classes": "Classi",
-        "properties": "Proprietà",
-        "collapseAll": "Riduci tutto",
-        "expandAll": "Espandi tutto",
-        "createNewClass": "Crea nuova classe",
-        "addProperty": "Aggiungi proprietà"
       },
       "cardinality": {
         "multipleValues": "Valori multipli",
         "required": "Obbligatorio"
-      },
-      "cardinalityDialog": {
-        "title": "Aggiorna la cardinalità",
-        "subtitle": "Imposta la cardinalità per la proprietà “{{label}}”",
-        "notPossible": "La modifica della cardinalità non è possibile.",
-        "attention": "Attenzione",
-        "confirmMessage": "Si prega di notare che questa modifica potrebbe non essere reversibile. Vuoi modificare la cardinalità?",
-        "multiplePropertiesError": "Almeno una risorsa della classe \"{{className}}\" ha più proprietà \"{{propertyLabel}}\" nei tuoi dati.",
-        "multiplePropertiesHint": "Per impostare la cardinalità di \"{{propertyLabel}}\" su singolo, ogni risorsa \"{{className}}\" deve avere solo un valore \"{{propertyLabel}}\" prima di questa modifica.",
-        "missingPropertyError": "Almeno una risorsa della classe \"{{className}}\" non ha una proprietà \"{{propertyLabel}}\" nei tuoi dati.",
-        "missingPropertyHint": "Per impostare la cardinalità di \"{{propertyLabel}}\" su obbligatorio, ogni risorsa \"{{className}}\" deve avere un valore \"{{propertyLabel}}\" prima di questa modifica."
-      },
-      "propertyItem": {
-        "edit": "Modifica",
-        "removeFromClass": "Rimuovi dalla classe",
-        "copyId": "Copia ID della proprietà",
-        "idCopied": "ID proprietà copiato negli appunti!"
-      },
-      "propertyInfo": {
-        "usedIn": "Usato in",
-        "notUsed": "Non usato",
-        "cannotEdit": "Non può essere modificato",
-        "cannotDelete": "Non può essere eliminato",
-        "deleteConfirmation": "Vuoi eliminare questa proprietà?",
-        "restrictedTo": "Limitato a {{className}}"
       },
       "resourceClassInfo": {
         "collapse": "Riduci",
@@ -447,9 +400,7 @@
         "edit": "Modifica",
         "openInstances": "Apri istanze",
         "copyId": "Copia ID della classe",
-        "cannotDelete": "Questa classe non può essere eliminata perché è in uso!",
         "delete": "Elimina",
-        "deleteConfirmation": "Vuoi eliminare questa classe di risorsa?",
         "idCopied": "ID classe copiato negli appunti!"
       },
       "propertyForm": {
@@ -1484,8 +1435,7 @@
       "projectTabs": {
         "data": "Dati",
         "dataModels": "Modelli di dati",
-        "settings": "Impostazioni",
-        "dataModels2": "Modelli di dati 2"
+        "settings": "Impostazioni"
       }
     },
     "grid": {

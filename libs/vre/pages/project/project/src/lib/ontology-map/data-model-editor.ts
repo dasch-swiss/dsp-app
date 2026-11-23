@@ -1,9 +1,7 @@
 import { DestroyRef, inject, InjectionToken } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
 import { Cardinality } from '@dasch-swiss/dsp-js';
-import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import { DefaultClass, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { DefaultClass, DefaultProperty } from '@dasch-swiss/vre/shared/app-helper-services';
 import { filter, map, Observable, of, tap } from 'rxjs';
 import { ProjectPageService } from '../project-page.service';
 
@@ -103,37 +101,20 @@ export interface AvailableProperties {
   }[];
 }
 
-/** The data model editor, if the app provides one; without it, editing opens the data model editor page instead. */
+/** The data model editor, if the app provides one; without it, the data models can only be read. */
 export const DATA_MODEL_EDITOR = new InjectionToken<DataModelEditor>('DataModelEditor');
 
 /**
- * Editing classes and properties from a component of the Data models 2 pages: in the editor's dialog when the app
- * provides it, a saved change then read again with the whole project so every section shows it; else on the data model
- * editor page. Call in an injection context.
+ * Editing classes and properties from a component of the Data models pages, in the editor's dialog when the app
+ * provides it: a saved change is then read again with the whole project, so every section shows it. Call in an
+ * injection context.
  */
 export function injectDataModelEditing() {
   const editor = inject(DATA_MODEL_EDITOR, { optional: true });
   const project = inject(ProjectPageService);
-  const router = inject(Router);
   const destroyRef = inject(DestroyRef);
-  const edit = (iri: string, page: string, inPlace?: (iri: string) => Observable<boolean>) => {
-    if (inPlace) {
-      inPlace(iri)
-        .pipe(filter(Boolean), takeUntilDestroyed(destroyRef))
-        .subscribe(() => project.reloadProject());
-      return;
-    }
-    const [ontologyIri] = iri.split('#');
-    router.navigate([
-      '/',
-      RouteConstants.project,
-      project.currentProjectUuid,
-      RouteConstants.ontology,
-      OntologyService.getOntologyNameFromIri(ontologyIri),
-      RouteConstants.editor,
-      page,
-    ]);
-  };
+  const edit = (opened?: Observable<boolean>) =>
+    opened?.pipe(filter(Boolean), takeUntilDestroyed(destroyRef)).subscribe(() => project.reloadProject());
   // A saved text is read again with the whole project, so every section shows it.
   const reloadOnceSaved = (saved: Observable<boolean>): Observable<boolean> =>
     saved.pipe(
@@ -148,10 +129,9 @@ export function injectDataModelEditing() {
       editor ? editor.availableProperties(classIri) : of([]),
     /** Gives the class an existing property, then reads the project again. */
     addExistingProperty: (classIri: string, propertyIri: string) =>
-      editor && edit(classIri, RouteConstants.classes, () => editor.addExistingProperty(classIri, propertyIri)),
+      edit(editor?.addExistingProperty(classIri, propertyIri)),
     /** Creates a property of that type for the class, in the data model editor's dialog, then reads the project again. */
-    addNewProperty: (classIri: string, type: DefaultProperty) =>
-      editor && edit(classIri, RouteConstants.classes, () => editor.addNewProperty(classIri, type)),
+    addNewProperty: (classIri: string, type: DefaultProperty) => edit(editor?.addNewProperty(classIri, type)),
     /** Whether classes and properties can be deleted, and cardinalities changed, here. */
     canDelete: !!editor,
     canDeleteClass: (classIri: string): Observable<CanDo> =>
@@ -241,7 +221,7 @@ export function injectDataModelEditing() {
           project.reloadProject();
           created(iri);
         }),
-    editClass: (iri: string) => edit(iri, RouteConstants.classes, editor && (i => editor.editClass(i))),
-    editProperty: (iri: string) => edit(iri, RouteConstants.properties, editor && (i => editor.editProperty(i))),
+    editClass: (iri: string) => edit(editor?.editClass(iri)),
+    editProperty: (iri: string) => edit(editor?.editProperty(iri)),
   };
 }

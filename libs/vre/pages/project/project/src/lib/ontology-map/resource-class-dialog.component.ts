@@ -105,7 +105,7 @@ export class ResourceClassDialogComponent {
   /** Shows the class with the classes it is linked with, in the graph. */
   filterOn(iri: string): void {
     const [ontologyIri] = iri.split('#');
-    this._router.navigate(this._path(RouteConstants.dataModels2, RouteConstants.graph), {
+    this._router.navigate(this._path(RouteConstants.dataModels, RouteConstants.graph), {
       queryParams: {
         [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri),
         [ONTOLOGY_MAP_PARAM.filter]: localNameOf(iri),

@@ -507,7 +507,7 @@ export class DataModelsTreePageComponent {
 
   constructor() {
     // The sections' links and "Open in…" lead to this tab.
-    this.state.tab = RouteConstants.dataModels2;
+    this.state.tab = RouteConstants.dataModels;
     // The data model shown folds open when it changes; folding it again is the viewer's choice.
     effect(() => {
       const iri = this.state.selected()?.iri;

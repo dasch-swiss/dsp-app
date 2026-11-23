@@ -1,9 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
-import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListNodeInfo, ListResponse } from '@dasch-swiss/dsp-js';
@@ -13,15 +12,12 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { CenteredLayoutComponent, DialogService, TruncatePipe } from '@dasch-swiss/vre/ui/ui';
+import { CenteredLayoutComponent, DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { ListInfoFormComponent } from './list-info-form/list-info-form.component';
 import { ListItemComponent } from './list-item/list-item.component';
 import { ListItemService } from './list-item/list-item.service';
-
-/** The route data naming the project tab the list page's way back leads to; the Data models tab without it. */
-export const LIST_PAGE_BACK = 'listPageBack';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,8 +26,8 @@ export const LIST_PAGE_BACK = 'listPageBack';
   styles: `
     @use '../../../../../../../apps/dsp-app/src/styles/config' as *;
 
-    // In Data models 2, the page sits at the left with its sections' padding, not centered.
-    app-centered-layout.at-left {
+    // The page sits at the left with the Data models sections' padding, not centered.
+    app-centered-layout {
       justify-content: flex-start;
 
       ::ng-deep > .content {
@@ -40,7 +36,7 @@ export const LIST_PAGE_BACK = 'listPageBack';
       }
     }
 
-    // The head in Data models 2: as its Resource classes and Properties heads.
+    // The head: as the Resource classes and Properties heads.
     .dm2-head {
       display: flex;
       align-items: flex-start;
@@ -74,17 +70,13 @@ export const LIST_PAGE_BACK = 'listPageBack';
   providers: [ListItemService],
   imports: [
     AsyncPipe,
-    MatAnchor,
     MatButton,
     MatIcon,
-    MatToolbar,
-    MatToolbarRow,
     MatTooltip,
     TranslatePipe,
     ProgressIndicatorOverlayComponent,
     ListItemComponent,
     StringifyStringLiteralPipe,
-    TruncatePipe,
     CenteredLayoutComponent,
   ],
 })
@@ -105,9 +97,6 @@ export class ListPageComponent implements OnInit, OnDestroy {
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
   isListsLoading$ = of(false);
-
-  /** Opened from the Data models 2 tab, whose head differs. */
-  readonly inDataModels2 = this._route.snapshot.data[LIST_PAGE_BACK] === RouteConstants.dataModels2;
 
   private _destroy = new Subject<void>();
   private readonly _translate = inject(TranslateService);
@@ -156,11 +145,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  /** Back to the tab the vocabulary was opened from: the Data models tab, unless its route names another. */
+  /** Back to the controlled vocabularies of the Data models tab. */
   navigateToDataModels() {
     const projectUuid = this._projectPageService.currentProjectUuid;
-    const tab = this._route.snapshot.data[LIST_PAGE_BACK] ?? RouteConstants.dataModels;
-    this._router.navigate([RouteConstants.project, projectUuid, tab]);
+    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.dataModels, RouteConstants.lists]);
   }
 
   ngOnDestroy() {

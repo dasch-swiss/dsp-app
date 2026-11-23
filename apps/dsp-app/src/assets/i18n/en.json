@@ -353,7 +353,6 @@
       },
       "list": {
         "deleteList": "Delete controlled vocabulary",
-        "backToDataModels": "Back to data models",
         "editInfo": "Edit controlled vocabulary info",
         "deleteConfirmation": "Do you want to delete this controlled vocabulary?",
         "actionBubble": {
@@ -385,60 +384,14 @@
         }
       },
       "dataModels": {
-        "title": "All Data Models",
         "info": "A data model organizes data elements and specifies how they relate to one another and by which properties they are described.",
-        "createNew": "Create New",
-        "documentation": "Read Documentation About How To Create Data Models",
         "vocabularies": {
-          "title": "Controlled Vocabularies",
-          "info": "Controlled vocabularies are hierarchical or non-hierarchical lexica of reference terms. Due to their normative or standardized nature, controlled vocabularies improve data quality and make database searching more efficient than free-text fields.",
-          "createNew": "Create New"
+          "info": "Controlled vocabularies are hierarchical or non-hierarchical lexica of reference terms. Due to their normative or standardized nature, controlled vocabularies improve data quality and make database searching more efficient than free-text fields."
         }
-      },
-      "editor": {
-        "backToDataModels": "Back to data models",
-        "updatedOn": "Updated on:",
-        "editInfo": "Edit data model info",
-        "deleteTooltip": "Delete data model",
-        "cannotDelete": "This data model cant be deleted because it is in use!",
-        "deleteConfirmation": "Do you want to delete this data model ?"
-      },
-      "sidenav": {
-        "classes": "Classes",
-        "properties": "Properties",
-        "collapseAll": "Collapse all",
-        "expandAll": "Expand all",
-        "createNewClass": "Create new class",
-        "addProperty": "Add Property"
       },
       "cardinality": {
         "multipleValues": "Multiple values",
         "required": "Required"
-      },
-      "cardinalityDialog": {
-        "title": "Update cardinality",
-        "subtitle": "Set the cardinality for property “{{label}}”",
-        "notPossible": "Changing the cardinality is not possible.",
-        "attention": "Attention",
-        "confirmMessage": "Please note that this change may not be reversible. Do you want to change the cardinality?",
-        "multiplePropertiesError": "At least one resource of the class \"{{className}}\" has multiple \"{{propertyLabel}}\" properties in your data.",
-        "multiplePropertiesHint": "In order to set the cardinality of \"{{propertyLabel}}\" to single, every resource \"{{className}}\" must have only one \"{{propertyLabel}}\" value prior to this change.",
-        "missingPropertyError": "At least one resource of the class \"{{className}}\" does not have a \"{{propertyLabel}}\" property in your data.",
-        "missingPropertyHint": "In order to set the cardinality of \"{{propertyLabel}}\" to required every resource \"{{className}}\" needs to have a \"{{propertyLabel}}\" value prior to this change."
-      },
-      "propertyItem": {
-        "edit": "Edit",
-        "removeFromClass": "Remove from class",
-        "copyId": "Copy property ID",
-        "idCopied": "Property ID copied to clipboard!"
-      },
-      "propertyInfo": {
-        "usedIn": "Used in",
-        "notUsed": "Not used",
-        "cannotEdit": "Cannot edit",
-        "cannotDelete": "Cannot delete",
-        "deleteConfirmation": "Do you want to delete this property?",
-        "restrictedTo": "Restricted to {{className}}"
       },
       "resourceClassInfo": {
         "collapse": "Collapse",
@@ -447,9 +400,7 @@
         "edit": "Edit",
         "openInstances": "Open instances",
         "copyId": "Copy class ID",
-        "cannotDelete": "This class cannot be deleted because it is in use!",
         "delete": "Delete",
-        "deleteConfirmation": "Do you want to delete this resource class?",
         "idCopied": "Class ID copied to clipboard!"
       },
       "propertyForm": {
@@ -1484,8 +1435,7 @@
       "projectTabs": {
         "data": "Data",
         "dataModels": "Data models",
-        "settings": "Settings",
-        "dataModels2": "Data models 2"
+        "settings": "Settings"
       }
     },
     "grid": {

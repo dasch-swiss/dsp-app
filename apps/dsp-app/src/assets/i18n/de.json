@@ -353,7 +353,6 @@
       },
       "list": {
         "deleteList": "Kontrolliertes Vokabular löschen",
-        "backToDataModels": "Zurück zu Datenmodellen",
         "editInfo": "Info zu kontrolliertem Vokabular bearbeiten",
         "deleteConfirmation": "Möchten Sie dieses kontrollierte Vokabular löschen?",
         "actionBubble": {
@@ -385,60 +384,14 @@
         }
       },
       "dataModels": {
-        "title": "Alle Datenmodelle",
         "info": "Ein Datenmodell organisiert Datenelemente und spezifiziert, wie sie miteinander in Beziehung stehen und durch welche Eigenschaften sie beschrieben werden.",
-        "createNew": "Neu erstellen",
-        "documentation": "Dokumentation zum Erstellen von Datenmodellen lesen",
         "vocabularies": {
-          "title": "Kontrollierte Vokabulare",
-          "info": "Kontrollierte Vokabulare sind hierarchische oder nicht-hierarchische Lexika von Referenzbegriffen. Aufgrund ihrer normativen oder standardisierten Natur verbessern kontrollierte Vokabulare die Datenqualität und machen die Datenbanksuche effizienter als Freitextfelder.",
-          "createNew": "Neu erstellen"
+          "info": "Kontrollierte Vokabulare sind hierarchische oder nicht-hierarchische Lexika von Referenzbegriffen. Aufgrund ihrer normativen oder standardisierten Natur verbessern kontrollierte Vokabulare die Datenqualität und machen die Datenbanksuche effizienter als Freitextfelder."
         }
-      },
-      "editor": {
-        "backToDataModels": "Zurück zu Datenmodellen",
-        "updatedOn": "Aktualisiert am:",
-        "editInfo": "Datenmodell-Info bearbeiten",
-        "deleteTooltip": "Datenmodell löschen",
-        "cannotDelete": "Dieses Datenmodell kann nicht gelöscht werden, da es verwendet wird!",
-        "deleteConfirmation": "Möchten Sie dieses Datenmodell löschen?"
-      },
-      "sidenav": {
-        "classes": "Klassen",
-        "properties": "Eigenschaften",
-        "collapseAll": "Alle einklappen",
-        "expandAll": "Alle ausklappen",
-        "createNewClass": "Neue Klasse erstellen",
-        "addProperty": "Eigenschaft hinzufügen"
       },
       "cardinality": {
         "multipleValues": "Mehrere Werte",
         "required": "Erforderlich"
-      },
-      "cardinalityDialog": {
-        "title": "Kardinalität aktualisieren",
-        "subtitle": "Kardinalität für die Eigenschaft „{{label}}“ festlegen",
-        "notPossible": "Die Änderung der Kardinalität ist nicht möglich.",
-        "attention": "Achtung",
-        "confirmMessage": "Bitte beachten Sie, dass diese Änderung möglicherweise nicht rückgängig gemacht werden kann. Möchten Sie die Kardinalität ändern?",
-        "multiplePropertiesError": "Mindestens eine Ressource der Klasse \"{{className}}\" hat mehrere \"{{propertyLabel}}\"-Eigenschaften in Ihren Daten.",
-        "multiplePropertiesHint": "Um die Kardinalität von \"{{propertyLabel}}\" auf einzeln zu setzen, muss jede Ressource \"{{className}}\" vor dieser Änderung nur einen \"{{propertyLabel}}\"-Wert haben.",
-        "missingPropertyError": "Mindestens eine Ressource der Klasse \"{{className}}\" hat keine \"{{propertyLabel}}\"-Eigenschaft in Ihren Daten.",
-        "missingPropertyHint": "Um die Kardinalität von \"{{propertyLabel}}\" auf erforderlich zu setzen, muss jede Ressource \"{{className}}\" vor dieser Änderung einen \"{{propertyLabel}}\"-Wert haben."
-      },
-      "propertyItem": {
-        "edit": "Bearbeiten",
-        "removeFromClass": "Aus Klasse entfernen",
-        "copyId": "Eigenschafts-ID kopieren",
-        "idCopied": "Eigenschafts-ID in Zwischenablage kopiert!"
-      },
-      "propertyInfo": {
-        "usedIn": "Verwendet in",
-        "notUsed": "Nicht verwendet",
-        "cannotEdit": "Kann nicht bearbeitet werden",
-        "cannotDelete": "Kann nicht gelöscht werden",
-        "deleteConfirmation": "Möchten Sie diese Eigenschaft löschen?",
-        "restrictedTo": "Eingeschränkt auf {{className}}"
       },
       "resourceClassInfo": {
         "collapse": "Einklappen",
@@ -447,9 +400,7 @@
         "edit": "Bearbeiten",
         "openInstances": "Instanzen öffnen",
         "copyId": "Klassen-ID kopieren",
-        "cannotDelete": "Diese Klasse kann nicht gelöscht werden, da sie verwendet wird!",
         "delete": "Löschen",
-        "deleteConfirmation": "Möchten Sie diese Ressourcenklasse löschen?",
         "idCopied": "Klassen-ID in Zwischenablage kopiert!"
       },
       "propertyForm": {
@@ -1484,8 +1435,7 @@
       "projectTabs": {
         "data": "Daten",
         "dataModels": "Datenmodelle",
-        "settings": "Einstellungen",
-        "dataModels2": "Datenmodelle 2"
+        "settings": "Einstellungen"
       }
     },
     "grid": {

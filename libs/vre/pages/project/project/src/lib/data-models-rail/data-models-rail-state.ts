@@ -43,8 +43,8 @@ export class DataModelsRailState {
     return ontologies.find(o => OntologyService.getOntologyNameFromIri(o.iri) === name) ?? ontologies[0];
   });
   private readonly _graphsByIri = toSignal(this._graphs.graphs$);
-  /** The tab whose sections these are: Data models 2. */
-  tab: string = RouteConstants.dataModels2;
+  /** The tab whose sections these are: Data models. */
+  tab: string = RouteConstants.dataModels;
   /** How many classes and properties each data model has, by its IRI, once read. */
   readonly counts = computed(() => {
     const counts = new Map<string, { classes: number; properties: number }>();

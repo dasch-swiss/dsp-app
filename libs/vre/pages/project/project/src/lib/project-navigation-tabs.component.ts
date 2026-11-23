@@ -26,13 +26,9 @@ import { ProjectPageService } from './project-page.service';
         <mat-icon class="tab-icon">search</mat-icon>
         {{ 'ui.common.actions.search' | translate }}
       </a>
-      <a mat-tab-link [routerLink]="[DATA_MODELS]" [class.active-link]="isDataModelsRouteActive()">
+      <a mat-tab-link [routerLink]="[DATA_MODELS]" routerLinkActive="active-link" data-cy="data-models-tab">
         <mat-icon class="tab-icon">lan</mat-icon>
         {{ 'shared.header.projectTabs.dataModels' | translate }}
-      </a>
-      <a mat-tab-link [routerLink]="[DATA_MODELS_2]" routerLinkActive="active-link" data-cy="data-models-2-tab">
-        <mat-icon class="tab-icon">account_tree</mat-icon>
-        {{ 'shared.header.projectTabs.dataModels2' | translate }}
       </a>
       @if (projectPageService.hasProjectAdminRights$ | async) {
         <a mat-tab-link [routerLink]="[SETTINGS]" routerLinkActive="active-link">
@@ -64,7 +60,6 @@ import { ProjectPageService } from './project-page.service';
 export class ProjectNavigationTabsComponent {
   readonly DATA = RouteConstants.data;
   readonly DATA_MODELS = RouteConstants.dataModels;
-  readonly DATA_MODELS_2 = RouteConstants.dataModels2;
   readonly SETTINGS = RouteConstants.settings;
   readonly SEARCH = RouteConstants.advancedSearch;
   readonly DESCRIPTION = RouteConstants.projectDescription;
@@ -90,10 +85,6 @@ export class ProjectNavigationTabsComponent {
 
   isDataRouteActive(): boolean {
     return this.path === 'data' || this.path.startsWith('/data/');
-  }
-
-  isDataModelsRouteActive(): boolean {
-    return this.path === RouteConstants.dataModels || this.path === RouteConstants.ontology;
   }
 
   isSearchRouteActive() {
