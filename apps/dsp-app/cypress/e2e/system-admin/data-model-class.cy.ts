@@ -2,8 +2,18 @@ import { ResourceClassDefinitionWithAllLanguages } from '../../../../../libs/dsp
 import { faker } from '@faker-js/faker';
 import { DataModelClassProperty } from '../../models/data-model-class';
 import { CLASS_TYPES, PropertyType } from '../../support/helpers/constants';
+import {
+  addNewPropertyFromType,
+  classCard,
+  openClassMenu,
+  openCreateClassDialog,
+} from '../../support/helpers/data-models';
 import { uniqueName } from '../../support/helpers/unique-name';
 import ProjectPage from '../../support/pages/project-page';
+
+/** A property's row on a class's card, by the property's label. */
+const propertyRow = (className: string, label: string) =>
+  classCard(className).contains('[data-cy=data-model-class-card-property]', label);
 
 describe('Data Model Class', () => {
   const projectPage = new ProjectPage();
@@ -45,8 +55,7 @@ describe('Data Model Class', () => {
 
     cy.createOntology(projectPage);
 
-    cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
-    cy.get(`[data-cy=${classType.type}]`).scrollIntoView().should('be.visible').click({ force: true });
+    openCreateClassDialog(classType.label);
 
     cy.get('[data-cy=name-input]').clear().type(textClass.id);
     cy.get('[data-cy=label-input]').clear().type(textClass.label);
@@ -54,25 +63,20 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createRequest');
-    cy.get('[data-cy=class-card]')
-      .should('be.visible')
-      .within(() => {
-        cy.get('mat-card-title').contains(textClass.label.split(' ')[0]);
-      });
-    // The within function is used to scope the search for mat-card-title within the visible class-card. This ensures that Cypress waits for mat-card-title to be available within the class-card.
-    cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
-    cy.get(`[data-cy=Resource]`).scrollIntoView().should('be.visible').click({ force: true });
+    classCard(textClass.id).should('be.visible').should('contain.text', textClass.label);
+
+    openCreateClassDialog(CLASS_TYPES.objectWithoutRepresentation.label);
     cy.get('[data-cy=name-input]').clear().type(resourceClass.id);
     cy.get('[data-cy=label-input]').clear().type(resourceClass.label);
     cy.get('[data-cy=comment-textarea]').type(resourceClass.comment);
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createRequest');
-    cy.get('[data-cy=class-card]')
+    classCard(resourceClass.id).should('be.visible').should('contain.text', resourceClass.label);
+    classCard(textClass.id)
+      .find('[data-cy=data-model-class-card-file]')
       .should('be.visible')
-      .get('mat-card-title')
-      .contains(resourceClass.label.split(' ')[0]);
-    cy.get('[data-cy=class-type-label]').should('be.visible').should('include.text', classType.label);
+      .should('include.text', classType.fileLabel);
   });
 
   it('should create new class with object class constraints (e.g. page as part of a book)', () => {
@@ -104,8 +108,7 @@ describe('Data Model Class', () => {
 
     cy.createOntology(projectPage);
     // create a book
-    cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
-    cy.get(`[data-cy=${bookType.type}]`).scrollIntoView().should('be.visible').click({ force: true });
+    openCreateClassDialog(bookType.label);
 
     cy.get('[data-cy=name-input]').clear().type(bookClass.id);
     cy.get('[data-cy=label-input]').clear().type(bookClass.label);
@@ -113,26 +116,21 @@ describe('Data Model Class', () => {
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createRequest');
-    cy.get('[data-cy=class-card]')
-      .should('be.visible')
-      .within(() => {
-        cy.get('mat-card-title').contains(bookClass.label.split(' ')[0]);
-      });
+    classCard(bookClass.id).should('be.visible').should('contain.text', bookClass.label);
 
     // create a still image class
-    cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
-    cy.get(`[data-cy=${stillImageType.type}]`).scrollIntoView().should('be.visible').click({ force: true });
+    openCreateClassDialog(stillImageType.label);
     cy.get('[data-cy=name-input]').clear().type(stillImageClass.id);
     cy.get('[data-cy=label-input]').clear().type(stillImageClass.label);
     cy.get('[data-cy=comment-textarea]').type(stillImageClass.comment);
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@createRequest');
-    cy.get('[data-cy=class-card]')
+    classCard(stillImageClass.id).should('be.visible').should('contain.text', stillImageClass.label);
+    classCard(stillImageClass.id)
+      .find('[data-cy=data-model-class-card-file]')
       .should('be.visible')
-      .get('mat-card-title')
-      .contains(stillImageClass.label.split(' ')[0]);
-    cy.get('[data-cy=class-type-label]').should('be.visible').should('include.text', stillImageType.label);
+      .should('include.text', stillImageType.fileLabel);
 
     // link them
     const partOfProperty = <DataModelClassProperty>{
@@ -150,11 +148,7 @@ describe('Data Model Class', () => {
     cy.intercept('POST', '/v2/ontologies/properties').as('createPropertyRequest');
     cy.intercept('POST', '/v2/ontologies/cardinalities').as('addCardinalityRequest');
     // partOf property
-    cy.get('[data-cy=class-card]').eq(0).should('be.visible');
-    cy.get('[data-cy=add-property-button]').eq(0).should('be.visible').click();
-    cy.get('[data-cy=create-new-from-type-button]').should('be.visible').click({ force: true });
-    cy.get(`[data-cy=${PropertyType.LinkRelation}]`).should('be.visible').click();
-    cy.get(`[data-cy=${PropertyType.PartOfClass}]`).should('be.visible').click();
+    addNewPropertyFromType(stillImageClass.id, PropertyType.LinkRelation, PropertyType.PartOfClass);
 
     cy.get('[data-cy=name-input]').clear().type(partOfProperty.name);
     cy.get('[data-cy=label-input] input').clear().type(partOfProperty.label);
@@ -167,14 +161,13 @@ describe('Data Model Class', () => {
 
     cy.wait('@createPropertyRequest');
     cy.wait('@addCardinalityRequest');
-    cy.get('[data-cy=property-object-label]').should('be.visible').should('include.text', bookClass.label);
+    propertyRow(stillImageClass.id, partOfProperty.label)
+      .find('[data-cy=data-model-class-card-target]')
+      .should('be.visible')
+      .should('include.text', bookClass.label);
 
     // linkToClass property
-    cy.get('[data-cy=class-card]').eq(0).should('be.visible');
-    cy.get('[data-cy=add-property-button]').eq(0).should('be.visible').click();
-    cy.get('[data-cy=create-new-from-type-button]').should('be.visible').click({ force: true });
-    cy.get(`[data-cy=${PropertyType.LinkRelation}]`).should('be.visible').click();
-    cy.get(`[data-cy=${PropertyType.LinkToClass}]`).should('be.visible').click();
+    addNewPropertyFromType(stillImageClass.id, PropertyType.LinkRelation, PropertyType.LinkToClass);
 
     cy.get('[data-cy=name-input]').clear().type(linkToClassProperty.name);
     cy.get('[data-cy=label-input] input').clear().type(linkToClassProperty.label);
@@ -186,32 +179,34 @@ describe('Data Model Class', () => {
     cy.wait('@createPropertyRequest');
     cy.wait('@addCardinalityRequest');
     // there should be a second property with a link to the class
-    cy.get('[data-cy=property-object-label]').eq(1).should('be.visible').should('include.text', bookClass.label);
+    propertyRow(stillImageClass.id, linkToClassProperty.label)
+      .find('[data-cy=data-model-class-card-target]')
+      .should('be.visible')
+      .should('include.text', bookClass.label);
 
-    // go back to data models, lists and create a list
-    cy.get('[data-cy=back-to-data-models]').should('be.visible').click();
-    cy.get('[data-cy=create-list-button]').should('be.visible').click();
-
+    // create a list from the rail
     const listLabel = uniqueName();
 
-    cy.get('[data-cy=create-list-button]').click({ force: true, multiple: false });
+    cy.get('[data-cy=data-models-tree-create-vocabulary]').should('be.visible').click();
     cy.get('[data-cy=label-input]:visible').should('have.length', 1).type(listLabel);
     cy.get('[data-cy=comments-input]:visible').should('have.length', 1).type(faker.lorem.sentence());
     cy.get('[data-cy=submit-button]:visible').should('have.length', 1).click();
-    projectPage.visitDataModels();
-    cy.get('[data-cy=ontology-button]').should('be.visible').click();
+    cy.url().should('match', /\/data-models\/list\/(.+)/);
+
+    // back to the data model's classes, to add a list property
+    cy.get('@ontology').then((created: any) => projectPage.visitDataModels('classes', created.ontology.name));
+    const listProperty = <DataModelClassProperty>{
+      name: uniqueName(),
+      label: `C${faker.lorem.words(2)}`,
+      comment: faker.lorem.word({ length: 5 }),
+    };
     cy.intercept('POST', '/v2/ontologies/properties').as('createPropertyRequest');
     cy.intercept('POST', '/v2/ontologies/cardinalities').as('addCardinalityRequest');
-    // partOf property
-    cy.get('[data-cy=class-card]').eq(0).should('be.visible');
-    cy.get('[data-cy=add-property-button]').eq(0).should('be.visible').click();
-    cy.get('[data-cy=create-new-from-type-button]').should('be.visible').click({ force: true });
-    cy.get(`[data-cy=${PropertyType.List}]`).should('be.visible').click();
-    cy.get(`[data-cy=${PropertyType.Dropdown}]`).should('be.visible').click();
+    addNewPropertyFromType(stillImageClass.id, PropertyType.List, PropertyType.Dropdown);
 
-    cy.get('[data-cy=name-input]').clear().type(uniqueName());
-    cy.get('[data-cy=label-input] input').clear().type(faker.lorem.word({ length: 2 }));
-    cy.get('[data-cy=comment-textarea]').type(faker.lorem.word({ length: 5 }));
+    cy.get('[data-cy=name-input]').clear().type(listProperty.name);
+    cy.get('[data-cy=label-input] input').clear().type(listProperty.label);
+    cy.get('[data-cy=comment-textarea]').type(listProperty.comment);
     cy.get('[data-cy=object-attribute-list]').click(); // open dropdown
 
     cy.get('mat-option').contains(listLabel).scrollIntoView().should('be.visible').click();
@@ -220,38 +215,35 @@ describe('Data Model Class', () => {
 
     cy.wait('@createPropertyRequest');
     cy.wait('@addCardinalityRequest');
-    cy.get('[data-cy=property-object-label]').should('be.visible').should('include.text', bookClass.label);
+    propertyRow(stillImageClass.id, listProperty.label).should('be.visible');
   });
 
   it('should cancel to create data model class', () => {
     const classType = CLASS_TYPES.stillImageRepresentation;
     cy.createOntology(projectPage);
 
-    cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
-    cy.get(`[data-cy=${classType.type}]`).scrollIntoView().should('be.visible').click({ force: true });
+    openCreateClassDialog(classType.label);
     cy.get('.mat-mdc-dialog-container').should('be.visible');
     cy.get('[data-cy=cancel-button]').scrollIntoView().should('be.visible').click();
     cy.get('.mat-mdc-dialog-container').should('not.exist');
 
-    cy.get('[data-cy=create-class-button]').scrollIntoView().should('be.visible').click();
-    cy.get(`[data-cy=${classType.type}]`).scrollIntoView().click({ force: true });
+    openCreateClassDialog(classType.label);
     cy.get('.mat-mdc-dialog-container').should('be.visible');
     cy.get('.cdk-overlay-backdrop-showing').click(-50, -50, { force: true });
     cy.get('.mat-mdc-dialog-container').should('not.exist');
+    cy.get('[data-cy=data-model-class-card]').should('not.exist');
   });
 
   it('should delete a data model class', () => {
     cy.intercept('GET', '/v2/ontologies/candeleteclass/*').as('canDeleteClassRequest');
-    cy.createDataModelClass(projectPage);
-    const classCard = cy.get('[data-cy=class-card] mat-card-header');
-    classCard.should('be.visible');
-    classCard.trigger('mouseenter').wait(100);
-    cy.get('[data-cy=more-button]').scrollIntoView().should('be.visible').click();
-    // the delete item stays disabled until /candeleteclass answers
-    cy.wait('@canDeleteClassRequest');
-    cy.get('[data-cy=delete-button]').should('not.be.disabled').click();
-    cy.get('[data-cy=confirmation-button]').click();
-    classCard.should('not.exist');
+    cy.createDataModelClass(projectPage).then(resourceClass => {
+      openClassMenu(resourceClass.name);
+      // the delete item stays disabled until /candeleteclass answers
+      cy.wait('@canDeleteClassRequest');
+      cy.get('[data-cy=data-model-class-card-delete]').should('not.be.disabled').click();
+      cy.get('[data-cy=confirmation-button]').click();
+      classCard(resourceClass.name).should('not.exist');
+    });
   });
 
   it('should add property to a data model class', () => {
@@ -262,20 +254,16 @@ describe('Data Model Class', () => {
     };
 
     cy.intercept('POST', '/v2/ontologies/properties').as('createPropertyRequest');
-    cy.createDataModelClass(projectPage);
+    cy.createDataModelClass(projectPage).then(resourceClass => {
+      addNewPropertyFromType(resourceClass.name, PropertyType.Text, PropertyType.Short);
 
-    cy.get('[data-cy=class-card]').should('be.visible');
-    cy.get('[data-cy=add-property-button]').should('be.visible').click();
-    cy.get('[data-cy=create-new-from-type-button]').should('be.visible').click({ force: true });
-    cy.get(`[data-cy=${PropertyType.Text}]`).should('be.visible').click();
-    cy.get(`[data-cy=${PropertyType.Short}]`).should('be.visible').click();
+      cy.get('[data-cy=name-input]').clear().type(textProperty.name);
+      cy.get('[data-cy=label-input] input').clear().type(textProperty.label);
+      cy.get('[data-cy=comment-textarea]').type(textProperty.comment);
+      cy.get('[data-cy=submit-button]').click();
 
-    cy.get('[data-cy=name-input]').clear().type(textProperty.name);
-    cy.get('[data-cy=label-input] input').clear().type(textProperty.label);
-    cy.get('[data-cy=comment-textarea]').type(textProperty.comment);
-    cy.get('[data-cy=submit-button]').click();
-
-    cy.wait('@createPropertyRequest');
-    cy.get('[data-cy=property-label]').should('be.visible').should('include.text', textProperty.label);
+      cy.wait('@createPropertyRequest');
+      propertyRow(resourceClass.name, textProperty.label).should('be.visible');
+    });
   });
 });

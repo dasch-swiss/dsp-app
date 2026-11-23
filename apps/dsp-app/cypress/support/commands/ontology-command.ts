@@ -1,6 +1,7 @@
 import { CreateOntology, OntologyMetadata } from '../../../../../libs/dsp-js/src';
 import { faker } from '@faker-js/faker';
 import { JsonConvert } from 'json2typescript';
+import { railModel } from '../helpers/data-models';
 import { uniqueName } from '../helpers/unique-name';
 import ProjectPage from '../pages/project-page';
 
@@ -29,7 +30,9 @@ Cypress.Commands.add(
       .then(response => {
         const ontologyMetadata = response.body;
         cy.log('Ontology created!');
-        cy.visit(`/project/${projectPage.projectUuid}/ontology/${ontology.name}/editor/classes`);
+        // The Data models tab, on the new data model's classes, once its rail lists it.
+        projectPage.visitDataModels('classes', ontology.name);
+        railModel(ontology.label).should('be.visible');
         return cy.wrap({ ontology, ontologyMetadata }).as('ontology');
       });
   }
