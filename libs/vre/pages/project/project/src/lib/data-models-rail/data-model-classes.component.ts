@@ -245,9 +245,10 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
         --density-name: 12px;
         --density-texts-gap: 1px;
         --density-check-col: 112px;
-        --density-check-layer: 26px;
+        --density-check-layer: 22px;
         --density-check-label: 11.5px;
-        --density-check-scale: 0.89;
+        // Small boxes, 13px, beside words at their full size.
+        --density-check-scale: 0.72;
       }
 
       // On a narrow screen the search gives room first, down to a usable width.
