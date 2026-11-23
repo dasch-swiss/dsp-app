@@ -27,6 +27,40 @@ export const LIST_PAGE_BACK = 'listPageBack';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-list-page',
   templateUrl: './list-page.component.html',
+  styles: `
+    @use '../../../../../../../apps/dsp-app/src/styles/config' as *;
+
+    // The head in Data models 2: as its Resource classes and Properties heads.
+    .dm2-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dm2-texts {
+      flex: 1;
+      min-width: 0;
+
+      h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 500;
+      }
+    }
+
+    .dm2-description {
+      margin: 4px 0 0;
+      font-size: 14px;
+      color: $cool_gray_700;
+    }
+
+    .dm2-actions {
+      flex: none;
+      display: flex;
+      gap: 4px;
+    }
+  `,
   providers: [ListItemService],
   imports: [
     AsyncPipe,
@@ -61,6 +95,9 @@ export class ListPageComponent implements OnInit, OnDestroy {
   hasProjectAdminRights$ = this._projectPageService.hasProjectAdminRights$;
 
   isListsLoading$ = of(false);
+
+  /** Opened from the Data models 2 tab, whose head differs. */
+  readonly inDataModels2 = this._route.snapshot.data[LIST_PAGE_BACK] === RouteConstants.dataModels2;
 
   private _destroy = new Subject<void>();
   private readonly _translate = inject(TranslateService);

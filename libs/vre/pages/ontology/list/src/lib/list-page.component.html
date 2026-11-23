@@ -3,7 +3,38 @@
   <div class="overlay-blocker">
     <app-progress-indicator-overlay class="floating-center" />
   </div>
-  } @if ((isListsLoading$ | async) === false && (rootListNodeInfo$ | async); as list) {
+  } @if ((isListsLoading$ | async) === false && (rootListNodeInfo$ | async); as list) { @if (inDataModels2) {
+  <!-- In Data models 2: the title and the description, as its other sections, with the actions at the right. -->
+  <div class="dm2-head">
+    <div class="dm2-texts">
+      <h2 data-cy="label-title">{{ list.labels | appStringifyStringLiteral }}</h2>
+      @if (list.comments.length) {
+      <p class="dm2-description" data-cy="comment-title">{{ list.comments | appStringifyStringLiteral }}</p>
+      }
+    </div>
+    @if ((hasProjectAdminRights$ | async) === true) {
+    <div class="dm2-actions">
+      <button
+        mat-button
+        (click)="editList(list!)"
+        [matTooltip]="'pages.ontology.list.editInfo' | translate"
+        data-cy="edit-button">
+        <mat-icon>edit</mat-icon>
+        {{ 'ui.common.actions.edit' | translate }}
+      </button>
+      <button
+        color="warn"
+        mat-button
+        (click)="askToDeleteList(list)"
+        [matTooltip]="'pages.ontology.list.deleteList' | translate"
+        data-cy="delete-button">
+        <mat-icon>delete</mat-icon>
+        {{ 'ui.common.actions.delete' | translate }}
+      </button>
+    </div>
+    }
+  </div>
+  } @else {
   <mat-toolbar style="margin-bottom: 48px">
     <mat-toolbar-row>
       <a mat-button (click)="navigateToDataModels()" [matTooltip]="'pages.ontology.list.backToDataModels' | translate">
@@ -49,7 +80,7 @@
       }
     </mat-toolbar-row>
   </mat-toolbar>
-  @if (((isListsLoading$ | async) === false)) {
+  } @if (((isListsLoading$ | async) === false)) {
   <app-list-item [node]="list" [isAdmin]="(hasProjectAdminRights$ | async) === true" />
   } }
 </app-centered-layout>
