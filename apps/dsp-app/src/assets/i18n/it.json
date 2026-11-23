@@ -960,22 +960,6 @@
         "add": "Aggiungi una descrizione ({{language}}) a {{class}}",
         "editLabel": "Modifica l'etichetta ({{language}}) di {{class}}",
         "addLabel": "Aggiungi un'etichetta ({{language}}) a {{class}}"
-      },
-      "density": {
-        "title": "Densità",
-        "compact": "Compatta",
-        "compactHint": "Il maggior numero di proprietà in vista",
-        "comfortable": "Comoda",
-        "comfortableHint": "Più spazio tra le proprietà, testo più grande",
-        "spacious": "Spaziosa",
-        "spaciousHint": "Il massimo spazio, testo e caselle più grandi"
-      },
-      "header": {
-        "title": "Intestazione",
-        "twoLines": "Due righe",
-        "twoLinesHint": "Il titolo e Crea classe di risorsa sulla prima riga, la ricerca sotto",
-        "oneLine": "Una riga",
-        "oneLineHint": "Il titolo, la ricerca e Crea classe di risorsa affiancati"
       }
     }
   },

@@ -960,22 +960,6 @@
         "add": "Add a {{language}} description to {{class}}",
         "editLabel": "Edit the {{language}} label of {{class}}",
         "addLabel": "Add a {{language}} label to {{class}}"
-      },
-      "density": {
-        "title": "Density",
-        "compact": "Compact",
-        "compactHint": "The most properties in view",
-        "comfortable": "Comfortable",
-        "comfortableHint": "More room between properties, bigger text",
-        "spacious": "Spacious",
-        "spaciousHint": "The most room, the biggest text and checkboxes"
-      },
-      "header": {
-        "title": "Header",
-        "twoLines": "Two lines",
-        "twoLinesHint": "The title and Create resource class on the first line, the search below",
-        "oneLine": "One line",
-        "oneLineHint": "The title, the search and Create resource class side by side"
       }
     }
   },

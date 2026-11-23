@@ -390,7 +390,8 @@ export interface PropertyOrder {
         display: flex;
         align-items: flex-start;
         gap: 2px;
-        padding: 6px 4px 6px 16px;
+        // As the property rows: their texts 16px from the left and 6px from the top, the toggle flush with their checkboxes.
+        padding: 6px 19px 6px 16px;
 
         .texts {
           flex: 1;
@@ -582,6 +583,8 @@ export interface PropertyOrder {
       // "Add property" under an opened card's properties, as in the Data models tab.
       .add-property {
         display: block;
+        // Room above and below as the property rows have.
+        padding: var(--density-pad, 1px) 0;
         border-top: 1px solid $cool_gray_100;
       }
 

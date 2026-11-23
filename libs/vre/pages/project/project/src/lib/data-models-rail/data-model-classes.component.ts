@@ -29,17 +29,6 @@ import { DataModelClassCardsComponent, PropertyOrder, InheritedLayout } from './
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
-import { rememberedSignal } from './remembered-signal';
-
-/** The head's layout: the title alone on a first line with the create button, or everything on one line. */
-type Header = 'twoLines' | 'oneLine';
-const HEADERS: readonly Header[] = ['twoLines', 'oneLine'];
-
-/** How much room the cards give each property: as compact as can be, or roomier for reading. */
-type Density = 'compact' | 'comfortable' | 'spacious';
-const DENSITIES: readonly Density[] = ['compact', 'comfortable', 'spacious'];
-/** How much wider than at compact a card is, in px, for its bigger checkboxes and words. */
-const DENSITY_EXTRA_WIDTH: Record<Density, number> = { compact: 0, comfortable: 20, spacious: 40 };
 
 /**
  * Data models 2 › Resource classes: the data model's classes as cards, one per class with its properties, as the Data models tab
@@ -67,8 +56,8 @@ const DENSITY_EXTRA_WIDTH: Record<Density, number> = { compact: 0, comfortable: 
     @let r = 'pages.dataModels2';
     @let t = 'pages.dataBrowser.dataModelMap';
     <div class="section">
-      <!-- On two lines unless chosen otherwise: the title and the create button, then the search and the tools. -->
-      <div class="head" [class.two-lines]="header() === 'twoLines'" [class.one-line]="header() === 'oneLine'">
+      <!-- On one line: the title, the search and the create button; the tools, small, on a line under it. -->
+      <div class="head one-line">
         <h2>{{ r + '.classes' | translate }}</h2>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
           <mat-icon matPrefix>search</mat-icon>
@@ -106,59 +95,6 @@ const DENSITY_EXTRA_WIDTH: Record<Density, number> = { compact: 0, comfortable: 
           </mat-menu>
         }
         <div class="tools">
-          <!-- View options: how much room each card's properties take. -->
-          <button
-            mat-button
-            type="button"
-            class="view-options"
-            data-cy="data-model-classes-view-options"
-            [matMenuTriggerFor]="viewMenu">
-            <mat-icon>tune</mat-icon>
-            {{ 'pages.dataBrowser.viewOptions.title' | translate }}
-          </button>
-          <mat-menu #viewMenu="matMenu" xPosition="before">
-            <span class="menu-heading">{{ r + '.density.title' | translate }}</span>
-            @for (option of densities; track option) {
-              @let chosen = density() === option;
-              <!-- Choosing keeps the menu open, to compare the three on the cards behind it. -->
-              <button
-                mat-menu-item
-                type="button"
-                class="view-entry"
-                role="menuitemradio"
-                [attr.aria-checked]="chosen"
-                [attr.data-cy]="'data-model-classes-density-' + option"
-                (click)="$event.stopPropagation(); density.set(option)">
-                <mat-icon [class.chosen]="chosen">{{
-                  chosen ? 'radio_button_checked' : 'radio_button_unchecked'
-                }}</mat-icon>
-                <span class="view-item">
-                  <span>{{ r + '.density.' + option | translate }}</span>
-                  <span class="view-hint">{{ r + '.density.' + option + 'Hint' | translate }}</span>
-                </span>
-              </button>
-            }
-            <span class="menu-heading">{{ r + '.header.title' | translate }}</span>
-            @for (option of headers; track option) {
-              @let chosen = header() === option;
-              <button
-                mat-menu-item
-                type="button"
-                class="view-entry"
-                role="menuitemradio"
-                [attr.aria-checked]="chosen"
-                [attr.data-cy]="'data-model-classes-header-' + option"
-                (click)="$event.stopPropagation(); header.set(option)">
-                <mat-icon [class.chosen]="chosen">{{
-                  chosen ? 'radio_button_checked' : 'radio_button_unchecked'
-                }}</mat-icon>
-                <span class="view-item">
-                  <span>{{ r + '.header.' + option | translate }}</span>
-                  <span class="view-hint">{{ r + '.header.' + option + 'Hint' | translate }}</span>
-                </span>
-              </button>
-            }
-          </mat-menu>
           @if (rows().length) {
             <button mat-button type="button" data-cy="data-model-class-cards-fold" (click)="toggleAllCards()">
               <mat-icon>{{ allCardsOpen() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
@@ -183,7 +119,7 @@ const DENSITY_EXTRA_WIDTH: Record<Density, number> = { compact: 0, comfortable: 
         [kindForAll]="kindForAll()"
         [showColours]="showColours()"
         [style.--card-width.px]="cardWidth()"
-        [attr.data-density]="density()"
+        data-density="comfortable"
         [(folded)]="foldedCards"
         (reorder)="reorderProperties($event)"
         (editClass)="edit($event)"
@@ -301,52 +237,7 @@ const DENSITY_EXTRA_WIDTH: Record<Density, number> = { compact: 0, comfortable: 
         white-space: nowrap;
       }
 
-      .view-options {
-        height: 36px;
-        font-size: 13px;
-      }
-
-      // View options, as the diagram's: a heading, then each choice with its hint under it.
-      .menu-heading {
-        display: block;
-        padding: 8px 16px 4px;
-        font-size: 12px;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
-      }
-
-      .view-entry {
-        --mat-menu-item-label-text-size: 13px;
-        padding-top: 6px;
-        padding-bottom: 6px;
-
-        mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-          margin-right: 12px;
-
-          &.chosen {
-            color: $primary;
-          }
-        }
-      }
-
-      .view-item {
-        display: flex;
-        flex-direction: column;
-        max-width: 280px;
-        white-space: normal;
-        line-height: 1.3;
-      }
-
-      .view-hint {
-        font-size: 12px;
-        color: $cool_gray_500;
-      }
-
-      // Each density's sizes, which the property rows and their checkboxes read; compact is theirs by default.
+      // The comfortable sizes, which the property rows and their checkboxes read; compact is theirs by default.
       .cards-box[data-density='comfortable'] {
         --density-row: 32px;
         --density-pad: 4px;
@@ -357,18 +248,6 @@ const DENSITY_EXTRA_WIDTH: Record<Density, number> = { compact: 0, comfortable: 
         --density-check-layer: 26px;
         --density-check-label: 11.5px;
         --density-check-scale: 0.89;
-      }
-
-      .cards-box[data-density='spacious'] {
-        --density-row: 40px;
-        --density-pad: 7px;
-        --density-label: 14.5px;
-        --density-name: 12.5px;
-        --density-texts-gap: 2px;
-        --density-check-col: 124px;
-        --density-check-layer: 30px;
-        --density-check-label: 12.5px;
-        --density-check-scale: 1;
       }
 
       // On a narrow screen the search gives room first, down to a usable width.
@@ -429,25 +308,15 @@ export class DataModelClassesComponent {
   readonly kindForAll = signal(true).asReadonly();
   /** A subclass's card lists its superclass's properties after the class's own. */
   readonly inheritedLayout = signal<InheritedLayout>('listed').asReadonly();
-  readonly headers = HEADERS;
-  /** The head's layout, as the viewer last chose: on two lines unless chosen otherwise. */
-  readonly header = rememberedSignal<Header>('dsp-data-models-classes-header', 'twoLines', stored =>
-    HEADERS.find(header => header === stored)
-  );
-  readonly densities = DENSITIES;
-  /** How much room each card's properties take, as the viewer last chose: compact unless chosen otherwise. */
-  readonly density = rememberedSignal<Density>('dsp-data-models-card-density', 'compact', stored =>
-    DENSITIES.find(density => density === stored)
-  );
   /**
-   * The cards' least width: room for the checkboxes' words on each row, less for columns, least for the chip; more
-   * as the density gives the rows more room.
+   * The cards' least width: room for the checkboxes' words on each row, less for columns, least for the chip; 20px
+   * more for the comfortable rows' bigger checkboxes and words.
    */
   readonly cardWidth = computed(
     () =>
       ({ rows: 420, columns: 350, ticked: 350, chip: 320, differs: 320, bar: 300, symbols: 300, words: 380 })[
         this.cardinalityLayout()
-      ] + DENSITY_EXTRA_WIDTH[this.density()]
+      ] + 20
   );
 
   /** The classes whose name, file or properties have the searched text, in any language. */
