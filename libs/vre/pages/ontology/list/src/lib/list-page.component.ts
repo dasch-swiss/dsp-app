@@ -30,6 +30,16 @@ export const LIST_PAGE_BACK = 'listPageBack';
   styles: `
     @use '../../../../../../../apps/dsp-app/src/styles/config' as *;
 
+    // In Data models 2, the page sits at the left with its sections' padding, not centered.
+    app-centered-layout.at-left {
+      justify-content: flex-start;
+
+      ::ng-deep > .content {
+        margin: 0;
+        padding: 16px 24px;
+      }
+    }
+
     // The head in Data models 2: as its Resource classes and Properties heads.
     .dm2-head {
       display: flex;

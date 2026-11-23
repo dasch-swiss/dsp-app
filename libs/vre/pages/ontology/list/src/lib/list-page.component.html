@@ -1,4 +1,4 @@
-<app-centered-layout>
+<app-centered-layout [class.at-left]="inDataModels2">
   @if ((isListsLoading$ | async)) {
   <div class="overlay-blocker">
     <app-progress-indicator-overlay class="floating-center" />
