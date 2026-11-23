@@ -565,6 +565,8 @@ const COLUMN_LABELS: Record<Column, string> = {
         display: inline-flex;
         visibility: hidden;
         .mat-mdc-icon-button {
+          // Sized for the 18px icon, which sits off-centre in Material's 24px otherwise.
+          --mat-icon-button-icon-size: 18px;
           width: 32px;
           height: 32px;
           padding: 7px;
