@@ -8,6 +8,7 @@
 #   just lint                         ESLint: the Bazel aspect, pnpm for what it does not see
 #   just ci                           the gate: build, test, lint, knip, Storybook, the Cypress
 #                                     type-check, the version checks and the visibility check
+#   just ng-serve | jest | eslint     local dev loop outside Bazel, not part of the gate
 #
 # An argument starting with `//` is a target list; anything else is a configuration name. Every
 # Bazel call appends $BAZEL_FLAGS, which CI sets to the remote flags plus --lockfile_mode=error,
@@ -45,6 +46,33 @@ serve config="production":
     ibazel build //apps/dsp-app:dist "$flag" $BAZEL_FLAGS &
     trap 'kill $!' EXIT
     {{ static_server }} --port 4200 "$(bazel info bazel-bin "$flag" $BAZEL_FLAGS 2>/dev/null)/apps/dsp-app/dist"
+
+# Local development only, outside Bazel: the Angular CLI's dev server with live reload on
+# http://localhost:4200. It copies the configuration's environment file to the gitignored
+# environment.ts that Bazel otherwise writes; `just build` and `just ci` stay the gate.
+ng-serve config="development": install openapi-generate
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case "{{ config }}" in
+      production) env=prod ;;
+      development | dev-server | ls-test-server | stage-server) env="{{ config }}" ;;
+      *) echo "just ng-serve: production, development, dev-server, ls-test-server or stage-server, not {{ config }}" >&2; exit 1 ;;
+    esac
+    cp "apps/dsp-app/src/environments/environment.$env.ts" apps/dsp-app/src/environments/environment.ts
+    # Components name the `.css` Bazel compiles from their `.scss`; write it locally and keep it current.
+    node scripts/dev-styles.mjs
+    node scripts/dev-styles.mjs --watch &
+    trap 'kill $!' EXIT
+    pnpm exec ng serve
+
+# Local development only, outside Bazel: Jest on one library (`just jest libs/vre/ui/ui [jest args]`).
+# It does not check the library's declared deps; `just test` does.
+jest lib *ARGS: openapi-generate
+    pnpm exec jest -c {{ lib }}/jest.config.js {{ ARGS }}
+
+# Local development only, outside Bazel: ESLint on the given files or directories
+eslint +PATHS: openapi-generate
+    pnpm exec eslint --flag v10_config_lookup_from_file --no-warn-ignored {{ PATHS }}
 
 # Build Storybook and its breakpoint-stories variant; a story's type error fails here
 storybook-build:

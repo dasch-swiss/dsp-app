@@ -136,6 +136,14 @@ These must be clean:
 - `just typecheck-e2e` when you changed a Cypress spec or support file.
 - `just ci` runs the whole gate CI runs.
 
+## Local Dev Loop Outside Bazel
+
+For a faster edit loop only; none of these is a gate, and the Bazel recipes above stay the check before committing.
+
+- `just ng-serve [config]` — the Angular CLI dev server with live reload on http://localhost:4200 (default `development`). It writes the gitignored `environment.ts` and the component `.css` files Bazel otherwise compiles (`scripts/dev-styles.mjs`), and compiles with the strict flags off (`apps/dsp-app/tsconfig.serve.json`), so `just build` still catches type errors.
+- `just jest <library> [jest args]` — Jest on one library's sources; an import the library's `BUILD.bazel` does not declare passes here and fails in `just test`.
+- `just eslint <paths>` — ESLint on the given files or directories.
+
 ## Dependency Management
 
 - No bot updates dependencies: Renovate is disabled, library updates are analysed and made by hand, security advisories still arrive as Dependabot PRs. `renovate.json`'s rules record why packages are coupled; read them before a bump.

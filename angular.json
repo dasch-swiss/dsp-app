@@ -44,6 +44,22 @@
             "scripts": [
               "node_modules/openseadragon/build/openseadragon/openseadragon.min.js"
             ]
+          },
+          "configurations": {
+            "development": {
+              "tsConfig": "apps/dsp-app/tsconfig.serve.json",
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "namedChunks": true
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "dsp-app:build:development",
+            "port": 4200
           }
         },
         "storybook": {
