@@ -25,6 +25,7 @@ import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component'
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
 import { CardinalityLayout } from './class-card-property.component';
+import { COMFORTABLE_CARD_SIZES } from './class-card-property.component';
 import { DataModelClassCardsComponent, PropertyOrder, InheritedLayout } from './data-model-class-cards.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
@@ -237,18 +238,9 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
         white-space: nowrap;
       }
 
-      // The comfortable sizes, which the property rows and their checkboxes read; compact is theirs by default.
+      // The comfortable sizes, which the property rows and their checkboxes read.
       .cards-box[data-density='comfortable'] {
-        --density-row: 32px;
-        --density-pad: 4px;
-        --density-label: 13.5px;
-        --density-name: 12px;
-        --density-texts-gap: 1px;
-        --density-check-col: 112px;
-        --density-check-layer: 22px;
-        --density-check-label: 11.5px;
-        // Small boxes, 13px, beside words at their full size.
-        --density-check-scale: 0.72;
+        ${COMFORTABLE_CARD_SIZES}
       }
 
       // On a narrow screen the search gives room first, down to a usable width.

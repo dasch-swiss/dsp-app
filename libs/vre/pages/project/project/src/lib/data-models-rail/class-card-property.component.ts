@@ -31,6 +31,23 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
  * The link target opens that class's card when it shows. For editors, on hover, a pencil edits the property, and a
  * handle left of it, where the card lets it, drags the property to another place in the form order.
  */
+/**
+ * The comfortable sizes of a card's property rows and their checkboxes, as custom properties for a rule over the rows;
+ * without them, the rows are compact.
+ */
+export const COMFORTABLE_CARD_SIZES = `
+  --density-row: 32px;
+  --density-pad: 4px;
+  --density-label: 13.5px;
+  --density-name: 12px;
+  --density-texts-gap: 1px;
+  --density-check-col: 112px;
+  --density-check-layer: 22px;
+  --density-check-label: 11.5px;
+  // Small boxes, 13px, beside words at their full size.
+  --density-check-scale: 0.72;
+`;
+
 @Component({
   selector: 'li[appClassCardProperty]',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -20,7 +20,11 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { CardProperty, ClassCardPropertyComponent } from '../data-models-rail/class-card-property.component';
+import {
+  CardProperty,
+  ClassCardPropertyComponent,
+  COMFORTABLE_CARD_SIZES,
+} from '../data-models-rail/class-card-property.component';
 import { DataModelGraph, DataModelProperty } from '../sidenav/data-model-map/data-model-graph';
 import { representationIcon } from '../sidenav/resource-class-sidenav/representation-icon';
 import { AddPropertyMenuComponent } from './add-property-menu.component';
@@ -118,8 +122,9 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
         @if (!elsewhere()) {
           <div class="group">
             <h3>{{ t + '.properties' | translate: { count: properties().length } }}</h3>
-            <!-- The rows of the class cards, alike in look and use: editors drag the class's own properties to
-                 another place, change a cardinality, edit or remove a property on hover. -->
+            <!-- The rows of the class cards, alike in look and use: the class's own and inherited properties together,
+                 in its form order; editors drag its own to another place, change a cardinality, edit or remove a
+                 property on hover. -->
             @let drag = reorderable();
             <ng-template #ownList let-list>
               <ul
@@ -128,20 +133,21 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                 [cdkDropListDisabled]="!drag"
                 (cdkDropListDropped)="dropped(node.id, list, $event)">
                 @for (property of list; track property.id) {
+                  @let isOwn = ownIds().has(property.id);
                   <li
                     appClassCardProperty
                     cdkDrag
                     cdkDragLockAxis="y"
                     cdkDragBoundary=".props"
-                    [cdkDragDisabled]="!drag"
+                    [cdkDragDisabled]="!drag || !isOwn"
                     [property]="property"
                     [homeIri]="node.id"
                     [labelOf]="labelOfIri"
                     [reachable]="!!property.linkTarget && isNavigable(property.linkTarget)"
                     [canEdit]="canEdit()"
                     cardinalityLayout="rows"
-                    [draggable]="drag"
-                    [classIri]="node.id"
+                    [draggable]="drag && isOwn"
+                    [classIri]="isOwn ? node.id : undefined"
                     [className]="node.label"
                     (mouseenter)="propertyHovered.emit(property.id)"
                     (mouseleave)="propertyHovered.emit(undefined)"
@@ -153,44 +159,10 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                 }
               </ul>
             </ng-template>
-            @if (own().length) {
-              <ng-container *ngTemplateOutlet="ownList; context: { $implicit: own() }" />
-            } @else if (!inheritedRows().length) {
+            @if (all().length) {
+              <ng-container *ngTemplateOutlet="ownList; context: { $implicit: all() }" />
+            } @else {
               <p class="none">{{ 'pages.dataModels2.noProperties' | translate }}</p>
-            }
-            @if (inheritedRows().length) {
-              <div class="inherited">
-                <button
-                  type="button"
-                  class="more"
-                  data-cy="data-model-class-card-inherited"
-                  [attr.aria-expanded]="inheritedOpen()"
-                  (click)="inheritedOpen.set(!inheritedOpen())">
-                  <mat-icon>{{ inheritedOpen() ? 'expand_less' : 'chevron_right' }}</mat-icon>
-                  {{
-                    'pages.dataModels2.inheritedFrom'
-                      | translate: { count: inheritedRows().length, class: parentLabel() }
-                  }}
-                </button>
-                @if (inheritedOpen()) {
-                  <ul class="props">
-                    @for (property of inheritedRows(); track property.id) {
-                      <li
-                        appClassCardProperty
-                        [property]="property"
-                        [homeIri]="classIri()"
-                        [labelOf]="labelOfIri"
-                        [reachable]="!!property.linkTarget && isNavigable(property.linkTarget)"
-                        [canEdit]="canEdit()"
-                        cardinalityLayout="rows"
-                        (mouseenter)="propertyHovered.emit(property.id)"
-                        (mouseleave)="propertyHovered.emit(undefined)"
-                        (edit)="editProperty.emit($event)"
-                        (goTo)="showClass($event)"></li>
-                    }
-                  </ul>
-                }
-              </div>
             }
             @if (canEdit()) {
               <div class="add-property">
@@ -366,6 +338,11 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
       }
 
       // The cards' rows, across the panel's padding, between lines as on a card.
+      // The cards' comfortable sizes.
+      .props {
+        ${COMFORTABLE_CARD_SIZES}
+      }
+
       .props {
         list-style: none;
         margin: 0 -16px;
@@ -382,42 +359,6 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
       .cdk-drag-animating,
       .props.cdk-drop-list-dragging .prop:not(.cdk-drag-placeholder) {
         transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
-      }
-
-      .inherited {
-        margin: 0 -16px;
-        background: $cool_gray_50;
-
-        .props {
-          margin: 0;
-        }
-      }
-
-      // The inherited row, as on a card.
-      .more {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        width: 100%;
-        padding: 3px 16px;
-        border: 0;
-        border-top: 1px solid $cool_gray_100;
-        background: none;
-        font: inherit;
-        font-size: 12px;
-        color: $cool_gray_600;
-        text-align: left;
-        cursor: pointer;
-
-        &:hover {
-          background: $cool_gray_100;
-        }
-
-        mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-        }
       }
 
       .add-property {
@@ -515,7 +456,6 @@ export class ResourceClassPanelComponent {
       const check = this.canEdit() && !!editing?.canDelete && !this.elsewhere();
       untracked(() => {
         this.deleteCheck.set(undefined);
-        this.inheritedOpen.set(false);
         if (!check || !editing) return;
         editing
           .canDeleteClass(iri)
@@ -535,7 +475,6 @@ export class ResourceClassPanelComponent {
   });
   /** The properties the class has from its superclass: removed on the superclass, not here. */
   readonly inherited = computed(() => new Set((this._parent()?.propertyDetails ?? []).map(property => property.id)));
-  readonly parentLabel = computed(() => this._parent()?.label ?? '');
 
   /** The order a drag gave the class's own properties, shown until the data model is read again. */
   private readonly _dragged = signal<{ classIri: string; order: string[] } | undefined>(undefined);
@@ -550,27 +489,25 @@ export class ResourceClassPanelComponent {
     }
     return own;
   });
-  /** The properties it has from its superclass, as rows of the cards, folded under one row. */
-  readonly inheritedRows = computed(() =>
-    this.properties()
-      .filter(property => this.inherited().has(property.id))
-      .map(cardPropertyOf)
-  );
-  readonly inheritedOpen = signal(false);
+  readonly ownIds = computed(() => new Set(this.own().map(property => property.id)));
+  /** All its properties, as rows of the cards, in its form order: its own in the dragged order, if any. */
+  readonly all = computed(() => {
+    const own = [...this.own()];
+    return this.properties().map(property => (this.ownIds().has(property.id) ? own.shift()! : cardPropertyOf(property)));
+  });
   /** For editors, where the editor can save a new order. */
   readonly reorderable = computed(() => this.canEdit() && !!this.editing?.canReorder);
   readonly labelOfIri = (iri: string) => this.labelOf(iri);
 
   /**
-   * A property of `list`, the class's own ones or one group of them, was dropped elsewhere in it: the class's own
-   * properties take the new order, the other group's keeping their places, shown at once, then saved.
+   * A property of `list`, the class's own and inherited ones, was dropped elsewhere in it: the class's own properties
+   * take the new order, the inherited keeping their places, shown at once, then saved.
    */
   dropped(classIri: string, list: CardProperty[], event: CdkDragDrop<unknown>): void {
     if (event.previousIndex === event.currentIndex) return;
     const moved = list.map(property => property.id);
     moveItemInArray(moved, event.previousIndex, event.currentIndex);
-    const inList = new Set(moved);
-    const order = this.own().map(property => (inList.has(property.id) ? moved.shift()! : property.id));
+    const order = moved.filter(id => this.ownIds().has(id));
     this._dragged.set({ classIri, order });
     this.editing?.reorderProperties(classIri, order).pipe(takeUntilDestroyed(this._destroyRef)).subscribe();
   }
