@@ -74,13 +74,26 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
   styles: [
     `
       .selection-bar {
+        /* Dense: the bar sits between the toolbar and the results, so it stays one slim line. */
+        --mat-button-filled-container-height: 28px;
+        --mat-button-outlined-container-height: 28px;
+        --mat-button-text-container-height: 28px;
+        --mat-button-filled-horizontal-padding: 10px;
+        --mat-button-outlined-horizontal-padding: 10px;
+        --mat-button-text-horizontal-padding: 8px;
+        --mat-button-filled-label-text-size: 13px;
+        --mat-button-outlined-label-text-size: 13px;
+        --mat-button-text-label-text-size: 13px;
+        --mat-button-filled-icon-spacing: 6px;
+        --mat-button-outlined-icon-spacing: 6px;
         display: flex;
         align-items: center;
-        gap: 8px;
-        min-height: 52px;
+        gap: 6px;
+        min-height: 36px;
         padding: 0 24px;
         background: #eaf1f7;
         border-bottom: 1px solid #c9d8e5;
+        font-size: 13px;
         white-space: nowrap;
       }
       .selection-bar > * {
@@ -95,23 +108,28 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
       .actions {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
       }
       .tonal:not([disabled]) {
         background-color: #d6e0e8;
         color: #264c6a;
+      }
+      .mat-icon {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
       }
       .count-badge {
         /* Aligned to the text's top, the pill is centred on the label's line box. */
         display: inline-block;
         vertical-align: text-top;
         margin-left: 6px;
-        padding: 0 7px;
-        border-radius: 10px;
+        padding: 0 6px;
+        border-radius: 8px;
         background: #e8eef4;
         color: #336790;
-        font-size: 12px;
-        line-height: 18px;
+        font-size: 11px;
+        line-height: 16px;
       }
     `,
   ],
