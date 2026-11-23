@@ -15,13 +15,13 @@ import { ProjectDataRights } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LABEL_COLUMN_KEY, RightsField, TableColumn } from './table-column.model';
 
 /** How many values a read-only cell shows before collapsing the rest. Editable cells render every value. */
-export const COLLAPSED_VALUE_COUNT = 3;
+const COLLAPSED_VALUE_COUNT = 3;
 
 /**
  * One cell, resolved to what it will render. `propertyInfo` set means the cell mounts the viewer's
  * property unit; otherwise `values` holds the plain-text path (read-only columns).
  */
-export interface TableCell {
+interface TableCell {
   readonly columnKey: string;
   /** The text of a non-property column (label or rights field); undefined on property columns. */
   readonly text?: string;

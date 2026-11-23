@@ -91,7 +91,7 @@ const EDIT_WIDTH_BY_VALUE_TYPE: ReadonlyMap<string, number> = new Map([
   [Constants.UriValue, 320],
 ]);
 
-export const DEFAULT_EDIT_WIDTH = 300;
+const DEFAULT_EDIT_WIDTH = 300;
 
 export function editWidthForValueType(valueType: string): number {
   return EDIT_WIDTH_BY_VALUE_TYPE.get(valueType) ?? DEFAULT_EDIT_WIDTH;

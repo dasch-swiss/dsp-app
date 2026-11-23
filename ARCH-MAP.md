@@ -69,7 +69,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Depends on**: none in the build graph. The specs import `dsp-js` and `vre/3rd-party-services/open-api` type-only, through their `@dasch-swiss/*` aliases; those edges are not Bazel deps, so the two entries do not list this one under Used by.
 - **Used by**: none
 - **Boundary rules**:
-  - The suite is no Bazel target: Cypress, its browser and the dsp-api stack are not hermetic. `just e2e <specs>` builds `//apps/dsp-app:dist` with Bazel, serves it on port 4200, runs `pnpm exec cypress run` over the specs and stops the server; `just e2e-stack-up` brings up the stack from `DSP_API_DIR`. CI's `dsp-app-e2e-tests` job runs those recipes as a two-runner matrix (`heavy` and `rest`). See ADR-0006. `structure`
+  - The suite is no Bazel target: Cypress, its browser and the dsp-api stack are not hermetic. `just e2e <specs>` builds `//apps/dsp-app:dist` with Bazel, serves it on port 4200, runs `pnpm exec cypress run` over the specs and stops the server; `just e2e-stack-up` brings up the stack from `DSP_API_DIR`. `just e2e-stack-up` is `just e2e-stack-start` then `just e2e-stack-wait`; CI's `dsp-app-e2e-tests` job runs the start in the background, type-checks and builds meanwhile, and waits for the API before `just e2e`, as a two-runner matrix (`heavy` and `rest`). See ADR-0006. `structure`
   - The matrix mixes two styles: `project-member`, `logged-out-user` and `performance` are globbed, while the `system-admin` specs are enumerated one by one. A new `system-admin` spec will not run until the matrix is edited, and nothing reports that omission. `docs-only`
   - `dsp-app-e2e-tests-status` is the required gate that aggregates the matrix. `static-analysis`
   - `just typecheck-e2e` (`tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json`) type-checks the suite and is part of `just ci`. Before a type-check existed, Cypress bundled the specs transpile-only, five files imported from two deleted libraries, and the suite stayed green (#3434, DEV-7251). `static-analysis`
@@ -81,10 +81,10 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Bazel package**: `//libs/vre/3rd-party-services/api`
 - **Paths**: `libs/vre/3rd-party-services/api/**`
-- **Purpose**: Hand-written Angular services over DSP-API REST endpoints, plus hand-written TypeScript interfaces for v2 ontology JSON-LD payloads.
+- **Purpose**: Hand-written Angular services over DSP-API REST endpoints.
 - **Key entities**: `BaseApi`, `ProjectApiService`, `UserApiService`, `ListApiService`, `LegalInfoApiService`, `ResourceLegalV2ApiService`, `ProjectIdentifier`
-- **Public interface**: Five `export *` from `src/index.ts`, one per service. `BaseApi` and the v2 payload interfaces are internal.
-- **Local-context kit**: `src/index.ts`, `src/lib/services/base-api.ts`, `src/lib/services/admin/project-api.service.ts`, `src/lib/services/admin/legal-info-api.service.ts`, `src/lib/services/v2/resource-legal-v2-api.service.ts`, `src/lib/services/v2/ontology/read-ontology.interface.ts`, the root `CLAUDE.md` (the dual-client rule)
+- **Public interface**: Five `export *` from `src/index.ts`, one per service. `BaseApi` is internal.
+- **Local-context kit**: `src/index.ts`, `src/lib/services/base-api.ts`, `src/lib/services/admin/project-api.service.ts`, `src/lib/services/admin/legal-info-api.service.ts`, `src/lib/services/v2/resource-legal-v2-api.service.ts`, the root `CLAUDE.md` (the dual-client rule)
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/open-api`, `vre/core/config`
 - **Used by**: `vre/core/session`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`
 - **Boundary rules**:
@@ -152,8 +152,8 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: `//libs/vre/core/session`
 - **Paths**: `libs/vre/core/session/**`
 - **Purpose**: Owns the JWT lifecycle: storage, expiry checking, login and logout orchestration, auto-login at boot, and the current-user stream.
-- **Key entities**: `AccessTokenService`, `AuthService`, `AutoLoginService`, `LocalStorageWatcherService`, `UserService`, `hasCheckedCredentials$`, `afterSuccessfulLogin$`, `isSysAdmin$`, `AuthError`
-- **Public interface**: Seven named exports from `src/index.ts`, no `export *`. `apiConnectionTokenProvider` is one of them and is registered at `apps/dsp-app/src/app/app.config.ts:55`.
+- **Key entities**: `AccessTokenService`, `AuthService`, `AutoLoginService`, `LocalStorageWatcherService`, `UserService`, `hasCheckedCredentials$`, `afterSuccessfulLogin$`, `isSysAdmin$`
+- **Public interface**: Six named exports from `src/index.ts`, no `export *`. `apiConnectionTokenProvider` is one of them and is registered at `apps/dsp-app/src/app/app.config.ts:55`.
 - **Local-context kit**: `src/lib/access-token.service.ts`, `src/lib/auth.service.ts`, `src/lib/auto-login.service.ts`, `src/lib/user.service.ts`, `apps/dsp-app/src/app/main/http-interceptors/auth.interceptor.fn.ts`, `src/lib/api-connection-token.provider.ts`, `apps/dsp-app/src/app/app.component.ts`
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/analytics`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/error-handler`, `vre/shared/app-common`, `vre/shared/app-helper-services`
 - **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/project/project`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`
@@ -171,8 +171,8 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: `//libs/vre/core/error-handler`
 - **Paths**: `libs/vre/core/error-handler/**`
 - **Purpose**: The global Angular `ErrorHandler`. Turns dsp-api, dsp-js and HTTP failures into user-facing snackbars and, separately, into Sentry and Faro telemetry.
-- **Key entities**: `AppErrorHandler`, `provideAppErrorHandler`, `ErrorReportingService`, `reasonFromErrorBody`, `declaredMessageOf`, `AppError`, `UserFeedbackError`, `JsLibParsedError`, `DEDUP_WINDOW_MS`
-- **Public interface**: The nine symbols above, from `src/index.ts`.
+- **Key entities**: `AppErrorHandler`, `provideAppErrorHandler`, `ErrorReportingService`, `reasonFromErrorBody`, `declaredMessageOf`, `AppError`, `UserFeedbackError`, `DEDUP_WINDOW_MS`
+- **Public interface**: The eight symbols above, from `src/index.ts`.
 - **Local-context kit**: `src/lib/app-error-handler.ts`, `src/lib/api-error-reason.ts`, `src/lib/error-reporting.service.ts`, `src/lib/app-error-handler.providers.ts`, `src/lib/app-error-handler.spec.ts`, `apps/dsp-app/src/assets/i18n/en.json`, `libs/vre/3rd-party-services/analytics/src/lib/grafana-faro.service.ts`
 - **Depends on**: `dsp-js`, `vre/core/config`, `vre/ui/notification`
 - **Used by**: `dsp-app`, `vre/core/session`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/system/system`, `vre/resource-editor/resource-editor`
@@ -189,7 +189,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Paths**: `libs/vre/ui/ui/**`
 - **Purpose**: The shared component kit: dialogs, form controls, layout primitives, pipes and directives. It also carries a tail of page-shaped and domain-specific components that do not belong in a kit.
 - **Key entities**: `DialogService`, `ConfirmDialogComponent`, `DialogHeaderComponent`, `CkEditorComponent`, `CommonInputComponent`, `ChipListInputComponent`, `TimeInputComponent`, `PagerComponent`, `KnoraDatePipe`, `HumanReadableErrorPipe`, `AdminImageDirective`, `NotAllowedPageComponent`, `NoResultsFoundPageComponent`, `ResourceRightsStatementComponent`, `CalendarMarkerComponent`, `CalendarDateService`
-- **Public interface**: 46 `export *` lines from `src/index.ts`, plus one curated named export (`CalendarMarkerComponent`).
+- **Public interface**: 44 `export *` lines from `src/index.ts`, plus one curated named export (`CalendarMarkerComponent`).
 - **Local-context kit**: `src/index.ts`, `src/lib/dialog/dialog.service.ts`, `src/lib/dialog/confirm-dialog.component.ts`, `src/lib/common-input.component.ts`, `src/lib/pipes/formatting/knoradate.pipe.ts`, `src/lib/search-failed.component.ts`
 - **Depends on**: `dsp-js`, `vre/shared/app-common`, `vre/shared/calendar`, `vre/ui/styles`
 - **Used by**: `dsp-app`, `vre/pages/data-browser`, `vre/pages/ontology/list`, `vre/pages/ontology/ontology`, `vre/pages/project/project`, `vre/pages/search/advanced-search`, `vre/pages/search/search`, `vre/pages/search/search-filters`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common-to-move`, `vre/ui/date-picker`, `vre/ui/string-literal`
@@ -206,7 +206,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Paths**: `libs/vre/ui/date-picker/**`
 - **Purpose**: The date editor: a calendar choice, a picker that picks a date in the calendar it is told, and a form control for a DSP date value — one date or a period, edited against what is stored. It orchestrates; the calendar rules it applies live in `CalendarDateService` (`vre/ui/ui`).
 - **Key entities**: `CalendarSelectorComponent`, `DatePickerComponent`, `DateValueComponent`
-- **Public interface**: `CalendarSelectorComponent`, `DatePickerComponent` and `DateValueComponent`, from `src/index.ts`.
+- **Public interface**: `DatePickerComponent` and `DateValueComponent`, from `src/index.ts`.
 - **Local-context kit**: `src/index.ts`, `src/lib/date-value/date-value.component.ts`, `src/lib/date-picker/date-picker.component.ts`, `src/lib/calendar-selector/calendar-selector.component.ts`, `src/lib/date-value/date-value.host.spec.ts`, `../ui/src/lib/calendar-date/calendar-date.service.ts`
 - **Depends on**: `dsp-js`, `vre/shared/calendar`, `vre/ui/ui`
 - **Used by**: `vre/pages/search/search-filters`, `vre/resource-editor/resource-editor`
@@ -365,7 +365,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: `//libs/vre/shared/calendar`
 - **Paths**: `libs/vre/shared/calendar/**`
 - **Purpose**: A framework-free multi-calendar date library (Gregorian, Julian, Islamic) using the Julian Day Number as the conversion pivot, with comparison and period validation.
-- **Key entities**: `CalendarSystem`, `CALENDAR_SYSTEMS`, `Era`, `ERAS`, `DatePrecision`, `CalendarDate`, `CalendarPeriod`, `CalendarOperations`, `CalendarError`, `createDate`, `convertCalendar`, `compareDates`, `isPeriodOutOfOrder`, `validatePeriod`, `GregorianCalendar`, `JulianCalendar`, `IslamicCalendar`, `getCalendar`, `convertCalendarResult`, `ConversionResult`, `ConversionRefusalReason`, `ISLAMIC_EPOCH_JDN`
+- **Key entities**: `CalendarSystem`, `CALENDAR_SYSTEMS`, `Era`, `DatePrecision`, `CalendarDate`, `CalendarPeriod`, `CalendarOperations`, `CalendarError`, `createDate`, `convertCalendar`, `compareDates`, `isPeriodOutOfOrder`, `validatePeriod`, `GregorianCalendar`, `JulianCalendar`, `IslamicCalendar`, `getCalendar`, `convertCalendarResult`, `ConversionResult`, `ConversionRefusalReason`, `ISLAMIC_EPOCH_JDN`
 - **Public interface**: The only hand-curated barrel in the repository: named `export` and `export type` blocks with a `@packageDocumentation` usage example, no `export *`.
 - **Local-context kit**: `src/index.ts`, `src/lib/types/calendar.types.ts`, `src/lib/factories/calendar.factory.ts`, `src/lib/factories/date.factory.ts`, `src/lib/converters/calendar.converter.ts`, `src/lib/calendars/gregorian.calendar.ts`, `README.md`
 - **Depends on**: none
@@ -534,7 +534,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: `//libs/vre/pages/user-settings/user`
 - **Paths**: `libs/vre/pages/user-settings/user/**`
 - **Purpose**: Nominally the account area. It also owns the public landing page and the application-wide `AllProjectsService`, neither of which is user settings.
-- **Key entities**: `UserComponent`, `ProfileComponent`, `AccountComponent`, `EditUserDialogComponent`, `EditPasswordDialogComponent`, `ProjectOverviewComponent`, `ProjectCardComponent`, `AllProjectsService`, `existingNamesValidator`
+- **Key entities**: `UserComponent`, `ProfileComponent`, `AccountComponent`, `EditUserDialogComponent`, `EditPasswordDialogComponent`, `ProjectOverviewComponent`, `ProjectCardComponent`, `AllProjectsService`, `existingNamesAsyncValidator`
 - **Public interface**: 11 `export *` lines from `src/index.ts`.
 - **Local-context kit**: `src/lib/user.component.ts`, `src/lib/account/account.component.ts`, `src/lib/profile/profile.component.ts`, `src/lib/project-overview/project-overview.component.ts`, `src/lib/project-overview/all-projects.service.ts`, `src/index.ts`
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/core/config`, `vre/core/session`, `vre/shared/app-common-to-move`, `vre/shared/app-help-page`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/styles`, `vre/ui/ui`
@@ -574,7 +574,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 ### build-tooling
 
 - **Bazel package**: none
-- **Paths**: `tools/**`, `scripts/**`, `.storybook/**`, `types/**`, `mocks/**`, `nix/**`, `platforms/**`, `MODULE.bazel`, `MODULE.bazel.lock`, `BUILD.bazel`, `.bazelrc`, `.bazelversion`, `.bazelignore`, `justfile`, `flake.nix`, `flake.lock`, `.envrc`, `angular.json`, `tsconfig.base.json`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.npmrc`, `vendor/**`, `eslint.config.mjs`, `eslint.config.angular.mjs`, `jest.preset.js`, `jest.resolver.js`, `.babelrc`, `.editorconfig`, `.prettierrc`, `.prettierignore`, `.markdownlint.json`, `.remarkrc.json`, `.kodus-readiness.yml`, `.gitignore`, `pixeleye.config.ts`, `pixeleye.breakpoints.config.ts`, `pixeleye/**`, `libs/.gitkeep`
+- **Paths**: `tools/**`, `scripts/**`, `.storybook/**`, `types/**`, `mocks/**`, `nix/**`, `platforms/**`, `MODULE.bazel`, `MODULE.bazel.lock`, `BUILD.bazel`, `.bazelrc`, `.bazelversion`, `.bazelignore`, `justfile`, `flake.nix`, `flake.lock`, `.envrc`, `angular.json`, `tsconfig.base.json`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.npmrc`, `vendor/**`, `eslint.config.mjs`, `eslint.config.angular.mjs`, `jest.preset.js`, `jest.resolver.js`, `.editorconfig`, `.prettierrc`, `.prettierignore`, `.markdownlint.json`, `.remarkrc.json`, `.kodus-readiness.yml`, `knip.jsonc`, `.gitignore`, `pixeleye.config.ts`, `pixeleye.breakpoints.config.ts`, `pixeleye/**`, `libs/.gitkeep`
 - **Purpose**: The Bazel module, the `vre_library` and `vre_application` macros, the `just` recipes, the Nix dev shell, and the lint, test, Storybook and Pixeleye configuration for the whole workspace, plus ambient type declarations and test mocks.
 - **Key entities**: `vre_library`, `vre_application`, `vre_jest_test`, `LIBRARIES`, `APPLICATIONS`, `TYPE_MAY_DEPEND_ON`, `package_visibility`, `extra_visibility`, `LOOSE_LIBRARIES`, `visibility-check.sh`, `check-openapi-sync.sh`
 - **Public interface**: The `just` recipes (`just help`); `vre_library` in `tools/angular/defs.bzl` for a library's `BUILD.bazel`; `LIBRARIES` in `tools/angular/visibility.bzl` for its type and scope. `tsconfig.base.json` `paths` stays the list of aliases the IDE and the ESLint rules read; the build generates each library's own tsconfig.
@@ -596,7 +596,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 - **Bazel package**: none
 - **Paths**: `.github/**`, `renovate.json`, `release-please-config.json`, `.release-please-manifest.json`, `CHANGELOG.md`
 - **Purpose**: Continuous integration workflows, the disabled Renovate configuration, and release automation for both the application and the published `dsp-js` package.
-- **Key entities**: `release-dsp-js.yml`, `check-openapi-sync`, `release-please`
+- **Key entities**: `release-dsp-js.yml`, `openapi-sync.yml`, `check-openapi-sync`, `release-please`
 - **Public interface**: None.
 - **Local-context kit**: `.github/workflows/`, `release-please-config.json`, `.release-please-manifest.json`
 - **Depends on**: none
@@ -606,8 +606,9 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Every job runs `nix develop --command just <recipe>`; `.github/actions/bazel-setup` sets up Nix, the Bazel caches and the NativeLink remote flags in `BAZEL_FLAGS`. `structure`
   - Renovate is disabled (`enabled: false`); dependency updates are made by hand, and Dependabot opens security PRs only. `docs-only`
   - `dsp-js` publishes to NPM on `dsp-js-v*` tags via `.github/workflows/release-dsp-js.yml`. `docs-only`
-  - `check-openapi-sync` runs on every push and opens an auto-bump PR on mismatch. A red check is expected while a dsp-api change is undeployed. `static-analysis`
-  - `ci.yml` runs the Cypress suite as the `dsp-app-e2e-tests` matrix, gated by the required `dsp-app-e2e-tests-status` job. `static-analysis`
+  - `check-openapi-sync` (`openapi-sync.yml`) runs on `main` pushes, the spec-bump branches and a weekday schedule, never on feature branches, and opens an auto-bump PR on mismatch. A red check is expected while a dsp-api change is undeployed. `static-analysis`
+  - `ci.yml` runs the Cypress suite as the `dsp-app-e2e-tests` matrix, gated by the required `dsp-app-e2e-tests-status` job. The matrix skips when the `changes` job's `docs_only` is true: every changed file is under `docs/`, `k6/` or `.claude/`, or a root `*.md`. Add a path to that list only if nothing the built app or the E2E run reads lives there. `static-analysis`
+  - The E2E jobs run in `.#e2e`, which is `flake.nix`'s `base` package list plus Chromium; a tool they call goes in `base`. `review`
 - **Durable state**: `.release-please-manifest.json`, the released version of record.
 - **Fingerprint**: `f7c7c0204b21`
 
@@ -713,7 +714,7 @@ ADR-0001's type and scope rules are Bazel `visibility`, derived from `LIBRARIES`
 | Type tiers: `ui` depends on `ui` and `util`, `data-access` on `data-access` and `util`, `util` on `util`. **Four exceptions**, all into `ui/string-literal` or `ui/ui`: from `core/config`, `shared/app-common`, `shared/app-helper-services` and `3rd-party-services/open-api` (ADR-0001 decision 7, DEV-7552). `dsp-js` is visible to every library (ADR-0001 decision 8). | `structure` |
 | `pages/*` libraries of different scopes do not depend on each other. **Seven exceptions**: `project/project` is visible to `ontology/list`, `ontology/ontology` and `search/advanced-search`; `user-settings/user` to `ontology/ontology`, `project/project` and `system/system`; `system/system` to `project/project` (ADR-0004, DEV-7555). | `structure` |
 
-Each exception is an `extra_visibility` entry on the target library with a comment naming the ADR and the issue; removing it is part of the change that moves the code. `just visibility-check` seeds one forbidden edge per tier rule and asserts the build rejects it.
+Each exception is an `extra_visibility` entry on the target library with a comment naming the ADR and the issue; removing it is part of the change that moves the code. `just visibility-check` seeds one forbidden edge per tier rule and asserts the build rejects it; it also fails on a library target made public by hand and on an `extra_visibility` entry the tree analyses without.
 
 ### Wiring
 

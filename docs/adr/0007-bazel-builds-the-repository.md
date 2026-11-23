@@ -50,8 +50,8 @@ Three problems followed from the difference:
 
 **Negative and costs.**
 
-- **No hot reload.** `just serve` rebuilds under `ibazel`; the page reloads by hand, and an edit takes tens of seconds to reach it where `ng serve` took about one. Accepted for now; agents do not need the page for most edits. `docs/contribution/bazel-baselines.md` records the numbers.
-- **`styleUrl` names `.css` files that exist only in the output tree**, since `ng_project` takes the compiled CSS. The IDE's Angular language service reports them as missing; that is tolerated.
+- **No hot reload.** `just serve` rebuilds under `ibazel`; the page reloads by hand, and an edit takes tens of seconds to reach it where `ng serve` took about one. Accepted for now; agents do not need the page for most edits. `docs/contribution/bazel-baselines.md` records the numbers. `just ng-serve` brings live reload back for local development, outside Bazel and outside the gate (`CONVENTIONS.md`, "Local Dev Loop Outside Bazel").
+- **`styleUrl` names `.css` files that exist only in the output tree**, since `ng_project` takes the compiled CSS. The IDE's Angular language service reports them as missing; that is tolerated. `just ng-serve` writes gitignored copies beside the `.scss`, which also quiets the IDE while it runs.
 - **Unreleased rules.** `rules_angular` and `rules_sass` are commits, not releases, and upstream tests them on Bazel 8, not 9. Decision 5 is the policy that contains it.
 - **Four libraries compile with loose TypeScript flags** (`tools/angular/loose.bzl`), each with an issue, because making them strict would change behaviour in a build-system change.
 

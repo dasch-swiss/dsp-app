@@ -71,6 +71,10 @@ apps/dsp-app/cypress/downloads
 # The configuration's environment file, which Bazel writes (apps/dsp-app/BUILD.bazel)
 apps/dsp-app/src/environments/environment.ts
 
+# The component stylesheets Bazel compiles; `just ng-serve` writes them beside their .scss
+libs/**/*.css
+apps/dsp-app/src/**/*.css
+
 # OpenAPI generated files
 libs/vre/3rd-party-services/open-api/src/generated/
 

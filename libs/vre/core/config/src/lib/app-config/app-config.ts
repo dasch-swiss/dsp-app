@@ -14,7 +14,7 @@ export const Rollbar = z.discriminatedUnion('enabled', [
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type Rollbar = z.infer<typeof Rollbar>;
 
-export const Faro = z.object({
+const Faro = z.object({
   enabled: z.boolean(),
   collectorUrl: z.string(),
   appName: z.string(),
@@ -35,10 +35,8 @@ export const Faro = z.object({
     })
     .optional(),
 });
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export type Faro = z.infer<typeof Faro>;
 
-export const Instrumentation = z.object({
+const Instrumentation = z.object({
   environment: z.string(),
   rollbar: Rollbar,
   faro: Faro,
@@ -46,7 +44,7 @@ export const Instrumentation = z.object({
 
 export type InstrumentationType = z.infer<typeof Instrumentation>;
 
-export const FeatureFlags = z.object({
+const FeatureFlags = z.object({
   allowEraseProjects: z.boolean(),
 });
 
@@ -56,7 +54,7 @@ export type FeatureFlagsType = z.infer<typeof FeatureFlags>;
  * Our codebase requires number | null. The config will contain either a number
  * or an empty string. We need to transform the empty string case into a null.
  */
-export const ApiPort = z
+const ApiPort = z
   .number()
   .or(z.string().max(0))
   .transform(val => {
@@ -71,7 +69,7 @@ export const ApiPort = z
  * Our codebase requires number | null. The config will contain either a number
  * or an empty string. We need to transform the empty string case into a null.
  */
-export const IiifPort = z
+const IiifPort = z
   .number()
   .or(z.string().max(0))
   .transform(val => {

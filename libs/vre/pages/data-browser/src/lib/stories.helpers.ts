@@ -119,13 +119,13 @@ export const makeEditableReadResource = (partial: Partial<ReadResource> & { valu
   } as unknown as Partial<ReadResource>);
 };
 
-export const makeLocalizationServiceStub = (language = 'en'): Partial<LocalizationService> => ({
+const makeLocalizationServiceStub = (language = 'en'): Partial<LocalizationService> => ({
   currentLanguage: language as LocalizationService['currentLanguage'],
   currentLanguage$: of(language as LocalizationService['currentLanguage']),
 });
 
 /** `getResource` never emits: `reload()` after a save goes through it and an emission would rebind the editor mid-assertion. */
-export const makeDspApiConnectionStub = () => ({
+const makeDspApiConnectionStub = () => ({
   v2: {
     res: { getResource: () => EMPTY },
     values: { updateValue: () => of({}), createValue: () => of({}) },

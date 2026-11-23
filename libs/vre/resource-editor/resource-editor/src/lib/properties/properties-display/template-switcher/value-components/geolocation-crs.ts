@@ -49,7 +49,7 @@ export const CRS_LV95: Crs = {
   yMax: 1299970.97,
 };
 
-export const CRS_LV03: Crs = {
+const CRS_LV03: Crs = {
   iri: 'http://www.opengis.net/def/crs/EPSG/0/21781',
   labelKey: `${I18N}.crs.lv03`,
   xLabelKey: `${I18N}.easting`,

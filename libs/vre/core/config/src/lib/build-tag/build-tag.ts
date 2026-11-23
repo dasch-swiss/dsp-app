@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { z } from 'zod';
 
-export const BuildTagSchema = z.object({
+const BuildTagSchema = z.object({
   build_tag: z.string().nonempty(),
 });
 

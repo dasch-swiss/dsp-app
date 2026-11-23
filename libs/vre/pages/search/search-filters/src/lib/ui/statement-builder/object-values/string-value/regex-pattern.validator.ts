@@ -17,7 +17,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
  * `\p{…}` name) still gets dsp-api's 400 in the failure panel, but a pattern it refused could not be
  * searched at all.
  */
-export function isCompilableRegex(pattern: string): boolean {
+function isCompilableRegex(pattern: string): boolean {
   let translated: string | typeof INVALID | typeof UNCHECKED;
   try {
     translated = toJavaScriptPattern(pattern);

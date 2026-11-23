@@ -19,7 +19,7 @@ jobs:
       # manual review enforced where it matters:
       #   - Renovate arms it only for rules with automerge:true (patch/minor);
       #     major PRs (automerge:false) never set autoMergeRequest.
-      #   - The DaSCH Bot App arms it on dsp-api spec-bump PRs (see ci.yml).
+      #   - The DaSCH Bot App arms it on dsp-api spec-bump PRs (see openapi-sync.yml).
       # Any other bot PR without auto-merge stays unapproved and needs a human.
       - name: Check if auto-merge was requested
         id: check
@@ -30,7 +30,7 @@ jobs:
         run: |
           set -euo pipefail
           # Poll: both bots arm auto-merge in a separate call *after* opening the
-          # PR (ci.yml retries it while GitHub computes mergeability), so on the
+          # PR (openapi-sync.yml retries it while GitHub computes mergeability), so on the
           # `opened` event autoMergeRequest can still be null for a few seconds.
           # Reading it once would skip the approval and leave the PR blocked.
           result=false

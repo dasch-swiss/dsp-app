@@ -8,7 +8,7 @@
   "iiifHost": "iiif.dev.dasch.swiss",
   "iiifPort": 443,
   "iiifPath": "",
-  "ingestUrl": "https://ingest.dev.dasch.swiss",
+  "ingestUrl": "https://api.dev.dasch.swiss/ingest",
   "geonameToken": "knora",
   "jsonWebToken": "",
   "logErrors": true,
@@ -32,7 +32,7 @@
         "enabled": true,
         "disabledLevels": []
       },
-      "tracingCorsUrls": ["https://api.dev.dasch.swiss", "https://ingest.dev.dasch.swiss"]
+      "tracingCorsUrls": ["https://api.dev.dasch.swiss"]
     }
   },
   "featureFlags": {

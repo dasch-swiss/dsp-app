@@ -6,8 +6,9 @@
 #   just test [TARGETS...]            every Bazel test target, or the named ones
 #   just test-files -- PATHS...       the Jest targets that depend on those files
 #   just lint                         ESLint: the Bazel aspect, pnpm for what it does not see
-#   just ci                           the gate: build, test, lint, Storybook, the Cypress type-check,
-#                                     the version checks and the visibility check
+#   just ci                           the gate: build, test, lint, knip, Storybook, the Cypress
+#                                     type-check, the version checks and the visibility check
+#   just ng-serve | jest | eslint     local dev loop outside Bazel, not part of the gate
 #
 # An argument starting with `//` is a target list; anything else is a configuration name. Every
 # Bazel call appends $BAZEL_FLAGS, which CI sets to the remote flags plus --lockfile_mode=error,
@@ -46,6 +47,33 @@ serve config="production":
     trap 'kill $!' EXIT
     {{ static_server }} --port 4200 "$(bazel info bazel-bin "$flag" $BAZEL_FLAGS 2>/dev/null)/apps/dsp-app/dist"
 
+# Local development only, outside Bazel: the Angular CLI's dev server with live reload on
+# http://localhost:4200. It copies the configuration's environment file to the gitignored
+# environment.ts that Bazel otherwise writes; `just build` and `just ci` stay the gate.
+ng-serve config="development": install openapi-generate
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case "{{ config }}" in
+      production) env=prod ;;
+      development | dev-server | ls-test-server | stage-server) env="{{ config }}" ;;
+      *) echo "just ng-serve: production, development, dev-server, ls-test-server or stage-server, not {{ config }}" >&2; exit 1 ;;
+    esac
+    cp "apps/dsp-app/src/environments/environment.$env.ts" apps/dsp-app/src/environments/environment.ts
+    # Components name the `.css` Bazel compiles from their `.scss`; write it locally and keep it current.
+    node scripts/dev-styles.mjs
+    node scripts/dev-styles.mjs --watch &
+    trap 'kill $!' EXIT
+    pnpm exec ng serve
+
+# Local development only, outside Bazel: Jest on one library (`just jest libs/vre/ui/ui [jest args]`).
+# It does not check the library's declared deps; `just test` does.
+jest lib *ARGS: openapi-generate
+    pnpm exec jest -c {{ lib }}/jest.config.js {{ ARGS }}
+
+# Local development only, outside Bazel: ESLint on the given files or directories
+eslint +PATHS: openapi-generate
+    pnpm exec eslint --flag v10_config_lookup_from_file --no-warn-ignored {{ PATHS }}
+
 # Build Storybook and its breakpoint-stories variant; a story's type error fails here
 storybook-build:
     bazel build //:storybook //:storybook_breakpoints $BAZEL_FLAGS
@@ -59,8 +87,8 @@ storybook:
     trap 'kill $!' EXIT
     {{ static_server }} --port 4400 "$(bazel info bazel-bin $BAZEL_FLAGS 2>/dev/null)/storybook"
 
-# Run the interaction tests against the Bazel-built Storybook with the dev shell's browsers
-storybook-test: install
+# Run the interaction tests against the Bazel-built Storybook with the dev shell's browsers; arguments go to test-storybook
+storybook-test *ARGS: install
     #!/usr/bin/env bash
     set -euo pipefail
     bazel build //:storybook $BAZEL_FLAGS
@@ -69,7 +97,7 @@ storybook-test: install
     trap 'kill $!' EXIT
     timeout 60 bash -c 'until curl -sf -o /dev/null http://127.0.0.1:6006/index.json; do sleep 0.5; done'
     # Keep two workers: in band the runner runs out of heap, with four it hits ChunkLoadError.
-    pnpm exec test-storybook -c .storybook --url=http://127.0.0.1:6006 --index-json --ci --maxWorkers=2
+    pnpm exec test-storybook -c .storybook --url=http://127.0.0.1:6006 --index-json --ci --maxWorkers=2 {{ ARGS }}
 
 # Capture the stories with Pixeleye and upload them (PIXELEYE_TOKEN, PIXELEYE_ENDPOINT); `breakpoints`
 # captures the breakpoint stories into their own project (PIXELEYE_BREAKPOINTS_TOKEN)
@@ -208,21 +236,31 @@ lint-selftest:
     done
     echo "lint-selftest: just lint rejected the seeded violation with" $rules
 
+# Unused files, dependencies and exports (knip.jsonc)
+knip: install openapi-generate
+    pnpm exec knip --tsConfig tsconfig.base.json
+
 # The gate CI runs
-ci: build test lint node-version-check playwright-version-check tsconfig-paths-check storybook-build typecheck-e2e visibility-check
+ci: build test lint knip node-version-check playwright-version-check tsconfig-paths-check storybook-build typecheck-e2e visibility-check
 
 # Type-check the Cypress suite, its own project (ADR-0006); its specs import the generated client
 typecheck-e2e: install openapi-generate
     pnpm exec tsc --noEmit -p apps/dsp-app/cypress/tsconfig.json
 
-# Start the dsp-api stack Cypress runs against from DSP_API_DIR: a fresh test database, sipi, ingest, API
-e2e-stack-up:
+# Start the dsp-api stack Cypress runs against from DSP_API_DIR and wait until the API answers
+e2e-stack-up: e2e-stack-start e2e-stack-wait
+
+# Start the dsp-api stack without waiting for the API: a fresh test database, sipi, API (serving ingest)
+e2e-stack-start:
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{ dsp_api_dir }}"
     just init-db-test
-    docker compose -f docker-compose.yml up -d sipi ingest api
-    ./modules/webapi/scripts/wait-for-api.sh
+    docker compose -f docker-compose.yml up -d sipi api
+
+# Wait until the API `just e2e-stack-start` started answers
+e2e-stack-wait:
+    cd "{{ dsp_api_dir }}" && ./modules/webapi/scripts/wait-for-api.sh
 
 # Stop the dsp-api stack
 e2e-stack-down:
@@ -297,7 +335,8 @@ playwright-version-check:
     done
     echo "playwright $driver"
 
-# Check that Bazel visibility rejects a seeded forbidden dependency for each ADR-0001 tier rule
+# Check that Bazel visibility rejects a seeded forbidden dependency for each ADR-0001 tier rule, that
+# no library target is public by hand, and that no extra_visibility entry is stale
 visibility-check:
     scripts/visibility-check.sh
 

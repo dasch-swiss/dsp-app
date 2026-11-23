@@ -1,4 +1,4 @@
-# This file is currently used by autoprefixer to adjust CSS to support the below specified browsers
+# The Angular build reads this file to target CSS and JavaScript at the browsers below
 # For additional information regarding the format and rule options, please see:
 # https://github.com/browserslist/browserslist#queries
 #

@@ -102,40 +102,6 @@ function getEnvironmentName(url) {
 }
 
 /**
- * Get environment-specific selectors for better element finding
- */
-export function getEnvironmentSelectors(environmentUrl) {
-  const environment = getEnvironmentName(environmentUrl);
-
-  // Different environments might have different UI structures
-  const selectors = {
-    dev: {
-      navigation: [
-        'nav a[href]:not([href="#"]):visible',
-        '[routerLink]:visible',
-        'a[href*="/project"]:visible',
-        '.navigation-link:visible'
-      ],
-      buttons: [
-        'button:visible:not([disabled])',
-        '[role="button"]:visible',
-        '.mat-button:visible',
-        '.btn:visible'
-      ],
-      inputs: [
-        'input[type="text"]:visible',
-        'input[type="search"]:visible',
-        'textarea:visible',
-        '.mat-input-element:visible'
-      ]
-    }
-  };
-
-  // Use dev selectors for all environments (they should be most comprehensive)
-  return selectors.dev;
-}
-
-/**
  * Get performance expectations message based on environment
  */
 export function getPerformanceExpectations(environmentUrl) {

@@ -14,7 +14,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { PropertyForm } from './property-form.type';
 
-export interface ClassToSelect {
+interface ClassToSelect {
   ontologyId: string;
   ontologyLabel: string;
   classes: ResourceClassDefinitionWithAllLanguages[];
