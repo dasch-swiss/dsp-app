@@ -74,9 +74,9 @@ describe('Data Model Class', () => {
     cy.wait('@createRequest');
     classCard(resourceClass.id).should('be.visible').should('contain.text', resourceClass.label);
     classCard(textClass.id)
-      .find('[data-cy=data-model-class-card-file]')
+      .find('[data-cy=data-model-class-card-file] mat-icon')
       .should('be.visible')
-      .should('include.text', classType.fileLabel);
+      .should('contain.text', classType.fileIcon);
   });
 
   it('should create new class with object class constraints (e.g. page as part of a book)', () => {
@@ -128,9 +128,9 @@ describe('Data Model Class', () => {
     cy.wait('@createRequest');
     classCard(stillImageClass.id).should('be.visible').should('contain.text', stillImageClass.label);
     classCard(stillImageClass.id)
-      .find('[data-cy=data-model-class-card-file]')
+      .find('[data-cy=data-model-class-card-file] mat-icon')
       .should('be.visible')
-      .should('include.text', stillImageType.fileLabel);
+      .should('contain.text', stillImageType.fileIcon);
 
     // link them
     const partOfProperty = <DataModelClassProperty>{
@@ -229,7 +229,8 @@ describe('Data Model Class', () => {
 
     openCreateClassDialog(classType.label);
     cy.get('.mat-mdc-dialog-container').should('be.visible');
-    cy.get('.cdk-overlay-backdrop-showing').click(-50, -50, { force: true });
+    // The dialog's backdrop is the last one; the create menu's may still be fading out.
+    cy.get('.cdk-overlay-backdrop-showing').last().click(-50, -50, { force: true });
     cy.get('.mat-mdc-dialog-container').should('not.exist');
     cy.get('[data-cy=data-model-class-card]').should('not.exist');
   });
