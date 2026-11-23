@@ -584,7 +584,9 @@
         "noResourcesSelected": "No resources selected",
         "resourcesMustBeSameProject": "Resources must be from the same project",
         "bulkEdit": "Bulk edit",
-        "bulkEditSameClass": "Bulk edit needs resources of the same class"
+        "bulkEditSameClass": "Bulk edit needs resources of the same class",
+        "clearSelection": "Clear selection",
+        "bulkEditNoRights": "You need edit rights in this project to bulk edit."
       },
       "bulkEdit": {
         "title": "Bulk edit",
@@ -679,7 +681,9 @@
         "progressXofN": "Exported {{x}} of {{n}} resources",
         "buildingCsv": "Building your CSV — keep this tab open. We'll start the download as soon as the file is ready.",
         "preparing": "Preparing…",
-        "scopeAll": "This file contains every resource of this class. The current search and filters are not applied."
+        "scopeAll": "This file contains every resource of this class. The current search and filters are not applied.",
+        "scopeSearch": "This file contains the {{count}} resources that match your search and filters.",
+        "scopeSelection": "This file contains the {{count}} selected resources."
       },
       "dataClassHeader": {
         "searchLabel": "Search",
@@ -760,6 +764,15 @@
         "searchBody": "Search the resources of this class and narrow them down with filters, without leaving the Data tab.",
         "tableTitle": "Try the table view",
         "tableBody": "Switch to Table to see resources as rows, with their properties as columns, and compare values side by side."
+      },
+      "resultsBar": {
+        "resources": "resources",
+        "ofClass": "of {{total}} resources match your search and filters",
+        "match": "resources match your search and filters",
+        "download": "Download",
+        "bulkEditAll": "Bulk edit all",
+        "collecting": "Loading resources… {{percent}}%",
+        "collectFailed": "The resources to edit could not be loaded."
       }
     }
   },

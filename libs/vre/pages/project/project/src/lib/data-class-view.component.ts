@@ -5,11 +5,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
-import {
-  MultipleViewerComponent,
-  MultipleViewerService,
-  ResourceListSelectionComponent,
-} from '@dasch-swiss/vre/pages/data-browser';
+import { MultipleViewerComponent } from '@dasch-swiss/vre/pages/data-browser';
 import { provideSearchFilters, StatementDraftStore } from '@dasch-swiss/vre/pages/search/search-filters';
 import { OntologyService, ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { AppProgressIndicatorComponent } from '@dasch-swiss/vre/ui/progress-indicator';
@@ -21,6 +17,7 @@ import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassHeaderComponent } from './data-class-header.component';
 import { DataClassPanelComponent } from './data-class-panel.component';
 import { provideDataClassSearch } from './data-class-query.service';
+import { DataClassResultsBarComponent } from './data-class-results-bar.component';
 import { DataClassUrlStateService, DataClassView } from './data-class-url-state.service';
 import { ProjectPageService } from './project-page.service';
 
@@ -47,11 +44,7 @@ const QUERIES = RESULT_LIST_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}p
         </app-centered-box>
       } @else {
         <app-data-class-header [classSelected]="classSelected" />
-        <!-- selectMode is a plain field with no change notification: keep it in the template. A
-             computed that reads it behind a short-circuited signal read caches forever. -->
-        @if ((selectedResources$ | async)?.length && multipleViewerService.selectMode) {
-          <app-resource-list-selection (bulkEdited)="onBulkEdited()" />
-        }
+        <app-data-class-results-bar [classSelected]="classSelected" (bulkEdited)="onBulkEdited()" />
         <as-split direction="horizontal" unit="pixel" (dragEnd)="onResultListDragged($event)">
           <as-split-area [size]="panelSize()" cdkScrollable>
             <app-data-class-panel [classSelected]="classSelected" />
@@ -76,7 +69,7 @@ const QUERIES = RESULT_LIST_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}p
         min-height: 0;
       }
       app-data-class-header,
-      app-resource-list-selection {
+      app-data-class-results-bar {
         flex: none;
       }
       as-split {
@@ -110,7 +103,7 @@ const QUERIES = RESULT_LIST_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}p
     DataClassHeaderComponent,
     DataClassPanelComponent,
     MultipleViewerComponent,
-    ResourceListSelectionComponent,
+    DataClassResultsBarComponent,
   ],
   // Scoped here so the header and the list share one query, one `ResourceResultService`, and a class
   // switch disposes them.
@@ -118,10 +111,6 @@ const QUERIES = RESULT_LIST_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}p
 })
 export class DataClassViewComponent {
   private readonly _view = toSignal(inject(DataClassUrlStateService).view$, { initialValue: 'list' as DataClassView });
-
-  /** Public: the selection banner's visibility is decided in this component's template. */
-  readonly multipleViewerService = inject(MultipleViewerService);
-  readonly selectedResources$ = this.multipleViewerService.selectedResources$;
 
   private readonly _breakpoints = inject(BreakpointObserver);
   private readonly _dataBrowserPageService = inject(DataBrowserPageService);

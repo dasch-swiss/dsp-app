@@ -584,7 +584,9 @@
         "noResourcesSelected": "Keine Ressourcen ausgewählt",
         "resourcesMustBeSameProject": "Die Ressourcen müssen zum selben Projekt gehören",
         "bulkEdit": "Mehrfach bearbeiten",
-        "bulkEditSameClass": "Mehrfachbearbeitung braucht Ressourcen derselben Klasse"
+        "bulkEditSameClass": "Mehrfachbearbeitung braucht Ressourcen derselben Klasse",
+        "clearSelection": "Auswahl aufheben",
+        "bulkEditNoRights": "Für die Massenbearbeitung brauchen Sie Bearbeitungsrechte in diesem Projekt."
       },
       "bulkEdit": {
         "title": "Mehrfach bearbeiten",
@@ -679,7 +681,9 @@
         "progressXofN": "{{x}} von {{n}} Ressourcen exportiert",
         "buildingCsv": "Ihre CSV-Datei wird erstellt — bitte lassen Sie diesen Tab geöffnet. Der Download startet, sobald die Datei bereit ist.",
         "preparing": "Wird vorbereitet…",
-        "scopeAll": "Die Datei enthält alle Ressourcen dieser Klasse. Die aktuelle Suche und die Filter werden nicht angewendet."
+        "scopeAll": "Die Datei enthält alle Ressourcen dieser Klasse. Die aktuelle Suche und die Filter werden nicht angewendet.",
+        "scopeSearch": "Diese Datei enthält die {{count}} Ressourcen, die Ihrer Suche und Ihren Filtern entsprechen.",
+        "scopeSelection": "Diese Datei enthält die {{count}} ausgewählten Ressourcen."
       },
       "dataClassHeader": {
         "searchLabel": "Suche",
@@ -760,6 +764,15 @@
         "searchBody": "Durchsuchen Sie die Ressourcen dieser Klasse und grenzen Sie sie mit Filtern ein, ohne den Daten-Tab zu verlassen.",
         "tableTitle": "Probieren Sie die Tabellenansicht",
         "tableBody": "Wechseln Sie zu Tabelle, um Ressourcen als Zeilen und ihre Eigenschaften als Spalten zu sehen und Werte direkt zu vergleichen."
+      },
+      "resultsBar": {
+        "resources": "Ressourcen",
+        "ofClass": "von {{total}} Ressourcen entsprechen Ihrer Suche und Ihren Filtern",
+        "match": "Ressourcen entsprechen Ihrer Suche und Ihren Filtern",
+        "download": "Herunterladen",
+        "bulkEditAll": "Alle bearbeiten",
+        "collecting": "Ressourcen werden geladen… {{percent}}%",
+        "collectFailed": "Die zu bearbeitenden Ressourcen konnten nicht geladen werden."
       }
     }
   },

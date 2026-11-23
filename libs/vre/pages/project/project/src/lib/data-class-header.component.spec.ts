@@ -2,8 +2,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, ViewContainerRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
@@ -13,7 +11,6 @@ import { of } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassHeaderComponent } from './data-class-header.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
-import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
 describe('DataClassHeaderComponent', () => {
@@ -22,8 +19,6 @@ describe('DataClassHeaderComponent', () => {
   let mockDialog: jest.Mocked<MatDialog>;
   let mockViewContainerRef: jest.Mocked<ViewContainerRef>;
   let mockProjectPageService: jest.Mocked<ProjectPageService>;
-  let mockOntologyCache: { getResourceClassDefinition: jest.Mock };
-  let mockResClassCountApi: jest.Mocked<ResourceClassCountApi>;
   let mockStringifyPipe: jest.Mocked<StringifyStringLiteralPipe>;
   let mockDataBrowserPageService: jest.Mocked<DataBrowserPageService>;
   let mockLocalizationService: Partial<LocalizationService>;
@@ -42,27 +37,6 @@ describe('DataClassHeaderComponent', () => {
     classLabel: 'TestClass',
     ontologyLabel: 'TestOntology',
     resClass: mockResClass,
-  };
-
-  const mockProperty = (id: string, guiOrder: number, overrides: Record<string, unknown> = {}) => ({
-    propertyIndex: id,
-    guiOrder,
-    propertyDefinition: { id, isEditable: true, isLinkProperty: false, subPropertyOf: [], ...overrides },
-  });
-
-  // Class definition as the ontology cache returns it: editable, non-editable and link properties.
-  const mockClassDefinitions = {
-    classes: {
-      [mockResClass.id]: {
-        id: mockResClass.id,
-        getResourcePropertiesList: () => [
-          mockProperty('prop:date', 2),
-          mockProperty('prop:title', 1),
-          mockProperty('prop:creator', 3, { isEditable: false }),
-          mockProperty('prop:linksTo', 4, { isLinkProperty: true }),
-        ],
-      },
-    },
   };
 
   beforeEach(async () => {
@@ -90,14 +64,6 @@ describe('DataClassHeaderComponent', () => {
       },
     } as any;
 
-    mockOntologyCache = {
-      getResourceClassDefinition: jest.fn().mockReturnValue(of(mockClassDefinitions)),
-    };
-
-    mockResClassCountApi = {
-      getResourceClassCount: jest.fn(),
-    } as any;
-
     mockStringifyPipe = {
       transform: jest.fn().mockReturnValue('Transformed Label'),
     } as any;
@@ -115,8 +81,6 @@ describe('DataClassHeaderComponent', () => {
         { provide: MatDialog, useValue: mockDialog },
         { provide: ViewContainerRef, useValue: mockViewContainerRef },
         { provide: ProjectPageService, useValue: mockProjectPageService },
-        { provide: DspApiConnectionToken, useValue: { v2: { ontologyCache: mockOntologyCache } } },
-        { provide: ResourceClassCountApi, useValue: mockResClassCountApi },
         { provide: DataBrowserPageService, useValue: mockDataBrowserPageService },
         { provide: LocalizationService, useValue: mockLocalizationService },
         // Route-scoped in the app; this isolated fixture has no route.
@@ -158,70 +122,6 @@ describe('DataClassHeaderComponent', () => {
 
     it('should expose hasProjectMemberRights$ from ProjectPageService', () => {
       expect(component.hasProjectMemberRights$).toBe(mockProjectPageService.hasProjectMemberRights$);
-    });
-  });
-
-  describe('openDownloadDialog', () => {
-    it('should get the class definition', done => {
-      component.openDownloadDialog(10);
-
-      setTimeout(() => {
-        expect(mockOntologyCache.getResourceClassDefinition).toHaveBeenCalledWith(mockResClass.id);
-        done();
-      }, 0);
-    });
-
-    it('should open download dialog as a side panel', done => {
-      component.openDownloadDialog(10);
-
-      setTimeout(() => {
-        expect(mockDialog.open).toHaveBeenCalledWith(
-          DownloadDialogComponent,
-          // A full-height right-side panel keeps the actions visible while only the property list scrolls.
-          expect.objectContaining({
-            width: '600px',
-            height: 'calc(100vh)',
-            position: { right: '0px' },
-          })
-        );
-        done();
-      }, 0);
-    });
-
-    it('should pass resource count and class to dialog', done => {
-      component.openDownloadDialog(42);
-
-      setTimeout(() => {
-        const config = mockDialog.open.mock.calls[0][1] as any;
-        expect(config.data.resourceCount).toBe(42);
-        expect(config.data.resClass).toBe(mockResClass);
-        done();
-      }, 0);
-    });
-
-    it('lists the editable properties of the class, not of a selected resource', done => {
-      component.openDownloadDialog(10);
-
-      setTimeout(() => {
-        const config = mockDialog.open.mock.calls[0][1] as any;
-        expect(config.data.properties.map((p: any) => p.propDef.id)).toEqual(['prop:title', 'prop:date']);
-        done();
-      }, 0);
-    });
-  });
-
-  describe('download scope', () => {
-    it('exposes the class total for the Download all badge', done => {
-      mockResClassCountApi.getResourceClassCount.mockReturnValue(of(66));
-      const emitted: (number | null)[] = [];
-
-      component.classCount$.subscribe(count => emitted.push(count));
-
-      setTimeout(() => {
-        expect(mockResClassCountApi.getResourceClassCount).toHaveBeenCalledWith(mockResClass.id);
-        expect(emitted).toEqual([null, 66]);
-        done();
-      }, 0);
     });
   });
 

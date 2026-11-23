@@ -89,8 +89,8 @@ export const SingleResourceSelected: Story = {
 
 const resetSpy = fn();
 
-export const ResetsSelectionOnClose: Story = {
-  name: 'Resets selection when close button is clicked',
+export const ResetsSelectionOnClear: Story = {
+  name: 'Resets selection when Clear selection is clicked',
   decorators: [
     applicationConfig({
       providers: [
@@ -108,8 +108,8 @@ export const ResetsSelectionOnClose: Story = {
   play: async ({ canvasElement, step }) => {
     resetSpy.mockClear();
     const canvas = within(canvasElement);
-    await step('Click the close icon button', async () => {
-      await userEvent.click(canvas.getByRole('button'));
+    await step('Click Clear selection', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Clear selection' }));
     });
     await step('MultipleViewerService.reset was called', async () => {
       await expect(resetSpy).toHaveBeenCalledTimes(1);

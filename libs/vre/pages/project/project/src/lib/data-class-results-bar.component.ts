@@ -1,0 +1,329 @@
+import { AsyncPipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
+import { Component, DestroyRef, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { KnoraApiConnection, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import {
+  BulkEditLauncher,
+  MultipleViewerService,
+  ResourceClassCountApi,
+  ResourceListSelectionComponent,
+} from '@dasch-swiss/vre/pages/data-browser';
+import { GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
+import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { NotificationService } from '@dasch-swiss/vre/ui/notification';
+import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import {
+  catchError,
+  combineLatest,
+  distinctUntilChanged,
+  first,
+  from,
+  map,
+  mergeMap,
+  of,
+  ReplaySubject,
+  startWith,
+  switchMap,
+  tap,
+  toArray,
+} from 'rxjs';
+import { DataClassQueryService } from './data-class-query.service';
+import { DataClassUrlStateService } from './data-class-url-state.service';
+import { DownloadScope } from './download/download-dialog-resources-tab.component';
+import { DownloadDialogComponent } from './download/download-dialog.component';
+import { ProjectPageService } from './project-page.service';
+
+/** Result pages fetched at once while collecting every matching resource for a bulk edit. */
+const COLLECT_CONCURRENCY = 4;
+
+/**
+ * The bar between the toolbar and the results: which resources the actions apply to, and Download and
+ * Bulk edit for them. The scope is the ticked rows if there are any, else what the search and filters
+ * keep, else the whole class.
+ */
+@Component({
+  selector: 'app-data-class-results-bar',
+  template: `
+    @let total = resourceResult.numberOfResults;
+    @let classCount = classCount$ | async;
+    @let narrowed = (narrowed$ | async) === true;
+    @let selected = (selectedResources$ | async) ?? [];
+
+    <!-- selectMode is a plain field with no change notification: keep it in the template. -->
+    @if (selected.length && multipleViewerService.selectMode) {
+      <app-resource-list-selection (bulkEdited)="bulkEdited.emit()">
+        <ng-container
+          [ngTemplateOutlet]="downloadButton"
+          [ngTemplateOutletContext]="{ scope: 'selection', count: selected.length }" />
+      </app-resource-list-selection>
+    } @else {
+      <div class="results-bar" data-cy="results-bar">
+        <!-- aria-live: filtering changes this count without moving focus. -->
+        <span class="scope" data-cy="results-scope" aria-live="polite">
+          @if (total !== null) {
+            <b class="count">{{ total | number }}</b>
+            @if (!narrowed) {
+              {{ 'pages.dataBrowser.resultsBar.resources' | translate }}
+            } @else if (classCount !== null) {
+              {{ 'pages.dataBrowser.resultsBar.ofClass' | translate: { total: (classCount | number) } }}
+            } @else {
+              {{ 'pages.dataBrowser.resultsBar.match' | translate }}
+            }
+          }
+        </span>
+        <span class="spacer"></span>
+        @if (narrowed) {
+          <ng-container
+            [ngTemplateOutlet]="downloadButton"
+            [ngTemplateOutletContext]="{ scope: 'search', count: total }" />
+        } @else {
+          <ng-container
+            [ngTemplateOutlet]="downloadButton"
+            [ngTemplateOutletContext]="{ scope: 'class', count: classCount }" />
+        }
+
+        @let canEdit = (hasProjectMemberRights$ | async) === true;
+        <div
+          class="tooltip-anchor"
+          [matTooltip]="'pages.dataBrowser.resourceListSelection.bulkEditNoRights' | translate"
+          [matTooltipDisabled]="canEdit">
+          <button
+            mat-flat-button
+            class="tonal"
+            data-cy="bulk-edit-all-btn"
+            [disabled]="!canEdit || !total || collecting() !== null"
+            (click)="bulkEditAll(total ?? 0)">
+            <mat-icon>edit_note</mat-icon>
+            @let progress = collecting();
+            @if (progress !== null) {
+              {{ 'pages.dataBrowser.resultsBar.collecting' | translate: { percent: progress } }}
+            } @else {
+              {{
+                (narrowed
+                  ? 'pages.dataBrowser.resourceListSelection.bulkEdit'
+                  : 'pages.dataBrowser.resultsBar.bulkEditAll'
+                ) | translate
+              }}
+              @if (total) {
+                <span class="count-badge" data-cy="bulk-edit-count">{{ total | number }}</span>
+              }
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Hidden while the count loads and when there is nothing to download. -->
+    <ng-template #downloadButton let-scope="scope" let-count="count">
+      @if (count) {
+        <button mat-stroked-button (click)="openDownloadDialog(count, scope)" data-cy="download-btn">
+          <mat-icon>download</mat-icon>
+          {{
+            (scope === 'class'
+              ? 'pages.dataBrowser.downloadDialog.downloadAll'
+              : 'pages.dataBrowser.resultsBar.download'
+            ) | translate
+          }}
+          <span class="count-badge" data-cy="download-count">{{ count | number }}</span>
+        </button>
+      }
+    </ng-template>
+  `,
+  styles: [
+    `
+      .results-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 52px;
+        padding: 0 24px;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        color: #374151;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+      .results-bar > * {
+        flex: none;
+      }
+      .results-bar > .spacer {
+        flex: 1;
+      }
+      .scope {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .count {
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.87);
+      }
+      .tooltip-anchor {
+        display: inline-block;
+      }
+      .tonal:not([disabled]) {
+        background-color: #d6e0e8;
+        color: #264c6a;
+      }
+      .count-badge {
+        /* Aligned to the text's top, the pill is centred on the label's line box. */
+        display: inline-block;
+        vertical-align: text-top;
+        margin-left: 6px;
+        padding: 0 7px;
+        border-radius: 10px;
+        background: #e8eef4;
+        color: #336790;
+        font-size: 12px;
+        line-height: 18px;
+      }
+    `,
+  ],
+  imports: [
+    AsyncPipe,
+    DecimalPipe,
+    NgTemplateOutlet,
+    MatButton,
+    MatIcon,
+    MatTooltip,
+    TranslatePipe,
+    ResourceListSelectionComponent,
+  ],
+  providers: [StringifyStringLiteralPipe],
+})
+export class DataClassResultsBarComponent {
+  @Input({ required: true }) set classSelected(value: { resClass: ResourceClassDefinitionWithAllLanguages }) {
+    this._resClass = value.resClass;
+    this._classId$.next(value.resClass.id);
+  }
+  private _resClass!: ResourceClassDefinitionWithAllLanguages;
+
+  /** Emits once a bulk edit has written values, so the host can reload its results. */
+  @Output() bulkEdited = new EventEmitter<void>();
+
+  readonly multipleViewerService = inject(MultipleViewerService);
+  readonly resourceResult = inject(ResourceResultService);
+  private readonly _urlState = inject(DataClassUrlStateService);
+  private readonly _query = inject(DataClassQueryService);
+  private readonly _classCountApi = inject(ResourceClassCountApi);
+  private readonly _projectPageService = inject(ProjectPageService);
+  private readonly _bulkEditLauncher = inject(BulkEditLauncher);
+  private readonly _dialog = inject(MatDialog);
+  private readonly _dspApiConnection = inject<KnoraApiConnection>(DspApiConnectionToken);
+  private readonly _stringifyStringLiteralPipe = inject(StringifyStringLiteralPipe);
+  private readonly _notification = inject(NotificationService);
+  private readonly _translate = inject(TranslateService);
+  private readonly _destroyRef = inject(DestroyRef);
+
+  readonly selectedResources$ = this.multipleViewerService.selectedResources$;
+  readonly hasProjectMemberRights$ = this._projectPageService.hasProjectMemberRights$;
+
+  /** Percent of result pages read while collecting every match for a bulk edit; null when idle. */
+  readonly collecting = signal<number | null>(null);
+
+  /** Only search and filters narrow the results; a sort does not. */
+  readonly narrowed$ = combineLatest([this._urlState.fulltextTerm$, this._urlState.filters$]).pipe(
+    map(([term, filters]) => !!term || filters.length > 0),
+    distinctUntilChanged()
+  );
+
+  private readonly _classId$ = new ReplaySubject<string>(1);
+
+  /** The class total, shown against the filtered count and offered by Download all. */
+  readonly classCount$ = this._classId$.pipe(
+    distinctUntilChanged(),
+    switchMap(id =>
+      this._classCountApi.getResourceClassCount(id).pipe(
+        startWith(null),
+        catchError(() => of(null))
+      )
+    )
+  );
+
+  openDownloadDialog(resourceCount: number, scope: DownloadScope) {
+    const resClass = this._resClass;
+    // The columns come from the class definition, not from a selected row.
+    this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resClass.id).subscribe(classDefinitions => {
+      const properties = GenerateProperty.classProperty(classDefinitions.classes[resClass.id]).filter(
+        prop => prop.propDef.isEditable
+      );
+
+      // Full-height side panel: the property list scrolls inside it and the actions stay visible.
+      this._dialog.open(DownloadDialogComponent, {
+        ...DspDialogConfig.dialogDrawerConfig(
+          {
+            resourceCount,
+            scope,
+            resClass,
+            classLabel: this._stringifyStringLiteralPipe.transform(resClass.labels),
+            properties,
+          },
+          true
+        ),
+        width: '600px',
+        maxWidth: '100vw',
+        minWidth: 0,
+        autoFocus: false,
+      });
+    });
+  }
+
+  /**
+   * Bulk edit every resource the current query matches, across all its pages. dsp-api has no bulk
+   * endpoint and the panel takes IRIs, so the pages are read first, a few at a time.
+   */
+  bulkEditAll(total: number): void {
+    const pageSize = this.resourceResult.MAX_RESULTS_PER_PAGE;
+    const pageCount = Math.ceil(total / pageSize);
+    const projectIri = this._projectPageService.currentProject.id;
+    let pagesRead = 0;
+    this.collecting.set(0);
+
+    this._query.query$
+      .pipe(
+        first(),
+        switchMap(query =>
+          from(Array.from({ length: pageCount }, (_, pageIndex) => pageIndex)).pipe(
+            mergeMap(
+              pageIndex =>
+                this._dspApiConnection.v2.search.doExtendedSearch(withOffset(query, pageIndex), projectIri).pipe(
+                  map(response => ({ pageIndex, iris: response.resources.map(resource => resource.id) })),
+                  tap(() => this.collecting.set(Math.round((++pagesRead / pageCount) * 100)))
+                ),
+              COLLECT_CONCURRENCY
+            ),
+            toArray()
+          )
+        ),
+        map(pages => pages.sort((a, b) => a.pageIndex - b.pageIndex).flatMap(page => page.iris)),
+        tap(() => this.collecting.set(null)),
+        switchMap(iris => this._bulkEditLauncher.open(iris)),
+        takeUntilDestroyed(this._destroyRef)
+      )
+      .subscribe({
+        next: changedIris => {
+          changedIris?.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
+          if (changedIris?.length) this.bulkEdited.emit();
+        },
+        error: () => {
+          this.collecting.set(null);
+          this._notification.openSnackBar(
+            this._translate.instant('pages.dataBrowser.resultsBar.collectFailed'),
+            'error'
+          );
+        },
+      });
+  }
+}
+
+/** `lastIndexOf`: a fulltext term can contain the word OFFSET. */
+function withOffset(query: string, pageIndex: number): string {
+  const offsetAt = query.lastIndexOf('OFFSET');
+  return `${offsetAt === -1 ? query : query.substring(0, offsetAt)}OFFSET ${pageIndex}`;
+}

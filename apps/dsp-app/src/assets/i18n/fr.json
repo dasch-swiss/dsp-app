@@ -584,7 +584,9 @@
         "noResourcesSelected": "Aucune ressource sélectionnée",
         "resourcesMustBeSameProject": "Les ressources doivent appartenir au même projet",
         "bulkEdit": "Modifier en masse",
-        "bulkEditSameClass": "La modification en masse nécessite des ressources de la même classe"
+        "bulkEditSameClass": "La modification en masse nécessite des ressources de la même classe",
+        "clearSelection": "Effacer la sélection",
+        "bulkEditNoRights": "Il faut des droits de modification dans ce projet pour modifier en masse."
       },
       "bulkEdit": {
         "title": "Modifier en masse",
@@ -679,7 +681,9 @@
         "progressXofN": "{{x}} sur {{n}} ressources exportées",
         "buildingCsv": "Création de votre fichier CSV — veuillez garder cet onglet ouvert. Le téléchargement démarrera dès que le fichier sera prêt.",
         "preparing": "Préparation…",
-        "scopeAll": "Le fichier contient toutes les ressources de cette classe. La recherche et les filtres actuels ne sont pas appliqués."
+        "scopeAll": "Le fichier contient toutes les ressources de cette classe. La recherche et les filtres actuels ne sont pas appliqués.",
+        "scopeSearch": "Ce fichier contient les {{count}} ressources qui correspondent à votre recherche et à vos filtres.",
+        "scopeSelection": "Ce fichier contient les {{count}} ressources sélectionnées."
       },
       "dataClassHeader": {
         "searchLabel": "Rechercher",
@@ -760,6 +764,15 @@
         "searchBody": "Recherchez parmi les ressources de cette classe et affinez-les avec des filtres, sans quitter l'onglet Données.",
         "tableTitle": "Essayez la vue tableau",
         "tableBody": "Passez à Tableau pour afficher les ressources en lignes, leurs propriétés en colonnes, et comparer les valeurs côte à côte."
+      },
+      "resultsBar": {
+        "resources": "ressources",
+        "ofClass": "ressources sur {{total}} correspondent à votre recherche et à vos filtres",
+        "match": "ressources correspondent à votre recherche et à vos filtres",
+        "download": "Télécharger",
+        "bulkEditAll": "Tout modifier",
+        "collecting": "Chargement des ressources… {{percent}} %",
+        "collectFailed": "Les ressources à modifier n’ont pas pu être chargées."
       }
     }
   },

@@ -440,6 +440,14 @@ describe('DownloadDialogResourcesTabComponent', () => {
     it('states the class-wide scope', () => {
       expect(scopeNote()).toContain('pages.dataBrowser.downloadDialog.scopeAll');
     });
+
+    it.each([
+      ['search', 'pages.dataBrowser.downloadDialog.scopeSearch'],
+      ['selection', 'pages.dataBrowser.downloadDialog.scopeSelection'],
+    ] as const)('states the %s scope', (scope, key) => {
+      component.scope = scope;
+      expect(scopeNote()).toContain(key);
+    });
   });
 
   describe('columnCount', () => {

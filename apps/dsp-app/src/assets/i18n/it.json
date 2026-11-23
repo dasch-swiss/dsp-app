@@ -584,7 +584,9 @@
         "noResourcesSelected": "Nessuna risorsa selezionata",
         "resourcesMustBeSameProject": "Le risorse devono appartenere allo stesso progetto",
         "bulkEdit": "Modifica multipla",
-        "bulkEditSameClass": "La modifica multipla richiede risorse della stessa classe"
+        "bulkEditSameClass": "La modifica multipla richiede risorse della stessa classe",
+        "clearSelection": "Cancella selezione",
+        "bulkEditNoRights": "Per la modifica multipla servono i diritti di modifica in questo progetto."
       },
       "bulkEdit": {
         "title": "Modifica multipla",
@@ -679,7 +681,9 @@
         "progressXofN": "Esportate {{x}} su {{n}} risorse",
         "buildingCsv": "Creazione del file CSV in corso — tieni aperta questa scheda. Il download inizierà non appena il file sarà pronto.",
         "preparing": "Preparazione…",
-        "scopeAll": "Il file contiene tutte le risorse di questa classe. La ricerca e i filtri attuali non vengono applicati."
+        "scopeAll": "Il file contiene tutte le risorse di questa classe. La ricerca e i filtri attuali non vengono applicati.",
+        "scopeSearch": "Questo file contiene le {{count}} risorse che corrispondono alla ricerca e ai filtri.",
+        "scopeSelection": "Questo file contiene le {{count}} risorse selezionate."
       },
       "dataClassHeader": {
         "searchLabel": "Cerca",
@@ -760,6 +764,15 @@
         "searchBody": "Cerca tra le risorse di questa classe e restringile con i filtri, senza lasciare la scheda Dati.",
         "tableTitle": "Prova la vista tabella",
         "tableBody": "Passa a Tabella per vedere le risorse come righe, con le proprietà come colonne, e confrontare i valori fianco a fianco."
+      },
+      "resultsBar": {
+        "resources": "risorse",
+        "ofClass": "di {{total}} risorse corrispondono alla ricerca e ai filtri",
+        "match": "risorse corrispondono alla ricerca e ai filtri",
+        "download": "Scarica",
+        "bulkEditAll": "Modifica tutte",
+        "collecting": "Caricamento delle risorse… {{percent}}%",
+        "collectFailed": "Non è stato possibile caricare le risorse da modificare."
       }
     }
   },

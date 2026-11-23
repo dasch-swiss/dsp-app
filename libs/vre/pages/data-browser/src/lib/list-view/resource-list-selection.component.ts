@@ -1,47 +1,30 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ReadResource } from '@dasch-swiss/dsp-js';
-import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
-import {
-  BulkEditDialogComponent,
-  BulkEditDialogProps,
-  BulkEditDialogResult,
-} from '../bulk-edit/bulk-edit-dialog.component';
+import { BulkEditLauncher } from '../bulk-edit/bulk-edit-launcher.service';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource-link-dialog.component';
 
 @Component({
   selector: 'app-resource-list-selection',
   template: `
-    <div style="background: #336790; color: white; padding: 0 16px; display: flex; gap: 8px; align-items: center">
-      <div style="flex: 1; display: flex; align-items: center; gap: 16px;">
-        <div>
-          {{ 'pages.dataBrowser.resourceListSelection.resourcesSelected' | translate: { count: count$ | async } }}
-        </div>
-        @if ((canEdit$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
-          @let sameClass = isSameClass(selectedResources);
-          <div
-            style="display: inline-block"
-            [matTooltip]="'pages.dataBrowser.resourceListSelection.bulkEditSameClass' | translate"
-            [matTooltipDisabled]="sameClass">
-            <button
-              mat-flat-button
-              data-cy="bulk-edit-btn"
-              [disabled]="!sameClass"
-              (click)="openBulkEditDialog(selectedResources)">
-              <mat-icon>edit_note</mat-icon>
-              {{ 'pages.dataBrowser.resourceListSelection.bulkEdit' | translate }}
-            </button>
-          </div>
-        }
+    <div class="selection-bar" data-cy="selection-bar">
+      <b class="count">
+        {{ 'pages.dataBrowser.resourceListSelection.resourcesSelected' | translate: { count: count$ | async } }}
+      </b>
+      <button mat-button type="button" data-cy="clear-selection-btn" (click)="reset()">
+        {{ 'pages.dataBrowser.resourceListSelection.clearSelection' | translate }}
+      </button>
+      <span class="spacer"></span>
+      <div class="actions">
         @if ((showCreateLink$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
           @if (isCreateLinkButtonDisabled$ | async; as disabledState) {
             <div
@@ -51,7 +34,7 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
               "
               [matTooltipDisabled]="!disabledState.disabled">
               <button
-                mat-flat-button
+                mat-stroked-button
                 (click)="openCreateLinkDialog(selectedResources)"
                 [disabled]="disabledState.disabled">
                 {{ 'pages.dataBrowser.resourceListSelection.createLinkObject' | translate }}
@@ -59,12 +42,80 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
             </div>
           }
         }
+        <!-- The host's actions for the same selection, e.g. Download. -->
+        <ng-content />
+        @if (multipleViewerService.selectedResources$ | async; as selectedResources) {
+          @let canEdit = (canEdit$ | async) === true;
+          @let sameClass = isSameClass(selectedResources);
+          <div
+            style="display: inline-block"
+            [matTooltip]="
+              (canEdit
+                ? 'pages.dataBrowser.resourceListSelection.bulkEditSameClass'
+                : 'pages.dataBrowser.resourceListSelection.bulkEditNoRights'
+              ) | translate
+            "
+            [matTooltipDisabled]="canEdit && sameClass">
+            <button
+              mat-flat-button
+              class="tonal"
+              data-cy="bulk-edit-btn"
+              [disabled]="!canEdit || !sameClass"
+              (click)="openBulkEditDialog(selectedResources)">
+              <mat-icon>edit_note</mat-icon>
+              {{ 'pages.dataBrowser.resourceListSelection.bulkEdit' | translate }}
+              <span class="count-badge" data-cy="bulk-edit-count">{{ selectedResources.length }}</span>
+            </button>
+          </div>
+        }
       </div>
-      <button mat-icon-button (click)="reset()"><mat-icon>close</mat-icon></button>
     </div>
   `,
-  styles: ['button[disabled] { background-color: #fff; color: #b8b8b8 }'],
-  imports: [AsyncPipe, MatButton, MatIconButton, MatIcon, MatTooltip, TranslatePipe],
+  styles: [
+    `
+      .selection-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 52px;
+        padding: 0 24px;
+        background: #eaf1f7;
+        border-bottom: 1px solid #c9d8e5;
+        white-space: nowrap;
+      }
+      .selection-bar > * {
+        flex: none;
+      }
+      .count {
+        font-weight: 500;
+      }
+      .selection-bar > .spacer {
+        flex: 1;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tonal:not([disabled]) {
+        background-color: #d6e0e8;
+        color: #264c6a;
+      }
+      .count-badge {
+        /* Aligned to the text's top, the pill is centred on the label's line box. */
+        display: inline-block;
+        vertical-align: text-top;
+        margin-left: 6px;
+        padding: 0 7px;
+        border-radius: 10px;
+        background: #e8eef4;
+        color: #336790;
+        font-size: 12px;
+        line-height: 18px;
+      }
+    `,
+  ],
+  imports: [AsyncPipe, MatButton, MatIcon, MatTooltip, TranslatePipe],
 })
 export class ResourceListSelectionComponent {
   /** Emits once a bulk edit has written values, so the host can reload its results. */
@@ -136,7 +187,8 @@ export class ResourceListSelectionComponent {
     public multipleViewerService: MultipleViewerService,
     private readonly _userService: UserService,
     private readonly _translateService: TranslateService,
-    private readonly _dialog: MatDialog
+    private readonly _dialog: MatDialog,
+    private readonly _bulkEditLauncher: BulkEditLauncher
   ) {}
 
   reset() {
@@ -149,20 +201,10 @@ export class ResourceListSelectionComponent {
   }
 
   openBulkEditDialog(resources: ReadResource[]): void {
-    this._dialog
-      .open<BulkEditDialogComponent, BulkEditDialogProps, BulkEditDialogResult>(BulkEditDialogComponent, {
-        ...DspDialogConfig.dialogDrawerConfig({ resourceIris: resources.map(resource => resource.id) }, true),
-        width: '600px',
-        maxWidth: '100vw',
-        minWidth: 0,
-        autoFocus: false,
-      })
-      .afterClosed()
-      .subscribe(changedIris => {
-        if (!changedIris?.length) return;
-        changedIris.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
-        this.bulkEdited.emit(changedIris);
-      });
+    this._bulkEditLauncher.open(resources.map(resource => resource.id)).subscribe(changedIris => {
+      changedIris?.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
+      if (changedIris?.length) this.bulkEdited.emit(changedIris);
+    });
   }
 
   openCreateLinkDialog(resources: ReadResource[]): void {
