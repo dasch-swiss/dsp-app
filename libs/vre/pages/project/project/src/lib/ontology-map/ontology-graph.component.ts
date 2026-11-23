@@ -1,3 +1,4 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -16,7 +17,9 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Constants } from '@dasch-swiss/dsp-js';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { map } from 'rxjs';
 import type { Core, EdgeSingular, NodeSingular, StylesheetJson } from 'cytoscape';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { linkCounts, mainClass } from '../sidenav/data-model-map/data-model-importance';
@@ -55,6 +58,17 @@ const COLOR = {
 
 /** Room left around the model when it is fitted, clear of the legend at the bottom. */
 const FIT_PADDING = 56;
+
+/**
+ * How much smaller the names are drawn from each breakpoint up, widest first, as against the page's own text, which
+ * stays the same size: Normal is 23px below 1536px, 20px from it, 18px from 1920px. The min-widths are those of the
+ * Data tab's sidebar (DEV-7494).
+ */
+const SCREEN_TEXT_SCALES: readonly (readonly [minWidth: number, scale: number])[] = [
+  [1920, 18 / 23],
+  [1536, 20 / 23],
+];
+const SCREEN_QUERIES = SCREEN_TEXT_SCALES.map(([minWidth]) => `(min-width: ${minWidth}px)`);
 /** Room left above the model when it is fitted, clear of the filter bar and tools floating over the top edge. */
 const TOOLBAR_ROOM = 72;
 
@@ -902,6 +916,12 @@ export class OntologyGraphComponent {
   readonly backgroundClicked = output<void>();
 
   private readonly _translate = inject(TranslateService);
+  private readonly _breakpoints = inject(BreakpointObserver);
+  /** How much smaller than chosen the names are drawn on the screen's breakpoint. */
+  private readonly _screenScale = toSignal(
+    this._breakpoints.observe(SCREEN_QUERIES).pipe(map(() => this._screenScaleNow())),
+    { initialValue: this._screenScaleNow() }
+  );
   private readonly _canvas = viewChild.required<ElementRef<HTMLElement>>('canvas');
   private readonly _cy = signal<Core | undefined>(undefined);
   readonly failed = signal(false);
@@ -1154,13 +1174,14 @@ export class OntologyGraphComponent {
     // A new size only grows or shrinks text, boxes and lines, by as much as the text size changes: every class stays
     // where it is, and the view too; only the links are routed again round the new boxes. The size the graph starts
     // with is already the one it is laid out at.
-    let sizeShown = untracked(() => this.size());
+    // A screen crossing a breakpoint does the same.
+    let textShown = untracked(() => this._textSize());
     effect(() => {
       const cy = this._cy();
-      const size = this.size();
-      if (!cy || size === sizeShown) return;
-      const ratio = GRAPH_TEXT_SIZE[size] / GRAPH_TEXT_SIZE[sizeShown];
-      sizeShown = size;
+      const text = GRAPH_TEXT_SIZE[this.size()] * this._screenScale();
+      if (!cy || text === textShown) return;
+      const ratio = text / textShown;
+      textShown = text;
       untracked(() => this._grow(cy, ratio));
     });
     // New texts restyle in place: classes stay where they are, their boxes fitting the new texts, and the labels clear
@@ -1310,7 +1331,7 @@ export class OntologyGraphComponent {
 
   /** What `_keep` keeps the layout under: the classes and links shown, and the texts and size they are drawn with. */
   private _layoutKey(): string {
-    return [this._shown, this.size(), this.labels(), this.levelLabels(), this.showProperties()].join('|');
+    return [this._shown, this.size(), this._screenScale(), this.labels(), this.levelLabels(), this.showProperties()].join('|');
   }
 
   /** Keeps the layout shown, places, scale and view, in memory for `_restore`; see `remember`. */
@@ -1369,7 +1390,7 @@ export class OntologyGraphComponent {
    */
   private _rescale(cy: Core): void {
     if (cy.elements().empty()) return;
-    const textSize = GRAPH_TEXT_SIZE[untracked(() => this.size())];
+    const textSize = this._textSize();
     this._scale = 1;
     for (let pass = 0; pass < 2; pass++) {
       cy.style(this._style(this._scale));
@@ -1408,7 +1429,7 @@ export class OntologyGraphComponent {
     const before = cy.elements().boundingBox({});
     // The zoom the model is fitted at, at most the one that draws names at the chosen size.
     const zoom = Math.min(
-      GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale),
+      this._textSize() / (BASE_FONT_SIZE * this._scale),
       screen.w / before.w,
       screen.h / before.h
     );
@@ -1553,10 +1574,20 @@ export class OntologyGraphComponent {
    * Fits the whole model in the box, clear of the Islands view's legend, zooming in no further than the chosen size of
    * class names.
    */
+  /** The names' size on screen, in px: the size chosen, smaller on a wide screen. */
+  private _textSize(): number {
+    return untracked(() => GRAPH_TEXT_SIZE[this.size()] * this._screenScale());
+  }
+
+  private _screenScaleNow(): number {
+    const match = SCREEN_TEXT_SCALES.find((_, index) => this._breakpoints.isMatched(SCREEN_QUERIES[index]));
+    return match ? match[1] : 1;
+  }
+
   private _fit(cy: Core): void {
     const room = this._room(cy);
     const box = cy.elements().boundingBox({});
-    const largest = GRAPH_TEXT_SIZE[untracked(() => this.size())] / (BASE_FONT_SIZE * this._scale);
+    const largest = this._textSize() / (BASE_FONT_SIZE * this._scale);
     const zoom = Math.min(largest, room.w / box.w, room.h / box.h);
     if (!Number.isFinite(zoom) || zoom <= 0) return;
     cy.stop(true, false);
