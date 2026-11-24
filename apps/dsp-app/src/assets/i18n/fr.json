@@ -595,8 +595,6 @@
         "property": "Propriété",
         "replace": "Remplacer",
         "replaceHint": "Rechercher du texte dans les valeurs existantes et le remplacer",
-        "defaultValue": "Valeur par défaut",
-        "defaultValueHint": "Définir une valeur là où la propriété est vide",
         "text": "Texte",
         "find": "Rechercher",
         "replaceWith": "Remplacer par",
@@ -628,11 +626,17 @@
         "setValue": "Définir la valeur",
         "setValueHint": "Donner ce libellé à chaque ressource",
         "replaceListValueHint": "Remplacer une valeur de liste par une autre ; les autres valeurs restent",
-        "setListValueHint": "Donner cette valeur de liste à chaque ressource, en remplaçant l’actuelle",
-        "defaultListValueHint": "Définir cette valeur de liste seulement là où la propriété est vide",
         "listFrom": "Remplacer",
         "listTo": "Par",
-        "listLoadFailed": "La liste n’a pas pu être chargée."
+        "listLoadFailed": "La liste n’a pas pu être chargée.",
+        "valueNumbered": "Valeur {{index}}",
+        "addValue": "Ajouter une autre valeur",
+        "removeValue": "Supprimer la valeur {{index}}",
+        "onlyEmpty": "Ne remplir que les valeurs vides",
+        "onlyEmptyHint": "Les ressources qui ont déjà une valeur la gardent",
+        "onlyEmptyMultipleHint": "Les ressources qui ont déjà des valeurs les gardent",
+        "onlyEmptyMultipleTooltip": "Les propriétés à plusieurs valeurs ne peuvent être remplies que là où elles sont vides. Utilisez Remplacer pour modifier les valeurs existantes.",
+        "overwriteWarning": "Valeurs existantes écrasées : {{count}}"
       },
       "resourcesList": {
         "resultsCount": "{{count}} résultats",
@@ -768,7 +772,9 @@
         "download": "Télécharger",
         "bulkEditAll": "Tout modifier",
         "collecting": "Chargement des ressources… {{percent}} %",
-        "collectFailed": "Les ressources à modifier n’ont pas pu être chargées."
+        "collectFailed": "Les ressources à modifier n’ont pas pu être chargées.",
+        "bulkEditScopeAll": "Les {{count}} ressources de la classe {{class}}",
+        "bulkEditScopeFiltered": "{{count}} ressources de la classe {{class}} correspondant à votre recherche et à vos filtres"
       }
     }
   },

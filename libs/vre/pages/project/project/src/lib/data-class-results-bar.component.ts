@@ -98,7 +98,7 @@ const COLLECT_CONCURRENCY = 4;
             class="tonal"
             data-cy="bulk-edit-all-btn"
             [disabled]="!canEdit || !total || collecting() !== null"
-            (click)="bulkEditAll(total ?? 0)">
+            (click)="bulkEditAll(total ?? 0, narrowed)">
             <mat-icon>edit_note</mat-icon>
             @let progress = collecting();
             @if (progress !== null) {
@@ -295,7 +295,12 @@ export class DataClassResultsBarComponent {
    * Bulk edit every resource the current query matches, across all its pages. dsp-api has no bulk
    * endpoint and the panel takes IRIs, so the pages are read first, a few at a time.
    */
-  bulkEditAll(total: number): void {
+  bulkEditAll(total: number, narrowed: boolean): void {
+    // The panel's header says which resources these are.
+    const scope = this._translate.instant(
+      narrowed ? 'pages.dataBrowser.resultsBar.bulkEditScopeFiltered' : 'pages.dataBrowser.resultsBar.bulkEditScopeAll',
+      { count: total, class: this._stringifyStringLiteralPipe.transform(this._resClass.labels) }
+    );
     const pageSize = this.resourceResult.MAX_RESULTS_PER_PAGE;
     const pageCount = Math.ceil(total / pageSize);
     const projectIri = this._projectPageService.currentProject.id;
@@ -320,7 +325,7 @@ export class DataClassResultsBarComponent {
         ),
         map(pages => pages.sort((a, b) => a.pageIndex - b.pageIndex).flatMap(page => page.iris)),
         tap(() => this.collecting.set(null)),
-        switchMap(iris => this._bulkEditLauncher.open(iris)),
+        switchMap(iris => this._bulkEditLauncher.open(iris, scope)),
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe({

@@ -13,11 +13,14 @@ import { BulkEditDialogComponent, BulkEditDialogProps, BulkEditDialogResult } fr
 export class BulkEditLauncher {
   private readonly _dialog = inject(MatDialog);
 
-  /** Emits the IRIs of the resources whose values changed, once the panel closes (empty when nothing changed). */
-  open(resourceIris: string[]): Observable<BulkEditDialogResult | undefined> {
+  /**
+   * Emits the IRIs of the resources whose values changed, once the panel closes (empty when nothing changed).
+   * `scope` names which resources these are in the panel's header, e.g. what a search keeps.
+   */
+  open(resourceIris: string[], scope?: string): Observable<BulkEditDialogResult | undefined> {
     return this._dialog
       .open<BulkEditDialogComponent, BulkEditDialogProps, BulkEditDialogResult>(BulkEditDialogComponent, {
-        ...DspDialogConfig.dialogDrawerConfig({ resourceIris }, true),
+        ...DspDialogConfig.dialogDrawerConfig({ resourceIris, scope }, true),
         width: '600px',
         maxWidth: '100vw',
         minWidth: 0,

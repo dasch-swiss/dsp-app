@@ -595,8 +595,6 @@
         "property": "Eigenschaft",
         "replace": "Ersetzen",
         "replaceHint": "Text in bestehenden Werten suchen und ersetzen",
-        "defaultValue": "Standardwert",
-        "defaultValueHint": "Einen Wert setzen, wo die Eigenschaft leer ist",
         "text": "Text",
         "find": "Suchen",
         "replaceWith": "Ersetzen durch",
@@ -628,11 +626,17 @@
         "setValue": "Wert setzen",
         "setValueHint": "Allen Ressourcen diese Bezeichnung geben",
         "replaceListValueHint": "Einen Listenwert durch einen anderen ersetzen; andere Werte bleiben",
-        "setListValueHint": "Allen Ressourcen diesen Listenwert geben und den bisherigen ersetzen",
-        "defaultListValueHint": "Diesen Listenwert nur setzen, wo die Eigenschaft leer ist",
         "listFrom": "Ersetzen",
         "listTo": "Durch",
-        "listLoadFailed": "Die Liste konnte nicht geladen werden."
+        "listLoadFailed": "Die Liste konnte nicht geladen werden.",
+        "valueNumbered": "Wert {{index}}",
+        "addValue": "Weiteren Wert hinzufügen",
+        "removeValue": "Wert {{index}} entfernen",
+        "onlyEmpty": "Nur leere Werte ergänzen",
+        "onlyEmptyHint": "Ressourcen, die bereits einen Wert haben, behalten ihn",
+        "onlyEmptyMultipleHint": "Ressourcen, die bereits Werte haben, behalten sie",
+        "onlyEmptyMultipleTooltip": "Eigenschaften mit mehreren Werten können nur dort gesetzt werden, wo sie leer sind. Verwenden Sie Ersetzen, um bestehende Werte zu ändern.",
+        "overwriteWarning": "Überschriebene bestehende Werte: {{count}}"
       },
       "resourcesList": {
         "resultsCount": "{{count}} Ergebnisse",
@@ -768,7 +772,9 @@
         "download": "Herunterladen",
         "bulkEditAll": "Alle bearbeiten",
         "collecting": "Ressourcen werden geladen… {{percent}}%",
-        "collectFailed": "Die zu bearbeitenden Ressourcen konnten nicht geladen werden."
+        "collectFailed": "Die zu bearbeitenden Ressourcen konnten nicht geladen werden.",
+        "bulkEditScopeAll": "Alle {{count}} Ressourcen der Klasse {{class}}",
+        "bulkEditScopeFiltered": "{{count}} Ressourcen der Klasse {{class}}, die Ihrer Suche und Ihren Filtern entsprechen"
       }
     }
   },

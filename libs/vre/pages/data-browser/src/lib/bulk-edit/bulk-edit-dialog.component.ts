@@ -1,9 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatOptgroup } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -12,6 +11,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatOption, MatSelect, MatSelectTrigger } from '@angular/material/select';
+import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
+import { MatTooltip } from '@angular/material/tooltip';
 import {
   KnoraApiConnection,
   ListNodeV2,
@@ -48,12 +49,15 @@ import {
   bulkEditRequest,
   BulkEditTarget,
   bulkEditTargets,
+  canOverwrite,
   flattenList,
   planBulkEdit,
 } from './bulk-edit-plan';
 
 export interface BulkEditDialogProps {
   resourceIris: string[];
+  /** Which resources these are, e.g. what a search keeps; without it the panel names the selected count. */
+  scope?: string;
 }
 
 /** The IRIs of the resources that got at least one value written. */
@@ -64,7 +68,9 @@ type Step = 'loading' | 'loadFailed' | 'edit' | 'applying' | 'done';
 interface FormValue {
   property: string | null;
   operation: BulkEditOperationKind;
-  text: string;
+  values: string[];
+  listValues: (string | null)[];
+  onlyEmpty: boolean;
   find: string;
   replaceWith: string;
   wholeValue: boolean;
@@ -73,24 +79,23 @@ interface FormValue {
   listTo: string | null;
 }
 
-const OPERATION_INFO: Record<BulkEditOperationKind, { labelKey: string; hintKey: string }> = {
-  replace: { labelKey: 'pages.dataBrowser.bulkEdit.replace', hintKey: 'pages.dataBrowser.bulkEdit.replaceHint' },
-  setValue: { labelKey: 'pages.dataBrowser.bulkEdit.setValue', hintKey: 'pages.dataBrowser.bulkEdit.setValueHint' },
-  defaultValue: {
+/** `hintKey`: shown under the property; “Set value” on a property explains itself with its checkbox instead. */
+const OPERATION_INFO: Record<BulkEditOperationKind, { labelKey: string; icon: string; hintKey?: string }> = {
+  setValue: {
     labelKey: 'pages.dataBrowser.bulkEdit.setValue',
-    hintKey: 'pages.dataBrowser.bulkEdit.defaultValueHint',
+    icon: 'edit',
+    hintKey: 'pages.dataBrowser.bulkEdit.setValueHint',
   },
+  replace: {
+    labelKey: 'pages.dataBrowser.bulkEdit.replace',
+    icon: 'find_replace',
+    hintKey: 'pages.dataBrowser.bulkEdit.replaceHint',
+  },
+  setListValue: { labelKey: 'pages.dataBrowser.bulkEdit.setValue', icon: 'edit' },
   replaceListValue: {
     labelKey: 'pages.dataBrowser.bulkEdit.replace',
+    icon: 'find_replace',
     hintKey: 'pages.dataBrowser.bulkEdit.replaceListValueHint',
-  },
-  setListValue: {
-    labelKey: 'pages.dataBrowser.bulkEdit.setValue',
-    hintKey: 'pages.dataBrowser.bulkEdit.setListValueHint',
-  },
-  defaultListValue: {
-    labelKey: 'pages.dataBrowser.bulkEdit.defaultValue',
-    hintKey: 'pages.dataBrowser.bulkEdit.defaultListValueHint',
   },
 };
 
@@ -109,20 +114,45 @@ const READ_CHUNK_SIZE = 25;
   selector: 'app-bulk-edit-dialog',
   template: `
     <header class="header">
-      <div class="heading">
+      <div class="top">
         <h2 class="mat-headline-6 title">{{ 'pages.dataBrowser.bulkEdit.title' | translate }}</h2>
-        <p class="subtitle">
-          {{ 'pages.dataBrowser.bulkEdit.subtitle' | translate: { count: data.resourceIris.length } }}
-        </p>
+        <span class="scope" data-cy="bulk-edit-scope">
+          <mat-icon aria-hidden="true">{{ data.scope ? 'filter_list' : 'check_box' }}</mat-icon>
+          <span class="scope-text">
+            {{ data.scope ?? ('pages.dataBrowser.bulkEdit.subtitle' | translate: { count: data.resourceIris.length }) }}
+          </span>
+        </span>
+        <button
+          mat-icon-button
+          type="button"
+          class="close"
+          [disabled]="step() === 'applying'"
+          [attr.aria-label]="'ui.common.actions.close' | translate"
+          (click)="close()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
-      <button
-        mat-icon-button
-        type="button"
-        [disabled]="step() === 'applying'"
-        [attr.aria-label]="'ui.common.actions.close' | translate"
-        (click)="close()">
-        <mat-icon>close</mat-icon>
-      </button>
+      @if (step() === 'edit' && target()) {
+        <mat-tab-group
+          class="operations"
+          mat-stretch-tabs="false"
+          mat-align-tabs="start"
+          animationDuration="0"
+          [attr.aria-label]="'pages.dataBrowser.bulkEdit.operation' | translate"
+          [selectedIndex]="operationIndex()"
+          (selectedIndexChange)="selectOperation($event)">
+          @for (operation of operations(); track operation) {
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon" aria-hidden="true">{{ operationInfo[operation].icon }}</mat-icon>
+                <span [attr.data-cy]="'bulk-edit-operation-' + operation">
+                  {{ operationInfo[operation].labelKey | translate }}
+                </span>
+              </ng-template>
+            </mat-tab>
+          }
+        </mat-tab-group>
+      }
     </header>
 
     <div class="body">
@@ -150,20 +180,9 @@ const READ_CHUNK_SIZE = 25;
                 </mat-select>
               </mat-form-field>
 
-              <div>
-                <mat-button-toggle-group
-                  formControlName="operation"
-                  class="operations"
-                  hideSingleSelectionIndicator
-                  [attr.aria-label]="'pages.dataBrowser.bulkEdit.operation' | translate">
-                  @for (operation of operations(); track operation) {
-                    <mat-button-toggle [value]="operation" [attr.data-cy]="'bulk-edit-operation-' + operation">
-                      {{ operationInfo[operation].labelKey | translate }}
-                    </mat-button-toggle>
-                  }
-                </mat-button-toggle-group>
-                <p class="hint">{{ operationHintKey() | translate }}</p>
-              </div>
+              @if (operationHintKey(); as hintKey) {
+                <p class="hint">{{ hintKey | translate }}</p>
+              }
 
               @switch (formValue().operation) {
                 @case ('replace') {
@@ -187,25 +206,13 @@ const READ_CHUNK_SIZE = 25;
                     </mat-checkbox>
                   </div>
                 }
-                @case ('defaultValue') {
-                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <mat-label>{{ 'pages.dataBrowser.bulkEdit.value' | translate }}</mat-label>
-                    <input matInput formControlName="text" data-cy="bulk-edit-default-value" />
-                  </mat-form-field>
-                }
-                @case ('setValue') {
-                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <mat-label>{{ 'pages.dataBrowser.bulkEdit.value' | translate }}</mat-label>
-                    <input matInput formControlName="text" data-cy="bulk-edit-set-value" />
-                  </mat-form-field>
-                }
                 @case ('replaceListValue') {
                   <div class="row">
                     <ng-container
                       [ngTemplateOutlet]="listSelect"
                       [ngTemplateOutletContext]="{
                         control: form.controls.listFrom,
-                        labelKey: 'pages.dataBrowser.bulkEdit.listFrom',
+                        label: 'pages.dataBrowser.bulkEdit.listFrom' | translate,
                         cy: 'bulk-edit-list-from',
                       }" />
                     <mat-icon aria-hidden="true" class="arrow">arrow_forward</mat-icon>
@@ -213,19 +220,74 @@ const READ_CHUNK_SIZE = 25;
                       [ngTemplateOutlet]="listSelect"
                       [ngTemplateOutletContext]="{
                         control: form.controls.listTo,
-                        labelKey: 'pages.dataBrowser.bulkEdit.listTo',
+                        label: 'pages.dataBrowser.bulkEdit.listTo' | translate,
                         cy: 'bulk-edit-list-to',
                       }" />
                   </div>
                 }
                 @default {
-                  <ng-container
-                    [ngTemplateOutlet]="listSelect"
-                    [ngTemplateOutletContext]="{
-                      control: form.controls.listTo,
-                      labelKey: 'pages.dataBrowser.bulkEdit.value',
-                      cy: 'bulk-edit-list-value',
-                    }" />
+                  <div class="values">
+                    @if (isList()) {
+                      @for (control of form.controls.listValues.controls; track control; let i = $index) {
+                        <div class="value-row">
+                          <ng-container
+                            [ngTemplateOutlet]="listSelect"
+                            [ngTemplateOutletContext]="{
+                              control: control,
+                              label: valueLabel(i),
+                              cy: 'bulk-edit-list-value-' + i,
+                            }" />
+                          <ng-container [ngTemplateOutlet]="removeButton" [ngTemplateOutletContext]="{ index: i }" />
+                        </div>
+                      }
+                    } @else {
+                      @for (control of form.controls.values.controls; track control; let i = $index) {
+                        <div class="value-row">
+                          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                            <mat-label>{{ valueLabel(i) }}</mat-label>
+                            <input matInput [formControl]="control" [attr.data-cy]="'bulk-edit-value-' + i" />
+                          </mat-form-field>
+                          <ng-container [ngTemplateOutlet]="removeButton" [ngTemplateOutletContext]="{ index: i }" />
+                        </div>
+                      }
+                    }
+                    @if (isMultiple()) {
+                      <button
+                        mat-button
+                        type="button"
+                        class="add-value"
+                        data-cy="bulk-edit-add-value"
+                        (click)="addValue()">
+                        <mat-icon>add</mat-icon>
+                        {{ 'pages.dataBrowser.bulkEdit.addValue' | translate }}
+                      </button>
+                    }
+                  </div>
+                  @if (currentTarget.kind !== 'label') {
+                    <!-- A disabled checkbox shows no tooltip of its own, so its wrapper carries it. -->
+                    <div
+                      class="only-empty"
+                      [matTooltip]="'pages.dataBrowser.bulkEdit.onlyEmptyMultipleTooltip' | translate"
+                      [matTooltipDisabled]="!isMultiple()">
+                      <mat-checkbox formControlName="onlyEmpty" data-cy="bulk-edit-only-empty">
+                        {{ 'pages.dataBrowser.bulkEdit.onlyEmpty' | translate }}
+                      </mat-checkbox>
+                      <p class="hint">
+                        {{
+                          (isMultiple()
+                            ? 'pages.dataBrowser.bulkEdit.onlyEmptyMultipleHint'
+                            : 'pages.dataBrowser.bulkEdit.onlyEmptyHint'
+                          ) | translate
+                        }}
+                      </p>
+                    </div>
+                    @if (overwriteCount()) {
+                      <p class="warning" role="status" data-cy="bulk-edit-overwrite-warning">
+                        <mat-icon aria-hidden="true">warning</mat-icon>
+                        {{ 'pages.dataBrowser.bulkEdit.overwriteWarning' | translate: { count: overwriteCount() } }}
+                      </p>
+                    }
+                  }
                 }
               }
               @if (listLoadFailed()) {
@@ -235,9 +297,22 @@ const READ_CHUNK_SIZE = 25;
               }
             </form>
 
-            <ng-template #listSelect let-control="control" let-labelKey="labelKey" let-cy="cy">
+            <ng-template #removeButton let-index="index">
+              @if (valueCount() > 1) {
+                <button
+                  mat-icon-button
+                  type="button"
+                  [attr.aria-label]="'pages.dataBrowser.bulkEdit.removeValue' | translate: { index: index + 1 }"
+                  [attr.data-cy]="'bulk-edit-remove-value-' + index"
+                  (click)="removeValue(index)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
+            </ng-template>
+
+            <ng-template #listSelect let-control="control" let-label="label" let-cy="cy">
               <mat-form-field appearance="outline" subscriptSizing="dynamic" class="list-field">
-                <mat-label>{{ labelKey | translate }}</mat-label>
+                <mat-label>{{ label }}</mat-label>
                 <mat-select [formControl]="control" [attr.data-cy]="cy">
                   <mat-select-trigger>{{ listOptionPath(control.value) }}</mat-select-trigger>
                   @for (option of listOptions(); track option.id) {
@@ -264,18 +339,20 @@ const READ_CHUNK_SIZE = 25;
               </div>
               <div class="preview-list">
                 @if (plan(); as p) {
-                  @for (change of p.changes; track $index) {
+                  @for (group of previewGroups(); track group.resource.id) {
                     <div class="change" data-cy="bulk-edit-change">
-                      <div class="label">{{ change.resource.label }}</div>
-                      <div class="diff">
-                        @if (change.before === null) {
-                          <span class="empty">{{ 'pages.dataBrowser.bulkEdit.empty' | translate }}</span>
-                        } @else {
-                          <del [class.chip]="isList()">{{ change.before }}</del>
-                        }
-                        <mat-icon aria-hidden="true">arrow_forward</mat-icon>
-                        <ins [class.chip]="isList()">{{ change.after }}</ins>
-                      </div>
+                      <div class="label">{{ group.resource.label }}</div>
+                      @for (change of group.changes; track $index) {
+                        <div class="diff">
+                          @if (change.before === null) {
+                            <span class="empty">{{ 'pages.dataBrowser.bulkEdit.empty' | translate }}</span>
+                          } @else {
+                            <del [class.chip]="isList()">{{ change.before }}</del>
+                          }
+                          <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+                          <ins [class.chip]="isList()">{{ change.after }}</ins>
+                        </div>
+                      }
                     </div>
                   } @empty {
                     <p class="note" data-cy="bulk-edit-nothing-to-change">
@@ -402,23 +479,51 @@ const READ_CHUNK_SIZE = 25;
         height: 100%;
       }
       .header {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 16px 8px 12px 24px;
+        padding: 12px 8px 0 24px;
         border-bottom: 1px solid #e5e7eb; /* $cool-gray-200 */
       }
-      .heading {
-        flex: 1;
-        min-width: 0;
+      .top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 8px;
       }
       .title {
         margin: 0;
+        flex: none;
       }
-      .subtitle {
-        margin: 2px 0 0;
-        font-size: 13px;
-        color: #6b7280; /* $cool-gray-500 */
+      .scope {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        padding: 2px 10px;
+        border-radius: 12px;
+        background: #e8eef4;
+        color: #264c6a;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .scope mat-icon {
+        flex: none;
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+      }
+      .scope-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .close {
+        margin-left: auto;
+        flex: none;
+      }
+      .tab-icon {
+        margin-right: 6px;
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
       }
       /* The preview takes the height the form leaves; only its list scrolls. */
       .body {
@@ -436,9 +541,40 @@ const READ_CHUNK_SIZE = 25;
         gap: 16px;
         flex: none;
       }
-      .operations {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+      .values {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .value-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .value-row mat-form-field {
+        flex: 1;
+        min-width: 0;
+      }
+      .add-value,
+      .only-empty {
+        align-self: flex-start;
+      }
+      .only-empty .hint {
+        margin: 0 0 0 40px;
+      }
+      .warning {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        padding: 8px 12px;
+        border-radius: 4px;
+        background: #fef3c7; /* $amber-100 */
+        color: #78350f; /* $amber-900 */
+        font-size: 13px;
+      }
+      .warning mat-icon {
+        color: #b45309; /* $amber-700 */
       }
       .hint {
         margin: 6px 0 0;
@@ -509,7 +645,9 @@ const READ_CHUNK_SIZE = 25;
       .change mat-icon + .label {
         flex: 1;
       }
+      /* One line per value: a resource can get several. */
       .diff {
+        flex: 1 1 100%;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -594,8 +732,6 @@ const READ_CHUNK_SIZE = 25;
     NgTemplateOutlet,
     ReactiveFormsModule,
     MatButton,
-    MatButtonToggle,
-    MatButtonToggleGroup,
     MatCheckbox,
     MatFormField,
     MatIcon,
@@ -608,6 +744,10 @@ const READ_CHUNK_SIZE = 25;
     MatProgressBar,
     MatSelect,
     MatSelectTrigger,
+    MatTab,
+    MatTabGroup,
+    MatTabLabel,
+    MatTooltip,
     TranslatePipe,
     AppProgressIndicatorComponent,
   ],
@@ -627,7 +767,9 @@ export class BulkEditDialogComponent {
   readonly form = new FormGroup({
     property: new FormControl<string | null>(null),
     operation: new FormControl<BulkEditOperationKind>(BULK_EDIT_OPERATIONS.text[0], { nonNullable: true }),
-    text: new FormControl('', { nonNullable: true }),
+    values: new FormArray([new FormControl('', { nonNullable: true })]),
+    listValues: new FormArray([new FormControl<string | null>(null)]),
+    onlyEmpty: new FormControl(true, { nonNullable: true }),
     find: new FormControl('', { nonNullable: true }),
     replaceWith: new FormControl('', { nonNullable: true }),
     wholeValue: new FormControl(false, { nonNullable: true }),
@@ -655,8 +797,18 @@ export class BulkEditDialogComponent {
   );
   readonly target = computed(() => this.targets().find(target => target.id === this.formValue().property) ?? null);
   readonly isList = computed(() => this.target()?.kind === 'list');
+  readonly isMultiple = computed(() => {
+    const target = this.target();
+    return !!target && !canOverwrite(target);
+  });
   readonly operations = computed(() => BULK_EDIT_OPERATIONS[this.target()?.kind ?? 'text']);
-  readonly operationHintKey = computed(() => OPERATION_INFO[this.formValue().operation].hintKey);
+  readonly operationIndex = computed(() => Math.max(0, this.operations().indexOf(this.formValue().operation)));
+  readonly operationHintKey = computed(() => {
+    const { operation } = this.formValue();
+    // On a property, “Set value” says what it does next to its checkbox.
+    return operation === 'setValue' && this.target()?.kind !== 'label' ? null : OPERATION_INFO[operation].hintKey;
+  });
+  readonly valueCount = computed(() => (this.isList() ? this.formValue().listValues : this.formValue().values).length);
 
   readonly listOptions = signal<BulkEditListOption[]>([]);
   readonly listLoadFailed = signal(false);
@@ -670,6 +822,24 @@ export class BulkEditDialogComponent {
   readonly changedResourceCount = computed(
     () => new Set(this.plan()?.changes.map(change => change.resource.id) ?? []).size
   );
+  /** The preview shows each resource once, with every value it gets. */
+  readonly previewGroups = computed(() => {
+    const groups = new Map<string, { resource: ReadResource; changes: BulkEditChange[] }>();
+    for (const change of this.plan()?.changes ?? []) {
+      const group = groups.get(change.resource.id) ?? { resource: change.resource, changes: [] };
+      group.changes.push(change);
+      groups.set(change.resource.id, group);
+    }
+    return [...groups.values()];
+  });
+  /** Values “Set value” writes over, so the user sees what is lost before applying. */
+  readonly overwriteCount = computed(() => {
+    const { operation } = this.formValue();
+    if (this.target()?.kind === 'label' || (operation !== 'setValue' && operation !== 'setListValue')) {
+      return 0;
+    }
+    return this.plan()?.changes.filter(change => change.value).length ?? 0;
+  });
 
   readonly running = signal<BulkEditChange[]>([]);
   readonly processed = signal(0);
@@ -692,6 +862,32 @@ export class BulkEditDialogComponent {
 
   listOptionPath(id: string | null): string {
     return this.listOptions().find(option => option.id === id)?.path ?? '';
+  }
+
+  /** Numbered once the property takes several values. */
+  valueLabel(index: number): string {
+    return this.isMultiple()
+      ? this._translateService.instant('pages.dataBrowser.bulkEdit.valueNumbered', { index: index + 1 })
+      : this._translateService.instant('pages.dataBrowser.bulkEdit.value');
+  }
+
+  selectOperation(index: number) {
+    const operation = this.operations()[index];
+    if (operation) {
+      this.form.controls.operation.setValue(operation);
+    }
+  }
+
+  addValue() {
+    if (this.isList()) {
+      this.form.controls.listValues.push(new FormControl<string | null>(null));
+    } else {
+      this.form.controls.values.push(new FormControl('', { nonNullable: true }));
+    }
+  }
+
+  removeValue(index: number) {
+    (this.isList() ? this.form.controls.listValues : this.form.controls.values).removeAt(index);
   }
 
   apply(changes: BulkEditChange[]) {
@@ -767,7 +963,7 @@ export class BulkEditDialogComponent {
           if (!operations.includes(this.form.controls.operation.value)) {
             this.form.controls.operation.setValue(operations[0]);
           }
-          this.form.patchValue({ listFrom: null, listTo: null });
+          this._resetValues(target);
           this.listOptions.set([]);
           this.listLoadFailed.set(false);
           if (target?.kind !== 'list') {
@@ -784,6 +980,26 @@ export class BulkEditDialogComponent {
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe(options => this.listOptions.set(options));
+  }
+
+  /**
+   * A new property starts with one value field, keeping the text typed so far. A property with several
+   * values per resource is only ever filled where empty, so its checkbox stays ticked and disabled.
+   */
+  private _resetValues(target: BulkEditTarget | null) {
+    const { values, listValues, onlyEmpty } = this.form.controls;
+    const typed = values.at(0).value;
+    values.clear({ emitEvent: false });
+    values.push(new FormControl(typed, { nonNullable: true }), { emitEvent: false });
+    listValues.clear({ emitEvent: false });
+    listValues.push(new FormControl<string | null>(null), { emitEvent: false });
+    onlyEmpty.setValue(true, { emitEvent: false });
+    if (target && !canOverwrite(target)) {
+      onlyEmpty.disable({ emitEvent: false });
+    } else {
+      onlyEmpty.enable({ emitEvent: false });
+    }
+    this.form.patchValue({ listFrom: null, listTo: null });
   }
 
   /** The selection may be stale, so the plan is computed from freshly read resources. */
@@ -829,16 +1045,20 @@ export class BulkEditDialogComponent {
 }
 
 function _operationOf(value: FormValue, listOptions: BulkEditListOption[]): BulkEditOperation | null {
-  const to = listOptions.find(option => option.id === value.listTo);
   switch (value.operation) {
-    case 'setValue':
-      return value.text.trim() ? { kind: 'setValue', text: value.text } : null;
-    case 'replaceListValue':
+    case 'setValue': {
+      const values = [...new Set(value.values.filter(text => text.trim()))];
+      return values.length ? { kind: 'setValue', values, onlyEmpty: value.onlyEmpty } : null;
+    }
+    case 'setListValue': {
+      const ids = new Set(value.listValues.filter((id): id is string => !!id));
+      const values = listOptions.filter(option => ids.has(option.id));
+      return values.length ? { kind: 'setListValue', values, onlyEmpty: value.onlyEmpty } : null;
+    }
+    case 'replaceListValue': {
+      const to = listOptions.find(option => option.id === value.listTo);
       return value.listFrom && to ? { kind: 'replaceListValue', from: value.listFrom, to } : null;
-    case 'setListValue':
-      return to ? { kind: 'setListValue', to } : null;
-    case 'defaultListValue':
-      return to ? { kind: 'defaultListValue', to } : null;
+    }
     case 'replace':
       return value.find
         ? {
@@ -849,7 +1069,5 @@ function _operationOf(value: FormValue, listOptions: BulkEditListOption[]): Bulk
             matchCase: value.matchCase,
           }
         : null;
-    case 'defaultValue':
-      return value.text ? { kind: 'defaultValue', text: value.text } : null;
   }
 }

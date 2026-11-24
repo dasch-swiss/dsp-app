@@ -1,4 +1,5 @@
 import {
+  Cardinality,
   Constants,
   CreateListValue,
   CreateValue,
@@ -16,11 +17,20 @@ import {
 } from '@dasch-swiss/dsp-js';
 import { listRootIriFromGuiAttributes } from '@dasch-swiss/vre/shared/app-common';
 
-/** What a bulk edit changes: the resource label, a plain-text property or a list property. */
+/**
+ * What a bulk edit changes: the resource label, a plain-text property or a list property. `multiple`: the
+ * property takes several values per resource.
+ */
 export type BulkEditTarget =
   | { kind: 'label'; id: string }
-  | { kind: 'text'; id: string; propertyDefinition: ResourcePropertyDefinition }
-  | { kind: 'list'; id: string; propertyDefinition: ResourcePropertyDefinition; listRootIri: string };
+  | { kind: 'text'; id: string; propertyDefinition: ResourcePropertyDefinition; multiple: boolean }
+  | {
+      kind: 'list';
+      id: string;
+      propertyDefinition: ResourcePropertyDefinition;
+      listRootIri: string;
+      multiple: boolean;
+    };
 
 /** A node of the property's list, flattened; `path` names its ancestors too. */
 export interface BulkEditListOption {
@@ -30,22 +40,28 @@ export interface BulkEditListOption {
   depth: number;
 }
 
+/**
+ * “Set value” writes `values` (a label takes the first). With `onlyEmpty`, resources that have a value keep
+ * it; otherwise the value is overwritten, which only a property with one value per resource allows.
+ */
 export type BulkEditOperation =
+  | { kind: 'setValue'; values: string[]; onlyEmpty: boolean }
   | { kind: 'replace'; find: string; replaceWith: string; wholeValue: boolean; matchCase: boolean }
-  | { kind: 'setValue'; text: string }
-  | { kind: 'defaultValue'; text: string }
-  | { kind: 'replaceListValue'; from: string; to: BulkEditListOption }
-  | { kind: 'setListValue'; to: BulkEditListOption }
-  | { kind: 'defaultListValue'; to: BulkEditListOption };
+  | { kind: 'setListValue'; values: BulkEditListOption[]; onlyEmpty: boolean }
+  | { kind: 'replaceListValue'; from: string; to: BulkEditListOption };
 
 export type BulkEditOperationKind = BulkEditOperation['kind'];
 
-/** A label can't be empty, so its “Set value” overwrites; a text's “Set value” only fills empty properties. */
 export const BULK_EDIT_OPERATIONS: Record<BulkEditTarget['kind'], BulkEditOperationKind[]> = {
   label: ['setValue', 'replace'],
-  text: ['defaultValue', 'replace'],
-  list: ['replaceListValue', 'setListValue', 'defaultListValue'],
+  text: ['setValue', 'replace'],
+  list: ['setListValue', 'replaceListValue'],
 };
+
+/** A label always has one value; a property with several values per resource can only be filled where empty. */
+export function canOverwrite(target: BulkEditTarget): boolean {
+  return target.kind === 'label' || !target.multiple;
+}
 
 /** One write: the label, a value update when `value` is set, otherwise a value to create. */
 export interface BulkEditChange {
@@ -67,20 +83,23 @@ export interface BulkEditPlan {
 export function bulkEditTargets(resource: ReadResource): BulkEditTarget[] {
   const targets: BulkEditTarget[] = [{ kind: 'label', id: Constants.Label }];
 
-  for (const { propertyDefinition } of resource.entityInfo.classes[resource.type].getResourcePropertiesList()) {
+  for (const { propertyDefinition, cardinality } of resource.entityInfo.classes[
+    resource.type
+  ].getResourcePropertiesList()) {
     if (!(propertyDefinition instanceof ResourcePropertyDefinition) || !propertyDefinition.isEditable) {
       continue;
     }
+    const multiple = cardinality === Cardinality._0_n || cardinality === Cardinality._1_n;
     if (
       propertyDefinition.objectType === Constants.TextValue &&
       (propertyDefinition.guiElement === Constants.GuiSimpleText ||
         propertyDefinition.guiElement === Constants.GuiTextarea)
     ) {
-      targets.push({ kind: 'text', id: propertyDefinition.id, propertyDefinition });
+      targets.push({ kind: 'text', id: propertyDefinition.id, propertyDefinition, multiple });
     }
     const listRootIri = listRootIriFromGuiAttributes(propertyDefinition.guiAttributes);
     if (propertyDefinition.objectType === Constants.ListValue && listRootIri) {
-      targets.push({ kind: 'list', id: propertyDefinition.id, propertyDefinition, listRootIri });
+      targets.push({ kind: 'list', id: propertyDefinition.id, propertyDefinition, listRootIri, multiple });
     }
   }
   return targets;
@@ -162,16 +181,21 @@ function _changesFor(resource: ReadResource, target: BulkEditTarget, operation: 
     const values = resource
       .getValues(target.id)
       .filter((value): value is ReadListValue => value instanceof ReadListValue);
-    return _listChanges(resource, values, operation);
+    return _listChanges(resource, target, values, operation);
   }
 
   const values = resource
     .getValues(target.id)
     .filter((value): value is ReadTextValueAsString => value instanceof ReadTextValueAsString);
-  if (operation.kind === 'defaultValue') {
-    return values.length === 0 && operation.text
-      ? [{ resource, before: null, after: operation.text, newValue: operation.text }]
-      : [];
+  if (operation.kind === 'setValue') {
+    return _setChanges(
+      resource,
+      target,
+      operation,
+      values,
+      operation.values.map(text => ({ newValue: text, after: text })),
+      value => value.text
+    );
   }
   return values.flatMap(value => {
     const after = _textAfter(value.text, operation);
@@ -181,44 +205,62 @@ function _changesFor(resource: ReadResource, target: BulkEditTarget, operation: 
   });
 }
 
-function _listChanges(resource: ReadResource, values: ReadListValue[], operation: BulkEditOperation): BulkEditChange[] {
-  if (
-    operation.kind !== 'replaceListValue' &&
-    operation.kind !== 'setListValue' &&
-    operation.kind !== 'defaultListValue'
-  ) {
+function _listChanges(
+  resource: ReadResource,
+  target: BulkEditTarget,
+  values: ReadListValue[],
+  operation: BulkEditOperation
+): BulkEditChange[] {
+  if (operation.kind === 'setListValue') {
+    return _setChanges(
+      resource,
+      target,
+      operation,
+      values,
+      operation.values.map(option => ({ newValue: option.id, after: option.path })),
+      value => value.listNode
+    );
+  }
+  if (operation.kind !== 'replaceListValue') {
     return [];
   }
-  const { to } = operation;
+  const { from, to } = operation;
+  const match = values.find(value => value.listNode === from);
   // A resource can't hold the same list value twice.
-  if (values.some(value => value.listNode === to.id)) {
+  if (!match || values.some(value => value.listNode === to.id)) {
     return [];
   }
-  const change = (value?: ReadListValue): BulkEditChange => ({
-    resource,
-    value,
-    before: value ? value.listNodeLabel : null,
-    after: to.path,
-    newValue: to.id,
-  });
+  return [{ resource, value: match, before: match.listNodeLabel, after: to.path, newValue: to.id }];
+}
 
-  switch (operation.kind) {
-    case 'replaceListValue': {
-      const match = values.find(value => value.listNode === operation.from);
-      return match ? [change(match)] : [];
-    }
-    case 'setListValue':
-      return [change(values[0])];
-    case 'defaultListValue':
-      return values.length === 0 ? [change()] : [];
+/**
+ * “Set value”: an empty property gets every new value; a filled one keeps its values, unless the operation
+ * overwrites and the property takes one value, whose value then becomes the first new one.
+ */
+function _setChanges<V extends ReadTextValueAsString | ReadListValue>(
+  resource: ReadResource,
+  target: BulkEditTarget,
+  operation: { onlyEmpty: boolean },
+  values: V[],
+  next: { newValue: string; after: string }[],
+  contentOf: (value: V) => string
+): BulkEditChange[] {
+  if (values.length === 0) {
+    return next.map(({ newValue, after }) => ({ resource, before: null, after, newValue }));
   }
+  const [current] = values;
+  if (operation.onlyEmpty || !canOverwrite(target) || !next.length || contentOf(current) === next[0].newValue) {
+    return [];
+  }
+  const before = current instanceof ReadListValue ? current.listNodeLabel : (current as ReadTextValueAsString).text;
+  return [{ resource, value: current, before, after: next[0].after, newValue: next[0].newValue }];
 }
 
 /** The text after a text operation; null when the operation is not a text operation. */
 function _textAfter(text: string, operation: BulkEditOperation): string | null {
   switch (operation.kind) {
     case 'setValue':
-      return operation.text;
+      return operation.values[0] ?? null;
     case 'replace': {
       if (!operation.find) {
         return text;

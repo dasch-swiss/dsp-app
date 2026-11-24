@@ -1,5 +1,6 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
+  Cardinality,
   Constants,
   ListNodeV2,
   ReadListValue,
@@ -56,7 +57,8 @@ function letter(
   label: string,
   ort?: string,
   art?: string,
-  properties = [textProperty(ORT, 'Ort'), artProperty]
+  properties = [textProperty(ORT, 'Ort'), artProperty],
+  cardinalities: Record<string, Cardinality> = {}
 ): ReadResource {
   const resource = new ReadResource();
   resource.id = id;
@@ -65,7 +67,11 @@ function letter(
   resource.entityInfo = {
     classes: {
       [TYPE]: {
-        getResourcePropertiesList: () => properties.map(propertyDefinition => ({ propertyDefinition })),
+        getResourcePropertiesList: () =>
+          properties.map(propertyDefinition => ({
+            propertyDefinition,
+            cardinality: cardinalities[propertyDefinition.id] ?? Cardinality._0_1,
+          })),
       } as unknown as ResourceClassDefinitionWithPropertyDefinition,
     },
     properties: {},
@@ -149,8 +155,9 @@ export const SetsADefaultValueOnlyWhereEmptyAndReportsTheResult: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Set value is offered first; type the value', async () => {
-      await userEvent.type(await canvas.findByTestId('bulk-edit-default-value'), 'Wien');
+    await step('Set value is offered first and only fills empty values; type the value', async () => {
+      await expect(await canvas.findByTestId('bulk-edit-only-empty')).toHaveTextContent('Only update empty values');
+      await userEvent.type(canvas.getByTestId('bulk-edit-value-0'), 'Wien');
     });
     await step('Only the letter without a place is changed', async () => {
       await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(1);
@@ -227,12 +234,66 @@ export const ReplacesOneListValueWithAnother: Story = {
 
     await step('Choose the list property and both list values', async () => {
       await choose(canvas, 'bulk-edit-property', 'Art');
+      await userEvent.click(canvas.getByTestId('bulk-edit-operation-replaceListValue'));
       await choose(canvas, 'bulk-edit-list-from', 'Brief');
       await choose(canvas, 'bulk-edit-list-to', 'handschriftlich');
     });
     await step('Only the letters change, the postcard stays', async () => {
       await expect(canvas.getByTestId('bulk-edit-preview-count')).toHaveTextContent('2 of 3 resources will change');
       await expect(canvas.getAllByText('Brief › handschriftlich')).toHaveLength(3);
+      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply changes (2)');
+    });
+  },
+};
+
+export const OverwritesASingleValueWhenOnlyEmptyIsUnticked: Story = {
+  decorators: [applicationConfig({ providers: providers(letters) })],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('Type a value and untick Only update empty values', async () => {
+      await userEvent.type(await canvas.findByTestId('bulk-edit-value-0'), 'Wien');
+      await userEvent.click(within(canvas.getByTestId('bulk-edit-only-empty')).getByRole('checkbox'));
+    });
+    await step('The two existing places are overwritten, with a warning', async () => {
+      await expect(canvas.getByTestId('bulk-edit-overwrite-warning')).toHaveTextContent(
+        'Existing values overwritten: 1'
+      );
+      await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(2);
+      await expect(canvas.getByText('Mödling')).toBeInTheDocument();
+      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply changes (2)');
+    });
+  },
+};
+
+export const FillsAMultiValuePropertyWithSeveralValues: Story = {
+  decorators: [
+    applicationConfig({
+      providers: providers(
+        letters.map(({ id, label }) =>
+          letter(id, label, id.endsWith('pisk') ? undefined : 'Wien', undefined, undefined, {
+            [ORT]: Cardinality._0_n,
+          })
+        )
+      ),
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('Only empty is ticked and cannot be changed', async () => {
+      const onlyEmpty = within(await canvas.findByTestId('bulk-edit-only-empty')).getByRole('checkbox');
+      await expect(onlyEmpty).toBeChecked();
+      await expect(onlyEmpty).toBeDisabled();
+    });
+    await step('Add a second value', async () => {
+      await userEvent.type(canvas.getByTestId('bulk-edit-value-0'), 'Wien');
+      await userEvent.click(canvas.getByTestId('bulk-edit-add-value'));
+      await userEvent.type(canvas.getByTestId('bulk-edit-value-1'), 'Mödling');
+    });
+    await step('The postcard without a place gets both values', async () => {
+      await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(1);
+      await expect(canvas.getByText('Postkarte an Paul Amadeus Pisk')).toBeInTheDocument();
       await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply changes (2)');
     });
   },

@@ -170,7 +170,7 @@ describe('DataClassResultsBarComponent', () => {
       component.bulkEdited.subscribe(() => emitted.push(undefined));
 
       // 51 results: three pages of 25.
-      component.bulkEditAll(51);
+      component.bulkEditAll(51, true);
 
       expect(doExtendedSearch.mock.calls.map(([query]) => query.match(/OFFSET \d+$/)?.[0])).toEqual([
         'OFFSET 0',
@@ -178,7 +178,10 @@ describe('DataClassResultsBarComponent', () => {
         'OFFSET 2',
       ]);
       expect(doExtendedSearch).toHaveBeenCalledWith(expect.any(String), 'http://rdfh.ch/projects/0001');
-      expect(launcher.open).toHaveBeenCalledWith(['iri-0-a', 'iri-0-b', 'iri-1-a', 'iri-1-b', 'iri-2-a', 'iri-2-b']);
+      expect(launcher.open).toHaveBeenCalledWith(
+        ['iri-0-a', 'iri-0-b', 'iri-1-a', 'iri-1-b', 'iri-2-a', 'iri-2-b'],
+        'pages.dataBrowser.resultsBar.bulkEditScopeFiltered'
+      );
       expect(multipleViewer.notifyResourceChanged).toHaveBeenCalledWith('iri-0-a');
       expect(component.collecting()).toBeNull();
       expect(emitted).toHaveLength(1);
@@ -188,7 +191,7 @@ describe('DataClassResultsBarComponent', () => {
       doExtendedSearch.mockReturnValueOnce(throwError(() => new Error('500')));
       const component = create();
 
-      component.bulkEditAll(30);
+      component.bulkEditAll(30, false);
 
       expect(launcher.open).not.toHaveBeenCalled();
       expect(notification.openSnackBar).toHaveBeenCalledWith(expect.any(String), 'error');

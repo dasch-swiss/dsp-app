@@ -595,8 +595,6 @@
         "property": "Proprietà",
         "replace": "Sostituisci",
         "replaceHint": "Cerca testo nei valori esistenti e sostituiscilo",
-        "defaultValue": "Valore predefinito",
-        "defaultValueHint": "Imposta un valore dove la proprietà è vuota",
         "text": "Testo",
         "find": "Cerca",
         "replaceWith": "Sostituisci con",
@@ -628,11 +626,17 @@
         "setValue": "Imposta valore",
         "setValueHint": "Dai questa etichetta a ogni risorsa",
         "replaceListValueHint": "Sostituisci un valore di lista con un altro; gli altri valori restano",
-        "setListValueHint": "Dai questo valore di lista a ogni risorsa, sostituendo quello attuale",
-        "defaultListValueHint": "Imposta questo valore di lista solo dove la proprietà è vuota",
         "listFrom": "Sostituisci",
         "listTo": "Con",
-        "listLoadFailed": "Non è stato possibile caricare la lista."
+        "listLoadFailed": "Non è stato possibile caricare la lista.",
+        "valueNumbered": "Valore {{index}}",
+        "addValue": "Aggiungi un altro valore",
+        "removeValue": "Rimuovi il valore {{index}}",
+        "onlyEmpty": "Aggiorna solo i valori vuoti",
+        "onlyEmptyHint": "Le risorse che hanno già un valore lo mantengono",
+        "onlyEmptyMultipleHint": "Le risorse che hanno già dei valori li mantengono",
+        "onlyEmptyMultipleTooltip": "Le proprietà con più valori si possono compilare solo dove sono vuote. Usa Sostituisci per modificare i valori esistenti.",
+        "overwriteWarning": "Valori esistenti sovrascritti: {{count}}"
       },
       "resourcesList": {
         "resultsCount": "{{count}} risultati",
@@ -768,7 +772,9 @@
         "download": "Scarica",
         "bulkEditAll": "Modifica tutte",
         "collecting": "Caricamento delle risorse… {{percent}}%",
-        "collectFailed": "Non è stato possibile caricare le risorse da modificare."
+        "collectFailed": "Non è stato possibile caricare le risorse da modificare.",
+        "bulkEditScopeAll": "Tutte le {{count}} risorse della classe {{class}}",
+        "bulkEditScopeFiltered": "{{count}} risorse della classe {{class}} che corrispondono alla ricerca e ai filtri"
       }
     }
   },

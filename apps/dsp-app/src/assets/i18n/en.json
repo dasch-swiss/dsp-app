@@ -595,8 +595,6 @@
         "property": "Property",
         "replace": "Replace",
         "replaceHint": "Find text in existing values and replace it",
-        "defaultValue": "Default value",
-        "defaultValueHint": "Set a value where the property is empty",
         "text": "Text",
         "find": "Find",
         "replaceWith": "Replace with",
@@ -628,11 +626,17 @@
         "setValue": "Set value",
         "setValueHint": "Give every resource this label",
         "replaceListValueHint": "Swap one list value for another; other values stay",
-        "setListValueHint": "Give every resource this list value, replacing the one it has",
-        "defaultListValueHint": "Set this list value only where the property is empty",
         "listFrom": "Replace",
         "listTo": "With",
-        "listLoadFailed": "The list could not be loaded."
+        "listLoadFailed": "The list could not be loaded.",
+        "valueNumbered": "Value {{index}}",
+        "addValue": "Add another value",
+        "removeValue": "Remove value {{index}}",
+        "onlyEmpty": "Only update empty values",
+        "onlyEmptyHint": "Resources that already have a value keep it",
+        "onlyEmptyMultipleHint": "Resources that already have values keep them",
+        "onlyEmptyMultipleTooltip": "Properties with several values can only be filled where empty. Use Replace to change existing values.",
+        "overwriteWarning": "Existing values overwritten: {{count}}"
       },
       "resourcesList": {
         "resultsCount": "{{count}} results",
@@ -768,7 +772,9 @@
         "download": "Download",
         "bulkEditAll": "Bulk edit all",
         "collecting": "Loading resources… {{percent}}%",
-        "collectFailed": "The resources to edit could not be loaded."
+        "collectFailed": "The resources to edit could not be loaded.",
+        "bulkEditScopeAll": "All {{count}} {{class}} resources",
+        "bulkEditScopeFiltered": "{{count}} {{class}} resources matching your search and filters"
       }
     }
   },
