@@ -13,6 +13,7 @@ export { VALUE_ACTIONS_OPTIONS } from './lib/properties/properties-display/prope
 export { PropertiesDisplayService } from './lib/properties/properties-display/property-value/properties-display.service';
 export { ResourceFetcherService } from './lib/representation/resource-fetcher.service';
 export { RepresentationService } from './lib/representation/representation.service';
+export { ListCacheService } from './lib/properties/properties-display/property-value/list-cache.service';
 export { FootnoteService } from './lib/properties/properties-display/footnotes/footnote.service';
 
 export { ResourceExplorerButtonComponent } from './lib/properties/resource-explorer-button.component';

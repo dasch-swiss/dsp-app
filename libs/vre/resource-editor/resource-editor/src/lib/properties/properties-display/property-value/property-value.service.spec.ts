@@ -1,7 +1,9 @@
+import { Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { KnoraApiConnection, ListNodeV2WithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { of } from 'rxjs';
+import { ListCacheService } from './list-cache.service';
 import { PropertyValueService } from './property-value.service';
 
 describe('PropertyValueService', () => {
@@ -53,6 +55,29 @@ describe('PropertyValueService', () => {
         expect(list.id).toEqual(rootIri);
         done();
       });
+    });
+
+    it('shares one fetch across services when an ancestor provides a ListCacheService', () => {
+      const parent = TestBed.inject(Injector);
+      const tableInjector = Injector.create({ providers: [ListCacheService], parent });
+      const cellService = () =>
+        Injector.create({ providers: [PropertyValueService], parent: tableInjector }).get(PropertyValueService);
+
+      cellService().getList$(rootIri).subscribe();
+      cellService().getList$(rootIri).subscribe();
+      cellService().getList$(rootIri).subscribe();
+
+      expect(getListSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps a cache per service when no ancestor provides one', () => {
+      const parent = TestBed.inject(Injector);
+      const ownService = () => Injector.create({ providers: [PropertyValueService], parent }).get(PropertyValueService);
+
+      ownService().getList$(rootIri).subscribe();
+      ownService().getList$(rootIri).subscribe();
+
+      expect(getListSpy).toHaveBeenCalledTimes(2);
     });
   });
 });

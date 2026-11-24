@@ -1,14 +1,13 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   Cardinality,
-  KnoraApiConnection,
   ListNodeV2WithAllLanguages,
   ReadResource,
   ReadValue,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
-import { BehaviorSubject, Observable, shareReplay } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ListCacheService } from './list-cache.service';
 
 @Injectable()
 export class PropertyValueService {
@@ -18,16 +17,10 @@ export class PropertyValueService {
   lastOpenedItem$ = new BehaviorSubject<number | null>(null);
 
   /**
-   * One shared whole-list fetch for this property, so all of its list values resolve against a
-   * single /v2/lists request instead of one per value. Keyed by root IRI to guard against the
-   * (unexpected) case of the property definition changing under a live service instance.
+   * The cache an ancestor provides (the data table, so all cells of a column share one request),
+   * else one of this property's own. Created here, in the injection context, because it injects the connection.
    */
-  private _listByRoot: { [rootIri: string]: Observable<ListNodeV2WithAllLanguages> } = {};
-
-  constructor(
-    @Inject(DspApiConnectionToken)
-    private _dspApiConnection: KnoraApiConnection
-  ) {}
+  private readonly _lists = inject(ListCacheService, { optional: true }) ?? new ListCacheService();
 
   get editModeData(): { resource: ReadResource; values: ReadValue[] } {
     return this._editModeData;
@@ -40,16 +33,10 @@ export class PropertyValueService {
 
   /**
    * Returns the list rooted at `rootIri`, fetched once and shared across all of this property's
-   * list values. The service is provided per property (see PropertyValuesComponent), so the
-   * cache lifetime never exceeds a single property's viewer lifetime.
+   * list values, or across the whole table when the table provides a `ListCacheService`.
    */
   getList$(rootIri: string): Observable<ListNodeV2WithAllLanguages> {
-    if (this._listByRoot[rootIri] === undefined) {
-      this._listByRoot[rootIri] = this._dspApiConnection.v2.list
-        .getListWithAllLanguages(rootIri)
-        .pipe(shareReplay({ bufferSize: 1, refCount: false }));
-    }
-    return this._listByRoot[rootIri];
+    return this._lists.get$(rootIri);
   }
 
   toggleOpenedValue(index: number) {

@@ -9,7 +9,6 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 import { applicationConfig, componentWrapperDecorator, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, waitFor } from 'storybook/test';
-import { ResourceFetcherService } from '../../../../representation/resource-fetcher.service';
 import { PropertyValueService } from '../../property-value/property-value.service';
 
 import { ListViewerComponent } from './list-viewer.component';
@@ -67,11 +66,6 @@ const dspApiConnectionStub = {
   },
 };
 
-const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
-  resource$: of(undefined),
-  projectShortcode$: of('0001'),
-};
-
 // StringifyStringLiteralPipe reads currentLanguage (synchronous getter), not the
 // observable, so the stub needs both: the observable drives combineLatest in the
 // component pipeline, the getter feeds the impure pipe.
@@ -95,7 +89,6 @@ const meta: Meta<ListViewerComponent> = {
     applicationConfig({
       providers: [
         { provide: DspApiConnectionToken, useValue: dspApiConnectionStub },
-        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
         { provide: LocalizationService, useValue: localizationServiceStub },
         // The viewer resolves its list through PropertyValueService (provided per property),
         // which reads getListWithAllLanguages from the connection stub above.
