@@ -42,6 +42,7 @@ import {
   catchError,
   combineLatest,
   concatMap,
+  defaultIfEmpty,
   EMPTY,
   filter,
   finalize,
@@ -579,7 +580,8 @@ export class DataModelEditorService implements DataModelEditor {
   }
 
   /**
-   * Gives the class's property that cardinality, after any save still running, then offers to undo it. Emits whether it
+   * Gives the class's property that cardinality once the user confirms, after any save still running, then offers to
+   * undo it. Emits whether it
    * was saved; the API's refusal shows as its message, and emits false.
    */
   setCardinality(classIri: string, propertyIri: string, cardinality: Cardinality): Observable<boolean> {
@@ -614,14 +616,29 @@ export class DataModelEditorService implements DataModelEditor {
                   this._notify(this._translate.instant('pages.dataModels2.cardinalityBlocked'), check.reason);
                   return of(false);
                 }
-                return this._saved(
-                  editing.replacePropertiesOfResourceClass$(
-                    classIri,
-                    own.map(property =>
-                      property.propertyIndex === propertyIri ? { ...property, cardinality } : property
+                const save = () =>
+                  this._saved(
+                    editing.replacePropertiesOfResourceClass$(
+                      classIri,
+                      own.map(property =>
+                        property.propertyIndex === propertyIri ? { ...property, cardinality } : property
+                      )
                     )
+                  );
+                // Undo saves at once; a change of the user's own is asked first, and cancelling it saves nothing.
+                if (!offerUndo) return save();
+                const r = 'pages.dataModels2';
+                return this._confirm
+                  .afterConfirmation(
+                    this._translate.instant(`${r}.cardinalityConfirm`, {
+                      ...labels,
+                      cardinality: this._translate.instant(`${r}.cardinality.${CARDINALITY_KEYS[cardinality]}`),
+                    })
                   )
-                );
+                  .pipe(
+                    switchMap(save),
+                    defaultIfEmpty(false)
+                  );
               }),
               tap(saved => {
                 if (saved && offerUndo) this._offerUndo(classIri, propertyIri, previous, cardinality, labels);
