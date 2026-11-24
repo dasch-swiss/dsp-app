@@ -108,7 +108,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
             <mat-icon>edit</mat-icon>
           </button>
         }
-        @if (changeable()) {
+        @if (removable()) {
           <button
             type="button"
             class="remove"
@@ -136,8 +136,10 @@ export class ClassCardPropertyComponent {
   readonly canEdit = input(false);
   /** Whether the property can be dragged to another place: the class's own ones, for editors. */
   readonly draggable = input(false);
-  /** The class the row is on, when it is the class's own property: its cardinality and removal can change then. */
+  /** The class the row is on: its cardinality can change there, own property or inherited. */
   readonly classIri = input<string | undefined>(undefined);
+  /** Whether the class has the property from a class above it: it cannot be removed here, only made stricter. */
+  readonly inherited = input(false);
   /** The class whose card or panel the row is on, own property or inherited, to tell another data model's by. */
   readonly homeIri = input<string | undefined>(undefined);
   /** That class's label, for the remove button. */
@@ -151,10 +153,12 @@ export class ClassCardPropertyComponent {
 
   // Only where the app provides the data model editor: without it, nothing here edits.
   private readonly _editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
-  /** Whether the cardinality and the class's hold on the property can change here: for editors, on its own properties. */
+  /** Whether the cardinality can change here: for editors, on the class's own properties and inherited ones. */
   readonly changeable = computed(
     () => this.canEdit() && this.editable() && !!this.classIri() && !!this._editing?.canDelete
   );
+  /** Whether the property can come off the class here: only one of its own. */
+  readonly removable = computed(() => this.changeable() && !this.inherited());
   readonly currentCardinality = computed(() => cardinalityOf(this.property()));
 
   /** Its name, prefixed by its data model's when that is not the card's class's, as `biblio:hasTitle`. */

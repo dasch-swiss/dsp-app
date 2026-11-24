@@ -600,10 +600,13 @@ export class DataModelEditorService implements DataModelEditor {
           filter(ontology => !!ontology?.classes[classIri]),
           take(1),
           switchMap(ontology => {
-            // The class's own properties, as the API replaces them all; this one with its new cardinality.
-            const own = ontology!.classes[classIri].propertiesList.filter(property => !property.isInherited);
-            const previous = own.find(property => property.propertyIndex === propertyIri)?.cardinality;
-            if (previous === undefined) return of(false);
+            // The class's own properties, as the API replaces them all, and this one with its new cardinality. An
+            // inherited one becomes the class's own then, as a subclass may hold a property more strictly.
+            const list = ontology!.classes[classIri].propertiesList;
+            const target = list.find(property => property.propertyIndex === propertyIri);
+            const previous = target?.cardinality;
+            if (!target || previous === undefined) return of(false);
+            const own = list.filter(property => !property.isInherited || property === target);
             if (previous === cardinality) return of(true);
             const labels = {
               property: ontology!.properties[propertyIri]?.label || propertyIri.split('#').pop()!,
@@ -621,7 +624,7 @@ export class DataModelEditorService implements DataModelEditor {
                     editing.replacePropertiesOfResourceClass$(
                       classIri,
                       own.map(property =>
-                        property.propertyIndex === propertyIri ? { ...property, cardinality } : property
+                        property === target ? { ...property, cardinality, isInherited: false } : property
                       )
                     )
                   );

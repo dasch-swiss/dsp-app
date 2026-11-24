@@ -151,14 +151,14 @@ export class CardinalityCheckboxesComponent {
     return checks.for === this.cardinality() ? checks.boxes[box] : undefined;
   }
 
-  /** A box is out of reach once the API said the existing resources rule it out, or for a yes/no property's "Multiple values". */
+  /** A box is out of reach once the API said the existing resources rule it out; a yes/no property's "Multiple values" always. */
   readonly blockedBoxes = computed<Record<Box, boolean>>(() => {
     // A check the API could not answer blocks nothing: the save asks again.
     const blocked = (box: Box) => {
       const result = this._result(box);
       return result?.canDo === false && !result.failed;
     };
-    return { multiple: blocked('multiple'), required: blocked('required') };
+    return { multiple: this.type() === 'Boolean' || blocked('multiple'), required: blocked('required') };
   });
 
   /** Why each box can't change, for its tooltip; nothing while it can, or for one that never can here. */
@@ -178,7 +178,7 @@ export class CardinalityCheckboxesComponent {
     const current = this.cardinality();
     if (!this.changeable() || !classIri || !editing || this._checks().for === current) return;
     const boxes: Partial<Record<Box, CanDo>> = {};
-    if (this.type() === 'Boolean' && !this.state().multiple) boxes.multiple = { canDo: false };
+    if (this.type() === 'Boolean') boxes.multiple = { canDo: false };
     this._checks.set({ for: current, boxes });
     // One question at a time: the API turns several at once away as too many requests.
     from(this.boxes.filter(box => !boxes[box]))
