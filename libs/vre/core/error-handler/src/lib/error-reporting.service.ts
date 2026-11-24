@@ -1,5 +1,3 @@
-/// <reference types="window" />
-
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiResponseError } from '@dasch-swiss/dsp-js';

@@ -20,7 +20,7 @@ import { TranslatePipe } from '@ngx-translate/core';
       </div>
     </div>
   }`,
-  styleUrls: [`./cookie-banner.component.scss`],
+  styleUrls: [`./cookie-banner.component.css`],
   imports: [MatButtonModule, TranslatePipe],
 })
 export class CookieBannerComponent implements OnInit {
@@ -29,10 +29,11 @@ export class CookieBannerComponent implements OnInit {
   constructor(private readonly _router: Router) {}
 
   ngOnInit() {
-    if (localStorage.getItem('cookieBanner') === null) {
+    const stored = localStorage.getItem('cookieBanner');
+    if (stored === null) {
       localStorage.setItem('cookieBanner', JSON.stringify(this.showCookieBanner));
     } else {
-      this.showCookieBanner = JSON.parse(localStorage.getItem('cookieBanner'));
+      this.showCookieBanner = JSON.parse(stored);
     }
   }
 

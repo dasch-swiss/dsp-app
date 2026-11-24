@@ -1,0 +1,107 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@aspect_rules_js//npm:defs.bzl", "npm_package")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@jq.bzl//jq:jq.bzl", "jq")
+load("@rules_angular//src/ts_project:index.bzl", "ts_project")
+load("//tools/angular:defs.bzl", "eslint_config", "vre_jest_test")
+
+SPEC_SRCS = glob(["src/**/*.spec.ts"]) + ["src/test-setup.ts"]
+
+LIB_SRCS = glob(
+    ["src/**/*.ts"],
+    exclude = SPEC_SRCS,
+)
+
+# tsconfig.lib.json with the output beside the sources in bazel-bin, which keeps src/index.js
+# where package.json's `main` names it. A checked-in `outDir` would otherwise win and emit nothing.
+write_file(
+    name = "tsconfig_bazel_json",
+    out = "tsconfig.bazel.json",
+    content = [json.encode({
+        "extends": "./tsconfig.lib.json",
+        "compilerOptions": {"outDir": "."},
+    })],
+)
+
+ts_config(
+    name = "tsconfig_bazel",
+    src = ":tsconfig_bazel_json",
+    deps = [
+        "tsconfig.json",
+        "tsconfig.lib.json",
+        "//:tsconfig_base",
+    ],
+)
+
+ts_project(
+    name = "dsp-js",
+    srcs = LIB_SRCS,
+    declaration = True,
+    declaration_map = True,
+    resolve_json_module = True,
+    source_map = True,
+    transpiler = "tsc",
+    tsconfig = ":tsconfig_bazel",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:node_modules/json2typescript",
+        "//:node_modules/jsonld",
+        "//:node_modules/reflect-metadata",
+        "//:node_modules/rxjs",
+        "//:node_modules/tslib",
+    ],
+)
+
+# What a library's Jest target runs on: the sources, compiled by Jest itself (vre_library's
+# `sources`).
+js_library(
+    name = "sources",
+    srcs = LIB_SRCS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:node_modules/json2typescript",
+        "//:node_modules/jsonld",
+        "//:node_modules/rxjs",
+    ],
+)
+
+# The published package.json: the source one plus the ES module fields the library's emit needs,
+# which the earlier build added and 12.0.1 shipped.
+jq(
+    name = "package_json",
+    srcs = ["package.json"],
+    out = "publish/package.json",
+    filter = '. + {module: "./src/index.js", type: "module"}',
+)
+
+# The npm package `release-dsp-js.yml` publishes: the compiled library, package.json, README.md and
+# CHANGELOG.md.
+npm_package(
+    name = "npm_package",
+    srcs = [
+        "CHANGELOG.md",
+        "README.md",
+        ":dsp-js",
+        ":package_json",
+    ],
+    package = "@dasch-swiss/dsp-js",
+    replace_prefixes = {"publish/": ""},
+    visibility = ["//visibility:public"],
+)
+
+vre_jest_test(
+    name = "test",
+    srcs = LIB_SRCS + SPEC_SRCS,
+    size = "small",
+    data = glob(["test/**"]),
+    deps = [
+        "//:node_modules/@types/jest",
+        "//:node_modules/jest",
+        "//:node_modules/json2typescript",
+        "//:node_modules/jsonld",
+        "//:node_modules/rxjs",
+    ],
+)
+
+eslint_config()

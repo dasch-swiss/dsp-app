@@ -7,11 +7,11 @@ import {
   CreateTextValueAsXml,
   Point2D,
   ReadResource,
-  ReadStillImageFileValue,
   RegionGeometry,
 } from '@dasch-swiss/dsp-js';
 import { handleXML } from '@dasch-swiss/vre/shared/app-common';
 import OpenSeadragon from 'openseadragon';
+import { IiifImageInfo } from '../../representation/iiif-image-info';
 import { Region } from '../../representation/region';
 import { GeometryForRegion } from './geometry-for-region';
 import { PolygonsForRegion } from './polygons-for-region.interface';
@@ -61,53 +61,17 @@ export class StillImageHelper {
     return createResource;
   }
 
-  static prepareTileSourcesFromFileValues(
-    images: ReadStillImageFileValue[],
+  static prepareTileSourceFromImageInfo(
+    imageInfo: IiifImageInfo,
     ajaxHeaders: any,
     pngFormat = false
   ): OpenSeadragon.TileSourceSpecifier[] {
-    let imageXOffset = 0;
-    const imageYOffset = 0;
-    const tileSources = [];
+    // the info.json is the tile source itself (https://iiif.io/api/image/3.0/#5-image-information);
+    // preferredFormats picks the tile format OpenSeadragon requests
+    const tileSource = pngFormat ? { ...imageInfo, preferredFormats: ['png'] } : imageInfo;
 
-    for (const image of images) {
-      const sipiBasePath = `${image.iiifBaseUrl}/${image.filename}`;
-      const width = image.dimX;
-      const height = image.dimY;
-      let tileSource = {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        '@context': 'http://iiif.io/api/image/3/context.json',
-        id: sipiBasePath,
-        height,
-        width,
-        profile: ['level2'],
-        protocol: 'http://iiif.io/api/image',
-        tiles: [
-          {
-            scaleFactors: [1, 2, 4, 8, 16, 32],
-            width: 1024,
-          },
-        ],
-      } as any;
-
-      if (pngFormat) {
-        tileSource = { ...tileSource, preferredFormats: ['png'] };
-      }
-
-      // construct OpenSeadragon tileSources according to https://openseadragon.github.io/docs/OpenSeadragon.Viewer.html#open
-      tileSources.push({
-        // construct IIIF tileSource configuration according to https://iiif.io/api/image/3.0
-        tileSource,
-        x: imageXOffset,
-        y: imageYOffset,
-        preload: true,
-        ajaxHeaders,
-      });
-
-      imageXOffset++;
-    }
-
-    return tileSources;
+    // construct OpenSeadragon tileSources according to https://openseadragon.github.io/docs/OpenSeadragon.Viewer.html#open
+    return [{ tileSource, x: 0, y: 0, preload: true, ajaxHeaders } as any];
   }
 
   static sortRectangularRegion = (geom1: GeometryForRegion, geom2: GeometryForRegion) => {

@@ -189,6 +189,10 @@ const meta: Meta<DataTableComponent> = {
     visibleColumns: { description: 'Keys of the columns to show, in display order. Label first.' },
     columnWidths: { description: 'Pixel widths the user has set; a column absent here uses its default.' },
     rowHeight: { description: 'Height every row is drawn at from View options; undefined for Auto.' },
+    showComments: {
+      description:
+        'Whether value comments show under their values, from View options; undefined keeps the stored setting.',
+    },
     selectionActive: { description: 'Whether a comparison set is being built; every row then shows its checkbox.' },
     selectable: { description: 'Whether rows can be selected for comparison; off for anonymous visitors.' },
     sortedColumnKey: { description: 'Column the query is sorted by, so its header announces aria-sort.' },
@@ -310,6 +314,52 @@ export const LeavesAnEmptyEditableCellToTheViewersOwnAddControl: Story = {
   },
 };
 
+// ── Value comments ──────────────────────────────────────────────────────────
+
+const COMMENT = 'Title taken from the back of the print';
+
+const commentedRows = () => {
+  const title = textValue(`${ONTO}hasTitle`, 'Brautpaar in Tracht');
+  title.valueHasComment = COMMENT;
+  return [resource('http://rdfh.ch/0001/c', 'BRAUT001c', { [`${ONTO}hasTitle`]: [title] })];
+};
+
+export const ShowsValueCommentsWhenViewOptionsTurnThemOn: Story = {
+  args: { resources: commentedRows(), showComments: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await waitFor(() => expect(canvas.getByText(COMMENT)).toBeInTheDocument());
+  },
+};
+
+export const HidesValueCommentsWhenViewOptionsTurnThemOff: Story = {
+  args: { resources: commentedRows(), showComments: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Brautpaar in Tracht')).toBeInTheDocument();
+    await expect(canvas.queryByText(COMMENT)).toBeNull();
+  },
+};
+
+/** The table's denser value padding leaves less room than the comment's pointer needs above the bubble. */
+export const KeepsTheCommentPointerClearOfTheValue: Story = {
+  args: { resources: commentedRows(), showComments: true },
+  play: async ({ canvasElement }) => {
+    const comment = await waitFor(() => {
+      const element = canvasElement.querySelector<HTMLElement>('[data-cy="property-value-comment"]');
+      expect(element).not.toBeNull();
+      return element!;
+    });
+    const value = within(canvasElement).getByText('Brautpaar in Tracht').getBoundingClientRect();
+    const pointerTop =
+      comment.getBoundingClientRect().top +
+      parseFloat(getComputedStyle(comment).borderTopWidth) +
+      parseFloat(getComputedStyle(comment, '::before').top);
+
+    await expect(pointerTop).toBeGreaterThanOrEqual(value.bottom);
+  },
+};
+
 const COLLAPSING_COLUMNS: TableColumn[] = [column(LABEL_COLUMN_KEY, 'Label'), readOnlyColumn(LINK_PROPERTY, 'Author')];
 
 const manyAuthors = () =>
@@ -376,6 +426,19 @@ export const HidesRowCheckboxesForAnonymousVisitors: Story = {
 
     const labelCell = canvasElement.querySelector('td.is-label-cell') as HTMLElement;
     await expect(getComputedStyle(labelCell).paddingLeft).toBe('44px');
+  },
+};
+
+export const CentresTheOpenArrowOnTheLabelsFirstLine: Story = {
+  play: async ({ canvasElement }) => {
+    const row = canvasElement.querySelector('tr.mat-mdc-row') as HTMLElement;
+    const arrow = (row.querySelector('[data-cy="row-open"]') as HTMLElement).getBoundingClientRect();
+    const range = document.createRange();
+    range.selectNodeContents(within(row).getByText('BRAUT001a'));
+    const firstLine = range.getClientRects()[0];
+
+    const centre = (rect: DOMRect) => rect.top + rect.height / 2;
+    await expect(Math.abs(centre(arrow) - centre(firstLine))).toBeLessThanOrEqual(1.5);
   },
 };
 
@@ -684,6 +747,23 @@ export const ShowsTheViewersActionBubbleWhenAValueIsHovered: Story = {
   },
 };
 
+/** A bubble that takes room re-wraps a narrow value, moving it from under the pointer and back, over and over. */
+export const KeepsAValueInPlaceWhileItsActionsShow: Story = {
+  ...editingStory({}),
+  play: async ({ canvasElement }) => {
+    const value = canvasElement.querySelector('[data-cy="property-value"]') as HTMLElement;
+    const content = value.querySelector('.value-content') as HTMLElement;
+    const before = content.getBoundingClientRect();
+
+    await userEvent.hover(value);
+    await waitFor(() => expect(canvasElement.querySelector('[data-cy="action-bubble"]')).not.toBeNull());
+
+    const after = content.getBoundingClientRect();
+    await expect(after.width).toBe(before.width);
+    await expect(after.height).toBe(before.height);
+  },
+};
+
 export const WidensAColumnForItsEditorWhileEditing: Story = {
   ...editingStory({ columnWidths: { [EDITABLE_PROPERTY_IRI]: 120 } }),
   render: storyArgs => ({
@@ -904,8 +984,15 @@ export const ShowsATruncatedHeaderNameInFullOnHover: Story = {
     await expect(tooltip()).toBeNull();
     await userEvent.unhover(label('Place'));
 
-    await userEvent.hover(label('Title'));
-    await waitFor(() => expect(tooltip()).toHaveTextContent('Title of the photograph as published'));
+    // Hovered again on each try: on a loaded CI runner the tooltip can open late, or close again when a layout
+    // shift repositions it, and a single hover then never shows it.
+    await waitFor(
+      async () => {
+        await userEvent.hover(label('Title'));
+        await expect(tooltip()).toHaveTextContent('Title of the photograph as published');
+      },
+      { timeout: 3000 }
+    );
     await userEvent.unhover(label('Title'));
   },
 };
@@ -993,6 +1080,29 @@ export const ShadesTheFrozenEdgeOnceTheTableScrolls: Story = {
     await expect(Math.round(shadow()!.getBoundingClientRect().top)).toBe(Math.round(edge.getBoundingClientRect().top));
     await expect(getComputedStyle(bodyEdge).borderRightColor).toBe('rgba(0, 0, 0, 0)');
     await expect(getComputedStyle(edge).borderRightColor).not.toBe('rgba(0, 0, 0, 0)');
+  },
+};
+
+/** A resize writes its width straight to the header, a change MatTable's sticky offsets do not watch for. */
+export const KeepsThePinnedColumnAndShadowOnTheLabelsEdgeWhenItIsResized: Story = {
+  ...pinnedStory(),
+  play: async ({ canvasElement }) => {
+    const scroller = canvasElement.querySelector('.table-scroll') as HTMLElement;
+    const header = (name: string) => canvasElement.querySelector(`th[aria-label="${name}"]`) as HTMLElement;
+    const shadow = () => canvasElement.querySelector('[data-cy="frozen-shadow"]') as HTMLElement;
+    const right = (element: HTMLElement) => Math.round(element.getBoundingClientRect().right);
+
+    scroller.scrollLeft = 200;
+    scroller.dispatchEvent(new Event('scroll'));
+    await waitFor(() => expect(shadow()).not.toBeNull());
+    const before = right(header('Label'));
+
+    header('Label').querySelector<HTMLElement>('[data-cy="column-resize"]')!.focus();
+    await userEvent.keyboard('{ArrowRight}{ArrowRight}{ArrowRight}');
+
+    await waitFor(() => expect(right(header('Label'))).toBe(before + 48));
+    await waitFor(() => expect(Math.round(header('Place').getBoundingClientRect().left)).toBe(right(header('Label'))));
+    await waitFor(() => expect(Math.round(shadow().getBoundingClientRect().left)).toBe(right(header('Place'))));
   },
 };
 
@@ -1306,6 +1416,45 @@ export const MovesAColumnByDraggingItsHeader: Story = {
     await waitFor(() =>
       expect(onReorder).toHaveBeenCalledWith([LABEL_COLUMN_KEY, `${ONTO}hasPlace`, `${ONTO}hasTitle`])
     );
+  },
+};
+
+/** CDK clears the dragged header's inline `top` on release, and with no reorder nothing re-renders the row. */
+export const KeepsAHeaderStuckWhenItIsDroppedBackInPlace: Story = {
+  ...keyboardStory(),
+  play: async ({ canvasElement }) => {
+    const title = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    const from = title.getBoundingClientRect();
+    const y = from.top + from.height / 2;
+    const mouse = (target: EventTarget, type: string, x: number) =>
+      target.dispatchEvent(
+        new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, buttons: 1, detail: 1 })
+      );
+
+    mouse(title.querySelector('.header-label') as HTMLElement, 'mousedown', from.left + 20);
+    for (const x of [from.left + 30, from.left + 60, from.left + 25]) {
+      mouse(document, 'mousemove', x);
+      await new Promise(resolve => requestAnimationFrame(resolve));
+    }
+    // The preview is attached to the body, not the canvas.
+    await waitFor(() => expect(document.querySelector('.cdk-drag-preview')).not.toBeNull());
+    mouse(document, 'mouseup', from.left + 25);
+
+    await waitFor(() => expect(document.querySelector('.cdk-drag-preview')).toBeNull());
+    await waitFor(() => expect(title.style.top).toBe('0px'));
+    await expect(onReorder).not.toHaveBeenCalled();
+  },
+};
+
+/** The header cell clips its overflow: a handle straddling the edge would leave a grab there to the next column's drag. */
+export const KeepsTheWholeResizeHandleInsideItsHeader: Story = {
+  play: async ({ canvasElement }) => {
+    const title = canvasElement.querySelector('th[aria-label="Title"]') as HTMLElement;
+    const handle = title.querySelector('[data-cy="column-resize"]') as HTMLElement;
+    const box = handle.getBoundingClientRect();
+
+    await expect(box.right).toBeLessThanOrEqual(title.getBoundingClientRect().right);
+    await expect(document.elementFromPoint(box.right - 1, box.top + box.height / 2)).toBe(handle);
   },
 };
 

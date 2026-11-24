@@ -1,0 +1,60 @@
+// Dead-code check: `just knip`, part of `just ci`. Bazel BUILD files, the justfile and CI are
+// invisible to knip, so what only they use is declared here with the reason.
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "apps/dsp-app/src/main.ts",
+    // Published to npm: its public API is used outside this repository.
+    "libs/dsp-js/src/index.ts",
+    // vre_application copies one of them to environment.ts per configuration.
+    "apps/dsp-app/src/environments/*.ts",
+    "{apps,libs}/**/src/test-setup.ts",
+    "libs/dsp-js/test/jest-setup.ts",
+    ".storybook/*.ts",
+    "pixeleye*.config.ts",
+    "k6/tests/*.js",
+    "scripts/*.{mjs,js}",
+    "tools/**/*.{mjs,js}",
+    "mocks/**/index.js",
+  ],
+  "project": [
+    "apps/**/*.{ts,js,mjs}",
+    "libs/**/*.{ts,js,mjs}",
+    "k6/**/*.js",
+    "scripts/**/*.{mjs,js}",
+    "tools/**/*.{mjs,js}",
+  ],
+  "ignore": ["libs/vre/3rd-party-services/open-api/src/generated/**"],
+  "ignoreDependencies": [
+    // k6's runtime module, provided by the k6 binary.
+    "k6",
+    // rules_jest's jest_test links both from //:node_modules without naming them anywhere here.
+    "jest-cli",
+    "jest-junit",
+    // The justfile's `pixeleye` recipe runs both: `pnpm exec pixeleye`, and playwright-core's cli.js.
+    "pixeleye",
+    "playwright-core",
+    // Peer dependency of @angular/build.
+    "postcss",
+    // vre_jest_test's Jest runs under it (tools/angular/defs.bzl).
+    "ts-node",
+  ],
+  "ignoreUnresolved": [
+    // Written by vre_application from src/environments/ at build time.
+    "./environments/environment",
+    // types/window.d.ts, through tsconfig.base.json's typeRoots.
+    "window",
+  ],
+  "jest": { "config": ["{apps,libs}/**/jest.config.js"] },
+  "eslint": { "config": ["eslint.config.mjs", "eslint.config.angular.mjs", "{apps,libs}/**/eslint.config.mjs"] },
+  "cypress": {
+    "config": ["apps/dsp-app/cypress.config.ts"],
+    "entry": [
+      "apps/dsp-app/cypress/e2e/**/*.cy.ts",
+      "apps/dsp-app/cypress/support/e2e.ts",
+      // Ambient Cypress declarations the specs use without importing them.
+      "apps/dsp-app/cypress/support/commands.ts",
+      "apps/dsp-app/cypress/models/payload-parameters.ts",
+    ],
+  },
+}

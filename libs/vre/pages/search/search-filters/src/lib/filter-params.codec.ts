@@ -30,7 +30,7 @@ const VALID_OPERATORS = new Set<string>(Object.values(Operator));
  * allowed for Exists/NotExists) and a recognised `operator`. `parentIndex` is not checked; the caller
  * coerces it to null.
  */
-export function isValidFilterParam(
+function isValidFilterParam(
   s: unknown
 ): s is { predicateIri: string; operator: Operator; value: string; valueLabel?: unknown; parentIndex?: unknown } {
   if (typeof s !== 'object' || s === null) return false;

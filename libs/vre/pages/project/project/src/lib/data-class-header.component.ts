@@ -1,34 +1,34 @@
 import { AsyncPipe, DecimalPipe } from '@angular/common';
-import { Component, computed, ElementRef, inject, Input, viewChild, ViewContainerRef } from '@angular/core';
+import {
+  afterRenderEffect,
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  Inject,
+  inject,
+  Input,
+  signal,
+  viewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { KnoraApiConnection, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
-  MultipleViewerService,
   ResourceClassCountApi,
   TableViewOptionsComponent,
   TableViewStateService,
 } from '@dasch-swiss/vre/pages/data-browser';
 import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search-filters';
-import { filterUndefined, generateDspResource } from '@dasch-swiss/vre/shared/app-common';
+import { filterUndefined, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import {
-  catchError,
-  combineLatest,
-  distinctUntilChanged,
-  first,
-  from,
-  of,
-  ReplaySubject,
-  startWith,
-  switchMap,
-} from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
+import { catchError, distinctUntilChanged, from, of, ReplaySubject, startWith, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
@@ -69,7 +69,29 @@ interface CreateResourceDialogProps {
           </div>
           @if (classSelected.resClass.comments.length) {
             @let description = classSelected.resClass.comments | appStringifyStringLiteral;
-            <p class="class-description" [title]="description">{{ description }}</p>
+            <p
+              #descriptionEl
+              class="class-description"
+              data-cy="class-description"
+              [class.expanded]="descriptionExpanded()">
+              {{ description }}
+            </p>
+            @if (descriptionClamped() || descriptionExpanded()) {
+              <button
+                type="button"
+                class="description-toggle"
+                data-cy="class-description-toggle"
+                [attr.aria-expanded]="descriptionExpanded()"
+                (click)="descriptionExpanded.set(!descriptionExpanded())">
+                {{
+                  (descriptionExpanded()
+                    ? 'pages.dataBrowser.dataClassHeader.descriptionShowLess'
+                    : 'pages.dataBrowser.dataClassHeader.descriptionShowMore'
+                  ) | translate
+                }}
+                <mat-icon [class.flipped]="descriptionExpanded()">expand_more</mat-icon>
+              </button>
+            }
           }
         </div>
         <div class="actions">
@@ -78,14 +100,14 @@ interface CreateResourceDialogProps {
             <mat-icon>info_outline</mat-icon>
             {{ 'pages.dataBrowser.dataClassHeader.classDetails' | translate }}
           </button>
-          <!-- "All" and the class total: the export ignores the row selection, search and filters. -->
-          <button mat-stroked-button (click)="openDownloadDialog()" data-cy="download-btn">
-            <mat-icon>download</mat-icon>
-            {{ 'pages.dataBrowser.downloadDialog.downloadAll' | translate }}
-            @if (classCount$ | async; as classCount) {
+          <!-- "All" and the class total: the export ignores search and filters. Hidden while loading and for an empty class. -->
+          @if (classCount$ | async; as classCount) {
+            <button mat-stroked-button (click)="openDownloadDialog(classCount)" data-cy="download-btn">
+              <mat-icon>download</mat-icon>
+              {{ 'pages.dataBrowser.downloadDialog.downloadAll' | translate }}
               <span class="count-badge" data-cy="download-count">{{ classCount | number }}</span>
-            }
-          </button>
+            </button>
+          }
           @if (hasProjectMemberRights$ | async) {
             <button mat-flat-button color="primary" (click)="goToAddClassInstance()" data-cy="create-resource-btn">
               <mat-icon>add</mat-icon>
@@ -116,7 +138,9 @@ interface CreateResourceDialogProps {
             <app-table-view-options
               [entries]="tableState.pickerEntries()"
               [rowHeight]="tableState.layout().rowHeight"
+              [showComments]="tableState.showComments()"
               (rowHeightChanged)="tableState.setRowHeight($event)"
+              (showCommentsChanged)="tableState.setShowComments($event)"
               (columnVisibilityChanged)="tableState.setColumnVisible($event.key, $event.isVisible)"
               (allColumnsVisibilityChanged)="tableState.setAllColumnsVisible($event)" />
           }
@@ -135,7 +159,7 @@ interface CreateResourceDialogProps {
       <app-data-tab-tour [steps]="tourSteps()" />
     </div>
   `,
-  styleUrl: './data-class-header.component.scss',
+  styleUrl: './data-class-header.component.css',
   imports: [
     AsyncPipe,
     DecimalPipe,
@@ -164,6 +188,7 @@ export class DataClassHeaderComponent {
 
   @Input({ required: true }) set classSelected(value: SelectedClass) {
     this._classSelected = value;
+    this.descriptionExpanded.set(false);
     this._resClassId$.next(value.resClass.id);
   }
   get classSelected(): SelectedClass {
@@ -182,6 +207,26 @@ export class DataClassHeaderComponent {
       )
     )
   );
+
+  readonly descriptionExpanded = signal(false);
+  readonly descriptionClamped = signal(false);
+  private readonly _descriptionEl = viewChild<ElementRef<HTMLElement>>('descriptionEl');
+  private _descriptionObserver?: ResizeObserver;
+
+  private readonly _watchDescription = afterRenderEffect(() => {
+    const el = this._descriptionEl()?.nativeElement;
+    this._descriptionObserver?.disconnect();
+    if (!el) {
+      this.descriptionClamped.set(false);
+      return;
+    }
+    this._descriptionObserver = new ResizeObserver(() => {
+      if (!this.descriptionExpanded()) {
+        this.descriptionClamped.set(el.scrollHeight > el.clientHeight + 1);
+      }
+    });
+    this._descriptionObserver.observe(el);
+  });
 
   private readonly _tourSearchAnchor = viewChild('tourSearchAnchor', { read: ElementRef });
   private readonly _tourViewToggleAnchor = viewChild('tourViewToggleAnchor', { read: ElementRef });
@@ -213,13 +258,13 @@ export class DataClassHeaderComponent {
     private readonly _dialog: MatDialog,
     private readonly _viewContainerRef: ViewContainerRef,
     private readonly _projectPageService: ProjectPageService,
-    private readonly _multipleViewerService: MultipleViewerService,
+    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
     private readonly _resClassCountApi: ResourceClassCountApi,
     private readonly _stringifyStringLiteralPipe: StringifyStringLiteralPipe,
-    private readonly _notificationService: NotificationService,
-    private readonly _dataBrowserPageService: DataBrowserPageService,
-    private readonly _translateService: TranslateService
-  ) {}
+    private readonly _dataBrowserPageService: DataBrowserPageService
+  ) {
+    inject(DestroyRef).onDestroy(() => this._descriptionObserver?.disconnect());
+  }
 
   goToAddClassInstance() {
     const project = this._projectPageService.currentProject;
@@ -269,20 +314,15 @@ export class DataClassHeaderComponent {
     });
   }
 
-  openDownloadDialog() {
-    combineLatest([
-      this._resClassCountApi.getResourceClassCount(this.classSelected.resClass.id),
-      this._multipleViewerService.selectedResources$.pipe(first()),
-    ]).subscribe(([resClassCount, resources]) => {
-      if (resClassCount === 0 || resources.length === 0) {
-        this._notificationService.openSnackBar(
-          this._translateService.instant('pages.dataBrowser.downloadDialog.noResources')
-        );
-        return;
-      }
+  openDownloadDialog(resClassCount: number) {
+    const classIri = this.classSelected.resClass.id;
+    // The export is the whole class, so the columns come from the class definition, not from a selected row.
+    this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(classIri).subscribe(classDefinitions => {
+      const properties = GenerateProperty.classProperty(classDefinitions.classes[classIri]).filter(
+        prop => prop.propDef.isEditable
+      );
 
-      const properties = generateDspResource(resources[0]).resProps.filter(prop => prop.propDef.isEditable);
-
+      // Full-height side panel: the property list scrolls inside it and the actions stay visible.
       this._dialog.open(DownloadDialogComponent, {
         ...DspDialogConfig.dialogDrawerConfig(
           {
@@ -290,14 +330,13 @@ export class DataClassHeaderComponent {
             resClass: this.classSelected.resClass,
             classLabel: this._stringifyStringLiteralPipe.transform(this.classSelected.resClass.labels),
             properties,
-            // In list view one resource is always "selected" by clicking it; only checkbox selection counts.
-            selectedCount: this._multipleViewerService.selectMode ? resources.length : 0,
           },
           true
         ),
-        width: '100vw',
-        maxWidth: '500px',
+        width: '600px',
+        maxWidth: '100vw',
         minWidth: 0,
+        autoFocus: false,
       });
     });
   }

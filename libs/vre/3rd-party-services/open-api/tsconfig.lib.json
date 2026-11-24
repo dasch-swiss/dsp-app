@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../../dist/out-tsc",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "lib": ["dom", "es2022"],
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "types": ["window", "ckeditor5-custom-build"]
+  },
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/test-setup.ts",
+    "jest.config.js",
+    "src/**/*.test.ts",
+    "**/*.stories.ts",
+    "**/stories.helpers.ts",
+    "**/*.stories.helpers.ts",
+    "**/*-stories.helper.ts"
+  ],
+  "include": ["src/**/*.ts"]
+}

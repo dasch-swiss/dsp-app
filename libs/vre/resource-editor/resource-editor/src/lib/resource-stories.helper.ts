@@ -118,7 +118,7 @@ export const withheldFileValue = (res: ReadResource, filePropertyIri: string): R
   return res;
 };
 
-export const makeDescriptionProperty = (userHasPermission = 'RV') => {
+const makeDescriptionProperty = (userHasPermission = 'RV') => {
   const descPropId = 'http://0.0.0.0:3333/ontology/0001/example/v2#hasDescription';
   const def = makeTextPropDef(descPropId, 'Description');
   const entry = makePropEntry(def, 0);

@@ -562,13 +562,12 @@
       },
       "downloadDialog": {
         "downloadAll": "Download all",
-        "titleAll": "Download all {{count}} resources",
-        "titleOne": "Download 1 resource",
-        "noResources": "There are no resources to download.",
+        "heading": "Download {{className}}",
+        "resourceCount": "{{count}} resources",
         "properties": "Properties",
-        "selectAll": "Select All",
-        "selectNone": "Select None",
-        "selectedCount": "{{count}} of {{total}} properties selected",
+        "filterProperties": "Filter properties",
+        "csvSummary": "CSV · {{rows}} rows × {{columns}} columns",
+        "noMatchingProperties": "No properties match the filter.",
         "includeIrisLabel": "Include Resource IRIs for reference properties",
         "includeIrisExplanation": "When enabled, reference properties export both human-readable values (e.g., 'Alice') and Resource IRIs for proper data referencing.",
         "includeArkUrlsLabel": "Include ARK identifiers",
@@ -581,13 +580,14 @@
         "progressXofN": "Exported {{x}} of {{n}} resources",
         "buildingCsv": "Building your CSV — keep this tab open. We'll start the download as soon as the file is ready.",
         "preparing": "Preparing…",
-        "scopeAll": "This file contains every resource of this class. The current search and filters are not applied.",
-        "scopeAllWithSelection": "This file contains every resource of this class. Your {{count}} selected resources and the current search and filters are not applied."
+        "scopeAll": "This file contains every resource of this class. The current search and filters are not applied."
       },
       "dataClassHeader": {
         "searchLabel": "Search",
         "searchPlaceholder": "Search",
-        "classDetails": "Class details"
+        "classDetails": "Class details",
+        "descriptionShowMore": "Show more",
+        "descriptionShowLess": "Show less"
       },
       "resultMeta": {
         "range": "{{start}} – {{end}} of {{total}}",
@@ -647,7 +647,9 @@
         "hideAllShort": "Hide all",
         "rowHeight": "Row height",
         "rowHeightAuto": "Auto",
-        "rowHeightManual": "Manual"
+        "rowHeightManual": "Manual",
+        "comments": "Comments",
+        "showComments": "Show comments"
       },
       "tour": {
         "new": "New",

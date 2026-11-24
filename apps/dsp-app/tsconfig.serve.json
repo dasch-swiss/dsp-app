@@ -1,0 +1,13 @@
+{
+  "//": "Local `just ng-serve` only. The CLI compiles every library in one program, so the libraries Bazel compiles loosely (tools/angular/loose.bzl) need the strict flags off; `just build` stays the type check.",
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "strict": false,
+    "noImplicitOverride": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noImplicitReturns": false
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": false
+  }
+}

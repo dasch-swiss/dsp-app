@@ -1,0 +1,28 @@
+load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+vre_library(
+    name = "search",
+    srcs = glob(
+        ["src/**/*.ts"],
+        exclude = LIBRARY_EXCLUDES,
+    ),
+    stylesheets = glob(["src/**/*.scss"]),
+    sass_deps = ["//libs/vre/ui/styles"],
+    test_size = "small",
+    test_srcs = glob(TEST_SRCS),
+    deps = [
+        "//:node_modules/@angular/common",
+        "//:node_modules/@angular/core",
+        "//:node_modules/@angular/router",
+        "//:node_modules/rxjs",
+        "//libs/dsp-js",
+        "//libs/vre/core/config",
+        "//libs/vre/core/error-handler",
+        "//libs/vre/pages/data-browser",
+        "//libs/vre/shared/app-common-to-move",
+        "//libs/vre/shared/app-helper-services",
+        "//libs/vre/ui/progress-indicator",
+        "//libs/vre/ui/ui",
+    ],
+    test_deps = ["//:node_modules/@ngx-translate/core"],
+)

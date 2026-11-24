@@ -6,6 +6,7 @@
     ".": {
       "package-name": "DSP-APP",
       "include-component-in-tag": false,
+      "extra-files": ["libs/vre/core/config/src/lib/app-version.ts"],
       "changelog-sections": [
         {"type": "feat", "section": "Enhancements"},
         {"type": "fix", "section": "Bug Fixes"},

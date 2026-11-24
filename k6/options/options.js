@@ -1,4 +1,4 @@
-export const smokeTest = {
+const smokeTest = {
   // a small test that checks for major issues before spending more time and resources
   executor: 'shared-iterations',
   tags: { type: 'smoke-test' },
@@ -13,7 +13,7 @@ export const smokeTest = {
   },
 };
 
-export const averageLoad = {
+const averageLoad = {
   startTime: '10s',
   executor: 'ramping-vus',
   tags: { type: 'average-load' },
@@ -30,7 +30,7 @@ export const averageLoad = {
   },
 };
 
-export const defaultScenario = {
+const defaultScenario = {
   smokeTest: smokeTest,
   averageLoad: averageLoad,
 };

@@ -1,0 +1,14 @@
+load("@rules_java//java:java_binary.bzl", "java_binary")
+load("@rules_java//java:java_import.bzl", "java_import")
+
+java_import(
+    name = "openapi_generator_cli_jar",
+    jars = ["@openapi_generator_cli//file"],
+)
+
+java_binary(
+    name = "openapi_generator",
+    main_class = "org.openapitools.codegen.OpenAPIGenerator",
+    visibility = ["//libs/vre/3rd-party-services/open-api:__pkg__"],
+    runtime_deps = [":openapi_generator_cli_jar"],
+)

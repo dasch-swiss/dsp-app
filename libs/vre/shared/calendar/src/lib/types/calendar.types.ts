@@ -31,11 +31,6 @@ export type CalendarSystem = (typeof CALENDAR_SYSTEMS)[number];
  * - **CE** (Common Era): Equivalent to AD (Anno Domini)
  * - **BCE** (Before Common Era): Equivalent to BC (Before Christ)
  * - **NONE**: No era designation (used for Islamic calendar)
- */
-export const ERAS = ['CE', 'BCE', 'NONE'] as const;
-
-/**
- * Type representing an era.
  *
  * @example
  * ```typescript
@@ -43,7 +38,7 @@ export const ERAS = ['CE', 'BCE', 'NONE'] as const;
  * const ancientEra: Era = 'BCE';
  * ```
  */
-export type Era = (typeof ERAS)[number];
+export type Era = 'CE' | 'BCE' | 'NONE';
 
 /**
  * Precision level for dates.
@@ -52,11 +47,6 @@ export type Era = (typeof ERAS)[number];
  * - **YEAR**: Year only (e.g., 2024)
  * - **MONTH**: Year and month (e.g., 2024-01)
  * - **DAY**: Full date (e.g., 2024-01-15)
- */
-export const DATE_PRECISIONS = ['YEAR', 'MONTH', 'DAY'] as const;
-
-/**
- * Type representing date precision.
  *
  * @example
  * ```typescript
@@ -64,7 +54,7 @@ export const DATE_PRECISIONS = ['YEAR', 'MONTH', 'DAY'] as const;
  * const yearOnly: DatePrecision = 'YEAR';
  * ```
  */
-export type DatePrecision = (typeof DATE_PRECISIONS)[number];
+export type DatePrecision = 'YEAR' | 'MONTH' | 'DAY';
 
 /**
  * Immutable representation of a calendar date.
@@ -233,32 +223,6 @@ export interface CalendarOperations {
 }
 
 /**
- * Date format types supported by the formatter.
- *
- * @remarks
- * - **DD-MM-YYYY**: 15-01-2024
- * - **MM-DD-YYYY**: 01-15-2024
- * - **YYYY-MM-DD**: 2024-01-15 (ISO format)
- * - **DD.MM.YYYY**: 15.01.2024
- * - **GRAVSEARCH**: GREGORIAN:2024-01-15 CE (DSP-API gravsearch format)
- */
-export type DateFormat = 'DD-MM-YYYY' | 'MM-DD-YYYY' | 'YYYY-MM-DD' | 'DD.MM.YYYY' | 'GRAVSEARCH';
-
-/**
- * Configuration options for date formatting.
- */
-export interface DateFormatOptions {
-  /** The format to use */
-  format: DateFormat;
-  /** Whether to show the era (CE/BCE) */
-  showEra?: boolean;
-  /** Whether to show the calendar name */
-  showCalendar?: boolean;
-  /** Locale for month/day names */
-  locale?: string;
-}
-
-/**
  * Error class for calendar-related errors.
  */
 export class CalendarError extends Error {
@@ -278,7 +242,7 @@ export class CalendarError extends Error {
  * - **BEFORE_TARGET_EPOCH**: the date precedes the target calendar's first representable day,
  *   as a pre-Hijra date does for the Islamic calendar.
  */
-export type ConversionRefusalReason = 'BEFORE_TARGET_EPOCH';
+type ConversionRefusalReason = 'BEFORE_TARGET_EPOCH';
 
 /**
  * The outcome of converting a date into another calendar.

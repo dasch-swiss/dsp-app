@@ -114,7 +114,10 @@ const meta: Meta = {
             firstChild: null,
           },
         },
-        { provide: ResourceService, useValue: { getResourceIri: () => RESOURCE_IRI } },
+        {
+          provide: ResourceService,
+          useValue: { getResourceIri: () => RESOURCE_IRI, getResourcePath: (iri: string) => iri },
+        },
         {
           provide: AppConfigService,
           useValue: {
@@ -162,6 +165,11 @@ export const VideoResource: Story = {
     await step('The video wrapper is rendered', async () => {
       await waitFor(() => expect(canvasElement.querySelector('app-resource-video')).not.toBeNull(), {
         timeout: 2000,
+      });
+    });
+    await step('The video player controls are shown', async () => {
+      await waitFor(() => expect(canvasElement.querySelector('app-video-toolbar')).not.toBeNull(), {
+        timeout: 10000,
       });
     });
     await step('The properties are rendered', async () => {

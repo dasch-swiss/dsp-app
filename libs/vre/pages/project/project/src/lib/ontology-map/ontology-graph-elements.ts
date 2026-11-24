@@ -59,7 +59,7 @@ export interface GraphElementOptions {
   expanded?: ReadonlySet<string>;
 }
 
-export interface IslandElementOptions {
+interface IslandElementOptions {
   /** The family of every class of the data model; see `classFamilies`. */
   families: Map<string, ClassFamily>;
 }
@@ -187,7 +187,7 @@ export function toGraphElements(graph: DataModelGraph, options: GraphElementOpti
 }
 
 /** How many links from one class to another are drawn one by one; more are drawn as one. */
-export const MAX_PARALLEL_LINKS = 4;
+const MAX_PARALLEL_LINKS = 4;
 
 /** An element's texts, one per `GraphLabels`: its label, its name, and both on two lines. */
 function texts(label: string, iri: string, name = localNameOf(iri)): { label: string; name: string; both: string } {
@@ -390,7 +390,7 @@ function superclasses(graph: DataModelGraph): { children: string[]; ancestors: (
 }
 
 /** A class with a property, for the property panel. */
-export interface PropertyUser {
+interface PropertyUser {
   classIri: string;
   /** How many values the class takes; unknown for a class outside the data model. */
   cardinality?: Cardinality;
@@ -602,7 +602,7 @@ const VOCABULARIES: readonly { prefix: string; namespace: string; name: string }
 const isDataModelIri = (iri: string) => /\/ontology\/.+\/v2#/.test(iri);
 
 /** How a term of a standard vocabulary is written, and of which vocabulary. */
-export function standardTermOf(iri: string): StandardTerm {
+function standardTermOf(iri: string): StandardTerm {
   const known = VOCABULARIES.find(vocabulary => iri.startsWith(vocabulary.namespace));
   if (known) return { iri, short: `${known.prefix}:${iri.slice(known.namespace.length)}`, vocabulary: known.name };
   const host = /^[a-z]+:\/\/([^/]+)/i.exec(iri)?.[1] ?? iri;
@@ -759,7 +759,7 @@ function matchGraph(
  * Whether the graph draws an edge: every link, a class's link to itself as a loop; a subclass edge only between two
  * classes.
  */
-export const isDrawn = (edge: DataModelEdge) => edge.kind === 'link' || edge.source !== edge.target;
+const isDrawn = (edge: DataModelEdge) => edge.kind === 'link' || edge.source !== edge.target;
 
 const pairOf = (edge: DataModelEdge) => `${edge.source}\n${edge.target}`;
 

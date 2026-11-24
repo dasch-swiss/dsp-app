@@ -1,12 +1,12 @@
 # ─── Update strategy overview ──────────────────────────────────────────────────
 #
-# Version updates (npm, github-actions, docker) are managed by Renovate.
-# See renovate.json for configuration.
+# Automated version updates are off: Renovate is disabled in renovate.json and
+# library updates are made by hand.
 #
 # The npm entry below is kept solely so that Dependabot security update PRs
 # inherit the labels config. open-pull-requests-limit: 0 disables version
-# update PRs for npm (Renovate handles those); security update PRs are
-# unaffected by the limit and will receive the "security" label.
+# update PRs for npm; security update PRs are unaffected by the limit and will
+# receive the "security" label.
 # ───────────────────────────────────────────────────────────────────────────────
 
 version: 2

@@ -105,12 +105,4 @@ export class ApiConstants {
 
 export enum Auth {
   AccessToken = 'ACCESS_TOKEN',
-  Bearer = 'Bearer',
-}
-
-export enum MaterialColor {
-  Primary = 'primary',
-  Warn = 'warn',
-  Accent = 'accent',
-  Default = 'default',
 }

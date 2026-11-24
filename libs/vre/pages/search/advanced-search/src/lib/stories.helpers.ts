@@ -1,21 +1,20 @@
+import { of } from 'rxjs';
+// eslint-disable-next-line no-restricted-imports -- story-only helpers, kept out of search-filters' barrel.
 import {
   EMPTY_SEARCH_STATE,
-  SEARCH_FILTER_SERVICE_STUBS,
   STORY_PROVIDERS as SHARED_STORY_PROVIDERS,
-} from '@dasch-swiss/vre/pages/search/search-filters';
-import { of } from 'rxjs';
+} from '../../../search-filters/src/lib/stories.helpers';
 import { DerivedSearchStateService } from './service/derived-search-state.service';
 import { SearchUrlSyncService } from './service/search-url-sync.service';
 
+// eslint-disable-next-line no-restricted-imports -- story-only helpers, kept out of search-filters' barrel.
 export {
-  CHIP_LABEL_STORY_PROVIDERS,
+  EMPTY_SEARCH_STATE,
   makeDspApiConnectionStub,
-  makeListNodeLabelResolverStub,
   makeOntologyDataServiceStub,
-  PROPERTY_FORM_MANAGER_STORY_PROVIDERS,
   SAMPLE_ONTOLOGIES,
   SAMPLE_RESOURCE_CLASSES,
-} from '@dasch-swiss/vre/pages/search/search-filters';
+} from '../../../search-filters/src/lib/stories.helpers';
 
 /** Stubs the Search tab's URL service on top of the shared port stub, both backed by one quiet state object. */
 const searchUrlSyncServiceStub = {
@@ -24,9 +23,6 @@ const searchUrlSyncServiceStub = {
 };
 
 export const STORY_PROVIDERS = [...SHARED_STORY_PROVIDERS, searchUrlSyncServiceStub];
-
-/** Use these AFTER provideAdvancedSearch() to override the real services with story-safe stubs. */
-export const ADVANCED_SEARCH_SERVICE_STUBS = [...SEARCH_FILTER_SERVICE_STUBS, searchUrlSyncServiceStub];
 
 /**
  * Stub for the URL-derived order-by list. `OrderByComponent` reads `orderByItems$` from

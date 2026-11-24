@@ -25,12 +25,10 @@ import { ClassRow, localNameOf } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
-import { COMFORTABLE_CARD_SIZES } from './class-card-property.component';
 import { DataModelClassCardsComponent, PropertyOrder } from './data-model-class-cards.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { debounced } from './debounced';
 import { escapeClosesPanel } from './escape-closes';
-import { RAIL_SECTION_STYLES } from './rail-section-styles';
 
 /**
  * Data models 2 › Resource classes: the data model's classes as cards, one per class with its properties, as the Data models tab
@@ -155,97 +153,7 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
       }
     </div>
   `,
-  styles: [
-    RAIL_SECTION_STYLES,
-    `
-      @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
-
-      // Title, search and tools on one line; only the tools wrap.
-      .head {
-        flex-wrap: nowrap;
-      }
-
-      .tools {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 8px 12px;
-        // Never narrower than its widest tool, which would then lie over the create button.
-        min-width: min-content;
-        // Each tool keeps its width; a tool that does not fit goes to the next line rather than over its neighbour.
-        > * {
-          flex: none;
-          white-space: nowrap;
-        }
-      }
-
-      // On one line: the title, the search and the create button at the right end; the tools, very small, on a line
-      // of their own under it, at the right.
-      .head.one-line {
-        display: grid;
-        grid-template-columns: auto minmax(140px, 280px) minmax(0, 1fr) auto;
-        grid-template-areas:
-          'title search . create'
-          'tools tools tools tools';
-        // The tools nearer the cards they act on than the button above them.
-        gap: 12px;
-        margin-bottom: -10px;
-
-        h2 {
-          grid-area: title;
-        }
-
-        .search {
-          grid-area: search;
-          width: auto;
-        }
-
-        .create {
-          grid-area: create;
-        }
-
-        .tools {
-          grid-area: tools;
-          gap: 2px;
-
-          .mat-mdc-button {
-            --mat-button-text-container-height: 24px;
-            --mat-button-text-label-text-size: 11px;
-            --mat-button-text-horizontal-padding: 6px;
-            --mat-button-text-icon-spacing: 4px;
-            --mat-button-text-label-text-color: #{$cool_gray_500};
-            height: 24px;
-            font-size: 11px;
-
-            mat-icon {
-              font-size: 14px;
-              width: 14px;
-              height: 14px;
-            }
-          }
-        }
-      }
-
-      // The title on one line, whatever room the tools take.
-      .head h2 {
-        white-space: nowrap;
-      }
-
-      // The comfortable sizes, which the property rows and their checkboxes read.
-      .cards-box[data-density='comfortable'] {
-        ${COMFORTABLE_CARD_SIZES}
-      }
-
-      // On a narrow screen the search gives room first, down to a usable width.
-      .head .search {
-        flex: 0 1 280px;
-        min-width: 140px;
-      }
-    `,
-  ],
+  styleUrl: './data-model-classes.component.css',
 })
 export class DataModelClassesComponent {
   readonly state = inject(DataModelsRailState);

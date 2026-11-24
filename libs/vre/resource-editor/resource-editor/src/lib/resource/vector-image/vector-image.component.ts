@@ -82,7 +82,7 @@ import { VectorViewerService } from './vector-viewer.service';
       </div>
     }
   `,
-  styleUrls: ['./vector-image.component.scss'],
+  styleUrls: ['./vector-image.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   providers: [VectorViewerService],

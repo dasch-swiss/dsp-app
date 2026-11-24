@@ -30,15 +30,14 @@ import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelsRailState } from './data-models-rail-state';
 import { LanguageTextsComponent } from './language-texts.component';
-import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabularyUses } from './vocabulary-tree';
 
 /** The query parameter naming the controlled vocabulary to open on arriving at Controlled vocabularies. */
-export const VOCABULARY_PARAM = 'vocabulary';
+const VOCABULARY_PARAM = 'vocabulary';
 
 /** A vocabulary's or value's texts with their language, for the language lines. */
 @Pipe({ name: 'languageTexts' })
-export class LanguageTextsPipe implements PipeTransform {
+class LanguageTextsPipe implements PipeTransform {
   transform(texts: VocabularyNode['labels'] | undefined): LanguageText[] {
     return (texts ?? []).filter(text => !!text.language).map(text => ({ language: text.language!, value: text.value }));
   }
@@ -250,205 +249,7 @@ export class LanguageTextsPipe implements PipeTransform {
       </div>
     </div>
   `,
-  styles: [
-    RAIL_SECTION_STYLES,
-    `
-      @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
-
-      .tree {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-        background: white;
-        font-size: 13px;
-
-        .name-column {
-          width: 38%;
-        }
-
-        .used-column {
-          width: 30%;
-        }
-
-        .actions-column {
-          width: 48px;
-        }
-
-        th {
-          position: sticky;
-          top: 0;
-          z-index: 1;
-          padding: 10px 12px;
-          text-align: left;
-          font-size: 11.5px;
-          font-weight: 500;
-          letter-spacing: 0.05em;
-          text-transform: uppercase;
-          color: $cool_gray_500;
-          background: $cool_gray_50;
-          border-bottom: 1px solid $cool_gray_200;
-          border-right: 1px solid $cool_gray_200;
-        }
-
-        td {
-          padding: 6px 12px;
-          vertical-align: middle;
-          border-bottom: 1px solid $cool_gray_100;
-          border-right: 1px solid $cool_gray_100;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        tr {
-          height: 36px;
-        }
-
-        tr.vocabulary {
-          height: 44px;
-          background: $cool_gray_50;
-
-          .node-label {
-            font-weight: 500;
-          }
-        }
-      }
-
-      .node {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        min-width: 0;
-      }
-
-      .toggle {
-        flex: none;
-        display: flex;
-        width: 24px;
-        height: 24px;
-        padding: 0;
-        border: 0;
-        border-radius: 4px;
-        background: none;
-        color: $cool_gray_600;
-        cursor: pointer;
-
-        &:hover {
-          background: $cool_gray_100;
-        }
-      }
-
-      .leaf {
-        flex: none;
-        width: 24px;
-        display: flex;
-        justify-content: center;
-
-        &::before {
-          content: '';
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: $cool_gray_300;
-        }
-      }
-
-      .list-icon {
-        flex: none;
-        width: 16px;
-        height: 16px;
-        font-size: 16px;
-        color: $primary;
-      }
-
-      .node-label {
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      // The row's menu, at the end, as in the other tables: shown on the hovered or focused row, and while open.
-      .tree .actions-cell {
-        padding: 0 4px;
-        text-align: right;
-      }
-
-      .row-menu {
-        --mat-icon-button-state-layer-size: 32px;
-        padding: 4px;
-        color: $cool_gray_500;
-        visibility: hidden;
-
-        mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-        }
-      }
-
-      tr:hover .row-menu,
-      tr:focus-within .row-menu,
-      .row-menu[aria-expanded='true'] {
-        visibility: visible;
-      }
-
-      .delete {
-        color: $red_800;
-
-        mat-icon {
-          color: inherit;
-        }
-      }
-
-      .count {
-        flex: none;
-        padding: 0 6px;
-        border-radius: 10px;
-        background: $cool_gray_100;
-        font-size: 11.5px;
-        line-height: 18px;
-        color: $cool_gray_600;
-      }
-
-      .description {
-        color: $cool_gray_700;
-      }
-
-      .chips {
-        flex-wrap: nowrap;
-        align-items: center;
-        overflow: hidden;
-      }
-
-      .chip {
-        flex: none;
-      }
-
-      .property-chip {
-        flex: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-        padding: 0 7px 0 5px;
-        border-radius: 11px;
-        background: $cool_gray_100;
-        font-size: 12px;
-        line-height: 22px;
-        color: $cool_gray_700;
-
-        mat-icon {
-          width: 14px;
-          height: 14px;
-          font-size: 14px;
-        }
-      }
-
-      mark {
-        border-radius: 2px;
-        background: $yellow_200;
-        color: inherit;
-      }
-    `,
-  ],
+  styleUrl: './data-model-lists.component.css',
 })
 export class DataModelListsComponent {
   readonly state = inject(DataModelsRailState);

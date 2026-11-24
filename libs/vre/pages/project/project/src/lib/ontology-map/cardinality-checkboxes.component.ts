@@ -19,13 +19,13 @@ import { CHECK_DELAY_MS } from '../data-models-rail/can-do-checks';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 
 /** A cardinality from its two checkboxes, as the Data models tab reads them. */
-export function cardinalityFrom(multiple: boolean, required: boolean): Cardinality {
+function cardinalityFrom(multiple: boolean, required: boolean): Cardinality {
   if (required) return multiple ? Cardinality._1_n : Cardinality._1;
   return multiple ? Cardinality._0_n : Cardinality._0_1;
 }
 
 /** Whether a cardinality allows several values, and whether it requires one. */
-export function checkboxesOf(cardinality: Cardinality): { multiple: boolean; required: boolean } {
+function checkboxesOf(cardinality: Cardinality): { multiple: boolean; required: boolean } {
   return {
     multiple: cardinality === Cardinality._0_n || cardinality === Cardinality._1_n,
     required: cardinality === Cardinality._1 || cardinality === Cardinality._1_n,
@@ -106,112 +106,7 @@ type Box = 'multiple' | 'required';
       }
     }
   `,
-  styles: [
-    `
-      @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
-
-      // Two columns, or with their words, the two boxes one above the other, as in the Data models tab.
-      // Small boxes and words, so a card's properties stay what reads first.
-      app-cardinality-checkboxes {
-        display: grid;
-        grid-template-columns: 52px 52px;
-        align-items: center;
-        justify-items: center;
-        // Sizes from the class cards' density, as compact as can be when none is set.
-        --mat-checkbox-state-layer-size: var(--density-check-layer, 22px);
-        --mat-checkbox-label-text-size: var(--density-check-label, 10.5px);
-        --mat-checkbox-label-text-line-height: calc(var(--density-check-label, 10.5px) + 3.5px);
-      }
-
-      app-cardinality-checkboxes.labelled {
-        grid-template-columns: var(--density-check-col, 100px);
-        justify-items: start;
-        row-gap: 0;
-      }
-
-      app-cardinality-checkboxes .box {
-        display: inline-flex;
-      }
-
-      // The star and the stack, side by side: grey when off, red and blue when on.
-      app-cardinality-checkboxes.icons {
-        display: inline-flex;
-        gap: 2px;
-      }
-
-      app-cardinality-checkboxes .icon-toggle {
-        display: grid;
-        place-items: center;
-        width: 22px;
-        height: 22px;
-        padding: 0;
-        border: 0;
-        border-radius: 50%;
-        background: none;
-        color: $cool_gray_400;
-        cursor: pointer;
-
-        &:hover:not([disabled]) {
-          background: $cool_gray_100;
-        }
-
-        &[disabled] {
-          cursor: default;
-          opacity: 0.4;
-        }
-
-        &.on {
-          color: $primary;
-        }
-
-        &.star.on {
-          color: $red_800;
-        }
-
-        &:focus-visible {
-          outline: 2px solid $primary;
-          outline-offset: 1px;
-        }
-
-        mat-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-        }
-      }
-
-      app-cardinality-checkboxes .star-glyph {
-        font-size: 18px;
-        font-weight: 700;
-        line-height: 22px;
-        height: 22px;
-      }
-
-      // Ticked boxes only; the others show while the pointer is on the property's row, or with the focus.
-      app-cardinality-checkboxes.ticked-only .box.unticked {
-        visibility: hidden;
-      }
-
-      .prop:hover app-cardinality-checkboxes .box.unticked,
-      app-cardinality-checkboxes.ticked-only .box.unticked:focus-within {
-        visibility: visible;
-      }
-
-      app-cardinality-checkboxes .mat-mdc-checkbox {
-        // Material's touch target is wider than a card row; the row stays compact.
-        margin: -3px 0;
-
-        // Material draws an 18 px box: drawn at 14 px, in the room its smaller state layer leaves.
-        .mdc-checkbox {
-          transform: scale(var(--density-check-scale, 0.78));
-        }
-
-        .mdc-label {
-          padding-left: 0;
-        }
-      }
-    `,
-  ],
+  styleUrl: './cardinality-checkboxes.component.css',
 })
 export class CardinalityCheckboxesComponent {
   readonly cardinality = input.required<Cardinality>();

@@ -16,7 +16,7 @@ import { SearchUrlSyncService } from '../../service/search-url-sync.service';
   selector: 'app-order-by',
   imports: [AsyncPipe, MatButtonModule, MatIconModule, MatListModule, MatTooltipModule, OverlayModule, TranslateModule],
   templateUrl: './order-by.component.html',
-  styleUrls: ['./order-by.component.scss'],
+  styleUrls: ['./order-by.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderByComponent {

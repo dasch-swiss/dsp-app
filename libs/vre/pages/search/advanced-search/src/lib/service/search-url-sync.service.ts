@@ -44,7 +44,7 @@ type AdvancedSearchParamNames = { [K in keyof Required<SearchUrlParams>]: K };
  * the app-wide `RouteConstants` (DEV-7252 — an unused duplicate set there used to make renames look
  * effective while the live values stayed put).
  */
-export const ADVANCED_SEARCH_PARAM = {
+const ADVANCED_SEARCH_PARAM = {
   q: 'q',
   ontology: 'ontology',
   class: 'class',

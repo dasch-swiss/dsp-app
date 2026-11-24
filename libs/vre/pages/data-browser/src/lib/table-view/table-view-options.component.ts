@@ -3,6 +3,7 @@ import { MatButton } from '@angular/material/button';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
@@ -19,7 +20,7 @@ export interface ViewOptionsEntry {
   readonly isVisible: boolean;
 }
 
-/** The table's shaping controls: row height and column visibility. Presentational: takes the picker's rows and emits intent. */
+/** The table's shaping controls: comments, row height and column visibility. Presentational: takes the picker's rows and emits intent. */
 @Component({
   selector: 'app-table-view-options',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +39,24 @@ export interface ViewOptionsEntry {
       <!-- MatMenu's panel carries none of this component's style attributes, so sizing and scroll are set on a wrapper in the projected content. -->
       <div class="view-options-panel">
         @if (showRowHeight()) {
+          <!-- Comments and row height shape the data table only; the Data models tables leave them out. -->
+          <h4 class="section-header">{{ 'pages.dataBrowser.viewOptions.comments' | translate }}</h4>
+          <!-- A switch, not a checkbox row: a ticked row reads as one more column. -->
+          <div class="comments-control" (click)="$event.stopPropagation()" (keydown)="onControlKeydown($event)">
+            <!-- A label of its own, so the switch can sit at the panel's right edge; MatSlideToggle ids its
+                 button after its own id, plus "-button". -->
+            <label class="comments-label" id="show-comments-label" for="show-comments-button">
+              {{ 'pages.dataBrowser.viewOptions.showComments' | translate }}
+            </label>
+            <mat-slide-toggle
+              id="show-comments"
+              aria-labelledby="show-comments-label"
+              data-cy="show-comments"
+              hideIcon
+              [checked]="showComments()"
+              (change)="showCommentsChanged.emit($event.checked)" />
+          </div>
+
           <h4 class="section-header" id="row-height-heading">
             {{ 'pages.dataBrowser.viewOptions.rowHeight' | translate }}
             <span class="section-meta" data-cy="row-height-value">{{ rowHeightLabel() }}</span>
@@ -112,7 +131,7 @@ export interface ViewOptionsEntry {
       </div>
     </mat-menu>
   `,
-  styleUrl: './table-view-options.component.scss',
+  styleUrl: './table-view-options.component.css',
   imports: [
     MatButton,
     MatButtonToggle,
@@ -121,6 +140,7 @@ export interface ViewOptionsEntry {
     MatMenu,
     MatMenuItem,
     MatMenuTrigger,
+    MatSlideToggle,
     MatSlider,
     MatSliderThumb,
     TranslatePipe,
@@ -131,13 +151,17 @@ export class TableViewOptionsComponent {
 
   /** Every column of the class with its current on/off state, in the ontology's own order. */
   readonly entries = input.required<ViewOptionsEntry[]>();
-  /** False for a table whose rows always fit their content: the menu then holds the columns only. */
+  /** False for a table whose rows always fit their content and carry no comments: the menu then holds the columns only. */
   readonly showRowHeight = input(true);
   /** The height every row is drawn at, or undefined for Auto. */
   readonly rowHeight = input<number | undefined>(undefined);
 
+  /** Whether value comments are shown under their values. */
+  readonly showComments = input(false);
+
   /** A height in pixels, or undefined when the user picks Auto. */
   readonly rowHeightChanged = output<number | undefined>();
+  readonly showCommentsChanged = output<boolean>();
 
   readonly columnVisibilityChanged = output<{ key: string; isVisible: boolean }>();
   /** True to show every column, false to hide every column but the sticky one. */

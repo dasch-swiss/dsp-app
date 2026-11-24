@@ -58,7 +58,7 @@ import { PropertyValueService } from './property-value.service';
           (deleteAction)="askToDelete()" />
       }
     </div>`,
-  styleUrls: ['./property-value-display.component.scss'],
+  styleUrls: ['./property-value-display.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PropertyValueDisplayComponent implements OnInit {

@@ -83,12 +83,6 @@ export class ResourceClassInfo {
   }
 }
 
-export interface PropToAdd {
-  ontologyId: string;
-  ontologyLabel: string;
-  properties: PropertyInfo[];
-}
-
 export interface ClassShortInfo {
   id: string;
   labels: StringLiteralV2[];

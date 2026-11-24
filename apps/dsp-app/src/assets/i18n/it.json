@@ -562,13 +562,12 @@
       },
       "downloadDialog": {
         "downloadAll": "Scarica tutto",
-        "titleAll": "Scarica tutte le {{count}} risorse",
-        "titleOne": "Scarica 1 risorsa",
-        "noResources": "Non ci sono risorse da scaricare.",
+        "heading": "Scarica {{className}}",
+        "resourceCount": "{{count}} risorse",
         "properties": "Proprietà",
-        "selectAll": "Seleziona tutto",
-        "selectNone": "Deseleziona tutto",
-        "selectedCount": "{{count}} di {{total}} proprietà selezionate",
+        "filterProperties": "Filtra proprietà",
+        "csvSummary": "CSV · {{rows}} righe × {{columns}} colonne",
+        "noMatchingProperties": "Nessuna proprietà corrisponde al filtro.",
         "includeIrisLabel": "Includi IRI delle risorse per le proprietà di riferimento",
         "includeIrisExplanation": "Quando attivata, le proprietà di riferimento esportano sia valori leggibili (ad es. 'Alice') che IRI delle risorse per un corretto riferimento ai dati.",
         "includeArkUrlsLabel": "Includi identificatori ARK",
@@ -581,13 +580,14 @@
         "progressXofN": "Esportate {{x}} su {{n}} risorse",
         "buildingCsv": "Creazione del file CSV in corso — tieni aperta questa scheda. Il download inizierà non appena il file sarà pronto.",
         "preparing": "Preparazione…",
-        "scopeAll": "Il file contiene tutte le risorse di questa classe. La ricerca e i filtri attuali non vengono applicati.",
-        "scopeAllWithSelection": "Il file contiene tutte le risorse di questa classe. Le {{count}} risorse selezionate, la ricerca e i filtri attuali non vengono considerati."
+        "scopeAll": "Il file contiene tutte le risorse di questa classe. La ricerca e i filtri attuali non vengono applicati."
       },
       "dataClassHeader": {
         "searchLabel": "Cerca",
         "searchPlaceholder": "Cerca",
-        "classDetails": "Dettagli della classe"
+        "classDetails": "Dettagli della classe",
+        "descriptionShowMore": "Mostra di più",
+        "descriptionShowLess": "Mostra meno"
       },
       "resultMeta": {
         "range": "{{start}} – {{end}} di {{total}}",
@@ -647,7 +647,9 @@
         "hideAllShort": "Nascondi tutte",
         "rowHeight": "Altezza delle righe",
         "rowHeightAuto": "Automatica",
-        "rowHeightManual": "Manuale"
+        "rowHeightManual": "Manuale",
+        "comments": "Commenti",
+        "showComments": "Mostra i commenti"
       },
       "tour": {
         "new": "Novità",

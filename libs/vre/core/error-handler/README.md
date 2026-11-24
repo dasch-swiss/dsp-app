@@ -1,7 +1,5 @@
-# vre-shared-app-error-handler
-
-This library was generated with [Nx](https://nx.dev).
+# @dasch-swiss/vre/core/error-handler
 
 ## Running unit tests
 
-Run `nx test vre-shared-app-error-handler` to execute the unit tests.
+Run `just test //libs/vre/core/error-handler/...` to execute the unit tests.

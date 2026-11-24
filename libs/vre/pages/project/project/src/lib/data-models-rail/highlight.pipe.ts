@@ -19,7 +19,7 @@ export function highlightParts(text: string, terms: readonly string[]): TextPart
   }
   const parts: TextPart[] = [];
   for (let i = 0; i < text.length; i++) {
-    const last = parts.at(-1);
+    const last = parts[parts.length - 1];
     if (last && last.match === marked[i]) last.text += text[i];
     else parts.push({ text: text[i], match: marked[i] });
   }

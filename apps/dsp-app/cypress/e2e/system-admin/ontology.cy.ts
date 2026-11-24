@@ -1,4 +1,4 @@
-import { CreateOntology } from '../../../../../libs/dsp-js/src';
+import { CreateOntology } from '@dasch-swiss/dsp-js';
 import { faker } from '@faker-js/faker';
 import { railModel } from '../../support/helpers/data-models';
 import { uniqueName } from '../../support/helpers/unique-name';

@@ -114,7 +114,7 @@ export const FIRST_APPEARANCE_DELAY_MS = 2000;
       </ng-template>
     }
   `,
-  styleUrl: './data-tab-tour.component.scss',
+  styleUrl: './data-tab-tour.component.css',
   imports: [A11yModule, CdkConnectedOverlay, MatButton, MatIconButton, MatIcon, TranslatePipe],
 })
 export class DataTabTourComponent {

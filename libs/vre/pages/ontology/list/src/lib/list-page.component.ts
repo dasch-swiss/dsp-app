@@ -23,50 +23,7 @@ import { ListItemService } from './list-item/list-item.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-list-page',
   templateUrl: './list-page.component.html',
-  styles: `
-    @use '../../../../../../../apps/dsp-app/src/styles/config' as *;
-
-    // The page sits at the left with the Data models sections' padding, not centered.
-    app-centered-layout {
-      justify-content: flex-start;
-
-      ::ng-deep > .content {
-        margin: 0;
-        padding: 16px 24px;
-      }
-    }
-
-    // The head: as the Resource classes and Properties heads.
-    .dm2-head {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .dm2-texts {
-      flex: 1;
-      min-width: 0;
-
-      h2 {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 500;
-      }
-    }
-
-    .dm2-description {
-      margin: 4px 0 0;
-      font-size: 14px;
-      color: $cool_gray_700;
-    }
-
-    .dm2-actions {
-      flex: none;
-      display: flex;
-      gap: 4px;
-    }
-  `,
+  styleUrl: './list-page.component.css',
   providers: [ListItemService],
   imports: [
     AsyncPipe,

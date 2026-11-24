@@ -58,28 +58,7 @@ import {
     PropertyFormComponent,
     TranslatePipe,
   ],
-  styles: [
-    `
-      .shared {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin: 0 24px 8px;
-        padding: 8px 12px;
-        border-radius: 6px;
-        background: #eff6ff;
-        color: #1e3a5f;
-        font-size: 13px;
-
-        mat-icon {
-          flex: none;
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-        }
-      }
-    `,
-  ],
+  styleUrl: './edit-property-form-dialog.component.css',
 })
 export class EditPropertyFormDialogComponent implements OnInit {
   loading = false;

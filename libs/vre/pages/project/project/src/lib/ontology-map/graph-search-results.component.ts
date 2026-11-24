@@ -21,7 +21,7 @@ import { homeOf, localNameOf, propertyNameOf } from './ontology-graph-elements';
  * A class the search found: how many subclasses it has, and how deep it sits under its parents when every class is
  * listed as a tree; 0 in a search, which lists them by label.
  */
-export interface ClassResult {
+interface ClassResult {
   kind: 'class';
   iri: string;
   label: string;
@@ -34,7 +34,7 @@ export interface ClassResult {
 }
 
 /** A link property the search found, with how many classes of the data model use it. */
-export interface PropertyResult {
+interface PropertyResult {
   kind: 'property';
   iri: string;
   label: string;
@@ -254,159 +254,7 @@ function asTree(classes: ClassResult[], model: DataModelGraph): ClassResult[] {
       <span class="enter" aria-hidden="true" [class.shown]="index === active()">↵</span>
     </ng-template>
   `,
-  styles: [
-    `
-      @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
-
-      :host {
-        display: block;
-      }
-
-      // A card under the search, see-through: the graph shows faintly behind it.
-      .results {
-        box-sizing: border-box;
-        width: 340px;
-        max-height: 320px;
-        display: flex;
-        flex-direction: column;
-        padding: 8px;
-        border-radius: 10px;
-        background: rgba($white, 0.82);
-        backdrop-filter: blur(2px);
-        box-shadow: 0 4px 14px rgba($cool_gray_900, 0.12);
-        font: 400 13px/20px var(--font-sans, Roboto, sans-serif);
-      }
-
-      .list {
-        flex: 1;
-        min-height: 0;
-        overflow: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .heading {
-        padding: 6px 10px 4px;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
-      }
-
-      .row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        min-height: 34px;
-        padding: 0 6px 0 10px;
-        border-radius: 6px;
-        font-size: 13px;
-        cursor: pointer;
-
-        &.active {
-          background: $primary_50;
-        }
-      }
-
-      .swatch {
-        flex: none;
-        width: 12px;
-        height: 12px;
-        // Without a class colour.
-        background: $cool_gray_100;
-        border: 1px solid rgba($black, 0.15);
-        border-radius: 3px;
-      }
-
-      .kind {
-        flex: none;
-        width: 16px;
-        height: 16px;
-        font-size: 16px;
-        color: $cool_gray_500;
-      }
-
-      .label {
-        flex: 1;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      mark {
-        background: none;
-        font-weight: 700;
-        color: $primary;
-      }
-
-      // The name a result was found by, beside its label.
-      .name {
-        flex: 0 1 auto;
-        min-width: 0;
-        max-width: 45%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-family: var(--font-mono, 'Roboto Mono', monospace);
-        font-size: 11px;
-        color: $cool_gray_500;
-      }
-
-      .meta {
-        flex: none;
-        max-width: 110px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 11.5px;
-        color: $cool_gray_500;
-      }
-
-      .enter {
-        flex: none;
-        width: 14px;
-        visibility: hidden;
-        font-size: 13px;
-        text-align: center;
-        color: $cool_gray_500;
-
-        &.shown {
-          visibility: visible;
-        }
-      }
-
-      .action {
-        font-weight: 500;
-      }
-
-      // An action, not a result: set apart from the rows under it.
-      .reset {
-        margin-bottom: 4px;
-        border-bottom: 1px solid $cool_gray_100;
-        border-radius: 6px 6px 0 0;
-        color: $primary;
-
-        .kind {
-          color: $primary;
-        }
-      }
-
-      .count {
-        flex: none;
-        min-width: 20px;
-        padding: 0 6px;
-        border-radius: 10px;
-        background: $cool_gray_100;
-        font-size: 12px;
-        line-height: 20px;
-        text-align: center;
-        color: $cool_gray_700;
-      }
-    `,
-  ],
+  styleUrl: './graph-search-results.component.css',
 })
 export class GraphSearchResultsComponent {
   /** What the search found; see `graphSearchResults`. */

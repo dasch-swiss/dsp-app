@@ -57,7 +57,7 @@ PY
 2. Add proper translations to `de.json`, `fr.json`, and `it.json`
 3. **Update the relevant code** to replace hardcoded text with the translation key (e.g., `"Cancel"` → `{{ 'ui.common.actions.cancel' | translate }}`)
 4. Run the parity check (see **Key Parity Verification**)
-5. Run the tests of each project whose templates you changed (`npx nx test <project>`), and `npm run test-storybook` if a changed component appears in stories (see the Storybook caveat above)
+5. Run the tests of each project whose templates you changed (`just test-files -- <paths>`), and `just storybook-test` if a changed component appears in stories (see the Storybook caveat above)
 
 ### When Updating Existing Keys:
 1. Update the key in `en.json`
@@ -72,7 +72,7 @@ PY
 
 ## Testing Translations
 
-After making translation changes, run the parity check (see **Key Parity Verification**); it is the gate. When a browser tool is available and the app is already running (`npm run start-local`), also switch languages in the UI and check that no key shows raw (e.g. `"pages.project.legalSettings.tab"`).
+After making translation changes, run the parity check (see **Key Parity Verification**); it is the gate. When a browser tool is available and the app is already running (`just serve development`), also switch languages in the UI and check that no key shows raw (e.g. `"pages.project.legalSettings.tab"`).
 
 ## Translation Structure
 

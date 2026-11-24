@@ -16,7 +16,7 @@ import {
  * `class`: a class of the mapped data model. `external`: a class of another data model.
  * `generic`: a knora-api class a link may point to, such as "any resource".
  */
-export type DataModelNodeKind = 'class' | 'external' | 'generic';
+type DataModelNodeKind = 'class' | 'external' | 'generic';
 
 /** One property a class declares, for the class details. */
 export interface DataModelProperty {

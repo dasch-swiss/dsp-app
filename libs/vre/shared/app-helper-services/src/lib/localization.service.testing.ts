@@ -4,8 +4,8 @@
 // reference lets the file type-check during the lib build.
 /// <reference types="jest" />
 import { AvailableLanguage } from '@dasch-swiss/vre/core/config';
+import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { LocalizationService } from './localization.service';
 
 /**
  * Returns a `Partial<LocalizationService>` suitable for `useValue` in a TestBed

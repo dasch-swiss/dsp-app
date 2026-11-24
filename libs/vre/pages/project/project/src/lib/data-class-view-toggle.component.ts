@@ -34,7 +34,7 @@ import { DataClassUrlStateService, DataClassView } from './data-class-url-state.
       </button>
     </div>
   `,
-  styleUrl: './data-class-view-toggle.component.scss',
+  styleUrl: './data-class-view-toggle.component.css',
   imports: [MatIcon, TranslatePipe],
 })
 export class DataClassViewToggleComponent {
