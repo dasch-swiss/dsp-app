@@ -115,6 +115,8 @@
 .icon-button {
   flex: none;
   border: 0;
+  // Without the browser's padding the icon sits in the circle's middle, not pushed to its side.
+  padding: 0;
   background: none;
   color: $cool_gray_500;
   cursor: pointer;
