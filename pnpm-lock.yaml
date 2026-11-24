@@ -249,6 +249,9 @@ importers:
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
+      sass:
+        specifier: 1.97.3
+        version: 1.97.3
       storybook:
         specifier: 10.6.5
         version: 10.6.5(prettier@3.9.10)(react@18.3.1)
@@ -13184,7 +13187,7 @@ snapshots:
       detect-libc: 2.1.2
       is-glob: 4.0.3
       node-addon-api: 7.1.1
-      picomatch: 4.0.4
+      picomatch: 4.0.7
     optionalDependencies:
       '@parcel/watcher-android-arm64': 2.6.0
       '@parcel/watcher-darwin-arm64': 2.6.0
@@ -17457,12 +17460,12 @@ snapshots:
       '@types/node': 22.20.5
       anymatch: 3.1.3
       fb-watchman: 2.0.4
-      fdir: 6.5.0(picomatch@4.0.4)
+      fdir: 6.5.0(picomatch@4.0.7)
       graceful-fs: 4.2.11
       jest-regex-util: 30.5.0
       jest-util: 30.5.1
       jest-worker: 30.5.1
-      picomatch: 4.0.4
+      picomatch: 4.0.7
 
   jest-junit@16.0.0:
     dependencies:
@@ -17491,7 +17494,7 @@ snapshots:
       chalk: 4.1.2
       graceful-fs: 4.2.11
       jest-util: 30.5.1
-      picomatch: 4.0.4
+      picomatch: 4.0.7
       pretty-format: 30.5.1
       slash: 3.0.0
       stack-utils: 2.0.6
@@ -20665,8 +20668,8 @@ snapshots:
   vite@7.3.7(@types/node@24.19.2)(jiti@2.7.0)(less@4.9.0)(sass-embedded@1.107.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.9.1):
     dependencies:
       esbuild: 0.28.1
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
+      fdir: 6.5.0(picomatch@4.0.7)
+      picomatch: 4.0.7
       postcss: 8.5.32
       rollup: 4.67.4
       tinyglobby: 0.2.15
