@@ -1,5 +1,6 @@
 import { createEnvironmentInjector, EnvironmentInjector, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   ApiResponseError,
   CanDoResponse,
@@ -37,7 +38,22 @@ import { MultiLanguages } from '@dasch-swiss/vre/ui/string-literal';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { DIALOG_LARGE, DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, combineLatest, filter, finalize, map, Observable, of, switchMap, take, takeUntil } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  concatMap,
+  EMPTY,
+  filter,
+  finalize,
+  map,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { OntologyEditService } from '../services/ontology-edit.service';
 import { CreateOntologyFormDialogComponent } from './ontology-form/create-ontology-form-dialog.component';
 import { EditOntologyFormDialogComponent } from './ontology-form/edit-ontology-form-dialog.component';
@@ -50,6 +66,14 @@ import {
   EditResourceClassDialogProps,
 } from './resource-class-form/edit-resource-class-dialog.component';
 import { UpdateResourceClassData } from './resource-class-form/resource-class-form.type';
+
+/** The words for each cardinality, under `pages.dataModels2.cardinality`. */
+const CARDINALITY_KEYS: Record<Cardinality, string> = {
+  [Cardinality._1]: 'requiredOne',
+  [Cardinality._0_1]: 'optionalOne',
+  [Cardinality._1_n]: 'requiredMultiple',
+  [Cardinality._0_n]: 'optionalMultiple',
+};
 
 /**
  * Opens the data model editor's "Customize resource class" and "Edit property" dialogs away from it, as on the Data
@@ -67,6 +91,17 @@ export class DataModelEditorService implements DataModelEditor {
   private readonly _translate = inject(TranslateService);
   private readonly _api = inject<KnoraApiConnection>(DspApiConnectionToken);
   private readonly _notification = inject(NotificationService);
+  private readonly _snackBar = inject(MatSnackBar);
+  /**
+   * Cardinality saves, one after another: each reads the data model as the one before left it, since the API turns a
+   * change made from an older reading away as made by another user.
+   */
+  private readonly _saves = new Subject<() => Observable<unknown>>();
+
+  constructor() {
+    // Lives as long as the service; a failed save does not stop the ones after it.
+    this._saves.pipe(concatMap(save => save().pipe(catchError(() => EMPTY)))).subscribe();
+  }
 
   editClass(classIri: string): Observable<boolean> {
     return this._withEditing(classIri, (editing, injector) =>
@@ -98,8 +133,17 @@ export class DataModelEditorService implements DataModelEditor {
         map(properties => properties.find(property => property.propDef.id === propertyIri)),
         filter(property => !!property),
         take(1),
-        switchMap(property => {
+        switchMap(property =>
+          editing.currentOntology$.pipe(
+            take(1),
+            map(ontology => ({ property, ontology }))
+          )
+        ),
+        switchMap(({ property, ontology }) => {
           const { propDef, propType } = property!;
+          const usedBy = Object.values(ontology?.classes ?? {})
+            .filter(resourceClass => resourceClass.propertiesList.some(card => card.propertyIndex === propertyIri))
+            .map(resourceClass => resourceClass.label ?? resourceClass.id.split('#').pop()!);
           const data: EditPropertyDialogData = {
             id: propDef.id,
             propType,
@@ -109,6 +153,7 @@ export class DataModelEditorService implements DataModelEditor {
             guiElement: propDef.guiElement || propType.guiElement,
             guiAttribute: propDef.guiAttributes[0],
             objectType: propDef.objectType,
+            usedBy,
           };
           return this._closedByClickOnly(
             this._dialog.open(EditPropertyFormDialogComponent, {
@@ -547,31 +592,78 @@ export class DataModelEditorService implements DataModelEditor {
     return this._canDo(this._api.v2.onto.canReplaceCardinalityOfResourceClassWith(classIri, propertyIri, cardinality));
   }
 
+  /**
+   * Gives the class's property that cardinality, after any save still running, then offers to undo it. Emits whether it
+   * was saved; the API's refusal shows as its message, and emits false.
+   */
   setCardinality(classIri: string, propertyIri: string, cardinality: Cardinality): Observable<boolean> {
-    return this._withEditing(classIri, editing =>
-      editing.currentOntology$.pipe(
-        filter(ontology => !!ontology?.classes[classIri]),
-        take(1),
-        switchMap(ontology => {
-          // The class's own properties, as the API replaces them all; this one with its new cardinality.
-          const own = ontology!.classes[classIri].propertiesList.filter(property => !property.isInherited);
-          if (!own.some(property => property.propertyIndex === propertyIri)) return of(false);
-          editing.updatePropertiesOfResourceClass(
-            classIri,
-            own.map(property => (property.propertyIndex === propertyIri ? { ...property, cardinality } : property))
-          );
-          return editing.currentOntology$.pipe(
-            filter(
-              read =>
-                read?.classes[classIri]?.propertiesList.find(property => property.propertyIndex === propertyIri)
-                  ?.cardinality === cardinality
-            ),
-            take(1),
-            map(() => true)
-          );
-        })
+    return this._saveCardinality(classIri, propertyIri, cardinality, true);
+  }
+
+  private _saveCardinality(
+    classIri: string,
+    propertyIri: string,
+    cardinality: Cardinality,
+    offerUndo: boolean
+  ): Observable<boolean> {
+    return this._serially(() =>
+      this._withEditing(classIri, editing =>
+        editing.currentOntology$.pipe(
+          filter(ontology => !!ontology?.classes[classIri]),
+          take(1),
+          switchMap(ontology => {
+            // The class's own properties, as the API replaces them all; this one with its new cardinality.
+            const own = ontology!.classes[classIri].propertiesList.filter(property => !property.isInherited);
+            const previous = own.find(property => property.propertyIndex === propertyIri)?.cardinality;
+            if (previous === undefined) return of(false);
+            if (previous === cardinality) return of(true);
+            const labels = {
+              property: ontology!.properties[propertyIri]?.label || propertyIri.split('#').pop()!,
+              class: ontology!.classes[classIri].label || classIri.split('#').pop()!,
+            };
+            return editing
+              .replacePropertiesOfResourceClass$(
+                classIri,
+                own.map(property => (property.propertyIndex === propertyIri ? { ...property, cardinality } : property))
+              )
+              .pipe(
+                map(response => !(response instanceof ApiResponseError)),
+                catchError(() => of(false)),
+                tap(saved => {
+                  if (saved && offerUndo) this._offerUndo(classIri, propertyIri, previous, cardinality, labels);
+                })
+              );
+          })
+        )
       )
     );
+  }
+
+  /** Says what the cardinality now is, with Undo, which saves the one before and reads the project again. */
+  private _offerUndo(
+    classIri: string,
+    propertyIri: string,
+    previous: Cardinality,
+    cardinality: Cardinality,
+    labels: { property: string; class: string }
+  ): void {
+    const r = 'pages.dataModels2';
+    const message = this._translate.instant(`${r}.cardinalitySaved`, {
+      ...labels,
+      cardinality: this._translate.instant(`${r}.cardinality.${CARDINALITY_KEYS[cardinality]}`),
+    });
+    this._snackBar
+      .open(message, this._translate.instant(`${r}.undo`), { duration: 8000, verticalPosition: 'top' })
+      .onAction()
+      .pipe(switchMap(() => this._saveCardinality(classIri, propertyIri, previous, false)))
+      .subscribe(saved => saved && this._project.reloadProject());
+  }
+
+  /** Runs `save` once the saves queued before it are done, emitting what it emits. */
+  private _serially<T>(save: () => Observable<T>): Observable<T> {
+    return new Observable<T>(subscriber => {
+      this._saves.next(() => save().pipe(tap(subscriber)));
+    });
   }
 
   /** Whether the API allows it, and why not; an error answer counts as not, with its message. */

@@ -73,8 +73,9 @@ type Box = 'multiple' | 'required';
         <span
           class="box"
           [class.unticked]="!state()[box]"
-          [matTooltip]="reasonOf(box) | translate"
-          [matTooltipDisabled]="!reasonOf(box)">
+          [matTooltip]="reasonOf(box) || (changeable() ? 'pages.dataModels2.cardinalityRule' : '') | translate"
+          [matTooltipDisabled]="!reasonOf(box) && !changeable()"
+          [matTooltipShowDelay]="reasonOf(box) ? 0 : 600">
           <mat-checkbox
             color="primary"
             [attr.data-cy]="'cardinality-' + box"

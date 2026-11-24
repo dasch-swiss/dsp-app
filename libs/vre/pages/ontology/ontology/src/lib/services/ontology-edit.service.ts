@@ -455,6 +455,12 @@ export class OntologyEditService {
    * Yes, we are sending the same body as for replaceGuiOrderOfCardinalities, canDeleteCardinalityFromResourceClass,
    * but to another endpoint.
    */
+  /** Replaces the class's own properties and their cardinalities; emits the API's answer, or errors, once. */
+  replacePropertiesOfResourceClass$(classId: string, properties: IHasProperty[]) {
+    const updateOntology = MakeOntologyFor.updateCardinalityOfResourceClass(this.ctx, classId, properties);
+    return this._dspApiConnection.v2.onto.replaceCardinalityOfResourceClass(updateOntology).pipe(take(1));
+  }
+
   updatePropertiesOfResourceClass(classId: string, properties: IHasProperty[] = []) {
     this._isTransacting.next(true);
     const updateOntology = MakeOntologyFor.updateCardinalityOfResourceClass(this.ctx, classId, properties);

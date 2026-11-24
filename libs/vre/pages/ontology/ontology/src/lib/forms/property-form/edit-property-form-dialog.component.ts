@@ -7,6 +7,7 @@ import {
   MatDialogContent,
   MatDialogRef,
 } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
@@ -25,6 +26,13 @@ import {
 @Component({
   selector: 'app-edit-property-form-dialog',
   template: ` <app-dialog-header [title]="title" [subtitle]="data.propType.group + ': ' + data.propType.label || ''" />
+    <!-- A property is shared: editing it from one class changes it in every class that has it. -->
+    @if (sharedWith(); as classes) {
+      <p class="shared" data-cy="property-shared-note">
+        <mat-icon>info</mat-icon>
+        <span>{{ 'pages.dataModels2.propertyShared' | translate: classes }}</span>
+      </p>
+    }
     <app-property-form mat-dialog-content (afterFormInit)="form = $event" [propertyData]="data" />
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
@@ -46,8 +54,31 @@ import {
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
+    MatIcon,
     PropertyFormComponent,
     TranslatePipe,
+  ],
+  styles: [
+    `
+      .shared {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 24px 8px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        background: #eff6ff;
+        color: #1e3a5f;
+        font-size: 13px;
+
+        mat-icon {
+          flex: none;
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+    `,
   ],
 })
 export class EditPropertyFormDialogComponent implements OnInit {
@@ -58,6 +89,20 @@ export class EditPropertyFormDialogComponent implements OnInit {
 
   isPropertyEditData(data: EditPropertyDialogData | CreatePropertyDialogData): data is EditPropertyDialogData {
     return 'id' in data;
+  }
+
+  /** The classes that share the property, named up to three, for the note; nothing when only one class has it. */
+  sharedWith(): { classes: string; count: number } | undefined {
+    const usedBy = this.isPropertyEditData(this.data) ? (this.data.usedBy ?? []) : [];
+    if (usedBy.length < 2) return undefined;
+    const named = usedBy.slice(0, 3);
+    const more = usedBy.length - named.length;
+    return {
+      classes: more
+        ? this._translate.instant('pages.dataModels2.andMore', { names: named.join(', '), count: more })
+        : named.join(', '),
+      count: usedBy.length,
+    };
   }
 
   get title(): string {
