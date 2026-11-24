@@ -473,8 +473,17 @@ export class DataModelEditorService implements DataModelEditor {
           return editing.propertyCanBeRemovedFromClass$(card, classIri).pipe(
             switchMap(check => {
               if (!check.canDo) {
-                this._notify(this._translate.instant('pages.dataModels2.cannotRemove', labels), check.cannotDoReason);
-                return of(false);
+                // With a reason, the API said why. Without one, values are in the way: how many, the count tells.
+                if (check.cannotDoReason) {
+                  this._notify(this._translate.instant('pages.dataModels2.cannotRemove', labels), check.cannotDoReason);
+                  return of(false);
+                }
+                return this._valuesInTheWay(classIri, propertyIri).pipe(
+                  map(count => {
+                    this._notification.openSnackBar(this._cannotRemoveMessage(labels, count), 'error');
+                    return false;
+                  })
+                );
               }
               return this._confirm
                 .afterConfirmation(this._translate.instant('pages.dataModels2.removeFromClassConfirm', labels))
@@ -576,6 +585,39 @@ export class DataModelEditorService implements DataModelEditor {
       ),
       catchError(() => of({ canDo: false }))
     );
+  }
+
+  /**
+   * How many resources of the class, or of its subclasses, have a value for the property, as the viewer can see
+   * them: deleted values and resources are not counted. Undefined when the count fails.
+   */
+  private _valuesInTheWay(classIri: string, propertyIri: string): Observable<number | undefined> {
+    const query = `PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>
+CONSTRUCT { ?resource knora-api:isMainResource true . } WHERE {
+  ?resource a knora-api:Resource .
+  ?resource a <${classIri}> .
+  ?resource <${propertyIri}> ?value .
+}`;
+    return this._api.v2.search.doExtendedSearchCountQuery(query).pipe(
+      take(1),
+      map(response => (response instanceof ApiResponseError ? undefined : response.numberOfResults)),
+      catchError(() => of(undefined))
+    );
+  }
+
+  /**
+   * Why a property cannot be removed from a class: so many resources still have a value for it, or, when none the
+   * viewer can see does, values marked as deleted or hidden from the viewer, which only DaSCH can erase.
+   */
+  private _cannotRemoveMessage(labels: { property: string; class: string }, count: number | undefined): string {
+    const r = 'pages.dataModels2';
+    if (count === undefined) return this._translate.instant(`${r}.cannotRemove`, labels);
+    if (count === 0) return this._translate.instant(`${r}.cannotRemoveHiddenValues`, labels);
+    const formatted = count.toLocaleString(this._translate.currentLang);
+    return this._translate.instant(count === 1 ? `${r}.cannotRemoveOneValue` : `${r}.cannotRemoveValues`, {
+      ...labels,
+      count: formatted,
+    });
   }
 
   /** Says why an action could not be done, with the API's reason when there is one. */
