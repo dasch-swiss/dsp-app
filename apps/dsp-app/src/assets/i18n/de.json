@@ -769,7 +769,6 @@
         "ticked": "{{count}} von {{total}}",
         "noMatch": "Kein Treffer",
         "matching": "{{count}} von {{total}} gefunden",
-        "allShown": "Alle {{total}} angezeigt",
         "hidden": "Ausgeblendet:",
         "showAll": "Alle zeigen"
       },
@@ -799,7 +798,7 @@
       },
       "labelsMenu": {
         "heading": "Auf Klassen und Verknüpfungen",
-        "labels": "Bezeichnungen",
+        "labels": "Labels",
         "labelsHint": "Wie man sie liest",
         "names": "Namen",
         "namesHint": "linkToVideo",
@@ -810,8 +809,6 @@
       "nameCopied": "Name kopiert",
       "islands": {
         "legend": "Legende",
-        "files": "Dateien",
-        "shapes": "Formen",
         "subclass": "Unterklasse, unter ihrer Oberklasse",
         "link": "Verknüpfung",
         "fileKinds": {

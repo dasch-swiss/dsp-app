@@ -629,7 +629,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         <span class="legend-title">{{ i + '.legend' | translate }}</span>
         @if (legend.shapes) {
           <span class="divider"></span>
-          <span class="legend-heading">{{ i + '.shapes' | translate }}</span>
         }
         @if (legend.families && treeLines()) {
           <span class="shape"
@@ -654,7 +653,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         }
         @if (legend.files.length) {
           <span class="divider"></span>
-          <span class="legend-heading">{{ i + '.files' | translate }}</span>
           @for (file of legend.files; track file.representation) {
             <span class="file"
               ><span class="file-icon"
@@ -798,14 +796,6 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         width: 1px;
         height: 20px;
         background: $cool_gray_200;
-      }
-
-      .legend-heading {
-        font-size: 10.5px;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: $cool_gray_500;
       }
 
       .file,
@@ -1695,11 +1685,9 @@ export class OntologyGraphComponent {
     const t = (key: string) => this._translate.instant(`pages.ontologyMap.${key}`);
     return {
       title: t('islands.legend'),
-      shapes: legend.shapes ? t('islands.shapes') : undefined,
       subclass: legend.families && this.treeLines() ? t('islands.subclass') : undefined,
       other: legend.other ? t('legendDashed') : undefined,
       link: legend.link ? t('islands.link') : undefined,
-      files: t('islands.files'),
       fileKinds: legend.files.map(kind => ({
         label: t(`islands.fileKinds.${kind.representation}`),
         icon: fileIconImage(kind.representation, '#4B5563')!,

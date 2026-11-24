@@ -4,11 +4,9 @@
  */
 export interface LegendTexts {
   title: string;
-  shapes?: string;
   subclass?: string;
   other?: string;
   link?: string;
-  files: string;
   /** Each kind of file the classes shown carry: its name, and its icon as an image URL. */
   fileKinds: { label: string; icon: string }[];
 }
@@ -20,8 +18,9 @@ const LOOK = {
   gap: 16,
   itemGap: 6,
   title: { font: '600 13px Roboto, sans-serif', color: '#111827' },
-  heading: { font: '600 10.5px Roboto, sans-serif', color: '#6B7280', spacing: 0.6 },
   text: { font: '400 12.5px Roboto, sans-serif', color: '#1F2937' },
+  /** The title strip's subtitle. */
+  muted: '#6B7280',
   divider: '#E5E7EB',
   border: '#E5E7EB',
   card: '#FFFFFF',
@@ -87,7 +86,6 @@ function escapeXml(value: string): string {
 
 /** The legend's pieces, left to right, and its card's size; `icons` are its kinds of file's icons, loaded. */
 function legendLayout(legend: LegendTexts, icons: HTMLImageElement[]): LegendLayout {
-  const heading = (text: string) => text.toUpperCase();
   const text = (value: string, look: TextLook): Piece => ({
     w: measure(value, look.font, look.spacing),
     draw: (ctx, x, mid) => {
@@ -189,16 +187,12 @@ function legendLayout(legend: LegendTexts, icons: HTMLImageElement[]): LegendLay
   const shown = <T>(value: string | undefined, group: (value: string) => T): T[] => (value ? [group(value)] : []);
   const groups: Piece[][] = [
     [text(legend.title, LOOK.title)],
-    ...(legend.shapes ? [[divider], [text(heading(legend.shapes), LOOK.heading)]] : []),
+    ...(legend.subclass || legend.other || legend.link ? [[divider]] : []),
     ...shown(legend.subclass, subclass => [treeLine, text(subclass, LOOK.text)]),
     ...shown(legend.other, other => [box('#FFFFFF', '#9CA3AF', 1.5, true), text(other, LOOK.text)]),
     ...shown(legend.link, link => [arrow, text(link, LOOK.text)]),
     ...(icons.length
-      ? [
-          [divider],
-          [text(heading(legend.files), LOOK.heading)],
-          ...icons.map((image, i) => [icon(image), text(legend.fileKinds[i].label, LOOK.text)]),
-        ]
+      ? [[divider], ...icons.map((image, i) => [icon(image), text(legend.fileKinds[i].label, LOOK.text)])]
       : []),
   ];
   const groupWidth = (group: Piece[]) =>
@@ -293,7 +287,7 @@ export async function withTitle(
   ctx.fillText(title, side, TITLE.titleY);
   if (subtitle) {
     ctx.font = TITLE.subFont;
-    ctx.fillStyle = LOOK.heading.color;
+    ctx.fillStyle = LOOK.muted;
     ctx.fillText(subtitle, side, TITLE.subtitleY);
   }
   return new Promise((resolve, reject) =>
@@ -335,9 +329,7 @@ export async function framedSvg(graphSvg: string, frame: SvgFrame): Promise<stri
     parts.push(
       `<g transform="scale(${scale})">`,
       svgText(frame.title, side, TITLE.titleY, { font: TITLE.font, color: LOOK.title.color }),
-      frame.subtitle
-        ? svgText(frame.subtitle, side, TITLE.subtitleY, { font: TITLE.subFont, color: LOOK.heading.color })
-        : '',
+      frame.subtitle ? svgText(frame.subtitle, side, TITLE.subtitleY, { font: TITLE.subFont, color: LOOK.muted }) : '',
       '</g>'
     );
   }

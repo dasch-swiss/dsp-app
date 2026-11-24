@@ -105,12 +105,7 @@ const NAMED_HIDDEN = 3;
             @if (option.color) {
               <span class="dot" [style.background]="option.color"></span>
             }
-            <span class="option-text">
-              {{ option.label }}
-              @if (option.name && option.name !== option.label) {
-                <code class="option-name">{{ option.name }}</code>
-              }
-            </span>
+            <span class="option-text">{{ option.label }}</span>
             @if (option.count !== undefined) {
               <span class="muted">{{ option.count }}</span>
             }
@@ -122,25 +117,26 @@ const NAMED_HIDDEN = 3;
       }
     </div>
 
-    <div class="foot">
-      <span class="summary">
-        @if (query()) {
-          {{ f + '.matching' | translate: { count: matches().length, total: options().length } }}
-        } @else if (hidden().length === 0) {
-          {{ f + '.allShown' | translate: { total: options().length } }}
-        } @else if (hidden().length <= namedHidden) {
-          {{ f + '.hidden' | translate }}
-          <b>{{ hiddenNames() }}</b>
-        } @else {
-          {{ f + '.ticked' | translate: { count: ticked().length, total: options().length } }}
+    <!-- Nothing to say when every option is shown and none is searched for. -->
+    @if (query() || hidden().length > 0) {
+      <div class="foot">
+        <span class="summary">
+          @if (query()) {
+            {{ f + '.matching' | translate: { count: matches().length, total: options().length } }}
+          } @else if (hidden().length <= namedHidden) {
+            {{ f + '.hidden' | translate }}
+            <b>{{ hiddenNames() }}</b>
+          } @else {
+            {{ f + '.ticked' | translate: { count: ticked().length, total: options().length } }}
+          }
+        </span>
+        @if (hidden().length > 0) {
+          <button mat-button class="small" data-cy="filter-menu-show-all" (click)="tickedChange.emit(allIds())">
+            {{ f + '.showAll' | translate }}
+          </button>
         }
-      </span>
-      @if (hidden().length > 0) {
-        <button mat-button class="small" data-cy="filter-menu-show-all" (click)="tickedChange.emit(allIds())">
-          {{ f + '.showAll' | translate }}
-        </button>
-      }
-    </div>
+      </div>
+    }
   `,
   styles: [
     `
@@ -221,12 +217,6 @@ const NAMED_HIDDEN = 3;
         flex-direction: column;
         line-height: 17px;
         vertical-align: middle;
-      }
-
-      .option-name {
-        font-family: 'Roboto Mono', ui-monospace, monospace;
-        font-size: 11px;
-        color: $cool_gray_500;
       }
 
       .dot {

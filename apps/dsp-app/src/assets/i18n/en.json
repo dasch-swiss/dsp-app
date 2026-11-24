@@ -769,7 +769,6 @@
         "ticked": "{{count}} of {{total}}",
         "noMatch": "No match",
         "matching": "{{count}} of {{total}} match",
-        "allShown": "All {{total}} shown",
         "hidden": "Hidden:",
         "showAll": "Show all"
       },
@@ -810,8 +809,6 @@
       "nameCopied": "Name copied",
       "islands": {
         "legend": "Legend",
-        "files": "Files",
-        "shapes": "Shapes",
         "subclass": "Subclass, under its parent",
         "link": "Link",
         "fileKinds": {
