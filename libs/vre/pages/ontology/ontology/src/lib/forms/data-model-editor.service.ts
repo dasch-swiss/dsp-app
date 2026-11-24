@@ -638,10 +638,7 @@ export class DataModelEditorService implements DataModelEditor {
                       cardinality: this._translate.instant(`${r}.cardinality.${CARDINALITY_KEYS[cardinality]}`),
                     })
                   )
-                  .pipe(
-                    switchMap(save),
-                    defaultIfEmpty(false)
-                  );
+                  .pipe(switchMap(save), defaultIfEmpty(false));
               }),
               tap(saved => {
                 if (saved && offerUndo) this._offerUndo(classIri, propertyIri, previous, cardinality, labels);
