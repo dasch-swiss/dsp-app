@@ -414,7 +414,11 @@ export class ExportPreviewDialogComponent {
           this.failed.set(true);
         });
     });
-    inject(DestroyRef).onDestroy(() => this._show(undefined));
+    // A render still running then is dropped when done, its image URL freed rather than shown.
+    inject(DestroyRef).onDestroy(() => {
+      made++;
+      this._show(undefined);
+    });
   }
 
   /** A resolution's scale, and its width once the shown image is drawn, such as `2× · 3200 px`. */

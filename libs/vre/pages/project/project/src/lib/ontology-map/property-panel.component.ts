@@ -18,10 +18,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { PropertyTypeIconPipe, PropertyTypeNamePipe } from '../data-models-rail/property-type.pipes';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 import { homeOf, propertyNameOf, propertyRows, propertyUsage, StandardTerm } from './ontology-graph-elements';
-import { typeIconOf, typeNameOf } from './property-types';
 
 const CARDINALITY_KEY: Record<Cardinality, string> = {
   [Cardinality._1]: 'required',
@@ -44,7 +44,7 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
 @Component({
   selector: 'app-property-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, TranslatePipe],
+  imports: [MatButton, MatIcon, MatIconButton, MatTooltip, PropertyTypeIconPipe, PropertyTypeNamePipe, TranslatePipe],
   host: { '(keydown.escape)': 'closed.emit()' },
   template: `
     @let t = 'pages.ontologyMap.propertyPanel';
@@ -53,12 +53,12 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
       <section class="panel" data-cy="property-panel" [attr.aria-label]="usage.label">
         <header class="header">
           <span class="property-icon" [attr.data-type]="usage.type"
-            ><mat-icon>{{ typeIcon(usage.type) }}</mat-icon></span
+            ><mat-icon>{{ usage.type | propertyTypeIcon }}</mat-icon></span
           >
           <div class="title">
             <h2 data-cy="property-panel-title">{{ usage.label }}</h2>
             <span class="name-line">
-              <code class="name" data-cy="property-panel-name">{{ nameOf(propertyIri()) }}</code>
+              <code class="name" data-cy="property-panel-name">{{ name() }}</code>
               <button
                 type="button"
                 class="copy"
@@ -137,8 +137,8 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
             <div class="fact" data-cy="property-panel-type">
               <h3>{{ t + '.type' | translate }}</h3>
               <span class="type" [attr.data-type]="usage.type">
-                <mat-icon>{{ typeIcon(usage.type) }}</mat-icon
-                >{{ typeName(usage.type) }}
+                <mat-icon>{{ usage.type | propertyTypeIcon }}</mat-icon
+                >{{ usage.type | propertyTypeName }}
               </span>
             </div>
           </div>
@@ -146,27 +146,29 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
 
         <div class="group">
           <h3>{{ t + '.usedBy' | translate: { count: usage.users.length } }}</h3>
-          @for (user of usage.users; track user.classIri) {
+          @for (user of users(); track user.classIri) {
             <div class="user" data-cy="property-panel-user">
               <span class="dot" [style.background]="colors().get(user.classIri) ?? 'white'"></span>
-              @if (isNavigable(user.classIri)) {
+              @if (user.navigable) {
                 <button type="button" class="class-link" (click)="classSelected.emit(user.classIri)">
-                  {{ labelOf(user.classIri) }}
+                  {{ user.classLabel }}
                 </button>
               } @else {
-                <span class="class-name">{{ labelOf(user.classIri) }}</span>
+                <span class="class-name">{{ user.classLabel }}</span>
               }
-              @if (user.inheritedFrom; as from) {
-                <span class="inherited">{{ t + '.inheritedFrom' | translate: { class: labelOf(from) } }}</span>
+              @if (user.inheritedFrom) {
+                <span class="inherited">{{
+                  t + '.inheritedFrom' | translate: { class: user.inheritedFromLabel }
+                }}</span>
               }
               @if (user.cardinality !== undefined) {
                 <!-- As on the class cards: 1, 0-1, 1-n or 0-n, filled when required; in words on hover. -->
                 <span
                   class="cardinality"
                   data-cy="property-panel-cardinality"
-                  [class.required]="isRequired(user.cardinality)"
-                  [matTooltip]="c + '.' + cardinalityKey(user.cardinality) | translate"
-                  >{{ cardinalityNotation(user.cardinality) }}</span
+                  [class.required]="user.required"
+                  [matTooltip]="c + '.' + user.cardinalityKey | translate"
+                  >{{ user.cardinalityNotation }}</span
                 >
               }
             </div>
@@ -219,10 +221,10 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
         flex-direction: column;
         gap: 18px;
         background: white;
-        border-left: 1px solid #ebebeb;
-        box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+        border-left: 1px solid $cold_grey_50;
+        box-shadow: -8px 0 24px rgba($black, 0.08);
         font: 400 13px/20px var(--font-sans, Roboto, sans-serif);
-        color: rgba(0, 0, 0, 0.87);
+        color: $dark-text;
       }
 
       .header {
@@ -239,7 +241,7 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #eaeff3;
+        background: $primary_50;
         color: $primary;
 
         mat-icon {
@@ -396,7 +398,7 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
 
       .fact {
         padding: 10px 12px;
-        border: 1px solid #ebebeb;
+        border: 1px solid $cold_grey_50;
         border-radius: 6px;
 
         h3 {
@@ -426,7 +428,7 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
         width: 10px;
         height: 10px;
         box-sizing: border-box;
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        border: 1px solid $black-12-opacity;
         border-radius: 50%;
       }
 
@@ -491,8 +493,8 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
 
         // Deleting, in red, once possible.
         .delete:not([disabled]) {
-          color: #b3261e;
-          border-color: #b3261e;
+          color: $red_800;
+          border-color: $red_800;
         }
 
         button {
@@ -529,6 +531,23 @@ export class PropertyPanelComponent {
   readonly edit = output<string>();
 
   readonly usage = computed(() => propertyUsage(this.graph(), this.propertyIri()));
+  readonly name = computed(() => this.nameOf(this.propertyIri()));
+
+  /**
+   * The classes that have the property, each with its label, whether it opens, and its cardinality as the class cards
+   * show it: 1, 0-1, 1-n or 0-n, and in words.
+   */
+  readonly users = computed(() =>
+    (this.usage()?.users ?? []).map(user => ({
+      ...user,
+      navigable: this.isNavigable(user.classIri),
+      classLabel: this.labelOf(user.classIri),
+      inheritedFromLabel: user.inheritedFrom ? this.labelOf(user.inheritedFrom) : undefined,
+      required: user.cardinality === Cardinality._1 || user.cardinality === Cardinality._1_n,
+      cardinalityKey: user.cardinality === undefined ? undefined : CARDINALITY_KEY[user.cardinality],
+      cardinalityNotation: user.cardinality === undefined ? undefined : CARDINALITY_NOTATION[user.cardinality],
+    }))
+  );
 
   // Only where the app provides the data model editor: without it, nothing here edits.
   readonly editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
@@ -598,27 +617,6 @@ export class PropertyPanelComponent {
   labelOf(iri: string): string {
     if (iri === Constants.Resource) return this.anyResourceLabel();
     return this.graph().nodes.find(node => node.id === iri)?.label ?? iri.substring(iri.lastIndexOf('#') + 1);
-  }
-
-  typeIcon(type: string): string {
-    return typeIconOf(type);
-  }
-
-  typeName(type: string): string {
-    return typeNameOf(type);
-  }
-
-  cardinalityKey(cardinality: Cardinality): string {
-    return CARDINALITY_KEY[cardinality];
-  }
-
-  /** The cardinality as the data model writes it, as the class cards show it. */
-  cardinalityNotation(cardinality: Cardinality): string {
-    return CARDINALITY_NOTATION[cardinality];
-  }
-
-  isRequired(cardinality: Cardinality): boolean {
-    return cardinality === Cardinality._1 || cardinality === Cardinality._1_n;
   }
 
   /** The name in the data model, such as `linkToVideo`. */

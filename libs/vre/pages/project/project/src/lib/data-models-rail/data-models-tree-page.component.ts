@@ -37,6 +37,16 @@ const MODEL_SECTIONS = [
 const RAIL_MIN_WIDTH = 220;
 const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}px)`);
 
+/** A vocabulary's name in the URL: the end of its IRI. */
+function nameOf(listIri: string): string {
+  return listIri.split('/').pop() ?? '';
+}
+
+/** The query parameter naming the data model, for its sections' links. */
+function paramOf(ontologyIri: string): Record<string, string> {
+  return { [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri) };
+}
+
 /**
  * The Data models 2 tab: a rail listing every data model of the project as a group that folds open on its sections
  * (its classes, its properties, its diagram), then the project's controlled vocabularies by name, each opening as in
@@ -156,10 +166,10 @@ const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}
                   [activated]="active"
                   [attr.aria-current]="active ? 'page' : null"
                   [routerLink]="item.path"
-                  [queryParams]="paramOf(model.iri)"
+                  [queryParams]="modelParams().get(model.iri)"
                   [attr.data-cy]="'data-models-tree-' + item.path">
                   <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-                  {{ r + '.' + item.path | translate }}
+                  <span class="rail-text">{{ r + '.' + item.path | translate }}</span>
                   @if (item.path === classes && counts) {
                     <span matListItemMeta class="count">{{ counts.classes }}</span>
                   } @else if (item.path === properties && counts) {
@@ -199,7 +209,7 @@ const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}
         </div>
         <mat-nav-list class="sections flat">
           @for (vocabulary of state.lists() ?? []; track vocabulary.id) {
-            @let name = nameOf(vocabulary.id);
+            @let name = listNames().get(vocabulary.id);
             @let active = section() === list && route().list === name;
             <a
               mat-list-item
@@ -210,7 +220,7 @@ const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}
               [routerLink]="[list, name]"
               data-cy="data-models-tree-vocabulary">
               <mat-icon matListItemIcon>list</mat-icon>
-              {{ vocabulary.labels | appStringifyStringLiteral }}
+              <span class="rail-text">{{ vocabulary.labels | appStringifyStringLiteral }}</span>
             </a>
           }
           @if (state.canEdit()) {
@@ -218,7 +228,7 @@ const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}
             <mat-divider class="docs-divider" />
             <a mat-list-item class="rail-link docs" [href]="docs" target="_blank" rel="noopener">
               <mat-icon matListItemIcon>open_in_new</mat-icon>
-              {{ r + '.documentation' | translate }}
+              <span class="rail-text">{{ r + '.documentation' | translate }}</span>
             </a>
           }
         </mat-nav-list>
@@ -367,8 +377,8 @@ const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}
       }
 
       .model .delete:not([disabled]):hover {
-        color: #b3261e;
-        background: #fdecea;
+        color: $red_800;
+        background: $red_50;
       }
 
       // A data model's sections, set in under its name.
@@ -391,6 +401,7 @@ const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}
         --mat-list-list-item-leading-icon-start-space: 12px;
         --mat-list-list-item-leading-icon-end-space: 10px;
         --mat-list-list-item-label-text-size: 14px;
+        --mat-list-list-item-label-text-line-height: 18px;
         --mat-list-list-item-label-text-color: #{$cool_gray_700};
         --mat-list-list-item-hover-label-text-color: #{$cool_gray_900};
         --mat-list-list-item-leading-icon-color: #{$cool_gray_500};
@@ -406,9 +417,9 @@ const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}
         border-radius: 6px;
         cursor: pointer;
 
-        ::ng-deep .mdc-list-item__primary-text {
+        // Long names wrap rather than end in an ellipsis.
+        .rail-text {
           white-space: normal;
-          line-height: 18px;
         }
 
         &.current {
@@ -493,10 +504,10 @@ export class DataModelsTreePageComponent {
   );
   readonly section = computed(() => this.route().section);
 
-  /** A vocabulary's name in the URL: the end of its IRI. */
-  nameOf(listIri: string): string {
-    return listIri.split('/').pop() ?? '';
-  }
+  /** The query parameter naming each data model, for its sections' links. */
+  readonly modelParams = computed(() => new Map(this.state.ontologies().map(model => [model.iri, paramOf(model.iri)])));
+  /** Each vocabulary's name in the URL. */
+  readonly listNames = computed(() => new Map((this.state.lists() ?? []).map(list => [list.id, nameOf(list.id)])));
 
   /** The data models folded open on their sections; the one shown opens by itself. */
   readonly expanded = signal(new Set<string>());
@@ -515,11 +526,6 @@ export class DataModelsTreePageComponent {
     });
   }
 
-  /** The query parameter naming the data model, for its sections' links. */
-  paramOf(ontologyIri: string): Record<string, string> {
-    return { [ONTOLOGY_MAP_PARAM.ontology]: OntologyService.getOntologyNameFromIri(ontologyIri) };
-  }
-
   toggle(ontologyIri: string): void {
     this.expanded.update(open => {
       const next = new Set(open);
@@ -533,7 +539,7 @@ export class DataModelsTreePageComponent {
     const section = this.section();
     const keep = MODEL_SECTIONS.some(known => known.path === section) ? section! : RouteConstants.classes;
     this.expanded.update(open => new Set(open).add(ontologyIri));
-    this._router.navigate([keep], { relativeTo: this._route, queryParams: this.paramOf(ontologyIri) });
+    this._router.navigate([keep], { relativeTo: this._route, queryParams: paramOf(ontologyIri) });
   }
 
   /** Asks the API whether the data model can be deleted, for its bin to say so; once per data model. */
@@ -562,14 +568,14 @@ export class DataModelsTreePageComponent {
   createDataModel(): void {
     this.editing.createDataModel(iri => {
       this.expanded.update(open => new Set(open).add(iri));
-      this._router.navigate([RouteConstants.classes], { relativeTo: this._route, queryParams: this.paramOf(iri) });
+      this._router.navigate([RouteConstants.classes], { relativeTo: this._route, queryParams: paramOf(iri) });
     });
   }
 
   /** Creates a controlled vocabulary, then shows it opened, ready for its first values. */
   createVocabulary(): void {
     this.editing.createVocabulary(iri =>
-      this._router.navigate([RouteConstants.list, this.nameOf(iri)], { relativeTo: this._route })
+      this._router.navigate([RouteConstants.list, nameOf(iri)], { relativeTo: this._route })
     );
   }
 

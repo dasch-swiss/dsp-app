@@ -85,7 +85,7 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
               }}</span>
             }
             <span class="name-line">
-              <code class="name" data-cy="class-panel-name">{{ nameOf(classIri()) }}</code>
+              <code class="name" data-cy="class-panel-name">{{ name() }}</code>
               <button
                 type="button"
                 class="copy"
@@ -143,9 +143,8 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                     [property]="property"
                     [homeIri]="node.id"
                     [labelOf]="labelOfIri"
-                    [reachable]="!!property.linkTarget && isNavigable(property.linkTarget)"
+                    [reachable]="!!property.linkTarget && classIris().has(property.linkTarget)"
                     [canEdit]="canEdit()"
-                    cardinalityLayout="rows"
                     [draggable]="drag && isOwn"
                     [classIri]="isOwn ? node.id : undefined"
                     [className]="node.label"
@@ -235,10 +234,10 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
         flex-direction: column;
         gap: 18px;
         background: white;
-        border-left: 1px solid #ebebeb;
-        box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+        border-left: 1px solid $cold_grey_50;
+        box-shadow: -8px 0 24px rgba($black, 0.08);
         font: 400 13px/20px var(--font-sans, Roboto, sans-serif);
-        color: rgba(0, 0, 0, 0.87);
+        color: $dark-text;
       }
 
       .header {
@@ -382,8 +381,8 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
 
         // Deleting, in red, once possible.
         .delete:not([disabled]) {
-          color: #b3261e;
-          border-color: #b3261e;
+          color: $red_800;
+          border-color: $red_800;
         }
 
         button {
@@ -534,6 +533,16 @@ export class ResourceClassPanelComponent {
       .subscribe(deleted => deleted && this.closed.emit());
   }
   readonly properties = computed(() => this.node()?.propertyDetails ?? []);
+  /** The data model's classes, which a link target opens. */
+  readonly classIris = computed(
+    () =>
+      new Set(
+        this.graph()
+          .nodes.filter(node => node.kind === 'class')
+          .map(node => node.id)
+      )
+  );
+  readonly name = computed(() => this.nameOf(this.classIri()));
   readonly icon = computed(() => representationIcon(this.node()?.representationClass));
 
   /** Whether the class belongs to another data model, or comes with DSP: shown, not defined, in this one. */

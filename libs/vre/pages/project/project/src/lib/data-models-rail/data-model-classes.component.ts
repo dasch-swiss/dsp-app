@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -24,9 +25,8 @@ import { ClassRow, localNameOf } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
-import { CardinalityLayout } from './class-card-property.component';
 import { COMFORTABLE_CARD_SIZES } from './class-card-property.component';
-import { DataModelClassCardsComponent, PropertyOrder, InheritedLayout } from './data-model-class-cards.component';
+import { DataModelClassCardsComponent, PropertyOrder } from './data-model-class-cards.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
@@ -109,16 +109,11 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
         class="cards-box"
         [rows]="rows()"
         [classes]="state.classRows()"
-        [colors]="state.colors()"
         [labelOf]="labelOf"
         [selected]="panelIri()"
         [canEdit]="state.canEdit()"
         [canReorder]="editing.canReorder"
         [query]="query()"
-        [cardinalityLayout]="cardinalityLayout()"
-        [inheritedLayout]="inheritedLayout()"
-        [kindForAll]="kindForAll()"
-        [showColours]="showColours()"
         [style.--card-width.px]="cardWidth()"
         data-density="comfortable"
         [(folded)]="foldedCards"
@@ -255,6 +250,7 @@ export class DataModelClassesComponent {
   readonly state = inject(DataModelsRailState);
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
+  private readonly _dialog = inject(MatDialog);
   private readonly _params = toSignal(this._route.queryParamMap);
   private readonly _translate = inject(TranslateService);
   readonly editing = injectDataModelEditing();
@@ -297,24 +293,8 @@ export class DataModelClassesComponent {
 
   readonly query = signal('');
 
-  /** The cards show "Multiple values" and "Required" as the two checkboxes with their words on each row. */
-  readonly cardinalityLayout = signal<CardinalityLayout>('rows').asReadonly();
-  /** The cards show no family colour on their left edge. */
-  readonly showColours = signal(false).asReadonly();
-  /** Every class's card says its kind, "Object without representation" too. */
-  readonly kindForAll = signal(true).asReadonly();
-  /** A subclass's card lists its superclass's properties after the class's own. */
-  readonly inheritedLayout = signal<InheritedLayout>('listed').asReadonly();
-  /**
-   * The cards' least width: room for the checkboxes' words on each row, less for columns, least for the chip; 20px
-   * more for the comfortable rows' bigger checkboxes and words.
-   */
-  readonly cardWidth = computed(
-    () =>
-      ({ rows: 420, columns: 350, ticked: 350, chip: 320, differs: 320, bar: 300, symbols: 300, words: 380 })[
-        this.cardinalityLayout()
-      ] + 20
-  );
+  /** The cards' least width: room for the checkboxes' words on each row, at the comfortable rows' bigger sizes. */
+  readonly cardWidth = signal(440).asReadonly();
 
   /** The classes whose name, file or properties have the searched text, in any language. */
   readonly rows = computed(() => {
@@ -344,7 +324,7 @@ export class DataModelClassesComponent {
 
   /** Esc closes the class's or property's side panel open. */
   closeOnEscape(event: Event): void {
-    if (!escapeClosesPanel(event)) return;
+    if (!escapeClosesPanel(event, this._dialog)) return;
     if (this.panelIri()) this.openPanel(undefined);
     else if (this.propertyPanelIri()) this.openProperty(undefined);
   }

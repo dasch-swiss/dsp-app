@@ -7,6 +7,8 @@ import {
   effect,
   ElementRef,
   inject,
+  Pipe,
+  PipeTransform,
   signal,
   viewChild,
 } from '@angular/core';
@@ -27,13 +29,20 @@ import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { TabShadePipe } from '../ontology-map/tab-shade.pipe';
 import { LanguageText } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelsRailState } from './data-models-rail-state';
-import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabularyUses } from './vocabulary-tree';
 
 /** The query parameter naming the controlled vocabulary to open on arriving at Controlled vocabularies. */
 export const VOCABULARY_PARAM = 'vocabulary';
+
+/** A vocabulary's or value's texts with their language, for the language lines. */
+@Pipe({ name: 'languageTexts' })
+export class LanguageTextsPipe implements PipeTransform {
+  transform(texts: VocabularyNode['labels'] | undefined): LanguageText[] {
+    return (texts ?? []).filter(text => !!text.language).map(text => ({ language: text.language!, value: text.value }));
+  }
+}
 
 /**
  * Controlled vocabularies: the project's vocabularies in one tree table, each a line to open on its
@@ -46,8 +55,8 @@ export const VOCABULARY_PARAM = 'vocabulary';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TabShadePipe,
-    HighlightPipe,
     LanguageTextsComponent,
+    LanguageTextsPipe,
     MatButton,
     MatDivider,
     MatFormField,
@@ -144,7 +153,7 @@ export const VOCABULARY_PARAM = 'vocabulary';
                       class="node-label"
                       cyPrefix="data-model-lists"
                       [kind]="row.depth === 0 ? 'label' : 'description'"
-                      [texts]="textsOf(row.node.labels)"
+                      [texts]="row.node.labels | languageTexts"
                       [shown]="row.label"
                       [highlight]="[query()]" />
                     @if (row.count) {
@@ -157,7 +166,7 @@ export const VOCABULARY_PARAM = 'vocabulary';
                     <app-language-texts
                       kind="description"
                       cyPrefix="data-model-lists"
-                      [texts]="textsOf(row.node.comments)"
+                      [texts]="row.node.comments | languageTexts"
                       [shown]="row.description" />
                   } @else if (row.depth === 0) {
                     <span class="none">—</span>
@@ -172,7 +181,11 @@ export const VOCABULARY_PARAM = 'vocabulary';
                         >
                         @for (iri of use.classes; track iri) {
                           <span class="chip"
-                            ><span class="tab" [style.background]="state.colors().get(iri) | tabShade: '#F3F4F6'"></span
+                            ><span
+                              class="tab"
+                              [style.background]="
+                                state.colors().has(iri) ? (state.colors().get(iri) | tabShade) : null
+                              "></span
                             ><span class="chip-label">{{ state.labelOf(iri) }}</span></span
                           >
                         }
@@ -272,16 +285,16 @@ export const VOCABULARY_PARAM = 'vocabulary';
           letter-spacing: 0.05em;
           text-transform: uppercase;
           color: $cool_gray_500;
-          background: #f9fafb;
+          background: $cool_gray_50;
           border-bottom: 1px solid $cool_gray_200;
-          border-right: 1px solid #e5e7eb;
+          border-right: 1px solid $cool_gray_200;
         }
 
         td {
           padding: 6px 12px;
           vertical-align: middle;
           border-bottom: 1px solid $cool_gray_100;
-          border-right: 1px solid #f3f4f6;
+          border-right: 1px solid $cool_gray_100;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -293,7 +306,7 @@ export const VOCABULARY_PARAM = 'vocabulary';
 
         tr.vocabulary {
           height: 44px;
-          background: #fcfcfd;
+          background: $cool_gray_50;
 
           .node-label {
             font-weight: 500;
@@ -379,7 +392,7 @@ export const VOCABULARY_PARAM = 'vocabulary';
       }
 
       .delete {
-        color: #b91c1c;
+        color: $red_800;
 
         mat-icon {
           color: inherit;
@@ -431,7 +444,7 @@ export const VOCABULARY_PARAM = 'vocabulary';
 
       mark {
         border-radius: 2px;
-        background: #fde68a;
+        background: $yellow_200;
         color: inherit;
       }
     `,
@@ -554,11 +567,6 @@ export class DataModelListsComponent {
       if (open) this.expanded.update(expanded => new Set(expanded).add(open));
       this._reload.update(count => count + 1);
     });
-  }
-
-  /** A vocabulary's or value's texts with their language, for the language lines. */
-  textsOf(texts: VocabularyNode['labels'] | undefined): LanguageText[] {
-    return (texts ?? []).filter(text => !!text.language).map(text => ({ language: text.language!, value: text.value }));
   }
 
   private _text(texts: VocabularyNode['labels'] | undefined): string {

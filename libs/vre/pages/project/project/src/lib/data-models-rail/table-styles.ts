@@ -38,10 +38,10 @@ export const TABLE_STYLES = `
   .mat-mdc-header-cell {
     position: relative;
     padding: 4px 6px 4px 10px;
-    background: #f9fafb;
+    background: $cool_gray_50;
 
     &.filtered {
-      background: #e6edf3;
+      background: $primary_50;
     }
   }
 
@@ -57,7 +57,7 @@ export const TABLE_STYLES = `
     padding: 0 12px;
     background: white;
     border-radius: 4px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 6px 18px rgba($black, 0.18);
     cursor: grabbing;
   }
 
@@ -80,7 +80,7 @@ export const TABLE_STYLES = `
   }
 
   .scrolled .frozen {
-    box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.18);
+    box-shadow: 4px 0 6px -4px rgba($black, 0.18);
   }
 
   // A filter's options, in its column header's menu.
@@ -150,7 +150,7 @@ export const TABLE_STYLES = `
 
   .mat-mdc-header-cell,
   .mat-mdc-cell {
-    border-right: 1px solid #e5e7eb;
+    border-right: 1px solid $cool_gray_200;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -167,7 +167,7 @@ export const TABLE_STYLES = `
   // What a search or filter matches.
   mark {
     border-radius: 2px;
-    background: #fde68a;
+    background: $yellow_200;
     color: inherit;
   }
 

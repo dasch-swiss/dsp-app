@@ -6,10 +6,10 @@ import {
   computed,
   effect,
   ElementRef,
-  inject,
   input,
   linkedSignal,
   output,
+  viewChildren,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -158,6 +158,7 @@ function asTree(classes: ClassResult[], model: DataModelGraph): ClassResult[] {
         @if (narrowed()) {
           @let index = rows().indexOf(reset);
           <div
+            #rowElement
             class="row action reset"
             role="option"
             data-cy="ontology-map-search-reset"
@@ -173,6 +174,7 @@ function asTree(classes: ClassResult[], model: DataModelGraph): ClassResult[] {
         @if (!browseAll() && count()) {
           @let index = rows().indexOf(all);
           <div
+            #rowElement
             class="row action"
             role="option"
             data-cy="ontology-map-search-all"
@@ -202,6 +204,7 @@ function asTree(classes: ClassResult[], model: DataModelGraph): ClassResult[] {
     <ng-template #row let-result>
       @let index = rows().indexOf(result);
       <div
+        #rowElement
         class="row"
         role="option"
         data-cy="ontology-map-search-result"
@@ -211,7 +214,7 @@ function asTree(classes: ClassResult[], model: DataModelGraph): ClassResult[] {
         (mousemove)="browse(index)"
         (click)="filtered.emit(result)">
         @if (result.kind === 'class') {
-          <span class="swatch" [style.background]="colors().get(result.iri) ?? '#F3F4F6'"></span>
+          <span class="swatch" [style.background]="colors().get(result.iri)"></span>
         } @else {
           <mat-icon class="kind">arrow_right_alt</mat-icon>
         }
@@ -268,9 +271,9 @@ function asTree(classes: ClassResult[], model: DataModelGraph): ClassResult[] {
         flex-direction: column;
         padding: 8px;
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.82);
+        background: rgba($white, 0.82);
         backdrop-filter: blur(2px);
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+        box-shadow: 0 4px 14px rgba($cool_gray_900, 0.12);
         font: 400 13px/20px var(--font-sans, Roboto, sans-serif);
       }
 
@@ -303,7 +306,7 @@ function asTree(classes: ClassResult[], model: DataModelGraph): ClassResult[] {
         cursor: pointer;
 
         &.active {
-          background: #eaeff3;
+          background: $primary_50;
         }
       }
 
@@ -311,7 +314,9 @@ function asTree(classes: ClassResult[], model: DataModelGraph): ClassResult[] {
         flex: none;
         width: 12px;
         height: 12px;
-        border: 1px solid rgba(0, 0, 0, 0.15);
+        // Without a class colour.
+        background: $cool_gray_100;
+        border: 1px solid rgba($black, 0.15);
         border-radius: 3px;
       }
 
@@ -452,7 +457,7 @@ export class GraphSearchResultsComponent {
    */
   readonly previewed = output<SearchResult | undefined>();
 
-  private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly _rowElements = viewChildren<ElementRef<HTMLElement>>('rowElement');
 
   constructor() {
     // The list opens scrolled to its active row, such as the one whose panel shows.
@@ -491,7 +496,9 @@ export class GraphSearchResultsComponent {
   }
 
   private _scrollToActive(): void {
-    this._host.nativeElement.querySelector('.row.active')?.scrollIntoView({ block: 'nearest' });
+    this._rowElements()
+      .find(row => row.nativeElement.classList.contains('active'))
+      ?.nativeElement.scrollIntoView({ block: 'nearest' });
   }
 
   /** Acts on the active row, as a click on it does: filters on a result, or shows every class again. */

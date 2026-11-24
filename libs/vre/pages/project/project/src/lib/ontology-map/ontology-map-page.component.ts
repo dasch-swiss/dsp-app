@@ -23,6 +23,7 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
+import { escapeClosesPanel } from '../data-models-rail/escape-closes';
 import { ProjectPageService } from '../project-page.service';
 import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
@@ -176,6 +177,7 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
                 <div class="top-left">
                   <!-- Typing fades what lies away from the classes and links found; nothing found, nothing fades. -->
                   <label
+                    #searchBox
                     class="float search"
                     cdkOverlayOrigin
                     #searchOrigin="cdkOverlayOrigin"
@@ -522,7 +524,7 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
         background: white;
         border: 1px solid $cool_gray_200;
         border-radius: 24px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 10px rgba($black, 0.08);
       }
 
       // The top bar lets clicks through to the graph between its two halves.
@@ -568,10 +570,10 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
         height: 42px;
         padding: 0 6px 0 12px;
         border-radius: 24px;
-        background: #fff4dc;
-        color: #6b4a00;
+        background: $yellow_50;
+        color: $yellow_900;
         font-size: 13px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 10px rgba($black, 0.08);
 
         mat-icon {
           flex: none;
@@ -595,8 +597,8 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
           flex: none;
           height: 26px;
           border-radius: 13px;
-          background-color: #6b4a00;
-          color: #fff4dc;
+          background-color: $yellow_900;
+          color: $yellow_50;
         }
       }
 
@@ -870,7 +872,7 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
         height: 20px;
         margin-right: 6px;
         border-radius: 50%;
-        background: rgba(51, 103, 144, 0.12);
+        background: rgba($primary, 0.12);
 
         mat-icon {
           font-size: 14px;
@@ -1018,6 +1020,7 @@ export class OntologyMapPageComponent {
   readonly labels = signal<GraphLabels>(LABEL_OPTIONS.find(option => option === readStored(LABELS_KEY)) ?? 'labels');
   readonly graphView = viewChild('mainGraph', { read: OntologyGraphComponent });
   private readonly _searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
+  private readonly _searchBox = viewChild<ElementRef<HTMLElement>>('searchBox');
 
   /** The family of every class of the data model, which the Islands view groups and colours classes by. */
   readonly families = computed(() => {
@@ -1228,7 +1231,7 @@ export class OntologyMapPageComponent {
    * the search field itself keeps it open, as it opens it.
    */
   closeListOnOutsideClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement | null)?.closest('.float.search')) return;
+    if (this._searchBox()?.nativeElement.contains(event.target as Node | null)) return;
     clearTimeout(this._previewing);
     this.listClosed.set(true);
   }
@@ -1258,9 +1261,7 @@ export class OntologyMapPageComponent {
    * typing, where Esc has its own job, nor while a menu or dialog is open, which Esc closes first.
    */
   closeOnEscape(event: Event): void {
-    const target = event.target as HTMLElement | null;
-    if (event.defaultPrevented || target?.closest('input, textarea, [contenteditable="true"]')) return;
-    if (document.querySelector('.mat-mdc-menu-panel, mat-dialog-container')) return;
+    if (!escapeClosesPanel(event, this._dialog)) return;
     if (this.panelIri() || this.propertyPanelIri()) this.openPanel(undefined);
     else if (this.searchDropdownOpen()) {
       const input = this._searchInput()?.nativeElement;

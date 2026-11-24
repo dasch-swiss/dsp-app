@@ -15,9 +15,6 @@ import { HighlightPipe } from './highlight.pipe';
     <span class="cut">
       @for (iri of shown(); track iri) {
         <span class="chip" data-cy="class-chip">
-          @if (showColours()) {
-            <span class="tab" aria-hidden="true" [style.background]="state.colors().get(iri) ?? '#F3F4F6'"></span>
-          }
           <span class="label">
             @for (part of state.labelOf(iri) | highlight: highlight(); track $index) {
               @if (part.match) {
@@ -72,14 +69,14 @@ import { HighlightPipe } from './highlight.pipe';
         display: inline-flex;
         align-items: stretch;
         padding: 0;
-        border: 1px solid #d1d5db;
+        border: 1px solid $cool_gray_300;
         border-radius: 4px;
         overflow: hidden;
         background: white;
         font: inherit;
         font-size: 11px;
         line-height: 16px;
-        color: #1f2937;
+        color: $cool_gray_800;
 
         .tab {
           flex: none;
@@ -105,7 +102,7 @@ import { HighlightPipe } from './highlight.pipe';
 
       mark {
         border-radius: 2px;
-        background: #fde68a;
+        background: $yellow_200;
         color: inherit;
       }
     `,
@@ -119,8 +116,6 @@ export class ClassChipsComponent {
   /** How many a condensed line shows. */
   readonly max = input(2);
   readonly expanded = input(false);
-  /** Whether each chip shows its class's family colour as a tab on its left. */
-  readonly showColours = input(true);
   /** What a search looks for, marked in the class names. */
   readonly highlight = input<readonly string[]>([]);
 

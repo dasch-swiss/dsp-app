@@ -114,7 +114,7 @@ export const RAIL_SECTION_STYLES = `
     width: 12px;
     height: 12px;
     box-sizing: border-box;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba($black, 0.15);
     border-radius: 3px;
   }
 
@@ -146,17 +146,19 @@ export const RAIL_SECTION_STYLES = `
   .chip {
     display: inline-flex;
     align-items: stretch;
-    border: 1px solid #d1d5db;
+    border: 1px solid $cool_gray_300;
     border-radius: 4px;
     overflow: hidden;
     background: white;
     font-size: 11px;
     line-height: 16px;
-    color: #1f2937;
+    color: $cool_gray_800;
 
     .tab {
       flex: none;
       width: 10px;
+      // Without a class colour.
+      background: $cool_gray_100;
     }
 
     .chip-label {

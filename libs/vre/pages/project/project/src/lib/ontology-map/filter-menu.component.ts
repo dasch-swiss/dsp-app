@@ -225,7 +225,7 @@ const NAMED_HIDDEN = 3;
         height: 10px;
         margin-right: 6px;
         box-sizing: border-box;
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        border: 1px solid $black-12-opacity;
         border-radius: 50%;
       }
 

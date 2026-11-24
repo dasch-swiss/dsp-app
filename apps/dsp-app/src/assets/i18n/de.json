@@ -829,8 +829,6 @@
     "dataModels2": {
       "classActions": "Aktionen für {{class}}",
       "objectWithoutRepresentation": "Objekt ohne Repräsentation",
-      "cardinalityMultiple": "Mehrere",
-      "cardinalityRequired": "Erforderlich",
       "dataModels": "Datenmodelle",
       "createDataModel": "Datenmodell erstellen",
       "documentation": "Dokumentation",
@@ -854,9 +852,6 @@
       "deleteProperty": "Eigenschaft löschen",
       "deletePropertyConfirm": "Die Eigenschaft «{{property}}» löschen? Dies kann nicht rückgängig gemacht werden.",
       "cannotDeleteProperty": "«{{property}}» kann nicht gelöscht werden, solange eine Klasse oder ein Wert sie verwendet.",
-      "changeCardinality": "Kardinalität von {{property}}: {{cardinality}}",
-      "checkingCardinality": "Bestehende Ressourcen werden geprüft …",
-      "current": "Aktuell",
       "cardinalityBlocked": "Bestehende Ressourcen passen nicht dazu",
       "cardinalitySaved": "«{{property}}» in «{{class}}»: {{cardinality}}",
       "undo": "Rückgängig",
@@ -868,7 +863,6 @@
       "dragToReorder": "Ziehen, um die Reihenfolge zu ändern",
       "showMore": "{{count}} weitere anzeigen",
       "showLess": "Weniger anzeigen",
-      "inheritedFrom": "{{count}} von {{class}}",
       "cardinality": {
         "requiredOne": "Pflichtfeld, ein Wert",
         "optionalOne": "Optional, ein Wert",

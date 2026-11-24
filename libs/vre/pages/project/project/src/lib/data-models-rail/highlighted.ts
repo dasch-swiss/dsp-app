@@ -1,3 +1,5 @@
+import { Pipe, PipeTransform } from '@angular/core';
+
 /** A piece of a text, and whether it is what was searched for. */
 export interface TextPart {
   text: string;
@@ -18,6 +20,14 @@ export function highlighted(text: string, query: string): TextPart[] {
   }
   if (from < text.length) parts.push({ text: text.slice(from), match: false });
   return parts;
+}
+
+/** `highlighted` in a template. */
+@Pipe({ name: 'highlighted' })
+export class HighlightedPipe implements PipeTransform {
+  transform(text: string, query: string): TextPart[] {
+    return highlighted(text, query);
+  }
 }
 
 /** Whether the text has the query, in any case. */

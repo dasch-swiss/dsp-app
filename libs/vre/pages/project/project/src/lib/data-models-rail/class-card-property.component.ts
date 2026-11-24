@@ -5,19 +5,12 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality, Constants } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CardinalityCheckboxesComponent } from '../ontology-map/cardinality-checkboxes.component';
-import { CardinalityChipComponent } from '../ontology-map/cardinality-chip.component';
 import { DATA_MODEL_EDITOR, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ClassRow, propertyNameOf } from '../ontology-map/ontology-graph-elements';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
 import { highlighted } from './highlighted';
 
 export type CardProperty = ClassRow['propertyList'][number];
-
-/**
- * How a card shows a property's cardinality: "Multiple values" and "Required" as two columns named once, or with their
- * words on each row, as in the Data models tab; or as before, 0-1, 0-n, 1 or 1-n.
- */
-export type CardinalityLayout = 'columns' | 'ticked' | 'rows' | 'chip' | 'differs' | 'bar' | 'symbols' | 'words';
 
 /** A property's cardinality from whether it is required and may hold several values. */
 function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
@@ -51,22 +44,9 @@ export const COMFORTABLE_CARD_SIZES = `
 @Component({
   selector: 'li[appClassCardProperty]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CardinalityCheckboxesComponent,
-    CardinalityChipComponent,
-    CdkDragHandle,
-    MatIcon,
-    MatTooltip,
-    TranslatePipe,
-  ],
+  imports: [CardinalityCheckboxesComponent, CdkDragHandle, MatIcon, MatTooltip, TranslatePipe],
   host: {
     class: 'prop',
-    '[class.chip-layout]':
-      "cardinalityLayout() === 'chip' || cardinalityLayout() === 'differs' || (cardinalityLayout() === 'bar' && chipColumn())",
-    '[class.no-chip-column]':
-      "(cardinalityLayout() === 'bar' || cardinalityLayout() === 'symbols' || cardinalityLayout() === 'words') && !chipColumn()",
-    '[class.stack-layout]': "cardinalityLayout() === 'symbols' && chipColumn()",
-    '[class.words-layout]': "cardinalityLayout() === 'words' && chipColumn()",
     'data-cy': 'data-model-class-card-property',
   },
   template: `
@@ -78,15 +58,6 @@ export const COMFORTABLE_CARD_SIZES = `
       <span class="name" [matTooltip]="tip()" matTooltipShowDelay="600">
         @for (part of label(); track $index) {
           <span [class.hit]="part.match">{{ part.text }}</span>
-        }
-        <!-- A required property, as forms mark one: a red star after its label. -->
-        @if (cardinalityLayout() === 'symbols' && property.required) {
-          <span
-            class="star"
-            [attr.aria-label]="'pages.ontology.cardinality.required' | translate"
-            [matTooltip]="'pages.ontology.cardinality.required' | translate"
-            >*</span
-          >
         }
         @if (property.linkTarget; as target) {
           <!-- Opens the target's card when it shows; plain text when the search hides it, or it is in another model. -->
@@ -119,75 +90,15 @@ export const COMFORTABLE_CARD_SIZES = `
         }
       </span>
     </span>
-    @if (cardinalityLayout() === 'chip' || cardinalityLayout() === 'differs') {
-      <app-cardinality-chip
-        class="cardinality"
-        data-cy="data-model-class-card-cardinality"
-        [cardinality]="currentCardinality()"
-        [type]="property.type"
-        [propertyIri]="property.id"
-        [propertyLabel]="property.label"
-        [classIri]="classIri()"
-        [changeable]="changeable()"
-        [quietDefault]="cardinalityLayout() === 'differs'" />
-    } @else if (cardinalityLayout() === 'symbols') {
-      <!-- Several values allowed: a stack, in a narrow column the card keeps only when one of its properties has it. -->
-      @if (chipColumn()) {
-        <span class="stack">
-          @if (property.multiple) {
-            <mat-icon
-              data-cy="data-model-class-card-multiple"
-              [attr.aria-label]="'pages.ontology.cardinality.multipleValues' | translate"
-              [matTooltip]="'pages.ontology.cardinality.multipleValues' | translate"
-              >layers</mat-icon
-            >
-          }
-        </span>
-      }
-    } @else if (cardinalityLayout() === 'words') {
-      <!-- In words, only what differs from 0-1: "Required" in red, "Multiple", or both; a card where nothing does
-           keeps no column. -->
-      @if (chipColumn()) {
-        <span class="words" data-cy="data-model-class-card-cardinality">
-          @if (property.required) {
-            <span class="required-word">{{ r + '.cardinalityRequired' | translate }}</span>
-          }
-          @if (property.required && property.multiple) {
-            ·
-          }
-          @if (property.multiple) {
-            {{ r + '.cardinalityMultiple' | translate }}
-          }
-        </span>
-      }
-    } @else if (cardinalityLayout() === 'bar') {
-      <!-- Only what differs from 0-1; a 0-1 one changes from the hover tools, below. -->
-      @if (!isDefault()) {
-        <app-cardinality-chip
-          class="cardinality"
-          data-cy="data-model-class-card-cardinality"
-          [cardinality]="currentCardinality()"
-          [type]="property.type"
-          [propertyIri]="property.id"
-          [propertyLabel]="property.label"
-          [classIri]="classIri()"
-          [changeable]="changeable()"
-          [quietDefault]="true" />
-      } @else if (chipColumn()) {
-        <span></span>
-      }
-    } @else {
-      <app-cardinality-checkboxes
-        class="cardinality"
-        data-cy="data-model-class-card-cardinality"
-        [cardinality]="currentCardinality()"
-        [type]="property.type"
-        [propertyIri]="property.id"
-        [classIri]="classIri()"
-        [changeable]="changeable()"
-        [labelled]="cardinalityLayout() === 'rows'"
-        [tickedOnly]="cardinalityLayout() === 'ticked'" />
-    }
+    <app-cardinality-checkboxes
+      class="cardinality"
+      data-cy="data-model-class-card-cardinality"
+      [cardinality]="currentCardinality()"
+      [type]="property.type"
+      [propertyIri]="property.id"
+      [classIri]="classIri()"
+      [changeable]="changeable()"
+      [labelled]="true" />
     <!-- For editors, on hover: the handle to drag it, the property's dialog, and for the class's own ones, removing it
          from the class. -->
     @if ((canEdit() && editable()) || draggable()) {
@@ -226,31 +137,6 @@ export const COMFORTABLE_CARD_SIZES = `
             <mat-icon>remove_circle_outline</mat-icon>
           </button>
         }
-        <!-- With the star and the stack: both switch here, last of the row's tools. -->
-        @if (changeable() && cardinalityLayout() === 'symbols') {
-          <app-cardinality-checkboxes
-            class="bar-toggles"
-            data-cy="data-model-class-card-cardinality"
-            appearance="icons"
-            [cardinality]="currentCardinality()"
-            [type]="property.type"
-            [propertyIri]="property.id"
-            [classIri]="classIri()"
-            [changeable]="true" />
-        }
-        <!-- A cardinality not shown at rest (a 0-1, or in words) changes from here, last of the row's tools. -->
-        @if (changeable() && ((cardinalityLayout() === 'bar' && isDefault()) || cardinalityLayout() === 'words')) {
-          <app-cardinality-chip
-            class="bar-chip"
-            data-cy="data-model-class-card-cardinality"
-            [cardinality]="currentCardinality()"
-            [type]="property.type"
-            [propertyIri]="property.id"
-            [propertyLabel]="property.label"
-            [classIri]="classIri()"
-            [changeable]="true"
-            [quietDefault]="true" />
-        }
       </span>
     }
   `,
@@ -275,68 +161,6 @@ export const COMFORTABLE_CARD_SIZES = `
         &:hover {
           background: $cool_gray_50;
         }
-      }
-
-      // As before: the chip in a narrow last column.
-      :host(.chip-layout) {
-        grid-template-columns: 16px minmax(0, 1fr) 32px;
-        --actions-right: 46px;
-      }
-
-      // A card whose properties are all 0-1: no chip column, the texts to the edge, the tools over its end.
-      :host(.no-chip-column) {
-        grid-template-columns: 16px minmax(0, 1fr);
-        --actions-right: 8px;
-      }
-
-      // A red star and a stack icon: the stack's narrow column, the tools left of it.
-      :host(.stack-layout) {
-        grid-template-columns: 16px minmax(0, 1fr) 18px;
-        --actions-right: 30px;
-      }
-
-      .star {
-        margin-left: 2px;
-        font-weight: 500;
-        color: #b3261e;
-      }
-
-      .stack {
-        display: flex;
-        justify-content: center;
-
-        mat-icon {
-          font-size: 15px;
-          width: 15px;
-          height: 15px;
-          color: $cool_gray_500;
-        }
-      }
-
-      // In words, in a column wide enough for "Optional · many".
-      :host(.words-layout) {
-        grid-template-columns: 16px minmax(0, 1fr) 96px;
-        --actions-right: 110px;
-      }
-
-      .words {
-        font-size: 11px;
-        text-align: right;
-        white-space: nowrap;
-        color: $cool_gray_500;
-      }
-
-      .required-word {
-        font-weight: 500;
-        color: #b3261e;
-      }
-
-      .bar-toggles {
-        margin: 0 2px 0 2px;
-      }
-
-      .bar-chip {
-        margin: 0 2px 0 4px;
       }
 
       :host + :host {
@@ -367,7 +191,7 @@ export const COMFORTABLE_CARD_SIZES = `
       }
 
       .hit {
-        background: #fde68a;
+        background: $yellow_200;
         color: inherit;
         border-radius: 2px;
       }
@@ -482,8 +306,8 @@ export const COMFORTABLE_CARD_SIZES = `
         color: $cool_gray_500;
 
         &:hover {
-          color: #b3261e;
-          background: #fdecea;
+          color: $red_800;
+          background: $red_50;
         }
       }
 
@@ -518,10 +342,6 @@ export class ClassCardPropertyComponent {
   readonly homeIri = input<string | undefined>(undefined);
   /** That class's label, for the remove button. */
   readonly className = input('');
-  /** Whether the checkboxes carry their words on each row, or the card names their columns once. */
-  readonly cardinalityLayout = input<CardinalityLayout>('columns');
-  /** Whether the card keeps a column for the chips: some property on it differs from 0-1. */
-  readonly chipColumn = input(true);
 
   readonly edit = output<string>();
   /** The link target was clicked: its card is to show. */
@@ -536,7 +356,6 @@ export class ClassCardPropertyComponent {
     () => this.canEdit() && this.editable() && !!this.classIri() && !!this._editing?.canDelete
   );
   readonly currentCardinality = computed(() => cardinalityOf(this.property()));
-  readonly isDefault = computed(() => this.currentCardinality() === Cardinality._0_1);
 
   /** Its name, prefixed by its data model's when that is not the card's class's, as `biblio:hasTitle`. */
   readonly localName = computed(() => propertyNameOf(this.property().id, this.homeIri()));

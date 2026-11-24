@@ -829,8 +829,6 @@
     "dataModels2": {
       "classActions": "Azioni per {{class}}",
       "objectWithoutRepresentation": "Oggetto senza rappresentazione",
-      "cardinalityMultiple": "Multipli",
-      "cardinalityRequired": "Obbligatoria",
       "dataModels": "Modelli di dati",
       "createDataModel": "Crea modello di dati",
       "documentation": "Documentazione",
@@ -854,9 +852,6 @@
       "deleteProperty": "Elimina proprietà",
       "deletePropertyConfirm": "Eliminare la proprietà «{{property}}»? L’operazione è irreversibile.",
       "cannotDeleteProperty": "«{{property}}» non può essere eliminata finché una classe o un valore la usa.",
-      "changeCardinality": "Cardinalità di {{property}}: {{cardinality}}",
-      "checkingCardinality": "Verifica delle risorse esistenti…",
-      "current": "Attuale",
       "cardinalityBlocked": "Risorse esistenti non vi si adattano",
       "cardinalitySaved": "«{{property}}» in «{{class}}»: {{cardinality}}",
       "undo": "Annulla",
@@ -868,7 +863,6 @@
       "dragToReorder": "Trascina per cambiare l’ordine",
       "showMore": "Mostra altri {{count}}",
       "showLess": "Mostra meno",
-      "inheritedFrom": "{{count}} da {{class}}",
       "cardinality": {
         "requiredOne": "Obbligatorio, un valore",
         "optionalOne": "Facoltativo, un valore",

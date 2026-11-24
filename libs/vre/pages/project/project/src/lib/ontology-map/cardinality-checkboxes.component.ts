@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
@@ -33,6 +42,8 @@ type Box = 'multiple' | 'required';
 @Component({
   selector: 'app-cardinality-checkboxes',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Unencapsulated, to size Material's box and label inside the checkbox; every rule starts at the element's tag.
+  encapsulation: ViewEncapsulation.None,
   imports: [MatCheckbox, MatIcon, MatTooltip, TranslatePipe],
   host: {
     '[class.labelled]': 'labelled()',
@@ -48,7 +59,8 @@ type Box = 'multiple' | 'required';
       @for (box of iconOrder; track box) {
         @let label = c + '.' + (box === 'multiple' ? 'multipleValues' : 'required') | translate;
         @let on = state()[box];
-        <span class="box" [matTooltip]="reasonOf(box) || label | translate">
+        @let reason = reasons()[box];
+        <span class="box" [matTooltip]="reason || label | translate">
           <button
             type="button"
             class="icon-toggle"
@@ -57,7 +69,7 @@ type Box = 'multiple' | 'required';
             [attr.data-cy]="'cardinality-toggle-' + box"
             [attr.aria-label]="label"
             [attr.aria-pressed]="on"
-            [disabled]="!changeable() || saving() || blocked(box)"
+            [disabled]="!changeable() || saving() || blockedBoxes()[box]"
             (click)="toggle(box)">
             @if (box === 'required') {
               <span class="star-glyph" aria-hidden="true">*</span>
@@ -70,17 +82,18 @@ type Box = 'multiple' | 'required';
     } @else {
       @for (box of boxes; track box) {
         @let label = c + '.' + (box === 'multiple' ? 'multipleValues' : 'required') | translate;
+        @let reason = reasons()[box];
         <span
           class="box"
           [class.unticked]="!state()[box]"
-          [matTooltip]="reasonOf(box) || (changeable() ? 'pages.dataModels2.cardinalityRule' : '') | translate"
-          [matTooltipDisabled]="!reasonOf(box) && !changeable()"
-          [matTooltipShowDelay]="reasonOf(box) ? 0 : 600">
+          [matTooltip]="reason || (changeable() ? 'pages.dataModels2.cardinalityRule' : '') | translate"
+          [matTooltipDisabled]="!reason && !changeable()"
+          [matTooltipShowDelay]="reason ? 0 : 600">
           <mat-checkbox
             color="primary"
             [attr.data-cy]="'cardinality-' + box"
             [checked]="state()[box]"
-            [disabled]="!changeable() || saving() || blocked(box)"
+            [disabled]="!changeable() || saving() || blockedBoxes()[box]"
             [aria-label]="label"
             (change)="toggle(box, $event.source)">
             @if (labelled()) {
@@ -97,7 +110,7 @@ type Box = 'multiple' | 'required';
 
       // Two columns, or with their words, the two boxes one above the other, as in the Data models tab.
       // Small boxes and words, so a card's properties stay what reads first.
-      :host {
+      app-cardinality-checkboxes {
         display: grid;
         grid-template-columns: 52px 52px;
         align-items: center;
@@ -108,23 +121,23 @@ type Box = 'multiple' | 'required';
         --mat-checkbox-label-text-line-height: calc(var(--density-check-label, 10.5px) + 3.5px);
       }
 
-      :host(.labelled) {
+      app-cardinality-checkboxes.labelled {
         grid-template-columns: var(--density-check-col, 100px);
         justify-items: start;
         row-gap: 0;
       }
 
-      .box {
+      app-cardinality-checkboxes .box {
         display: inline-flex;
       }
 
       // The star and the stack, side by side: grey when off, red and blue when on.
-      :host(.icons) {
+      app-cardinality-checkboxes.icons {
         display: inline-flex;
         gap: 2px;
       }
 
-      .icon-toggle {
+      app-cardinality-checkboxes .icon-toggle {
         display: grid;
         place-items: center;
         width: 22px;
@@ -150,7 +163,7 @@ type Box = 'multiple' | 'required';
         }
 
         &.star.on {
-          color: #b3261e;
+          color: $red_800;
         }
 
         &:focus-visible {
@@ -165,7 +178,7 @@ type Box = 'multiple' | 'required';
         }
       }
 
-      .star-glyph {
+      app-cardinality-checkboxes .star-glyph {
         font-size: 18px;
         font-weight: 700;
         line-height: 22px;
@@ -173,25 +186,25 @@ type Box = 'multiple' | 'required';
       }
 
       // Ticked boxes only; the others show while the pointer is on the property's row, or with the focus.
-      :host(.ticked-only) .box.unticked {
+      app-cardinality-checkboxes.ticked-only .box.unticked {
         visibility: hidden;
       }
 
-      :host-context(.prop:hover) .box.unticked,
-      :host(.ticked-only) .box.unticked:focus-within {
+      .prop:hover app-cardinality-checkboxes .box.unticked,
+      app-cardinality-checkboxes.ticked-only .box.unticked:focus-within {
         visibility: visible;
       }
 
-      mat-checkbox {
+      app-cardinality-checkboxes .mat-mdc-checkbox {
         // Material's touch target is wider than a card row; the row stays compact.
         margin: -3px 0;
 
         // Material draws an 18 px box: drawn at 14 px, in the room its smaller state layer leaves.
-        ::ng-deep .mdc-checkbox {
+        .mdc-checkbox {
           transform: scale(var(--density-check-scale, 0.78));
         }
 
-        ::ng-deep .mdc-label {
+        .mdc-label {
           padding-left: 0;
         }
       }
@@ -238,16 +251,20 @@ export class CardinalityCheckboxesComponent {
   }
 
   /** A box is out of reach once the API said the existing resources rule it out, or for a yes/no property's "Multiple values". */
-  blocked(box: Box): boolean {
-    return this._result(box)?.canDo === false;
-  }
+  readonly blockedBoxes = computed<Record<Box, boolean>>(() => ({
+    multiple: this._result('multiple')?.canDo === false,
+    required: this._result('required')?.canDo === false,
+  }));
 
-  /** Why a box can't change, for its tooltip; nothing while it can, or for one that never can here. */
-  reasonOf(box: Box): string {
-    if (!this.changeable()) return '';
-    if (box === 'multiple' && this.type() === 'Boolean') return 'pages.dataModels2.booleanOne';
-    return this._result(box)?.canDo === false ? 'pages.dataModels2.cardinalityBlocked' : '';
-  }
+  /** Why each box can't change, for its tooltip; nothing while it can, or for one that never can here. */
+  readonly reasons = computed<Record<Box, string>>(() => {
+    const reasonOf = (box: Box): string => {
+      if (!this.changeable()) return '';
+      if (box === 'multiple' && this.type() === 'Boolean') return 'pages.dataModels2.booleanOne';
+      return this.blockedBoxes()[box] ? 'pages.dataModels2.cardinalityBlocked' : '';
+    };
+    return { multiple: reasonOf('multiple'), required: reasonOf('required') };
+  });
 
   /** Asks the API, once per cardinality shown, whether the existing resources allow each box to change. */
   check(): void {

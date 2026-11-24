@@ -216,7 +216,7 @@ export interface LanguageTextEdit {
       // What a filter or search matches.
       mark {
         border-radius: 2px;
-        background: #fde68a;
+        background: $yellow_200;
         color: inherit;
       }
     `,

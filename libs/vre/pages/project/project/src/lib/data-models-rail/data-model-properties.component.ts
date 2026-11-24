@@ -14,6 +14,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -40,7 +41,7 @@ import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor
 import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
-import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
+import { typeNameOf } from '../ontology-map/property-types';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
 import { ClassChipsComponent } from './class-chips.component';
 import { ColumnHeaderComponent } from './column-header.component';
@@ -48,6 +49,7 @@ import { DataModelsRailState } from './data-models-rail-state';
 import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
+import { PropertyTypeIconPipe, PropertyTypeNamePipe } from './property-type.pipes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 import { TableColumns } from './table-columns';
 import { TABLE_STYLES } from './table-styles';
@@ -57,6 +59,11 @@ const MAX_USED_BY = 3;
 const STORAGE_KEY = 'dsp-data-models-properties';
 /** The Points to filter's value for properties that are not links. */
 const NO_TARGET = 'none';
+
+/** Whether every option of a filter is ticked. */
+function allOn(selected: Set<string>, options: string[]): boolean {
+  return options.length > 0 && options.every(option => selected.has(option));
+}
 
 type Column = 'property' | 'description' | 'type' | 'pointsTo' | 'usedBy';
 
@@ -85,6 +92,8 @@ const COLUMN_LABELS: Record<Column, string> = {
     ClassChipsComponent,
     ColumnHeaderComponent,
     HighlightPipe,
+    PropertyTypeIconPipe,
+    PropertyTypeNamePipe,
     LanguageTextsComponent,
     MatButton,
     MatCell,
@@ -296,14 +305,14 @@ const COLUMN_LABELS: Record<Column, string> = {
                 <span class="filter-head">
                   <span class="filter-heading">{{ columnLabels.type | translate }}</span>
                   <button mat-button type="button" class="filter-all" (click)="toggleAll(types, typeOptions())">
-                    {{ (allOn(types(), typeOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+                    {{ (allTypesOn() ? r + '.deselectAll' : r + '.selectAll') | translate }}
                   </button>
                 </span>
                 @for (option of typeOptions(); track option) {
                   <mat-checkbox [checked]="types().has(option)" (change)="toggle(types, option)">
                     <span class="option">
-                      <mat-icon>{{ typeIcon(option) }}</mat-icon>
-                      {{ typeName(option) }}
+                      <mat-icon>{{ option | propertyTypeIcon }}</mat-icon>
+                      {{ option | propertyTypeName }}
                     </span>
                   </mat-checkbox>
                 }
@@ -311,9 +320,9 @@ const COLUMN_LABELS: Record<Column, string> = {
             </th>
             <td mat-cell *matCellDef="let row">
               <span class="type">
-                <mat-icon>{{ typeIcon(row.type) }}</mat-icon>
+                <mat-icon>{{ row.type | propertyTypeIcon }}</mat-icon>
                 <span>
-                  @for (part of typeName(row.type) | highlight: searchTerms(); track $index) {
+                  @for (part of row.type | propertyTypeName | highlight: searchTerms(); track $index) {
                     @if (part.match) {
                       <mark>{{ part.text }}</mark>
                     } @else {
@@ -342,7 +351,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                 <span class="filter-head">
                   <span class="filter-heading">{{ columnLabels.pointsTo | translate }}</span>
                   <button mat-button type="button" class="filter-all" (click)="toggleAll(targets, targetOptions())">
-                    {{ (allOn(targets(), targetOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+                    {{ (allTargetsOn() ? r + '.deselectAll' : r + '.selectAll') | translate }}
                   </button>
                 </span>
                 @for (option of targetOptions(); track option) {
@@ -352,7 +361,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                     } @else {
                       <!-- In the class's color, as in the column. -->
                       <span class="chip"
-                        ><span class="tab" [style.background]="state.colors().get(option) ?? '#F3F4F6'"></span
+                        ><span class="tab" [style.background]="state.colors().get(option)"></span
                         ><span class="chip-label">{{ state.labelOf(option) }}</span></span
                       >
                     }
@@ -363,7 +372,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             <td mat-cell *matCellDef="let row">
               <app-class-chips
                 [iris]="row.linkTarget ? [row.linkTarget] : []"
-                [showColours]="showColours()"
                 [expanded]="expanded"
                 [highlight]="searchTerms()" />
             </td>
@@ -387,7 +395,7 @@ const COLUMN_LABELS: Record<Column, string> = {
                 <span class="filter-head">
                   <span class="filter-heading">{{ columnLabels.usedBy | translate }}</span>
                   <button mat-button type="button" class="filter-all" (click)="toggleAll(users, userOptions())">
-                    {{ (allOn(users(), userOptions()) ? r + '.deselectAll' : r + '.selectAll') | translate }}
+                    {{ (allUsersOn() ? r + '.deselectAll' : r + '.selectAll') | translate }}
                   </button>
                 </span>
                 @for (option of userOptions(); track option) {
@@ -403,7 +411,6 @@ const COLUMN_LABELS: Record<Column, string> = {
               }
               <app-class-chips
                 [iris]="row.usedBy"
-                [showColours]="showColours()"
                 [max]="maxUsedBy"
                 [expanded]="expanded"
                 [highlight]="searchTerms()" />
@@ -534,7 +541,7 @@ const COLUMN_LABELS: Record<Column, string> = {
         display: flex;
         align-items: center;
         gap: 4px;
-        color: #4b5563;
+        color: $cool_gray_600;
 
         mat-icon {
           color: inherit;
@@ -607,8 +614,8 @@ const COLUMN_LABELS: Record<Column, string> = {
       }
 
       .row-actions .delete:not([disabled]):hover {
-        color: #b3261e;
-        background: #fdecea;
+        color: $red_800;
+        background: $red_50;
       }
     `,
   ],
@@ -617,6 +624,7 @@ export class DataModelPropertiesComponent {
   readonly state = inject(DataModelsRailState);
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
+  private readonly _dialog = inject(MatDialog);
   private readonly _params = toSignal(this._route.queryParamMap);
   readonly editing = injectDataModelEditing();
   private readonly _destroyRef = inject(DestroyRef);
@@ -667,8 +675,6 @@ export class DataModelPropertiesComponent {
   readonly maxUsedBy = MAX_USED_BY;
   readonly noTarget = NO_TARGET;
 
-  /** The class chips show no family colour. */
-  readonly showColours = signal(false).asReadonly();
   /** Whether the table is scrolled sideways, which shadows the frozen property column. */
   readonly scrolled = signal(false);
 
@@ -697,6 +703,10 @@ export class DataModelPropertiesComponent {
     return rows.some(row => !row.linkTarget) ? [...targets, NO_TARGET] : targets;
   });
   readonly userOptions = computed(() => this._byLabel(this.state.propertyRows().flatMap(row => row.usedBy)));
+  /** Whether every option of each filter is ticked. */
+  readonly allTypesOn = computed(() => allOn(this.types(), this.typeOptions()));
+  readonly allTargetsOn = computed(() => allOn(this.targets(), this.targetOptions()));
+  readonly allUsersOn = computed(() => allOn(this.users(), this.userOptions()));
 
   /** The properties, one per row, by label: a sub-property among the others, not under its parent. */
   readonly rows = computed(() => {
@@ -746,14 +756,9 @@ export class DataModelPropertiesComponent {
     this.scrolled.set((event.target as HTMLElement).scrollLeft > 0);
   }
 
-  /** Whether every option of a filter is ticked. */
-  allOn(selected: Set<string>, options: string[]): boolean {
-    return options.length > 0 && options.every(option => selected.has(option));
-  }
-
   /** Ticks every option of a filter, or none when they all are. */
   toggleAll(filter: WritableSignal<Set<string>>, options: string[]): void {
-    filter.set(this.allOn(filter(), options) ? new Set() : new Set(options));
+    filter.set(allOn(filter(), options) ? new Set() : new Set(options));
   }
 
   /** Adds the option to a filter, or takes it out. */
@@ -765,20 +770,12 @@ export class DataModelPropertiesComponent {
     });
   }
 
-  typeIcon(type: string): string {
-    return typeIconOf(type);
-  }
-
-  typeName(type: string): string {
-    return typeNameOf(type);
-  }
-
   /**
    * Esc closes the property's side panel open. Not the name or description editor, which edits: Esc never drops an edit,
    * and leaves the panel under it open too.
    */
   closeOnEscape(event: Event): void {
-    if (!escapeClosesPanel(event)) return;
+    if (!escapeClosesPanel(event, this._dialog)) return;
     if (this.classPanelIri()) this.closeClass();
     else if (this.panelIri()) this.openPanel(undefined);
   }

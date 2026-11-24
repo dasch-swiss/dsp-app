@@ -14,6 +14,7 @@ import {
   output,
   signal,
   untracked,
+  viewChildren,
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -29,12 +30,17 @@ import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.comp
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
-import { CardinalityLayout, CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
+import { CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
 import { DataModelsRailState } from './data-models-rail-state';
-import { hasText, highlighted } from './highlighted';
+import { hasText, HighlightedPipe } from './highlighted';
 
 /** How many of a class's own properties a card shows before "Show more". */
 export const CARD_PROPERTIES = 8;
+
+/** The icon of a kind of file. */
+function fileIconOf(representation: string): string {
+  return FILE_KINDS.find(kind => kind.representation === representation)?.icon ?? 'insert_drive_file';
+}
 
 /** How long a card opened from a link target stays outlined. */
 const FLASH_MS = 1500;
@@ -43,18 +49,15 @@ const FLASH_MS = 1500;
 interface Card {
   row: ClassRow;
   own: CardProperty[];
-  inherited: CardProperty[];
   /** Every property, own and inherited, in the class's form order, as the data model editor lists them. */
   all: CardProperty[];
   /** Which of them are the class's own: those change on this card. */
   ownIds: ReadonlySet<string>;
-  /** The label of the superclass the inherited ones come from, when it is a class of the data model. */
-  parent?: string;
+  /** The icon of the kind of file its resources carry, if any. */
+  fileIcon?: string;
 }
 
 /** How a subclass's card shows the properties it has from its superclass. */
-export type InheritedLayout = 'grouped' | 'listed';
-
 /** A class's own properties in a new form order, to save. */
 export interface PropertyOrder {
   classIri: string;
@@ -78,6 +81,7 @@ export interface PropertyOrder {
     CdkDragPlaceholder,
     CdkDropList,
     ClassCardPropertyComponent,
+    HighlightedPipe,
     MatIcon,
     MatMenu,
     MatMenuItem,
@@ -88,44 +92,11 @@ export interface PropertyOrder {
   ],
   template: `
     @let r = 'pages.dataModels2';
-    @let c = 'pages.ontology.cardinality';
-    <!-- With the checkboxes in columns, the columns' names, once, over the properties. -->
-    <ng-template #columns>
-      @if (cardinalityLayout() === 'columns' || cardinalityLayout() === 'ticked') {
-        <div class="cardinality-head" aria-hidden="true">
-          <span>{{ c + '.multipleValues' | translate }}</span>
-          <span>{{ c + '.required' | translate }}</span>
-        </div>
-      }
-    </ng-template>
-    <!-- The properties a class has from its superclass: they change there, not on this card. -->
-    <ng-template #inheritedRows let-card>
-      @if (!card.own.length) {
-        <ng-container [ngTemplateOutlet]="columns" />
-      }
-      <ul class="props" data-cy="data-model-class-card-inherited-list">
-        @for (property of card.inherited; track property.id) {
-          <li
-            appClassCardProperty
-            [homeIri]="card.row.id"
-            [property]="property"
-            [labelOf]="labelOf()"
-            [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
-            [query]="query()"
-            [canEdit]="canEdit()"
-            [cardinalityLayout]="cardinalityLayout()"
-            [chipColumn]="hasChipColumn(card)"
-            (edit)="editProperty.emit($event)"
-            (goTo)="goTo($event)"></li>
-        }
-      </ul>
-    </ng-template>
     <!-- A class's own properties, or one group of them, up to the cap, then "Show n more"; editors drag them. -->
     <ng-template #capped let-properties let-key="key" let-card="card">
       @let all = showAll().has(key) || autoOpened().has(key);
       @let hidden = properties.length - CARD_PROPERTIES;
       @let drag = reorderable();
-      <ng-container [ngTemplateOutlet]="columns" />
       <ul
         class="props"
         cdkDropList
@@ -148,8 +119,6 @@ export interface PropertyOrder {
             [draggable]="drag && own"
             [classIri]="own ? card.row.id : undefined"
             [className]="card.row.label"
-            [cardinalityLayout]="cardinalityLayout()"
-            [chipColumn]="hasChipColumn(card)"
             (edit)="editProperty.emit($event)"
             (remove)="removeProperty(card.row, property)"
             (goTo)="goTo($event)">
@@ -175,48 +144,40 @@ export interface PropertyOrder {
         @let row = card.row;
         @let open = !folded().has(row.id);
         <article
+          #cardElement
           class="card"
           data-cy="data-model-class-card"
           [attr.data-iri]="row.id"
           [class.selected]="row.id === selected()"
-          [class.flash]="row.id === flashed()"
-          [class.no-colour]="!showColours()"
-          [style.--tab]="colors().get(row.id) ?? '#FFFFFF'">
+          [class.flash]="row.id === flashed()">
           <header class="card-head" (mouseenter)="checkDelete(row.id)">
             <span class="texts">
               <ng-template #className>
                 <small>
-                  @for (part of mark(row.name); track $index) {
+                  @for (part of row.name | highlighted: query(); track $index) {
                     <span [class.hit]="part.match">{{ part.text }}</span>
                   }
                 </small>
               </ng-template>
               <span class="title">
                 <b>
-                  @for (part of mark(row.label); track $index) {
+                  @for (part of row.label | highlighted: query(); track $index) {
                     <span [class.hit]="part.match">{{ part.text }}</span>
                   }
                 </b>
-                <!-- A plain object: its name beside its label, nothing more, unless every class says its kind. -->
-                @if (!row.representation && !kindForAll()) {
-                  <ng-container [ngTemplateOutlet]="className" />
+              </span>
+              <!-- Under the label: the class's name, then the kind of file its resources carry, or none. -->
+              <span class="kind-line" data-cy="data-model-class-card-file">
+                <ng-container [ngTemplateOutlet]="className" />
+                <span aria-hidden="true">·</span>
+                @if (row.representation; as representation) {
+                  <mat-icon>{{ card.fileIcon }}</mat-icon>
+                  {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
+                } @else {
+                  <mat-icon>person_outline</mat-icon>
+                  {{ 'pages.dataModels2.objectWithoutRepresentation' | translate }}
                 }
               </span>
-              <!-- A class whose resources carry a file: its name, then the kind of file, under the label, as the Data
-                   models tab writes it. -->
-              @if (row.representation || kindForAll()) {
-                <span class="kind-line" data-cy="data-model-class-card-file">
-                  <ng-container [ngTemplateOutlet]="className" />
-                  <span aria-hidden="true">·</span>
-                  @if (row.representation; as representation) {
-                    <mat-icon>{{ fileIcon(representation) }}</mat-icon>
-                    {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
-                  } @else {
-                    <mat-icon>person_outline</mat-icon>
-                    {{ 'pages.dataModels2.objectWithoutRepresentation' | translate }}
-                  }
-                </span>
-              }
             </span>
             <!-- The class's actions, as in the Data models tab: edit, open its resources, copy its ID, delete. -->
             @let c = 'pages.ontology.resourceClassInfo';
@@ -289,35 +250,12 @@ export interface PropertyOrder {
             </button>
           </header>
           @if (open) {
-            @if (inheritedLayout() === 'listed') {
-              <!-- Own and inherited properties together, in the class's form order, as the data model editor lists
-                   them; only the class's own change here. -->
-              @if (card.all.length) {
-                <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.all, key: row.id, card }" />
-              } @else {
-                <p class="none">{{ r + '.noProperties' | translate }}</p>
-              }
-            } @else if (card.own.length) {
-              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.own, key: row.id, card }" />
-            } @else if (!card.inherited.length) {
+            <!-- Own and inherited properties together, in the class's form order, as the data model editor lists
+                 them; only the class's own change here. -->
+            @if (card.all.length) {
+              <ng-container *ngTemplateOutlet="capped; context: { $implicit: card.all, key: row.id, card }" />
+            } @else {
               <p class="none">{{ r + '.noProperties' | translate }}</p>
-            }
-            @if (card.inherited.length && inheritedLayout() !== 'listed') {
-              @let inheritedOpen = inheritedShown().has(row.id) || autoOpened().has(row.id + ' inherited');
-              <div class="inherited">
-                <button
-                  type="button"
-                  class="more"
-                  data-cy="data-model-class-card-inherited"
-                  [attr.aria-expanded]="inheritedOpen"
-                  (click)="toggle(inheritedShown, row.id)">
-                  <mat-icon>{{ inheritedOpen ? 'expand_less' : 'chevron_right' }}</mat-icon>
-                  {{ r + '.inheritedFrom' | translate: { count: card.inherited.length, class: card.parent } }}
-                </button>
-                @if (inheritedOpen) {
-                  <ng-container *ngTemplateOutlet="inheritedRows; context: { $implicit: card }" />
-                }
-              </div>
             }
             <!-- For editors: a new property of a type, or one the project has, as in the class's panel. -->
             @if (canEdit()) {
@@ -351,29 +289,12 @@ export interface PropertyOrder {
 
       .card {
         background: white;
-        border: 1px solid #d1d5db;
+        border: 1px solid $cool_gray_300;
         border-radius: 6px;
         overflow: hidden;
         position: relative;
         scroll-margin: 16px;
         transition: box-shadow 0.2s;
-
-        // The family's colour as a tab, exactly as the diagram draws the class.
-        &::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          width: 6px;
-          background: var(--tab);
-          z-index: 1;
-        }
-
-        // Without colours, as the viewer chose: no tab.
-        &.no-colour::before {
-          display: none;
-        }
 
         &.selected,
         &.flash {
@@ -382,7 +303,7 @@ export interface PropertyOrder {
         }
 
         &.flash {
-          box-shadow: 0 0 0 3px rgba(51, 103, 144, 0.35);
+          box-shadow: 0 0 0 3px rgba($primary, 0.35);
         }
       }
 
@@ -430,7 +351,7 @@ export interface PropertyOrder {
       }
 
       .hit {
-        background: #fde68a;
+        background: $yellow_200;
         color: inherit;
         border-radius: 2px;
       }
@@ -506,19 +427,6 @@ export interface PropertyOrder {
         pointer-events: auto;
       }
 
-      // The checkboxes' columns, named once over the properties, above the two boxes of each row.
-      .cardinality-head {
-        display: grid;
-        grid-template-columns: 52px 52px;
-        justify-content: end;
-        padding: 4px 8px 2px;
-        border-top: 1px solid $cool_gray_100;
-        font-size: 10px;
-        line-height: 1.2;
-        text-align: center;
-        color: $cool_gray_500;
-      }
-
       .props {
         list-style: none;
         margin: 0;
@@ -565,15 +473,6 @@ export interface PropertyOrder {
         }
       }
 
-      .inherited {
-        background: $cool_gray_50;
-
-        .more {
-          font-weight: 400;
-          color: $cool_gray_600;
-        }
-      }
-
       // Deleting a class, in red, and why it can't be, under it.
       // In the class's menu: Delete, and why it can't, under it.
       .menu-text small {
@@ -608,7 +507,6 @@ export interface PropertyOrder {
   ],
 })
 export class DataModelClassCardsComponent {
-  private readonly _host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly _destroyRef = inject(DestroyRef);
   readonly editing = injectDataModelEditing();
   private readonly _state = inject(DataModelsRailState);
@@ -643,8 +541,6 @@ export class DataModelClassCardsComponent {
   readonly rows = input.required<ClassRow[]>();
   /** Every class of the data model, the search aside: where a subclass finds its superclass's properties. */
   readonly classes = input<ClassRow[]>();
-  /** Colour per class, its family's. */
-  readonly colors = input.required<Map<string, string>>();
   /** A class's label from its IRI, for superclasses and link targets. */
   readonly labelOf = input.required<(iri: string) => string>();
   /** The class whose panel is open. */
@@ -655,23 +551,6 @@ export class DataModelClassCardsComponent {
   readonly canReorder = input(false);
   /** The text searched for: marked where it shows, and the rows it is in opened. */
   readonly query = input('');
-  /** Whether each card shows its family's colour as a tab on its left edge. */
-  readonly showColours = input(true);
-  /** Whether every class says its kind under its label, a plain object too; else only a class with a file does. */
-  readonly kindForAll = input(false);
-  /** Whether a subclass's card groups its superclass's properties under "n from …", or lists them with its own. */
-  readonly inheritedLayout = input<InheritedLayout>('grouped');
-  /** Whether a card keeps a column for its cardinalities: one of its properties differs from 0-1, or for the stacks, allows several values. */
-  hasChipColumn(card: Card): boolean {
-    // With a star and a stack icon, the column holds the stacks only; a star sits after the label.
-    const differs = (property: CardProperty) =>
-      this.cardinalityLayout() === 'symbols' ? property.multiple : property.required || property.multiple;
-    return [...card.own, ...card.inherited].some(differs);
-  }
-
-  /** Whether the properties' checkboxes carry their words on each row, or are named once as columns. */
-  readonly cardinalityLayout = input<CardinalityLayout>('columns');
-
   /** "Edit class" was picked: the class's dialog is to open. */
   readonly editClass = output<string>();
   /** A property's pencil was clicked: its dialog is to open. */
@@ -683,14 +562,15 @@ export class DataModelClassCardsComponent {
   readonly folded = model(new Set<string>());
   /** The cards showing all their own properties, past the first {@link CARD_PROPERTIES}. */
   readonly showAll = signal(new Set<string>());
-  /** The cards showing the properties their class has from its superclass. */
-  readonly inheritedShown = signal(new Set<string>());
   /** The card a link target just opened, outlined a moment. */
   readonly flashed = signal<string | undefined>(undefined);
   private _flashTimer?: ReturnType<typeof setTimeout>;
 
   /** The orders dragged but not read back yet, by class: shown at once, until the data model is read again. */
   private readonly _dragged = signal(new Map<string, string[]>());
+
+  /** The cards' elements, in the order of {@link cards}. */
+  private readonly _cardElements = viewChildren<ElementRef<HTMLElement>>('cardElement');
 
   readonly reorderable = computed(() => this.canEdit() && this.canReorder());
 
@@ -711,15 +591,14 @@ export class DataModelClassCardsComponent {
       return {
         row,
         own,
-        inherited: row.propertyList.filter(property => fromParent.has(property.id)),
         all: row.propertyList.map(property => (ownIds.has(property.id) ? ownInOrder.shift()! : property)),
         ownIds,
-        parent: parent?.label,
+        fileIcon: row.representation ? fileIconOf(row.representation) : undefined,
       };
     });
   });
 
-  /** The lists opened for the search: past "Show more", or the inherited row, where a property has the text. */
+  /** The lists opened for the search: past "Show more", where a property has the text. */
   readonly autoOpened = computed(() => {
     const query = this.query();
     const opened = new Set<string>();
@@ -728,8 +607,7 @@ export class DataModelClassCardsComponent {
       hasText(property.label, query) || hasText(property.id.substring(property.id.lastIndexOf('#') + 1), query);
     for (const card of this.cards()) {
       const id = card.row.id;
-      if (card.own.slice(CARD_PROPERTIES).some(has)) opened.add(id);
-      if (card.inherited.some(has)) opened.add(`${id} inherited`);
+      if (card.all.slice(CARD_PROPERTIES).some(has)) opened.add(id);
     }
     return opened;
   });
@@ -771,20 +649,9 @@ export class DataModelClassCardsComponent {
     set.set(next);
   }
 
-  /** The text cut where it has the searched text, to mark it. */
-  mark(text: string) {
-    return highlighted(text, this.query());
-  }
-
-  fileIcon(representation: string): string {
-    return FILE_KINDS.find(kind => kind.representation === representation)?.icon ?? 'insert_drive_file';
-  }
-
   /** Brings the class's card into view and outlines it a moment. */
   goTo(iri: string): void {
-    const card = Array.from(this._host.nativeElement.querySelectorAll<HTMLElement>('[data-iri]')).find(
-      element => element.dataset['iri'] === iri
-    );
+    const card = this._cardElements()[this.cards().findIndex(c => c.row.id === iri)]?.nativeElement;
     if (!card) return;
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     card.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });

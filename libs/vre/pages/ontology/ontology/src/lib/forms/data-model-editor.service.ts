@@ -465,21 +465,29 @@ export class DataModelEditorService implements DataModelEditor {
     return this._canDo(this._api.v2.onto.canDeleteResourceClass(classIri));
   }
 
+  /** Deletes the class once the API allows it and the user confirms; emits whether it was deleted. */
   deleteClass(classIri: string, label: string): Observable<boolean> {
-    return this._confirm
-      .afterConfirmation(this._translate.instant('pages.dataModels2.deleteClassConfirm', { class: label }))
-      .pipe(
-        switchMap(() =>
-          this._withEditing(classIri, editing =>
-            editing.currentOntology$.pipe(
-              filter(ontology => !!ontology?.classes[classIri]),
-              take(1),
-              switchMap(() => editing.deleteResourceClass$(classIri)),
-              map(() => true)
+    return this.canDeleteClass(classIri).pipe(
+      switchMap(check => {
+        if (!check.canDo) {
+          this._notify(this._translate.instant('pages.dataModels2.cannotDeleteClass'), check.reason);
+          return of(false);
+        }
+        return this._confirm
+          .afterConfirmation(this._translate.instant('pages.dataModels2.deleteClassConfirm', { class: label }))
+          .pipe(
+            switchMap(() =>
+              this._withEditing(classIri, editing =>
+                editing.currentOntology$.pipe(
+                  filter(ontology => !!ontology?.classes[classIri]),
+                  take(1),
+                  switchMap(() => this._saved(editing.deleteResourceClass$(classIri)))
+                )
+              )
             )
-          )
-        )
-      );
+          );
+      })
+    );
   }
 
   removeProperty(
@@ -599,17 +607,26 @@ export class DataModelEditorService implements DataModelEditor {
               property: ontology!.properties[propertyIri]?.label || propertyIri.split('#').pop()!,
               class: ontology!.classes[classIri].label || classIri.split('#').pop()!,
             };
-            return editing
-              .replacePropertiesOfResourceClass$(
-                classIri,
-                own.map(property => (property.propertyIndex === propertyIri ? { ...property, cardinality } : property))
-              )
-              .pipe(
-                (write: Observable<unknown>) => this._saved(write),
-                tap(saved => {
-                  if (saved && offerUndo) this._offerUndo(classIri, propertyIri, previous, cardinality, labels);
-                })
-              );
+            // Saved only once the API says the existing resources allow it.
+            return this.canSetCardinality(classIri, propertyIri, cardinality).pipe(
+              switchMap(check => {
+                if (!check.canDo) {
+                  this._notify(this._translate.instant('pages.dataModels2.cardinalityBlocked'), check.reason);
+                  return of(false);
+                }
+                return this._saved(
+                  editing.replacePropertiesOfResourceClass$(
+                    classIri,
+                    own.map(property =>
+                      property.propertyIndex === propertyIri ? { ...property, cardinality } : property
+                    )
+                  )
+                );
+              }),
+              tap(saved => {
+                if (saved && offerUndo) this._offerUndo(classIri, propertyIri, previous, cardinality, labels);
+              })
+            );
           })
         )
       )

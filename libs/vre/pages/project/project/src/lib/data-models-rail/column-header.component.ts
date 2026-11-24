@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, ElementRef, input, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, contentChild, input } from '@angular/core';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { ColumnResizeDirective } from '@dasch-swiss/vre/pages/data-browser';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -30,7 +32,6 @@ import { TableColumns } from './table-columns';
     <mat-menu #menu="matMenu" [xPosition]="menuPosition()">
       <!-- The menu stays open while its options are ticked, and only Escape closes it from the keyboard. -->
       <div
-        #filterMenu
         class="filter-menu"
         (click)="$event.stopPropagation()"
         (keydown)="$event.key !== 'Escape' && $event.stopPropagation()">
@@ -64,11 +65,11 @@ import { TableColumns } from './table-columns';
         text-overflow: ellipsis;
         font: 500 12px/16px var(--font-sans, Roboto, sans-serif);
         letter-spacing: 0.06em;
-        color: rgba(0, 0, 0, 0.6);
+        color: $black-60-opacity;
       }
 
       :host-context(th.filtered) .header-label {
-        color: #234a69;
+        color: $primary_800;
       }
 
       // The filter shows while its header is hovered or focused, or while it filters.
@@ -83,7 +84,7 @@ import { TableColumns } from './table-columns';
         border: 0;
         border-radius: 3px;
         background: transparent;
-        color: rgba(0, 0, 0, 0.45);
+        color: rgba($black, 0.45);
         cursor: pointer;
         visibility: hidden;
 
@@ -94,12 +95,12 @@ import { TableColumns } from './table-columns';
         }
 
         &:hover {
-          background: rgba(0, 0, 0, 0.06);
+          background: rgba($black, 0.06);
         }
 
         &.on {
           visibility: visible;
-          background: #d6e0e8;
+          background: $primary_100;
           color: $primary;
         }
 
@@ -133,7 +134,7 @@ import { TableColumns } from './table-columns';
         opacity: 0;
 
         &:hover {
-          background: rgba(51, 103, 144, 0.25);
+          background: rgba($primary, 0.25);
         }
 
         &:focus-visible {
@@ -168,10 +169,13 @@ export class ColumnHeaderComponent {
   readonly filterCy = input<string>();
   readonly resizeCy = input<string>();
 
-  private readonly _filterMenu = viewChild<ElementRef<HTMLElement>>('filterMenu');
+  /** The filter's text field, if it has one. */
+  private readonly _textField = contentChild(MatInput);
+  /** The filter's first option, if it has options. */
+  private readonly _firstOption = contentChild(MatCheckbox);
 
-  /** A filter typed in gets the focus as its menu opens, once the menu has focused itself. */
+  /** The filter's field, or its first option, gets the focus as its menu opens, once the menu has focused itself. */
   focusInput(): void {
-    setTimeout(() => this._filterMenu()?.nativeElement.querySelector('input')?.focus());
+    setTimeout(() => (this._textField() ?? this._firstOption())?.focus());
   }
 }

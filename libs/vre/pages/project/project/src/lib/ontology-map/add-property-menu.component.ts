@@ -96,6 +96,8 @@ import { AvailableProperties, DATA_MODEL_EDITOR, injectDataModelEditing } from '
   `,
   styles: [
     `
+      @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
+
       .add {
         margin-top: 4px;
         height: 32px;
@@ -124,12 +126,12 @@ import { AvailableProperties, DATA_MODEL_EDITOR, injectDataModelEditing } from '
 
       .details {
         font-size: 12px;
-        color: rgba(0, 0, 0, 0.6);
+        color: $black-60-opacity;
 
         code {
           font-family: 'Roboto Mono', monospace;
           font-size: 11.5px;
-          color: #336790;
+          color: $primary;
         }
       }
 
