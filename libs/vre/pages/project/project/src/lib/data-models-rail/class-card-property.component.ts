@@ -402,18 +402,19 @@ export const COMFORTABLE_CARD_SIZES = `
         vertical-align: -2px;
         color: $primary;
         cursor: help;
-        visibility: hidden;
+        // Transparent, not hidden, so the keyboard still reaches it.
+        opacity: 0;
         border-radius: 50%;
 
         &:focus-visible {
-          visibility: visible;
+          opacity: 1;
           outline: 2px solid $primary;
           outline-offset: 1px;
         }
       }
 
       :host(:hover) .info {
-        visibility: visible;
+        opacity: 1;
       }
 
       .local {
@@ -448,7 +449,9 @@ export const COMFORTABLE_CARD_SIZES = `
         border-radius: 99px;
         background: $cool_gray_50;
         box-shadow: -10px 0 8px -2px $cool_gray_50;
-        visibility: hidden;
+        // Transparent, not hidden, so Tab still reaches its buttons; it lets clicks through to the name it covers.
+        opacity: 0;
+        pointer-events: none;
       }
 
       .edit,
@@ -487,7 +490,8 @@ export const COMFORTABLE_CARD_SIZES = `
       :host(:hover) .actions,
       .actions:focus-within,
       .actions:has([aria-expanded='true']) {
-        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
       }
 
       button:focus-visible {

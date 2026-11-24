@@ -216,22 +216,15 @@ export class DataModelEditorService implements DataModelEditor {
     );
   }
 
+  /** Gives the class an existing property, after any save still running; emits whether it was saved. */
   addExistingProperty(classIri: string, propertyIri: string): Observable<boolean> {
-    return this._withEditing(classIri, editing =>
-      editing.currentOntology$.pipe(
-        filter(ontology => !!ontology?.classes[classIri]),
-        take(1),
-        switchMap(ontology => {
-          editing.assignPropertyToClass(propertyIri, ontology!.classes[classIri]);
-          // Saved once the data model, read again, gives the class the property.
-          return editing.currentOntology$.pipe(
-            filter(
-              read => !!read?.classes[classIri]?.propertiesList.some(property => property.propertyIndex === propertyIri)
-            ),
-            take(1)
-          );
-        }),
-        map(() => true)
+    return this._serially(() =>
+      this._withEditing(classIri, editing =>
+        editing.currentOntology$.pipe(
+          filter(ontology => !!ontology?.classes[classIri]),
+          take(1),
+          switchMap(ontology => this._saved(editing.assignPropertyToClass$(propertyIri, ontology!.classes[classIri])))
+        )
       )
     );
   }
@@ -266,40 +259,28 @@ export class DataModelEditorService implements DataModelEditor {
     );
   }
 
+  /** Saves the form order of the class's own properties, after any save still running; emits whether it was saved. */
   reorderProperties(classIri: string, propertyIris: string[]): Observable<boolean> {
-    return this._withEditing(classIri, editing =>
-      editing.currentOntology$.pipe(
-        filter(ontology => !!ontology?.classes[classIri]),
-        take(1),
-        switchMap(ontology => {
-          // The class's properties in form order; its own ones take the new order, in the places they had.
-          const current = [...ontology!.classes[classIri].propertiesList].sort(
-            (a, b) => (a.guiOrder ?? 0) - (b.guiOrder ?? 0)
-          );
-          const moved = new Set(propertyIris);
-          const next = [...propertyIris];
-          const ordered = current.map(property => {
-            if (!moved.has(property.propertyIndex)) return property;
-            return current.find(own => own.propertyIndex === next.shift())!;
-          });
-          const saved = ordered.map((property, index) => ({ ...property, guiOrder: index + 1 }));
-          editing.updateGuiOrderOfClassProperties(classIri, saved);
-          // Saved once the data model, read again, has the class's properties in that order.
-          const order = (properties: { propertyIndex: string; guiOrder?: number }[]) =>
-            properties
-              .filter(property => moved.has(property.propertyIndex))
-              .sort((a, b) => (a.guiOrder ?? 0) - (b.guiOrder ?? 0))
-              .map(property => property.propertyIndex)
-              .join(' ');
-          return editing.currentOntology$.pipe(
-            filter(
-              read =>
-                !!read?.classes[classIri] && order(read.classes[classIri].propertiesList) === propertyIris.join(' ')
-            ),
-            take(1)
-          );
-        }),
-        map(() => true)
+    return this._serially(() =>
+      this._withEditing(classIri, editing =>
+        editing.currentOntology$.pipe(
+          filter(ontology => !!ontology?.classes[classIri]),
+          take(1),
+          switchMap(ontology => {
+            // The class's properties in form order; its own ones take the new order, in the places they had.
+            const current = [...ontology!.classes[classIri].propertiesList].sort(
+              (a, b) => (a.guiOrder ?? 0) - (b.guiOrder ?? 0)
+            );
+            const moved = new Set(propertyIris);
+            const next = [...propertyIris];
+            const ordered = current.map(property => {
+              if (!moved.has(property.propertyIndex)) return property;
+              return current.find(own => own.propertyIndex === next.shift())!;
+            });
+            const saved = ordered.map((property, index) => ({ ...property, guiOrder: index + 1 }));
+            return this._saved(editing.updateGuiOrderOfClassProperties$(classIri, saved));
+          })
+        )
       )
     );
   }
@@ -533,21 +514,18 @@ export class DataModelEditorService implements DataModelEditor {
               return this._confirm
                 .afterConfirmation(this._translate.instant('pages.dataModels2.removeFromClassConfirm', labels))
                 .pipe(
-                  switchMap(() => {
-                    editing.removePropertyFromClass(card, classIri);
-                    // Saved once the data model, read again, no longer gives the class the property.
-                    return editing.currentOntology$.pipe(
-                      filter(
-                        read =>
-                          !!read?.classes[classIri] &&
-                          !read.classes[classIri].propertiesList.some(
-                            property => property.propertyIndex === propertyIri
-                          )
-                      ),
-                      take(1),
-                      map(() => true)
-                    );
-                  })
+                  // Saved from the data model as read once the saves before it are done, so its date is current.
+                  switchMap(() =>
+                    this._serially(() =>
+                      this._withEditing(classIri, current =>
+                        current.currentOntology$.pipe(
+                          filter(ontology => !!ontology?.classes[classIri]),
+                          take(1),
+                          switchMap(() => this._saved(current.removePropertyFromClass$(card, classIri)))
+                        )
+                      )
+                    )
+                  )
                 );
             })
           );
@@ -627,8 +605,7 @@ export class DataModelEditorService implements DataModelEditor {
                 own.map(property => (property.propertyIndex === propertyIri ? { ...property, cardinality } : property))
               )
               .pipe(
-                map(response => !(response instanceof ApiResponseError)),
-                catchError(() => of(false)),
+                (write: Observable<unknown>) => this._saved(write),
                 tap(saved => {
                   if (saved && offerUndo) this._offerUndo(classIri, propertyIri, previous, cardinality, labels);
                 })
@@ -657,6 +634,14 @@ export class DataModelEditorService implements DataModelEditor {
       .onAction()
       .pipe(switchMap(() => this._saveCardinality(classIri, propertyIri, previous, false)))
       .subscribe(saved => saved && this._project.reloadProject());
+  }
+
+  /** Whether a write went through: false on the API's error, whose message the app shows already. */
+  private _saved(write: Observable<unknown>): Observable<boolean> {
+    return write.pipe(
+      map(response => !(response instanceof ApiResponseError)),
+      catchError(() => of(false))
+    );
   }
 
   /** Runs `save` once the saves queued before it are done, emitting what it emits. */

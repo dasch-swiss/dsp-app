@@ -269,7 +269,11 @@ export class DataModelClassesComponent {
 
   /** Saves the form order a property was dragged to on a card; the data model is then read again. */
   reorderProperties({ classIri, propertyIris }: PropertyOrder): void {
-    this.editing.reorderProperties(classIri, propertyIris).pipe(takeUntilDestroyed(this._destroyRef)).subscribe();
+    this.editing
+      .reorderProperties(classIri, propertyIris)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      // Not saved, the cards show the saved order again.
+      .subscribe(saved => !saved && this._cards()?.forgetOrder(classIri));
   }
 
   toggleAllCards(): void {
@@ -331,6 +335,7 @@ export class DataModelClassesComponent {
   });
 
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
+  private readonly _cards = viewChild(DataModelClassCardsComponent);
 
   constructor() {
     // Arriving on the page, typing finds what it lists.

@@ -511,7 +511,11 @@ export class ResourceClassPanelComponent {
     moveItemInArray(moved, event.previousIndex, event.currentIndex);
     const order = moved.filter(id => this.ownIds().has(id));
     this._dragged.set({ classIri, order });
-    this.editing?.reorderProperties(classIri, order).pipe(takeUntilDestroyed(this._destroyRef)).subscribe();
+    this.editing
+      ?.reorderProperties(classIri, order)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      // Not saved, the properties go back to their saved order.
+      .subscribe(saved => !saved && this._dragged.set(undefined));
   }
 
   /** Takes the property off the class, once checked and confirmed; the data model is then read again. */

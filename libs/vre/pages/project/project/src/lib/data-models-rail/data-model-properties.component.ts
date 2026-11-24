@@ -572,7 +572,9 @@ const COLUMN_LABELS: Record<Column, string> = {
       // The row's icons, small, shown on hover or with the focus.
       .row-actions {
         display: inline-flex;
-        visibility: hidden;
+        // Transparent, not hidden, so Tab still reaches its buttons.
+        opacity: 0;
+        pointer-events: none;
         .mat-mdc-icon-button {
           // Sized for the 18px icon, which sits off-centre in Material's 24px otherwise.
           --mat-icon-button-icon-size: 18px;
@@ -590,7 +592,8 @@ const COLUMN_LABELS: Record<Column, string> = {
 
       .mat-mdc-row:hover .row-actions,
       .row-actions:focus-within {
-        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
       }
 
       // A row only shows: clicking it does nothing, only its fold arrow, pen and bin act.

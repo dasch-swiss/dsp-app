@@ -488,7 +488,9 @@ export interface PropertyOrder {
       // The class's menu: shown over the header, while open or with the focus; its dots drawn smaller, as tall as the
       // chevron looks.
       .menu-button {
-        visibility: hidden;
+        // Transparent, not hidden, so Tab still reaches it.
+        opacity: 0;
+        pointer-events: none;
 
         mat-icon {
           font-size: 20px;
@@ -500,7 +502,8 @@ export interface PropertyOrder {
       .card-head:hover .menu-button,
       .menu-button[aria-expanded='true'],
       .menu-button:focus-visible {
-        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
       }
 
       // The checkboxes' columns, named once over the properties, above the two boxes of each row.
@@ -788,6 +791,15 @@ export class DataModelClassCardsComponent {
     this.flashed.set(iri);
     clearTimeout(this._flashTimer);
     this._flashTimer = setTimeout(() => this.flashed.set(undefined), FLASH_MS);
+  }
+
+  /** Shows the class's properties in their saved order again, after a dragged order failed to save. */
+  forgetOrder(classIri: string): void {
+    this._dragged.update(dragged => {
+      const next = new Map(dragged);
+      next.delete(classIri);
+      return next;
+    });
   }
 
   /**

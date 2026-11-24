@@ -339,21 +339,23 @@ export class OntologyEditService {
 
   assignPropertyToClass(propertyId: string, classDefinition: ClassDefinition) {
     this._isTransacting.next(true);
+    this.assignPropertyToClass$(propertyId, classDefinition).subscribe(
+      (_res: ResourceClassDefinitionWithAllLanguages) => {
+        this._loadOntology(this.ontologyId, propertyId);
+      }
+    );
+  }
 
+  /** Gives the class the property, after its others, optional and single; emits the API's answer, or errors, once. */
+  assignPropertyToClass$(propertyId: string, classDefinition: ClassDefinition) {
     const guiOrder = Math.max(0, ...classDefinition.propertiesList.map(p => p.guiOrder ?? 0)) + 1;
     const propCard: IHasProperty = {
       propertyIndex: propertyId,
       cardinality: 1, // default: not required, not multiple
       guiOrder,
     };
-
     const updateOntology = MakeOntologyFor.updateCardinalityOfResourceClass(this.ctx, classDefinition.id, [propCard]);
-    this._dspApiConnection.v2.onto
-      .addCardinalityToResourceClass(updateOntology)
-      .pipe(take(1))
-      .subscribe((_res: ResourceClassDefinitionWithAllLanguages) => {
-        this._loadOntology(this.ontologyId, propertyId);
-      });
+    return this._dspApiConnection.v2.onto.addCardinalityToResourceClass(updateOntology).pipe(take(1));
   }
 
   /**
@@ -361,14 +363,16 @@ export class OntologyEditService {
    * we like to remove to deleteCardinalityFromResourceClass in order to remove that property ...
    */
   removePropertyFromClass(property: IHasProperty, classId: string) {
-    const updateOntology = MakeOntologyFor.updateCardinalityOfResourceClass(this.ctx, classId, [property]);
     this._isTransacting.next(true);
-    this._dspApiConnection.v2.onto
-      .deleteCardinalityFromResourceClass(updateOntology)
-      .pipe(take(1))
-      .subscribe(() => {
-        this._loadOntology(this.ontologyId, classId);
-      });
+    this.removePropertyFromClass$(property, classId).subscribe(() => {
+      this._loadOntology(this.ontologyId, classId);
+    });
+  }
+
+  /** Takes the property off the class; emits the API's answer, or errors, once. */
+  removePropertyFromClass$(property: IHasProperty, classId: string) {
+    const updateOntology = MakeOntologyFor.updateCardinalityOfResourceClass(this.ctx, classId, [property]);
+    return this._dspApiConnection.v2.onto.deleteCardinalityFromResourceClass(updateOntology).pipe(take(1));
   }
 
   /**
@@ -442,13 +446,15 @@ export class OntologyEditService {
    */
   updateGuiOrderOfClassProperties(classId: string, properties: IHasProperty[]) {
     this._isTransacting.next(true);
+    this.updateGuiOrderOfClassProperties$(classId, properties).subscribe(() => {
+      this._loadOntology(this.ontologyId, classId);
+    });
+  }
+
+  /** Saves the form order of the class's properties; emits the API's answer, or errors, once. */
+  updateGuiOrderOfClassProperties$(classId: string, properties: IHasProperty[]) {
     const updateOntology = MakeOntologyFor.updateCardinalityOfResourceClass(this.ctx, classId, properties);
-    this._dspApiConnection.v2.onto
-      .replaceGuiOrderOfCardinalities(updateOntology)
-      .pipe(take(1))
-      .subscribe(() => {
-        this._loadOntology(this.ontologyId, classId);
-      });
+    return this._dspApiConnection.v2.onto.replaceGuiOrderOfCardinalities(updateOntology).pipe(take(1));
   }
 
   /**
