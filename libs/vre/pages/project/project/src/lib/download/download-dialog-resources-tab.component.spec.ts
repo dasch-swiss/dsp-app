@@ -155,6 +155,16 @@ describe('DownloadDialogResourcesTabComponent', () => {
       );
     });
 
+    it('sends the resource IRIs when the download is limited to them', () => {
+      component.resourceIris = ['http://rdfh.ch/0001/a', 'http://rdfh.ch/0001/b'];
+      component.downloadCsv();
+      expect(mockHttp.post).toHaveBeenCalledWith(
+        `${basePath}/v3/export/resources`,
+        expect.objectContaining({ resourceIris: ['http://rdfh.ch/0001/a', 'http://rdfh.ch/0001/b'] }),
+        expect.anything()
+      );
+    });
+
     it('passes includeIris=true when toggled', () => {
       component.includeResourceIris = true;
       component.downloadCsv();

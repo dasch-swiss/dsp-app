@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { KnoraApiConnection, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { KnoraApiConnection, ReadResource, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
   BulkEditLauncher,
@@ -26,6 +26,7 @@ import {
   from,
   map,
   mergeMap,
+  Observable,
   of,
   ReplaySubject,
   startWith,
@@ -35,7 +36,7 @@ import {
 } from 'rxjs';
 import { DataClassQueryService } from './data-class-query.service';
 import { DataClassUrlStateService } from './data-class-url-state.service';
-import { DownloadScope } from './download/download-dialog-resources-tab.component';
+import { DownloadScope, EXPORT_MAX_RESOURCE_IRIS } from './download/download-dialog-resources-tab.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
@@ -60,7 +61,7 @@ const COLLECT_CONCURRENCY = 4;
       <app-resource-list-selection (bulkEdited)="bulkEdited.emit()">
         <ng-container
           [ngTemplateOutlet]="downloadButton"
-          [ngTemplateOutletContext]="{ scope: 'selection', count: selected.length }" />
+          [ngTemplateOutletContext]="{ scope: 'selection', count: selected.length, selected }" />
       </app-resource-list-selection>
     } @else {
       <div class="results-bar" data-cy="results-bar">
@@ -120,9 +121,9 @@ const COLLECT_CONCURRENCY = 4;
     }
 
     <!-- Hidden while the count loads and when there is nothing to download. -->
-    <ng-template #downloadButton let-scope="scope" let-count="count">
+    <ng-template #downloadButton let-scope="scope" let-count="count" let-selected="selected">
       @if (count) {
-        <button mat-stroked-button (click)="openDownloadDialog(count, scope)" data-cy="download-btn">
+        <button mat-stroked-button (click)="download(count, scope, selected)" data-cy="download-btn">
           <mat-icon>download</mat-icon>
           {{
             (scope === 'class'
@@ -263,7 +264,39 @@ export class DataClassResultsBarComponent {
     )
   );
 
-  openDownloadDialog(resourceCount: number, scope: DownloadScope) {
+  /**
+   * Download the class, the ticked rows, or what the search and filters keep. The export takes IRIs for the
+   * last two, so a search's matches are read page by page first, like for a bulk edit.
+   */
+  download(resourceCount: number, scope: DownloadScope, selected?: ReadResource[]): void {
+    if (scope === 'selection') {
+      this._openDownloadDialog(
+        resourceCount,
+        scope,
+        selected?.map(resource => resource.id)
+      );
+      return;
+    }
+    if (scope === 'class') {
+      this._openDownloadDialog(resourceCount, scope);
+      return;
+    }
+    if (resourceCount > EXPORT_MAX_RESOURCE_IRIS) {
+      this._notification.openSnackBar(
+        this._translate.instant('pages.dataBrowser.resultsBar.downloadTooMany', { max: EXPORT_MAX_RESOURCE_IRIS }),
+        'error'
+      );
+      return;
+    }
+    this._collectMatchingIris(resourceCount)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: iris => this._openDownloadDialog(iris.length, scope, iris),
+        error: () => this._collectFailed('pages.dataBrowser.downloadDialog.downloadError'),
+      });
+  }
+
+  private _openDownloadDialog(resourceCount: number, scope: DownloadScope, resourceIris?: string[]) {
     const resClass = this._resClass;
     // The columns come from the class definition, not from a selected row.
     this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(resClass.id).subscribe(classDefinitions => {
@@ -277,6 +310,7 @@ export class DataClassResultsBarComponent {
           {
             resourceCount,
             scope,
+            resourceIris,
             resClass,
             classLabel: this._stringifyStringLiteralPipe.transform(resClass.labels),
             properties,
@@ -301,30 +335,8 @@ export class DataClassResultsBarComponent {
       narrowed ? 'pages.dataBrowser.resultsBar.bulkEditScopeFiltered' : 'pages.dataBrowser.resultsBar.bulkEditScopeAll',
       { count: total, class: this._stringifyStringLiteralPipe.transform(this._resClass.labels) }
     );
-    const pageSize = this.resourceResult.MAX_RESULTS_PER_PAGE;
-    const pageCount = Math.ceil(total / pageSize);
-    const projectIri = this._projectPageService.currentProject.id;
-    let pagesRead = 0;
-    this.collecting.set(0);
-
-    this._query.query$
+    this._collectMatchingIris(total)
       .pipe(
-        first(),
-        switchMap(query =>
-          from(Array.from({ length: pageCount }, (_, pageIndex) => pageIndex)).pipe(
-            mergeMap(
-              pageIndex =>
-                this._dspApiConnection.v2.search.doExtendedSearch(withOffset(query, pageIndex), projectIri).pipe(
-                  map(response => ({ pageIndex, iris: response.resources.map(resource => resource.id) })),
-                  tap(() => this.collecting.set(Math.round((++pagesRead / pageCount) * 100)))
-                ),
-              COLLECT_CONCURRENCY
-            ),
-            toArray()
-          )
-        ),
-        map(pages => pages.sort((a, b) => a.pageIndex - b.pageIndex).flatMap(page => page.iris)),
-        tap(() => this.collecting.set(null)),
         switchMap(iris => this._bulkEditLauncher.open(iris, scope)),
         takeUntilDestroyed(this._destroyRef)
       )
@@ -333,14 +345,44 @@ export class DataClassResultsBarComponent {
           changedIris?.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
           if (changedIris?.length) this.bulkEdited.emit();
         },
-        error: () => {
-          this.collecting.set(null);
-          this._notification.openSnackBar(
-            this._translate.instant('pages.dataBrowser.resultsBar.collectFailed'),
-            'error'
-          );
-        },
+        error: () => this._collectFailed('pages.dataBrowser.resultsBar.collectFailed'),
       });
+  }
+
+  /**
+   * The IRIs of every resource the current query matches, across all its pages, in result order. dsp-api has
+   * no endpoint for that, so the pages are read a few at a time, with progress in `collecting`.
+   */
+  private _collectMatchingIris(total: number): Observable<string[]> {
+    const pageSize = this.resourceResult.MAX_RESULTS_PER_PAGE;
+    const pageCount = Math.ceil(total / pageSize);
+    const projectIri = this._projectPageService.currentProject.id;
+    let pagesRead = 0;
+    this.collecting.set(0);
+
+    return this._query.query$.pipe(
+      first(),
+      switchMap(query =>
+        from(Array.from({ length: pageCount }, (_, pageIndex) => pageIndex)).pipe(
+          mergeMap(
+            pageIndex =>
+              this._dspApiConnection.v2.search.doExtendedSearch(withOffset(query, pageIndex), projectIri).pipe(
+                map(response => ({ pageIndex, iris: response.resources.map(resource => resource.id) })),
+                tap(() => this.collecting.set(Math.round((++pagesRead / pageCount) * 100)))
+              ),
+            COLLECT_CONCURRENCY
+          ),
+          toArray()
+        )
+      ),
+      map(pages => pages.sort((a, b) => a.pageIndex - b.pageIndex).flatMap(page => page.iris)),
+      tap(() => this.collecting.set(null))
+    );
+  }
+
+  private _collectFailed(messageKey: string): void {
+    this.collecting.set(null);
+    this._notification.openSnackBar(this._translate.instant(messageKey), 'error');
   }
 }
 

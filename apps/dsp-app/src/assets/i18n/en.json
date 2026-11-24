@@ -772,6 +772,7 @@
         "download": "Download",
         "bulkEditAll": "Bulk edit all",
         "collecting": "Loading resources… {{percent}}%",
+        "downloadTooMany": "Downloading search results is limited to {{max}} resources. Narrow the search or download the whole class.",
         "collectFailed": "The resources to edit could not be loaded.",
         "bulkEditScopeAll": "All {{count}} {{class}} resources",
         "bulkEditScopeFiltered": "{{count}} {{class}} resources matching your search and filters"

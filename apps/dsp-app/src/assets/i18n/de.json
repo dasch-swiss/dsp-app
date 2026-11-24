@@ -772,6 +772,7 @@
         "download": "Herunterladen",
         "bulkEditAll": "Alle bearbeiten",
         "collecting": "Ressourcen werden geladen… {{percent}}%",
+        "downloadTooMany": "Der Download von Suchergebnissen ist auf {{max}} Ressourcen begrenzt. Grenzen Sie die Suche ein oder laden Sie die ganze Klasse herunter.",
         "collectFailed": "Die zu bearbeitenden Ressourcen konnten nicht geladen werden.",
         "bulkEditScopeAll": "Alle {{count}} Ressourcen der Klasse {{class}}",
         "bulkEditScopeFiltered": "{{count}} Ressourcen der Klasse {{class}}, die Ihrer Suche und Ihren Filtern entsprechen"

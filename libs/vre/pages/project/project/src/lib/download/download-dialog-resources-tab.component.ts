@@ -29,6 +29,9 @@ const SCOPE_NOTE_KEYS: Record<DownloadScope, string> = {
   selection: 'pages.dataBrowser.downloadDialog.scopeSelection',
 };
 
+/** dsp-api rejects an export of more resource IRIs than this. */
+export const EXPORT_MAX_RESOURCE_IRIS = 10_000;
+
 // U+FEFF, encoded by Blob as the three-byte UTF-8 BOM (ef bb bf).
 const UTF8_BOM = '﻿';
 
@@ -278,11 +281,10 @@ export class DownloadDialogResourcesTabComponent {
   @Input({ required: true }) properties!: PropertyInfoValues[];
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) resourceCount!: number;
-  /**
-   * Which resources the download stands for. TODO(DEV-7912): `/v3/export/resources` only takes a
-   * class, so `search` and `selection` still export the whole class until dsp-api accepts them.
-   */
+  /** Which resources the download stands for; only shown in the note above the button. */
   @Input() scope: DownloadScope = 'class';
+  /** The resources to export; the whole class when absent. */
+  @Input() resourceIris?: string[];
   @Output() afterClosed = new EventEmitter<void>();
 
   get scopeNoteKey(): string {
@@ -329,6 +331,7 @@ export class DownloadDialogResourcesTabComponent {
       language: this._localizationService.currentLanguage,
       includeIris: this.includeResourceIris,
       includeArkUrls: this.includeArkUrls,
+      ...(this.resourceIris && { resourceIris: this.resourceIris }),
     };
 
     // Call HttpClient directly instead of the generated APIV3ApiService: now that dsp-api streams the

@@ -16,6 +16,8 @@ export interface DownloadDialogData {
   properties: PropertyInfoValues[];
   /** Which resources `resourceCount` counts; the whole class when absent. */
   scope?: DownloadScope;
+  /** The resources to export, for the `search` and `selection` scopes; the whole class when absent. */
+  resourceIris?: string[];
 }
 
 @Component({
@@ -40,6 +42,7 @@ export interface DownloadDialogData {
       [resourceClassIri]="data.resClass.id"
       [resourceCount]="data.resourceCount"
       [scope]="data.scope ?? 'class'"
+      [resourceIris]="data.resourceIris"
       (afterClosed)="dialogRef.close()" />
   `,
   styles: [

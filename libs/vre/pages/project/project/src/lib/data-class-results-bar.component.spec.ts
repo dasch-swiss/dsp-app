@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { ReadResource, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { BulkEditLauncher, MultipleViewerService, ResourceClassCountApi } from '@dasch-swiss/vre/pages/data-browser';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
@@ -134,9 +134,9 @@ describe('DataClassResultsBarComponent', () => {
     });
   });
 
-  describe('openDownloadDialog', () => {
+  describe('download', () => {
     it('opens the download dialog as a side panel', () => {
-      create().openDownloadDialog(10, 'class');
+      create().download(10, 'class');
       expect(dialog.open).toHaveBeenCalledWith(
         DownloadDialogComponent,
         // A full-height right-side panel keeps the actions visible while only the property list scrolls.
@@ -145,7 +145,7 @@ describe('DataClassResultsBarComponent', () => {
     });
 
     it('passes the count, its scope and the class to the dialog', () => {
-      create().openDownloadDialog(2, 'selection');
+      create().download(2, 'selection', [{ id: 'iri-a' }, { id: 'iri-b' }] as ReadResource[]);
       const config = dialog.open.mock.calls[0][1];
       expect(config.data.resourceCount).toBe(2);
       expect(config.data.scope).toBe('selection');
@@ -153,8 +153,51 @@ describe('DataClassResultsBarComponent', () => {
       expect(config.data.classLabel).toBe('Test Resource Class');
     });
 
+    it('exports the whole class without resource IRIs', () => {
+      create().download(66, 'class');
+      expect(dialog.open.mock.calls[0][1].data.resourceIris).toBeUndefined();
+      expect(doExtendedSearch).not.toHaveBeenCalled();
+    });
+
+    it('exports the ticked rows by their IRIs', () => {
+      create().download(2, 'selection', [{ id: 'iri-a' }, { id: 'iri-b' }] as ReadResource[]);
+      expect(dialog.open.mock.calls[0][1].data.resourceIris).toEqual(['iri-a', 'iri-b']);
+      expect(doExtendedSearch).not.toHaveBeenCalled();
+    });
+
+    it('reads every result page and exports all matches, in result order', () => {
+      const component = create();
+
+      // 30 results: two pages of 25.
+      component.download(30, 'search');
+
+      const config = dialog.open.mock.calls[0][1];
+      expect(config.data.scope).toBe('search');
+      expect(config.data.resourceIris).toEqual(['iri-0-a', 'iri-0-b', 'iri-1-a', 'iri-1-b']);
+      expect(config.data.resourceCount).toBe(4);
+      expect(component.collecting()).toBeNull();
+    });
+
+    it('refuses a search larger than the export accepts, without reading it', () => {
+      create().download(10_001, 'search');
+      expect(doExtendedSearch).not.toHaveBeenCalled();
+      expect(dialog.open).not.toHaveBeenCalled();
+      expect(notification.openSnackBar).toHaveBeenCalledWith(expect.any(String), 'error');
+    });
+
+    it('reports a failed page and opens no dialog', () => {
+      doExtendedSearch.mockReturnValueOnce(throwError(() => new Error('500')));
+      const component = create();
+
+      component.download(30, 'search');
+
+      expect(dialog.open).not.toHaveBeenCalled();
+      expect(notification.openSnackBar).toHaveBeenCalledWith(expect.any(String), 'error');
+      expect(component.collecting()).toBeNull();
+    });
+
     it('lists the editable properties of the class, not of a selected resource', () => {
-      create().openDownloadDialog(10, 'class');
+      create().download(10, 'class');
       const config = dialog.open.mock.calls[0][1];
       expect(config.data.properties.map((p: { propDef: { id: string } }) => p.propDef.id)).toEqual([
         'prop:title',

@@ -772,6 +772,7 @@
         "download": "Télécharger",
         "bulkEditAll": "Tout modifier",
         "collecting": "Chargement des ressources… {{percent}} %",
+        "downloadTooMany": "Le téléchargement des résultats de recherche est limité à {{max}} ressources. Affinez la recherche ou téléchargez toute la classe.",
         "collectFailed": "Les ressources à modifier n’ont pas pu être chargées.",
         "bulkEditScopeAll": "Les {{count}} ressources de la classe {{class}}",
         "bulkEditScopeFiltered": "{{count}} ressources de la classe {{class}} correspondant à votre recherche et à vos filtres"
