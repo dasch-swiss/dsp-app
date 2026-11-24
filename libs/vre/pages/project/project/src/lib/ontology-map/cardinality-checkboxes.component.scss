@@ -91,6 +91,19 @@ app-cardinality-checkboxes .mat-mdc-checkbox {
   // Material's touch target is wider than a card row; the row stays compact.
   margin: -3px 0;
 
+  // The two boxes overlap, one above the other: Material's touch target and the boxes' edges would take a click meant
+  // for the box above. Only each box itself and its words are clicked.
+  pointer-events: none;
+
+  .mat-mdc-checkbox-touch-target {
+    display: none;
+  }
+
+  .mdc-checkbox__native-control,
+  .mdc-label {
+    pointer-events: auto;
+  }
+
   // Material draws an 18 px box: drawn at 14 px, in the room its smaller state layer leaves.
   .mdc-checkbox {
     transform: scale(var(--density-check-scale, 0.78));
