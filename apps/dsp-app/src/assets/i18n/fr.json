@@ -708,6 +708,8 @@
       "layout": "Disposition",
       "fit": "Ajuster à l'écran",
       "graphFailed": "Le graphe n'a pas pu être chargé.",
+      "graphEmpty": "Ce modèle de données est vide. Créez une classe de ressource pour la voir ici.",
+      "graphNoMatch": "Aucune classe ne correspond au filtre.",
       "legendDashed": "autre modèle de données",
       "classFilter": "Classe",
       "allClasses": "Toutes les classes",

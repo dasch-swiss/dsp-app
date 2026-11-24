@@ -147,6 +147,7 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
                 class="view"
                 [remember]="true"
                 [graph]="graphShown() ?? graph"
+                [emptyText]="graph.nodes.length ? 'pages.ontologyMap.graphNoMatch' : 'pages.ontologyMap.graphEmpty'"
                 [selectedIri]="classIri()"
                 [size]="size()"
                 [levelLabels]="levelLabels()"

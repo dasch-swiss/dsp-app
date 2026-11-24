@@ -618,7 +618,10 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         {{ 'pages.ontologyMap.expandLinks' | translate: { count: hint.count } }}
       </div>
     }
-    @if (!laidOut() && !failed()) {
+    @if (isEmpty()) {
+      <!-- Nothing to lay out, so no layout ever settles: said instead of an endless spinner. -->
+      <p class="empty" data-cy="ontology-graph-empty">{{ emptyText() | translate }}</p>
+    } @else if (!laidOut() && !failed()) {
       <mat-progress-spinner class="laying-out" mode="indeterminate" diameter="32" />
     }
     @if (failed()) {
@@ -662,7 +665,8 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
           }
         }
       </div>
-    } @else {
+    } @else if (!isEmpty()) {
+      <!-- With no class drawn, there is nothing for a legend to explain. -->
       <div class="legend" aria-hidden="true">
         <span class="legend-item">
           <svg width="28" height="8" viewBox="0 0 28 8">
@@ -716,6 +720,15 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+      }
+
+      .empty {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
+        color: $cool_gray_500;
       }
 
       .failed {
@@ -847,6 +860,10 @@ const styleFor = (f: number, text: GraphTextOptions): StylesheetJson => [
 export class OntologyGraphComponent {
   /** The data model to draw. */
   readonly graph = input.required<DataModelGraph>();
+  /** Whether the data model has no class to draw. */
+  readonly isEmpty = computed(() => this.graph().nodes.length === 0);
+  /** The translation key said when there is no class to draw: the data model has none, or the filter left none. */
+  readonly emptyText = input('pages.ontologyMap.graphEmpty');
   /** IRI of the class to outline, if any. */
   readonly selectedIri = input<string | undefined>(undefined);
   /** Colour per class, from the whole data model so a filter keeps them; see `familyColors`. */

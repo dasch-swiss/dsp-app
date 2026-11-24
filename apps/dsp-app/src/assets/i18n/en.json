@@ -708,6 +708,8 @@
       "layout": "Layout",
       "fit": "Fit to screen",
       "graphFailed": "The graph could not be loaded.",
+      "graphEmpty": "This data model is empty. Create a resource class to see it here.",
+      "graphNoMatch": "No class matches the filter.",
       "legendDashed": "other data model",
       "classFilter": "Class",
       "allClasses": "All classes",
