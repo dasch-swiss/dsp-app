@@ -4,7 +4,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
 import { KnoraApiConnection, ReadResource, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
 import {
@@ -89,16 +88,13 @@ const COLLECT_CONCURRENCY = 4;
             [ngTemplateOutletContext]="{ scope: 'class', count: classCount }" />
         }
 
-        @let canEdit = (hasProjectMemberRights$ | async) === true;
-        <div
-          class="tooltip-anchor"
-          [matTooltip]="'pages.dataBrowser.resourceListSelection.bulkEditNoRights' | translate"
-          [matTooltipDisabled]="canEdit">
+        <!-- Only project members may edit, so the button is not offered to anyone else. -->
+        @if (hasProjectMemberRights$ | async) {
           <button
             mat-flat-button
             class="tonal"
             data-cy="bulk-edit-all-btn"
-            [disabled]="!canEdit || !total || collecting() !== null"
+            [disabled]="!total || collecting() !== null"
             (click)="bulkEditAll(total ?? 0, narrowed)">
             <mat-icon>edit_note</mat-icon>
             @let progress = collecting();
@@ -116,7 +112,7 @@ const COLLECT_CONCURRENCY = 4;
               }
             }
           </button>
-        </div>
+        }
       </div>
     }
 
@@ -177,9 +173,6 @@ const COLLECT_CONCURRENCY = 4;
         font-weight: 500;
         color: rgba(0, 0, 0, 0.87);
       }
-      .tooltip-anchor {
-        display: inline-block;
-      }
       .tonal:not([disabled]) {
         background-color: #d6e0e8;
         color: #264c6a;
@@ -209,7 +202,6 @@ const COLLECT_CONCURRENCY = 4;
     NgTemplateOutlet,
     MatButton,
     MatIcon,
-    MatTooltip,
     TranslatePipe,
     ResourceListSelectionComponent,
   ],

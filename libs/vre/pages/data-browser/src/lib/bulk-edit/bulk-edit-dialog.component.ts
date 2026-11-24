@@ -190,6 +190,12 @@ const READ_CHUNK_SIZE = 25;
                   </p>
                 }
               }
+              @if (plan()?.noRightsCount; as noRightsCount) {
+                <p class="info" role="status" data-cy="bulk-edit-no-rights">
+                  <mat-icon aria-hidden="true">lock</mat-icon>
+                  {{ 'pages.dataBrowser.bulkEdit.noRightsSkipped' | translate: { count: noRightsCount } }}
+                </p>
+              }
               @if (listLoadFailed()) {
                 <p class="error" data-cy="bulk-edit-list-load-failed">
                   {{ 'pages.dataBrowser.bulkEdit.listLoadFailed' | translate }}
@@ -456,7 +462,8 @@ const READ_CHUNK_SIZE = 25;
       .only-empty .hint {
         margin: 0 0 0 40px;
       }
-      .warning {
+      .warning,
+      .info {
         display: flex;
         align-items: center;
         gap: 8px;
@@ -466,6 +473,13 @@ const READ_CHUNK_SIZE = 25;
         background: #fef3c7; /* $amber-100 */
         color: #78350f; /* $amber-900 */
         font-size: 13px;
+      }
+      .info {
+        background: #f3f4f6; /* $cool-gray-100 */
+        color: #374151; /* $cool-gray-700 */
+      }
+      .info mat-icon {
+        color: #6b7280; /* $cool-gray-500 */
       }
       .warning mat-icon {
         color: #b45309; /* $amber-700 */

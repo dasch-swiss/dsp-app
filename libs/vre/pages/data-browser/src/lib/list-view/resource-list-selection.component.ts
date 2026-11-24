@@ -44,23 +44,18 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
         }
         <!-- The host's actions for the same selection, e.g. Download. -->
         <ng-content />
-        @if (multipleViewerService.selectedResources$ | async; as selectedResources) {
-          @let canEdit = (canEdit$ | async) === true;
+        <!-- Only project members may edit, so the button is not offered to anyone else. -->
+        @if ((canEdit$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
           @let sameClass = isSameClass(selectedResources);
           <div
             style="display: inline-block"
-            [matTooltip]="
-              (canEdit
-                ? 'pages.dataBrowser.resourceListSelection.bulkEditSameClass'
-                : 'pages.dataBrowser.resourceListSelection.bulkEditNoRights'
-              ) | translate
-            "
-            [matTooltipDisabled]="canEdit && sameClass">
+            [matTooltip]="'pages.dataBrowser.resourceListSelection.bulkEditSameClass' | translate"
+            [matTooltipDisabled]="sameClass">
             <button
               mat-flat-button
               class="tonal"
               data-cy="bulk-edit-btn"
-              [disabled]="!canEdit || !sameClass"
+              [disabled]="!sameClass"
               (click)="openBulkEditDialog(selectedResources)">
               <mat-icon>edit_note</mat-icon>
               {{ 'pages.dataBrowser.resourceListSelection.bulkEdit' | translate }}

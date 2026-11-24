@@ -585,8 +585,7 @@
         "resourcesMustBeSameProject": "Resources must be from the same project",
         "bulkEdit": "Bulk edit",
         "bulkEditSameClass": "Bulk edit needs resources of the same class",
-        "clearSelection": "Clear selection",
-        "bulkEditNoRights": "You need edit rights in this project to bulk edit."
+        "clearSelection": "Clear selection"
       },
       "bulkEdit": {
         "title": "Bulk edit",
@@ -626,7 +625,8 @@
         "onlyEmptyHint": "Resources that already have a value keep it",
         "onlyEmptyMultipleHint": "Resources that already have values keep them",
         "onlyEmptyMultipleTooltip": "Properties with several values can only be filled where they are empty.",
-        "overwriteWarning": "Existing values overwritten: {{count}}"
+        "overwriteWarning": "Existing values overwritten: {{count}}",
+        "noRightsSkipped": "Resources you may not edit are skipped: {{count}}"
       },
       "resourcesList": {
         "resultsCount": "{{count}} results",

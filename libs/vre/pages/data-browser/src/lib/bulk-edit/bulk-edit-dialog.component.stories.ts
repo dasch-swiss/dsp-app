@@ -64,6 +64,7 @@ function letter(
   resource.id = id;
   resource.label = label;
   resource.type = TYPE;
+  resource.userHasPermission = 'M';
   resource.entityInfo = {
     classes: {
       [TYPE]: {
@@ -78,12 +79,15 @@ function letter(
   } as unknown as ReadResource['entityInfo'];
   resource.properties = {};
   if (ort) {
-    resource.properties[ORT] = [Object.assign(new ReadTextValueAsString(), { id: `${id}/values/ort`, text: ort })];
+    resource.properties[ORT] = [
+      Object.assign(new ReadTextValueAsString(), { id: `${id}/values/ort`, text: ort, userHasPermission: 'M' }),
+    ];
   }
   if (art) {
     resource.properties[ART] = [
       Object.assign(new ReadListValue(), {
         id: `${id}/values/art`,
+        userHasPermission: 'M',
         listNode: `${LIST_ROOT}/${art}`,
         listNodeLabel: art,
       }),
@@ -273,6 +277,34 @@ export const FillsAMultiValuePropertyWithSeveralValues: Story = {
       await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(1);
       await expect(canvas.getByText('Postkarte an Paul Amadeus Pisk')).toBeInTheDocument();
       await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply changes (2)');
+    });
+  },
+};
+
+export const SkipsResourcesTheUserMayNotEdit: Story = {
+  decorators: [
+    applicationConfig({
+      // A fresh postcard: the shared letters must keep their rights for the other stories.
+      providers: providers([
+        ...letters.slice(0, 2),
+        Object.assign(letter('http://rdfh.ch/0001/pisk', 'Postkarte an Paul Amadeus Pisk', undefined, 'postkarte'), {
+          userHasPermission: 'V',
+        }),
+      ]),
+    }),
+  ],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('Set a place where it is empty', async () => {
+      await userEvent.type(await canvas.findByTestId('bulk-edit-value-0'), 'Wien');
+    });
+    await step('The postcard the user may only view is skipped, and the panel says so', async () => {
+      await expect(canvas.getByTestId('bulk-edit-no-rights')).toHaveTextContent(
+        'Resources you may not edit are skipped: 1'
+      );
+      await expect(canvas.queryAllByTestId('bulk-edit-change')).toHaveLength(0);
+      await expect(canvas.getByTestId('bulk-edit-apply')).toBeDisabled();
     });
   },
 };

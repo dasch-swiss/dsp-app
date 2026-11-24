@@ -53,7 +53,10 @@ const providers = ({
       provide: MultipleViewerService,
       useValue: { selectedResources$: of(resources), selectMode: selected > 0, reset: () => {} },
     },
-    { provide: UserService, useValue: { user$: of({ id: 'u1' }), isSysAdmin$: of(canEdit) } },
+    {
+      provide: UserService,
+      useValue: { user$: of({ id: 'u1', permissions: { groupsPerProject: {} } }), isSysAdmin$: of(canEdit) },
+    },
     { provide: BulkEditLauncher, useValue: { open: () => of(undefined) } },
     { provide: MatDialog, useValue: { open: () => {} } },
   ];
@@ -123,11 +126,20 @@ export const OffersTheSelectionWhenRowsAreTicked: Story = {
   },
 };
 
-export const DisablesBulkEditWithoutEditRights: Story = {
+export const HidesBulkEditFromNonMembers: Story = {
   decorators: [applicationConfig({ providers: providers({ filters: ['creator'], canEdit: false }) })],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByTestId('bulk-edit-all-btn')).toBeDisabled();
-    await expect(canvas.getByTestId('download-btn')).toBeEnabled();
+    await expect(await canvas.findByTestId('download-btn')).toBeEnabled();
+    await expect(canvas.queryByTestId('bulk-edit-all-btn')).toBeNull();
+  },
+};
+
+export const HidesBulkEditOfASelectionFromNonMembers: Story = {
+  decorators: [applicationConfig({ providers: providers({ filters: ['creator'], selected: 2, canEdit: false }) })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByTestId('download-btn')).toHaveTextContent('Download 2');
+    await expect(canvas.queryByTestId('bulk-edit-btn')).toBeNull();
   },
 };

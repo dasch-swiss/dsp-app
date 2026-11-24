@@ -585,8 +585,7 @@
         "resourcesMustBeSameProject": "Die Ressourcen müssen zum selben Projekt gehören",
         "bulkEdit": "Mehrfach bearbeiten",
         "bulkEditSameClass": "Mehrfachbearbeitung braucht Ressourcen derselben Klasse",
-        "clearSelection": "Auswahl aufheben",
-        "bulkEditNoRights": "Für die Massenbearbeitung brauchen Sie Bearbeitungsrechte in diesem Projekt."
+        "clearSelection": "Auswahl aufheben"
       },
       "bulkEdit": {
         "title": "Mehrfach bearbeiten",
@@ -626,7 +625,8 @@
         "onlyEmptyHint": "Ressourcen, die bereits einen Wert haben, behalten ihn",
         "onlyEmptyMultipleHint": "Ressourcen, die bereits Werte haben, behalten sie",
         "onlyEmptyMultipleTooltip": "Eigenschaften mit mehreren Werten können nur dort gesetzt werden, wo sie leer sind.",
-        "overwriteWarning": "Überschriebene bestehende Werte: {{count}}"
+        "overwriteWarning": "Überschriebene bestehende Werte: {{count}}",
+        "noRightsSkipped": "Übersprungene Ressourcen, die Sie nicht bearbeiten dürfen: {{count}}"
       },
       "resourcesList": {
         "resultsCount": "{{count}} Ergebnisse",

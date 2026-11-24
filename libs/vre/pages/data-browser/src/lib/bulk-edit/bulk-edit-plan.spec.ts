@@ -54,6 +54,7 @@ function textValue(id: string, text: string, comment?: string): ReadTextValueAsS
   value.id = id;
   value.text = text;
   value.valueHasComment = comment;
+  value.userHasPermission = 'M';
   return value;
 }
 
@@ -63,6 +64,7 @@ function listValue(id: string, node: BulkEditListOption, comment?: string): Read
   value.listNode = node.id;
   value.listNodeLabel = node.label;
   value.valueHasComment = comment;
+  value.userHasPermission = 'M';
   return value;
 }
 
@@ -71,6 +73,7 @@ function resource(id: string, ...values: (ReadTextValueAsString | ReadListValue)
   res.id = id;
   res.label = `Label ${id}`;
   res.type = 'http://0.0.0.0:3333/ontology/0001/anything/v2#Thing';
+  res.userHasPermission = 'M';
   const text = values.filter(value => value instanceof ReadTextValueAsString);
   const list = values.filter(value => value instanceof ReadListValue);
   res.properties = {
@@ -210,6 +213,56 @@ describe('planBulkEdit', () => {
       const plan = planBulkEdit([resource('r1')], LABEL, { kind: 'setValue', values: [' '], onlyEmpty: false });
 
       expect(plan.changes).toEqual([]);
+    });
+  });
+
+  describe('rights', () => {
+    const viewOnly = <T extends { userHasPermission: string }>(entity: T): T =>
+      Object.assign(entity, { userHasPermission: 'V' });
+
+    it('LeavesOutAResourceTheUserMayNotModify', () => {
+      const plan = planBulkEdit([resource('r1'), viewOnly(resource('r2'))], TEXT, {
+        kind: 'setValue',
+        values: ['Brief'],
+        onlyEmpty: true,
+      });
+
+      expect(plan.changes.map(change => change.resource.id)).toEqual(['r1']);
+      expect(plan.noRightsCount).toBe(1);
+      expect(plan.unchangedCount).toBe(0);
+    });
+
+    it('LeavesOutAValueTheUserMayNotModifyOnAResourceTheyMay', () => {
+      const plan = planBulkEdit([resource('r1', viewOnly(textValue('v1', 'Karte')))], TEXT, {
+        kind: 'setValue',
+        values: ['Brief'],
+        onlyEmpty: false,
+      });
+
+      expect(plan.changes).toEqual([]);
+      expect(plan.noRightsCount).toBe(1);
+    });
+
+    it('LeavesOutALabelOnAResourceTheUserMayNotModify', () => {
+      const plan = planBulkEdit([viewOnly(resource('r1'))], LABEL, {
+        kind: 'setValue',
+        values: ['Brief'],
+        onlyEmpty: false,
+      });
+
+      expect(plan.changes).toEqual([]);
+      expect(plan.noRightsCount).toBe(1);
+    });
+
+    it('DoesNotCountAResourceWithNothingToChangeAsLackingRights', () => {
+      const plan = planBulkEdit([viewOnly(resource('r1', textValue('v1', 'Karte')))], TEXT, {
+        kind: 'setValue',
+        values: ['Brief'],
+        onlyEmpty: true,
+      });
+
+      expect(plan.noRightsCount).toBe(0);
+      expect(plan.unchangedCount).toBe(1);
     });
   });
 

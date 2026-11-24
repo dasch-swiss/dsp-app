@@ -67,6 +67,8 @@ export interface BulkEditPlan {
   changes: BulkEditChange[];
   /** Resources that keep every value as it is. */
   unchangedCount: number;
+  /** Resources left out, wholly or in part, because the user may not modify them or their values. */
+  noRightsCount: number;
 }
 
 /** The label, then the plain-text and list properties the user may edit on this resource. */
@@ -116,16 +118,32 @@ export function planBulkEdit(
 ): BulkEditPlan {
   const changes: BulkEditChange[] = [];
   let unchangedCount = 0;
+  let noRightsCount = 0;
 
   for (const resource of resources) {
     const resourceChanges = _changesFor(resource, target, operation);
-    if (resourceChanges.length === 0) {
+    const allowed = resourceChanges.filter(_canWrite);
+    if (allowed.length < resourceChanges.length) {
+      noRightsCount++;
+    } else if (resourceChanges.length === 0) {
       unchangedCount++;
     }
-    changes.push(...resourceChanges);
+    changes.push(...allowed);
   }
 
-  return { changes, unchangedCount };
+  return { changes, unchangedCount, noRightsCount };
+}
+
+/**
+ * dsp-api lets a user write a label or create a value with modify rights on the resource, and update a
+ * value with modify rights on that value.
+ */
+function _canWrite(change: BulkEditChange): boolean {
+  return _canModify(change.value ?? change.resource);
+}
+
+function _canModify(entity: { userHasPermission: string }): boolean {
+  return ['M', 'D', 'CR'].includes(entity.userHasPermission);
 }
 
 export type BulkEditRequest =

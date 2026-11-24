@@ -585,8 +585,7 @@
         "resourcesMustBeSameProject": "Les ressources doivent appartenir au même projet",
         "bulkEdit": "Modifier en masse",
         "bulkEditSameClass": "La modification en masse nécessite des ressources de la même classe",
-        "clearSelection": "Effacer la sélection",
-        "bulkEditNoRights": "Il faut des droits de modification dans ce projet pour modifier en masse."
+        "clearSelection": "Effacer la sélection"
       },
       "bulkEdit": {
         "title": "Modifier en masse",
@@ -626,7 +625,8 @@
         "onlyEmptyHint": "Les ressources qui ont déjà une valeur la gardent",
         "onlyEmptyMultipleHint": "Les ressources qui ont déjà des valeurs les gardent",
         "onlyEmptyMultipleTooltip": "Les propriétés à plusieurs valeurs ne peuvent être remplies que là où elles sont vides.",
-        "overwriteWarning": "Valeurs existantes écrasées : {{count}}"
+        "overwriteWarning": "Valeurs existantes écrasées : {{count}}",
+        "noRightsSkipped": "Ressources ignorées que vous ne pouvez pas modifier : {{count}}"
       },
       "resourcesList": {
         "resultsCount": "{{count}} résultats",
