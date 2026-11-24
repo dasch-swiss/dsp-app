@@ -101,9 +101,12 @@ export const ShowsAutocompleteResultsAfterTyping: Story = {
       await userEvent.type(canvasElement.querySelector('input[matInput]') as HTMLElement, 'Res');
     });
     await step('Autocomplete options are shown for matching resources', async () => {
+      // Waits for the result labels, not for any enabled option: the "type at least 3 characters"
+      // hint is disabled via `aria-disabled`, so a `:not([disabled])` selector matches it before the
+      // debounced search has run. Pixeleye snapshots the story once `play` resolves.
       await waitFor(async () => {
-        const options = document.querySelectorAll('mat-option:not([disabled])');
-        await expect(options.length).toBeGreaterThan(0);
+        const labels = Array.from(document.querySelectorAll('mat-option'), option => option.textContent?.trim());
+        await expect(labels).toEqual(expect.arrayContaining(['Resource One', 'Resource Two']));
       });
     });
   },
