@@ -91,8 +91,7 @@ const COLLECT_CONCURRENCY = 4;
         <!-- Only project members may edit, so the button is not offered to anyone else. -->
         @if (hasProjectMemberRights$ | async) {
           <button
-            mat-flat-button
-            class="tonal"
+            mat-stroked-button
             data-cy="bulk-edit-all-btn"
             [disabled]="!total || collecting() !== null"
             (click)="bulkEditAll(total ?? 0, narrowed)">
@@ -172,10 +171,6 @@ const COLLECT_CONCURRENCY = 4;
       .count {
         font-weight: 500;
         color: rgba(0, 0, 0, 0.87);
-      }
-      .tonal:not([disabled]) {
-        background-color: #d6e0e8;
-        color: #264c6a;
       }
       .mat-icon {
         width: 18px;

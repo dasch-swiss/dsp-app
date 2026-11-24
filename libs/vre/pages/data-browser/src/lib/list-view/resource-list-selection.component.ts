@@ -52,8 +52,7 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
             [matTooltip]="'pages.dataBrowser.resourceListSelection.bulkEditSameClass' | translate"
             [matTooltipDisabled]="sameClass">
             <button
-              mat-flat-button
-              class="tonal"
+              mat-stroked-button
               data-cy="bulk-edit-btn"
               [disabled]="!sameClass"
               (click)="openBulkEditDialog(selectedResources)">
@@ -104,10 +103,6 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
         display: flex;
         align-items: center;
         gap: 6px;
-      }
-      .tonal:not([disabled]) {
-        background-color: #d6e0e8;
-        color: #264c6a;
       }
       .mat-icon {
         width: 18px;
