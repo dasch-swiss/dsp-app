@@ -337,6 +337,11 @@ export const ResolvesAPeriodOfYearsAsOneRange: Story = {
     value: asValue(new KnoraPeriod(new KnoraDate('GREGORIAN', 'CE', 1612), new KnoraDate('GREGORIAN', 'CE', 1613))),
   },
   play: async ({ canvasElement, step }) => {
+    // The overlay is positioned once, from the trigger's box at the moment it opens. Opened before
+    // Roboto has loaded, it keeps the fallback font's offset after the text reflows, so the
+    // snapshot shifts with network timing.
+    await document.fonts.load(getComputedStyle(marker(canvasElement)).font);
+    await document.fonts.ready;
     await userEvent.click(marker(canvasElement));
 
     // From the first day of its start to the last day of its end: 01.01.1612 to 31.12.1613.
