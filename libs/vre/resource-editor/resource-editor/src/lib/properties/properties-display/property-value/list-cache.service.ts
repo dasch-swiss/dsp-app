@@ -7,9 +7,6 @@ import { Observable, shareReplay } from 'rxjs';
  * Whole lists by root IRI, each fetched once and replayed to every later subscriber.
  *
  * Not provided in root on purpose: a list edited in the ontology editor must not stay stale app-wide.
- * The cache lives as long as the component that provides it. A host that mounts many
- * `PropertyValuesComponent`s over the same lists (the data table) provides one to share across them;
- * otherwise each `PropertyValueService` keeps its own.
  */
 @Injectable()
 export class ListCacheService {

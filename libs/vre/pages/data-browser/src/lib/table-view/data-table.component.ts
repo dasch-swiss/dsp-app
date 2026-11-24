@@ -373,7 +373,6 @@ const FILLER_COLUMN_KEY = '__filler';
     // and the table renders no footnote list so `FootnoteService` needs only a shared sink.
     PropertiesDisplayService,
     FootnoteService,
-    // Each list is fetched once for the whole table, not once per cell.
     ListCacheService,
   ],
 })

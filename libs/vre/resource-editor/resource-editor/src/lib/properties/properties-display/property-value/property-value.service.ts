@@ -16,10 +16,7 @@ export class PropertyValueService {
   cardinality!: Cardinality;
   lastOpenedItem$ = new BehaviorSubject<number | null>(null);
 
-  /**
-   * The cache an ancestor provides (the data table, so all cells of a column share one request),
-   * else one of this property's own. Created here, in the injection context, because it injects the connection.
-   */
+  /** The fallback is created here, in the injection context, because it injects the connection. */
   private readonly _lists = inject(ListCacheService, { optional: true }) ?? new ListCacheService();
 
   get editModeData(): { resource: ReadResource; values: ReadValue[] } {
@@ -33,7 +30,7 @@ export class PropertyValueService {
 
   /**
    * Returns the list rooted at `rootIri`, fetched once and shared across all of this property's
-   * list values, or across the whole table when the table provides a `ListCacheService`.
+   * list values.
    */
   getList$(rootIri: string): Observable<ListNodeV2WithAllLanguages> {
     return this._lists.get$(rootIri);

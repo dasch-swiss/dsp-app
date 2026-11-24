@@ -1,15 +1,20 @@
 import {
   Cardinality,
   Constants,
+  ListNodeV2WithAllLanguages,
   ReadBooleanValue,
   ReadDateValue,
   ReadIntValue,
+  ReadListValue,
   ReadResource,
   ReadTextValueAsString,
   ReadValue,
   ResourcePropertyDefinitionWithAllLanguages,
+  StringLiteralV2,
 } from '@dasch-swiss/dsp-js';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
+import { of } from 'rxjs';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { EDITABLE_PROPERTY_IRI, makeReadResource, STORY_PROVIDERS } from '../stories.helpers';
 import { rightsColumns } from './build-column-model';
@@ -300,6 +305,82 @@ export const RendersAColumnTheEditorCannotOpenAsPlainText: Story = {
 
     await expect(canvasElement.querySelector('mat-slide-toggle')).not.toBeNull();
     await expect(canvas.getByText('BRAUT001a')).toBeInTheDocument();
+  },
+};
+
+const LIST_PROPERTY = `${ONTO}hasCategory`;
+const LIST_ROOT = 'http://rdfh.ch/lists/0001/categories';
+
+function listNode(id: string, label: string, children: ListNodeV2WithAllLanguages[] = []): ListNodeV2WithAllLanguages {
+  const literal = new StringLiteralV2();
+  literal.language = 'en';
+  literal.value = label;
+  const node = new ListNodeV2WithAllLanguages();
+  node.id = id;
+  node.labels = [literal];
+  node.comments = [];
+  node.children = children;
+  return node;
+}
+
+function listValue(property: string, node: ListNodeV2WithAllLanguages): ReadListValue {
+  const value = seedValue(new ReadListValue(), property, node.labels[0].value);
+  value.listNode = node.id;
+  value.listNodeLabel = node.labels[0].value;
+  return value;
+}
+
+const PORTRAIT = listNode(`${LIST_ROOT}/portrait`, 'Portrait');
+const LANDSCAPE = listNode(`${LIST_ROOT}/landscape`, 'Landscape');
+const getListWithAllLanguages = fn(() => of(listNode(LIST_ROOT, 'Categories', [PORTRAIT, LANDSCAPE])));
+
+const LIST_COLUMNS: TableColumn[] = [
+  column(LABEL_COLUMN_KEY, 'Label'),
+  column(LIST_PROPERTY, 'Category', {
+    valueType: Constants.ListValue,
+    propertyDefinition: {
+      ...propDef(LIST_PROPERTY, Constants.ListValue),
+      guiAttributes: [`hlist=<${LIST_ROOT}>`],
+    } as ResourcePropertyDefinitionWithAllLanguages,
+  }),
+];
+
+export const FetchesEachListOnceForTheWholeTable: Story = {
+  decorators: [
+    applicationConfig({
+      providers: [
+        ...STORY_PROVIDERS,
+        {
+          provide: DspApiConnectionToken,
+          useValue: {
+            v2: {
+              res: { getResource: () => of() },
+              list: { getListWithAllLanguages },
+            },
+          },
+        },
+      ],
+    }),
+  ],
+  args: {
+    columns: LIST_COLUMNS,
+    visibleColumns: LIST_COLUMNS.map(c => c.key),
+    resources: [PORTRAIT, LANDSCAPE, PORTRAIT].map((node, index) =>
+      resource(
+        `http://rdfh.ch/0001/l${index}`,
+        `IMG00${index}`,
+        { [LIST_PROPERTY]: [listValue(LIST_PROPERTY, node)] },
+        LIST_COLUMNS
+      )
+    ),
+  },
+  beforeEach: () => {
+    getListWithAllLanguages.mockClear();
+  },
+  play: async ({ canvasElement }) => {
+    await waitFor(() => expect(canvasElement.querySelectorAll('[data-cy="list-switch"]')).toHaveLength(3));
+    await expect(within(canvasElement).getAllByText('Portrait')).toHaveLength(2);
+    await expect(getListWithAllLanguages).toHaveBeenCalledTimes(1);
   },
 };
 

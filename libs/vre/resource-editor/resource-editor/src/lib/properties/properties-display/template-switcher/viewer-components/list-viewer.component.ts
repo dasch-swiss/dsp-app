@@ -2,7 +2,12 @@ import { AsyncPipe, NgStyle } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ListNodeV2WithAllLanguages, ReadListValue, ResourcePropertyDefinition } from '@dasch-swiss/dsp-js';
+import {
+  ListNodeV2WithAllLanguages,
+  ReadListValue,
+  ResourcePropertyDefinition,
+  StringLiteralV2,
+} from '@dasch-swiss/dsp-js';
 import { listRootIriFromGuiAttributes } from '@dasch-swiss/vre/shared/app-common';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
@@ -62,16 +67,28 @@ export class ListViewerComponent implements OnInit {
       return;
     }
 
-    // One whole-list fetch shared by every value of this property (and, in the table, by every
-    // cell of the column), so N values from the same list issue a single /v2/lists request, not N.
+    // One whole-list fetch shared by every value of this property, so N values from the same list
+    // issue a single /v2/lists request, not N.
+    // The list can be older than the value: a node added after the list was fetched shows the value's own label.
     const tree$ = this._propertyValueService.getList$(rootIri).pipe(
-      map(v => ListViewerComponent.lookFor([v], this.value.listNode) as ListNodeV2WithAllLanguages[]),
+      map(v => ListViewerComponent.lookFor([v], this.value.listNode) ?? [v, this._nodeFromValue()]),
       map(tree => tree.slice(1))
     );
 
     // Re-emit on language change so AsyncPipe triggers a change-detection pass
     // and the impure label/comment pipes resolve against the new language.
     this.nodes$ = combineLatest([tree$, this._localizationService.currentLanguage$]).pipe(map(([tree]) => tree));
+  }
+
+  private _nodeFromValue(): ListNodeV2WithAllLanguages {
+    const label = new StringLiteralV2();
+    label.value = this.value.listNodeLabel;
+    const node = new ListNodeV2WithAllLanguages();
+    node.id = this.value.listNode;
+    node.labels = [label];
+    node.comments = [];
+    node.children = [];
+    return node;
   }
 
   static lookFor(tree: ListNodeV2WithAllLanguages[], id: string): ListNodeV2WithAllLanguages[] | null {

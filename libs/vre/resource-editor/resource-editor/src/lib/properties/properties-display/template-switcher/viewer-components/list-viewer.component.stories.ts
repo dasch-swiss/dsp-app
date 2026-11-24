@@ -74,7 +74,8 @@ const localizationServiceStub: Partial<LocalizationService> = {
   currentLanguage$: of<AvailableLanguage>('en'),
 };
 
-const makeValue = (listNode = 'http://rdfh.ch/lists/0001/itemA1'): ReadListValue => ({ listNode }) as any;
+const makeValue = (listNode = 'http://rdfh.ch/lists/0001/itemA1', listNodeLabel = ''): ReadListValue =>
+  ({ listNode, listNodeLabel }) as unknown as ReadListValue;
 const makePropertyDef = (): ResourcePropertyDefinition =>
   ({
     id: 'http://example.org/listProp',
@@ -155,5 +156,18 @@ export const WrapsTheListPathBetweenNodesInANarrowColumn: Story = {
         await expect(node.getBoundingClientRect().height).toBeLessThan(2 * parseFloat(getComputedStyle(node).fontSize));
       }
     });
+  },
+};
+
+/** Someone added the node to the list after the table fetched it: the cell shows the value's label, not an empty path. */
+export const ShowsTheValueLabelWhenTheNodeIsMissingFromTheList: Story = {
+  args: {
+    value: makeValue('http://rdfh.ch/lists/0001/addedLater', 'Added later'),
+    propertyDef: makePropertyDef(),
+  },
+  play: async ({ canvasElement }) => {
+    await waitFor(() =>
+      expect(canvasElement.querySelector('[data-cy="list-switch"]')?.textContent?.trim()).toBe('Added later')
+    );
   },
 };
