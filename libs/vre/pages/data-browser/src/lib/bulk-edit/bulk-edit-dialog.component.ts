@@ -11,7 +11,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatOption, MatSelect, MatSelectTrigger } from '@angular/material/select';
-import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
   KnoraApiConnection,
@@ -40,11 +39,9 @@ import {
   toArray,
 } from 'rxjs';
 import {
-  BULK_EDIT_OPERATIONS,
   BulkEditChange,
   BulkEditListOption,
   BulkEditOperation,
-  BulkEditOperationKind,
   BulkEditPlan,
   bulkEditRequest,
   BulkEditTarget,
@@ -67,37 +64,10 @@ type Step = 'loading' | 'loadFailed' | 'edit' | 'applying' | 'done';
 
 interface FormValue {
   property: string | null;
-  operation: BulkEditOperationKind;
   values: string[];
   listValues: (string | null)[];
   onlyEmpty: boolean;
-  find: string;
-  replaceWith: string;
-  wholeValue: boolean;
-  matchCase: boolean;
-  listFrom: string | null;
-  listTo: string | null;
 }
-
-/** `hintKey`: shown under the property; “Set value” on a property explains itself with its checkbox instead. */
-const OPERATION_INFO: Record<BulkEditOperationKind, { labelKey: string; icon: string; hintKey?: string }> = {
-  setValue: {
-    labelKey: 'pages.dataBrowser.bulkEdit.setValue',
-    icon: 'edit',
-    hintKey: 'pages.dataBrowser.bulkEdit.setValueHint',
-  },
-  replace: {
-    labelKey: 'pages.dataBrowser.bulkEdit.replace',
-    icon: 'find_replace',
-    hintKey: 'pages.dataBrowser.bulkEdit.replaceHint',
-  },
-  setListValue: { labelKey: 'pages.dataBrowser.bulkEdit.setValue', icon: 'edit' },
-  replaceListValue: {
-    labelKey: 'pages.dataBrowser.bulkEdit.replace',
-    icon: 'find_replace',
-    hintKey: 'pages.dataBrowser.bulkEdit.replaceListValueHint',
-  },
-};
 
 const TARGET_GROUPS: { kind: BulkEditTarget['kind']; labelKey: string }[] = [
   { kind: 'label', labelKey: 'pages.dataBrowser.bulkEdit.groupResource' },
@@ -132,27 +102,6 @@ const READ_CHUNK_SIZE = 25;
           <mat-icon>close</mat-icon>
         </button>
       </div>
-      @if (step() === 'edit' && target()) {
-        <mat-tab-group
-          class="operations"
-          mat-stretch-tabs="false"
-          mat-align-tabs="start"
-          animationDuration="0"
-          [attr.aria-label]="'pages.dataBrowser.bulkEdit.operation' | translate"
-          [selectedIndex]="operationIndex()"
-          (selectedIndexChange)="selectOperation($event)">
-          @for (operation of operations(); track operation) {
-            <mat-tab>
-              <ng-template mat-tab-label>
-                <mat-icon class="tab-icon" aria-hidden="true">{{ operationInfo[operation].icon }}</mat-icon>
-                <span [attr.data-cy]="'bulk-edit-operation-' + operation">
-                  {{ operationInfo[operation].labelKey | translate }}
-                </span>
-              </ng-template>
-            </mat-tab>
-          }
-        </mat-tab-group>
-      }
     </header>
 
     <div class="body">
@@ -180,114 +129,65 @@ const READ_CHUNK_SIZE = 25;
                 </mat-select>
               </mat-form-field>
 
-              @if (operationHintKey(); as hintKey) {
-                <p class="hint">{{ hintKey | translate }}</p>
+              @if (currentTarget.kind === 'label') {
+                <p class="hint">{{ 'pages.dataBrowser.bulkEdit.setValueHint' | translate }}</p>
               }
 
-              @switch (formValue().operation) {
-                @case ('replace') {
-                  <div class="row">
-                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                      <mat-label>{{ 'pages.dataBrowser.bulkEdit.find' | translate }}</mat-label>
-                      <input matInput formControlName="find" data-cy="bulk-edit-find" />
-                    </mat-form-field>
-                    <mat-icon aria-hidden="true" class="arrow">arrow_forward</mat-icon>
-                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                      <mat-label>{{ 'pages.dataBrowser.bulkEdit.replaceWith' | translate }}</mat-label>
-                      <input matInput formControlName="replaceWith" data-cy="bulk-edit-replace-with" />
-                    </mat-form-field>
-                  </div>
-                  <div class="options">
-                    <mat-checkbox formControlName="wholeValue">
-                      {{ 'pages.dataBrowser.bulkEdit.wholeValue' | translate }}
-                    </mat-checkbox>
-                    <mat-checkbox formControlName="matchCase">
-                      {{ 'pages.dataBrowser.bulkEdit.matchCase' | translate }}
-                    </mat-checkbox>
-                  </div>
-                }
-                @case ('replaceListValue') {
-                  <div class="row">
-                    <ng-container
-                      [ngTemplateOutlet]="listSelect"
-                      [ngTemplateOutletContext]="{
-                        control: form.controls.listFrom,
-                        label: 'pages.dataBrowser.bulkEdit.listFrom' | translate,
-                        cy: 'bulk-edit-list-from',
-                      }" />
-                    <mat-icon aria-hidden="true" class="arrow">arrow_forward</mat-icon>
-                    <ng-container
-                      [ngTemplateOutlet]="listSelect"
-                      [ngTemplateOutletContext]="{
-                        control: form.controls.listTo,
-                        label: 'pages.dataBrowser.bulkEdit.listTo' | translate,
-                        cy: 'bulk-edit-list-to',
-                      }" />
-                  </div>
-                }
-                @default {
-                  <div class="values">
-                    @if (isList()) {
-                      @for (control of form.controls.listValues.controls; track control; let i = $index) {
-                        <div class="value-row">
-                          <ng-container
-                            [ngTemplateOutlet]="listSelect"
-                            [ngTemplateOutletContext]="{
-                              control: control,
-                              label: valueLabel(i),
-                              cy: 'bulk-edit-list-value-' + i,
-                            }" />
-                          <ng-container [ngTemplateOutlet]="removeButton" [ngTemplateOutletContext]="{ index: i }" />
-                        </div>
-                      }
-                    } @else {
-                      @for (control of form.controls.values.controls; track control; let i = $index) {
-                        <div class="value-row">
-                          <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                            <mat-label>{{ valueLabel(i) }}</mat-label>
-                            <input matInput [formControl]="control" [attr.data-cy]="'bulk-edit-value-' + i" />
-                          </mat-form-field>
-                          <ng-container [ngTemplateOutlet]="removeButton" [ngTemplateOutletContext]="{ index: i }" />
-                        </div>
-                      }
-                    }
-                    @if (isMultiple()) {
-                      <button
-                        mat-button
-                        type="button"
-                        class="add-value"
-                        data-cy="bulk-edit-add-value"
-                        (click)="addValue()">
-                        <mat-icon>add</mat-icon>
-                        {{ 'pages.dataBrowser.bulkEdit.addValue' | translate }}
-                      </button>
-                    }
-                  </div>
-                  @if (currentTarget.kind !== 'label') {
-                    <!-- A disabled checkbox shows no tooltip of its own, so its wrapper carries it. -->
-                    <div
-                      class="only-empty"
-                      [matTooltip]="'pages.dataBrowser.bulkEdit.onlyEmptyMultipleTooltip' | translate"
-                      [matTooltipDisabled]="!isMultiple()">
-                      <mat-checkbox formControlName="onlyEmpty" data-cy="bulk-edit-only-empty">
-                        {{ 'pages.dataBrowser.bulkEdit.onlyEmpty' | translate }}
-                      </mat-checkbox>
-                      <p class="hint">
-                        {{
-                          (isMultiple()
-                            ? 'pages.dataBrowser.bulkEdit.onlyEmptyMultipleHint'
-                            : 'pages.dataBrowser.bulkEdit.onlyEmptyHint'
-                          ) | translate
-                        }}
-                      </p>
+              <div class="values">
+                @if (isList()) {
+                  @for (control of form.controls.listValues.controls; track control; let i = $index) {
+                    <div class="value-row">
+                      <ng-container
+                        [ngTemplateOutlet]="listSelect"
+                        [ngTemplateOutletContext]="{
+                          control: control,
+                          label: valueLabel(i),
+                          cy: 'bulk-edit-list-value-' + i,
+                        }" />
+                      <ng-container [ngTemplateOutlet]="removeButton" [ngTemplateOutletContext]="{ index: i }" />
                     </div>
-                    @if (overwriteCount()) {
-                      <p class="warning" role="status" data-cy="bulk-edit-overwrite-warning">
-                        <mat-icon aria-hidden="true">warning</mat-icon>
-                        {{ 'pages.dataBrowser.bulkEdit.overwriteWarning' | translate: { count: overwriteCount() } }}
-                      </p>
-                    }
                   }
+                } @else {
+                  @for (control of form.controls.values.controls; track control; let i = $index) {
+                    <div class="value-row">
+                      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-label>{{ valueLabel(i) }}</mat-label>
+                        <input matInput [formControl]="control" [attr.data-cy]="'bulk-edit-value-' + i" />
+                      </mat-form-field>
+                      <ng-container [ngTemplateOutlet]="removeButton" [ngTemplateOutletContext]="{ index: i }" />
+                    </div>
+                  }
+                }
+                @if (isMultiple()) {
+                  <button mat-button type="button" class="add-value" data-cy="bulk-edit-add-value" (click)="addValue()">
+                    <mat-icon>add</mat-icon>
+                    {{ 'pages.dataBrowser.bulkEdit.addValue' | translate }}
+                  </button>
+                }
+              </div>
+              @if (currentTarget.kind !== 'label') {
+                <!-- A disabled checkbox shows no tooltip of its own, so its wrapper carries it. -->
+                <div
+                  class="only-empty"
+                  [matTooltip]="'pages.dataBrowser.bulkEdit.onlyEmptyMultipleTooltip' | translate"
+                  [matTooltipDisabled]="!isMultiple()">
+                  <mat-checkbox formControlName="onlyEmpty" data-cy="bulk-edit-only-empty">
+                    {{ 'pages.dataBrowser.bulkEdit.onlyEmpty' | translate }}
+                  </mat-checkbox>
+                  <p class="hint">
+                    {{
+                      (isMultiple()
+                        ? 'pages.dataBrowser.bulkEdit.onlyEmptyMultipleHint'
+                        : 'pages.dataBrowser.bulkEdit.onlyEmptyHint'
+                      ) | translate
+                    }}
+                  </p>
+                </div>
+                @if (overwriteCount()) {
+                  <p class="warning" role="status" data-cy="bulk-edit-overwrite-warning">
+                    <mat-icon aria-hidden="true">warning</mat-icon>
+                    {{ 'pages.dataBrowser.bulkEdit.overwriteWarning' | translate: { count: overwriteCount() } }}
+                  </p>
                 }
               }
               @if (listLoadFailed()) {
@@ -519,12 +419,6 @@ const READ_CHUNK_SIZE = 25;
         margin-left: auto;
         flex: none;
       }
-      .tab-icon {
-        margin-right: 6px;
-        width: 18px;
-        height: 18px;
-        font-size: 18px;
-      }
       /* The preview takes the height the form leaves; only its list scrolls. */
       .body {
         flex: 1;
@@ -580,22 +474,6 @@ const READ_CHUNK_SIZE = 25;
         margin: 6px 0 0;
         font-size: 13px;
         color: #6b7280; /* $cool-gray-500 */
-      }
-      .row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .row mat-form-field {
-        flex: 1;
-        min-width: 0;
-      }
-      .arrow {
-        color: #9ca3af; /* $cool-gray-400 */
-      }
-      .options {
-        display: flex;
-        gap: 16px;
       }
       .preview {
         flex: 1;
@@ -744,9 +622,6 @@ const READ_CHUNK_SIZE = 25;
     MatProgressBar,
     MatSelect,
     MatSelectTrigger,
-    MatTab,
-    MatTabGroup,
-    MatTabLabel,
     MatTooltip,
     TranslatePipe,
     AppProgressIndicatorComponent,
@@ -761,21 +636,13 @@ export class BulkEditDialogComponent {
   private readonly _translateService = inject(TranslateService);
   private readonly _destroyRef = inject(DestroyRef);
 
-  readonly operationInfo = OPERATION_INFO;
   readonly kindIcons: Record<BulkEditTarget['kind'], string> = { label: 'label', text: 'notes', list: 'account_tree' };
 
   readonly form = new FormGroup({
     property: new FormControl<string | null>(null),
-    operation: new FormControl<BulkEditOperationKind>(BULK_EDIT_OPERATIONS.text[0], { nonNullable: true }),
     values: new FormArray([new FormControl('', { nonNullable: true })]),
     listValues: new FormArray([new FormControl<string | null>(null)]),
     onlyEmpty: new FormControl(true, { nonNullable: true }),
-    find: new FormControl('', { nonNullable: true }),
-    replaceWith: new FormControl('', { nonNullable: true }),
-    wholeValue: new FormControl(false, { nonNullable: true }),
-    matchCase: new FormControl(false, { nonNullable: true }),
-    listFrom: new FormControl<string | null>(null),
-    listTo: new FormControl<string | null>(null),
   });
 
   readonly formValue = toSignal(this.form.valueChanges.pipe(map(() => this.form.getRawValue())), {
@@ -801,13 +668,6 @@ export class BulkEditDialogComponent {
     const target = this.target();
     return !!target && !canOverwrite(target);
   });
-  readonly operations = computed(() => BULK_EDIT_OPERATIONS[this.target()?.kind ?? 'text']);
-  readonly operationIndex = computed(() => Math.max(0, this.operations().indexOf(this.formValue().operation)));
-  readonly operationHintKey = computed(() => {
-    const { operation } = this.formValue();
-    // On a property, “Set value” says what it does next to its checkbox.
-    return operation === 'setValue' && this.target()?.kind !== 'label' ? null : OPERATION_INFO[operation].hintKey;
-  });
   readonly valueCount = computed(() => (this.isList() ? this.formValue().listValues : this.formValue().values).length);
 
   readonly listOptions = signal<BulkEditListOption[]>([]);
@@ -816,7 +676,7 @@ export class BulkEditDialogComponent {
   /** Null until the form says what to change. */
   readonly plan = computed<BulkEditPlan | null>(() => {
     const target = this.target();
-    const operation = _operationOf(this.formValue(), this.listOptions());
+    const operation = target && _operationOf(target, this.formValue(), this.listOptions());
     return target && operation ? planBulkEdit(this._resources(), target, operation) : null;
   });
   readonly changedResourceCount = computed(
@@ -832,14 +692,10 @@ export class BulkEditDialogComponent {
     }
     return [...groups.values()];
   });
-  /** Values “Set value” writes over, so the user sees what is lost before applying. */
-  readonly overwriteCount = computed(() => {
-    const { operation } = this.formValue();
-    if (this.target()?.kind === 'label' || (operation !== 'setValue' && operation !== 'setListValue')) {
-      return 0;
-    }
-    return this.plan()?.changes.filter(change => change.value).length ?? 0;
-  });
+  /** Values written over, so the user sees what is lost before applying. */
+  readonly overwriteCount = computed(() =>
+    this.target()?.kind === 'label' ? 0 : (this.plan()?.changes.filter(change => change.value).length ?? 0)
+  );
 
   readonly running = signal<BulkEditChange[]>([]);
   readonly processed = signal(0);
@@ -847,10 +703,9 @@ export class BulkEditDialogComponent {
   readonly failed = signal<BulkEditChange[]>([]);
   readonly progress = computed(() => (this.running().length ? (this.processed() / this.running().length) * 100 : 0));
   readonly skippedCount = computed(() => (this.step() === 'done' ? this.running().length - this.processed() : 0));
-  readonly summary = computed(() => {
-    const operation = OPERATION_INFO[this.formValue().operation];
-    return `${this.target()?.label ?? ''} · ${this._translateService.instant(operation.labelKey)}`;
-  });
+  readonly summary = computed(
+    () => `${this.target()?.label ?? ''} · ${this._translateService.instant('pages.dataBrowser.bulkEdit.setValue')}`
+  );
 
   private readonly _changedIris = new Set<string>();
   private readonly _cancel$ = new Subject<void>();
@@ -869,13 +724,6 @@ export class BulkEditDialogComponent {
     return this.isMultiple()
       ? this._translateService.instant('pages.dataBrowser.bulkEdit.valueNumbered', { index: index + 1 })
       : this._translateService.instant('pages.dataBrowser.bulkEdit.value');
-  }
-
-  selectOperation(index: number) {
-    const operation = this.operations()[index];
-    if (operation) {
-      this.form.controls.operation.setValue(operation);
-    }
   }
 
   addValue() {
@@ -951,7 +799,7 @@ export class BulkEditDialogComponent {
     }
   }
 
-  /** Keeps the operation valid for the chosen property and loads the list of a list property. */
+  /** Resets the values for the chosen property and loads the list of a list property. */
   private _followTarget() {
     this.form.controls.property.valueChanges
       .pipe(
@@ -959,10 +807,6 @@ export class BulkEditDialogComponent {
         map(id => this.targets().find(target => target.id === id) ?? null),
         distinctUntilChanged((a, b) => a?.id === b?.id),
         switchMap(target => {
-          const operations = BULK_EDIT_OPERATIONS[target?.kind ?? 'text'];
-          if (!operations.includes(this.form.controls.operation.value)) {
-            this.form.controls.operation.setValue(operations[0]);
-          }
           this._resetValues(target);
           this.listOptions.set([]);
           this.listLoadFailed.set(false);
@@ -995,11 +839,10 @@ export class BulkEditDialogComponent {
     listValues.push(new FormControl<string | null>(null), { emitEvent: false });
     onlyEmpty.setValue(true, { emitEvent: false });
     if (target && !canOverwrite(target)) {
-      onlyEmpty.disable({ emitEvent: false });
+      onlyEmpty.disable();
     } else {
-      onlyEmpty.enable({ emitEvent: false });
+      onlyEmpty.enable();
     }
-    this.form.patchValue({ listFrom: null, listTo: null });
   }
 
   /** The selection may be stale, so the plan is computed from freshly read resources. */
@@ -1044,30 +887,16 @@ export class BulkEditDialogComponent {
   }
 }
 
-function _operationOf(value: FormValue, listOptions: BulkEditListOption[]): BulkEditOperation | null {
-  switch (value.operation) {
-    case 'setValue': {
-      const values = [...new Set(value.values.filter(text => text.trim()))];
-      return values.length ? { kind: 'setValue', values, onlyEmpty: value.onlyEmpty } : null;
-    }
-    case 'setListValue': {
-      const ids = new Set(value.listValues.filter((id): id is string => !!id));
-      const values = listOptions.filter(option => ids.has(option.id));
-      return values.length ? { kind: 'setListValue', values, onlyEmpty: value.onlyEmpty } : null;
-    }
-    case 'replaceListValue': {
-      const to = listOptions.find(option => option.id === value.listTo);
-      return value.listFrom && to ? { kind: 'replaceListValue', from: value.listFrom, to } : null;
-    }
-    case 'replace':
-      return value.find
-        ? {
-            kind: 'replace',
-            find: value.find,
-            replaceWith: value.replaceWith,
-            wholeValue: value.wholeValue,
-            matchCase: value.matchCase,
-          }
-        : null;
+function _operationOf(
+  target: BulkEditTarget,
+  value: FormValue,
+  listOptions: BulkEditListOption[]
+): BulkEditOperation | null {
+  if (target.kind === 'list') {
+    const ids = new Set(value.listValues.filter((id): id is string => !!id));
+    const values = listOptions.filter(option => ids.has(option.id));
+    return values.length ? { kind: 'setListValue', values, onlyEmpty: value.onlyEmpty } : null;
   }
+  const values = [...new Set(value.values.filter(text => text.trim()))];
+  return values.length ? { kind: 'setValue', values, onlyEmpty: value.onlyEmpty } : null;
 }

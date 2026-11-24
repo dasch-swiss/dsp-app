@@ -46,17 +46,7 @@ export interface BulkEditListOption {
  */
 export type BulkEditOperation =
   | { kind: 'setValue'; values: string[]; onlyEmpty: boolean }
-  | { kind: 'replace'; find: string; replaceWith: string; wholeValue: boolean; matchCase: boolean }
-  | { kind: 'setListValue'; values: BulkEditListOption[]; onlyEmpty: boolean }
-  | { kind: 'replaceListValue'; from: string; to: BulkEditListOption };
-
-export type BulkEditOperationKind = BulkEditOperation['kind'];
-
-export const BULK_EDIT_OPERATIONS: Record<BulkEditTarget['kind'], BulkEditOperationKind[]> = {
-  label: ['setValue', 'replace'],
-  text: ['setValue', 'replace'],
-  list: ['setListValue', 'replaceListValue'],
-};
+  | { kind: 'setListValue'; values: BulkEditListOption[]; onlyEmpty: boolean };
 
 /** A label always has one value; a property with several values per resource can only be filled where empty. */
 export function canOverwrite(target: BulkEditTarget): boolean {
@@ -171,47 +161,16 @@ export function bulkEditRequest(change: BulkEditChange, target: BulkEditTarget):
 
 function _changesFor(resource: ReadResource, target: BulkEditTarget, operation: BulkEditOperation): BulkEditChange[] {
   if (target.kind === 'label') {
-    const after = _textAfter(resource.label, operation);
-    return after !== null && after.trim() !== '' && after !== resource.label
+    const after = operation.kind === 'setValue' ? operation.values[0] : undefined;
+    return after !== undefined && after.trim() !== '' && after !== resource.label
       ? [{ resource, before: resource.label, after, newValue: after }]
       : [];
   }
 
-  if (target.kind === 'list') {
+  if (target.kind === 'list' && operation.kind === 'setListValue') {
     const values = resource
       .getValues(target.id)
       .filter((value): value is ReadListValue => value instanceof ReadListValue);
-    return _listChanges(resource, target, values, operation);
-  }
-
-  const values = resource
-    .getValues(target.id)
-    .filter((value): value is ReadTextValueAsString => value instanceof ReadTextValueAsString);
-  if (operation.kind === 'setValue') {
-    return _setChanges(
-      resource,
-      target,
-      operation,
-      values,
-      operation.values.map(text => ({ newValue: text, after: text })),
-      value => value.text
-    );
-  }
-  return values.flatMap(value => {
-    const after = _textAfter(value.text, operation);
-    return after !== null && after !== value.text
-      ? [{ resource, value, before: value.text, after, newValue: after }]
-      : [];
-  });
-}
-
-function _listChanges(
-  resource: ReadResource,
-  target: BulkEditTarget,
-  values: ReadListValue[],
-  operation: BulkEditOperation
-): BulkEditChange[] {
-  if (operation.kind === 'setListValue') {
     return _setChanges(
       resource,
       target,
@@ -221,16 +180,21 @@ function _listChanges(
       value => value.listNode
     );
   }
-  if (operation.kind !== 'replaceListValue') {
-    return [];
+
+  if (target.kind === 'text' && operation.kind === 'setValue') {
+    const values = resource
+      .getValues(target.id)
+      .filter((value): value is ReadTextValueAsString => value instanceof ReadTextValueAsString);
+    return _setChanges(
+      resource,
+      target,
+      operation,
+      values,
+      operation.values.map(text => ({ newValue: text, after: text })),
+      value => value.text
+    );
   }
-  const { from, to } = operation;
-  const match = values.find(value => value.listNode === from);
-  // A resource can't hold the same list value twice.
-  if (!match || values.some(value => value.listNode === to.id)) {
-    return [];
-  }
-  return [{ resource, value: match, before: match.listNodeLabel, after: to.path, newValue: to.id }];
+  return [];
 }
 
 /**
@@ -254,32 +218,6 @@ function _setChanges<V extends ReadTextValueAsString | ReadListValue>(
   }
   const before = current instanceof ReadListValue ? current.listNodeLabel : (current as ReadTextValueAsString).text;
   return [{ resource, value: current, before, after: next[0].after, newValue: next[0].newValue }];
-}
-
-/** The text after a text operation; null when the operation is not a text operation. */
-function _textAfter(text: string, operation: BulkEditOperation): string | null {
-  switch (operation.kind) {
-    case 'setValue':
-      return operation.values[0] ?? null;
-    case 'replace': {
-      if (!operation.find) {
-        return text;
-      }
-      if (operation.wholeValue) {
-        const matches = operation.matchCase
-          ? text === operation.find
-          : text.toLocaleLowerCase() === operation.find.toLocaleLowerCase();
-        return matches ? operation.replaceWith : text;
-      }
-      const pattern = new RegExp(
-        operation.find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
-        operation.matchCase ? 'g' : 'gi'
-      );
-      return text.replace(pattern, () => operation.replaceWith);
-    }
-    default:
-      return null;
-  }
 }
 
 function _setContent(

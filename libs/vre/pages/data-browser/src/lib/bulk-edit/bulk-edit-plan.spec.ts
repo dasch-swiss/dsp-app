@@ -143,59 +143,6 @@ describe('flattenList', () => {
 
 describe('planBulkEdit', () => {
   describe('text', () => {
-    it('LeavesAResourceWithoutValuesUnchangedWhenReplacing', () => {
-      const plan = planBulkEdit([resource('r1')], TEXT, {
-        kind: 'replace',
-        find: 'x',
-        replaceWith: 'y',
-        wholeValue: false,
-        matchCase: false,
-      });
-
-      expect(plan.changes).toEqual([]);
-      expect(plan.unchangedCount).toBe(1);
-    });
-
-    it('ReplacesEveryOccurrenceIgnoringCaseByDefault', () => {
-      const plan = planBulkEdit([resource('r1', textValue('v1', 'wien, Wien'))], TEXT, {
-        kind: 'replace',
-        find: 'Wien',
-        replaceWith: 'Vienna',
-        wholeValue: false,
-        matchCase: false,
-      });
-
-      expect(plan.changes[0]).toMatchObject({
-        before: 'wien, Wien',
-        after: 'Vienna, Vienna',
-        newValue: 'Vienna, Vienna',
-      });
-    });
-
-    it('TreatsTheSearchTextLiterallyAndKeepsDollarSignsInTheReplacement', () => {
-      const plan = planBulkEdit([resource('r1', textValue('v1', 'a.b a?b'))], TEXT, {
-        kind: 'replace',
-        find: 'a?b',
-        replaceWith: '$1',
-        wholeValue: false,
-        matchCase: true,
-      });
-
-      expect(plan.changes[0].after).toBe('a.b $1');
-    });
-
-    it('ReplacesOnlyAWholeMatchingValueWhenAsked', () => {
-      const plan = planBulkEdit(
-        [resource('r1', textValue('v1', '???')), resource('r2', textValue('v2', 'Brief ???'))],
-        TEXT,
-        { kind: 'replace', find: '???', replaceWith: 'Postkarte', wholeValue: true, matchCase: true }
-      );
-
-      expect(plan.changes).toHaveLength(1);
-      expect(plan.changes[0]).toMatchObject({ before: '???', after: 'Postkarte' });
-      expect(plan.unchangedCount).toBe(1);
-    });
-
     it('SetsTheValueOnlyWhereThePropertyIsEmptyByDefault', () => {
       const plan = planBulkEdit([resource('r1'), resource('r2', textValue('v1', 'Karte'))], TEXT, {
         kind: 'setValue',
@@ -249,20 +196,6 @@ describe('planBulkEdit', () => {
   });
 
   describe('label', () => {
-    it('ReplacesTextInTheLabels', () => {
-      const plan = planBulkEdit([resource('r1'), resource('x2')], LABEL, {
-        kind: 'replace',
-        find: 'Label r',
-        replaceWith: 'Letter r',
-        wholeValue: false,
-        matchCase: true,
-      });
-
-      expect(plan.changes).toHaveLength(1);
-      expect(plan.changes[0]).toMatchObject({ before: 'Label r1', after: 'Letter r1', newValue: 'Letter r1' });
-      expect(plan.unchangedCount).toBe(1);
-    });
-
     it('SetsTheSameLabelOnEveryResourceThatHasAnother', () => {
       const plan = planBulkEdit([resource('r1'), resource('r2')], LABEL, {
         kind: 'setValue',
@@ -274,35 +207,13 @@ describe('planBulkEdit', () => {
     });
 
     it('NeverEmptiesALabel', () => {
-      const plan = planBulkEdit([resource('r1')], LABEL, {
-        kind: 'replace',
-        find: 'Label r1',
-        replaceWith: ' ',
-        wholeValue: true,
-        matchCase: true,
-      });
+      const plan = planBulkEdit([resource('r1')], LABEL, { kind: 'setValue', values: [' '], onlyEmpty: false });
 
       expect(plan.changes).toEqual([]);
     });
   });
 
   describe('list', () => {
-    it('ReplacesOneListValueAndLeavesTheOthers', () => {
-      const plan = planBulkEdit(
-        [resource('r1', listValue('v1', BRIEF)), resource('r2', listValue('v2', HANDWRITTEN))],
-        LIST,
-        { kind: 'replaceListValue', from: BRIEF.id, to: HANDWRITTEN }
-      );
-
-      expect(plan.changes).toHaveLength(1);
-      expect(plan.changes[0]).toMatchObject({
-        before: 'Brief',
-        after: 'Brief › handschriftlich',
-        newValue: HANDWRITTEN.id,
-      });
-      expect(plan.changes[0].value?.id).toBe('v1');
-    });
-
     it('OverwritesASingleListValueExceptWhereItIsAlreadySet', () => {
       const plan = planBulkEdit(
         [resource('r1', listValue('v1', BRIEF)), resource('r2'), resource('r3', listValue('v3', HANDWRITTEN))],

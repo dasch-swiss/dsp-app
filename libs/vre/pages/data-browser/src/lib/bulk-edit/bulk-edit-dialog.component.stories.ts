@@ -130,26 +130,6 @@ const meta: Meta<BulkEditDialogComponent> = {
 export default meta;
 type Story = StoryObj<BulkEditDialogComponent>;
 
-export const PreviewsAReplaceAsYouType: Story = {
-  decorators: [applicationConfig({ providers: providers(letters) })],
-  play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-
-    await step('Choose Replace and fill find and replace', async () => {
-      await userEvent.click(await canvas.findByTestId('bulk-edit-operation-replace'));
-      await userEvent.type(canvas.getByTestId('bulk-edit-find'), 'Wien');
-      await userEvent.type(canvas.getByTestId('bulk-edit-replace-with'), 'Vienna');
-    });
-    await step('Only the matching value is previewed, with before and after', async () => {
-      await expect(canvas.getByTestId('bulk-edit-preview-count')).toHaveTextContent('1 of 3 resources will change');
-      await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(1);
-      await expect(canvas.getByText('Wien')).toBeInTheDocument();
-      await expect(canvas.getByText('Vienna')).toBeInTheDocument();
-      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply changes (1)');
-    });
-  },
-};
-
 export const SetsADefaultValueOnlyWhereEmptyAndReportsTheResult: Story = {
   decorators: [applicationConfig({ providers: providers(letters) })],
   play: async ({ canvasElement, step }) => {
@@ -191,34 +171,31 @@ export const ListsAFailedValueAndOffersARetry: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Replace a value the API refuses', async () => {
-      await userEvent.click(await canvas.findByTestId('bulk-edit-operation-replace'));
-      await userEvent.type(canvas.getByTestId('bulk-edit-find'), 'Wien');
-      await userEvent.type(canvas.getByTestId('bulk-edit-replace-with'), 'Vienna');
+    await step('Overwrite a value the API refuses', async () => {
+      await userEvent.type(await canvas.findByTestId('bulk-edit-value-0'), 'Wien');
+      await userEvent.click(within(canvas.getByTestId('bulk-edit-only-empty')).getByRole('checkbox'));
       await userEvent.click(canvas.getByTestId('bulk-edit-apply'));
     });
     await step('The failure is listed and can be retried', async () => {
       await waitFor(() => expect(canvas.getByTestId('bulk-edit-failed')).toHaveTextContent('not updated: 1'));
-      await expect(canvas.getByTestId('bulk-edit-failed-change')).toHaveTextContent('Brief an Arnold Schönberg');
+      await expect(canvas.getByTestId('bulk-edit-failed-change')).toHaveTextContent('Brief an Alban Berg');
       await expect(canvas.getByTestId('bulk-edit-retry')).toBeInTheDocument();
     });
   },
 };
 
-export const ReplacesTextInTheLabels: Story = {
+export const SetsTheSameLabelOnEveryResource: Story = {
   decorators: [applicationConfig({ providers: providers(letters) })],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Choose the label and replace a word', async () => {
+    await step('Choose the label and type it', async () => {
       await choose(canvas, 'bulk-edit-property', 'Label');
-      await userEvent.click(canvas.getByTestId('bulk-edit-operation-replace'));
-      await userEvent.type(canvas.getByTestId('bulk-edit-find'), 'Brief an');
-      await userEvent.type(canvas.getByTestId('bulk-edit-replace-with'), 'Letter to');
+      await userEvent.type(canvas.getByTestId('bulk-edit-value-0'), 'Brief an Alban Berg');
     });
-    await step('The two letters get a new label', async () => {
+    await step('The two other resources get the label', async () => {
       await expect(canvas.getByTestId('bulk-edit-preview-count')).toHaveTextContent('2 of 3 resources will change');
-      await expect(canvas.getByText('Letter to Alban Berg')).toBeInTheDocument();
+      await expect(canvas.getByText('Brief an Arnold Schönberg')).toBeInTheDocument();
     });
     await step('Applying updates both labels', async () => {
       await userEvent.click(canvas.getByTestId('bulk-edit-apply'));
@@ -227,21 +204,22 @@ export const ReplacesTextInTheLabels: Story = {
   },
 };
 
-export const ReplacesOneListValueWithAnother: Story = {
+export const OverwritesAListValue: Story = {
   decorators: [applicationConfig({ providers: providers(letters) })],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Choose the list property and both list values', async () => {
+    await step('Choose the list property, a list value, and untick Only update empty values', async () => {
       await choose(canvas, 'bulk-edit-property', 'Art');
-      await userEvent.click(canvas.getByTestId('bulk-edit-operation-replaceListValue'));
-      await choose(canvas, 'bulk-edit-list-from', 'Brief');
-      await choose(canvas, 'bulk-edit-list-to', 'handschriftlich');
+      await choose(canvas, 'bulk-edit-list-value-0', 'handschriftlich');
+      await userEvent.click(within(canvas.getByTestId('bulk-edit-only-empty')).getByRole('checkbox'));
     });
-    await step('Only the letters change, the postcard stays', async () => {
-      await expect(canvas.getByTestId('bulk-edit-preview-count')).toHaveTextContent('2 of 3 resources will change');
-      await expect(canvas.getAllByText('Brief › handschriftlich')).toHaveLength(3);
-      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply changes (2)');
+    await step('Every resource gets the list value', async () => {
+      await expect(canvas.getByTestId('bulk-edit-preview-count')).toHaveTextContent('3 of 3 resources will change');
+      await expect(canvas.getByTestId('bulk-edit-overwrite-warning')).toHaveTextContent(
+        'Existing values overwritten: 3'
+      );
+      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply changes (3)');
     });
   },
 };
