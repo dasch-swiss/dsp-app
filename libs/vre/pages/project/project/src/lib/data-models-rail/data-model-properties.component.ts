@@ -358,14 +358,11 @@ const COLUMN_LABELS: Record<Column, string> = {
                 </span>
                 @for (option of targetOptions(); track option) {
                   <mat-checkbox [checked]="targets().has(option)" (change)="toggle(targets, option)">
+                    <!-- Plain names, as Used by lists them. -->
                     @if (option === noTarget) {
                       {{ r + '.noTarget' | translate }}
                     } @else {
-                      <!-- In the class's color, as in the column. -->
-                      <span class="chip"
-                        ><span class="tab" [style.background]="state.colors().get(option)"></span
-                        ><span class="chip-label">{{ state.labelOf(option) }}</span></span
-                      >
+                      {{ state.labelOf(option) }}
                     }
                   </mat-checkbox>
                 }
