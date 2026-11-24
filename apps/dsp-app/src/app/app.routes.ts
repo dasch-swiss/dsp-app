@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Params, Router, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
 import { DataModelEditorService } from '@dasch-swiss/vre/pages/ontology/ontology';
@@ -38,6 +39,19 @@ import { HelpPageComponent } from '@dasch-swiss/vre/shared/app-help-page';
 import { NoResultsFoundComponent, NoResultsFoundPageComponent, NotAllowedPageComponent } from '@dasch-swiss/vre/ui/ui';
 import { AuthGuard } from './main/guard/auth.guard';
 import { SysAdminGuard } from './main/guard/sys-admin.guard';
+
+/**
+ * Sends a former editor link to the project's Data models page, at its section, showing the data model the link
+ * named. A guard, not a redirect: a redirect neither sees the project in a parent route nor keeps a query.
+ */
+const toDataModels: CanActivateFn = route => {
+  const params = Object.assign({}, ...route.pathFromRoot.map(step => step.params)) as Params;
+  const section = params['section'] ? [params['section']] : [];
+  return inject(Router).createUrlTree(
+    [RouteConstants.project, params[RouteConstants.uuidParameter], RouteConstants.dataModels, ...section],
+    { queryParams: { [RouteConstants.ontologyParameter]: params[RouteConstants.ontoParameter] } }
+  );
+};
 
 export const routes: Routes = [
   {
@@ -87,11 +101,9 @@ export const routes: Routes = [
         { path: `${former}/:section`, redirectTo: `${RouteConstants.dataModels}/:section` },
         { path: former, redirectTo: RouteConstants.dataModels },
       ]),
-      {
-        path: `${RouteConstants.ontologyEditorRelative}/:section`,
-        redirectTo: `${RouteConstants.dataModels}/:section`,
-      },
-      { path: RouteConstants.ontologyEditorRelative, redirectTo: RouteConstants.dataModels },
+      // The former editor's links name their data model in the path: it moves to the query, so the same one opens.
+      { path: `${RouteConstants.ontologyEditorRelative}/:section`, canActivate: [toDataModels], children: [] },
+      { path: RouteConstants.ontologyEditorRelative, canActivate: [toDataModels], children: [] },
       {
         path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
         redirectTo: `${RouteConstants.dataModels}/${RouteConstants.list}/:${RouteConstants.listParameter}`,

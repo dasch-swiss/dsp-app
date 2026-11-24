@@ -22,8 +22,9 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, startWith } from 'rxjs';
 import { SIDEBAR_WIDTHS } from '../data-browser-page.component';
-import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
+import { CanDoChecks } from './can-do-checks';
 import { DataModelsRailState } from './data-models-rail-state';
 
 /** A data model's sections, in the order the rail lists them under it. */
@@ -113,7 +114,9 @@ function paramOf(ontologyIri: string): Record<string, string> {
             class="model"
             [class.current]="current"
             data-cy="data-models-tree-model"
-            (mouseenter)="editor && checkDelete(model.iri)">
+            (mouseenter)="editor && checkDelete(model.iri, true)"
+            (mouseleave)="cancelCheck()"
+            (focusin)="editor && checkDelete(model.iri)">
             <button
               mat-icon-button
               type="button"
@@ -512,11 +515,16 @@ export class DataModelsTreePageComponent {
   /** The data models folded open on their sections; the one shown opens by itself. */
   readonly expanded = signal(new Set<string>());
 
-  /** What the API says of deleting each data model hovered. */
-  readonly deleteChecks = signal(new Map<string, CanDo>());
-  private readonly _checked = new Set<string>();
+  /** What the API says of deleting each data model, once asked; none while it checks. */
+  private readonly _deleteChecks = new CanDoChecks(iri => this.editing.canDeleteDataModel(iri), this._destroyRef);
+  readonly deleteChecks = this._deleteChecks.results;
 
   constructor() {
+    // Read again after an edit: a data model emptied may be deletable now, and the other way round.
+    effect(() => {
+      this.state.counts();
+      untracked(() => this._deleteChecks.clear());
+    });
     // The sections' links and "Open in…" lead to this tab.
     this.state.tab = RouteConstants.dataModels;
     // The data model shown folds open when it changes; folding it again is the viewer's choice.
@@ -542,14 +550,14 @@ export class DataModelsTreePageComponent {
     this._router.navigate([keep], { relativeTo: this._route, queryParams: paramOf(ontologyIri) });
   }
 
-  /** Asks the API whether the data model can be deleted, for its bin to say so; once per data model. */
-  checkDelete(ontologyIri: string): void {
-    if (this._checked.has(ontologyIri)) return;
-    this._checked.add(ontologyIri);
-    this.editing
-      .canDeleteDataModel(ontologyIri)
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(check => this.deleteChecks.update(checks => new Map(checks).set(ontologyIri, check)));
+  /** Asks the API whether the data model can be deleted, for its bin to say so; `soon` waits for the pointer to rest. */
+  checkDelete(ontologyIri: string, soon = false): void {
+    if (soon) this._deleteChecks.checkSoon(ontologyIri);
+    else this._deleteChecks.check(ontologyIri);
+  }
+
+  cancelCheck(): void {
+    this._deleteChecks.cancel();
   }
 
   editModel(model: { iri: string; label: string }): void {

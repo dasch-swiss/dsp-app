@@ -15,6 +15,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Cardinality } from '@dasch-swiss/dsp-js';
 import { TranslatePipe } from '@ngx-translate/core';
 import { concatMap, from, map, of, switchMap, tap } from 'rxjs';
+import { CHECK_DELAY_MS } from '../data-models-rail/can-do-checks';
 import { CanDo, DATA_MODEL_EDITOR, injectDataModelEditing } from './data-model-editor';
 
 /** A cardinality from its two checkboxes, as the Data models tab reads them. */
@@ -49,7 +50,8 @@ type Box = 'multiple' | 'required';
     '[class.labelled]': 'labelled()',
     '[class.ticked-only]': 'tickedOnly()',
     '[class.icons]': "appearance() === 'icons'",
-    '(mouseenter)': 'check()',
+    '(mouseenter)': 'checkSoon()',
+    '(mouseleave)': 'cancelCheck()',
     '(focusin)': 'check()',
   },
   template: `
@@ -231,6 +233,10 @@ export class CardinalityCheckboxesComponent {
   private readonly _editing = inject(DATA_MODEL_EDITOR, { optional: true }) ? injectDataModelEditing() : undefined;
   private readonly _destroyRef = inject(DestroyRef);
 
+  constructor() {
+    this._destroyRef.onDestroy(() => this.cancelCheck());
+  }
+
   readonly boxes: Box[] = ['multiple', 'required'];
   /** The star after a label comes first, as the card reads it; then the stack. */
   readonly iconOrder: Box[] = ['required', 'multiple'];
@@ -251,10 +257,14 @@ export class CardinalityCheckboxesComponent {
   }
 
   /** A box is out of reach once the API said the existing resources rule it out, or for a yes/no property's "Multiple values". */
-  readonly blockedBoxes = computed<Record<Box, boolean>>(() => ({
-    multiple: this._result('multiple')?.canDo === false,
-    required: this._result('required')?.canDo === false,
-  }));
+  readonly blockedBoxes = computed<Record<Box, boolean>>(() => {
+    // A check the API could not answer blocks nothing: the save asks again.
+    const blocked = (box: Box) => {
+      const result = this._result(box);
+      return result?.canDo === false && !result.failed;
+    };
+    return { multiple: blocked('multiple'), required: blocked('required') };
+  });
 
   /** Why each box can't change, for its tooltip; nothing while it can, or for one that never can here. */
   readonly reasons = computed<Record<Box, string>>(() => {
@@ -286,10 +296,25 @@ export class CardinalityCheckboxesComponent {
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe(({ box, result }) =>
-        this._checks.update(checks =>
-          checks.for === current ? { ...checks, boxes: { ...checks.boxes, [box]: result } } : checks
-        )
+        this._checks.update(checks => {
+          if (checks.for !== current) return checks;
+          // Not answered: forgotten, so the next hover asks again.
+          if (result.failed) return { boxes: {} };
+          return { ...checks, boxes: { ...checks.boxes, [box]: result } };
+        })
       );
+  }
+
+  private _pending?: ReturnType<typeof setTimeout>;
+
+  /** Asks once the pointer has rested on the row a moment: sweeping across rows asks nothing. */
+  checkSoon(): void {
+    this.cancelCheck();
+    this._pending = setTimeout(() => this.check(), CHECK_DELAY_MS);
+  }
+
+  cancelCheck(): void {
+    clearTimeout(this._pending);
   }
 
   /**
@@ -304,7 +329,7 @@ export class CardinalityCheckboxesComponent {
     const known = this._result(box);
     const current = this.cardinality();
     this.saving.set(true);
-    (known ? of(known) : editing.canSetCardinality(classIri, this.propertyIri(), next))
+    (known && !known.failed ? of(known) : editing.canSetCardinality(classIri, this.propertyIri(), next))
       .pipe(
         tap(result =>
           this._checks.update(checks =>

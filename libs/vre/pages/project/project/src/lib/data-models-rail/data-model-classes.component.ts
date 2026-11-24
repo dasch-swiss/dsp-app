@@ -28,6 +28,7 @@ import { ResourceClassPanelComponent } from '../ontology-map/resource-class-pane
 import { COMFORTABLE_CARD_SIZES } from './class-card-property.component';
 import { DataModelClassCardsComponent, PropertyOrder } from './data-model-class-cards.component';
 import { DataModelsRailState } from './data-models-rail-state';
+import { debounced } from './debounced';
 import { escapeClosesPanel } from './escape-closes';
 import { RAIL_SECTION_STYLES } from './rail-section-styles';
 
@@ -68,7 +69,7 @@ import { RAIL_SECTION_STYLES } from './rail-section-styles';
             data-cy="data-model-classes-search"
             [placeholder]="r + '.findInCards' | translate"
             [attr.aria-label]="r + '.findInCards' | translate"
-            (input)="query.set(search.value)" />
+            (input)="typed.set(search.value)" />
         </mat-form-field>
         <!-- For editors: a class of the kind picked, made in the data model editor's dialog. -->
         @if (canCreate()) {
@@ -291,7 +292,9 @@ export class DataModelClassesComponent {
   /** A class's label from its IRI, for the cards. */
   readonly labelOf = (iri: string) => this.state.labelOf(iri);
 
-  readonly query = signal('');
+  /** What is typed in the search; the search runs on it once typing pauses. */
+  readonly typed = signal('');
+  readonly query = debounced(this.typed);
 
   /** The cards' least width: room for the checkboxes' words on each row, at the comfortable rows' bigger sizes. */
   readonly cardWidth = signal(440).asReadonly();

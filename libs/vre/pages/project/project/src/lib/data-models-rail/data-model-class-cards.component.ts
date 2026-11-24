@@ -27,9 +27,10 @@ import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AddPropertyMenuComponent } from '../ontology-map/add-property-menu.component';
-import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { FILE_KINDS } from '../ontology-map/islands';
 import { ClassRow } from '../ontology-map/ontology-graph-elements';
+import { CanDoChecks } from './can-do-checks';
 import { CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
 import { DataModelsRailState } from './data-models-rail-state';
 import { hasText, HighlightedPipe } from './highlighted';
@@ -150,7 +151,7 @@ export interface PropertyOrder {
           [attr.data-iri]="row.id"
           [class.selected]="row.id === selected()"
           [class.flash]="row.id === flashed()">
-          <header class="card-head" (mouseenter)="checkDelete(row.id)">
+          <header class="card-head" (mouseenter)="checkDelete(row.id, true)" (mouseleave)="cancelCheck()">
             <span class="texts">
               <ng-template #className>
                 <small>
@@ -531,10 +532,9 @@ export class DataModelClassCardsComponent {
     this._clipboard.copy(row.id);
     this._notification.openSnackBar(this._translate.instant('pages.ontology.resourceClassInfo.idCopied'));
   }
-  /** What the API says of deleting each class, once its menu asked; none while it checks. */
-  readonly deleteChecks = signal(new Map<string, CanDo>());
-  /** The classes whose deletion was asked about, so hovering again asks no more. */
-  private readonly _checked = new Set<string>();
+  /** What the API says of deleting each class, once asked; none while it checks. */
+  private readonly _deleteChecks = new CanDoChecks(iri => this.editing.canDeleteClass(iri), inject(DestroyRef));
+  readonly deleteChecks = this._deleteChecks.results;
 
   readonly CARD_PROPERTIES = CARD_PROPERTIES;
 
@@ -616,18 +616,23 @@ export class DataModelClassCardsComponent {
     // The data model read again has the dragged orders, or not if saving failed: either way it is what shows.
     effect(() => {
       this.classes();
-      untracked(() => this._dragged.set(new Map()));
+      untracked(() => {
+        this._dragged.set(new Map());
+        // Read again after an edit: what could not be deleted may be deletable now, and the other way round.
+        this._deleteChecks.clear();
+      });
     });
   }
 
-  /** Asks the API whether the class can be deleted, for its bin to say so; once per class. */
-  checkDelete(classIri: string): void {
-    if (!this.canEdit() || !this.editing.canDelete || this._checked.has(classIri)) return;
-    this._checked.add(classIri);
-    this.editing
-      .canDeleteClass(classIri)
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(check => this.deleteChecks.update(checks => new Map(checks).set(classIri, check)));
+  /** Asks the API whether the class can be deleted, for its menu to say so; `soon` waits for the pointer to rest. */
+  checkDelete(classIri: string, soon = false): void {
+    if (!this.canEdit() || !this.editing.canDelete) return;
+    if (soon) this._deleteChecks.checkSoon(classIri);
+    else this._deleteChecks.check(classIri);
+  }
+
+  cancelCheck(): void {
+    this._deleteChecks.cancel();
   }
 
   /** Deletes the class once confirmed; the data model is then read again. */

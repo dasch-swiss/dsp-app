@@ -668,16 +668,17 @@ export class DataModelEditorService implements DataModelEditor {
     });
   }
 
-  /** Whether the API allows it, and why not; an error answer counts as not, with its message. */
+  /** Whether the API allows it, and why not; an error is a failed check, not an answer, with its message. */
   private _canDo(check: Observable<CanDoResponse | ApiResponseError>): Observable<CanDo> {
+    const failed = (reason?: string): CanDo => ({ canDo: false, failed: true, reason });
     return check.pipe(
       take(1),
       map(response =>
         response instanceof ApiResponseError
-          ? { canDo: false, reason: response.error instanceof Error ? response.error.message : String(response.error) }
+          ? failed(response.error instanceof Error ? response.error.message : String(response.error))
           : { canDo: response.canDo, reason: response.cannotDoReason }
       ),
-      catchError(() => of({ canDo: false }))
+      catchError(() => of(failed()))
     );
   }
 

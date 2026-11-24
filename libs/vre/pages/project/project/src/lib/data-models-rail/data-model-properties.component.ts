@@ -4,10 +4,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   DestroyRef,
   ElementRef,
   inject,
   signal,
+  untracked,
   viewChild,
   WritableSignal,
 } from '@angular/core';
@@ -37,15 +39,17 @@ import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { TableViewOptionsComponent, ViewOptionsEntry } from '@dasch-swiss/vre/pages/data-browser';
 import { DefaultProperties, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
+import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
 import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { typeNameOf } from '../ontology-map/property-types';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
+import { CanDoChecks } from './can-do-checks';
 import { ClassChipsComponent } from './class-chips.component';
 import { ColumnHeaderComponent } from './column-header.component';
 import { DataModelsRailState } from './data-models-rail-state';
+import { debounced } from './debounced';
 import { escapeClosesPanel } from './escape-closes';
 import { HighlightPipe } from './highlight.pipe';
 import { LanguageTextsComponent } from './language-texts.component';
@@ -137,7 +141,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             data-cy="data-model-properties-search"
             [placeholder]="r + '.findProperty' | translate"
             [attr.aria-label]="r + '.findProperty' | translate"
-            (input)="query.set(search.value)" />
+            (input)="typed.set(search.value)" />
         </mat-form-field>
         <!-- Which columns show, as in the Data tab's table. -->
         <app-table-view-options
@@ -469,7 +473,9 @@ const COLUMN_LABELS: Record<Column, string> = {
           <tr
             mat-row
             *matRowDef="let row; columns: shownColumns()"
-            (mouseenter)="checkDelete(row.id)"
+            (mouseenter)="checkDelete(row.id, true)"
+            (mouseleave)="cancelCheck()"
+            (focusin)="checkDelete(row.id)"
             data-cy="data-model-properties-row"
             [class.selected]="row.id === panelIri()"></tr>
         </table>
@@ -634,10 +640,9 @@ export class DataModelPropertiesComponent {
   /** The columns shown, then, for editors, the actions'. */
   readonly shownColumns = computed(() => [...this.columns.shown(), ...(this.canEdit() ? ['actions'] : [])]);
 
-  /** What the API says of deleting each property whose menu was opened. */
-  readonly deleteChecks = signal(new Map<string, CanDo>());
-  /** The properties whose deletion was asked about, so hovering again asks no more. */
-  private readonly _checked = new Set<string>();
+  /** What the API says of deleting each property, once asked; none while it checks. */
+  private readonly _deleteChecks = new CanDoChecks(iri => this.editing.canDeleteProperty(iri), this._destroyRef);
+  readonly deleteChecks = this._deleteChecks.results;
   /** The value types of a property to create, by group, as the data model editor offers them. */
   readonly propertyTypes = DefaultProperties.data;
   /** Whether "Create property" shows: for editors, where the editor's dialogs are at hand. */
@@ -678,7 +683,9 @@ export class DataModelPropertiesComponent {
   /** Whether the table is scrolled sideways, which shadows the frozen property column. */
   readonly scrolled = signal(false);
 
-  readonly query = signal('');
+  /** What is typed in the search; the search runs on it once typing pauses. */
+  readonly typed = signal('');
+  readonly query = debounced(this.typed);
   /** The column filters; an empty set or text filters nothing. */
   readonly namedAs = signal('');
   readonly describedAs = signal('');
@@ -750,6 +757,11 @@ export class DataModelPropertiesComponent {
   constructor() {
     // Arriving on the page, typing finds what it lists.
     afterNextRender(() => this._search()?.nativeElement.focus());
+    // Read again after an edit: what could not be deleted may be deletable now, and the other way round.
+    effect(() => {
+      this.state.graph();
+      untracked(() => this._deleteChecks.clear());
+    });
   }
 
   onScroll(event: Event): void {
@@ -826,14 +838,15 @@ export class DataModelPropertiesComponent {
     );
   }
 
-  /** Asks the API whether the property can be deleted, for its bin to say so; once per property. */
-  checkDelete(propertyIri: string): void {
-    if (!this.canEdit() || !this.editing.canDelete || this._checked.has(propertyIri)) return;
-    this._checked.add(propertyIri);
-    this.editing
-      .canDeleteProperty(propertyIri)
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(check => this.deleteChecks.update(checks => new Map(checks).set(propertyIri, check)));
+  /** Asks the API whether the property can be deleted, for its bin to say so; `soon` waits for the pointer to rest. */
+  checkDelete(propertyIri: string, soon = false): void {
+    if (!this.canEdit() || !this.editing.canDelete) return;
+    if (soon) this._deleteChecks.checkSoon(propertyIri);
+    else this._deleteChecks.check(propertyIri);
+  }
+
+  cancelCheck(): void {
+    this._deleteChecks.cancel();
   }
 
   /** Deletes the property once confirmed, closing its panel; the data model is then read again. */

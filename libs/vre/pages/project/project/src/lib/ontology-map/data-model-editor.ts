@@ -74,6 +74,8 @@ export interface DataModelEditor {
 export interface CanDo {
   canDo: boolean;
   reason?: string;
+  /** The API could not be asked: no answer to keep. */
+  failed?: boolean;
 }
 
 /** A value of a controlled vocabulary, as the editor's dialogs take it. */
