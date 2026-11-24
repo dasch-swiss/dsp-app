@@ -18,5 +18,6 @@ export type { TableLayout } from './lib/table-view/table-layout.service';
 export * from './lib/table-view/table-column.model';
 
 export { TableViewOptionsComponent } from './lib/table-view/table-view-options.component';
+export type { ViewOptionsEntry } from './lib/table-view/table-view-options.component';
 export { TableViewStateService } from './lib/table-view/table-view-state.service';
 export type { ColumnPickerEntry } from './lib/table-view/table-view-state.service';

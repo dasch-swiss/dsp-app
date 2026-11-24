@@ -33,8 +33,9 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { TableViewOptionsComponent, ViewOptionsEntry } from '@dasch-swiss/vre/pages/data-browser';
 import { DefaultProperties, DefaultProperty, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CanDo, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
@@ -108,6 +109,7 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatTooltip,
     PropertyPanelComponent,
     ResourceClassPanelComponent,
+    TableViewOptionsComponent,
     TranslatePipe,
   ],
   template: `
@@ -128,6 +130,13 @@ const COLUMN_LABELS: Record<Column, string> = {
             [attr.aria-label]="r + '.findProperty' | translate"
             (input)="query.set(search.value)" />
         </mat-form-field>
+        <!-- Which columns show, as in the Data tab's table. -->
+        <app-table-view-options
+          class="view-options"
+          [entries]="columnEntries()"
+          [showRowHeight]="false"
+          (columnVisibilityChanged)="showColumn($event.key, $event.isVisible)"
+          (allColumnsVisibilityChanged)="columns.showAll($event)" />
         <!-- For editors, at the head's right end: a property of the type picked, for no class yet, made in the data model
              editor's dialog. -->
         @if (canCreate()) {
@@ -499,8 +508,8 @@ const COLUMN_LABELS: Record<Column, string> = {
     `
       @use '../../../../../../../../apps/dsp-app/src/styles/config' as *;
 
-      // Create property at the head's right end, away from the search.
-      .head .create {
+      // View options, then Create property, at the head's right end, away from the search.
+      .head .view-options {
         margin-left: auto;
       }
 
@@ -636,6 +645,22 @@ export class DataModelPropertiesComponent {
     minWidths: { property: 140, description: 140, type: 90, pointsTo: 110, usedBy: 130 },
   });
   readonly columnLabels = COLUMN_LABELS;
+  /** A column ticked or unticked in View options; its key is one of this table's columns. */
+  showColumn(key: string, shown: boolean): void {
+    this.columns.show(key as Column, shown);
+  }
+  private readonly _translate = inject(TranslateService);
+  /** Read so the column names follow a change of language. */
+  private readonly _lang = toSignal(this._translate.onLangChange);
+  /** Each column for the View options menu, in the table's order; the property column stays shown. */
+  readonly columnEntries = computed((): ViewOptionsEntry[] => {
+    this._lang();
+    const hidden = this.columns.hidden();
+    return this.columns.order().map((key, index) => ({
+      column: { key, label: this._translate.instant(COLUMN_LABELS[key]), isSticky: index === 0 },
+      isVisible: !hidden.includes(key),
+    }));
+  });
   readonly maxUsedBy = MAX_USED_BY;
   readonly noTarget = NO_TARGET;
 
@@ -710,8 +735,6 @@ export class DataModelPropertiesComponent {
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
 
   constructor() {
-    // Every column shows: with no columns menu, one hidden before in this browser could not be shown again.
-    this.columns.showAll(true);
     // Arriving on the page, typing finds what it lists.
     afterNextRender(() => this._search()?.nativeElement.focus());
   }

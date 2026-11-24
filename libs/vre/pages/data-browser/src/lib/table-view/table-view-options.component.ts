@@ -5,8 +5,19 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { ROW_HEIGHT_MANUAL_DEFAULT, ROW_HEIGHT_MAX, ROW_HEIGHT_MIN, ROW_HEIGHT_STEP } from './table-column.model';
-import { ColumnPickerEntry } from './table-view-state.service';
+import {
+  ROW_HEIGHT_MANUAL_DEFAULT,
+  ROW_HEIGHT_MAX,
+  ROW_HEIGHT_MIN,
+  ROW_HEIGHT_STEP,
+  TableColumn,
+} from './table-column.model';
+
+/** A column the menu can show or hide; the picker's own entries fit, and so do another table's columns. */
+export interface ViewOptionsEntry {
+  readonly column: Pick<TableColumn, 'key' | 'label' | 'isSticky'>;
+  readonly isVisible: boolean;
+}
 
 /** The table's shaping controls: row height and column visibility. Presentational: takes the picker's rows and emits intent. */
 @Component({
@@ -26,40 +37,42 @@ import { ColumnPickerEntry } from './table-view-state.service';
     <mat-menu #menu="matMenu" xPosition="before">
       <!-- MatMenu's panel carries none of this component's style attributes, so sizing and scroll are set on a wrapper in the projected content. -->
       <div class="view-options-panel">
-        <h4 class="section-header" id="row-height-heading">
-          {{ 'pages.dataBrowser.viewOptions.rowHeight' | translate }}
-          <span class="section-meta" data-cy="row-height-value">{{ rowHeightLabel() }}</span>
-        </h4>
+        @if (showRowHeight()) {
+          <h4 class="section-header" id="row-height-heading">
+            {{ 'pages.dataBrowser.viewOptions.rowHeight' | translate }}
+            <span class="section-meta" data-cy="row-height-value">{{ rowHeightLabel() }}</span>
+          </h4>
 
-        <!-- Not menu items, so the wrapper swallows clicks that would close the menu, and every key but Escape. -->
-        <div class="row-height-control" (click)="$event.stopPropagation()" (keydown)="onControlKeydown($event)">
-          <mat-button-toggle-group
-            class="row-height-mode"
-            data-cy="row-height-mode"
-            hideSingleSelectionIndicator
-            aria-labelledby="row-height-heading"
-            [value]="isManual() ? 'manual' : 'auto'"
-            (change)="onModeChange($event.value)">
-            <mat-button-toggle value="auto" data-cy="row-height-auto">
-              {{ 'pages.dataBrowser.viewOptions.rowHeightAuto' | translate }}
-            </mat-button-toggle>
-            <mat-button-toggle value="manual" data-cy="row-height-manual">
-              {{ 'pages.dataBrowser.viewOptions.rowHeightManual' | translate }}
-            </mat-button-toggle>
-          </mat-button-toggle-group>
+          <!-- Not menu items, so the wrapper swallows clicks that would close the menu, and every key but Escape. -->
+          <div class="row-height-control" (click)="$event.stopPropagation()" (keydown)="onControlKeydown($event)">
+            <mat-button-toggle-group
+              class="row-height-mode"
+              data-cy="row-height-mode"
+              hideSingleSelectionIndicator
+              aria-labelledby="row-height-heading"
+              [value]="isManual() ? 'manual' : 'auto'"
+              (change)="onModeChange($event.value)">
+              <mat-button-toggle value="auto" data-cy="row-height-auto">
+                {{ 'pages.dataBrowser.viewOptions.rowHeightAuto' | translate }}
+              </mat-button-toggle>
+              <mat-button-toggle value="manual" data-cy="row-height-manual">
+                {{ 'pages.dataBrowser.viewOptions.rowHeightManual' | translate }}
+              </mat-button-toggle>
+            </mat-button-toggle-group>
 
-          @if (isManual()) {
-            <!-- Not discrete: the value bubble would be clipped at the track ends by the non-scrolling panel. -->
-            <mat-slider data-cy="row-height-slider" [min]="sliderMin" [max]="sliderMax" [step]="sliderStep">
-              <input
-                matSliderThumb
-                [value]="rowHeight() ?? lastManualHeight()"
-                [attr.aria-label]="'pages.dataBrowser.viewOptions.rowHeight' | translate"
-                [attr.aria-valuetext]="rowHeightLabel()"
-                (input)="onSliderInput($event)" />
-            </mat-slider>
-          }
-        </div>
+            @if (isManual()) {
+              <!-- Not discrete: the value bubble would be clipped at the track ends by the non-scrolling panel. -->
+              <mat-slider data-cy="row-height-slider" [min]="sliderMin" [max]="sliderMax" [step]="sliderStep">
+                <input
+                  matSliderThumb
+                  [value]="rowHeight() ?? lastManualHeight()"
+                  [attr.aria-label]="'pages.dataBrowser.viewOptions.rowHeight' | translate"
+                  [attr.aria-valuetext]="rowHeightLabel()"
+                  (input)="onSliderInput($event)" />
+              </mat-slider>
+            }
+          </div>
+        }
 
         <!-- Each row stops the click so the menu stays open while ticking columns. -->
         <h4 class="section-header">
@@ -117,7 +130,9 @@ export class TableViewOptionsComponent {
   private readonly _translate = inject(TranslateService);
 
   /** Every column of the class with its current on/off state, in the ontology's own order. */
-  readonly entries = input.required<ColumnPickerEntry[]>();
+  readonly entries = input.required<ViewOptionsEntry[]>();
+  /** False for a table whose rows always fit their content: the menu then holds the columns only. */
+  readonly showRowHeight = input(true);
   /** The height every row is drawn at, or undefined for Auto. */
   readonly rowHeight = input<number | undefined>(undefined);
 
