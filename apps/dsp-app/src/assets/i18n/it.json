@@ -618,15 +618,13 @@
         "setValue": "Imposta valore",
         "setValueHint": "Dai questa etichetta a ogni risorsa",
         "listLoadFailed": "Non è stato possibile caricare la lista.",
-        "valueNumbered": "Valore {{index}}",
-        "addValue": "Aggiungi un altro valore",
-        "removeValue": "Rimuovi il valore {{index}}",
         "onlyEmpty": "Aggiorna solo i valori vuoti",
         "onlyEmptyHint": "Le risorse che hanno già un valore lo mantengono",
-        "onlyEmptyMultipleHint": "Le risorse che hanno già dei valori li mantengono",
-        "onlyEmptyMultipleTooltip": "Le proprietà con più valori si possono compilare solo dove sono vuote.",
+        "onlyEmptyMultipleTooltip": "Più valori si possono aggiungere solo dove la proprietà è vuota. Mantieni un solo valore per sovrascrivere.",
         "overwriteWarning": "Valori esistenti sovrascritti: {{count}}",
-        "noRightsSkipped": "Risorse saltate che non puoi modificare: {{count}}"
+        "noRightsSkipped": "Risorse saltate che non puoi modificare: {{count}}",
+        "severalKept": "Risorse con più valori mantenute: {{count}}",
+        "overwriteMultipleHint": "Un unico valore esistente viene sostituito; le risorse con più valori li mantengono"
       },
       "resourcesList": {
         "resultsCount": "{{count}} risultati",

@@ -618,15 +618,13 @@
         "setValue": "Set value",
         "setValueHint": "Give every resource this label",
         "listLoadFailed": "The list could not be loaded.",
-        "valueNumbered": "Value {{index}}",
-        "addValue": "Add another value",
-        "removeValue": "Remove value {{index}}",
         "onlyEmpty": "Only update empty values",
         "onlyEmptyHint": "Resources that already have a value keep it",
-        "onlyEmptyMultipleHint": "Resources that already have values keep them",
-        "onlyEmptyMultipleTooltip": "Properties with several values can only be filled where they are empty.",
+        "onlyEmptyMultipleTooltip": "Several values can only be added where the property is empty. Keep one value to overwrite.",
         "overwriteWarning": "Existing values overwritten: {{count}}",
-        "noRightsSkipped": "Resources you may not edit are skipped: {{count}}"
+        "noRightsSkipped": "Resources you may not edit are skipped: {{count}}",
+        "severalKept": "Resources with several values are kept: {{count}}",
+        "overwriteMultipleHint": "A single existing value is replaced; resources with several values keep them"
       },
       "resourcesList": {
         "resultsCount": "{{count}} results",

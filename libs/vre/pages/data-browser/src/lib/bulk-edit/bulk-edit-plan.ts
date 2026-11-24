@@ -1,36 +1,43 @@
 import {
   Cardinality,
   Constants,
-  CreateListValue,
   CreateValue,
-  CreateTextValueAsString,
   ListNodeV2,
   ReadListValue,
   ReadResource,
+  ReadTextValue,
   ReadTextValueAsString,
   ResourcePropertyDefinition,
-  UpdateListValue,
   UpdateResource,
   UpdateResourceMetadata,
-  UpdateTextValueAsString,
   UpdateValue,
 } from '@dasch-swiss/dsp-js';
+import { propertiesTypeMapping } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { listRootIriFromGuiAttributes } from '@dasch-swiss/vre/shared/app-common';
 
 /**
- * What a bulk edit changes: the resource label, a plain-text property or a list property. `multiple`: the
+ * What a bulk edit changes: the resource label, a plain-text, rich-text or list property. `multiple`: the
  * property takes several values per resource.
  */
 export type BulkEditTarget =
   | { kind: 'label'; id: string }
-  | { kind: 'text'; id: string; propertyDefinition: ResourcePropertyDefinition; multiple: boolean }
+  | {
+      kind: 'text' | 'richText';
+      id: string;
+      propertyDefinition: ResourcePropertyDefinition;
+      cardinality: Cardinality;
+      multiple: boolean;
+    }
   | {
       kind: 'list';
       id: string;
       propertyDefinition: ResourcePropertyDefinition;
+      cardinality: Cardinality;
       listRootIri: string;
       multiple: boolean;
     };
+
+export type BulkEditPropertyTarget = Exclude<BulkEditTarget, { kind: 'label' }>;
 
 /** A node of the property's list, flattened; `path` names its ancestors too. */
 export interface BulkEditListOption {
@@ -41,26 +48,42 @@ export interface BulkEditListOption {
 }
 
 /**
- * “Set value” writes `values` (a label takes the first). With `onlyEmpty`, resources that have a value keep
- * it; otherwise the value is overwritten, which only a property with one value per resource allows.
+ * A value to write, as the resource creation form's editor gives it: the text, the rich text's HTML or the
+ * list node IRI. `display` is how the preview shows it.
  */
-export type BulkEditOperation =
-  | { kind: 'setValue'; values: string[]; onlyEmpty: boolean }
-  | { kind: 'setListValue'; values: BulkEditListOption[]; onlyEmpty: boolean };
+export interface BulkEditNewValue {
+  content: string;
+  display: string;
+  /** The value's comment, as the creation form adds one. */
+  comment?: string;
+}
 
-/** A label always has one value; a property with several values per resource can only be filled where empty. */
-export function canOverwrite(target: BulkEditTarget): boolean {
-  return target.kind === 'label' || !target.multiple;
+/**
+ * “Set value” writes `values` (a label takes the first). With `onlyEmpty`, resources that have a value keep
+ * it; otherwise a single new value replaces a resource's single value.
+ */
+export interface BulkEditOperation {
+  values: BulkEditNewValue[];
+  onlyEmpty: boolean;
+}
+
+/**
+ * Overwriting is unambiguous only for one new value: several new values can only fill empty properties.
+ */
+export function canOverwrite(valueCount: number): boolean {
+  return valueCount <= 1;
 }
 
 /** One write: the label, a value update when `value` is set, otherwise a value to create. */
 export interface BulkEditChange {
   resource: ReadResource;
-  value?: ReadTextValueAsString | ReadListValue;
+  value?: ReadTextValue | ReadListValue;
   before: string | null;
   after: string;
-  /** The text, the label or the list node IRI to write. */
+  /** The label, the text, the rich text's HTML or the list node IRI to write. */
   newValue: string;
+  /** A comment to write with the value; without one, an updated value keeps its own. */
+  comment?: string;
 }
 
 export interface BulkEditPlan {
@@ -69,9 +92,11 @@ export interface BulkEditPlan {
   unchangedCount: number;
   /** Resources left out, wholly or in part, because the user may not modify them or their values. */
   noRightsCount: number;
+  /** Resources an overwrite leaves alone because they hold several values: which one to replace is unclear. */
+  severalKeptCount: number;
 }
 
-/** The label, then the plain-text and list properties the user may edit on this resource. */
+/** The label, then the plain-text, rich-text and list properties the user may edit on this resource. */
 export function bulkEditTargets(resource: ReadResource): BulkEditTarget[] {
   const targets: BulkEditTarget[] = [{ kind: 'label', id: Constants.Label }];
 
@@ -82,16 +107,26 @@ export function bulkEditTargets(resource: ReadResource): BulkEditTarget[] {
       continue;
     }
     const multiple = cardinality === Cardinality._0_n || cardinality === Cardinality._1_n;
-    if (
-      propertyDefinition.objectType === Constants.TextValue &&
-      (propertyDefinition.guiElement === Constants.GuiSimpleText ||
-        propertyDefinition.guiElement === Constants.GuiTextarea)
-    ) {
-      targets.push({ kind: 'text', id: propertyDefinition.id, propertyDefinition, multiple });
+    if (propertyDefinition.objectType === Constants.TextValue) {
+      if (
+        propertyDefinition.guiElement === Constants.GuiSimpleText ||
+        propertyDefinition.guiElement === Constants.GuiTextarea
+      ) {
+        targets.push({ kind: 'text', id: propertyDefinition.id, propertyDefinition, cardinality, multiple });
+      } else if (propertyDefinition.guiElement === Constants.GuiRichText) {
+        targets.push({ kind: 'richText', id: propertyDefinition.id, propertyDefinition, cardinality, multiple });
+      }
     }
     const listRootIri = listRootIriFromGuiAttributes(propertyDefinition.guiAttributes);
     if (propertyDefinition.objectType === Constants.ListValue && listRootIri) {
-      targets.push({ kind: 'list', id: propertyDefinition.id, propertyDefinition, listRootIri, multiple });
+      targets.push({
+        kind: 'list',
+        id: propertyDefinition.id,
+        propertyDefinition,
+        cardinality,
+        listRootIri,
+        multiple,
+      });
     }
   }
   return targets;
@@ -111,6 +146,18 @@ export function flattenList(root: ListNodeV2): BulkEditListOption[] {
   return options;
 }
 
+/** The text a rich-text value shows, for the preview. */
+export function richTextDisplay(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export function planBulkEdit(
   resources: ReadResource[],
   target: BulkEditTarget,
@@ -119,19 +166,22 @@ export function planBulkEdit(
   const changes: BulkEditChange[] = [];
   let unchangedCount = 0;
   let noRightsCount = 0;
+  let severalKeptCount = 0;
 
   for (const resource of resources) {
-    const resourceChanges = _changesFor(resource, target, operation);
+    const { changes: resourceChanges, severalKept } = _changesFor(resource, target, operation);
     const allowed = resourceChanges.filter(_canWrite);
     if (allowed.length < resourceChanges.length) {
       noRightsCount++;
+    } else if (severalKept) {
+      severalKeptCount++;
     } else if (resourceChanges.length === 0) {
       unchangedCount++;
     }
     changes.push(...allowed);
   }
 
-  return { changes, unchangedCount, noRightsCount };
+  return { changes, unchangedCount, noRightsCount, severalKeptCount };
 }
 
 /**
@@ -148,10 +198,13 @@ function _canModify(entity: { userHasPermission: string }): boolean {
 
 export type BulkEditRequest =
   | { kind: 'label'; payload: UpdateResourceMetadata }
-  | { kind: 'update'; payload: UpdateResource<UpdateTextValueAsString | UpdateListValue> }
-  | { kind: 'create'; payload: UpdateResource<CreateTextValueAsString | CreateListValue> };
+  | { kind: 'update'; payload: UpdateResource<UpdateValue> }
+  | { kind: 'create'; payload: UpdateResource<CreateValue> };
 
-/** The request for one change; a value's comment is carried over, since an update replaces the value. */
+/**
+ * The request for one change, built like the resource editor builds it; a value's comment is carried over,
+ * since an update replaces the value.
+ */
 export function bulkEditRequest(change: BulkEditChange, target: BulkEditTarget): BulkEditRequest {
   if (target.kind === 'label') {
     const payload = new UpdateResourceMetadata();
@@ -162,91 +215,111 @@ export function bulkEditRequest(change: BulkEditChange, target: BulkEditTarget):
     return { kind: 'label', payload };
   }
 
+  const mapping = propertiesTypeMapping.get(target.propertyDefinition.objectType!)!;
   if (change.value) {
-    const value = target.kind === 'list' ? new UpdateListValue() : new UpdateTextValueAsString();
-    _setContent(value, change.newValue);
-    value.id = change.value.id;
-    if (change.value.valueHasComment) {
-      value.valueHasComment = change.value.valueHasComment;
+    const value = mapping.updateValue(change.value.id, change.newValue, target.propertyDefinition);
+    const comment = change.comment ?? change.value.valueHasComment;
+    if (comment) {
+      value.valueHasComment = comment;
     }
     return { kind: 'update', payload: _updateResource(change.resource, target.id, value) };
   }
 
-  const value = target.kind === 'list' ? new CreateListValue() : new CreateTextValueAsString();
-  _setContent(value, change.newValue);
+  const value = mapping.createValue(change.newValue, target.propertyDefinition);
+  if (change.comment) {
+    value.valueHasComment = change.comment;
+  }
   return { kind: 'create', payload: _updateResource(change.resource, target.id, value) };
 }
 
-function _changesFor(resource: ReadResource, target: BulkEditTarget, operation: BulkEditOperation): BulkEditChange[] {
-  if (target.kind === 'label') {
-    const after = operation.kind === 'setValue' ? operation.values[0] : undefined;
-    return after !== undefined && after.trim() !== '' && after !== resource.label
-      ? [{ resource, before: resource.label, after, newValue: after }]
-      : [];
-  }
-
-  if (target.kind === 'list' && operation.kind === 'setListValue') {
-    const values = resource
-      .getValues(target.id)
-      .filter((value): value is ReadListValue => value instanceof ReadListValue);
-    return _setChanges(
-      resource,
-      target,
-      operation,
-      values,
-      operation.values.map(option => ({ newValue: option.id, after: option.path })),
-      value => value.listNode
-    );
-  }
-
-  if (target.kind === 'text' && operation.kind === 'setValue') {
-    const values = resource
-      .getValues(target.id)
-      .filter((value): value is ReadTextValueAsString => value instanceof ReadTextValueAsString);
-    return _setChanges(
-      resource,
-      target,
-      operation,
-      values,
-      operation.values.map(text => ({ newValue: text, after: text })),
-      value => value.text
-    );
-  }
-  return [];
-}
-
-/**
- * “Set value”: an empty property gets every new value; a filled one keeps its values, unless the operation
- * overwrites and the property takes one value, whose value then becomes the first new one.
- */
-function _setChanges<V extends ReadTextValueAsString | ReadListValue>(
+function _changesFor(
   resource: ReadResource,
   target: BulkEditTarget,
-  operation: { onlyEmpty: boolean },
-  values: V[],
-  next: { newValue: string; after: string }[],
-  contentOf: (value: V) => string
-): BulkEditChange[] {
-  if (values.length === 0) {
-    return next.map(({ newValue, after }) => ({ resource, before: null, after, newValue }));
+  operation: BulkEditOperation
+): { changes: BulkEditChange[]; severalKept: boolean } {
+  if (target.kind === 'label') {
+    const after = operation.values[0]?.content;
+    return {
+      changes:
+        after !== undefined && after.trim() !== '' && after !== resource.label
+          ? [{ resource, before: resource.label, after, newValue: after }]
+          : [],
+      severalKept: false,
+    };
   }
-  const [current] = values;
-  if (operation.onlyEmpty || !canOverwrite(target) || !next.length || contentOf(current) === next[0].newValue) {
-    return [];
+
+  const existing = _existingValues(resource, target);
+  if (existing.length === 0) {
+    return {
+      changes: operation.values.map(({ content, display, comment }) => ({
+        resource,
+        before: null,
+        after: display,
+        newValue: content,
+        ...(comment && { comment }),
+      })),
+      severalKept: false,
+    };
   }
-  const before = current instanceof ReadListValue ? current.listNodeLabel : (current as ReadTextValueAsString).text;
-  return [{ resource, value: current, before, after: next[0].after, newValue: next[0].newValue }];
+
+  const [next] = operation.values;
+  if (operation.onlyEmpty || !next || !canOverwrite(operation.values.length)) {
+    return { changes: [], severalKept: false };
+  }
+  if (existing.length > 1) {
+    return { changes: [], severalKept: true };
+  }
+  const [current] = existing;
+  if (current.content === next.content) {
+    return { changes: [], severalKept: false };
+  }
+  return {
+    changes: [
+      {
+        resource,
+        value: current.value,
+        before: current.display,
+        after: next.display,
+        newValue: next.content,
+        ...(next.comment && { comment: next.comment }),
+      },
+    ],
+    severalKept: false,
+  };
 }
 
-function _setContent(
-  value: UpdateTextValueAsString | UpdateListValue | CreateTextValueAsString | CreateListValue,
-  content: string
-) {
-  if (value instanceof UpdateListValue || value instanceof CreateListValue) {
-    value.listNode = content;
-  } else {
-    value.text = content;
+interface ExistingValue {
+  value: ReadTextValue | ReadListValue;
+  content: string;
+  display: string;
+}
+
+function _existingValues(resource: ReadResource, target: BulkEditPropertyTarget): ExistingValue[] {
+  const values = resource.getValues(target.id);
+  switch (target.kind) {
+    case 'list':
+      return values
+        .filter((value): value is ReadListValue => value instanceof ReadListValue)
+        .map(value => ({ value, content: value.listNode, display: value.listNodeLabel }));
+    case 'richText':
+      return values
+        .filter((value): value is ReadTextValue => value instanceof ReadTextValue)
+        .map(value => {
+          const html = _richTextHtml(value);
+          return { value, content: html, display: richTextDisplay(html) };
+        });
+    case 'text':
+      return values
+        .filter((value): value is ReadTextValueAsString => value instanceof ReadTextValueAsString)
+        .map(value => ({ value, content: value.text, display: value.text }));
   }
+}
+
+/** A rich-text value's HTML, unwrapped from its XML document as the resource editor's control unwraps it. */
+function _richTextHtml(value: ReadTextValue): string {
+  const strval = value.strval ?? '';
+  const match = strval.match(/<\?xml version="1\.0" encoding="UTF-8"\?>\n<text>([\s\S]*)<\/text>/);
+  return match ? match[1] : strval;
 }
 
 function _updateResource<T extends UpdateValue | CreateValue>(

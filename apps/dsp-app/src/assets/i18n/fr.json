@@ -618,15 +618,13 @@
         "setValue": "Définir la valeur",
         "setValueHint": "Donner ce libellé à chaque ressource",
         "listLoadFailed": "La liste n’a pas pu être chargée.",
-        "valueNumbered": "Valeur {{index}}",
-        "addValue": "Ajouter une autre valeur",
-        "removeValue": "Supprimer la valeur {{index}}",
         "onlyEmpty": "Ne remplir que les valeurs vides",
         "onlyEmptyHint": "Les ressources qui ont déjà une valeur la gardent",
-        "onlyEmptyMultipleHint": "Les ressources qui ont déjà des valeurs les gardent",
-        "onlyEmptyMultipleTooltip": "Les propriétés à plusieurs valeurs ne peuvent être remplies que là où elles sont vides.",
+        "onlyEmptyMultipleTooltip": "Plusieurs valeurs ne peuvent être ajoutées que là où la propriété est vide. Gardez une seule valeur pour écraser.",
         "overwriteWarning": "Valeurs existantes écrasées : {{count}}",
-        "noRightsSkipped": "Ressources ignorées que vous ne pouvez pas modifier : {{count}}"
+        "noRightsSkipped": "Ressources ignorées que vous ne pouvez pas modifier : {{count}}",
+        "severalKept": "Ressources à plusieurs valeurs conservées : {{count}}",
+        "overwriteMultipleHint": "Une valeur existante unique est remplacée ; les ressources à plusieurs valeurs les gardent"
       },
       "resourcesList": {
         "resultsCount": "{{count}} résultats",

@@ -618,15 +618,13 @@
         "setValue": "Wert setzen",
         "setValueHint": "Allen Ressourcen diese Bezeichnung geben",
         "listLoadFailed": "Die Liste konnte nicht geladen werden.",
-        "valueNumbered": "Wert {{index}}",
-        "addValue": "Weiteren Wert hinzufügen",
-        "removeValue": "Wert {{index}} entfernen",
         "onlyEmpty": "Nur leere Werte ergänzen",
         "onlyEmptyHint": "Ressourcen, die bereits einen Wert haben, behalten ihn",
-        "onlyEmptyMultipleHint": "Ressourcen, die bereits Werte haben, behalten sie",
-        "onlyEmptyMultipleTooltip": "Eigenschaften mit mehreren Werten können nur dort gesetzt werden, wo sie leer sind.",
+        "onlyEmptyMultipleTooltip": "Mehrere Werte können nur dort hinzugefügt werden, wo die Eigenschaft leer ist. Behalten Sie einen Wert, um zu überschreiben.",
         "overwriteWarning": "Überschriebene bestehende Werte: {{count}}",
-        "noRightsSkipped": "Übersprungene Ressourcen, die Sie nicht bearbeiten dürfen: {{count}}"
+        "noRightsSkipped": "Übersprungene Ressourcen, die Sie nicht bearbeiten dürfen: {{count}}",
+        "severalKept": "Ressourcen mit mehreren Werten bleiben unverändert: {{count}}",
+        "overwriteMultipleHint": "Ein einzelner bestehender Wert wird ersetzt; Ressourcen mit mehreren Werten behalten sie"
       },
       "resourcesList": {
         "resultsCount": "{{count}} Ergebnisse",

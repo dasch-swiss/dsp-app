@@ -3,18 +3,22 @@ import {
   Constants,
   CreateListValue,
   CreateTextValueAsString,
+  CreateTextValueAsXml,
   ListNodeV2,
   ReadListValue,
   ReadResource,
+  ReadTextValueAsXml,
   ReadTextValueAsString,
   ResourceClassDefinitionWithPropertyDefinition,
   ResourcePropertyDefinition,
   UpdateListValue,
   UpdateResourceMetadata,
   UpdateTextValueAsString,
+  UpdateTextValueAsXml,
 } from '@dasch-swiss/dsp-js';
 import {
   BulkEditListOption,
+  BulkEditNewValue,
   bulkEditRequest,
   BulkEditTarget,
   bulkEditTargets,
@@ -24,22 +28,38 @@ import {
 
 const PROP = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasText';
 const LIST_PROP = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasListItem';
+const RICH_PROP = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasRichtext';
 const TEXT: BulkEditTarget = {
   kind: 'text',
   id: PROP,
-  propertyDefinition: new ResourcePropertyDefinition(),
+  propertyDefinition: Object.assign(new ResourcePropertyDefinition(), {
+    objectType: Constants.TextValue,
+    guiElement: Constants.GuiSimpleText,
+  }),
+  cardinality: Cardinality._0_1,
   multiple: false,
 };
-const MULTI_TEXT: BulkEditTarget = { ...TEXT, multiple: true };
+const RICH: BulkEditTarget = {
+  kind: 'richText',
+  id: RICH_PROP,
+  propertyDefinition: Object.assign(new ResourcePropertyDefinition(), {
+    objectType: Constants.TextValue,
+    guiElement: Constants.GuiRichText,
+  }),
+  cardinality: Cardinality._0_1,
+  multiple: false,
+};
+const MULTI_TEXT: BulkEditTarget = { ...TEXT, cardinality: Cardinality._0_n, multiple: true };
 const LABEL: BulkEditTarget = { kind: 'label', id: Constants.Label };
 const LIST: BulkEditTarget = {
   kind: 'list',
   id: LIST_PROP,
-  propertyDefinition: new ResourcePropertyDefinition(),
+  propertyDefinition: Object.assign(new ResourcePropertyDefinition(), { objectType: Constants.ListValue }),
+  cardinality: Cardinality._0_1,
   listRootIri: 'http://rdfh.ch/lists/0001/root',
   multiple: false,
 };
-const MULTI_LIST: BulkEditTarget = { ...LIST, multiple: true };
+const MULTI_LIST: BulkEditTarget = { ...LIST, cardinality: Cardinality._0_n, multiple: true };
 const BRIEF: BulkEditListOption = { id: 'node:brief', label: 'Brief', path: 'Brief', depth: 0 };
 const HANDWRITTEN: BulkEditListOption = {
   id: 'node:handwritten',
@@ -48,6 +68,10 @@ const HANDWRITTEN: BulkEditListOption = {
   depth: 1,
 };
 const POSTCARD: BulkEditListOption = { id: 'node:postcard', label: 'Karte', path: 'Karte', depth: 0 };
+
+const texts = (...values: string[]): BulkEditNewValue[] => values.map(value => ({ content: value, display: value }));
+const nodes = (...options: BulkEditListOption[]): BulkEditNewValue[] =>
+  options.map(option => ({ content: option.id, display: option.path }));
 
 function textValue(id: string, text: string, comment?: string): ReadTextValueAsString {
   const value = new ReadTextValueAsString();
@@ -94,7 +118,7 @@ function propertyDefinition(id: string, objectType: string, guiElement: string, 
 }
 
 describe('bulkEditTargets', () => {
-  it('OffersTheLabelThenPlainTextAndListProperties', () => {
+  it('OffersTheLabelThenPlainTextRichTextAndListProperties', () => {
     const res = resource('r1');
     const definitions = [
       { def: propertyDefinition(PROP, Constants.TextValue, Constants.GuiSimpleText), cardinality: Cardinality._0_1 },
@@ -123,6 +147,7 @@ describe('bulkEditTargets', () => {
       ['label', Constants.Label, false],
       ['text', PROP, false],
       ['list', LIST_PROP, true],
+      ['richText', 'rich', false],
     ]);
   });
 });
@@ -148,8 +173,7 @@ describe('planBulkEdit', () => {
   describe('text', () => {
     it('SetsTheValueOnlyWhereThePropertyIsEmptyByDefault', () => {
       const plan = planBulkEdit([resource('r1'), resource('r2', textValue('v1', 'Karte'))], TEXT, {
-        kind: 'setValue',
-        values: ['Brief'],
+        values: texts('Brief'),
         onlyEmpty: true,
       });
 
@@ -163,7 +187,7 @@ describe('planBulkEdit', () => {
       const plan = planBulkEdit(
         [resource('r1'), resource('r2', textValue('v1', 'Karte')), resource('r3', textValue('v3', 'Brief'))],
         TEXT,
-        { kind: 'setValue', values: ['Brief'], onlyEmpty: false }
+        { values: texts('Brief'), onlyEmpty: false }
       );
 
       expect(plan.changes.map(change => [change.resource.id, change.value?.id, change.before])).toEqual([
@@ -175,8 +199,7 @@ describe('planBulkEdit', () => {
 
     it('FillsAnEmptyMultiValuePropertyWithEveryValue', () => {
       const plan = planBulkEdit([resource('r1')], MULTI_TEXT, {
-        kind: 'setValue',
-        values: ['Wien', 'Mödling'],
+        values: texts('Wien', 'Mödling'),
         onlyEmpty: true,
       });
 
@@ -186,10 +209,32 @@ describe('planBulkEdit', () => {
       ]);
     });
 
-    it('NeverOverwritesAMultiValueProperty', () => {
+    it('OverwritesTheOneValueOfAMultiValuePropertyWithOneNewValue', () => {
       const plan = planBulkEdit([resource('r1', textValue('v1', 'Karte'))], MULTI_TEXT, {
-        kind: 'setValue',
-        values: ['Brief'],
+        values: texts('Brief'),
+        onlyEmpty: false,
+      });
+
+      expect(plan.changes.map(change => [change.value?.id, change.before, change.after])).toEqual([
+        ['v1', 'Karte', 'Brief'],
+      ]);
+    });
+
+    it('KeepsAResourceWithSeveralValuesWhenOverwriting', () => {
+      const plan = planBulkEdit(
+        [resource('r1', textValue('v1', 'Karte'), textValue('v2', 'Brief')), resource('r2')],
+        MULTI_TEXT,
+        { values: texts('Brief'), onlyEmpty: false }
+      );
+
+      expect(plan.changes.map(change => change.resource.id)).toEqual(['r2']);
+      expect(plan.severalKeptCount).toBe(1);
+      expect(plan.unchangedCount).toBe(0);
+    });
+
+    it('NeverOverwritesWithSeveralNewValues', () => {
+      const plan = planBulkEdit([resource('r1', textValue('v1', 'Karte'))], MULTI_TEXT, {
+        values: texts('Brief', 'Karte'),
         onlyEmpty: false,
       });
 
@@ -198,11 +243,32 @@ describe('planBulkEdit', () => {
     });
   });
 
+  describe('rich text', () => {
+    it('ShowsTheRichTextAsTextInThePreviewAndWritesItsHtml', () => {
+      const existing = Object.assign(new ReadTextValueAsXml(), {
+        id: 'v1',
+        strval: '<?xml version="1.0" encoding="UTF-8"?>\n<text><p>Old <b>note</b></p></text>',
+        userHasPermission: 'M',
+      });
+      const res = resource('r1');
+      res.properties[RICH_PROP] = [existing];
+
+      const plan = planBulkEdit([res, resource('r2')], RICH, {
+        values: [{ content: '<p>New <i>note</i></p>', display: 'New note' }],
+        onlyEmpty: false,
+      });
+
+      expect(plan.changes.map(change => [change.resource.id, change.before, change.after, change.newValue])).toEqual([
+        ['r1', 'Old note', 'New note', '<p>New <i>note</i></p>'],
+        ['r2', null, 'New note', '<p>New <i>note</i></p>'],
+      ]);
+    });
+  });
+
   describe('label', () => {
     it('SetsTheSameLabelOnEveryResourceThatHasAnother', () => {
       const plan = planBulkEdit([resource('r1'), resource('r2')], LABEL, {
-        kind: 'setValue',
-        values: ['Label r2'],
+        values: texts('Label r2'),
         onlyEmpty: false,
       });
 
@@ -210,7 +276,7 @@ describe('planBulkEdit', () => {
     });
 
     it('NeverEmptiesALabel', () => {
-      const plan = planBulkEdit([resource('r1')], LABEL, { kind: 'setValue', values: [' '], onlyEmpty: false });
+      const plan = planBulkEdit([resource('r1')], LABEL, { values: texts(' '), onlyEmpty: false });
 
       expect(plan.changes).toEqual([]);
     });
@@ -222,8 +288,7 @@ describe('planBulkEdit', () => {
 
     it('LeavesOutAResourceTheUserMayNotModify', () => {
       const plan = planBulkEdit([resource('r1'), viewOnly(resource('r2'))], TEXT, {
-        kind: 'setValue',
-        values: ['Brief'],
+        values: texts('Brief'),
         onlyEmpty: true,
       });
 
@@ -234,8 +299,7 @@ describe('planBulkEdit', () => {
 
     it('LeavesOutAValueTheUserMayNotModifyOnAResourceTheyMay', () => {
       const plan = planBulkEdit([resource('r1', viewOnly(textValue('v1', 'Karte')))], TEXT, {
-        kind: 'setValue',
-        values: ['Brief'],
+        values: texts('Brief'),
         onlyEmpty: false,
       });
 
@@ -245,8 +309,7 @@ describe('planBulkEdit', () => {
 
     it('LeavesOutALabelOnAResourceTheUserMayNotModify', () => {
       const plan = planBulkEdit([viewOnly(resource('r1'))], LABEL, {
-        kind: 'setValue',
-        values: ['Brief'],
+        values: texts('Brief'),
         onlyEmpty: false,
       });
 
@@ -256,8 +319,7 @@ describe('planBulkEdit', () => {
 
     it('DoesNotCountAResourceWithNothingToChangeAsLackingRights', () => {
       const plan = planBulkEdit([viewOnly(resource('r1', textValue('v1', 'Karte')))], TEXT, {
-        kind: 'setValue',
-        values: ['Brief'],
+        values: texts('Brief'),
         onlyEmpty: true,
       });
 
@@ -271,7 +333,7 @@ describe('planBulkEdit', () => {
       const plan = planBulkEdit(
         [resource('r1', listValue('v1', BRIEF)), resource('r2'), resource('r3', listValue('v3', HANDWRITTEN))],
         LIST,
-        { kind: 'setListValue', values: [HANDWRITTEN], onlyEmpty: false }
+        { values: nodes(HANDWRITTEN), onlyEmpty: false }
       );
 
       expect(plan.changes.map(change => [change.resource.id, change.value?.id])).toEqual([
@@ -283,8 +345,7 @@ describe('planBulkEdit', () => {
 
     it('SetsListValuesOnlyWhereThePropertyIsEmptyByDefault', () => {
       const plan = planBulkEdit([resource('r1', listValue('v1', BRIEF)), resource('r2')], LIST, {
-        kind: 'setListValue',
-        values: [HANDWRITTEN],
+        values: nodes(HANDWRITTEN),
         onlyEmpty: true,
       });
 
@@ -294,8 +355,7 @@ describe('planBulkEdit', () => {
 
     it('FillsAnEmptyMultiValueListWithEveryValueButNeverOverwritesIt', () => {
       const plan = planBulkEdit([resource('r1'), resource('r2', listValue('v2', BRIEF))], MULTI_LIST, {
-        kind: 'setListValue',
-        values: [HANDWRITTEN, POSTCARD],
+        values: nodes(HANDWRITTEN, POSTCARD),
         onlyEmpty: false,
       });
 
@@ -335,6 +395,38 @@ describe('bulkEditRequest', () => {
     expect(request.kind).toBe('create');
     expect((request.payload as { value: unknown }).value).toBeInstanceOf(CreateTextValueAsString);
     expect((request.payload as { value: unknown }).value).toMatchObject({ text: 'Brief' });
+  });
+
+  it('WritesTheCommentTypedWithTheValueOverTheOldOne', () => {
+    const value = textValue('v1', 'Wien', 'old comment');
+    const update = bulkEditRequest(
+      { resource: resource('r1', value), value, before: 'Wien', after: 'Vienna', newValue: 'Vienna', comment: 'new' },
+      TEXT
+    );
+    const create = bulkEditRequest(
+      { resource: resource('r2'), before: null, after: 'Vienna', newValue: 'Vienna', comment: 'new' },
+      TEXT
+    );
+
+    expect((update.payload as { value: unknown }).value).toMatchObject({ valueHasComment: 'new' });
+    expect((create.payload as { value: unknown }).value).toMatchObject({ valueHasComment: 'new' });
+  });
+
+  it('WritesRichTextAsXmlLikeTheResourceEditor', () => {
+    const create = bulkEditRequest(
+      { resource: resource('r1'), before: null, after: 'New note', newValue: '<p>New note</p>' },
+      RICH
+    );
+    const existing = Object.assign(new ReadTextValueAsXml(), { id: 'v1', valueHasComment: 'proofread' });
+    const update = bulkEditRequest(
+      { resource: resource('r2'), value: existing, before: 'Old', after: 'New note', newValue: '<p>New note</p>' },
+      RICH
+    );
+
+    expect((create.payload as { value: unknown }).value).toBeInstanceOf(CreateTextValueAsXml);
+    expect((create.payload as unknown as { value: { xml: string } }).value.xml).toContain('<p>New note</p>');
+    expect((update.payload as { value: unknown }).value).toBeInstanceOf(UpdateTextValueAsXml);
+    expect((update.payload as { value: unknown }).value).toMatchObject({ id: 'v1', valueHasComment: 'proofread' });
   });
 
   it('PointsAListValueAtTheNewNodeAndKeepsItsComment', () => {
