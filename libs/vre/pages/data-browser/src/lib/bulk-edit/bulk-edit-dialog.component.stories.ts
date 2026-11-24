@@ -129,8 +129,9 @@ export const PreviewsAReplaceAsYouType: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Fill find and replace', async () => {
-      await userEvent.type(await canvas.findByTestId('bulk-edit-find'), 'Wien');
+    await step('Choose Replace and fill find and replace', async () => {
+      await userEvent.click(await canvas.findByTestId('bulk-edit-operation-replace'));
+      await userEvent.type(canvas.getByTestId('bulk-edit-find'), 'Wien');
       await userEvent.type(canvas.getByTestId('bulk-edit-replace-with'), 'Vienna');
     });
     await step('Only the matching value is previewed, with before and after', async () => {
@@ -148,9 +149,8 @@ export const SetsADefaultValueOnlyWhereEmptyAndReportsTheResult: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Choose Default value and type it', async () => {
-      await userEvent.click(await canvas.findByText('Default value'));
-      await userEvent.type(canvas.getByTestId('bulk-edit-default-value'), 'Wien');
+    await step('Set value is offered first; type the value', async () => {
+      await userEvent.type(await canvas.findByTestId('bulk-edit-default-value'), 'Wien');
     });
     await step('Only the letter without a place is changed', async () => {
       await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(1);
@@ -185,7 +185,8 @@ export const ListsAFailedValueAndOffersARetry: Story = {
     const canvas = within(canvasElement);
 
     await step('Replace a value the API refuses', async () => {
-      await userEvent.type(await canvas.findByTestId('bulk-edit-find'), 'Wien');
+      await userEvent.click(await canvas.findByTestId('bulk-edit-operation-replace'));
+      await userEvent.type(canvas.getByTestId('bulk-edit-find'), 'Wien');
       await userEvent.type(canvas.getByTestId('bulk-edit-replace-with'), 'Vienna');
       await userEvent.click(canvas.getByTestId('bulk-edit-apply'));
     });
@@ -204,6 +205,7 @@ export const ReplacesTextInTheLabels: Story = {
 
     await step('Choose the label and replace a word', async () => {
       await choose(canvas, 'bulk-edit-property', 'Label');
+      await userEvent.click(canvas.getByTestId('bulk-edit-operation-replace'));
       await userEvent.type(canvas.getByTestId('bulk-edit-find'), 'Brief an');
       await userEvent.type(canvas.getByTestId('bulk-edit-replace-with'), 'Letter to');
     });

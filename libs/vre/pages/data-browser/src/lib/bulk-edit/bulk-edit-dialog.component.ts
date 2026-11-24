@@ -65,7 +65,6 @@ interface FormValue {
   property: string | null;
   operation: BulkEditOperationKind;
   text: string;
-  position: 'before' | 'after';
   find: string;
   replaceWith: string;
   wholeValue: boolean;
@@ -75,11 +74,10 @@ interface FormValue {
 }
 
 const OPERATION_INFO: Record<BulkEditOperationKind, { labelKey: string; hintKey: string }> = {
-  addText: { labelKey: 'pages.dataBrowser.bulkEdit.addText', hintKey: 'pages.dataBrowser.bulkEdit.addTextHint' },
   replace: { labelKey: 'pages.dataBrowser.bulkEdit.replace', hintKey: 'pages.dataBrowser.bulkEdit.replaceHint' },
   setValue: { labelKey: 'pages.dataBrowser.bulkEdit.setValue', hintKey: 'pages.dataBrowser.bulkEdit.setValueHint' },
   defaultValue: {
-    labelKey: 'pages.dataBrowser.bulkEdit.defaultValue',
+    labelKey: 'pages.dataBrowser.bulkEdit.setValue',
     hintKey: 'pages.dataBrowser.bulkEdit.defaultValueHint',
   },
   replaceListValue: {
@@ -168,20 +166,6 @@ const READ_CHUNK_SIZE = 25;
               </div>
 
               @switch (formValue().operation) {
-                @case ('addText') {
-                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                    <mat-label>{{ 'pages.dataBrowser.bulkEdit.text' | translate }}</mat-label>
-                    <input matInput formControlName="text" data-cy="bulk-edit-text" />
-                  </mat-form-field>
-                  <mat-button-toggle-group formControlName="position" hideSingleSelectionIndicator>
-                    <mat-button-toggle value="before">
-                      {{ 'pages.dataBrowser.bulkEdit.positionBefore' | translate }}
-                    </mat-button-toggle>
-                    <mat-button-toggle value="after">
-                      {{ 'pages.dataBrowser.bulkEdit.positionAfter' | translate }}
-                    </mat-button-toggle>
-                  </mat-button-toggle-group>
-                }
                 @case ('replace') {
                   <div class="row">
                     <mat-form-field appearance="outline" subscriptSizing="dynamic">
@@ -642,9 +626,8 @@ export class BulkEditDialogComponent {
 
   readonly form = new FormGroup({
     property: new FormControl<string | null>(null),
-    operation: new FormControl<BulkEditOperationKind>('replace', { nonNullable: true }),
+    operation: new FormControl<BulkEditOperationKind>(BULK_EDIT_OPERATIONS.text[0], { nonNullable: true }),
     text: new FormControl('', { nonNullable: true }),
-    position: new FormControl<'before' | 'after'>('after', { nonNullable: true }),
     find: new FormControl('', { nonNullable: true }),
     replaceWith: new FormControl('', { nonNullable: true }),
     wholeValue: new FormControl(false, { nonNullable: true }),
@@ -782,7 +765,7 @@ export class BulkEditDialogComponent {
         switchMap(target => {
           const operations = BULK_EDIT_OPERATIONS[target?.kind ?? 'text'];
           if (!operations.includes(this.form.controls.operation.value)) {
-            this.form.controls.operation.setValue(operations[target?.kind === 'list' ? 0 : 1]);
+            this.form.controls.operation.setValue(operations[0]);
           }
           this.form.patchValue({ listFrom: null, listTo: null });
           this.listOptions.set([]);
@@ -856,8 +839,6 @@ function _operationOf(value: FormValue, listOptions: BulkEditListOption[]): Bulk
       return to ? { kind: 'setListValue', to } : null;
     case 'defaultListValue':
       return to ? { kind: 'defaultListValue', to } : null;
-    case 'addText':
-      return value.text ? { kind: 'addText', text: value.text, position: value.position } : null;
     case 'replace':
       return value.find
         ? {

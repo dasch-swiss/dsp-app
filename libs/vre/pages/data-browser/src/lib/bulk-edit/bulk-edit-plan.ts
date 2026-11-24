@@ -31,7 +31,6 @@ export interface BulkEditListOption {
 }
 
 export type BulkEditOperation =
-  | { kind: 'addText'; text: string; position: 'before' | 'after' }
   | { kind: 'replace'; find: string; replaceWith: string; wholeValue: boolean; matchCase: boolean }
   | { kind: 'setValue'; text: string }
   | { kind: 'defaultValue'; text: string }
@@ -41,10 +40,10 @@ export type BulkEditOperation =
 
 export type BulkEditOperationKind = BulkEditOperation['kind'];
 
-/** A label can't be empty, so it gets “Set value” instead of “Default value”. */
+/** A label can't be empty, so its “Set value” overwrites; a text's “Set value” only fills empty properties. */
 export const BULK_EDIT_OPERATIONS: Record<BulkEditTarget['kind'], BulkEditOperationKind[]> = {
-  label: ['addText', 'replace', 'setValue'],
-  text: ['addText', 'replace', 'defaultValue'],
+  label: ['setValue', 'replace'],
+  text: ['defaultValue', 'replace'],
   list: ['replaceListValue', 'setListValue', 'defaultListValue'],
 };
 
@@ -218,8 +217,6 @@ function _listChanges(resource: ReadResource, values: ReadListValue[], operation
 /** The text after a text operation; null when the operation is not a text operation. */
 function _textAfter(text: string, operation: BulkEditOperation): string | null {
   switch (operation.kind) {
-    case 'addText':
-      return operation.position === 'before' ? operation.text + text : text + operation.text;
     case 'setValue':
       return operation.text;
     case 'replace': {

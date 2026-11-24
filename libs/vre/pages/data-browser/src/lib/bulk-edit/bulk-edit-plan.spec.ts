@@ -125,18 +125,14 @@ describe('flattenList', () => {
 
 describe('planBulkEdit', () => {
   describe('text', () => {
-    it('AddsTextBeforeOrAfterEveryExistingValue', () => {
-      const res = resource('r1', textValue('v1', 'Wien'), textValue('v2', 'Mödling'));
-
-      const after = planBulkEdit([res], TEXT, { kind: 'addText', text: ' (AT)', position: 'after' });
-      const before = planBulkEdit([res], TEXT, { kind: 'addText', text: 'Ort: ', position: 'before' });
-
-      expect(after.changes.map(change => change.after)).toEqual(['Wien (AT)', 'Mödling (AT)']);
-      expect(before.changes.map(change => change.after)).toEqual(['Ort: Wien', 'Ort: Mödling']);
-    });
-
-    it('LeavesAResourceWithoutValuesUnchangedWhenAddingText', () => {
-      const plan = planBulkEdit([resource('r1')], TEXT, { kind: 'addText', text: 'x', position: 'after' });
+    it('LeavesAResourceWithoutValuesUnchangedWhenReplacing', () => {
+      const plan = planBulkEdit([resource('r1')], TEXT, {
+        kind: 'replace',
+        find: 'x',
+        replaceWith: 'y',
+        wholeValue: false,
+        matchCase: false,
+      });
 
       expect(plan.changes).toEqual([]);
       expect(plan.unchangedCount).toBe(1);
