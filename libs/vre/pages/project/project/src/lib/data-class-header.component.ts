@@ -35,10 +35,6 @@ import { DataClassUrlStateService } from './data-class-url-state.service';
 import { DataClassViewToggleComponent } from './data-class-view-toggle.component';
 import { DataTabTourComponent, DataTabTourStep } from './data-tab-tour/data-tab-tour.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
-import {
-  ResourceClassDialogComponent,
-  resourceClassDialogConfig,
-} from './ontology-map/resource-class-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
 interface SelectedClass {
@@ -95,11 +91,6 @@ interface CreateResourceDialogProps {
           }
         </div>
         <div class="actions">
-          <!-- The class as the Data models 2 pages describe it: its links, its properties, editing. -->
-          <button mat-stroked-button (click)="openClassDetails()" data-cy="class-details-btn">
-            <mat-icon>info_outline</mat-icon>
-            {{ 'pages.dataBrowser.dataClassHeader.classDetails' | translate }}
-          </button>
           <!-- "All" and the class total: the export ignores search and filters. Hidden while loading and for an empty class. -->
           @if (classCount$ | async; as classCount) {
             <button mat-stroked-button (click)="openDownloadDialog(classCount)" data-cy="download-btn">
@@ -304,14 +295,6 @@ export class DataClassHeaderComponent {
           width: `${1200 - this._dialog.openDialogs.length * 40}px`,
         });
       });
-  }
-
-  /** Opens the class's details over the right of the page, as the Data models 2 pages show them. */
-  openClassDetails() {
-    this._dialog.open(ResourceClassDialogComponent, {
-      ...resourceClassDialogConfig({ classIri: this.classSelected.resClass.id }),
-      viewContainerRef: this._viewContainerRef,
-    });
   }
 
   openDownloadDialog(resClassCount: number) {
