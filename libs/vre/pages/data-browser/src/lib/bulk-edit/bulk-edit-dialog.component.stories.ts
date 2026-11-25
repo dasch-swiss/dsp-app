@@ -258,7 +258,7 @@ export const SetsTheSameLabelOnEveryResource: Story = {
     });
     await step('The two other resources get the label', async () => {
       await expect(canvas.getByTestId('bulk-edit-preview-count')).toHaveTextContent('2 of 3 resources will change');
-      await expect(canvas.getByText('Brief an Arnold Schönberg')).toBeInTheDocument();
+      await expect(canvas.getByText('Brief an Arnold Schönberg', { selector: 'del' })).toBeInTheDocument();
     });
     await step('Applying updates both labels', async () => {
       await userEvent.click(canvas.getByTestId('bulk-edit-apply'));
@@ -339,8 +339,9 @@ export const FillsAMultiValuePropertyWithSeveralValues: Story = {
     });
     await step('Add a second value, which rules replacing out', async () => {
       await typeValue(canvas, 0, 'Wien');
-      // The creation form's own add button.
-      await userEvent.click(within(canvas.getByTestId('bulk-edit-values')).getByRole('button', { name: /add_circle/ }));
+      // The creation form's own add button: an icon only, hidden from the accessibility tree.
+      const add = within(canvas.getByTestId('bulk-edit-values')).getByText('add_circle').closest('button');
+      await userEvent.click(add!);
       await typeValue(canvas, 1, 'Mödling');
       await expect(within(canvas.getByTestId('bulk-edit-choice-replace')).getByRole('radio')).toBeDisabled();
       await expect(canvas.getByTestId('bulk-edit-choice-replace')).toHaveTextContent(
@@ -390,7 +391,7 @@ export const RemovesValuesAfterAConfirmation: Story = {
 
     await step('Choose Ort and Remove values', async () => {
       await choose(canvas, 'bulk-edit-property', 'Ort');
-      await userEvent.click(within(await canvas.findByTestId('bulk-edit-action-remove')).getByRole('button'));
+      await userEvent.click(within(await canvas.findByTestId('bulk-edit-action-remove')).getByRole('radio'));
     });
     await step('The two places are previewed as removed, with a red card', async () => {
       await expect(canvas.getByTestId('bulk-edit-remove-card')).toHaveTextContent('Every Ort is removed');
@@ -417,7 +418,7 @@ export const LocksRemovingARequiredProperty: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await choose(canvas, 'bulk-edit-property', 'Ort');
-    await expect(within(await canvas.findByTestId('bulk-edit-action-remove')).getByRole('button')).toBeDisabled();
+    await expect(within(await canvas.findByTestId('bulk-edit-action-remove')).getByRole('radio')).toBeDisabled();
     await expect(canvas.getByTestId('bulk-edit-remove-required')).toHaveTextContent('Every resource must have a Ort');
   },
 };
@@ -446,10 +447,10 @@ export const OffersADateForRemovingOnly: Story = {
       await userEvent.click(await within(document.body).findByRole('option', { name: /Datum/ }));
     });
     await step('Setting is locked and removing, its one action, is chosen', async () => {
-      await expect(within(canvas.getByTestId('bulk-edit-action-set')).getByRole('button')).toBeDisabled();
+      await expect(within(canvas.getByTestId('bulk-edit-action-set')).getByRole('radio')).toBeDisabled();
       await expect(canvas.getByTestId('bulk-edit-set-unsupported')).toBeInTheDocument();
-      await expect(within(canvas.getByTestId('bulk-edit-action-remove')).getByRole('button')).toHaveAttribute(
-        'aria-pressed',
+      await expect(within(canvas.getByTestId('bulk-edit-action-remove')).getByRole('radio')).toHaveAttribute(
+        'aria-checked',
         'true'
       );
       await expect(canvas.getByTestId('bulk-edit-remove-card')).toBeInTheDocument();
