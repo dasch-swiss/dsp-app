@@ -15,6 +15,7 @@ import {
   UpdateResourceMetadata,
   UpdateTextValueAsString,
   UpdateTextValueAsXml,
+  DeleteValue,
 } from '@dasch-swiss/dsp-js';
 import {
   BulkEditListOption,
@@ -22,6 +23,8 @@ import {
   bulkEditRequest,
   BulkEditTarget,
   bulkEditTargets,
+  canRemove,
+  canSet,
   flattenList,
   planBulkEdit,
 } from './bulk-edit-plan';
@@ -118,7 +121,7 @@ function propertyDefinition(id: string, objectType: string, guiElement: string, 
 }
 
 describe('bulkEditTargets', () => {
-  it('OffersTheLabelThenPlainTextRichTextAndListProperties', () => {
+  it('OffersTheLabelThenEveryPropertyTheCreationFormWrites', () => {
     const res = resource('r1');
     const definitions = [
       { def: propertyDefinition(PROP, Constants.TextValue, Constants.GuiSimpleText), cardinality: Cardinality._0_1 },
@@ -148,6 +151,7 @@ describe('bulkEditTargets', () => {
       ['text', PROP, false],
       ['list', LIST_PROP, true],
       ['richText', 'rich', false],
+      ['other', 'date', false],
     ]);
   });
 });
@@ -262,6 +266,50 @@ describe('planBulkEdit', () => {
         ['r1', 'Old note', 'New note', '<p>New <i>note</i></p>'],
         ['r2', null, 'New note', '<p>New <i>note</i></p>'],
       ]);
+    });
+  });
+
+  describe('remove', () => {
+    const deletable = <T extends { userHasPermission: string }>(entity: T): T =>
+      Object.assign(entity, { userHasPermission: 'D' });
+
+    it('RemovesEveryValueOfEveryResource', () => {
+      const plan = planBulkEdit(
+        [resource('r1', deletable(textValue('v1', 'Karte')), deletable(textValue('v2', 'Brief'))), resource('r2')],
+        MULTI_TEXT,
+        { kind: 'remove' }
+      );
+
+      expect(plan.changes.map(change => [change.value?.id, change.remove, change.before])).toEqual([
+        ['v1', true, 'Karte'],
+        ['v2', true, 'Brief'],
+      ]);
+      expect(plan.unchangedCount).toBe(1);
+    });
+
+    it('LeavesOutAValueTheUserMayEditButNotDelete', () => {
+      const plan = planBulkEdit([resource('r1', textValue('v1', 'Karte'))], TEXT, { kind: 'remove' });
+
+      expect(plan.changes).toEqual([]);
+      expect(plan.noRightsCount).toBe(1);
+    });
+
+    it('NeverEmptiesARequiredPropertyOrTheLabel', () => {
+      const required: BulkEditTarget = { ...TEXT, cardinality: Cardinality._1 };
+
+      expect(canRemove(required)).toBe(false);
+      expect(canRemove(LABEL)).toBe(false);
+      expect(canRemove(TEXT)).toBe(true);
+      expect(
+        planBulkEdit([resource('r1', deletable(textValue('v1', 'Karte')))], required, { kind: 'remove' }).changes
+      ).toEqual([]);
+    });
+
+    it('OffersOnlyRemovingForTypesItCannotSetYet', () => {
+      const date: BulkEditTarget = { ...TEXT, kind: 'other' };
+
+      expect(canSet(date)).toBe(false);
+      expect(planBulkEdit([resource('r1')], date, { values: texts('1843'), onlyEmpty: true }).changes).toEqual([]);
     });
   });
 
@@ -410,6 +458,19 @@ describe('bulkEditRequest', () => {
 
     expect((update.payload as { value: unknown }).value).toMatchObject({ valueHasComment: 'new' });
     expect((create.payload as { value: unknown }).value).toMatchObject({ valueHasComment: 'new' });
+  });
+
+  it('DeletesARemovedValueByItsIriAndType', () => {
+    const value = textValue('v1', 'Karte');
+    const request = bulkEditRequest(
+      { resource: resource('r1', value), value, remove: true, before: 'Karte', after: '', newValue: '' },
+      TEXT
+    );
+
+    expect(request.kind).toBe('delete');
+    expect(request.payload).toMatchObject({ id: 'r1', property: PROP });
+    expect((request.payload as { value: unknown }).value).toBeInstanceOf(DeleteValue);
+    expect((request.payload as { value: unknown }).value).toMatchObject({ id: 'v1', type: value.type });
   });
 
   it('WritesRichTextAsXmlLikeTheResourceEditor', () => {

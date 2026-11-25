@@ -81,14 +81,14 @@ function letter(
   resource.properties = {};
   if (ort) {
     resource.properties[ORT] = [
-      Object.assign(new ReadTextValueAsString(), { id: `${id}/values/ort`, text: ort, userHasPermission: 'M' }),
+      Object.assign(new ReadTextValueAsString(), { id: `${id}/values/ort`, text: ort, userHasPermission: 'D' }),
     ];
   }
   if (art) {
     resource.properties[ART] = [
       Object.assign(new ReadListValue(), {
         id: `${id}/values/art`,
-        userHasPermission: 'M',
+        userHasPermission: 'D',
         listNode: `${LIST_ROOT}/${art}`,
         listNodeLabel: art,
       }),
@@ -113,7 +113,7 @@ const providers = (resources: ReadResource[]) => [
     useValue: {
       v2: {
         res: { getResources: () => of({ resources }), updateResourceMetadata: () => of({}) },
-        values: { updateValue: () => of({}), createValue: () => of({}) },
+        values: { updateValue: () => of({}), createValue: () => of({}), deleteValue: () => of({}) },
         list: {
           getList: () => of(correspondenceTypes),
           getListWithAllLanguages: () => of(correspondenceTypes),
@@ -368,7 +368,46 @@ export const SkipsResourcesTheUserMayNotEdit: Story = {
   },
 };
 
-export const OffersTheLabelWhenNoPropertyCanBeEdited: Story = {
+export const RemovesValuesAfterAConfirmation: Story = {
+  decorators: [applicationConfig({ providers: providers(letters) })],
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+
+    await step('Choose Ort and Remove values', async () => {
+      await choose(canvas, 'bulk-edit-property', 'Ort');
+      await userEvent.click(within(await canvas.findByTestId('bulk-edit-action-remove')).getByRole('button'));
+    });
+    await step('The two places are previewed as removed, with a red card', async () => {
+      await expect(canvas.getByTestId('bulk-edit-remove-card')).toHaveTextContent('Every Ort is removed');
+      await expect(canvas.getByTestId('bulk-edit-group-removed')).toHaveTextContent('Values removed');
+      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Remove values from 2 resource(s)');
+    });
+    await step('Removing asks once more, then reports the result', async () => {
+      await userEvent.click(canvas.getByTestId('bulk-edit-apply'));
+      await expect(canvas.getByTestId('bulk-edit-confirm')).toHaveTextContent('Remove 2 value(s) from 2 resource(s)?');
+      await userEvent.click(canvas.getByTestId('bulk-edit-confirm-remove'));
+      await waitFor(() => expect(canvas.getByTestId('bulk-edit-done')).toHaveTextContent('Values removed: 2'));
+    });
+  },
+};
+
+export const LocksRemovingARequiredProperty: Story = {
+  decorators: [
+    applicationConfig({
+      providers: providers(
+        letters.map(({ id, label }) => letter(id, label, 'Wien', undefined, undefined, { [ORT]: Cardinality._1 }))
+      ),
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await choose(canvas, 'bulk-edit-property', 'Ort');
+    await expect(within(await canvas.findByTestId('bulk-edit-action-remove')).getByRole('button')).toBeDisabled();
+    await expect(canvas.getByTestId('bulk-edit-remove-required')).toHaveTextContent('Every resource must have a Ort');
+  },
+};
+
+export const OffersADateForRemovingOnly: Story = {
   decorators: [
     applicationConfig({
       providers: providers([
@@ -384,8 +423,18 @@ export const OffersTheLabelWhenNoPropertyCanBeEdited: Story = {
       ]),
     }),
   ],
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByTestId('bulk-edit-property')).toHaveTextContent('Label');
+
+    await step('The date is tagged “Remove only” in the picker', async () => {
+      await userEvent.click(await canvas.findByTestId('bulk-edit-property'));
+      await userEvent.click(await within(document.body).findByRole('option', { name: /Datum/ }));
+    });
+    await step('Setting is locked and nothing is chosen, so nothing is removed by default', async () => {
+      await expect(within(canvas.getByTestId('bulk-edit-action-set')).getByRole('button')).toBeDisabled();
+      await expect(canvas.getByTestId('bulk-edit-set-unsupported')).toBeInTheDocument();
+      await expect(canvas.getByTestId('bulk-edit-choose-action')).toBeInTheDocument();
+      await expect(canvas.getByTestId('bulk-edit-apply')).toBeDisabled();
+    });
   },
 };

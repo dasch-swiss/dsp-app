@@ -12,6 +12,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatOptgroup } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormField } from '@angular/material/form-field';
@@ -56,12 +57,15 @@ import {
   BulkEditChange,
   BulkEditListOption,
   BulkEditNewValue,
-  BulkEditOperation,
+  BulkEditSetOperation,
   BulkEditPlan,
   bulkEditRequest,
   BulkEditTarget,
   bulkEditTargets,
   canOverwrite,
+  canRemove,
+  canSet,
+  existingValues,
   flattenList,
   planBulkEdit,
   richTextDisplay,
@@ -78,8 +82,12 @@ export type BulkEditDialogResult = string[];
 
 type Step = 'loading' | 'loadFailed' | 'edit' | 'applying' | 'done';
 
+type BulkEditAction = 'set' | 'remove';
+
 interface FormValue {
   property: string | null;
+  /** Null for a property that can only be removed, until the user chooses to: nothing is removed by default. */
+  action: BulkEditAction | null;
   label: string;
   /** What the creation form's editors hold: the text, the rich text's HTML or the list node IRI, and a comment. */
   values: { item: unknown; comment: string | null }[];
@@ -142,104 +150,177 @@ const READ_CHUNK_SIZE = 25;
                     @if (propertyTargets().length) {
                       <mat-optgroup [label]="'pages.dataBrowser.bulkEdit.properties' | translate">
                         @for (option of propertyTargets(); track option.id) {
-                          <mat-option [value]="option.id">{{ option.label }}</mat-option>
+                          <mat-option [value]="option.id">
+                            {{ option.label }}
+                            @if (option.kind === 'other') {
+                              <span class="option-tag">{{ 'pages.dataBrowser.bulkEdit.removeOnly' | translate }}</span>
+                            }
+                          </mat-option>
                         }
                       </mat-optgroup>
                     }
                   </mat-select>
                 </mat-form-field>
-                @if (isMultiple()) {
-                  <span class="kind-chip">{{ 'pages.dataBrowser.bulkEdit.severalAllowed' | translate }}</span>
-                }
-              </div>
-
-              <div class="block">
-                <span class="block-label">
-                  {{
-                    (valueCount() > 1 ? 'pages.dataBrowser.bulkEdit.newValues' : 'pages.dataBrowser.bulkEdit.newValue')
-                      | translate
-                  }}
-                </span>
-                @if (currentTarget.kind === 'label') {
-                  <div class="compact-value-editor">
-                    <mat-form-field>
-                      <input
-                        matInput
-                        formControlName="label"
-                        data-cy="bulk-edit-value-0"
-                        [attr.aria-label]="'pages.dataBrowser.bulkEdit.newValue' | translate" />
-                    </mat-form-field>
-                  </div>
-                  <p class="hint">{{ 'pages.dataBrowser.bulkEdit.setValueHint' | translate }}</p>
-                } @else {
-                  <!-- The values exactly as the resource creation form shows them, recreated for each property. -->
-                  @for (info of [propertyInfo()!]; track info.propDef.id) {
-                    <app-property-values-creator
-                      class="compact-value-editor creator"
-                      data-cy="bulk-edit-values"
-                      [myProperty]="info"
-                      [formArray]="form.controls.values"
-                      [resourceClassIri]="project().resourceClassIri"
-                      [projectIri]="project().projectIri"
-                      [projectShortcode]="project().projectShortcode" />
+                <span class="chips">
+                  @if (isRequired()) {
+                    <span class="kind-chip">{{ 'pages.dataBrowser.bulkEdit.required' | translate }}</span>
                   }
-                }
-                @if (listLoadFailed()) {
-                  <p class="error" data-cy="bulk-edit-list-load-failed">
-                    {{ 'pages.dataBrowser.bulkEdit.listLoadFailed' | translate }}
-                  </p>
-                }
+                  @if (isMultiple()) {
+                    <span class="kind-chip">{{ 'pages.dataBrowser.bulkEdit.severalAllowed' | translate }}</span>
+                  }
+                </span>
               </div>
 
               @if (currentTarget.kind !== 'label') {
                 <div class="block">
-                  <span class="block-label" id="bulk-edit-which">
-                    {{ 'pages.dataBrowser.bulkEdit.whichResources' | translate }}
+                  <span class="block-label" id="bulk-edit-action">
+                    {{ 'pages.dataBrowser.bulkEdit.action' | translate }}
                   </span>
-                  <mat-radio-group
-                    class="choices"
-                    formControlName="onlyEmpty"
-                    aria-labelledby="bulk-edit-which"
-                    data-cy="bulk-edit-only-empty">
-                    <mat-radio-button class="choice" [value]="true" data-cy="bulk-edit-choice-empty">
-                      <span class="choice-text">
-                        <span class="choice-title">{{ 'pages.dataBrowser.bulkEdit.onlyWhereEmpty' | translate }}</span>
-                        <span class="choice-hint">
-                          {{
-                            'pages.dataBrowser.bulkEdit.onlyWhereEmptyHint'
-                              | translate: { property: currentTarget.label }
-                          }}
-                        </span>
-                      </span>
-                      <span class="badge" data-cy="bulk-edit-choice-empty-count">{{
-                        choiceCounts().empty | number
-                      }}</span>
-                    </mat-radio-button>
-                    <mat-radio-button
-                      class="choice"
-                      [value]="false"
-                      [disabled]="onlyEmptyLocked()"
-                      data-cy="bulk-edit-choice-replace">
-                      <span class="choice-text">
-                        <span class="choice-title">{{ 'pages.dataBrowser.bulkEdit.alsoReplace' | translate }}</span>
-                        <span class="choice-hint">
-                          @if (onlyEmptyLocked()) {
-                            <mat-icon aria-hidden="true" class="hint-icon">lock</mat-icon>
-                            {{ 'pages.dataBrowser.bulkEdit.alsoReplaceLocked' | translate }}
-                          } @else {
+                  <mat-button-toggle-group
+                    class="actions"
+                    formControlName="action"
+                    aria-labelledby="bulk-edit-action"
+                    data-cy="bulk-edit-action"
+                    hideSingleSelectionIndicator>
+                    <mat-button-toggle value="set" [disabled]="!canSetTarget()" data-cy="bulk-edit-action-set">
+                      <mat-icon>{{ canSetTarget() ? 'edit' : 'lock' }}</mat-icon>
+                      {{ 'pages.dataBrowser.bulkEdit.setValue' | translate }}
+                    </mat-button-toggle>
+                    <mat-button-toggle
+                      value="remove"
+                      class="remove-toggle"
+                      [disabled]="!canRemoveTarget()"
+                      data-cy="bulk-edit-action-remove">
+                      <mat-icon>{{ canRemoveTarget() ? 'backspace' : 'lock' }}</mat-icon>
+                      {{ 'pages.dataBrowser.bulkEdit.removeValues' | translate }}
+                    </mat-button-toggle>
+                  </mat-button-toggle-group>
+                  @if (!canSetTarget()) {
+                    <p class="hint" data-cy="bulk-edit-set-unsupported">
+                      <mat-icon aria-hidden="true" class="hint-icon">lock</mat-icon>
+                      {{ 'pages.dataBrowser.bulkEdit.setNotSupported' | translate }}
+                    </p>
+                  }
+                  @if (!canRemoveTarget()) {
+                    <p class="hint" data-cy="bulk-edit-remove-required">
+                      <mat-icon aria-hidden="true" class="hint-icon">lock</mat-icon>
+                      {{ 'pages.dataBrowser.bulkEdit.removeRequired' | translate: { property: currentTarget.label } }}
+                    </p>
+                  }
+                </div>
+              }
+
+              @if (action() === 'remove') {
+                <div class="remove-card" role="status" data-cy="bulk-edit-remove-card">
+                  <mat-icon aria-hidden="true">delete_sweep</mat-icon>
+                  <span>
+                    <strong>{{
+                      'pages.dataBrowser.bulkEdit.removeCardTitle' | translate: { property: currentTarget.label }
+                    }}</strong>
+                    {{ 'pages.dataBrowser.bulkEdit.removeCardHint' | translate }}
+                  </span>
+                </div>
+              }
+              @if (action() === null) {
+                <div class="info-card" data-cy="bulk-edit-choose-action">
+                  <mat-icon aria-hidden="true">info</mat-icon>
+                  <span>{{ 'pages.dataBrowser.bulkEdit.chooseActionHint' | translate }}</span>
+                </div>
+              }
+
+              @if (action() === 'set') {
+                <div class="block">
+                  <span class="block-label">
+                    {{
+                      (valueCount() > 1
+                        ? 'pages.dataBrowser.bulkEdit.newValues'
+                        : 'pages.dataBrowser.bulkEdit.newValue'
+                      ) | translate
+                    }}
+                  </span>
+                  @if (currentTarget.kind === 'label') {
+                    <div class="compact-value-editor">
+                      <mat-form-field>
+                        <input
+                          matInput
+                          formControlName="label"
+                          data-cy="bulk-edit-value-0"
+                          [attr.aria-label]="'pages.dataBrowser.bulkEdit.newValue' | translate" />
+                      </mat-form-field>
+                    </div>
+                    <p class="hint">{{ 'pages.dataBrowser.bulkEdit.setValueHint' | translate }}</p>
+                  } @else {
+                    <!-- The values exactly as the resource creation form shows them, recreated for each property. -->
+                    @for (info of [propertyInfo()!]; track info.propDef.id) {
+                      <app-property-values-creator
+                        class="compact-value-editor creator"
+                        data-cy="bulk-edit-values"
+                        [myProperty]="info"
+                        [formArray]="form.controls.values"
+                        [resourceClassIri]="project().resourceClassIri"
+                        [projectIri]="project().projectIri"
+                        [projectShortcode]="project().projectShortcode" />
+                    }
+                  }
+                  @if (listLoadFailed()) {
+                    <p class="error" data-cy="bulk-edit-list-load-failed">
+                      {{ 'pages.dataBrowser.bulkEdit.listLoadFailed' | translate }}
+                    </p>
+                  }
+                </div>
+
+                @if (currentTarget.kind !== 'label') {
+                  <div class="block">
+                    <span class="block-label" id="bulk-edit-which">
+                      {{ 'pages.dataBrowser.bulkEdit.whichResources' | translate }}
+                    </span>
+                    <mat-radio-group
+                      class="choices"
+                      formControlName="onlyEmpty"
+                      aria-labelledby="bulk-edit-which"
+                      data-cy="bulk-edit-only-empty">
+                      <mat-radio-button class="choice" [value]="true" data-cy="bulk-edit-choice-empty">
+                        <span class="choice-text">
+                          <span class="choice-title">{{
+                            'pages.dataBrowser.bulkEdit.onlyWhereEmpty' | translate
+                          }}</span>
+                          <span class="choice-hint">
                             {{
-                              'pages.dataBrowser.bulkEdit.alsoReplaceHint'
+                              'pages.dataBrowser.bulkEdit.onlyWhereEmptyHint'
                                 | translate: { property: currentTarget.label }
                             }}
-                          }
+                          </span>
                         </span>
-                      </span>
-                      <span class="badge" data-cy="bulk-edit-choice-replace-count">
-                        {{ onlyEmptyLocked() ? '—' : (choiceCounts().replace | number) }}
-                      </span>
-                    </mat-radio-button>
-                  </mat-radio-group>
-                </div>
+                        <span class="badge" data-cy="bulk-edit-choice-empty-count">{{
+                          choiceCounts().empty | number
+                        }}</span>
+                      </mat-radio-button>
+                      <mat-radio-button
+                        class="choice"
+                        [value]="false"
+                        [disabled]="onlyEmptyLocked()"
+                        data-cy="bulk-edit-choice-replace">
+                        <span class="choice-text">
+                          <span class="choice-title">{{ 'pages.dataBrowser.bulkEdit.alsoReplace' | translate }}</span>
+                          <span class="choice-hint">
+                            @if (onlyEmptyLocked()) {
+                              <mat-icon aria-hidden="true" class="hint-icon">lock</mat-icon>
+                              {{ 'pages.dataBrowser.bulkEdit.alsoReplaceLocked' | translate }}
+                            } @else {
+                              {{
+                                'pages.dataBrowser.bulkEdit.alsoReplaceHint'
+                                  | translate: { property: currentTarget.label }
+                              }}
+                            }
+                          </span>
+                        </span>
+                        <span class="badge" data-cy="bulk-edit-choice-replace-count">
+                          {{ onlyEmptyLocked() ? '—' : (choiceCounts().replace | number) }}
+                        </span>
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                }
               }
             </form>
 
@@ -277,12 +358,20 @@ const READ_CHUNK_SIZE = 25;
                           <div class="group-item" data-cy="bulk-edit-change">
                             <span class="item-label">{{ item.resource.label }}</span>
                             <span class="item-values">
-                              @for (change of item.changes; track $index) {
-                                @if (change.before !== null) {
+                              @if (group.kind === 'removed') {
+                                @for (change of item.changes; track $index) {
                                   <del class="value">{{ change.before }}</del>
-                                  <mat-icon aria-hidden="true" class="arrow">arrow_forward</mat-icon>
                                 }
-                                <ins class="value">{{ change.after }}</ins>
+                                <mat-icon aria-hidden="true" class="arrow">arrow_forward</mat-icon>
+                                <span class="empty">{{ 'pages.dataBrowser.bulkEdit.emptyValue' | translate }}</span>
+                              } @else {
+                                @for (change of item.changes; track $index) {
+                                  @if (change.before !== null) {
+                                    <del class="value">{{ change.before }}</del>
+                                    <mat-icon aria-hidden="true" class="arrow">arrow_forward</mat-icon>
+                                  }
+                                  <ins class="value">{{ change.after }}</ins>
+                                }
                               }
                             </span>
                           </div>
@@ -301,6 +390,31 @@ const READ_CHUNK_SIZE = 25;
                     </p>
                   }
                 } @else {
+                  @if (currentValues(); as current) {
+                    <div class="current" data-cy="bulk-edit-current">
+                      <div class="current-header">
+                        <span>{{
+                          'pages.dataBrowser.bulkEdit.currentValues' | translate: { property: target()?.label }
+                        }}</span>
+                        <span class="group-count">
+                          {{
+                            'pages.dataBrowser.bulkEdit.currentHave'
+                              | translate: { count: current.rows.length, total: resourceCount() }
+                          }}
+                        </span>
+                      </div>
+                      @for (row of current.rows; track row.resource.id) {
+                        <div class="group-item">
+                          <span class="item-label">{{ row.resource.label }}</span>
+                          <span class="item-values">
+                            @for (value of row.values; track $index) {
+                              <span class="value current-value">{{ value }}</span>
+                            }
+                          </span>
+                        </div>
+                      }
+                    </div>
+                  }
                   <p class="note">{{ 'pages.dataBrowser.bulkEdit.previewEmpty' | translate }}</p>
                 }
               </div>
@@ -317,7 +431,12 @@ const READ_CHUNK_SIZE = 25;
               } @else {
                 <mat-icon aria-hidden="true" class="error">error</mat-icon>
               }
-              {{ 'pages.dataBrowser.bulkEdit.doneSummary' | translate: { updated: succeeded().length } }}
+              {{
+                (action() === 'remove'
+                  ? 'pages.dataBrowser.bulkEdit.doneRemovedSummary'
+                  : 'pages.dataBrowser.bulkEdit.doneSummary'
+                ) | translate: { updated: succeeded().length }
+              }}
               @if (failed().length) {
                 ·
                 <span class="error" data-cy="bulk-edit-failed">
@@ -363,18 +482,59 @@ const READ_CHUNK_SIZE = 25;
     <footer class="footer">
       @switch (step()) {
         @case ('edit') {
-          <span class="footer-hint"></span>
-          <button mat-button type="button" (click)="close()">{{ 'ui.common.actions.cancel' | translate }}</button>
-          @if (target()) {
-            <button
-              mat-flat-button
-              color="primary"
-              type="button"
-              data-cy="bulk-edit-apply"
-              [disabled]="!plan()?.changes?.length"
-              (click)="apply(plan()!.changes)">
-              {{ 'pages.dataBrowser.bulkEdit.applyTo' | translate: { count: changedResourceCount() } }}
-            </button>
+          @if (confirming()) {
+            <!-- Removing asks once more, with the exact counts. -->
+            <div class="confirm" role="alertdialog" data-cy="bulk-edit-confirm">
+              <mat-icon aria-hidden="true">warning</mat-icon>
+              <span class="confirm-text">
+                <strong>
+                  {{
+                    'pages.dataBrowser.bulkEdit.confirmRemove'
+                      | translate: { values: plan()?.changes?.length ?? 0, resources: changedResourceCount() }
+                  }}
+                </strong>
+                {{ 'pages.dataBrowser.bulkEdit.confirmRemoveHint' | translate }}
+              </span>
+              <button mat-button type="button" data-cy="bulk-edit-confirm-back" (click)="confirming.set(false)">
+                {{ 'pages.dataBrowser.bulkEdit.back' | translate }}
+              </button>
+              <button
+                mat-flat-button
+                class="danger"
+                type="button"
+                data-cy="bulk-edit-confirm-remove"
+                (click)="confirming.set(false); apply(plan()!.changes)">
+                <mat-icon>delete</mat-icon>
+                {{ 'pages.dataBrowser.bulkEdit.remove' | translate }}
+              </button>
+            </div>
+          } @else {
+            <span class="footer-hint"></span>
+            <button mat-button type="button" (click)="close()">{{ 'ui.common.actions.cancel' | translate }}</button>
+            @if (target()) {
+              @if (action() === 'remove') {
+                <button
+                  mat-flat-button
+                  class="danger"
+                  type="button"
+                  data-cy="bulk-edit-apply"
+                  [disabled]="!plan()?.changes?.length"
+                  (click)="confirming.set(true)">
+                  <mat-icon>delete</mat-icon>
+                  {{ 'pages.dataBrowser.bulkEdit.removeFrom' | translate: { count: changedResourceCount() } }}
+                </button>
+              } @else {
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="button"
+                  data-cy="bulk-edit-apply"
+                  [disabled]="!plan()?.changes?.length"
+                  (click)="apply(plan()!.changes)">
+                  {{ 'pages.dataBrowser.bulkEdit.applyTo' | translate: { count: changedResourceCount() } }}
+                </button>
+              }
+            }
           }
         }
         @case ('applying') {
@@ -508,6 +668,99 @@ const READ_CHUNK_SIZE = 25;
       }
       .property-field {
         width: 100%;
+      }
+      .chips {
+        display: flex;
+        gap: 6px;
+      }
+      .chips:empty {
+        display: none;
+      }
+      .option-tag {
+        margin-left: 8px;
+        padding: 0 6px;
+        border-radius: 8px;
+        background: #f3f4f6; /* $cool-gray-100 */
+        color: #6b7280; /* $cool-gray-500 */
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .actions {
+        align-self: flex-start;
+      }
+      .actions .remove-toggle.mat-button-toggle-checked {
+        background: #fdecef;
+        color: #9f1239;
+      }
+      .remove-card,
+      .info-card {
+        display: flex;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 13px;
+      }
+      .remove-card {
+        border: 1px solid #f3c2cd;
+        background: #fff5f7;
+        color: #7f1d2d;
+      }
+      .remove-card mat-icon {
+        color: #b9193c; /* $red-800 */
+      }
+      .remove-card strong {
+        display: block;
+        font-weight: 500;
+        color: #9f1239;
+      }
+      .info-card {
+        border: 1px solid #e5e7eb; /* $cool-gray-200 */
+        background: #f9fafb; /* $cool-gray-50 */
+        color: #374151; /* $cool-gray-700 */
+      }
+      .info-card mat-icon {
+        color: #6b7280; /* $cool-gray-500 */
+      }
+      .danger {
+        background: #b9193c; /* $red-800 */
+        color: #fff;
+      }
+      .confirm {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #7f1d2d;
+        font-size: 13px;
+      }
+      .confirm > mat-icon {
+        color: #b9193c; /* $red-800 */
+      }
+      .confirm-text {
+        flex: 1;
+      }
+      .confirm-text strong {
+        font-weight: 500;
+      }
+      .status.removed {
+        color: #b9193c; /* $red-800 */
+      }
+      .current-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        background: #fafafa;
+        border-bottom: 1px solid #e5e7eb; /* $cool-gray-200 */
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .current-header .group-count {
+        margin-left: auto;
+      }
+      .current-value {
+        background: #f3f4f6; /* $cool-gray-100 */
+        color: #374151; /* $cool-gray-700 */
       }
       .kind-chip {
         align-self: flex-start;
@@ -844,6 +1097,8 @@ const READ_CHUNK_SIZE = 25;
     DecimalPipe,
     ReactiveFormsModule,
     MatButton,
+    MatButtonToggle,
+    MatButtonToggleGroup,
     MatRadioButton,
     MatRadioGroup,
     MatFormField,
@@ -875,6 +1130,7 @@ export class BulkEditDialogComponent {
 
   readonly form = new FormGroup({
     property: new FormControl<string | null>(null),
+    action: new FormControl<BulkEditAction | null>('set'),
     label: new FormControl('', { nonNullable: true }),
     values: new FormArray<ValueGroup>([]),
     onlyEmpty: new FormControl(true, { nonNullable: true }),
@@ -899,6 +1155,33 @@ export class BulkEditDialogComponent {
       .sort((a, b) => a.label.localeCompare(b.label))
   );
   readonly target = computed(() => this.targets().find(target => target.id === this.formValue().property) ?? null);
+  /** The label is only ever set. */
+  readonly action = computed(() => (this.target()?.kind === 'label' ? 'set' : this.formValue().action));
+  readonly canSetTarget = computed(() => {
+    const target = this.target();
+    return !!target && canSet(target);
+  });
+  readonly canRemoveTarget = computed(() => {
+    const target = this.target();
+    return !!target && canRemove(target);
+  });
+  readonly isRequired = computed(() => {
+    const target = this.target();
+    return !!target && target.kind !== 'label' && !canRemove(target);
+  });
+  /** Removing waits for a second click in the footer. */
+  readonly confirming = signal(false);
+  /** What the resources hold now, shown until there is something to preview. */
+  readonly currentValues = computed(() => {
+    const target = this.target();
+    if (!target || target.kind === 'label') {
+      return null;
+    }
+    const rows = this._resources()
+      .map(resource => ({ resource, values: existingValues(resource, target).map(value => value.display) }))
+      .filter(row => row.values.length);
+    return { rows };
+  });
   readonly isMultiple = computed(() => {
     const target = this.target();
     return !!target && target.kind !== 'label' && target.multiple;
@@ -939,8 +1222,15 @@ export class BulkEditDialogComponent {
   /** Null until the form says what to change. */
   readonly plan = computed<BulkEditPlan | null>(() => {
     const target = this.target();
-    const operation = target && _operationOf(target, this.formValue(), this.listOptions());
-    return target && operation ? planBulkEdit(this._resources(), target, operation) : null;
+    if (!target) {
+      return null;
+    }
+    const action = this.action();
+    if (action === 'remove') {
+      return canRemove(target) ? planBulkEdit(this._resources(), target, { kind: 'remove' }) : null;
+    }
+    const operation = action === 'set' && canSet(target) && _operationOf(target, this.formValue(), this.listOptions());
+    return operation ? planBulkEdit(this._resources(), target, operation) : null;
   });
   readonly changedResourceCount = computed(
     () => new Set(this.plan()?.changes.map(change => change.resource.id) ?? []).size
@@ -959,15 +1249,35 @@ export class BulkEditDialogComponent {
     }
     const items = [...byResource.values()];
     const isLabel = this.target()?.kind === 'label';
-    const replaced = items.filter(item => isLabel || item.changes.some(change => change.value));
-    const added = items.filter(item => !replaced.includes(item));
+    const removing = this.action() === 'remove';
+    const removed = removing ? items : [];
+    const replaced = removing ? [] : items.filter(item => isLabel || item.changes.some(change => change.value));
+    const added = removing ? [] : items.filter(item => !replaced.includes(item));
     const reasons = [
-      { key: 'hasValue', labelKey: 'pages.dataBrowser.bulkEdit.reasonHasValue', count: plan.unchangedCount },
+      {
+        key: 'hasValue',
+        labelKey: removing ? 'pages.dataBrowser.bulkEdit.reasonEmpty' : 'pages.dataBrowser.bulkEdit.reasonHasValue',
+        count: plan.unchangedCount,
+      },
       { key: 'several', labelKey: 'pages.dataBrowser.bulkEdit.reasonSeveral', count: plan.severalKeptCount },
-      { key: 'noRights', labelKey: 'pages.dataBrowser.bulkEdit.reasonNoRights', count: plan.noRightsCount },
+      {
+        key: 'noRights',
+        labelKey: removing
+          ? 'pages.dataBrowser.bulkEdit.reasonNoDeleteRights'
+          : 'pages.dataBrowser.bulkEdit.reasonNoRights',
+        count: plan.noRightsCount,
+      },
     ].filter(reason => reason.count);
     const none: typeof reasons = [];
     return [
+      {
+        kind: 'removed' as const,
+        icon: 'remove_circle',
+        titleKey: 'pages.dataBrowser.bulkEdit.outcomeRemoved',
+        count: removed.length,
+        items: removed,
+        reasons: none,
+      },
       {
         kind: 'new' as const,
         icon: 'add_circle',
@@ -999,7 +1309,7 @@ export class BulkEditDialogComponent {
   /** How many resources each choice changes, shown before the user picks; a placeholder value counts them early. */
   readonly choiceCounts = computed(() => {
     const target = this.target();
-    if (!target || target.kind === 'label') {
+    if (!target || !canSet(target) || target.kind === 'label') {
       return { empty: 0, replace: 0 };
     }
     const values = _operationOf(target, this.formValue(), this.listOptions())?.values ?? [
@@ -1016,9 +1326,10 @@ export class BulkEditDialogComponent {
   readonly failed = signal<BulkEditChange[]>([]);
   readonly progress = computed(() => (this.running().length ? (this.processed() / this.running().length) * 100 : 0));
   readonly skippedCount = computed(() => (this.step() === 'done' ? this.running().length - this.processed() : 0));
-  readonly summary = computed(
-    () => `${this.target()?.label ?? ''} · ${this._translateService.instant('pages.dataBrowser.bulkEdit.setValue')}`
-  );
+  readonly summary = computed(() => {
+    const actionKey = this.action() === 'remove' ? 'removeValues' : 'setValue';
+    return `${this.target()?.label ?? ''} · ${this._translateService.instant(`pages.dataBrowser.bulkEdit.${actionKey}`)}`;
+  });
 
   private readonly _changedIris = new Set<string>();
   private readonly _cancel$ = new Subject<void>();
@@ -1040,6 +1351,7 @@ export class BulkEditDialogComponent {
   }
 
   constructor() {
+    this.form.controls.action.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.confirming.set(false));
     this._loadResources();
     this._followTarget();
     // The creation form adds and removes values itself; the checkbox follows how many there are.
@@ -1107,6 +1419,8 @@ export class BulkEditDialogComponent {
         return this._dspApiConnection.v2.values.updateValue(request.payload);
       case 'create':
         return this._dspApiConnection.v2.values.createValue(request.payload);
+      case 'delete':
+        return this._dspApiConnection.v2.values.deleteValue(request.payload);
     }
   }
 
@@ -1155,6 +1469,9 @@ export class BulkEditDialogComponent {
       label.setValue(typed, { emitEvent: false });
     }
     onlyEmpty.setValue(true, { emitEvent: false });
+    // A property that can only be removed starts with no action: removing is never the default.
+    this.form.controls.action.setValue(target && !canSet(target) ? null : 'set', { emitEvent: false });
+    this.confirming.set(false);
     this._syncOnlyEmpty(Math.max(1, values.length));
   }
 
@@ -1213,7 +1530,7 @@ function _operationOf(
   target: BulkEditTarget,
   value: FormValue,
   listOptions: BulkEditListOption[]
-): BulkEditOperation | null {
+): BulkEditSetOperation | null {
   if (target.kind === 'label') {
     const label = value.label.trim();
     return label ? { values: [{ content: label, display: label }], onlyEmpty: value.onlyEmpty } : null;

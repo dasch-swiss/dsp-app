@@ -2,11 +2,14 @@ import {
   Cardinality,
   Constants,
   CreateValue,
+  DeleteValue,
   ListNodeV2,
+  ReadLinkValue,
   ReadListValue,
   ReadResource,
   ReadTextValue,
   ReadTextValueAsString,
+  ReadValue,
   ResourcePropertyDefinition,
   UpdateResource,
   UpdateResourceMetadata,
@@ -16,13 +19,14 @@ import { propertiesTypeMapping } from '@dasch-swiss/vre/resource-editor/resource
 import { listRootIriFromGuiAttributes } from '@dasch-swiss/vre/shared/app-common';
 
 /**
- * What a bulk edit changes: the resource label, a plain-text, rich-text or list property. `multiple`: the
- * property takes several values per resource.
+ * What a bulk edit changes: the resource label, a plain-text, rich-text or list property, or another property
+ * whose values can only be removed for now (`other`: dates, numbers, links…). `multiple`: the property takes
+ * several values per resource.
  */
 export type BulkEditTarget =
   | { kind: 'label'; id: string }
   | {
-      kind: 'text' | 'richText';
+      kind: 'text' | 'richText' | 'other';
       id: string;
       propertyDefinition: ResourcePropertyDefinition;
       cardinality: Cardinality;
@@ -38,6 +42,16 @@ export type BulkEditTarget =
     };
 
 export type BulkEditPropertyTarget = Exclude<BulkEditTarget, { kind: 'label' }>;
+
+/** Values of these targets can be set; the others can only be removed. */
+export function canSet(target: BulkEditTarget): boolean {
+  return target.kind !== 'other';
+}
+
+/** A required property must keep a value, and every resource has a label: neither can be emptied. */
+export function canRemove(target: BulkEditTarget): boolean {
+  return target.kind !== 'label' && target.cardinality !== Cardinality._1 && target.cardinality !== Cardinality._1_n;
+}
 
 /** A node of the property's list, flattened; `path` names its ancestors too. */
 export interface BulkEditListOption {
@@ -60,9 +74,12 @@ export interface BulkEditNewValue {
 
 /**
  * “Set value” writes `values` (a label takes the first). With `onlyEmpty`, resources that have a value keep
- * it; otherwise a single new value replaces a resource's single value.
+ * it; otherwise a single new value replaces a resource's single value. “Remove values” deletes every value.
  */
-export interface BulkEditOperation {
+export type BulkEditOperation = BulkEditSetOperation | { kind: 'remove' };
+
+export interface BulkEditSetOperation {
+  kind?: 'set';
   values: BulkEditNewValue[];
   onlyEmpty: boolean;
 }
@@ -74,10 +91,14 @@ export function canOverwrite(valueCount: number): boolean {
   return valueCount <= 1;
 }
 
-/** One write: the label, a value update when `value` is set, otherwise a value to create. */
+/**
+ * One write: the label, a value update when `value` is set, otherwise a value to create; with `remove`, the
+ * deletion of `value`.
+ */
 export interface BulkEditChange {
   resource: ReadResource;
-  value?: ReadTextValue | ReadListValue;
+  value?: ReadValue;
+  remove?: boolean;
   before: string | null;
   after: string;
   /** The label, the text, the rich text's HTML or the list node IRI to write. */
@@ -96,7 +117,10 @@ export interface BulkEditPlan {
   severalKeptCount: number;
 }
 
-/** The label, then the plain-text, rich-text and list properties the user may edit on this resource. */
+/**
+ * The label, then the properties the user may edit on this resource: those the resource creation form writes.
+ * Plain text, rich text and lists can be set; the others can be removed.
+ */
 export function bulkEditTargets(resource: ReadResource): BulkEditTarget[] {
   const targets: BulkEditTarget[] = [{ kind: 'label', id: Constants.Label }];
 
@@ -106,27 +130,27 @@ export function bulkEditTargets(resource: ReadResource): BulkEditTarget[] {
     if (!(propertyDefinition instanceof ResourcePropertyDefinition) || !propertyDefinition.isEditable) {
       continue;
     }
-    const multiple = cardinality === Cardinality._0_n || cardinality === Cardinality._1_n;
-    if (propertyDefinition.objectType === Constants.TextValue) {
-      if (
-        propertyDefinition.guiElement === Constants.GuiSimpleText ||
-        propertyDefinition.guiElement === Constants.GuiTextarea
-      ) {
-        targets.push({ kind: 'text', id: propertyDefinition.id, propertyDefinition, cardinality, multiple });
-      } else if (propertyDefinition.guiElement === Constants.GuiRichText) {
-        targets.push({ kind: 'richText', id: propertyDefinition.id, propertyDefinition, cardinality, multiple });
-      }
+    if (!propertiesTypeMapping.has(propertyDefinition.objectType!)) {
+      continue;
     }
+    const multiple = cardinality === Cardinality._0_n || cardinality === Cardinality._1_n;
+    const base = { id: propertyDefinition.id, propertyDefinition, cardinality, multiple };
     const listRootIri = listRootIriFromGuiAttributes(propertyDefinition.guiAttributes);
-    if (propertyDefinition.objectType === Constants.ListValue && listRootIri) {
-      targets.push({
-        kind: 'list',
-        id: propertyDefinition.id,
-        propertyDefinition,
-        cardinality,
-        listRootIri,
-        multiple,
-      });
+    if (
+      propertyDefinition.objectType === Constants.TextValue &&
+      (propertyDefinition.guiElement === Constants.GuiSimpleText ||
+        propertyDefinition.guiElement === Constants.GuiTextarea)
+    ) {
+      targets.push({ kind: 'text', ...base });
+    } else if (
+      propertyDefinition.objectType === Constants.TextValue &&
+      propertyDefinition.guiElement === Constants.GuiRichText
+    ) {
+      targets.push({ kind: 'richText', ...base });
+    } else if (propertyDefinition.objectType === Constants.ListValue && listRootIri) {
+      targets.push({ kind: 'list', ...base, listRootIri });
+    } else {
+      targets.push({ kind: 'other', ...base });
     }
   }
   return targets;
@@ -185,10 +209,13 @@ export function planBulkEdit(
 }
 
 /**
- * dsp-api lets a user write a label or create a value with modify rights on the resource, and update a
- * value with modify rights on that value.
+ * dsp-api lets a user write a label or create a value with modify rights on the resource, update a value with
+ * modify rights on that value, and delete it with delete rights on it.
  */
 function _canWrite(change: BulkEditChange): boolean {
+  if (change.remove) {
+    return ['D', 'CR'].includes(change.value!.userHasPermission);
+  }
   return _canModify(change.value ?? change.resource);
 }
 
@@ -199,7 +226,8 @@ function _canModify(entity: { userHasPermission: string }): boolean {
 export type BulkEditRequest =
   | { kind: 'label'; payload: UpdateResourceMetadata }
   | { kind: 'update'; payload: UpdateResource<UpdateValue> }
-  | { kind: 'create'; payload: UpdateResource<CreateValue> };
+  | { kind: 'create'; payload: UpdateResource<CreateValue> }
+  | { kind: 'delete'; payload: UpdateResource<DeleteValue> };
 
 /**
  * The request for one change, built like the resource editor builds it; a value's comment is carried over,
@@ -213,6 +241,13 @@ export function bulkEditRequest(change: BulkEditChange, target: BulkEditTarget):
     payload.label = change.newValue;
     payload.lastModificationDate = change.resource.lastModificationDate;
     return { kind: 'label', payload };
+  }
+
+  if (change.remove) {
+    const value = new DeleteValue();
+    value.id = change.value!.id;
+    value.type = change.value!.type;
+    return { kind: 'delete', payload: _updateResource(change.resource, target.id, value) };
   }
 
   const mapping = propertiesTypeMapping.get(target.propertyDefinition.objectType!)!;
@@ -237,6 +272,23 @@ function _changesFor(
   target: BulkEditTarget,
   operation: BulkEditOperation
 ): { changes: BulkEditChange[]; severalKept: boolean } {
+  if (operation.kind === 'remove') {
+    if (!canRemove(target)) {
+      return { changes: [], severalKept: false };
+    }
+    return {
+      changes: _existingValues(resource, target as BulkEditPropertyTarget).map(({ value, display }) => ({
+        resource,
+        value,
+        remove: true,
+        before: display,
+        after: '',
+        newValue: '',
+      })),
+      severalKept: false,
+    };
+  }
+
   if (target.kind === 'label') {
     const after = operation.values[0]?.content;
     return {
@@ -249,6 +301,9 @@ function _changesFor(
   }
 
   const existing = _existingValues(resource, target);
+  if (target.kind === 'other') {
+    return { changes: [], severalKept: false };
+  }
   if (existing.length === 0) {
     return {
       changes: operation.values.map(({ content, display, comment }) => ({
@@ -289,14 +344,25 @@ function _changesFor(
 }
 
 interface ExistingValue {
-  value: ReadTextValue | ReadListValue;
+  value: ReadValue;
   content: string;
   display: string;
+}
+
+/** A resource's values of this property, with what the preview shows of each. */
+export function existingValues(resource: ReadResource, target: BulkEditTarget): ExistingValue[] {
+  return target.kind === 'label' ? [] : _existingValues(resource, target);
 }
 
 function _existingValues(resource: ReadResource, target: BulkEditPropertyTarget): ExistingValue[] {
   const values = resource.getValues(target.id);
   switch (target.kind) {
+    case 'other':
+      return values.map(value => {
+        const display =
+          value instanceof ReadLinkValue ? (value.linkedResource?.label ?? value.strval ?? '') : (value.strval ?? '');
+        return { value, content: display, display };
+      });
     case 'list':
       return values
         .filter((value): value is ReadListValue => value instanceof ReadListValue)
