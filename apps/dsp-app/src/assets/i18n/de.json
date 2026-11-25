@@ -186,7 +186,7 @@
           "listTitle": "Die Metadaten umfassen:",
           "listContent": {
             "label": "Label",
-            "class": "Ressourcen-Klasse",
+            "class": "Ressourcenklasse",
             "ark": "ARK-URL (Permalink)",
             "timestampArk": "ARK mit Zeitstempel",
             "iri": "Ressourcen-IRI",
@@ -421,7 +421,7 @@
         "name": "Eigenschaftsname",
         "labelPlaceholder": "Eigenschaftsbezeichnung",
         "commentPlaceholder": "Beschreibung",
-        "selectResourceClass": "Ressourcen-Klasse auswählen",
+        "selectResourceClass": "Ressourcenklasse auswählen",
         "selectList": "Liste auswählen"
       },
       "addPropertyMenu": {
