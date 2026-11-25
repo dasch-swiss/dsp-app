@@ -12,9 +12,8 @@
   background: white;
 }
 
-// Hovered or selected, the whole row takes the colour, the frozen cell too.
-.mat-mdc-row:hover .mat-mdc-cell.frozen,
-.mat-mdc-row.selected .mat-mdc-cell.frozen {
+// Hovered, the whole row takes the colour, the frozen cell too.
+.mat-mdc-row:hover .mat-mdc-cell.frozen {
   background: inherit;
 }
 
@@ -58,8 +57,7 @@
   background: white;
 }
 
-.mat-mdc-row:hover .mat-mdc-cell.actions-cell,
-.mat-mdc-row.selected .mat-mdc-cell.actions-cell {
+.mat-mdc-row:hover .mat-mdc-cell.actions-cell {
   background: inherit;
 }
 

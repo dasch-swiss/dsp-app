@@ -215,14 +215,11 @@ export function injectDataModelEditing() {
           created(iri);
         }),
     /** Creates a property of that type in the data model, as `createClass` creates a class. */
-    createProperty: (ontologyIri: string, type: DefaultProperty, created: (iri: string) => void) =>
+    createProperty: (ontologyIri: string, type: DefaultProperty) =>
       editor
         ?.createProperty(ontologyIri, type)
         .pipe(filter(Boolean), takeUntilDestroyed(destroyRef))
-        .subscribe(iri => {
-          project.reloadProject();
-          created(iri);
-        }),
+        .subscribe(() => project.reloadProject()),
     editClass: (iri: string) => edit(editor?.editClass(iri)),
     editProperty: (iri: string) => edit(editor?.editProperty(iri)),
   };

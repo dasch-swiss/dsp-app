@@ -42,7 +42,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { localNameOf, PropertyRow } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
-import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { typeNameOf } from '../ontology-map/property-types';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
 import { CanDoChecks } from './can-do-checks';
@@ -118,7 +117,6 @@ const COLUMN_LABELS: Record<Column, string> = {
     MatRowDef,
     MatTable,
     MatTooltip,
-    PropertyPanelComponent,
     ResourceClassPanelComponent,
     TableViewOptionsComponent,
     TranslatePipe,
@@ -471,8 +469,7 @@ const COLUMN_LABELS: Record<Column, string> = {
             (mouseenter)="checkDelete(row.id, true)"
             (mouseleave)="cancelCheck()"
             (focusin)="checkDelete(row.id)"
-            data-cy="data-model-properties-row"
-            [class.selected]="row.id === panelIri()"></tr>
+            data-cy="data-model-properties-row"></tr>
         </table>
         @if (rows().length === 0) {
           <p class="empty">{{ r + '.noMatch' | translate }}</p>
@@ -480,7 +477,7 @@ const COLUMN_LABELS: Record<Column, string> = {
       </div>
 
       @if (state.graph(); as graph) {
-        <!-- A class clicked in the table or the property's panel, described here, over the property's panel. -->
+        <!-- A class clicked in the table, described here. -->
         @if (classPanelIri(); as iri) {
           <app-resource-class-panel
             class="panel"
@@ -494,18 +491,6 @@ const COLUMN_LABELS: Record<Column, string> = {
             (browse)="browse($event)"
             (edit)="editing.editClass($event)"
             (editProperty)="edit($event)" />
-        } @else if (panelIri(); as iri) {
-          <app-property-panel
-            class="panel"
-            [graph]="graph"
-            [propertyIri]="iri"
-            [colors]="state.colors()"
-            [anyResourceLabel]="t + '.anyResource' | translate"
-            [canEdit]="state.canEdit()"
-            (classSelected)="showClass($event)"
-            (closed)="openPanel(undefined)"
-            (propertySelected)="openPanel($event)"
-            (edit)="edit($event)" />
         }
       }
     </div>
@@ -534,10 +519,10 @@ export class DataModelPropertiesComponent {
   /** Whether "Create property" shows: for editors, where the editor's dialogs are at hand. */
   readonly canCreate = computed(() => this.state.canEdit() && this.editing.canCreate);
 
-  /** Creates a property of that type in the data model shown, for no class yet, then opens it in the panel. */
+  /** Creates a property of that type in the data model shown, for no class yet; the table then lists it. */
   createProperty(type: DefaultProperty): void {
     const ontologyIri = this.state.selected()?.iri;
-    if (ontologyIri) this.editing.createProperty(ontologyIri, type, iri => this.openPanel(iri));
+    if (ontologyIri) this.editing.createProperty(ontologyIri, type);
   }
 
   readonly columns = new TableColumns<Column>({
@@ -626,13 +611,7 @@ export class DataModelPropertiesComponent {
       .sort((a, b) => a.label.localeCompare(b.label) || a.name.localeCompare(b.name));
   });
 
-  /** The property whose panel is open, named in the URL like in the graph. */
-  readonly panelIri = computed(() => {
-    const name = this._params()?.get(ONTOLOGY_MAP_PARAM.propertyPanel);
-    return name ? this.state.propertyRows().find(row => row.name === name)?.id : undefined;
-  });
-
-  /** The class whose panel is open over the property's, from a click on its chip; named in the URL. */
+  /** The class whose panel is open, from a click on its chip; named in the URL. */
   readonly classPanelIri = computed(() => {
     const name = this._params()?.get(ONTOLOGY_MAP_PARAM.panel);
     return name ? this.state.classRows().find(row => row.name === name)?.id : undefined;
@@ -669,26 +648,12 @@ export class DataModelPropertiesComponent {
   }
 
   /**
-   * Esc closes the property's side panel open. Not the name or description editor, which edits: Esc never drops an edit,
+   * Esc closes the class's side panel open. Not the name or description editor, which edits: Esc never drops an edit,
    * and leaves the panel under it open too.
    */
   closeOnEscape(event: Event): void {
     if (!escapeClosesPanel(event, this._dialog)) return;
     if (this.classPanelIri()) this.closeClass();
-    else if (this.panelIri()) this.openPanel(undefined);
-  }
-
-  /** Opens the property's panel, or closes it; a step in the browser history. */
-  openPanel(propertyIri: string | undefined): void {
-    this._router.navigate([], {
-      relativeTo: this._route,
-      queryParamsHandling: 'merge',
-      queryParams: {
-        ...this.state.modelParam(),
-        [ONTOLOGY_MAP_PARAM.propertyPanel]: propertyIri ? localNameOf(propertyIri) : null,
-        [ONTOLOGY_MAP_PARAM.panel]: null,
-      },
-    });
   }
 
   /**
@@ -707,7 +672,7 @@ export class DataModelPropertiesComponent {
     });
   }
 
-  /** Closes the class's panel, back to the property's if one was open. */
+  /** Closes the class's panel. */
   closeClass(): void {
     this._router.navigate([], {
       relativeTo: this._route,
@@ -735,12 +700,9 @@ export class DataModelPropertiesComponent {
     this._deleteChecks.cancel();
   }
 
-  /** Deletes the property once confirmed, closing its panel; the data model is then read again. */
+  /** Deletes the property once confirmed; the data model is then read again. */
   deleteProperty(row: PropertyRow): void {
-    this.editing
-      .deleteProperty(row.id, row.label)
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(deleted => deleted && this.panelIri() === row.id && this.openPanel(undefined));
+    this.editing.deleteProperty(row.id, row.label).pipe(takeUntilDestroyed(this._destroyRef)).subscribe();
   }
 
   /** Edits the property in the data model editor's dialog; see `injectDataModelEditing`. */
