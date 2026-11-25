@@ -393,6 +393,17 @@
         "multipleValues": "Valeurs multiples",
         "required": "Requis"
       },
+      "cardinalityDialog": {
+        "title": "Mettre à jour la cardinalité",
+        "subtitle": "Définir la cardinalité pour la propriété « {{label}} »",
+        "notPossible": "La modification de la cardinalité n'est pas possible.",
+        "attention": "Attention",
+        "confirmMessage": "Veuillez noter que cette modification peut être irréversible. Voulez-vous modifier la cardinalité ?",
+        "multiplePropertiesError": "Au moins une ressource de la classe \"{{className}}\" possède plusieurs propriétés \"{{propertyLabel}}\" dans vos données.",
+        "multiplePropertiesHint": "Pour définir la cardinalité de \"{{propertyLabel}}\" sur unique, chaque ressource \"{{className}}\" doit avoir une seule valeur \"{{propertyLabel}}\" avant cette modification.",
+        "missingPropertyError": "Au moins une ressource de la classe \"{{className}}\" ne possède pas de propriété \"{{propertyLabel}}\" dans vos données.",
+        "missingPropertyHint": "Pour définir la cardinalité de \"{{propertyLabel}}\" sur obligatoire, chaque ressource \"{{className}}\" doit avoir une valeur \"{{propertyLabel}}\" avant cette modification."
+      },
       "resourceClassInfo": {
         "collapse": "Réduire",
         "expand": "Développer",
@@ -855,7 +866,6 @@
       "cannotDeleteProperty": "« {{property}} » ne peut pas être supprimée tant qu’une classe ou une valeur l’utilise.",
       "cardinalityBlocked": "Des ressources existantes ne s’y conforment pas",
       "cardinalitySaved": "« {{property}} » dans « {{class}} » : {{cardinality}}",
-      "cardinalityConfirm": "Changer « {{property}} » dans « {{class}} » en « {{cardinality}} » ?",
       "undo": "Annuler",
       "cardinalityRule": "Enregistré après votre confirmation, et annulable juste après. Les valeurs existantes ne sont jamais modifiées : un changement qu’elles ne permettent pas est grisé.",
       "propertyShared": "{{count}} classes utilisent cette propriété ({{classes}}). Vos modifications s’appliquent à toutes.",

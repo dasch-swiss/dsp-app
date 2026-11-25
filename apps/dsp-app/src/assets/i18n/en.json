@@ -393,6 +393,17 @@
         "multipleValues": "Multiple values",
         "required": "Required"
       },
+      "cardinalityDialog": {
+        "title": "Update cardinality",
+        "subtitle": "Set the cardinality for property “{{label}}”",
+        "notPossible": "Changing the cardinality is not possible.",
+        "attention": "Attention",
+        "confirmMessage": "Please note that this change may not be reversible. Do you want to change the cardinality?",
+        "multiplePropertiesError": "At least one resource of the class \"{{className}}\" has multiple \"{{propertyLabel}}\" properties in your data.",
+        "multiplePropertiesHint": "In order to set the cardinality of \"{{propertyLabel}}\" to single, every resource \"{{className}}\" must have only one \"{{propertyLabel}}\" value prior to this change.",
+        "missingPropertyError": "At least one resource of the class \"{{className}}\" does not have a \"{{propertyLabel}}\" property in your data.",
+        "missingPropertyHint": "In order to set the cardinality of \"{{propertyLabel}}\" to required every resource \"{{className}}\" needs to have a \"{{propertyLabel}}\" value prior to this change."
+      },
       "resourceClassInfo": {
         "collapse": "Collapse",
         "expand": "Expand",
@@ -855,7 +866,6 @@
       "cannotDeleteProperty": "“{{property}}” cannot be deleted while a class or a value uses it.",
       "cardinalityBlocked": "Existing resources don’t fit it",
       "cardinalitySaved": "“{{property}}” in “{{class}}”: {{cardinality}}",
-      "cardinalityConfirm": "Change “{{property}}” in “{{class}}” to “{{cardinality}}”?",
       "undo": "Undo",
       "cardinalityRule": "Saved once you confirm, and can be undone right after. Existing values are never changed: a change they don’t allow is greyed out.",
       "propertyShared": "{{count}} classes use this property ({{classes}}). Your changes apply to all of them.",

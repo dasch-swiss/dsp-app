@@ -393,6 +393,17 @@
         "multipleValues": "Valori multipli",
         "required": "Obbligatorio"
       },
+      "cardinalityDialog": {
+        "title": "Aggiorna la cardinalità",
+        "subtitle": "Imposta la cardinalità per la proprietà “{{label}}”",
+        "notPossible": "La modifica della cardinalità non è possibile.",
+        "attention": "Attenzione",
+        "confirmMessage": "Si prega di notare che questa modifica potrebbe non essere reversibile. Vuoi modificare la cardinalità?",
+        "multiplePropertiesError": "Almeno una risorsa della classe \"{{className}}\" ha più proprietà \"{{propertyLabel}}\" nei tuoi dati.",
+        "multiplePropertiesHint": "Per impostare la cardinalità di \"{{propertyLabel}}\" su singolo, ogni risorsa \"{{className}}\" deve avere solo un valore \"{{propertyLabel}}\" prima di questa modifica.",
+        "missingPropertyError": "Almeno una risorsa della classe \"{{className}}\" non ha una proprietà \"{{propertyLabel}}\" nei tuoi dati.",
+        "missingPropertyHint": "Per impostare la cardinalità di \"{{propertyLabel}}\" su obbligatorio, ogni risorsa \"{{className}}\" deve avere un valore \"{{propertyLabel}}\" prima di questa modifica."
+      },
       "resourceClassInfo": {
         "collapse": "Riduci",
         "expand": "Espandi",
@@ -855,7 +866,6 @@
       "cannotDeleteProperty": "«{{property}}» non può essere eliminata finché una classe o un valore la usa.",
       "cardinalityBlocked": "Risorse esistenti non vi si adattano",
       "cardinalitySaved": "«{{property}}» in «{{class}}»: {{cardinality}}",
-      "cardinalityConfirm": "Cambiare «{{property}}» in «{{class}}» in «{{cardinality}}»?",
       "undo": "Annulla",
       "cardinalityRule": "Salvato dopo la conferma, e annullabile subito dopo. I valori esistenti non vengono mai modificati: una modifica che non consentono è disattivata.",
       "propertyShared": "{{count}} classi usano questa proprietà ({{classes}}). Le modifiche valgono per tutte.",

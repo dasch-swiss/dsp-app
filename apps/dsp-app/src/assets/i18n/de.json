@@ -393,6 +393,17 @@
         "multipleValues": "Mehrere Werte",
         "required": "Erforderlich"
       },
+      "cardinalityDialog": {
+        "title": "Kardinalität aktualisieren",
+        "subtitle": "Kardinalität für die Eigenschaft „{{label}}“ festlegen",
+        "notPossible": "Die Änderung der Kardinalität ist nicht möglich.",
+        "attention": "Achtung",
+        "confirmMessage": "Bitte beachten Sie, dass diese Änderung möglicherweise nicht rückgängig gemacht werden kann. Möchten Sie die Kardinalität ändern?",
+        "multiplePropertiesError": "Mindestens eine Ressource der Klasse \"{{className}}\" hat mehrere \"{{propertyLabel}}\"-Eigenschaften in Ihren Daten.",
+        "multiplePropertiesHint": "Um die Kardinalität von \"{{propertyLabel}}\" auf einzeln zu setzen, muss jede Ressource \"{{className}}\" vor dieser Änderung nur einen \"{{propertyLabel}}\"-Wert haben.",
+        "missingPropertyError": "Mindestens eine Ressource der Klasse \"{{className}}\" hat keine \"{{propertyLabel}}\"-Eigenschaft in Ihren Daten.",
+        "missingPropertyHint": "Um die Kardinalität von \"{{propertyLabel}}\" auf erforderlich zu setzen, muss jede Ressource \"{{className}}\" vor dieser Änderung einen \"{{propertyLabel}}\"-Wert haben."
+      },
       "resourceClassInfo": {
         "collapse": "Einklappen",
         "expand": "Ausklappen",
@@ -855,7 +866,6 @@
       "cannotDeleteProperty": "«{{property}}» kann nicht gelöscht werden, solange eine Klasse oder ein Wert sie verwendet.",
       "cardinalityBlocked": "Bestehende Ressourcen passen nicht dazu",
       "cardinalitySaved": "«{{property}}» in «{{class}}»: {{cardinality}}",
-      "cardinalityConfirm": "«{{property}}» in «{{class}}» auf «{{cardinality}}» ändern?",
       "undo": "Rückgängig",
       "cardinalityRule": "Wird nach Ihrer Bestätigung gespeichert und kann gleich danach rückgängig gemacht werden. Bestehende Werte werden nie verändert: Eine Änderung, die sie nicht zulassen, ist ausgegraut.",
       "propertyShared": "{{count}} Klassen verwenden diese Eigenschaft ({{classes}}). Ihre Änderungen gelten für alle.",

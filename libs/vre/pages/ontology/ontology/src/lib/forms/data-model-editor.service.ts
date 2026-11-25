@@ -5,6 +5,7 @@ import {
   ApiResponseError,
   CanDoResponse,
   Cardinality,
+  Constants,
   KnoraApiConnection,
   ListInfoResponse,
   ListResponse,
@@ -42,7 +43,6 @@ import {
   catchError,
   combineLatest,
   concatMap,
-  defaultIfEmpty,
   EMPTY,
   filter,
   finalize,
@@ -56,6 +56,11 @@ import {
   tap,
 } from 'rxjs';
 import { OntologyEditService } from '../services/ontology-edit.service';
+import {
+  CardinalityChangeData,
+  CardinalityChangeDialogComponent,
+  cardinalityChangeDialogConfig,
+} from './cardinality-change-dialog.component';
 import { CreateOntologyFormDialogComponent } from './ontology-form/create-ontology-form-dialog.component';
 import { EditOntologyFormDialogComponent } from './ontology-form/edit-ontology-form-dialog.component';
 import { UpdateOntologyData } from './ontology-form/ontology-form.type';
@@ -608,40 +613,55 @@ export class DataModelEditorService implements DataModelEditor {
             if (!target || previous === undefined) return of(false);
             const own = list.filter(property => !property.isInherited || property === target);
             if (previous === cardinality) return of(true);
+            // In the language the app shows, as the rows behind show them.
+            const stringify = new StringifyStringLiteralPipe(this._localization);
+            const labelOf = (definition: { label?: string; labels?: unknown } | undefined, iri: string) =>
+              (Array.isArray(definition?.labels) && stringify.transform(definition.labels as MultiLanguages)) ||
+              definition?.label ||
+              iri.split('#').pop()!;
+            const property = ontology!.properties[propertyIri];
             const labels = {
-              property: ontology!.properties[propertyIri]?.label || propertyIri.split('#').pop()!,
-              class: ontology!.classes[classIri].label || classIri.split('#').pop()!,
+              property: labelOf(property, propertyIri),
+              class: labelOf(ontology!.classes[classIri], classIri),
             };
-            // Saved only once the API says the existing resources allow it.
+            const save = () =>
+              this._saved(
+                editing.replacePropertiesOfResourceClass$(
+                  classIri,
+                  own.map(item => (item === target ? { ...item, cardinality, isInherited: false } : item))
+                )
+              );
+            const offered = (saved: boolean) => {
+              if (saved && offerUndo) this._offerUndo(classIri, propertyIri, previous, cardinality, labels);
+            };
+            // A change of the user's own opens the dialog the former Data models tab opened: it asks the API whether
+            // the existing resources allow it, then says why not, or warns and asks. Cancelling saves nothing.
+            if (offerUndo) {
+              return this._dialog
+                .open<CardinalityChangeDialogComponent, CardinalityChangeData, boolean>(
+                  CardinalityChangeDialogComponent,
+                  cardinalityChangeDialogConfig({
+                    classIri,
+                    propertyIri,
+                    classLabel: labels.class,
+                    propertyLabel: labels.property,
+                    isBoolean: property?.objectType === Constants.BooleanValue,
+                    currentCardinality: previous,
+                    targetCardinality: cardinality,
+                  })
+                )
+                .afterClosed()
+                .pipe(
+                  switchMap(confirmed => (confirmed ? save() : of(false))),
+                  tap(offered)
+                );
+            }
+            // Undo saves at once, once the API says the existing resources allow it.
             return this.canSetCardinality(classIri, propertyIri, cardinality).pipe(
               switchMap(check => {
-                if (!check.canDo) {
-                  this._notify(this._translate.instant('pages.dataModels2.cardinalityBlocked'), check.reason);
-                  return of(false);
-                }
-                const save = () =>
-                  this._saved(
-                    editing.replacePropertiesOfResourceClass$(
-                      classIri,
-                      own.map(property =>
-                        property === target ? { ...property, cardinality, isInherited: false } : property
-                      )
-                    )
-                  );
-                // Undo saves at once; a change of the user's own is asked first, and cancelling it saves nothing.
-                if (!offerUndo) return save();
-                const r = 'pages.dataModels2';
-                return this._confirm
-                  .afterConfirmation(
-                    this._translate.instant(`${r}.cardinalityConfirm`, {
-                      ...labels,
-                      cardinality: this._translate.instant(`${r}.cardinality.${CARDINALITY_KEYS[cardinality]}`),
-                    })
-                  )
-                  .pipe(switchMap(save), defaultIfEmpty(false));
-              }),
-              tap(saved => {
-                if (saved && offerUndo) this._offerUndo(classIri, propertyIri, previous, cardinality, labels);
+                if (check.canDo) return save();
+                this._notify(this._translate.instant('pages.dataModels2.cardinalityBlocked'), check.reason);
+                return of(false);
               })
             );
           })
