@@ -115,6 +115,10 @@
   flex-shrink: 0;
 }
 
+.connections {
+  margin-top: 6px;
+}
+
 .toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -141,4 +145,8 @@
   width: 1px;
   height: 24px;
   background: #d1d5db;
+}
+
+.connections:empty {
+  display: none;
 }

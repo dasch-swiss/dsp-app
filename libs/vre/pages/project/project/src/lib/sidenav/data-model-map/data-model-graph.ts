@@ -1,0 +1,292 @@
+import {
+  Cardinality,
+  Constants,
+  PropertyDefinition,
+  ReadOntology,
+  ResourcePropertyDefinition,
+  StringLiteralV2,
+} from '@dasch-swiss/dsp-js';
+import {
+  LanguageStringDto,
+  OntologyAndResourceClasses,
+  RepresentationClass,
+} from '@dasch-swiss/vre/3rd-party-services/open-api';
+
+/**
+ * `class`: a class of the mapped data model. `external`: a class of another data model.
+ * `generic`: a knora-api class a link may point to, such as "any resource".
+ */
+type DataModelNodeKind = 'class' | 'external' | 'generic';
+
+/** One property a class declares, as its card and panel show it. */
+export interface DataModelProperty {
+  id: string;
+  label: string;
+  description: string;
+  /** Its label in each language it has. */
+  labels?: LanguageText[];
+  /** Its description in each language it has. */
+  descriptions?: LanguageText[];
+  /** The value type's local name without "Value" (`Text`, `Date`, `List`…), or `Link` for a link. */
+  type: string;
+  /** The class a link points at; only set for links. */
+  linkTarget?: string;
+  /** The controlled vocabulary (list) the values come from; only set for list properties. */
+  list?: string;
+  cardinality: Cardinality;
+  /**
+   * The properties it is a sub-property of, knora-api's left out: a property of a data model, or a term of a standard
+   * vocabulary such as Dublin Core's `title`.
+   */
+  superProperties?: string[];
+}
+
+export interface DataModelNode {
+  /** The class IRI. */
+  id: string;
+  label: string;
+  kind: DataModelNodeKind;
+  /** Resources of the class; only set for classes of the mapped data model. */
+  count?: number;
+  /** Whether the class is one of this project's, so the data browser can open it. */
+  navigable: boolean;
+  /** The kind of file the class carries; only set for classes of the mapped data model. */
+  representationClass?: RepresentationClass;
+  /** The class's description in the ontology; only set for classes of the mapped data model. */
+  description?: string;
+  /** The same description in each language it has; only set for classes of the mapped data model. */
+  descriptions?: LanguageText[];
+  /** Its label in each language it has; only set for classes of the mapped data model. */
+  labels?: LanguageText[];
+  /** The class's own properties, in their form order; only set for classes of the mapped data model. */
+  propertyDetails?: DataModelProperty[];
+}
+
+/** A text in one language, such as a description in German. */
+export interface LanguageText {
+  language: string;
+  value: string;
+}
+
+export interface DataModelEdge {
+  source: string;
+  target: string;
+  /** The link property IRI; for a subclass edge, `rdfs:subClassOf`. */
+  property: string;
+  /** The link property's label; empty for a subclass edge. */
+  label: string;
+  kind: 'link' | 'subclass';
+}
+
+export interface DataModelGraph {
+  nodes: DataModelNode[];
+  edges: DataModelEdge[];
+  /**
+   * Properties of the data model that no class has, but that others are sub-properties of: their parents, for the
+   * Properties table to list them too. Their cardinality means nothing.
+   */
+  unusedProperties?: DataModelProperty[];
+}
+
+const SUBCLASS_OF = 'http://www.w3.org/2000/01/rdf-schema#subClassOf';
+
+/** Maintained by dsp-api from standoff markup on every resource; not a link the data model declares. */
+const HAS_STANDOFF_LINK_TO = `${Constants.KnoraApiV2}${Constants.HashDelimiter}hasStandoffLinkTo`;
+
+const localName = (iri: string) => iri.substring(iri.lastIndexOf('#') + 1);
+
+type Labels = ReadonlyArray<StringLiteralV2 | LanguageStringDto> | undefined;
+
+/** An entity's label or comment from its texts in every language, else its single-language text. */
+const textOf = (
+  entity: object,
+  all: 'labels' | 'comments',
+  one: 'label' | 'comment',
+  labelOf: (t: Labels) => string
+) => {
+  const texts = (entity as Partial<Record<typeof all, StringLiteralV2[]>>)[all];
+  return texts?.length ? labelOf(texts) : ((entity as Partial<Record<typeof one, string>>)[one] ?? '');
+};
+
+/** A class's description in each language it has, those without a language left out. */
+/** An entity's labels or comments in each language they have; those without a language are left out. */
+const languageTextsOf = (texts: Labels): LanguageText[] =>
+  (texts ?? [])
+    .filter(text => !!text.language && !!text.value)
+    .map(({ language, value }) => ({ language: language!, value }));
+
+const textsOf = (entity: object, all: 'labels' | 'comments'): LanguageText[] =>
+  languageTextsOf((entity as Partial<Record<typeof all, StringLiteralV2[]>>)[all]);
+
+/**
+ * The classes of one data model and every link or subclass relation that starts or ends in it.
+ *
+ * @param ontology the data model to map, with its classes and resource counts
+ * @param projectOntologies every data model of the project, to name and open classes outside `ontology`
+ * @param definitions the project's ontologies and knora-api, which declare the link properties
+ * @param labelOf picks the text to show from a text in every language
+ */
+export function buildDataModelGraph(
+  ontology: OntologyAndResourceClasses,
+  projectOntologies: readonly OntologyAndResourceClasses[],
+  definitions: readonly ReadOntology[],
+  labelOf: (labels: Labels) => string
+): DataModelGraph {
+  const projectClasses = new Map<string, string>();
+  for (const onto of projectOntologies) {
+    for (const { resourceClass } of onto.classesAndCount ?? []) {
+      projectClasses.set(resourceClass.iri, labelOf(resourceClass.label));
+    }
+  }
+
+  const nodes = new Map<string, DataModelNode>();
+  const properties: Record<string, PropertyDefinition> = Object.assign({}, ...definitions.map(d => d.properties));
+  const classDefs = Object.assign({}, ...definitions.map(d => d.classes)) as ReadOntology['classes'];
+
+  for (const { resourceClass, itemCount } of ontology.classesAndCount ?? []) {
+    const classDef = classDefs[resourceClass.iri];
+    const own = classDef ? ownProperties(classDef, properties, labelOf) : [];
+    nodes.set(resourceClass.iri, {
+      id: resourceClass.iri,
+      label: labelOf(resourceClass.label),
+      kind: 'class',
+      count: itemCount,
+      navigable: true,
+      representationClass: resourceClass.representationClass,
+      description: classDef ? textOf(classDef, 'comments', 'comment', labelOf) : '',
+      descriptions: classDef ? textsOf(classDef, 'comments') : [],
+      labels: languageTextsOf(resourceClass.label),
+      propertyDetails: own,
+    });
+  }
+
+  const edges = new Map<string, DataModelEdge>();
+  const addEdge = (edge: DataModelEdge) => {
+    if (nodes.has(edge.source) || nodes.has(edge.target)) {
+      edges.set(`${edge.source} ${edge.property} ${edge.target}`, edge);
+    }
+  };
+
+  for (const definition of definitions) {
+    for (const classDef of Object.values(definition.classes)) {
+      if (!projectClasses.has(classDef.id)) {
+        continue;
+      }
+      for (const hasProperty of classDef.propertiesList ?? []) {
+        const property = properties[hasProperty.propertyIndex] as ResourcePropertyDefinition | undefined;
+        const builtIn = hasProperty.propertyIndex.startsWith(Constants.KnoraApiV2);
+        // An inherited project property is drawn once, from the class that declares it.
+        if (!property?.isLinkProperty || property.isLinkValueProperty || !property.objectType) continue;
+        if (property.id === HAS_STANDOFF_LINK_TO || (hasProperty.isInherited && !builtIn)) continue;
+        addEdge({
+          source: classDef.id,
+          target: property.objectType,
+          property: property.id,
+          label: textOf(property, 'labels', 'label', labelOf) || localName(property.id),
+          kind: 'link',
+        });
+      }
+      for (const superClass of classDef.subClassOf ?? []) {
+        if (projectClasses.has(superClass)) {
+          addEdge({ source: classDef.id, target: superClass, property: SUBCLASS_OF, label: '', kind: 'subclass' });
+        }
+      }
+    }
+  }
+
+  for (const { source, target } of edges.values()) {
+    for (const iri of [source, target]) {
+      if (nodes.has(iri)) continue;
+      const projectLabel = projectClasses.get(iri);
+      nodes.set(iri, {
+        id: iri,
+        label: projectLabel ?? localName(iri),
+        kind: projectLabel !== undefined ? 'external' : iri.startsWith(Constants.KnoraApiV2) ? 'generic' : 'external',
+        navigable: projectLabel !== undefined,
+      });
+    }
+  }
+
+  return {
+    nodes: [...nodes.values()],
+    edges: [...edges.values()],
+    unusedProperties: unusedProperties([...nodes.values()], ontology.ontology.iri, properties, labelOf),
+  };
+}
+
+/** The properties a project declares on a class, not knora-api's, without link values, in their form order. */
+function ownProperties(
+  classDef: ReadOntology['classes'][string],
+  properties: Record<string, PropertyDefinition>,
+  labelOf: (labels: Labels) => string
+): DataModelProperty[] {
+  const seen = new Set<string>();
+  return (
+    [...classDef.propertiesList]
+      // rdfs:label is every class's resource label, not a property the project declares.
+      .filter(has => !has.propertyIndex.startsWith(Constants.KnoraApiV2) && has.propertyIndex !== Constants.Label)
+      .flatMap(has => {
+        const property = properties[has.propertyIndex] as ResourcePropertyDefinition | undefined;
+        if (!property || property.isLinkValueProperty || seen.has(property.id)) return [];
+        seen.add(property.id);
+        return [{ order: has.guiOrder ?? Infinity, described: describe(property, has.cardinality, labelOf) }];
+      })
+      // As the data model editor lists them: by place in the form, those at the same place by label.
+      .sort((a, b) => a.order - b.order || a.described.label.localeCompare(b.described.label))
+      .map(({ described }) => described)
+  );
+}
+
+/** A property as the data model's tables and panels show it. */
+function describe(
+  property: ResourcePropertyDefinition,
+  cardinality: Cardinality,
+  labelOf: (labels: Labels) => string
+): DataModelProperty {
+  const objectType = property.objectType ?? '';
+  return {
+    id: property.id,
+    label: textOf(property, 'labels', 'label', labelOf) || localName(property.id),
+    description: textOf(property, 'comments', 'comment', labelOf),
+    labels: textsOf(property, 'labels'),
+    descriptions: textsOf(property, 'comments'),
+    type: property.isLinkProperty ? 'Link' : localName(objectType).replace(/Value$/, ''),
+    ...(property.isLinkProperty ? { linkTarget: objectType } : {}),
+    ...listOf(property),
+    cardinality,
+    superProperties: (property.subPropertyOf ?? []).filter(iri => !iri.startsWith(Constants.KnoraApiV2)),
+  };
+}
+
+/**
+ * The properties no class has: those of the data model shown, such as one taken off its last class, which still
+ * points at its target and keeps that class from being deleted; and the parents of the classes' properties, and
+ * their parents in turn, declared in a data model. Not knora-api's, not link values.
+ */
+function unusedProperties(
+  nodes: DataModelNode[],
+  ontologyIri: string,
+  properties: Record<string, PropertyDefinition>,
+  labelOf: (labels: Labels) => string
+): DataModelProperty[] {
+  const used = new Map(nodes.flatMap(node => node.propertyDetails ?? []).map(property => [property.id, property]));
+  const unused = new Map<string, DataModelProperty>();
+  const own = Object.keys(properties).filter(iri => iri.startsWith(`${ontologyIri}#`));
+  const queue = [...own, ...[...used.values()].flatMap(property => property.superProperties ?? [])];
+  while (queue.length) {
+    const iri = queue.shift()!;
+    if (used.has(iri) || unused.has(iri)) continue;
+    const property = properties[iri] as ResourcePropertyDefinition | undefined;
+    if (!property || property.isLinkValueProperty || iri.startsWith(Constants.KnoraApiV2)) continue;
+    const parent = describe(property, Cardinality._0_n, labelOf);
+    unused.set(iri, parent);
+    queue.push(...(parent.superProperties ?? []));
+  }
+  return [...unused.values()];
+}
+
+/** The list a list property takes its values from, named in its `hlist` GUI attribute. */
+function listOf(property: ResourcePropertyDefinition): { list?: string } {
+  const attribute = property.guiAttributes?.find(attr => attr.startsWith('hlist='));
+  return attribute ? { list: attribute.slice('hlist='.length).replace(/[<>]/g, '') } : {};
+}

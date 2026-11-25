@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { UserProfiles } from '../../models/user-profiles';
+import { railModel } from '../../support/helpers/data-models';
 import { uniqueName } from '../../support/helpers/unique-name';
 import { Project0001Page } from '../../support/pages/existing-ontology-class-page';
 
@@ -33,11 +34,7 @@ describe('Project Member - Ontology management', () => {
       cy.visit(`/project/${projectPage.projectShortCode}/data-models`);
       cy.url().should('include', `project\/${projectPage.projectShortCode}\/data-models`);
 
-      cy.get('[data-cy=data-models-container]')
-        .find('[data-cy=create-button]')
-        .scrollIntoView()
-        .should('be.visible')
-        .click();
+      cy.get('[data-cy=data-models-tree-create-model]').should('be.visible').click();
 
       cy.get('[data-cy=name-input]').type(createData.name);
       // ensure that the label input is visible
@@ -54,14 +51,19 @@ describe('Project Member - Ontology management', () => {
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@submitRequest');
-      cy.url().should('include', `project/${projectPage.projectShortCode}/ontology/${createData.name}/editor/classes`);
-      cy.get('[data-cy=ontology-label]').contains(createData.label).should('be.visible');
-      cy.get('[data-cy=edit-ontology-button]').scrollIntoView().should('be.visible').click();
+      // The new data model opens on its classes.
+      cy.url().should('include', `project/${projectPage.projectShortCode}/data-models/classes`);
+      cy.url().should('include', `ontology=${createData.name}`);
+      // The pen shows only while the data model's line is hovered, so the click is forced.
+      railModel(createData.label)
+        .should('be.visible')
+        .find('[data-cy=data-models-tree-edit-model]')
+        .click({ force: true });
       cy.get('[data-cy=label-input]').clear().type(editData.label);
       cy.get('[data-cy=comment-textarea]').clear().type(editData.comment);
       cy.get('[data-cy=submit-button]').click();
-      cy.url().should('include', `project/${projectPage.projectShortCode}/ontology/${createData.name}/editor/classes`);
-      cy.get('[data-cy=ontology-label]').contains(editData.label).should('be.visible');
+      cy.url().should('include', `ontology=${createData.name}`);
+      railModel(editData.label).should('be.visible');
     });
   });
 });

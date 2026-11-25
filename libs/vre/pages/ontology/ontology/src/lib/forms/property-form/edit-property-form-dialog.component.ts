@@ -7,6 +7,7 @@ import {
   MatDialogContent,
   MatDialogRef,
 } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { StringLiteralV2 } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { LoadingButtonDirective } from '@dasch-swiss/vre/ui/progress-indicator';
 import { DialogHeaderComponent } from '@dasch-swiss/vre/ui/ui';
@@ -25,6 +26,13 @@ import {
 @Component({
   selector: 'app-edit-property-form-dialog',
   template: ` <app-dialog-header [title]="title" [subtitle]="data.propType.group + ': ' + data.propType.label || ''" />
+    <!-- A property is shared: editing it from one class changes it in every class that has it. -->
+    @if (sharedWith(); as classes) {
+      <p class="shared" data-cy="property-shared-note">
+        <mat-icon>info</mat-icon>
+        <span>{{ 'pages.dataModels.propertyShared' | translate: classes }}</span>
+      </p>
+    }
     <app-property-form mat-dialog-content (afterFormInit)="form = $event" [propertyData]="data" />
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>{{ 'ui.common.actions.cancel' | translate }}</button>
@@ -46,9 +54,11 @@ import {
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
+    MatIcon,
     PropertyFormComponent,
     TranslatePipe,
   ],
+  styleUrl: './edit-property-form-dialog.component.css',
 })
 export class EditPropertyFormDialogComponent implements OnInit {
   loading = false;
@@ -58,6 +68,20 @@ export class EditPropertyFormDialogComponent implements OnInit {
 
   isPropertyEditData(data: EditPropertyDialogData | CreatePropertyDialogData): data is EditPropertyDialogData {
     return 'id' in data;
+  }
+
+  /** The classes that share the property, named up to three, for the note; nothing when only one class has it. */
+  sharedWith(): { classes: string; count: number } | undefined {
+    const usedBy = this.isPropertyEditData(this.data) ? (this.data.usedBy ?? []) : [];
+    if (usedBy.length < 2) return undefined;
+    const named = usedBy.slice(0, 3);
+    const more = usedBy.length - named.length;
+    return {
+      classes: more
+        ? this._translate.instant('pages.dataModels.andMore', { names: named.join(', '), count: more })
+        : named.join(', '),
+      count: usedBy.length,
+    };
   }
 
   get title(): string {
@@ -91,7 +115,8 @@ export class EditPropertyFormDialogComponent implements OnInit {
         .updateProperty$(propertyData)
         .pipe(take(1))
         .subscribe(_ => {
-          this._dialogRef.close();
+          // Closing with the update tells whoever opened the dialog that the property was saved.
+          this._dialogRef.close(propertyData);
         });
     } else {
       propertyData = {
@@ -106,7 +131,8 @@ export class EditPropertyFormDialogComponent implements OnInit {
         .createProperty$(propertyData, this.data.assignToClass)
         .pipe(take(1))
         .subscribe(_ => {
-          this._dialogRef.close();
+          // Closing with its name tells whoever opened the dialog which property was made.
+          this._dialogRef.close((propertyData as CreatePropertyData).name);
         });
     }
   }

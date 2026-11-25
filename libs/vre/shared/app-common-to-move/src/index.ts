@@ -1,4 +1,3 @@
-export * from './lib/split.pipe';
 export * from './lib/header/header.component';
 export * from './lib/header/header-user-actions.component';
 export * from './lib/header/header-logo.component';

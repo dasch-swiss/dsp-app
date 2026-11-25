@@ -1,0 +1,77 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Cardinality } from '@dasch-swiss/dsp-js';
+import { provideTranslateService } from '@ngx-translate/core';
+import { DataModelGraph } from '../sidenav/data-model-map/data-model-graph';
+import { PropertyPanelComponent } from './property-panel.component';
+
+const graph: DataModelGraph = {
+  nodes: [
+    {
+      id: 'Film',
+      label: 'Film',
+      kind: 'class',
+      navigable: true,
+      propertyDetails: [
+        {
+          id: 'director',
+          label: 'Director',
+          description: 'Who directed it',
+          type: 'Link',
+          linkTarget: 'Person',
+          cardinality: Cardinality._0_n,
+        },
+      ],
+    },
+    { id: 'Short', label: 'Short', kind: 'class', navigable: true },
+    { id: 'Person', label: 'Person', kind: 'class', navigable: true },
+  ],
+  edges: [
+    { source: 'Film', target: 'Person', property: 'director', label: 'Director', kind: 'link' },
+    { source: 'Short', target: 'Film', property: 'subClassOf', label: '', kind: 'subclass' },
+  ],
+};
+
+describe('PropertyPanelComponent', () => {
+  let fixture: ComponentFixture<PropertyPanelComponent>;
+  const text = (selector: string) =>
+    Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll(selector)).map(e => e.textContent?.trim());
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [PropertyPanelComponent], providers: [provideTranslateService()] });
+    fixture = TestBed.createComponent(PropertyPanelComponent);
+    fixture.componentRef.setInput('graph', graph);
+    fixture.componentRef.setInput('propertyIri', 'director');
+    fixture.detectChanges();
+  });
+
+  it('shows the property and the classes that have it', () => {
+    expect(text('[data-cy="property-panel-title"]')).toEqual(['Director']);
+    expect(text('[data-cy="property-panel-user"] .class-link')).toEqual(['Film', 'Short']);
+    expect(fixture.nativeElement.querySelectorAll('.inherited')).toHaveLength(1);
+  });
+
+  it('shows the name of the property, to copy', () => {
+    expect(text('[data-cy="property-panel-name"]')).toEqual(['director']);
+  });
+
+  it('shows the type of a value property', () => {
+    fixture.componentRef.setInput('graph', {
+      ...graph,
+      nodes: graph.nodes.map(node =>
+        node.id === 'Person'
+          ? {
+              ...node,
+              propertyDetails: [
+                { id: 'birth', label: 'Birth', description: '', type: 'Date', cardinality: Cardinality._0_1 },
+              ],
+            }
+          : node
+      ),
+    });
+    fixture.componentRef.setInput('propertyIri', 'birth');
+    fixture.detectChanges();
+
+    expect(text('[data-cy="property-panel-type"]')[0]).toContain('Date');
+    expect(text('[data-cy="property-panel-user"] .class-link')).toEqual(['Person']);
+  });
+});

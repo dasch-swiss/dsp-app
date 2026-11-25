@@ -20,21 +20,25 @@ describe('Lists', () => {
       },
     }).then(response => {
       listId = response.body.list.listinfo.id.match(/\/([^\/]*)$/)[1];
-      listUrl = `/project/00FF/list/${listId}`;
+      listUrl = `/project/00FF/data-models/list/${listId}`;
     });
   });
 
   it('user can create a list', () => {
+    const label = faker.lorem.words(2);
     cy.intercept('POST', '/admin/lists').as('submitRequest');
 
     cy.visit('/project/00FF/data-models');
-    cy.get('[data-cy=create-list-button]').click();
-    cy.get('[data-cy=label-input]').type(faker.lorem.words(2));
+    cy.get('[data-cy=data-models-tree-create-vocabulary]').click();
+    cy.get('[data-cy=label-input]').type(label);
     cy.get('[data-cy=comments-input]').type(faker.lorem.sentence());
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@submitRequest');
-    cy.url().should('match', /\/project\/00FF\/list\/(.+)/);
+    // The new list opens, and the rail lists it.
+    cy.url().should('match', /\/project\/00FF\/data-models\/list\/(.+)/);
+    cy.get('[data-cy=label-title]').contains(label);
+    cy.contains('[data-cy=data-models-tree-vocabulary]', label).should('be.visible');
   });
 
   it('user can edit a list', () => {
@@ -52,7 +56,7 @@ describe('Lists', () => {
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@editRequest');
-    cy.url().should('match', /\/project\/00FF\/list\/(.+)/);
+    cy.url().should('match', /\/project\/00FF\/data-models\/list\/(.+)/);
     cy.get('[data-cy=label-title]').contains(data.label);
     cy.get('[data-cy=comment-title]').contains(data.comment);
   });
@@ -64,6 +68,6 @@ describe('Lists', () => {
     cy.get('[data-cy=confirmation-button]').click();
     cy.wait('@deleteRequest');
 
-    cy.url().should('match', /\/project\/00FF\/data-models$/);
+    cy.url().should('match', /\/project\/00FF\/data-models\/lists$/);
   });
 });
