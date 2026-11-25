@@ -34,7 +34,9 @@ import {
   tap,
   timer,
   toArray,
+  withLatestFrom,
 } from 'rxjs';
+import { BulkEditRequestService } from './bulk-edit-request.service';
 import { DataClassQueryService } from './data-class-query.service';
 import { DataClassUrlStateService } from './data-class-url-state.service';
 import { DownloadScope, EXPORT_MAX_RESOURCE_IRIS } from './download/download-dialog-resources-tab.component';
@@ -231,6 +233,19 @@ export class DataClassResultsBarComponent {
   private readonly _translate = inject(TranslateService);
   private readonly _destroyRef = inject(DestroyRef);
 
+  constructor() {
+    // A table column's bulk edit covers what this bar's own button would: the ticked rows, else every match.
+    inject(BulkEditRequestService)
+      .requests$.pipe(withLatestFrom(this.selectedResources$, this.narrowed$), takeUntilDestroyed())
+      .subscribe(([property, selected, narrowed]) => {
+        if (selected.length && this.multipleViewerService.selectMode) {
+          this._bulkEditSelection(selected, property);
+        } else {
+          this.bulkEditAll(this.resourceResult.numberOfResults ?? 0, narrowed, property);
+        }
+      });
+  }
+
   readonly selectedResources$ = this.multipleViewerService.selectedResources$;
   readonly hasProjectMemberRights$ = this._projectPageService.hasProjectMemberRights$;
 
@@ -321,7 +336,10 @@ export class DataClassResultsBarComponent {
    * Bulk edit every resource the current query matches, across all its pages. dsp-api has no bulk
    * endpoint and the panel takes IRIs, so the pages are read first, a few at a time.
    */
-  bulkEditAll(total: number, narrowed: boolean): void {
+  bulkEditAll(total: number, narrowed: boolean, property?: string): void {
+    if (!total || this.collecting() !== null) {
+      return;
+    }
     // The panel's header says which resources these are.
     const scope = this._translate.instant(
       narrowed ? 'pages.dataBrowser.resultsBar.bulkEditScopeFiltered' : 'pages.dataBrowser.resultsBar.bulkEditScopeAll',
@@ -329,7 +347,7 @@ export class DataClassResultsBarComponent {
     );
     this._collectMatchingIris(total)
       .pipe(
-        switchMap(iris => this._bulkEditLauncher.open(iris, scope)),
+        switchMap(iris => this._bulkEditLauncher.open(iris, scope, property)),
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe({
@@ -373,6 +391,21 @@ export class DataClassResultsBarComponent {
       map(pages => pages.sort((a, b) => a.pageIndex - b.pageIndex).flatMap(page => page.iris)),
       tap(() => this.collecting.set(null))
     );
+  }
+
+  /** The ticked rows, opened on `property`; the selection bar's own button opens on the label. */
+  private _bulkEditSelection(selected: ReadResource[], property: string): void {
+    this._bulkEditLauncher
+      .open(
+        selected.map(resource => resource.id),
+        undefined,
+        property
+      )
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(changedIris => {
+        changedIris.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
+        this.bulkEdited.emit();
+      });
   }
 
   private _collectFailed(messageKey: string): void {

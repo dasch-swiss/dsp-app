@@ -714,7 +714,9 @@
         "columnsScrolledUnder": "{{count}} colonne nascoste sotto",
         "selectRow": "Aggiungi {{label}} al confronto",
         "openRow": "Apri {{label}}",
-        "resizeRow": "Ridimensiona la riga di {{label}}"
+        "resizeRow": "Ridimensiona la riga di {{label}}",
+        "bulkEditColumn": "Modifica {{column}} in blocco",
+        "bulkEdit": "Modifica in blocco"
       },
       "viewOptions": {
         "title": "Opzioni di visualizzazione",

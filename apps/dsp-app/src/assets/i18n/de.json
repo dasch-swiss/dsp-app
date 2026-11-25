@@ -714,7 +714,9 @@
         "columnsScrolledUnder": "{{count}} Spalten darunter verborgen",
         "selectRow": "{{label}} zum Vergleich hinzufügen",
         "openRow": "{{label}} öffnen",
-        "resizeRow": "Zeilenhöhe für {{label}} ändern"
+        "resizeRow": "Zeilenhöhe für {{label}} ändern",
+        "bulkEditColumn": "{{column}} in allen Ressourcen bearbeiten",
+        "bulkEdit": "Massenbearbeitung"
       },
       "viewOptions": {
         "title": "Ansichtsoptionen",

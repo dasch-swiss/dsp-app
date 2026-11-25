@@ -28,6 +28,7 @@ import { ProjectDataRightsService, ResourceResultService } from '@dasch-swiss/vr
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
+import { BulkEditRequestService } from '../../bulk-edit-request.service';
 import { DataBrowserPageService } from '../../data-browser-page.service';
 import { DataClassQueryService } from '../../data-class-query.service';
 import { DataClassUrlStateService } from '../../data-class-url-state.service';
@@ -144,6 +145,7 @@ describe('DataTableFetcherComponent', () => {
         { provide: DspApiConnectionToken, useValue: api },
         { provide: MultipleViewerService, useValue: multipleViewer },
         DataBrowserPageService,
+        BulkEditRequestService,
         ResourceResultService,
         { provide: DataClassQueryService, useValue: { query$: querySubject.asObservable() } },
         {

@@ -714,7 +714,9 @@
         "columnsScrolledUnder": "{{count}} colonnes masquées dessous",
         "selectRow": "Ajouter {{label}} à la comparaison",
         "openRow": "Ouvrir {{label}}",
-        "resizeRow": "Redimensionner la ligne de {{label}}"
+        "resizeRow": "Redimensionner la ligne de {{label}}",
+        "bulkEditColumn": "Modifier {{column}} en masse",
+        "bulkEdit": "Modifier en masse"
       },
       "viewOptions": {
         "title": "Options d'affichage",

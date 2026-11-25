@@ -13,6 +13,7 @@ import { CenteredBoxComponent, NoResultsFoundComponent } from '@dasch-swiss/vre/
 import { TranslatePipe } from '@ngx-translate/core';
 import { AngularSplitModule, SplitGutterInteractionEvent } from 'angular-split';
 import { combineLatest, distinctUntilChanged, EMPTY, first, map, skip } from 'rxjs';
+import { BulkEditRequestService } from './bulk-edit-request.service';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassHeaderComponent } from './data-class-header.component';
 import { DataClassPanelComponent } from './data-class-panel.component';
@@ -107,7 +108,7 @@ const QUERIES = RESULT_LIST_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}p
   ],
   // Scoped here so the header and the list share one query, one `ResourceResultService`, and a class
   // switch disposes them.
-  providers: [...provideSearchFilters(), ...provideDataClassSearch(), ResourceResultService],
+  providers: [...provideSearchFilters(), ...provideDataClassSearch(), ResourceResultService, BulkEditRequestService],
 })
 export class DataClassViewComponent {
   private readonly _view = toSignal(inject(DataClassUrlStateService).view$, { initialValue: 'list' as DataClassView });

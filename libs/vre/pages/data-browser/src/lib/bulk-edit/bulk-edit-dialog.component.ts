@@ -81,6 +81,8 @@ export interface BulkEditDialogProps {
   resourceIris: string[];
   /** Which resources these are, e.g. what a search keeps; without it the panel names the selected count. */
   scope?: string;
+  /** The property to open on, e.g. the table column the panel was opened from; the label when absent or not editable. */
+  property?: string;
 }
 
 /** The IRIs of the resources a run wrote at least one value to. */
@@ -1628,8 +1630,9 @@ export class BulkEditDialogComponent {
       .subscribe({
         next: resources => {
           this._resources.set(resources);
-          // The label comes first: every resource has one.
-          const [preselected] = this.targets();
+          // The property asked for, else the label, which comes first: every resource has one.
+          const targets = this.targets();
+          const preselected = targets.find(target => target.id === this.data.property) ?? targets[0];
           if (preselected && !this.form.controls.property.value) {
             this.form.controls.property.setValue(preselected.id);
           }

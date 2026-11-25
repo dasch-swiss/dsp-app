@@ -16,11 +16,12 @@ export class BulkEditLauncher {
 
   /**
    * Emits the IRIs of the resources each run changed, as soon as it ends, while the panel stays open; completes
-   * when the panel closes. `scope` names which resources these are in the panel's header, e.g. what a search keeps.
+   * when the panel closes. `scope` names which resources these are in the panel's header, e.g. what a search keeps;
+   * `property` is the one the panel opens on.
    */
-  open(resourceIris: string[], scope?: string): Observable<BulkEditApplied> {
+  open(resourceIris: string[], scope?: string, property?: string): Observable<BulkEditApplied> {
     const dialogRef = this._dialog.open<BulkEditDialogComponent, BulkEditDialogProps>(BulkEditDialogComponent, {
-      ...DspDialogConfig.dialogDrawerConfig({ resourceIris, scope }, true),
+      ...DspDialogConfig.dialogDrawerConfig({ resourceIris, scope, property }, true),
       width: '1100px',
       maxWidth: '100vw',
       minWidth: 0,

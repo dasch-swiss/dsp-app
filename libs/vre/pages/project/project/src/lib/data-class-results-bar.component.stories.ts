@@ -7,6 +7,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { expect, within } from 'storybook/test';
 // eslint-disable-next-line no-restricted-imports -- story-only helpers with the data browser's translations.
 import { STORY_PROVIDERS } from '../../../../data-browser/src/lib/stories.helpers';
+import { BulkEditRequestService } from './bulk-edit-request.service';
 import { DataClassQueryService } from './data-class-query.service';
 import { DataClassResultsBarComponent } from './data-class-results-bar.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
@@ -58,6 +59,7 @@ const providers = ({
       useValue: { user$: of({ id: 'u1', permissions: { groupsPerProject: {} } }), isSysAdmin$: of(canEdit) },
     },
     { provide: BulkEditLauncher, useValue: { open: () => of(undefined) } },
+    BulkEditRequestService,
     { provide: MatDialog, useValue: { open: () => {} } },
   ];
 };

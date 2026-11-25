@@ -9,6 +9,7 @@ import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { provideTranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, defer, of, throwError } from 'rxjs';
+import { BulkEditRequestService } from './bulk-edit-request.service';
 import { DataClassQueryService } from './data-class-query.service';
 import { DataClassResultsBarComponent } from './data-class-results-bar.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
@@ -100,6 +101,7 @@ describe('DataClassResultsBarComponent', () => {
           useValue: { currentProject: { id: 'http://rdfh.ch/projects/0001' }, hasProjectMemberRights$: of(true) },
         },
         { provide: BulkEditLauncher, useValue: launcher },
+        BulkEditRequestService,
         { provide: NotificationService, useValue: notification },
         { provide: ResourceClassCountApi, useValue: classCountApi },
         { provide: DataClassUrlStateService, useValue: { fulltextTerm$: term$, filters$ } },
@@ -233,7 +235,8 @@ describe('DataClassResultsBarComponent', () => {
       expect(doExtendedSearchIris).toHaveBeenCalledWith(expect.any(String), 'http://rdfh.ch/projects/0001');
       expect(launcher.open).toHaveBeenCalledWith(
         ['iri-0-a', 'iri-0-b', 'iri-1-a', 'iri-1-b', 'iri-2-a', 'iri-2-b'],
-        'pages.dataBrowser.resultsBar.bulkEditScopeFiltered'
+        'pages.dataBrowser.resultsBar.bulkEditScopeFiltered',
+        undefined
       );
       expect(multipleViewer.notifyResourceChanged).toHaveBeenCalledWith('iri-0-a');
       expect(component.collecting()).toBeNull();
@@ -261,7 +264,11 @@ describe('DataClassResultsBarComponent', () => {
       component.bulkEditAll(30, false);
       jest.advanceTimersByTime(1000);
 
-      expect(launcher.open).toHaveBeenCalledWith(['iri-0-a', 'iri-0-b', 'iri-1-a', 'iri-1-b'], expect.any(String));
+      expect(launcher.open).toHaveBeenCalledWith(
+        ['iri-0-a', 'iri-0-b', 'iri-1-a', 'iri-1-b'],
+        expect.any(String),
+        undefined
+      );
       jest.useRealTimers();
     });
 
@@ -279,6 +286,32 @@ describe('DataClassResultsBarComponent', () => {
       expect(notification.openSnackBar).toHaveBeenCalledWith(expect.any(String), 'error');
       expect(component.collecting()).toBeNull();
       jest.useRealTimers();
+    });
+  });
+
+  describe('a bulk edit asked for by a table column', () => {
+    it('opens the panel on that property for every match', () => {
+      const component = create();
+      component.resourceResult.numberOfResults = 30;
+
+      TestBed.inject(BulkEditRequestService).request('prop:title');
+
+      expect(launcher.open).toHaveBeenCalledWith(
+        ['iri-0-a', 'iri-0-b', 'iri-1-a', 'iri-1-b'],
+        'pages.dataBrowser.resultsBar.bulkEditScopeAll',
+        'prop:title'
+      );
+    });
+
+    it('opens the panel on that property for the ticked rows', () => {
+      multipleViewer.selectedResources$ = of([{ id: 'iri-a' }, { id: 'iri-b' }]);
+      multipleViewer.selectMode = true;
+      create();
+
+      TestBed.inject(BulkEditRequestService).request('prop:title');
+
+      expect(launcher.open).toHaveBeenCalledWith(['iri-a', 'iri-b'], undefined, 'prop:title');
+      expect(doExtendedSearchIris).not.toHaveBeenCalled();
     });
   });
 });

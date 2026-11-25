@@ -22,7 +22,7 @@ import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import {
   FootnoteService,
   PropertiesDisplayService,
@@ -146,6 +146,18 @@ const FILLER_COLUMN_KEY = '__filler';
                     [matTooltip]="column.sortTooltipKey | translate"
                     (click)="sortToggled.emit({ key: column.key, descending: column.nextSortDescending })">
                     <mat-icon>{{ column.sortIcon }}</mat-icon>
+                  </button>
+                }
+
+                @if (canEdit() && isBulkEditable(column)) {
+                  <button
+                    type="button"
+                    class="header-bulk-edit"
+                    data-cy="column-bulk-edit"
+                    [attr.aria-label]="'pages.dataBrowser.table.bulkEditColumn' | translate: { column: column.label }"
+                    [matTooltip]="'pages.dataBrowser.table.bulkEdit' | translate"
+                    (click)="bulkEditRequested.emit(column.propertyIri ?? labelIri)">
+                    <mat-icon>edit_note</mat-icon>
                   </button>
                 }
 
@@ -428,6 +440,10 @@ export class DataTableComponent {
   readonly filterRequested = output<string>();
   /** Emits the column whose pin the user toggled. */
   readonly columnPinToggled = output<string>();
+  /** The property whose values the user wants to bulk edit: the column's property IRI, or `rdfs:label`. */
+  readonly bulkEditRequested = output<string>();
+
+  protected readonly labelIri = Constants.Label;
   /**
    * A row's resource as dsp-api holds it after a cell was saved. The table has already re-rendered the row;
    * this is for whoever else shows the same resource.
@@ -644,6 +660,23 @@ export class DataTableComponent {
    *
    * The label column is drag-disabled, which stops it being picked up but not another column being dropped in front of it.
    */
+  /**
+   * Whether the bulk edit panel can open on this column: the label and the class's own properties, as the
+   * resource creation form offers them; not the image, the rights statement or built-in properties.
+   */
+  protected isBulkEditable(column: TableColumn): boolean {
+    if (column.key === LABEL_COLUMN_KEY) {
+      return true;
+    }
+    return (
+      !!column.propertyIri &&
+      column.isEditable &&
+      !column.isImage &&
+      !column.rightsField &&
+      !column.propertyIri.startsWith(Constants.KnoraApiV2)
+    );
+  }
+
   protected readonly canDropAt = (index: number, drag: CdkDrag<string>): boolean => {
     const [first, last] = this._slotsFor(drag.data);
     return index >= first && index <= last;

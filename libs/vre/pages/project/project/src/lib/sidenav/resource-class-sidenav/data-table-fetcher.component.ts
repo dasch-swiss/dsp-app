@@ -31,6 +31,7 @@ import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { CenteredBoxComponent, CenteredMessageComponent, SearchFailedComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, combineLatest, first, map, Observable, of, skip, switchMap, tap } from 'rxjs';
+import { BulkEditRequestService } from '../../bulk-edit-request.service';
 import { DataBrowserPageService } from '../../data-browser-page.service';
 import { DataClassQueryService } from '../../data-class-query.service';
 import { DataClassUrlStateService } from '../../data-class-url-state.service';
@@ -78,6 +79,7 @@ import { ProjectPageService } from '../../project-page.service';
             (sortToggled)="onSortToggled($event)"
             (filterRequested)="onFilterRequested($event)"
             (columnPinToggled)="onColumnPinToggled($event)"
+            (bulkEditRequested)="onBulkEditRequested($event)"
             (resourceReloaded)="onResourceReloaded($event)" />
         } @else if (filtersAreActive) {
           <app-centered-message
@@ -120,6 +122,7 @@ export class DataTableFetcherComponent implements OnChanges {
 
   /** Column model and layout live in a service because the View options menu is in the class header. */
   private readonly _tableState = inject(TableViewStateService);
+  private readonly _bulkEditRequests = inject(BulkEditRequestService);
   readonly columns = this._tableState.columns;
 
   /** Whether the rows on screen are about to be replaced. See `ResourceResultService.isRefreshing`. */
@@ -262,6 +265,11 @@ export class DataTableFetcherComponent implements OnChanges {
 
   onColumnsReordered(order: string[]) {
     this._tableState.setVisibleOrder(order);
+  }
+
+  /** The results bar opens the panel: it knows which resources the bulk edit covers. */
+  onBulkEditRequested(property: string): void {
+    this._bulkEditRequests.request(property);
   }
 
   onColumnPinToggled(key: string) {
