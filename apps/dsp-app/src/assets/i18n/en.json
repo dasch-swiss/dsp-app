@@ -186,7 +186,7 @@
           "listTitle": "These metadata consist of:",
           "listContent": {
             "label": "Label",
-            "class": "Resource Class",
+            "class": "Resource class",
             "ark": "ARK URL (Permalink)",
             "timestampArk": "ARK with timestamp",
             "iri": "Resource IRI",
@@ -223,7 +223,7 @@
         "advancedSearch": "Advanced Search",
         "projectDescription": "Project Description",
         "projectSettings": "Project Settings",
-        "dataModel": "Data Model"
+        "dataModel": "Data model"
       },
       "collaboration": {
         "permissionGroup": "Permission group",
@@ -479,8 +479,8 @@
         "orderBy": "Sort by",
         "property": "Property",
         "propertyOfClass": "Property of {{class}}",
-        "resourceClass": "Resource Class",
-        "resourceLabel": "Resource Label",
+        "resourceClass": "Resource class",
+        "resourceLabel": "Resource label",
         "switchToRegular": "Switch to regular search",
         "title": "Advanced search",
         "tooltips": {

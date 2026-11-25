@@ -115,7 +115,7 @@ const STORY_TRANSLATIONS = {
         orderBy: 'Sort by',
         property: 'Property',
         propertyOfClass: 'Property of {{class}}',
-        resourceClass: 'Resource Class',
+        resourceClass: 'Resource class',
         fulltextSearch: 'Full-text search',
         fulltextSearchPlaceholder: 'Search…',
         reset: 'Reset',

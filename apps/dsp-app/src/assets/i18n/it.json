@@ -186,7 +186,7 @@
           "listTitle": "I metadati includono:",
           "listContent": {
             "label": "Label (Etichetta)",
-            "class": "Classe della risorsa",
+            "class": "Classe di risorsa",
             "ark": "URL ARK (link permanente)",
             "timestampArk": "ARK con data e ora",
             "iri": "IRI della risorsa",
