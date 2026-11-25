@@ -28,9 +28,11 @@ import {
   Observable,
   of,
   ReplaySubject,
+  retry,
   startWith,
   switchMap,
   tap,
+  timer,
   toArray,
 } from 'rxjs';
 import { DataClassQueryService } from './data-class-query.service';
@@ -41,6 +43,9 @@ import { ProjectPageService } from './project-page.service';
 
 /** Result pages fetched at once while collecting every matching resource for a bulk edit. */
 const COLLECT_CONCURRENCY = 4;
+
+/** A failed result page (dev answers 503 under load) is asked again up to this many times, after 1 s then 2 s. */
+const COLLECT_RETRIES = 2;
 
 /**
  * The bar between the toolbar and the results: which resources the actions apply to, and Download and
@@ -338,7 +343,8 @@ export class DataClassResultsBarComponent {
 
   /**
    * The IRIs of every resource the current query matches, across all its pages, in result order. dsp-api has
-   * no endpoint for that, so the pages are read a few at a time, with progress in `collecting`.
+   * no endpoint for that, so the pages are read a few at a time, with progress in `collecting`. Each page asks
+   * for no values (`iriOnly`) and is not turned into resources, so it stays small and reads no ontology.
    */
   private _collectMatchingIris(total: number): Observable<string[]> {
     const pageSize = this.resourceResult.MAX_RESULTS_PER_PAGE;
@@ -349,12 +355,14 @@ export class DataClassResultsBarComponent {
 
     return this._query.query$.pipe(
       first(),
+      map(iriOnly),
       switchMap(query =>
         from(Array.from({ length: pageCount }, (_, pageIndex) => pageIndex)).pipe(
           mergeMap(
             pageIndex =>
-              this._dspApiConnection.v2.search.doExtendedSearch(withOffset(query, pageIndex), projectIri).pipe(
-                map(response => ({ pageIndex, iris: response.resources.map(resource => resource.id) })),
+              this._dspApiConnection.v2.search.doExtendedSearchIris(withOffset(query, pageIndex), projectIri).pipe(
+                map(iris => ({ pageIndex, iris: iris as string[] })),
+                retry({ count: COLLECT_RETRIES, delay: (_, attempt) => timer(attempt * 1000) }),
                 tap(() => this.collecting.set(Math.round((++pagesRead / pageCount) * 100)))
               ),
             COLLECT_CONCURRENCY
@@ -371,6 +379,17 @@ export class DataClassResultsBarComponent {
     this.collecting.set(null);
     this._notification.openSnackBar(this._translate.instant(messageKey), 'error');
   }
+}
+
+/**
+ * The query asking for the matching resources without their values: only the main resource stays in the
+ * CONSTRUCT clause. The WHERE clause, the filters and the order are kept, so the same resources match.
+ */
+export function iriOnly(query: string): string {
+  return query.replace(
+    /CONSTRUCT\s*\{[\s\S]*?\}\s*WHERE\s*\{/,
+    'CONSTRUCT {\n?mainRes knora-api:isMainResource true .\n} WHERE {'
+  );
 }
 
 /** `lastIndexOf`: a fulltext term can contain the word OFFSET. */

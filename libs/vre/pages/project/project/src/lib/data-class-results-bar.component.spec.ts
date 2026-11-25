@@ -8,7 +8,7 @@ import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-servic
 import { NotificationService } from '@dasch-swiss/vre/ui/notification';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { provideTranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { BehaviorSubject, defer, of, throwError } from 'rxjs';
 import { DataClassQueryService } from './data-class-query.service';
 import { DataClassResultsBarComponent } from './data-class-results-bar.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
@@ -46,7 +46,7 @@ describe('DataClassResultsBarComponent', () => {
   let classCountApi: { getResourceClassCount: jest.Mock };
   let term$: BehaviorSubject<string>;
   let filters$: BehaviorSubject<unknown[]>;
-  let doExtendedSearch: jest.Mock;
+  let doExtendedSearchIris: jest.Mock;
   let launcher: { open: jest.Mock };
   let notification: { openSnackBar: jest.Mock };
   let multipleViewer: { selectedResources$: unknown; selectMode: boolean; notifyResourceChanged: jest.Mock };
@@ -54,7 +54,7 @@ describe('DataClassResultsBarComponent', () => {
   /** One result page per call: the OFFSET in the query is the page index. */
   const pageOf = (query: string) => {
     const pageIndex = Number(/OFFSET (\d+)$/.exec(query)?.[1]);
-    return of({ resources: [{ id: `iri-${pageIndex}-a` }, { id: `iri-${pageIndex}-b` }] });
+    return of([`iri-${pageIndex}-a`, `iri-${pageIndex}-b`]);
   };
 
   const create = () => {
@@ -68,7 +68,7 @@ describe('DataClassResultsBarComponent', () => {
     classCountApi = { getResourceClassCount: jest.fn().mockReturnValue(of(66)) };
     term$ = new BehaviorSubject('');
     filters$ = new BehaviorSubject<unknown[]>([]);
-    doExtendedSearch = jest.fn(pageOf);
+    doExtendedSearchIris = jest.fn(pageOf);
     launcher = { open: jest.fn().mockReturnValue(of(['iri-0-a'])) };
     notification = { openSnackBar: jest.fn() };
     multipleViewer = { selectedResources$: of([]), selectMode: false, notifyResourceChanged: jest.fn() };
@@ -83,11 +83,18 @@ describe('DataClassResultsBarComponent', () => {
           useValue: {
             v2: {
               ontologyCache: { getResourceClassDefinition: () => of(classDefinitions) },
-              search: { doExtendedSearch },
+              search: { doExtendedSearchIris },
             },
           },
         },
-        { provide: DataClassQueryService, useValue: { query$: of('CONSTRUCT {} WHERE {} OFFSET 0') } },
+        {
+          provide: DataClassQueryService,
+          useValue: {
+            query$: of(
+              'CONSTRUCT {\n?mainRes knora-api:isMainResource true .\n?mainRes ?p ?v .\n} WHERE {\n?mainRes ?p ?v .\n}\nOFFSET 0'
+            ),
+          },
+        },
         {
           provide: ProjectPageService,
           useValue: { currentProject: { id: 'http://rdfh.ch/projects/0001' }, hasProjectMemberRights$: of(true) },
@@ -156,13 +163,13 @@ describe('DataClassResultsBarComponent', () => {
     it('exports the whole class without resource IRIs', () => {
       create().download(66, 'class');
       expect(dialog.open.mock.calls[0][1].data.resourceIris).toBeUndefined();
-      expect(doExtendedSearch).not.toHaveBeenCalled();
+      expect(doExtendedSearchIris).not.toHaveBeenCalled();
     });
 
     it('exports the ticked rows by their IRIs', () => {
       create().download(2, 'selection', [{ id: 'iri-a' }, { id: 'iri-b' }] as ReadResource[]);
       expect(dialog.open.mock.calls[0][1].data.resourceIris).toEqual(['iri-a', 'iri-b']);
-      expect(doExtendedSearch).not.toHaveBeenCalled();
+      expect(doExtendedSearchIris).not.toHaveBeenCalled();
     });
 
     it('reads every result page and exports all matches, in result order', () => {
@@ -180,20 +187,23 @@ describe('DataClassResultsBarComponent', () => {
 
     it('refuses a search larger than the export accepts, without reading it', () => {
       create().download(10_001, 'search');
-      expect(doExtendedSearch).not.toHaveBeenCalled();
+      expect(doExtendedSearchIris).not.toHaveBeenCalled();
       expect(dialog.open).not.toHaveBeenCalled();
       expect(notification.openSnackBar).toHaveBeenCalledWith(expect.any(String), 'error');
     });
 
     it('reports a failed page and opens no dialog', () => {
-      doExtendedSearch.mockReturnValueOnce(throwError(() => new Error('500')));
+      jest.useFakeTimers();
+      doExtendedSearchIris.mockReturnValueOnce(throwError(() => new Error('500')));
       const component = create();
 
       component.download(30, 'search');
+      jest.advanceTimersByTime(3000);
 
       expect(dialog.open).not.toHaveBeenCalled();
       expect(notification.openSnackBar).toHaveBeenCalledWith(expect.any(String), 'error');
       expect(component.collecting()).toBeNull();
+      jest.useRealTimers();
     });
 
     it('lists the editable properties of the class, not of a selected resource', () => {
@@ -215,12 +225,12 @@ describe('DataClassResultsBarComponent', () => {
       // 51 results: three pages of 25.
       component.bulkEditAll(51, true);
 
-      expect(doExtendedSearch.mock.calls.map(([query]) => query.match(/OFFSET \d+$/)?.[0])).toEqual([
+      expect(doExtendedSearchIris.mock.calls.map(([query]) => query.match(/OFFSET \d+$/)?.[0])).toEqual([
         'OFFSET 0',
         'OFFSET 1',
         'OFFSET 2',
       ]);
-      expect(doExtendedSearch).toHaveBeenCalledWith(expect.any(String), 'http://rdfh.ch/projects/0001');
+      expect(doExtendedSearchIris).toHaveBeenCalledWith(expect.any(String), 'http://rdfh.ch/projects/0001');
       expect(launcher.open).toHaveBeenCalledWith(
         ['iri-0-a', 'iri-0-b', 'iri-1-a', 'iri-1-b', 'iri-2-a', 'iri-2-b'],
         'pages.dataBrowser.resultsBar.bulkEditScopeFiltered'
@@ -230,15 +240,45 @@ describe('DataClassResultsBarComponent', () => {
       expect(emitted).toHaveLength(1);
     });
 
-    it('reports a failed page and opens nothing', () => {
-      doExtendedSearch.mockReturnValueOnce(throwError(() => new Error('500')));
+    it('asks for the matching resources without their values', () => {
+      create().bulkEditAll(10, false);
+
+      const [query] = doExtendedSearchIris.mock.calls[0];
+      expect(query).toBe(
+        'CONSTRUCT {\n?mainRes knora-api:isMainResource true .\n} WHERE {\n?mainRes ?p ?v .\n}\nOFFSET 0'
+      );
+    });
+
+    it('asks a failed page again before giving up', () => {
+      jest.useFakeTimers();
+      // A request is sent on each subscription: the first one fails, the retry succeeds.
+      let attempts = 0;
+      doExtendedSearchIris.mockReturnValueOnce(
+        defer(() => (attempts++ ? of(['iri-0-a', 'iri-0-b']) : throwError(() => new Error('503'))))
+      );
       const component = create();
 
       component.bulkEditAll(30, false);
+      jest.advanceTimersByTime(1000);
 
+      expect(launcher.open).toHaveBeenCalledWith(['iri-0-a', 'iri-0-b', 'iri-1-a', 'iri-1-b'], expect.any(String));
+      jest.useRealTimers();
+    });
+
+    it('reports a page failing three times and opens nothing', () => {
+      jest.useFakeTimers();
+      let attempts = 0;
+      doExtendedSearchIris.mockReturnValueOnce(defer(() => (attempts++, throwError(() => new Error('503')))));
+      const component = create();
+
+      component.bulkEditAll(30, false);
+      jest.advanceTimersByTime(3000);
+
+      expect(attempts).toBe(3);
       expect(launcher.open).not.toHaveBeenCalled();
       expect(notification.openSnackBar).toHaveBeenCalledWith(expect.any(String), 'error');
       expect(component.collecting()).toBeNull();
+      jest.useRealTimers();
     });
   });
 });
