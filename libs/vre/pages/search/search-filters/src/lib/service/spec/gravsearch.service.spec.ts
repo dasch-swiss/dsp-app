@@ -1155,7 +1155,7 @@ describe('GravsearchService — main-resource type anchor (DEV-6889)', () => {
 
   it('omits the generic anchor when a fulltext term is present (matchFulltext types ?mainRes; anchor pessimizes the backend)', () => {
     const query = gravsearchService.generateGravSearchQuery([], 'hello');
-    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "hello")');
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "hello*")');
     expect(query).not.toContain('a knora-api:Resource');
   });
 });
@@ -1190,7 +1190,7 @@ describe('GravsearchService — fulltextTerm parameter', () => {
 
   it('injects matchFulltext filter on the main resource when term is provided', () => {
     const query = gravsearchService.generateGravSearchQuery([], 'hello');
-    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "hello")');
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "hello*")');
     // matchFulltext types ?mainRes on its own; the generic type anchor is omitted (backend perf).
     expect(query).not.toContain('a knora-api:Resource');
   });
@@ -1218,7 +1218,7 @@ describe('GravsearchService — fulltextTerm parameter', () => {
 
   it('trims the term before injecting', () => {
     const query = gravsearchService.generateGravSearchQuery([], '  hello  ');
-    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "hello")');
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "hello*")');
   });
 
   it('escapes the term with single-layer SPARQL escaping (quote, backslash, newline)', () => {
@@ -1299,7 +1299,7 @@ describe('GravsearchService — fulltextTerm parameter', () => {
       `${ontologyIri}#Person`
     );
 
-    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "foo")');
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "foo*")');
     expect(query).toContain(`?mainRes a <${ontologyIri}#Person> .`);
     expect(query).toContain('FILTER (?label = "bar")');
   });
@@ -1312,7 +1312,7 @@ describe('GravsearchService — fulltextTerm parameter', () => {
 
     const query = gravsearchService.generateGravSearchQuery([], 'whale');
 
-    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale")');
+    expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale*")');
     // No generic type anchor: it defeats matchFulltext index-anchoring on the backend (perf).
     expect(query).not.toContain('a knora-api:Resource');
     expect(query).not.toContain('<#>'); // no malformed `PREFIX : <#>` line

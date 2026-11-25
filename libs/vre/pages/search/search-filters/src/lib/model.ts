@@ -1,4 +1,5 @@
 import { Constants, StringLiteralV2 } from '@dasch-swiss/dsp-js';
+import { MIN_SEARCH_TERM_LENGTH } from '@dasch-swiss/vre/shared/app-common';
 import { v4 as uuidv4 } from 'uuid';
 import { getOperatorsForObjectType, Operator } from './operators.config';
 
@@ -38,6 +39,25 @@ export function escapeSparqlStringLiteral(value: string): string {
     .replace(/\n/g, '\\n')
     .replace(/\r/g, '\\r')
     .replace(/\t/g, '\\t');
+}
+
+const LUCENE_OPERATORS = new Set(['AND', 'OR', 'NOT']);
+
+/**
+ * Turns each plain word of a fulltext term into a Lucene prefix query (`adorn` → `adorn*`), so
+ * `knora-api:matchFulltext` finds matches while the user is still typing a word (DEV-7787).
+ *
+ * Only words of letters and digits with at least {@link MIN_SEARCH_TERM_LENGTH} characters get the
+ * wildcard: dsp-api refuses a shorter prefix such as `a*` as matching too many candidates, and a word
+ * with punctuation (`op.21`, `Schönberg-Webern`) is split by the index analyzer, which a wildcard query
+ * skips. Phrases, operators and words the user already gave Lucene syntax are left as typed.
+ */
+export function withPrefixWildcards(term: string): string {
+  return term.replace(/[^\s]*".*?"[^\s]*|[^\s]+/g, token =>
+    /^[\p{L}\p{M}\p{N}]+$/u.test(token) && token.length >= MIN_SEARCH_TERM_LENGTH && !LUCENE_OPERATORS.has(token)
+      ? `${token}*`
+      : token
+  );
 }
 
 /**

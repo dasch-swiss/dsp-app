@@ -6,6 +6,7 @@ import {
   sanitizeSparqlIri,
   StatementElement,
   StringValue,
+  withPrefixWildcards,
 } from './model';
 import { Operator } from './operators.config';
 
@@ -234,5 +235,25 @@ describe('sanitizeSparqlIri', () => {
     const sanitized = sanitizeSparqlIri(payload);
     expect(sanitized).not.toContain('>');
     expect(sanitized).not.toContain('<');
+  });
+});
+
+describe('withPrefixWildcards', () => {
+  it('matches a word the user is still typing', () => {
+    expect(withPrefixWildcards('adorn')).toBe('adorn*');
+  });
+
+  it('makes every plain word a prefix, including words with diacritics and digits', () => {
+    expect(withPrefixWildcards('schönb theod 1928')).toBe('schönb* theod* 1928*');
+  });
+
+  it('leaves words shorter than three characters exact, as dsp-api refuses short prefixes', () => {
+    expect(withPrefixWildcards('adorno de a')).toBe('adorno* de a');
+  });
+
+  it('leaves Lucene syntax as typed', () => {
+    expect(withPrefixWildcards('"theodor adorno" AND web* NOT op.21 Schönberg-Webern (anton)')).toBe(
+      '"theodor adorno" AND web* NOT op.21 Schönberg-Webern (anton)'
+    );
   });
 });

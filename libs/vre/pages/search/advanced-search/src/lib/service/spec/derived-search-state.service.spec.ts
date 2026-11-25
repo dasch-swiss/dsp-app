@@ -174,7 +174,7 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
 
       expect(derived).toBe(oracle);
       expect(derived).toContain(`?mainRes a <${bookClass.iri}> .`);
-      expect(derived).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale")');
+      expect(derived).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale*")');
     });
 
     it('emits ORDER BY ASC on the active predicate when orderBy is set without a direction', async () => {
@@ -499,7 +499,7 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
       params$.next({ q: 'whale' });
       const { derived, oracle } = await oracleFor();
       expect(derived).toBe(oracle);
-      expect(derived).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale")');
+      expect(derived).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale*")');
       // No class was selected → no per-class type restriction / UNION (REQ-3.1).
       expect(derived).not.toContain('UNION');
     });
@@ -541,7 +541,7 @@ describe('DerivedSearchStateService (DEV-6576 Phase 2)', () => {
     it('generates a project-wide fulltext query without throwing on the missing data model', async () => {
       p$.next({ q: 'whale' });
       const query = await firstValueFrom(svc.gravsearchQuery$);
-      expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale")');
+      expect(query).toContain('FILTER knora-api:matchFulltext(?mainRes, "whale*")');
       expect(query).not.toContain('<#>');
       expect(query).not.toContain('UNION');
     });
