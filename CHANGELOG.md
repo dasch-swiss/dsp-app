@@ -1,5 +1,25 @@
 # Changelog
 
+## [14.3.0](https://github.com/dasch-swiss/dsp-app/compare/v14.2.0...v14.3.0) (2026-11-25)
+
+
+### Enhancements
+
+* add samaria-ivories (0863) project cover image ([#3643](https://github.com/dasch-swiss/dsp-app/issues/3643)) ([a0283b0](https://github.com/dasch-swiss/dsp-app/commit/a0283b09eb5dd96a507066534fd2adccd621d035))
+* **data-models:** new Data models tab — class cards, properties table, diagram and vocabularies (DEV-7664) ([#3620](https://github.com/dasch-swiss/dsp-app/issues/3620)) ([b27be88](https://github.com/dasch-swiss/dsp-app/commit/b27be88c64196c601e7cae80d0171cf78b9980a1))
+
+
+### Bug Fixes
+
+* **i18n:** use sentence case for data model and resource class labels (DEV-7477) ([#3642](https://github.com/dasch-swiss/dsp-app/issues/3642)) ([eb1267f](https://github.com/dasch-swiss/dsp-app/commit/eb1267f130c2fd62f36b7649ecd39e5a0b77f128))
+* **search-filters:** keep the Data tab's data model when the search bar loads (DEV-7494) ([#3640](https://github.com/dasch-swiss/dsp-app/issues/3640)) ([0f423c0](https://github.com/dasch-swiss/dsp-app/commit/0f423c0c33fb14e5a3ea8404e9e4aefdb1e232d4))
+
+
+### Maintenances
+
+* **open-api:** bump dsp-api spec v40.7.0-11-gb32eca1 → v41.0.0-2-g3d4a075 ([#3639](https://github.com/dasch-swiss/dsp-app/issues/3639)) ([0f3a511](https://github.com/dasch-swiss/dsp-app/commit/0f3a511ed1182210ed14de6590413df5f687d70d))
+* run ng serve, Jest and ESLint outside Bazel for local development (DEV-8039) ([#3634](https://github.com/dasch-swiss/dsp-app/issues/3634)) ([e19dfbb](https://github.com/dasch-swiss/dsp-app/commit/e19dfbb843bd6820ffd3b047a48909afdc2b47f0))
+
 ## [14.2.0](https://github.com/dasch-swiss/dsp-app/compare/v14.1.4...v14.2.0) (2026-11-23)
 
 
