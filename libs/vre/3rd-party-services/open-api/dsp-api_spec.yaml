@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: DSP-API
-  version: v40.7.0-11-gb32eca1
+  version: v41.0.0-2-g3d4a075
   summary: DSP-API is part of the DaSCH Service Platform, a repository for the long-term
     preservation and reuse of data in the humanities.
   contact:
@@ -5535,7 +5535,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       responses:
         '200':
           description: ''
@@ -5603,7 +5603,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       responses:
         '200':
           description: ''
@@ -5671,7 +5671,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       responses:
         '200':
           description: ''
@@ -5862,7 +5862,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       responses:
         '200':
           description: ''
@@ -5929,7 +5929,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       responses:
         '200':
           description: ''
@@ -6133,7 +6133,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6207,7 +6207,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6282,7 +6282,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6356,7 +6356,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       - name: projectIri
         in: path
         description: The IRI of a project. Must be URL-encoded.
@@ -6430,7 +6430,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6504,7 +6504,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       - name: groupIri
         in: path
         description: The IRI of a group. Must be URL-encoded.
@@ -6578,7 +6578,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       requestBody:
         content:
           application/json:
@@ -6651,7 +6651,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       requestBody:
         content:
           application/json:
@@ -6724,7 +6724,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       requestBody:
         content:
           application/json:
@@ -6797,7 +6797,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/users/7LaOdnuLQPa7AKgarA4JJg
+        example: http://rdfh.ch/users/nNSue4h_QgO8Vq6KsCrbGA
       requestBody:
         content:
           application/json:
@@ -7716,7 +7716,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/c1bKbkOORvCq_kW5FssFUA
+        example: http://rdfh.ch/lists/0001/f3apjn48TluRlgF-kb47aQ
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -7844,7 +7844,7 @@ paths:
         required: true
         schema:
           type: string
-        example: http://rdfh.ch/lists/0001/c1bKbkOORvCq_kW5FssFUA
+        example: http://rdfh.ch/lists/0001/f3apjn48TluRlgF-kb47aQ
       - name: allLanguages
         in: query
         description: If true, return rdfs:label and rdfs:comment as JSON-LD arrays
@@ -15711,12 +15711,96 @@ paths:
                       message: The project '{id}' was not found.
                       details:
                         id: example_id
+  /v3/resources/values/batch:
+    post:
+      tags:
+      - API v3
+      description: 'Applies up to 100 planned changes of a bulk edit: create or update
+        plain text and list values, or update resource labels. A change without `value`
+        creates a value; with `value` it updates that value. A change with `expected`
+        is rejected as a `conflict` if the stored content differs (the text, the list
+        node IRI, the label). A create with `expectEmpty` is a `conflict` if the property
+        holds a value that an earlier change of the same request did not create. Formatted
+        text is refused as `invalid`. Changes are applied in order, each on its own,
+        and each gets a result at its index: one failure does not cancel the others.
+        The comment of an updated value, and the language of a text, are kept. Requires
+        authentication and appropriate object access permissions.'
+      operationId: postV3ResourcesValuesBatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchChangesRequest'
+            example:
+              changes:
+              - resource: http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw
+                property: http://0.0.0.0:3333/ontology/0001/anything/v2#hasText
+                value: http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/SZyeLLmOTcCCuS3B0VksHQ
+                expected: Basel
+                new: Basle
+              - resource: http://rdfh.ch/0001/a-thing
+                property: http://0.0.0.0:3333/ontology/0001/anything/v2#hasText
+                new: Basel
+                expectEmpty: true
+              - resource: http://rdfh.ch/0001/a-thing
+                label:
+                  expected: A thing
+                  new: Another thing
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchChangesResponse'
+              example:
+                results:
+                - index: 0
+                  status: ok
+                  valueIri: http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw/values/new
+                - index: 1
+                  status: conflict
+                  message: The value is 'Bâle', not 'Basel'.
+                - index: 2
+                  status: forbidden
+                  message: No permission to modify the resource.
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+              example:
+                message: Bad request example message
+                errors: []
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+              example:
+                message: Invalid token.
+                errors: []
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+              example:
+                message: User not active.
+                errors: []
+      security:
+      - httpAuth: []
   /v3/export/resources:
     post:
       tags:
       - API v3
-      description: Export resources to CSV format. Publicly accessible. Requires appropriate
-        object access permissions.
+      description: Export resources to CSV format. Exports the whole `resourceClass`,
+        or only the resources in `resourceIris` (at most 10000, all of `resourceClass`,
+        else 400). Publicly accessible. Requires appropriate object access permissions.
       operationId: postV3ExportResources
       requestBody:
         content:
@@ -16284,7 +16368,8 @@ paths:
       description: Initiates an export of the project. The export will be performed
         asynchronously, and the response will contain an export ID that can be used
         to check the status of the export. An export can only be triggered when no
-        other export exists. Requires SystemAdmin permissions.
+        other export exists. Requires SystemAdmin permissions, or a trusted export
+        service, which only sees the exports it created.
       operationId: postV3ProjectsProjectiriExports
       parameters:
       - name: projectIri
@@ -16383,7 +16468,7 @@ paths:
         the export is still in progress, has completed successfully, or has failed.
         The `projectIri` in the path is not validated: the export is resolved by its
         id alone and need not belong to a project that still exists. Requires SystemAdmin
-        permissions.'
+        permissions, or a trusted export service, which only sees the exports it created.'
       operationId: getV3ProjectsProjectiriExportsExportid
       parameters:
       - name: projectIri
@@ -16453,7 +16538,8 @@ paths:
       description: 'Deletes an export irrevocably. Only exports in state failed or
         completed can be deleted. The `projectIri` in the path is not validated: the
         export is resolved by its id alone and need not belong to a project that still
-        exists. Requires SystemAdmin permissions.'
+        exists. Requires SystemAdmin permissions, or a trusted export service, which
+        only sees the exports it created.'
       operationId: deleteV3ProjectsProjectiriExportsExportid
       parameters:
       - name: projectIri
@@ -16542,7 +16628,8 @@ paths:
         completed successfully. If it is still in progress or has failed, the response
         will be 409 Conflict. The `projectIri` in the path is not validated: the export
         is resolved by its id alone and need not belong to a project that still exists.
-        Requires SystemAdmin permissions.'
+        Requires SystemAdmin permissions, or a trusted export service, which only
+        sees the exports it created.'
       operationId: getV3ProjectsProjectiriExportsExportidDownload
       parameters:
       - name: projectIri
@@ -17455,11 +17542,11 @@ paths:
                 $ref: '#/components/schemas/InfoEndpointResponse'
               example:
                 name: dsp-ingest
-                version: v40.7.0-11-gb32eca1
+                version: v41.0.0-2-g3d4a075
                 scalaVersion: 3.8.4
                 sbtVersion: bazel
                 buildTime: dev
-                gitCommit: b32eca1ed48b114a66f38b2ffb6903e618241477
+                gitCommit: 3d4a075794cb27e16aaae1f3a5c68353b709775c
         '400':
           description: ''
           content:
@@ -18889,8 +18976,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/VersionResponse'
               example:
-                webapi: v40.7.0-11-gb32eca1
-                buildCommit: b32eca1ed
+                webapi: v41.0.0-2-g3d4a075
+                buildCommit: 3d4a07579
                 buildTime: dev
                 fuseki: 6.2.0
                 scala: 3.8.4
@@ -19306,6 +19393,80 @@ components:
           type: string
         lang:
           type: string
+    BatchChange:
+      title: BatchChange
+      type: object
+      required:
+      - resource
+      properties:
+        resource:
+          type: string
+        property:
+          type: string
+        value:
+          type: string
+        expected:
+          type: string
+        new:
+          type: string
+        label:
+          $ref: '#/components/schemas/BatchLabelChange'
+        expectEmpty:
+          type: boolean
+    BatchChangeResult:
+      title: BatchChangeResult
+      type: object
+      required:
+      - index
+      - status
+      properties:
+        index:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/BatchChangeStatus'
+        valueIri:
+          type: string
+        message:
+          type: string
+    BatchChangeStatus:
+      title: BatchChangeStatus
+      type: string
+      enum:
+      - conflict
+      - error
+      - forbidden
+      - invalid
+      - not_found
+      - ok
+    BatchChangesRequest:
+      title: BatchChangesRequest
+      type: object
+      properties:
+        changes:
+          type: array
+          maxItems: 100
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/BatchChange'
+    BatchChangesResponse:
+      title: BatchChangesResponse
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BatchChangeResult'
+    BatchLabelChange:
+      title: BatchLabelChange
+      type: object
+      required:
+      - new
+      properties:
+        expected:
+          type: string
+        new:
+          type: string
     CanDeleteListResponseADM:
       title: CanDeleteListResponseADM
       type: object
@@ -19540,7 +19701,7 @@ components:
             expected.
           type: string
         createdBy:
-          description: IRI for a user.
+          description: IRI of the user or service that created the task.
           type: string
         createdAt:
           type: string
@@ -19684,6 +19845,10 @@ components:
           type: boolean
         includeArkUrls:
           type: boolean
+        resourceIris:
+          type: array
+          items:
+            type: string
     ExportRequestOai:
       title: ExportRequestOai
       type: object
