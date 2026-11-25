@@ -385,7 +385,7 @@ export class DataClassResultsBarComponent {
  * The query asking for the matching resources without their values: only the main resource stays in the
  * CONSTRUCT clause. The WHERE clause, the filters and the order are kept, so the same resources match.
  */
-export function iriOnly(query: string): string {
+function iriOnly(query: string): string {
   return query.replace(
     /CONSTRUCT\s*\{[\s\S]*?\}\s*WHERE\s*\{/,
     'CONSTRUCT {\n?mainRes knora-api:isMainResource true .\n} WHERE {'

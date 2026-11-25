@@ -29,6 +29,7 @@ import {
   canSet,
   flattenList,
   planBulkEdit,
+  richTextDisplay,
 } from './bulk-edit-plan';
 
 const PROP = 'http://0.0.0.0:3333/ontology/0001/anything/v2#hasText';
@@ -614,5 +615,13 @@ describe('batchesOf', () => {
       ['b', 'b'],
       ['c'],
     ]);
+  });
+});
+
+describe('richTextDisplay', () => {
+  it('ShowsTheTextAndDecodesEachEntityOnce', () => {
+    expect(richTextDisplay('<p>Brief &amp; Karte</p><p>&amp;lt;b&amp;gt; stays text</p>')).toBe(
+      'Brief & Karte &lt;b&gt; stays text'
+    );
   });
 });

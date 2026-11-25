@@ -42,7 +42,7 @@ export type BulkEditTarget =
       multiple: boolean;
     };
 
-export type BulkEditPropertyTarget = Exclude<BulkEditTarget, { kind: 'label' }>;
+type BulkEditPropertyTarget = Exclude<BulkEditTarget, { kind: 'label' }>;
 
 /** Values of these targets can be set; the others can only be removed. */
 export function canSet(target: BulkEditTarget): boolean {
@@ -179,14 +179,17 @@ export function flattenList(root: ListNodeV2): BulkEditListOption[] {
 
 /** The text a rich-text value shows, for the preview. */
 export function richTextDisplay(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return (
+    html
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      // Last, so an escaped entity such as `&amp;lt;` stays the text `&lt;`.
+      .replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
 }
 
 export function planBulkEdit(
@@ -397,7 +400,7 @@ function _richTextHtml(value: ReadTextValue): string {
 }
 
 /** dsp-api's `POST /v3/resources/values/batch` takes at most this many changes per request. */
-export const BATCH_SIZE = 100;
+const BATCH_SIZE = 100;
 
 /**
  * One change as `POST /v3/resources/values/batch` takes it. The field is `new` on the wire; the generated
