@@ -29,6 +29,9 @@ export class OntologyDataService {
   private _selectedOntology = new BehaviorSubject<ReadOntology | null>(null);
   selectedOntology$ = this._selectedOntology.asObservable();
 
+  /** The last data model asked for, loaded or still loading. */
+  private _requestedOntologyIri?: string;
+
   private _ontologyLoading = new BehaviorSubject<boolean>(true);
   ontologyLoading$ = this._ontologyLoading.asObservable();
 
@@ -104,8 +107,17 @@ export class OntologyDataService {
       .subscribe({
         next: ontologies => {
           this._ontologies.next(ontologies);
+          if (ontology) {
+            this.setOntology(ontology.iri);
+            return;
+          }
+          // The host page may have chosen its data model while this list was loading (the Data tab's
+          // route names one). The first data model is only a default and must not replace that choice.
+          if (this._requestedOntologyIri) {
+            return;
+          }
           if (ontologies.length > 0) {
-            this.setOntology(ontology?.iri || ontologies[0].iri);
+            this.setOntology(ontologies[0].iri);
             return;
           }
           // A project with no data model returns an empty list, so `setOntology` — the only other
@@ -117,6 +129,7 @@ export class OntologyDataService {
   }
 
   setOntology(ontologyIri: string) {
+    this._requestedOntologyIri = ontologyIri;
     this._ontologyLoading.next(true);
     this._ontologyError.next(null);
     this._dspApiConnection.v2.onto

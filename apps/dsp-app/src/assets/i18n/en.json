@@ -186,7 +186,7 @@
           "listTitle": "These metadata consist of:",
           "listContent": {
             "label": "Label",
-            "class": "Resource Class",
+            "class": "Resource class",
             "ark": "ARK URL (Permalink)",
             "timestampArk": "ARK with timestamp",
             "iri": "Resource IRI",
@@ -223,7 +223,7 @@
         "advancedSearch": "Advanced Search",
         "projectDescription": "Project Description",
         "projectSettings": "Project Settings",
-        "dataModel": "Data Model"
+        "dataModel": "Data model"
       },
       "collaboration": {
         "permissionGroup": "Permission group",
@@ -353,7 +353,6 @@
       },
       "list": {
         "deleteList": "Delete controlled vocabulary",
-        "backToDataModels": "Back to data models",
         "editInfo": "Edit controlled vocabulary info",
         "deleteConfirmation": "Do you want to delete this controlled vocabulary?",
         "actionBubble": {
@@ -385,31 +384,10 @@
         }
       },
       "dataModels": {
-        "title": "All Data Models",
         "info": "A data model organizes data elements and specifies how they relate to one another and by which properties they are described.",
-        "createNew": "Create New",
-        "documentation": "Read Documentation About How To Create Data Models",
         "vocabularies": {
-          "title": "Controlled Vocabularies",
-          "info": "Controlled vocabularies are hierarchical or non-hierarchical lexica of reference terms. Due to their normative or standardized nature, controlled vocabularies improve data quality and make database searching more efficient than free-text fields.",
-          "createNew": "Create New"
+          "info": "Controlled vocabularies are hierarchical or non-hierarchical lexica of reference terms. Due to their normative or standardized nature, controlled vocabularies improve data quality and make database searching more efficient than free-text fields."
         }
-      },
-      "editor": {
-        "backToDataModels": "Back to data models",
-        "updatedOn": "Updated on:",
-        "editInfo": "Edit data model info",
-        "deleteTooltip": "Delete data model",
-        "cannotDelete": "This data model cant be deleted because it is in use!",
-        "deleteConfirmation": "Do you want to delete this data model ?"
-      },
-      "sidenav": {
-        "classes": "Classes",
-        "properties": "Properties",
-        "collapseAll": "Collapse all",
-        "expandAll": "Expand all",
-        "createNewClass": "Create new class",
-        "addProperty": "Add Property"
       },
       "cardinality": {
         "multipleValues": "Multiple values",
@@ -426,20 +404,6 @@
         "missingPropertyError": "At least one resource of the class \"{{className}}\" does not have a \"{{propertyLabel}}\" property in your data.",
         "missingPropertyHint": "In order to set the cardinality of \"{{propertyLabel}}\" to required every resource \"{{className}}\" needs to have a \"{{propertyLabel}}\" value prior to this change."
       },
-      "propertyItem": {
-        "edit": "Edit",
-        "removeFromClass": "Remove from class",
-        "copyId": "Copy property ID",
-        "idCopied": "Property ID copied to clipboard!"
-      },
-      "propertyInfo": {
-        "usedIn": "Used in",
-        "notUsed": "Not used",
-        "cannotEdit": "Cannot edit",
-        "cannotDelete": "Cannot delete",
-        "deleteConfirmation": "Do you want to delete this property?",
-        "restrictedTo": "Restricted to {{className}}"
-      },
       "resourceClassInfo": {
         "collapse": "Collapse",
         "expand": "Expand",
@@ -447,9 +411,7 @@
         "edit": "Edit",
         "openInstances": "Open instances",
         "copyId": "Copy class ID",
-        "cannotDelete": "This class cannot be deleted because it is in use!",
         "delete": "Delete",
-        "deleteConfirmation": "Do you want to delete this resource class?",
         "idCopied": "Class ID copied to clipboard!"
       },
       "propertyForm": {
@@ -463,6 +425,8 @@
         "selectList": "Select list"
       },
       "addPropertyMenu": {
+        "usedBy": "on {{classes}}",
+        "notUsed": "not used yet",
         "addProperty": "Add property",
         "createNewFromType": "Create new from type",
         "addExistingProperty": "Add existing property"
@@ -515,8 +479,8 @@
         "orderBy": "Sort by",
         "property": "Property",
         "propertyOfClass": "Property of {{class}}",
-        "resourceClass": "Resource Class",
-        "resourceLabel": "Resource Label",
+        "resourceClass": "Resource class",
+        "resourceLabel": "Resource label",
         "switchToRegular": "Switch to regular search",
         "title": "Advanced search",
         "tooltips": {
@@ -708,6 +672,253 @@
         "searchBody": "Search the resources of this class and narrow them down with filters, without leaving the Data tab.",
         "tableTitle": "Try the table view",
         "tableBody": "Switch to Table to see resources as rows, with their properties as columns, and compare values side by side."
+      },
+      "dataModelMap": {
+        "anyResource": "Any resource",
+        "legendLink": "link property, points to the linked class"
+      }
+    },
+    "ontologyMap": {
+      "filterNote": {
+        "classesOnlyOne": "Only {{names}} and the classes it links to",
+        "classesOnlyNamed": "Only {{names}} and the classes they link to",
+        "classesOnlyMany": "Only {{count}} classes and the classes they link to",
+        "classesAllButOne": "Every class but {{names}}",
+        "classesAllButNamed": "Every class but {{names}}",
+        "classesAllButMany": "Every class but {{count}} of them",
+        "linksOnlyOne": "Only the links {{names}}",
+        "linksOnlyNamed": "Only the links {{names}}",
+        "linksOnlyMany": "Only {{count}} kinds of links",
+        "linksAllButOne": "Every link but {{names}}",
+        "linksAllButNamed": "Every link but {{names}}",
+        "linksAllButMany": "Every link but {{count}} kinds",
+        "showAll": "Back to the full diagram"
+      },
+      "dataModels": "Data models",
+      "noDataModels": "This project does not have any data model yet.",
+      "classPanel": {
+        "close": "Close the class details",
+        "otherModel": "Resource class · another data model: {{model}}",
+        "builtIn": "Built-in DSP class",
+        "otherModelText": "{{current}} does not define this class: it links to it in {{model}}, another data model.",
+        "builtInText": "This class comes with DSP itself, and every project can use it.",
+        "openIn": "Open in {{model}}",
+        "properties": "Properties · {{count}}",
+        "noProperties": "This class has no properties of its own.",
+        "required": "required",
+        "optional": "optional",
+        "many": "many",
+        "oneOrMore": "one or more",
+        "none": "None",
+        "edit": "Edit",
+        "editProperty": "Edit the property {{property}}"
+      },
+      "filters": "Filter",
+      "fit": "Fit to screen",
+      "graphFailed": "The graph could not be loaded.",
+      "graphEmpty": "This data model is empty. Create a resource class to see it here.",
+      "graphNoMatch": "No class matches the filter.",
+      "legendDashed": "other data model",
+      "classFilter": "Class",
+      "allClasses": "All classes",
+      "resetFilter": "Reset",
+      "size": "Size",
+      "sizes": {
+        "small": "Small",
+        "normal": "Normal",
+        "large": "Large"
+      },
+      "classesChosen": "{{count}} classes",
+      "propertyFilter": "Property",
+      "search": {
+        "placeholder": "Search, or press ↓ to browse",
+        "found": "{{count}} found",
+        "none": "No match",
+        "clear": "Clear search",
+        "results": "Search results",
+        "all": "All results",
+        "resetFilter": "Show all classes",
+        "usedByOne": "1 class",
+        "usedBy": "{{count}} classes",
+        "classes": "Classes · {{count}}",
+        "properties": "Properties · {{count}}",
+        "subclasses": "{{count}} subclasses"
+      },
+      "allProperties": "All properties",
+      "propertiesChosen": "{{count}} properties",
+      "levelLabels": "Horizontal link labels",
+      "viewMenu": {
+        "textSize": "Text size",
+        "links": "Links",
+        "levelLabelsHint": "Easier to read than along the line"
+      },
+      "propertyPanel": {
+        "close": "Close the property details",
+        "subPropertyOf": "Sub-property of",
+        "standardTerm": "Standard term",
+        "through": "through {{property}}",
+        "subProperties": "Sub-properties:",
+        "usedBy": "Used by · {{count}} classes",
+        "inheritedFrom": "inherited from {{class}}",
+        "edit": "Edit property",
+        "type": "Type"
+      },
+      "zoom": "Zoom",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "filterNone": "none",
+      "allButOne": "all but {{name}}",
+      "allBut": "all but {{count}}",
+      "filterMenu": {
+        "search": "Find by name",
+        "clearSearch": "Clear the search",
+        "allMatches": "All {{count}} matches",
+        "onlyThese": "Only these",
+        "only": "Only",
+        "ticked": "{{count}} of {{total}}",
+        "noMatch": "No match",
+        "matching": "{{count}} of {{total}} match",
+        "hidden": "Hidden:",
+        "showAll": "Show all"
+      },
+      "export": "Export",
+      "exportMenu": {
+        "imageCopied": "Image copied",
+        "exportFailed": "The image could not be made."
+      },
+      "exportDialog": {
+        "title": "Export image",
+        "previewView": "Preview: what you see",
+        "previewAlt": "Preview of the exported image",
+        "resolution": "Resolution",
+        "legend": "Legend",
+        "copy": "Copy to clipboard",
+        "download": "Download as {{format}}",
+        "close": "Close",
+        "modelName": "Data model name",
+        "include": "Include",
+        "filteredOn": "Filtered on: {{filter}}",
+        "low": "Low",
+        "standard": "Standard",
+        "high": "High",
+        "format": "Format",
+        "pngHint": "An image of pixels, for slides and documents",
+        "svgHint": "Vectors, sharp at any size, to edit or print"
+      },
+      "labelsMenu": {
+        "heading": "Write on classes and links",
+        "labels": "Labels",
+        "labelsHint": "As people read them",
+        "names": "Names",
+        "namesHint": "linkToVideo",
+        "both": "Both",
+        "bothHint": "Label · name"
+      },
+      "copyName": "Copy the name",
+      "nameCopied": "Name copied",
+      "islands": {
+        "legend": "Legend",
+        "subclass": "Subclass, under its parent",
+        "link": "Link",
+        "fileKinds": {
+          "StillImageRepresentation": "Image",
+          "MovingImageRepresentation": "Video",
+          "AudioRepresentation": "Audio",
+          "DocumentRepresentation": "Document",
+          "TextRepresentation": "Text",
+          "ArchiveRepresentation": "Archive",
+          "DDDRepresentation": "3D model"
+        }
+      },
+      "links": "links",
+      "expandLinks": "Click to show the {{count}} links"
+    },
+    "dataModels": {
+      "classActions": "Actions for {{class}}",
+      "objectWithoutRepresentation": "Object without representation",
+      "dataModels": "Data models",
+      "createDataModel": "Create data model",
+      "documentation": "Documentation",
+      "showSections": "Show or hide the sections of {{model}}",
+      "editDataModel": "Edit data model",
+      "deleteDataModel": "Delete data model",
+      "cannotDeleteDataModel": "Resources or other data models use it",
+      "deleteDataModelConfirm": "Delete the data model “{{model}}”? This cannot be undone.",
+      "cannotDeletePropertyShort": "A class or a value uses it",
+      "editProperty": "Edit property",
+      "deleteClass": "Delete class",
+      "checkingDelete": "Checking whether it can be deleted…",
+      "cannotDeleteClass": "Resources, subclasses or links use it",
+      "deleteClassConfirm": "Delete the class “{{class}}”? Its properties stay in the data model. This cannot be undone.",
+      "removeFromClass": "Remove from {{class}}",
+      "removeFromClassConfirm": "Remove “{{property}}” from the class “{{class}}”? The property stays in the data model.",
+      "cannotRemove": "“{{property}}” cannot be removed from “{{class}}”.",
+      "cannotRemoveOneValue": "“{{property}}” cannot be removed from “{{class}}”: 1 resource still has a value for it. Delete that value first.",
+      "cannotRemoveValues": "“{{property}}” cannot be removed from “{{class}}”: {{count}} resources still have a value for it. Delete those values first.",
+      "cannotRemoveHiddenValues": "“{{property}}” cannot be removed from “{{class}}”: values marked as deleted, or values you cannot see, still use it. Contact DaSCH to erase them.",
+      "deleteProperty": "Delete property",
+      "deletePropertyConfirm": "Delete the property “{{property}}”? This cannot be undone.",
+      "cannotDeleteProperty": "“{{property}}” cannot be deleted while a class or a value uses it.",
+      "cardinalityBlocked": "Existing resources don’t fit it",
+      "cardinalitySaved": "“{{property}}” in “{{class}}”: {{cardinality}}",
+      "undo": "Undo",
+      "cardinalityRule": "Saved once you confirm, and can be undone right after. Existing values are never changed: a change they don’t allow is greyed out.",
+      "propertyShared": "{{count}} classes use this property ({{classes}}). Your changes apply to all of them.",
+      "andMore": "{{names}} and {{count}} more",
+      "booleanOne": "A yes/no property holds one value",
+      "findInCards": "Search classes and properties",
+      "dragToReorder": "Drag to change the order",
+      "showMore": "Show {{count}} more",
+      "showLess": "Show less",
+      "cardinality": {
+        "requiredOne": "Required, one value",
+        "optionalOne": "Optional, one value",
+        "requiredMultiple": "Required, multiple values",
+        "optionalMultiple": "Optional, multiple values"
+      },
+      "createVocabulary": "Create controlled vocabulary",
+      "createClass": "Create resource class",
+      "createProperty": "Create property",
+      "noProperties": "No properties yet",
+      "valueActions": "Actions for {{value}}",
+      "addValueInside": "Add a value inside",
+      "addValueAfter": "Add a value after",
+      "editValue": "Edit name and description",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "deleteValue": "Delete",
+      "colVocabulary": "Vocabulary / value",
+      "expandAll": "Expand all",
+      "collapseAll": "Collapse all",
+      "expandRow": "Expand",
+      "collapseRow": "Collapse",
+      "notUsed": "Not used in this data model",
+      "graph": "Diagram",
+      "classes": "Resource classes",
+      "properties": "Properties",
+      "lists": "Controlled vocabularies",
+      "findProperty": "Search the table",
+      "findList": "Search the vocabularies",
+      "colProperty": "Property",
+      "colType": "Type",
+      "colPointsTo": "Points to",
+      "colUsedBy": "Used by",
+      "notUsedByClass": "Not used by any class",
+      "noMatch": "Nothing matches the search.",
+      "noLists": "This project has no lists yet.",
+      "colDescription": "Description",
+      "filterOn": "Filter on {{column}}",
+      "noTarget": "Not a link",
+      "clearFilter": "Clear",
+      "contains": "Contains…",
+      "selectAll": "Select all",
+      "deselectAll": "Deselect all",
+      "resizeColumn": "Resize the column",
+      "descriptionEditor": {
+        "edit": "Edit the {{language}} description of {{class}}",
+        "add": "Add a {{language}} description to {{class}}",
+        "editLabel": "Edit the {{language}} label of {{class}}",
+        "addLabel": "Add a {{language}} label to {{class}}"
       }
     }
   },

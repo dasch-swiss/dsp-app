@@ -1,0 +1,222 @@
+@use 'config' as *;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.page {
+  display: flex;
+  height: 100%;
+}
+
+.rail {
+  flex: none;
+  box-sizing: border-box;
+  padding: 8px 8px 16px;
+  border-right: 1px solid $cool_gray_200;
+  overflow: auto;
+  background: white;
+}
+
+// "Data models" and "Controlled vocabularies", with their "+".
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  padding: 4px 4px 0 12px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $cool_gray_500;
+
+  &.project {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid $cool_gray_200;
+  }
+
+  .title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  // A discreet outlined "i", grey as the heading: what the heading's items are, on hover or focus.
+  .info {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: $cool_gray_400;
+    cursor: help;
+    border-radius: 50%;
+    transition: color 0.15s;
+
+    &:hover,
+    &:focus-visible {
+      color: $cool_gray_700;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $primary;
+      outline-offset: 1px;
+    }
+  }
+}
+
+// A data model's line: fold, name, and on hover its pen and bin.
+.model {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding-right: 2px;
+  border-radius: 6px;
+
+  &:hover {
+    background: $cool_gray_50;
+  }
+
+  .hover-action {
+    flex: none;
+    visibility: hidden;
+  }
+
+  &:hover .hover-action,
+  .hover-action:focus-within,
+  .hover-action:focus-visible {
+    visibility: visible;
+  }
+
+  .fold {
+    color: $cool_gray_500;
+  }
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: $cool_gray_900;
+  // A long name wraps onto a second line rather than being cut short, whatever the rail's width.
+  text-align: left;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+// Sized by Material's own tokens, so the icon sits in the middle of its round hover: set apart, the button's
+// text size stays 24 px and its line pushes the smaller icon down.
+.small.mat-mdc-icon-button {
+  --mat-icon-button-state-layer-size: 32px;
+  --mat-icon-button-icon-size: 18px;
+  // A global rule gives icon buttons 12 px around their icon, which would push it off centre.
+  padding: 7px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// The data model's pen and bin in the app's blue, as elsewhere; the bin turns red only while pointed at.
+.model button.hover-action:not([disabled]),
+.model .delete:not([disabled]) {
+  color: $primary;
+}
+
+.model .delete:not([disabled]):hover {
+  color: $red_800;
+  background: $red_50;
+}
+
+// A data model's sections, set in under its name.
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 0 6px 20px;
+
+  &.flat {
+    padding-left: 0;
+  }
+}
+
+// Rail rows as in the V3 design: compact, rounded, a pale blue for the current section. Specific enough to win
+// over Material's own list item rules.
+.rail .rail-link.mat-mdc-list-item {
+  --mat-list-list-item-one-line-container-height: 34px;
+  --mat-list-list-item-leading-icon-size: 18px;
+  --mat-list-list-item-leading-icon-start-space: 12px;
+  --mat-list-list-item-leading-icon-end-space: 10px;
+  --mat-list-list-item-label-text-size: 14px;
+  --mat-list-list-item-label-text-line-height: 18px;
+  --mat-list-list-item-label-text-color: #{$cool_gray_700};
+  --mat-list-list-item-hover-label-text-color: #{$cool_gray_900};
+  --mat-list-list-item-leading-icon-color: #{$cool_gray_500};
+  --mat-list-list-item-hover-leading-icon-color: #{$cool_gray_700};
+  --mat-list-list-item-hover-state-layer-color: #{$cool_gray_500};
+  --mat-list-list-item-hover-state-layer-opacity: 0.08;
+  --mat-list-active-indicator-shape: 6px;
+  --mat-list-active-indicator-color: transparent;
+  height: auto;
+  min-height: 34px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  // Long names wrap rather than end in an ellipsis.
+  .rail-text {
+    white-space: normal;
+  }
+
+  &.current {
+    --mat-list-list-item-label-text-color: #{$primary_700};
+    --mat-list-list-item-hover-label-text-color: #{$primary_700};
+    --mat-list-list-item-leading-icon-color: #{$primary};
+    --mat-list-list-item-hover-leading-icon-color: #{$primary};
+    background: $primary_50;
+    font-weight: 500;
+
+    .count {
+      color: $primary_700;
+    }
+  }
+
+  &.docs {
+    --mat-list-list-item-label-text-color: #{$cool_gray_500};
+  }
+}
+
+.count {
+  font-size: 12px;
+  font-weight: 400;
+  color: $cool_gray_500;
+}
+
+// As the line over "Controlled vocabularies".
+.docs-divider {
+  margin: 8px 0;
+  border-top-color: $cool_gray_200;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  background: $cool_gray_50;
+}

@@ -6,7 +6,10 @@ vre_library(
         ["src/**/*.ts"],
         exclude = LIBRARY_EXCLUDES,
     ),
-    assets = glob(["src/**/*.html"]),
+    assets = glob(
+        ["src/**/*.html"],
+        allow_empty = True,
+    ),
     stylesheets = glob(["src/**/*.scss"]),
     sass_deps = ["//libs/vre/ui/styles"],
     test_size = "small",

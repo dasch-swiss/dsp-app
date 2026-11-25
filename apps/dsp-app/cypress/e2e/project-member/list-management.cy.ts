@@ -35,7 +35,7 @@ describe('Project Member - List management', () => {
         },
       }).then(response => {
         listId = response.body.list.listinfo.id.match(/\/([^\/]*)$/)[1];
-        listUrl = `/project/${projectPage.projectShortCode}/list/${listId}`;
+        listUrl = `/project/${projectPage.projectShortCode}/data-models/list/${listId}`;
       });
     });
 
@@ -47,14 +47,16 @@ describe('Project Member - List management', () => {
 
       cy.intercept('POST', '/admin/lists').as('submitRequest');
 
-      cy.visit(`/project/${projectPage.projectShortCode}/data-models`);
-      cy.get('[data-cy=create-list-button]').click();
+      // From the Lists section: the new list shows among the others, the section stays.
+      cy.visit(`/project/${projectPage.projectShortCode}/data-models/lists`);
+      cy.get('[data-cy=data-model-lists-create]').click();
       cy.get('[data-cy=label-input]').type(createData.label);
       cy.get('[data-cy=comments-input]').type(createData.comment);
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@submitRequest');
-      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/list/(.+)`));
+      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/data-models/lists`));
+      cy.contains('[data-cy=data-model-lists-row]', createData.label).should('be.visible');
     });
 
     it('should edit existing list', () => {
@@ -73,7 +75,7 @@ describe('Project Member - List management', () => {
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@editRequest');
-      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/list/(.+)`));
+      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/data-models/list/(.+)`));
       cy.get('[data-cy=label-title]').contains(editData.label);
       cy.get('[data-cy=comment-title]').contains(editData.comment);
     });
@@ -85,7 +87,7 @@ describe('Project Member - List management', () => {
       cy.get('[data-cy=confirmation-button]').click();
       cy.wait('@deleteRequest');
 
-      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/data-models$`));
+      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/data-models/lists$`));
     });
 
     it('should create and edit list in single test', () => {
@@ -104,13 +106,13 @@ describe('Project Member - List management', () => {
 
       // Create list
       cy.visit(`/project/${projectPage.projectShortCode}/data-models`);
-      cy.get('[data-cy=create-list-button]').click();
+      cy.get('[data-cy=data-models-tree-create-vocabulary]').click();
       cy.get('[data-cy=label-input]').type(createData.label);
       cy.get('[data-cy=comments-input]').type(createData.comment);
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@createRequest');
-      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/list/(.+)`));
+      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/data-models/list/(.+)`));
 
       // Edit the created list
       cy.get('[data-cy=edit-button]').click();
@@ -119,7 +121,7 @@ describe('Project Member - List management', () => {
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@editRequest');
-      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/list/(.+)`));
+      cy.url().should('match', new RegExp(`/project/${projectPage.projectShortCode}/data-models/list/(.+)`));
       cy.get('[data-cy=label-title]').contains(editData.label);
       cy.get('[data-cy=comment-title]').contains(editData.comment);
     });

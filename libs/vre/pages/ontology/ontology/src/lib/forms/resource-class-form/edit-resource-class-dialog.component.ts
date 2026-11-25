@@ -90,12 +90,14 @@ export class EditResourceClassDialogComponent implements OnInit {
     const labels = this.form.controls.labels.value as StringLiteralV2[];
     const comments = this.form.controls.comments.value as StringLiteralV2[];
 
+    const update = { id: this.data.data.id, labels, comments } as UpdateResourceClassData;
     this._oes
-      .updateResourceClass$({ id: this.data.data.id, labels, comments } as UpdateResourceClassData)
+      .updateResourceClass$(update)
       .pipe(take(1))
       .subscribe(_res => {
         this.loading = false;
-        this.dialogRef.close();
+        // Closing with the update tells whoever opened the dialog that the class was saved.
+        this.dialogRef.close(update);
       });
   }
 }

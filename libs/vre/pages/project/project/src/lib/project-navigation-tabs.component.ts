@@ -26,7 +26,11 @@ import { ProjectPageService } from './project-page.service';
         <mat-icon class="tab-icon">search</mat-icon>
         {{ 'ui.common.actions.search' | translate }}
       </a>
-      <a mat-tab-link [routerLink]="[DATA_MODELS]" [class.active-link]="isDataModelsRouteActive()">
+      <a
+        mat-tab-link
+        [routerLink]="[DATA_MODELS]"
+        [class.active-link]="isDataModelsRouteActive()"
+        data-cy="data-models-tab">
         <mat-icon class="tab-icon">lan</mat-icon>
         {{ 'shared.header.projectTabs.dataModels' | translate }}
       </a>
@@ -88,7 +92,7 @@ export class ProjectNavigationTabsComponent {
   }
 
   isDataModelsRouteActive(): boolean {
-    return this.path.startsWith('data-models') || this.path.startsWith('ontology');
+    return this.path.startsWith('data-models');
   }
 
   isSearchRouteActive() {

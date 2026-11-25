@@ -18,8 +18,11 @@ class ProjectPage {
     cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)[1]}`);
   }
 
-  visitDataModels() {
-    cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)[1]}/data-models`);
+  /** Opens the Data models tab on a section (its classes by default), showing the data model named, if any. */
+  visitDataModels(section: 'classes' | 'properties' | 'lists' | 'graph' = 'classes', ontologyName?: string) {
+    cy.visit(`/project/${this.projectIri.match(/\/([^\/]+)$/)[1]}/data-models/${section}`, {
+      qs: ontologyName ? { ontology: ontologyName } : {},
+    });
   }
 
   requestProject() {

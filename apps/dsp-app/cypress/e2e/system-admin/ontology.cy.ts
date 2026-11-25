@@ -1,5 +1,6 @@
 import { CreateOntology } from '@dasch-swiss/dsp-js';
 import { faker } from '@faker-js/faker';
+import { railModel } from '../../support/helpers/data-models';
 import { uniqueName } from '../../support/helpers/unique-name';
 import ProjectPage from '../../support/pages/project-page';
 
@@ -21,11 +22,7 @@ describe('Ontology', () => {
     cy.visit(`/project/${projectPage.projectUuid}/data-models`);
     cy.url().should('include', `project\/${projectPage.projectUuid}\/data-models`);
 
-    cy.get('[data-cy=data-models-container]')
-      .find('[data-cy=create-button]')
-      .scrollIntoView()
-      .should('be.visible')
-      .click();
+    cy.get('[data-cy=data-models-tree-create-model]').should('be.visible').click();
 
     cy.get('[data-cy=name-input]').type(data.name);
     // ensure that the label input is visible
@@ -42,8 +39,10 @@ describe('Ontology', () => {
     cy.get('[data-cy=submit-button]').click();
 
     cy.wait('@submitRequest');
-    cy.url().should('include', `project/${projectPage.projectUuid}/ontology/${data.name}/editor/classes`);
-    cy.get('[data-cy=ontology-label]').contains(data.label).should('be.visible');
+    // The new data model opens on its classes.
+    cy.url().should('include', `project/${projectPage.projectUuid}/data-models/classes`);
+    cy.url().should('include', `ontology=${data.name}`);
+    railModel(data.label).should('be.visible');
   });
 
   it('should update ontology', () => {
@@ -56,17 +55,16 @@ describe('Ontology', () => {
     cy.intercept('PUT', '/v2/ontologies/metadata').as('updateRequest');
 
     cy.createOntology(projectPage).then(ontology => {
-      cy.get('[data-cy=edit-ontology-button]').scrollIntoView().should('be.visible').click();
+      // The pen shows only while the data model's line is hovered, so the click is forced.
+      railModel(ontology.ontology.label).find('[data-cy=data-models-tree-edit-model]').click({ force: true });
       cy.get('[data-cy=label-input]').clear().type(data.label);
       cy.get('[data-cy=comment-textarea]').type(data.comment);
       cy.get('[data-cy=submit-button]').click();
 
       cy.wait('@updateRequest');
-      cy.url().should(
-        'include',
-        `project/${projectPage.projectUuid}/ontology/${ontology.ontology.name}/editor/classes`
-      );
-      cy.get('[data-cy=ontology-label]').contains(data.label).should('be.visible');
+      cy.url().should('include', `project/${projectPage.projectUuid}/data-models/classes`);
+      cy.url().should('include', `ontology=${ontology.ontology.name}`);
+      railModel(data.label).should('be.visible');
     });
   });
 });

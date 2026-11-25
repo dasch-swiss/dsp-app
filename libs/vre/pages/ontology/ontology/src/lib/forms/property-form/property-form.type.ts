@@ -22,6 +22,8 @@ export interface EditPropertyDialogData {
   guiElement: string;
   guiAttribute?: string;
   objectType?: string;
+  /** The labels of the classes of the data model that have the property: an edit changes it for all of them. */
+  usedBy?: string[];
 }
 
 export interface CreatePropertyDialogData {

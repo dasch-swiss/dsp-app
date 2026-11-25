@@ -1,5 +1,6 @@
 import { ActivatedRoute } from '@angular/router';
 import { APIV3ApiService, OntologyAndResourceClasses } from '@dasch-swiss/vre/3rd-party-services/open-api';
+import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
@@ -39,6 +40,8 @@ const withOntologies = (ontologies: OntologyAndResourceClasses[]) =>
       { provide: APIV3ApiService, useValue: { getV3ProjectsProjectiriResourcesperontology: () => of(ontologies) } },
       { provide: OntologyService, useValue: { getClassIdFromParams: () => undefined } },
       { provide: LocalizationService, useValue: { currentLanguage: 'en', currentLanguage$: of('en') } },
+      // The data model map reads knora-api's built-in links through the ontology cache.
+      { provide: DspApiConnectionToken, useValue: { v2: { ontologyCache: { getOntology: () => of(new Map()) } } } },
     ],
   });
 

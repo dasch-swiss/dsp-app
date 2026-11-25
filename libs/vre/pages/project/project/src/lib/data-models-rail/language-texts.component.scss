@@ -1,0 +1,115 @@
+@use 'config' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+// The text; a pencil shows on hover to edit it.
+.lang-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 4px;
+  margin: 0 -4px;
+  padding: 0 0 0 4px;
+  border-radius: 4px;
+
+  // Only the pencil shows on hover: the text itself opens nothing.
+  &:hover,
+  &:focus-within {
+    .lang-edit {
+      opacity: 1;
+    }
+  }
+}
+
+// A name hugs its text, so the pencil sits right after it.
+:host(.is-label) {
+  .lang-line {
+    grid-template-columns: minmax(0, max-content) 24px;
+  }
+
+  .lang-text {
+    font-weight: 500;
+  }
+
+  .lang-missing {
+    padding-top: 0;
+  }
+}
+
+.lang-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:host(.expanded) {
+  .lang-text {
+    white-space: normal;
+  }
+
+  .lang-line {
+    align-items: start;
+  }
+}
+
+.lang-edit.mat-mdc-icon-button {
+  --mat-icon-button-state-layer-size: 24px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  opacity: 0;
+  color: $primary;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+
+  @media (hover: none) {
+    opacity: 0.6;
+  }
+}
+
+// The language to add a text in, when there is none.
+.lang-missing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 2px;
+}
+
+.lang-add {
+  border: 1px dashed $cool_gray_300;
+  border-radius: 10px;
+  background: none;
+  padding: 0 7px;
+  font: inherit;
+  font-size: 10.5px;
+  line-height: 16px;
+  text-transform: uppercase;
+  color: $cool_gray_500;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $primary;
+    color: $primary;
+  }
+}
+
+.none {
+  color: $cool_gray_400;
+}
+
+// What a filter or search matches.
+mark {
+  border-radius: 2px;
+  background: $yellow_200;
+  color: inherit;
+}

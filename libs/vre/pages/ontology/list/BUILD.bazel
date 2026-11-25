@@ -8,6 +8,7 @@ vre_library(
     ),
     assets = glob(["src/**/*.html"]),
     stylesheets = glob(["src/**/*.scss"]),
+    sass_deps = ["//libs/vre/ui/styles"],
     test_size = "small",
     test_srcs = glob(TEST_SRCS, allow_empty = True),
     deps = [

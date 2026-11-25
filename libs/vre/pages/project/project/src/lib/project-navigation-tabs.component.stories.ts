@@ -19,7 +19,7 @@ export default meta;
 type Story = StoryObj<ProjectNavigationTabsComponent>;
 
 export const RegularMember: Story = {
-  name: 'Shows Data, Search, and Data Models tabs for a regular member',
+  name: 'Shows Data, Search and Data models tabs for a regular member',
   decorators: [
     applicationConfig({
       providers: [

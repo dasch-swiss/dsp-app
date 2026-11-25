@@ -1,0 +1,104 @@
+@use 'rail-section';
+@use 'table';
+@use 'config' as *;
+
+// View options, then Create property, at the head's right end, away from the search.
+.head .view-options {
+  margin-left: auto;
+}
+
+// A frozen cell takes the row's background, which plain rows leave transparent.
+.mat-mdc-cell.frozen {
+  background: white;
+}
+
+// Hovered, the whole row takes the colour, the frozen cell too.
+.mat-mdc-row:hover .mat-mdc-cell.frozen {
+  background: inherit;
+}
+
+.description {
+  color: $cool_gray_700;
+}
+
+// A type, in its column and in the column's filter, all in the same tone.
+.type,
+.option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: $cool_gray_600;
+
+  mat-icon {
+    color: inherit;
+  }
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// The tree: chevrons as in Controlled vocabularies and Resource classes.
+.labelled {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.none {
+  color: $cool_gray_400;
+}
+
+// The menu column on white, as the frozen one.
+.mat-mdc-cell.actions-cell {
+  background: white;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell.actions-cell {
+  background: inherit;
+}
+
+// The row's icons, small, shown on hover or with the focus.
+.row-actions {
+  display: inline-flex;
+  // Transparent, not hidden, so Tab still reaches its buttons.
+  opacity: 0;
+  pointer-events: none;
+  .mat-mdc-icon-button {
+    // Sized for the 18px icon, which sits off-centre in Material's 24px otherwise.
+    --mat-icon-button-icon-size: 18px;
+    width: 32px;
+    height: 32px;
+    padding: 7px;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.mat-mdc-row:hover .row-actions,
+.row-actions:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+// A row only shows: clicking it does nothing, only its fold arrow, pen and bin act.
+.mat-mdc-row {
+  cursor: default;
+}
+
+// The pen and the bin in the app's blue, as on the class cards; the bin turns red only while pointed at.
+.row-actions .mat-mdc-icon-button:not([disabled]) {
+  color: $primary;
+}
+
+.row-actions .delete:not([disabled]):hover {
+  color: $red_800;
+  background: $red_50;
+}
