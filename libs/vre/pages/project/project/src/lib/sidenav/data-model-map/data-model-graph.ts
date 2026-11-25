@@ -18,7 +18,7 @@ import {
  */
 type DataModelNodeKind = 'class' | 'external' | 'generic';
 
-/** One property a class declares, for the class details. */
+/** One property a class declares, as its card and panel show it. */
 export interface DataModelProperty {
   id: string;
   label: string;

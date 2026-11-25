@@ -8,7 +8,7 @@ import { CardinalityCheckboxesComponent } from '../ontology-map/cardinality-chec
 import { DATA_MODEL_EDITOR, injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ClassRow, propertyNameOf } from '../ontology-map/ontology-graph-elements';
 import { typeIconOf, typeNameOf } from '../ontology-map/property-types';
-import { highlighted } from './highlighted';
+import { highlightParts } from './highlight.pipe';
 
 export type CardProperty = ClassRow['propertyList'][number];
 
@@ -163,8 +163,8 @@ export class ClassCardPropertyComponent {
 
   /** Its name, prefixed by its data model's when that is not the card's class's, as `biblio:hasTitle`. */
   readonly localName = computed(() => propertyNameOf(this.property().id, this.homeIri()));
-  readonly label = computed(() => highlighted(this.property().label, this.query()));
-  readonly local = computed(() => highlighted(this.localName(), this.query()));
+  readonly label = computed(() => highlightParts(this.property().label, [this.query()]));
+  readonly local = computed(() => highlightParts(this.localName(), [this.query()]));
   readonly targetLabel = computed(() => {
     const target = this.property().linkTarget;
     return target ? this.labelOf()(target) : '';

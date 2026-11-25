@@ -402,7 +402,7 @@ export class DataModelEditorService implements DataModelEditor {
   }
 
   /**
-   * An edit dialog Esc leaves open, so the Esc that closes the Data models 2 pages' side panels never drops an edit
+   * An edit dialog Esc leaves open, so the Esc that closes the Data models pages' side panels never drops an edit
    * by mistake; a click beside it still closes it. Emits once it closes.
    */
   private _closedByClickOnly<T, R>(ref: MatDialogRef<T, R>): Observable<R | undefined> {

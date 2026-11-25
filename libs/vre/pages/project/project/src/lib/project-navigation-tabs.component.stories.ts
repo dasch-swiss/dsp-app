@@ -40,9 +40,6 @@ export const RegularMember: Story = {
     await step('Data models tab is visible', async () => {
       await expect(canvas.getByText('Data models')).toBeInTheDocument();
     });
-    await step('No second Data models tab', async () => {
-      await expect(canvas.queryByText('Data models 2')).toBeNull();
-    });
     await step('Settings tab is not shown for non-admin', async () => {
       await expect(canvas.queryByText('Settings')).toBeNull();
     });

@@ -12,7 +12,7 @@ import { ProjectPageService } from '../project-page.service';
 import { DataModelGraphService } from '../sidenav/data-model-map/data-model-graph.service';
 
 /**
- * What the Data models 2 tab's sections share: the data models of the project, the one the URL names, its graph,
+ * What the Data models tab's sections share: the data models of the project, the one the URL names, its graph,
  * tables and colours, and the project's lists. Provided by the tab, so every section reads the same.
  */
 @Injectable()

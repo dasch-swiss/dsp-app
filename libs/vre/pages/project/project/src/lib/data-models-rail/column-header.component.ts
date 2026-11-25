@@ -8,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { TableColumns } from './table-columns';
 
 /**
- * A column's header in the Data models 2 tables: its name, a filter whose menu holds the content projected here, and
+ * A column's header in the Data models tables: its name, a filter whose menu holds the content projected here, and
  * the handle on its right edge that resizes it. Goes in the `th`, which drags the column.
  */
 @Component({

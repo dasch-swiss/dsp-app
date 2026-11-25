@@ -107,7 +107,7 @@ const LABEL_OPTIONS: GraphLabels[] = ['labels', 'names', 'both'];
 const SIZES: GraphSize[] = ['small', 'normal', 'large'];
 
 /**
- * The Ontology map tab: the map of one data model of the project, drawn large across the page, with a toolbar to
+ * The Data models tab's Diagram: the map of one data model of the project, drawn large across the page, with a toolbar to
  * pick the data model and how much each card shows. A class clicked on it opens its details in a panel docked at
  * the right, from which it can be browsed in the Data tab or edited.
  */

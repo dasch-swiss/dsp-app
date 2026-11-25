@@ -33,7 +33,7 @@ import { ClassRow } from '../ontology-map/ontology-graph-elements';
 import { CanDoChecks } from './can-do-checks';
 import { CardProperty, ClassCardPropertyComponent } from './class-card-property.component';
 import { DataModelsRailState } from './data-models-rail-state';
-import { hasText, HighlightedPipe } from './highlighted';
+import { hasText, HighlightPipe } from './highlight.pipe';
 
 /** How many of a class's own properties a card shows before "Show more". */
 const CARD_PROPERTIES = 8;
@@ -66,8 +66,8 @@ export interface PropertyOrder {
 }
 
 /**
- * Data models 2 › Resource classes as cards, the way the Data models tab shows a data model: one box per class, with the kind of
- * file its resources carry, then its properties in their form order, one line each. A subclass
+ * Data models › Resource classes as cards: one box per class, with the kind of file its resources carry, then its
+ * properties in their form order, one line each. A subclass
  * lists its own properties; those from its superclass fold into one row. Past {@link CARD_PROPERTIES}, "Show more" opens
  * the rest. A link's target opens its card. The text searched for is marked, and the rows it is in are opened. Editors
  * drag a class's own properties to another place. A card folds to its title. Its menu edits the class, or shows
@@ -82,7 +82,7 @@ export interface PropertyOrder {
     CdkDragPlaceholder,
     CdkDropList,
     ClassCardPropertyComponent,
-    HighlightedPipe,
+    HighlightPipe,
     MatIcon,
     MatMenu,
     MatMenuItem,
@@ -156,14 +156,14 @@ export interface PropertyOrder {
             <span class="texts">
               <ng-template #className>
                 <small>
-                  @for (part of row.name | highlighted: query(); track $index) {
+                  @for (part of row.name | highlight: [query()]; track $index) {
                     <span [class.hit]="part.match">{{ part.text }}</span>
                   }
                 </small>
               </ng-template>
               <span class="title">
                 <b>
-                  @for (part of row.label | highlighted: query(); track $index) {
+                  @for (part of row.label | highlight: [query()]; track $index) {
                     <span [class.hit]="part.match">{{ part.text }}</span>
                   }
                 </b>

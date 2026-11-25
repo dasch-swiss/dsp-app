@@ -31,8 +31,8 @@ import { debounced } from './debounced';
 import { escapeClosesPanel } from './escape-closes';
 
 /**
- * Data models 2 › Resource classes: the data model's classes as cards, one per class with its properties, as the Data models tab
- * shows them. A search finds a class by its name, its file or its properties.
+ * Data models › Resource classes: the data model's classes as cards, one per class with its properties, by label. A
+ * search finds a class by its name, its file or its properties.
  */
 @Component({
   selector: 'app-data-model-classes',

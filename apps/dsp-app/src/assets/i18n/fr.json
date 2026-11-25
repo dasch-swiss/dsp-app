@@ -711,13 +711,9 @@
         "oneOrMore": "une ou plusieurs",
         "none": "Aucune",
         "edit": "Modifier",
-        "filter": "Filtrer",
-        "filterHint": "Montrer dans le graphe seulement cette classe et les classes liées",
         "editProperty": "Modifier la propriété {{property}}"
       },
-      "dataModel": "Modèle de données",
       "filters": "Filtrer",
-      "layout": "Disposition",
       "fit": "Ajuster à l'écran",
       "graphFailed": "Le graphe n'a pas pu être chargé.",
       "graphEmpty": "Ce modèle de données est vide. Créez une classe de ressource pour la voir ici.",
@@ -764,7 +760,6 @@
         "subProperties": "Sous-propriétés :",
         "usedBy": "Utilisée par · {{count}} classes",
         "inheritedFrom": "héritée de {{class}}",
-        "filter": "Afficher seulement ces liens",
         "edit": "Modifier la propriété",
         "type": "Type"
       },

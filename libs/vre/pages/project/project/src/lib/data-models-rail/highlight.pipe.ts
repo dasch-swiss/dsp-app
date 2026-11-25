@@ -33,3 +33,9 @@ export class HighlightPipe implements PipeTransform {
     return highlightParts(text, terms);
   }
 }
+
+/** Whether the text has the query, in any case. */
+export function hasText(text: string | undefined, query: string): boolean {
+  const needle = query.trim().toLowerCase();
+  return !!needle && !!text && text.toLowerCase().includes(needle);
+}

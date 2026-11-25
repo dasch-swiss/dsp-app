@@ -58,7 +58,7 @@ export const routes: Routes = [
     path: RouteConstants.projectUuidRelative,
     component: ProjectPageComponent,
     canActivate: [ProjectPageGuard],
-    // Editing a class or a property from the Data and Data models 2 tabs opens the data model editor's dialog in place.
+    // Editing a class or a property from the Data and Data models tabs opens the data model editor's dialog in place.
     providers: [{ provide: DATA_MODEL_EDITOR, useClass: DataModelEditorService }],
     children: [
       {

@@ -711,13 +711,9 @@
         "oneOrMore": "one or more",
         "none": "None",
         "edit": "Edit",
-        "filter": "Filter",
-        "filterHint": "Show the graph with only this class and the classes it is linked with",
         "editProperty": "Edit the property {{property}}"
       },
-      "dataModel": "Data model",
       "filters": "Filter",
-      "layout": "Layout",
       "fit": "Fit to screen",
       "graphFailed": "The graph could not be loaded.",
       "graphEmpty": "This data model is empty. Create a resource class to see it here.",
@@ -764,7 +760,6 @@
         "subProperties": "Sub-properties:",
         "usedBy": "Used by · {{count}} classes",
         "inheritedFrom": "inherited from {{class}}",
-        "filter": "Show only these links",
         "edit": "Edit property",
         "type": "Type"
       },

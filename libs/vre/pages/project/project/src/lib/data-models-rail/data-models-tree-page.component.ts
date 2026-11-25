@@ -49,9 +49,9 @@ function paramOf(ontologyIri: string): Record<string, string> {
 }
 
 /**
- * The Data models 2 tab: a rail listing every data model of the project as a group that folds open on its sections
- * (its classes, its properties, its diagram), then the project's controlled vocabularies by name, each opening as in
- * the Data models tab, and the documentation; what is picked beside it. No overview: the tab opens on the first data
+ * The Data models tab: a rail listing every data model of the project as a group that folds open on its sections
+ * (its classes, its properties, its diagram), then the project's controlled vocabularies by name, and the
+ * documentation; what is picked beside it. No overview: the tab opens on the first data
  * model's classes. Editors create a data model or a vocabulary from the "+" by each heading, and edit or delete a data
  * model with the pen and the bin shown on hover.
  */

@@ -711,13 +711,9 @@
         "oneOrMore": "eine oder mehrere",
         "none": "Keine",
         "edit": "Bearbeiten",
-        "filter": "Filtern",
-        "filterHint": "Im Graphen nur diese Klasse und die mit ihr verknüpften Klassen zeigen",
         "editProperty": "Eigenschaft {{property}} bearbeiten"
       },
-      "dataModel": "Datenmodell",
       "filters": "Filter",
-      "layout": "Anordnung",
       "fit": "An Bildschirm anpassen",
       "graphFailed": "Der Graph konnte nicht geladen werden.",
       "graphEmpty": "Dieses Datenmodell ist leer. Erstellen Sie eine Ressourcenklasse, um sie hier zu sehen.",
@@ -764,7 +760,6 @@
         "subProperties": "Untereigenschaften:",
         "usedBy": "Verwendet von · {{count}} Klassen",
         "inheritedFrom": "geerbt von {{class}}",
-        "filter": "Nur diese Verknüpfungen zeigen",
         "edit": "Eigenschaft bearbeiten",
         "type": "Typ"
       },

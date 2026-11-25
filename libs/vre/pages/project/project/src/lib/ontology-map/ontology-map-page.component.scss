@@ -290,18 +290,6 @@
   background: $cool_gray_200;
 }
 
-.data-model {
-  --mat-button-text-container-height: 32px;
-  --mat-button-text-container-shape: 16px;
-  font-weight: 500;
-  white-space: nowrap;
-
-  &.static {
-    padding: 0 12px;
-    font-size: 14px;
-  }
-}
-
 // As the legend's title.
 .filters-label {
   padding-right: 6px;

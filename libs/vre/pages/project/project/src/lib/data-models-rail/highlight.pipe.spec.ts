@@ -1,4 +1,4 @@
-import { highlightParts } from './highlight.pipe';
+import { hasText, highlightParts } from './highlight.pipe';
 
 describe('highlightParts', () => {
   it('keeps the text whole without terms', () => {
@@ -18,5 +18,13 @@ describe('highlightParts', () => {
       { text: 'hasAu', match: true },
       { text: 'thor', match: false },
     ]);
+  });
+});
+
+describe('hasText', () => {
+  it('finds the query in any case, and nothing for an empty one', () => {
+    expect(hasText('hasGNDId', 'gnd')).toBe(true);
+    expect(hasText('hasGNDId', '')).toBe(false);
+    expect(hasText(undefined, 'gnd')).toBe(false);
   });
 });
