@@ -6,7 +6,13 @@ import {
   RESOURCE_PLACEHOLDER,
   SORT_PLACEHOLDER,
 } from '../constants';
-import { escapeSparqlStringLiteral, OrderByItem, sanitizeSparqlIri, StatementElement } from '../model';
+import {
+  escapeSparqlStringLiteral,
+  OrderByItem,
+  sanitizeSparqlIri,
+  StatementElement,
+  withPrefixWildcards,
+} from '../model';
 import { GravsearchWriter } from './gravsearch-writer';
 import { OntologyDataService } from './ontology-data.service';
 
@@ -47,7 +53,7 @@ export class GravsearchService {
     // backend function. NB: escapeSparqlStringLiteral emits a plain double-quoted SPARQL literal (the
     // shape matchFulltext expects, interpreted as a Lucene query); do NOT use the regex over-escaper.
     const fulltextTriple = trimmedTerm
-      ? `  FILTER knora-api:matchFulltext(?mainRes, "${escapeSparqlStringLiteral(trimmedTerm)}") .\n`
+      ? `  FILTER knora-api:matchFulltext(?mainRes, "${escapeSparqlStringLiteral(withPrefixWildcards(trimmedTerm))}") .\n`
       : '';
     // The ontology short-code PREFIX is unused by the generated query (statements emit full <IRI>s) —
     // it only names the selected data model. Omit it (and skip `ontoShortCode`, which throws on an empty
