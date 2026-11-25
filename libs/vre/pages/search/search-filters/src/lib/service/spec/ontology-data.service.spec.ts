@@ -10,7 +10,7 @@ import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { createMockLocalizationService } from '@dasch-swiss/vre/shared/app-helper-services/testing';
 import { TranslateLoader } from '@ngx-translate/core';
-import { firstValueFrom, of, skip, throwError } from 'rxjs';
+import { firstValueFrom, of, skip, Subject, throwError } from 'rxjs';
 import { RDFS_LABEL, ResourceLabel } from '../../constants';
 import { OntologyDataService } from '../ontology-data.service';
 
@@ -236,6 +236,60 @@ describe('OntologyDataService — i18n DTO propagation (DEV-6645)', () => {
       svc.setOntology('http://example/ok');
       expect(await firstValueFrom(svc.ontologyError$)).toBeNull();
       expect(await firstValueFrom(svc.ontologyLoading$)).toBe(false);
+    });
+  });
+
+  describe('init — default data model', () => {
+    const A = 'http://example/onto/a';
+    const B = 'http://example/onto/b';
+    const ontologyStub = (id: string) => ({ id, label: id, getClassDefinitionsByType: () => [] }) as any;
+
+    const build = () => {
+      const ontologiesOfProject = new Subject<{ ontologies: { id: string; label: string }[] }>();
+      const getOntology = jest.fn((iri: string) => of(ontologyStub(iri)));
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          OntologyDataService,
+          {
+            provide: DspApiConnectionToken,
+            useValue: { v2: { onto: { getOntology, getOntologiesByProjectIri: () => ontologiesOfProject } } },
+          },
+          { provide: DestroyRef, useValue: { onDestroy: () => () => {} } },
+          { provide: LocalizationService, useValue: createMockLocalizationService('en').service },
+          { provide: TranslateLoader, useValue: makeTranslateStub() },
+        ],
+      });
+      const svc = TestBed.inject(OntologyDataService);
+      const respond = () =>
+        ontologiesOfProject.next({
+          ontologies: [
+            { id: A, label: 'a' },
+            { id: B, label: 'b' },
+          ],
+        });
+      return { svc, getOntology, respond };
+    };
+
+    it('selects the first data model when nothing chose one', () => {
+      const { svc, getOntology, respond } = build();
+
+      svc.init('http://rdfh.ch/projects/x');
+      respond();
+
+      expect(getOntology).toHaveBeenCalledWith(A, true);
+      expect(svc.selectedOntology.iri).toBe(A);
+    });
+
+    it('keeps a data model chosen while the list was loading, such as the class in the Data tab route', () => {
+      const { svc, getOntology, respond } = build();
+
+      svc.init('http://rdfh.ch/projects/x');
+      svc.setOntology(B);
+      respond();
+
+      expect(getOntology).not.toHaveBeenCalledWith(A, true);
+      expect(svc.selectedOntology.iri).toBe(B);
     });
   });
 
