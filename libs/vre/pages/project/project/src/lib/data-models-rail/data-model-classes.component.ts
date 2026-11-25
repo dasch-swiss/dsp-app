@@ -207,10 +207,13 @@ export class DataModelClassesComponent {
   /** The cards' least width: room for the checkboxes' words on each row, at the comfortable rows' bigger sizes. */
   readonly cardWidth = signal(440).asReadonly();
 
-  /** The classes whose name, file or properties have the searched text, in any language. */
+  /** The classes whose name, file or properties have the searched text, in any language; by label, as the properties. */
   readonly rows = computed(() => {
     const query = this.query().trim().toLowerCase();
-    return this.state.classRows().filter(row => !query || this._has(row, query));
+    return this.state
+      .classRows()
+      .filter(row => !query || this._has(row, query))
+      .sort((a, b) => a.label.localeCompare(b.label) || a.name.localeCompare(b.name));
   });
 
   /** The class whose panel is open, named in the URL like in the graph. */
