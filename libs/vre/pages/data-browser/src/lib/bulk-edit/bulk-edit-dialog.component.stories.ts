@@ -445,6 +445,8 @@ export const OffersADateForRemovingOnly: Story = {
     await step('The date is tagged “Remove only” in the picker', async () => {
       await userEvent.click(await canvas.findByTestId('bulk-edit-property'));
       await userEvent.click(await within(document.body).findByRole('option', { name: /Datum/ }));
+      // Once chosen, the field shows the property alone, without the tag.
+      await expect(canvas.getByTestId('bulk-edit-property')).toHaveTextContent(/^\s*Datum\s*$/);
     });
     await step('Setting is locked and removing, its one action, is chosen', async () => {
       await expect(within(canvas.getByTestId('bulk-edit-action-set')).getByRole('radio')).toBeDisabled();

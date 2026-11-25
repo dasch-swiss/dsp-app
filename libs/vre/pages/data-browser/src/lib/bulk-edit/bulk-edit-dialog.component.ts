@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { MatOption, MatSelect } from '@angular/material/select';
+import { MatOption, MatSelect, MatSelectTrigger } from '@angular/material/select';
 import {
   IHasPropertyWithPropertyDefinition,
   KnoraApiConnection,
@@ -167,6 +167,8 @@ const READ_CONCURRENCY = 4;
                     panelClass="bulk-edit-property-panel"
                     data-cy="bulk-edit-property"
                     [attr.aria-label]="'pages.dataBrowser.bulkEdit.edit' | translate">
+                    <!-- The chosen property alone: the "Remove only" tag belongs in the list, not in the field. -->
+                    <mat-select-trigger>{{ currentTarget.label }}</mat-select-trigger>
                     @if (labelTarget(); as label) {
                       <mat-option [value]="label.id">{{ label.label }}</mat-option>
                     }
@@ -1176,6 +1178,7 @@ const READ_CONCURRENCY = 4;
     MatOption,
     MatProgressBar,
     MatSelect,
+    MatSelectTrigger,
     TranslatePipe,
     AppProgressIndicatorComponent,
     PropertyValuesCreatorComponent,
