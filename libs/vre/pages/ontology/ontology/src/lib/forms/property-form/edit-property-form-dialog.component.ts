@@ -30,7 +30,7 @@ import {
     @if (sharedWith(); as classes) {
       <p class="shared" data-cy="property-shared-note">
         <mat-icon>info</mat-icon>
-        <span>{{ 'pages.dataModels2.propertyShared' | translate: classes }}</span>
+        <span>{{ 'pages.dataModels.propertyShared' | translate: classes }}</span>
       </p>
     }
     <app-property-form mat-dialog-content (afterFormInit)="form = $event" [propertyData]="data" />
@@ -78,7 +78,7 @@ export class EditPropertyFormDialogComponent implements OnInit {
     const more = usedBy.length - named.length;
     return {
       classes: more
-        ? this._translate.instant('pages.dataModels2.andMore', { names: named.join(', '), count: more })
+        ? this._translate.instant('pages.dataModels.andMore', { names: named.join(', '), count: more })
         : named.join(', '),
       count: usedBy.length,
     };

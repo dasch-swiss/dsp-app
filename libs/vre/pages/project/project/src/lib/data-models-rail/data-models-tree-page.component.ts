@@ -74,7 +74,7 @@ function paramOf(ontologyIri: string): Record<string, string> {
     TranslatePipe,
   ],
   template: `
-    @let r = 'pages.dataModels2';
+    @let r = 'pages.dataModels';
     @let editor = state.canEdit() && editing.canEditDataModels;
     <div class="page">
       <aside class="rail" data-cy="data-models-tree" [style.width.px]="railWidth()">

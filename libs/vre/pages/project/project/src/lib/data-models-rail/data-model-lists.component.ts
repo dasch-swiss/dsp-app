@@ -68,7 +68,7 @@ class LanguageTextsPipe implements PipeTransform {
     TranslatePipe,
   ],
   template: `
-    @let r = 'pages.dataModels2';
+    @let r = 'pages.dataModels';
     <div class="section">
       <div class="head">
         <h2>{{ r + '.lists' | translate }}</h2>

@@ -23,7 +23,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
 import { ClassRow, localNameOf } from '../ontology-map/ontology-graph-elements';
 import { ONTOLOGY_MAP_PARAM } from '../ontology-map/ontology-map-page.component';
-import { PropertyPanelComponent } from '../ontology-map/property-panel.component';
 import { ResourceClassPanelComponent } from '../ontology-map/resource-class-panel.component';
 import { DataModelClassCardsComponent, PropertyOrder } from './data-model-class-cards.component';
 import { DataModelsRailState } from './data-models-rail-state';
@@ -48,12 +47,11 @@ import { escapeClosesPanel } from './escape-closes';
     MatMenuItem,
     MatMenuTrigger,
     MatPrefix,
-    PropertyPanelComponent,
     ResourceClassPanelComponent,
     TranslatePipe,
   ],
   template: `
-    @let r = 'pages.dataModels2';
+    @let r = 'pages.dataModels';
     @let t = 'pages.dataBrowser.dataModelMap';
     <div class="section">
       <!-- On one line: the title, the search and the create button; the tools, small, on a line under it. -->
@@ -137,18 +135,6 @@ import { escapeClosesPanel } from './escape-closes';
             (browse)="browse($event)"
             (edit)="edit($event)"
             (editProperty)="editing.editProperty($event)" />
-        } @else if (propertyPanelIri(); as iri) {
-          <app-property-panel
-            class="panel"
-            [graph]="graph"
-            [propertyIri]="iri"
-            [colors]="state.colors()"
-            [anyResourceLabel]="t + '.anyResource' | translate"
-            [canEdit]="state.canEdit()"
-            (classSelected)="openPanel($event)"
-            (closed)="openProperty(undefined)"
-            (propertySelected)="openProperty($event)"
-            (edit)="editing.editProperty($event)" />
         }
       }
     </div>
@@ -222,12 +208,6 @@ export class DataModelClassesComponent {
     return name ? this.state.classRows().find(row => row.name === name)?.id : undefined;
   });
 
-  /** The property whose panel is open; the class panel goes first. */
-  readonly propertyPanelIri = computed(() => {
-    const name = this._params()?.get(ONTOLOGY_MAP_PARAM.propertyPanel);
-    return name ? this.state.propertyRows().find(row => row.name === name)?.id : undefined;
-  });
-
   private readonly _search = viewChild<ElementRef<HTMLInputElement>>('search');
   private readonly _cards = viewChild(DataModelClassCardsComponent);
 
@@ -236,27 +216,15 @@ export class DataModelClassesComponent {
     afterNextRender(() => this._search()?.nativeElement.focus());
   }
 
-  /** Esc closes the class's or property's side panel open. */
+  /** Esc closes the class's side panel open. */
   closeOnEscape(event: Event): void {
     if (!escapeClosesPanel(event, this._dialog)) return;
     if (this.panelIri()) this.openPanel(undefined);
-    else if (this.propertyPanelIri()) this.openProperty(undefined);
   }
 
   /** Opens the class's panel, or closes it; a step in the browser history. */
   openPanel(classIri: string | undefined): void {
-    this._navigate({
-      [ONTOLOGY_MAP_PARAM.panel]: classIri ? localNameOf(classIri) : null,
-      [ONTOLOGY_MAP_PARAM.propertyPanel]: null,
-    });
-  }
-
-  /** Opens the property's panel in place of the class's, or closes it; a step in the browser history. */
-  openProperty(propertyIri: string | undefined): void {
-    this._navigate({
-      [ONTOLOGY_MAP_PARAM.panel]: null,
-      [ONTOLOGY_MAP_PARAM.propertyPanel]: propertyIri ? localNameOf(propertyIri) : null,
-    });
+    this._navigate({ [ONTOLOGY_MAP_PARAM.panel]: classIri ? localNameOf(classIri) : null });
   }
 
   /** Opens the class in the Data tab. */

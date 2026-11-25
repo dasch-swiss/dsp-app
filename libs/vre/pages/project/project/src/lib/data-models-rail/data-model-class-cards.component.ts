@@ -92,7 +92,7 @@ export interface PropertyOrder {
     TranslatePipe,
   ],
   template: `
-    @let r = 'pages.dataModels2';
+    @let r = 'pages.dataModels';
     <!-- A class's own properties, or one group of them, up to the cap, then "Show n more"; editors drag them. -->
     <ng-template #capped let-properties let-key="key" let-card="card">
       @let all = showAll().has(key) || autoOpened().has(key);
@@ -177,7 +177,7 @@ export interface PropertyOrder {
                   {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
                 } @else {
                   <mat-icon>person_outline</mat-icon>
-                  {{ 'pages.dataModels2.objectWithoutRepresentation' | translate }}
+                  {{ 'pages.dataModels.objectWithoutRepresentation' | translate }}
                 }
               </span>
             </span>

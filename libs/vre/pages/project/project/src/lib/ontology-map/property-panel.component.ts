@@ -186,7 +186,7 @@ const CARDINALITY_NOTATION: Record<Cardinality, string> = {
               @let check = deleteCheck();
               <!-- Only once the API says no class or value uses the property; why not, on hover, otherwise. -->
               <span
-                [matTooltip]="'pages.dataModels2.cannotDeleteProperty' | translate: { property: usage.label }"
+                [matTooltip]="'pages.dataModels.cannotDeleteProperty' | translate: { property: usage.label }"
                 [matTooltipDisabled]="!check || check.canDo">
                 <button
                   mat-stroked-button

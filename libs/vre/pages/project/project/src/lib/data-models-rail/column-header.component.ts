@@ -23,7 +23,7 @@ import { TableColumns } from './table-columns';
         class="filter"
         [attr.data-cy]="filterCy()"
         [class.on]="filtered()"
-        [attr.aria-label]="'pages.dataModels2.filterOn' | translate: { column: label() | translate }"
+        [attr.aria-label]="'pages.dataModels.filterOn' | translate: { column: label() | translate }"
         [matMenuTriggerFor]="menu"
         (menuOpened)="focusInput()">
         <mat-icon>filter_list</mat-icon>
@@ -44,7 +44,7 @@ import { TableColumns } from './table-columns';
       [minWidth]="columns().config.minWidths[column()]"
       [defaultWidth]="columns().config.defaultWidths[column()]"
       [width]="columns().widthOf(column())"
-      [attr.aria-label]="'pages.dataModels2.resizeColumn' | translate"
+      [attr.aria-label]="'pages.dataModels.resizeColumn' | translate"
       (widthChanged)="columns().resize(column(), $event)"
       (widthReset)="columns().resize(column(), undefined)"></span>
   `,

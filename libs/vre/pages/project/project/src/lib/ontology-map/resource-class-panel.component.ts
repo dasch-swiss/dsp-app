@@ -158,7 +158,7 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
             @if (all().length) {
               <ng-container *ngTemplateOutlet="ownList; context: { $implicit: all() }" />
             } @else {
-              <p class="none">{{ 'pages.dataModels2.noProperties' | translate }}</p>
+              <p class="none">{{ 'pages.dataModels.noProperties' | translate }}</p>
             }
             @if (canEdit()) {
               <div class="add-property">
@@ -180,7 +180,7 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
               @let check = deleteCheck();
               <!-- Only once the API says nothing uses the class; why not, on hover, when something does. -->
               <span
-                [matTooltip]="(check?.canDo ? '' : 'pages.dataModels2.cannotDeleteClass') | translate"
+                [matTooltip]="(check?.canDo ? '' : 'pages.dataModels.cannotDeleteClass') | translate"
                 [matTooltipDisabled]="!check || check.canDo">
                 <button
                   mat-stroked-button

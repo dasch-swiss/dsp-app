@@ -73,7 +73,7 @@ import {
 } from './resource-class-form/edit-resource-class-dialog.component';
 import { UpdateResourceClassData } from './resource-class-form/resource-class-form.type';
 
-/** The words for each cardinality, under `pages.dataModels2.cardinality`. */
+/** The words for each cardinality, under `pages.dataModels.cardinality`. */
 const CARDINALITY_KEYS: Record<Cardinality, string> = {
   [Cardinality._1]: 'requiredOne',
   [Cardinality._0_1]: 'optionalOne',
@@ -452,7 +452,7 @@ export class DataModelEditorService implements DataModelEditor {
 
   deleteDataModel(ontologyIri: string, label: string): Observable<boolean> {
     return this._confirm
-      .afterConfirmation(this._translate.instant('pages.dataModels2.deleteDataModelConfirm', { model: label }))
+      .afterConfirmation(this._translate.instant('pages.dataModels.deleteDataModelConfirm', { model: label }))
       .pipe(
         switchMap(() =>
           this._withEditing(ontologyIri, editing =>
@@ -476,11 +476,11 @@ export class DataModelEditorService implements DataModelEditor {
     return this.canDeleteClass(classIri).pipe(
       switchMap(check => {
         if (!check.canDo) {
-          this._notify(this._translate.instant('pages.dataModels2.cannotDeleteClass'), check.reason);
+          this._notify(this._translate.instant('pages.dataModels.cannotDeleteClass'), check.reason);
           return of(false);
         }
         return this._confirm
-          .afterConfirmation(this._translate.instant('pages.dataModels2.deleteClassConfirm', { class: label }))
+          .afterConfirmation(this._translate.instant('pages.dataModels.deleteClassConfirm', { class: label }))
           .pipe(
             switchMap(() =>
               this._withEditing(classIri, editing =>
@@ -515,7 +515,7 @@ export class DataModelEditorService implements DataModelEditor {
               if (!check.canDo) {
                 // With a reason, the API said why. Without one, values are in the way: how many, the count tells.
                 if (check.cannotDoReason) {
-                  this._notify(this._translate.instant('pages.dataModels2.cannotRemove', labels), check.cannotDoReason);
+                  this._notify(this._translate.instant('pages.dataModels.cannotRemove', labels), check.cannotDoReason);
                   return of(false);
                 }
                 return this._valuesInTheWay(classIri, propertyIri).pipe(
@@ -526,7 +526,7 @@ export class DataModelEditorService implements DataModelEditor {
                 );
               }
               return this._confirm
-                .afterConfirmation(this._translate.instant('pages.dataModels2.removeFromClassConfirm', labels))
+                .afterConfirmation(this._translate.instant('pages.dataModels.removeFromClassConfirm', labels))
                 .pipe(
                   // Saved from the data model as read once the saves before it are done, so its date is current.
                   switchMap(() =>
@@ -557,13 +557,13 @@ export class DataModelEditorService implements DataModelEditor {
       switchMap(check => {
         if (!check.canDo) {
           this._notify(
-            this._translate.instant('pages.dataModels2.cannotDeleteProperty', { property: label }),
+            this._translate.instant('pages.dataModels.cannotDeleteProperty', { property: label }),
             check.reason
           );
           return of(false);
         }
         return this._confirm
-          .afterConfirmation(this._translate.instant('pages.dataModels2.deletePropertyConfirm', { property: label }))
+          .afterConfirmation(this._translate.instant('pages.dataModels.deletePropertyConfirm', { property: label }))
           .pipe(
             switchMap(() =>
               this._withEditing(propertyIri, editing =>
@@ -660,7 +660,7 @@ export class DataModelEditorService implements DataModelEditor {
             return this.canSetCardinality(classIri, propertyIri, cardinality).pipe(
               switchMap(check => {
                 if (check.canDo) return save();
-                this._notify(this._translate.instant('pages.dataModels2.cardinalityBlocked'), check.reason);
+                this._notify(this._translate.instant('pages.dataModels.cardinalityBlocked'), check.reason);
                 return of(false);
               })
             );
@@ -678,7 +678,7 @@ export class DataModelEditorService implements DataModelEditor {
     cardinality: Cardinality,
     labels: { property: string; class: string }
   ): void {
-    const r = 'pages.dataModels2';
+    const r = 'pages.dataModels';
     const message = this._translate.instant(`${r}.cardinalitySaved`, {
       ...labels,
       cardinality: this._translate.instant(`${r}.cardinality.${CARDINALITY_KEYS[cardinality]}`),
@@ -742,7 +742,7 @@ CONSTRUCT { ?resource knora-api:isMainResource true . } WHERE {
    * viewer can see does, values marked as deleted or hidden from the viewer, which only DaSCH can erase.
    */
   private _cannotRemoveMessage(labels: { property: string; class: string }, count: number | undefined): string {
-    const r = 'pages.dataModels2';
+    const r = 'pages.dataModels';
     if (count === undefined) return this._translate.instant(`${r}.cannotRemove`, labels);
     if (count === 0) return this._translate.instant(`${r}.cannotRemoveHiddenValues`, labels);
     const formatted = count.toLocaleString(this._translate.currentLang);

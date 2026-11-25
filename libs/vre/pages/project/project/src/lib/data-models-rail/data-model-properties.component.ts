@@ -70,11 +70,11 @@ type Column = 'property' | 'description' | 'type' | 'pointsTo' | 'usedBy';
 
 /** The translation key of each column's name. */
 const COLUMN_LABELS: Record<Column, string> = {
-  property: 'pages.dataModels2.colProperty',
-  description: 'pages.dataModels2.colDescription',
-  type: 'pages.dataModels2.colType',
-  pointsTo: 'pages.dataModels2.colPointsTo',
-  usedBy: 'pages.dataModels2.colUsedBy',
+  property: 'pages.dataModels.colProperty',
+  description: 'pages.dataModels.colDescription',
+  type: 'pages.dataModels.colType',
+  pointsTo: 'pages.dataModels.colPointsTo',
+  usedBy: 'pages.dataModels.colUsedBy',
 };
 
 /**
@@ -121,7 +121,7 @@ const COLUMN_LABELS: Record<Column, string> = {
     TranslatePipe,
   ],
   template: `
-    @let r = 'pages.dataModels2';
+    @let r = 'pages.dataModels';
     @let t = 'pages.dataBrowser.dataModelMap';
     @let expanded = true;
     @let cols = columns;

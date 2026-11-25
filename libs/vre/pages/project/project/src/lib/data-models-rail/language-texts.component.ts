@@ -43,7 +43,7 @@ export interface LanguageTextEdit {
   imports: [HighlightPipe, MatIcon, MatIconButton, TranslatePipe],
   host: { '[class.expanded]': 'expanded()', '[class.is-label]': "kind() === 'label'" },
   template: `
-    @let t = 'pages.dataModels2.descriptionEditor';
+    @let t = 'pages.dataModels.descriptionEditor';
     @for (text of lines(); track text.language) {
       <span #line class="lang-line">
         <span class="lang-text" [title]="expanded() ? '' : text.value">

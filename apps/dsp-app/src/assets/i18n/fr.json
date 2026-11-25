@@ -833,7 +833,7 @@
       "links": "liens",
       "expandLinks": "Cliquer pour afficher les {{count}} liens"
     },
-    "dataModels2": {
+    "dataModels": {
       "classActions": "Actions pour {{class}}",
       "objectWithoutRepresentation": "Objet sans représentation",
       "dataModels": "Modèles de données",

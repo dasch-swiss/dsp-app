@@ -88,7 +88,7 @@ type Box = 'multiple' | 'required';
         <span
           class="box"
           [class.unticked]="!state()[box]"
-          [matTooltip]="reason || (changeable() ? 'pages.dataModels2.cardinalityRule' : '') | translate"
+          [matTooltip]="reason || (changeable() ? 'pages.dataModels.cardinalityRule' : '') | translate"
           [matTooltipDisabled]="!reason && !changeable()"
           [matTooltipShowDelay]="reason ? 0 : 600">
           <mat-checkbox
@@ -165,8 +165,8 @@ export class CardinalityCheckboxesComponent {
   readonly reasons = computed<Record<Box, string>>(() => {
     const reasonOf = (box: Box): string => {
       if (!this.changeable()) return '';
-      if (box === 'multiple' && this.type() === 'Boolean') return 'pages.dataModels2.booleanOne';
-      return this.blockedBoxes()[box] ? 'pages.dataModels2.cardinalityBlocked' : '';
+      if (box === 'multiple' && this.type() === 'Boolean') return 'pages.dataModels.booleanOne';
+      return this.blockedBoxes()[box] ? 'pages.dataModels.cardinalityBlocked' : '';
     };
     return { multiple: reasonOf('multiple'), required: reasonOf('required') };
   });

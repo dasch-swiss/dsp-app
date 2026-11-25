@@ -33,7 +33,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
     'data-cy': 'data-model-class-card-property',
   },
   template: `
-    @let r = 'pages.dataModels2';
+    @let r = 'pages.dataModels';
     @let property = this.property();
     <mat-icon class="type" [attr.aria-label]="typeName()">{{ typeIcon() }}</mat-icon>
     <!-- The label, its link target after it, and the name under it. -->
