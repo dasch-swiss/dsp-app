@@ -9,7 +9,6 @@ import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services
 import { applicationConfig, componentWrapperDecorator, type Meta, type StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
 import { expect, waitFor } from 'storybook/test';
-import { ResourceFetcherService } from '../../../../representation/resource-fetcher.service';
 import { PropertyValueService } from '../../property-value/property-value.service';
 
 import { ListViewerComponent } from './list-viewer.component';
@@ -67,11 +66,6 @@ const dspApiConnectionStub = {
   },
 };
 
-const resourceFetcherServiceStub: Partial<ResourceFetcherService> = {
-  resource$: of(undefined),
-  projectShortcode$: of('0001'),
-};
-
 // StringifyStringLiteralPipe reads currentLanguage (synchronous getter), not the
 // observable, so the stub needs both: the observable drives combineLatest in the
 // component pipeline, the getter feeds the impure pipe.
@@ -80,7 +74,8 @@ const localizationServiceStub: Partial<LocalizationService> = {
   currentLanguage$: of<AvailableLanguage>('en'),
 };
 
-const makeValue = (listNode = 'http://rdfh.ch/lists/0001/itemA1'): ReadListValue => ({ listNode }) as any;
+const makeValue = (listNode = 'http://rdfh.ch/lists/0001/itemA1', listNodeLabel = ''): ReadListValue =>
+  ({ listNode, listNodeLabel }) as unknown as ReadListValue;
 const makePropertyDef = (): ResourcePropertyDefinition =>
   ({
     id: 'http://example.org/listProp',
@@ -95,7 +90,6 @@ const meta: Meta<ListViewerComponent> = {
     applicationConfig({
       providers: [
         { provide: DspApiConnectionToken, useValue: dspApiConnectionStub },
-        { provide: ResourceFetcherService, useValue: resourceFetcherServiceStub },
         { provide: LocalizationService, useValue: localizationServiceStub },
         // The viewer resolves its list through PropertyValueService (provided per property),
         // which reads getListWithAllLanguages from the connection stub above.
@@ -162,5 +156,18 @@ export const WrapsTheListPathBetweenNodesInANarrowColumn: Story = {
         await expect(node.getBoundingClientRect().height).toBeLessThan(2 * parseFloat(getComputedStyle(node).fontSize));
       }
     });
+  },
+};
+
+/** Someone added the node to the list after the table fetched it: the cell shows the value's label, not an empty path. */
+export const ShowsTheValueLabelWhenTheNodeIsMissingFromTheList: Story = {
+  args: {
+    value: makeValue('http://rdfh.ch/lists/0001/addedLater', 'Added later'),
+    propertyDef: makePropertyDef(),
+  },
+  play: async ({ canvasElement }) => {
+    await waitFor(() =>
+      expect(canvasElement.querySelector('[data-cy="list-switch"]')?.textContent?.trim()).toBe('Added later')
+    );
   },
 };
