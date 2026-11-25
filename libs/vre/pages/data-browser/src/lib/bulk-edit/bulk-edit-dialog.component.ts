@@ -138,7 +138,7 @@ const READ_CHUNK_SIZE = 25;
             <form [formGroup]="form" class="form">
               <div class="block">
                 <span class="block-label">{{ 'pages.dataBrowser.bulkEdit.edit' | translate }}</span>
-                <mat-form-field class="property-field">
+                <mat-form-field class="property-field compact-value-editor">
                   <!-- The label stands alone; the properties follow under one header, whatever their type. -->
                   <mat-select
                     formControlName="property"
@@ -191,7 +191,7 @@ const READ_CHUNK_SIZE = 25;
                       class="remove-toggle"
                       [disabled]="!canRemoveTarget()"
                       data-cy="bulk-edit-action-remove">
-                      <mat-icon>{{ canRemoveTarget() ? 'backspace' : 'lock' }}</mat-icon>
+                      <mat-icon>{{ canRemoveTarget() ? 'delete_sweep' : 'lock' }}</mat-icon>
                       {{ 'pages.dataBrowser.bulkEdit.removeValues' | translate }}
                     </mat-button-toggle>
                   </mat-button-toggle-group>
@@ -319,12 +319,20 @@ const READ_CHUNK_SIZE = 25;
                         </span>
                       </mat-radio-button>
                     </mat-radio-group>
+                    @if (choicesAlike()) {
+                      <p class="hint" data-cy="bulk-edit-choices-alike">
+                        {{ 'pages.dataBrowser.bulkEdit.choicesAlike' | translate: { count: choiceCounts().empty } }}
+                      </p>
+                    }
                   </div>
                 }
               }
             </form>
 
-            <section class="preview" [attr.aria-label]="'pages.dataBrowser.bulkEdit.preview' | translate">
+            <section
+              class="preview"
+              [style.--label-width]="labelWidth()"
+              [attr.aria-label]="'pages.dataBrowser.bulkEdit.preview' | translate">
               <div class="preview-header">
                 <mat-icon aria-hidden="true">visibility</mat-icon>
                 <span class="preview-title">{{ 'pages.dataBrowser.bulkEdit.preview' | translate }}</span>
@@ -639,7 +647,7 @@ const READ_CHUNK_SIZE = 25;
         flex: none;
       }
       .split .form {
-        width: 440px;
+        width: 540px;
         padding: 20px 20px 20px 24px;
         border-right: 1px solid #e5e7eb; /* $cool-gray-200 */
         overflow: auto;
@@ -685,12 +693,27 @@ const READ_CHUNK_SIZE = 25;
         font-size: 11px;
         font-weight: 500;
       }
+      /* Compact like the editors, the selection in the app's blue; removing in red. */
       .actions {
         align-self: flex-start;
+        --mat-standard-button-toggle-height: 36px;
+        --mat-standard-button-toggle-selected-state-background-color: #e8eef4;
+        --mat-standard-button-toggle-selected-state-text-color: #264c6a;
+      }
+      .actions mat-icon {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+        margin-right: 4px;
+        vertical-align: -3px;
       }
       .actions .remove-toggle.mat-button-toggle-checked {
         background: #fdecef;
         color: #9f1239;
+      }
+      /* The creation form's add button, in the app's blue rather than black. */
+      .creator ::ng-deep .mat-mdc-icon-button .mat-icon {
+        color: #336790; /* $primary */
       }
       .remove-card,
       .info-card {
@@ -881,7 +904,7 @@ const READ_CHUNK_SIZE = 25;
       }
       .item-label {
         flex: none;
-        width: 140px;
+        width: min(var(--label-width, 140px), 40%);
         font-weight: 500;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1306,6 +1329,16 @@ export class BulkEditDialogComponent {
   });
   /** Unchanged resources start folded: they only explain why. */
   private readonly _folded = signal(new Set<string>(['unchanged']));
+  /** Both choices change the same resources: nothing would be replaced, so the choice does not matter. */
+  readonly choicesAlike = computed(() => {
+    const { empty, replace } = this.choiceCounts();
+    return !this.onlyEmptyLocked() && empty > 0 && empty === replace;
+  });
+  /** The preview's name column fits the longest name, up to 40% of the preview (see `.item-label`). */
+  readonly labelWidth = computed(() => {
+    const longest = Math.max(10, ...this._resources().map(resource => resource.label.length));
+    return `${Math.ceil(longest * 1.1)}ch`;
+  });
   /** How many resources each choice changes, shown before the user picks; a placeholder value counts them early. */
   readonly choiceCounts = computed(() => {
     const target = this.target();

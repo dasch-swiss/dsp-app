@@ -647,7 +647,8 @@
         "confirmRemoveHint": "They disappear from the app; dsp-api keeps them in its history.",
         "back": "Back",
         "remove": "Remove",
-        "doneRemovedSummary": "Values removed: {{updated}}"
+        "doneRemovedSummary": "Values removed: {{updated}}",
+        "choicesAlike": "Both choices change the same {{count}} resource(s): nothing would be replaced."
       },
       "resourcesList": {
         "resultsCount": "{{count}} results",
