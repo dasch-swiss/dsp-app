@@ -647,7 +647,8 @@
         "back": "Indietro",
         "remove": "Rimuovi",
         "doneRemovedSummary": "Valori rimossi: {{updated}}",
-        "choicesAlike": "Entrambe le scelte modificano le stesse {{count}} risorsa/e: nulla verrebbe sostituito."
+        "choicesAlike": "Entrambe le scelte modificano le stesse {{count}} risorsa/e: nulla verrebbe sostituito.",
+        "loading": "Caricamento delle risorse: {{loaded}} di {{total}}"
       },
       "resourcesList": {
         "resultsCount": "{{count}} risultati",

@@ -112,7 +112,7 @@ const providers = (resources: ReadResource[]) => [
     provide: DspApiConnectionToken,
     useValue: {
       v2: {
-        res: { getResources: () => of({ resources }), updateResourceMetadata: () => of({}) },
+        res: { getResourcesBatch: () => of({ resources }), updateResourceMetadata: () => of({}) },
         values: { updateValue: () => of({}), createValue: () => of({}), deleteValue: () => of({}) },
         list: {
           getList: () => of(correspondenceTypes),
@@ -203,7 +203,7 @@ export const ListsAFailedValueAndOffersARetry: Story = {
           provide: DspApiConnectionToken,
           useValue: {
             v2: {
-              res: { getResources: () => of({ resources: letters }) },
+              res: { getResourcesBatch: () => of({ resources: letters }) },
               list: {
                 getList: () => of(correspondenceTypes),
                 getListWithAllLanguages: () => of(correspondenceTypes),

@@ -647,7 +647,8 @@
         "back": "Retour",
         "remove": "Supprimer",
         "doneRemovedSummary": "Valeurs supprimées : {{updated}}",
-        "choicesAlike": "Les deux choix modifient les mêmes {{count}} ressource(s) : rien ne serait remplacé."
+        "choicesAlike": "Les deux choix modifient les mêmes {{count}} ressource(s) : rien ne serait remplacé.",
+        "loading": "Chargement des ressources : {{loaded}} sur {{total}}"
       },
       "resourcesList": {
         "resultsCount": "{{count}} résultats",

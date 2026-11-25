@@ -46,11 +46,13 @@ import {
   finalize,
   from,
   map,
+  mergeMap,
   Observable,
   of,
   Subject,
   switchMap,
   takeUntil,
+  tap,
   toArray,
 } from 'rxjs';
 import {
@@ -96,8 +98,10 @@ interface FormValue {
 
 type ValueGroup = FormGroup<{ item: AbstractControl; comment: FormControl<string | null> }>;
 
-/** dsp-api reads at most this many resources in one request. */
-const READ_CHUNK_SIZE = 25;
+/** dsp-api's `POST /v2/resources/batch` reads at most this many resources in one request. */
+const READ_CHUNK_SIZE = 100;
+/** Read requests in flight at once. */
+const READ_CONCURRENCY = 4;
 
 /** Opened as a side panel (`DspDialogConfig.dialogDrawerConfig`); the preview follows the form as it is filled. */
 @Component({
@@ -128,7 +132,15 @@ const READ_CHUNK_SIZE = 25;
     <div class="body" [class.split]="step() === 'edit'">
       @switch (step()) {
         @case ('loading') {
-          <app-progress-indicator />
+          <div class="loading">
+            <app-progress-indicator />
+            <p class="note" data-cy="bulk-edit-loading">
+              {{
+                'pages.dataBrowser.bulkEdit.loading'
+                  | translate: { loaded: loadedCount() | number, total: data.resourceIris.length | number }
+              }}
+            </p>
+          </div>
         }
         @case ('loadFailed') {
           <p class="error" data-cy="bulk-edit-load-failed">{{ 'pages.dataBrowser.bulkEdit.loadFailed' | translate }}</p>
@@ -1091,6 +1103,13 @@ const READ_CHUNK_SIZE = 25;
         font-style: italic;
         color: #9ca3af; /* $cool-gray-400 */
       }
+      .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin: auto;
+      }
       .note {
         margin: 0;
         padding: 10px 12px;
@@ -1179,6 +1198,8 @@ export class BulkEditDialogComponent {
   });
 
   readonly step = signal<Step>('loading');
+  /** Resources read so far, while loading. */
+  readonly loadedCount = signal(0);
   private readonly _resources = signal<ReadResource[]>([]);
   readonly resourceCount = computed(() => this._resources().length);
   readonly targets = computed(() => {
@@ -1537,17 +1558,25 @@ export class BulkEditDialogComponent {
   /** The selection may be stale, so the plan is computed from freshly read resources. */
   private _loadResources() {
     this.step.set('loading');
+    this.loadedCount.set(0);
     const chunks: string[][] = [];
     for (let i = 0; i < this.data.resourceIris.length; i += READ_CHUNK_SIZE) {
       chunks.push(this.data.resourceIris.slice(i, i + READ_CHUNK_SIZE));
     }
 
-    from(chunks)
+    // A few batches at a time; they may answer out of order, so they are put back in the selection's order.
+    from(chunks.map((iris, index) => ({ iris, index })))
       .pipe(
-        concatMap(iris => this._dspApiConnection.v2.res.getResources(iris)),
-        map(sequence => (sequence as ReadResourceSequence).resources),
+        mergeMap(
+          ({ iris, index }) =>
+            this._dspApiConnection.v2.res.getResourcesBatch(iris).pipe(
+              map(sequence => ({ index, resources: (sequence as ReadResourceSequence).resources })),
+              tap(({ resources }) => this.loadedCount.update(count => count + resources.length))
+            ),
+          READ_CONCURRENCY
+        ),
         toArray(),
-        map(pages => pages.flat()),
+        map(pages => pages.sort((a, b) => a.index - b.index).flatMap(page => page.resources)),
         takeUntilDestroyed(this._destroyRef)
       )
       .subscribe({
