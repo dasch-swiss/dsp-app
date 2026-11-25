@@ -334,8 +334,8 @@ export class DataClassResultsBarComponent {
       )
       .subscribe({
         next: changedIris => {
-          changedIris?.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
-          if (changedIris?.length) this.bulkEdited.emit();
+          changedIris.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
+          if (changedIris.length) this.bulkEdited.emit();
         },
         error: () => this._collectFailed('pages.dataBrowser.resultsBar.collectFailed'),
       });

@@ -210,8 +210,8 @@ export class ResourceListSelectionComponent {
 
   openBulkEditDialog(resources: ReadResource[]): void {
     this._bulkEditLauncher.open(resources.map(resource => resource.id)).subscribe(changedIris => {
-      changedIris?.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
-      if (changedIris?.length) this.bulkEdited.emit(changedIris);
+      changedIris.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
+      if (changedIris.length) this.bulkEdited.emit(changedIris);
     });
   }
 

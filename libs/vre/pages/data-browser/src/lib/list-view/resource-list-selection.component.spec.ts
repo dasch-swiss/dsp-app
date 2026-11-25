@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ReadResource, ReadUser } from '@dasch-swiss/dsp-js';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { BulkEditDialogComponent } from '../bulk-edit/bulk-edit-dialog.component';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource-link-dialog.component';
@@ -310,14 +310,15 @@ describe('ResourceListSelectionComponent', () => {
   });
 
   describe('openBulkEditDialog', () => {
-    it('passes the selected IRIs and announces the resources that changed', () => {
-      const afterClosed = new BehaviorSubject<string[] | undefined>(['resource-1']);
-      mockDialog.open.mockReturnValue({ afterClosed: () => afterClosed } as any);
+    it('passes the selected IRIs and announces the resources a run changed, with the panel still open', () => {
+      const applied = new Subject<string[]>();
+      mockDialog.open.mockReturnValue({ componentInstance: { applied } } as any);
       mockMultipleViewerService.notifyResourceChanged = jest.fn();
       const emitted: string[][] = [];
       component.bulkEdited.subscribe(iris => emitted.push(iris));
 
       component.openBulkEditDialog([mockResource1, mockResource2]);
+      applied.next(['resource-1']);
 
       expect(mockDialog.open).toHaveBeenCalledWith(
         BulkEditDialogComponent,
@@ -330,8 +331,8 @@ describe('ResourceListSelectionComponent', () => {
       expect(emitted).toEqual([['resource-1']]);
     });
 
-    it('emits nothing when the dialog closes without changes', () => {
-      mockDialog.open.mockReturnValue({ afterClosed: () => new BehaviorSubject<string[] | undefined>([]) } as any);
+    it('emits nothing before a run ends', () => {
+      mockDialog.open.mockReturnValue({ componentInstance: { applied: new Subject<string[]>() } } as any);
       const emitted: string[][] = [];
       component.bulkEdited.subscribe(iris => emitted.push(iris));
 

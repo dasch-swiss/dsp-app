@@ -6,6 +6,7 @@ import {
   DestroyRef,
   effect,
   inject,
+  output,
   signal,
   untracked,
 } from '@angular/core';
@@ -82,8 +83,8 @@ export interface BulkEditDialogProps {
   scope?: string;
 }
 
-/** The IRIs of the resources that got at least one value written. */
-export type BulkEditDialogResult = string[];
+/** The IRIs of the resources a run wrote at least one value to. */
+export type BulkEditApplied = string[];
 
 type Step = 'loading' | 'loadFailed' | 'edit' | 'applying' | 'done';
 
@@ -1187,7 +1188,7 @@ const READ_CONCURRENCY = 4;
 })
 export class BulkEditDialogComponent {
   readonly data = inject<BulkEditDialogProps>(MAT_DIALOG_DATA);
-  private readonly _dialogRef = inject<MatDialogRef<BulkEditDialogComponent, BulkEditDialogResult>>(MatDialogRef);
+  private readonly _dialogRef = inject<MatDialogRef<BulkEditDialogComponent>>(MatDialogRef);
   private readonly _dspApiConnection = inject<KnoraApiConnection>(DspApiConnectionToken);
   private readonly _stringifyStringLiteral = inject(StringifyStringLiteralPipe);
   private readonly _translateService = inject(TranslateService);
@@ -1410,8 +1411,10 @@ export class BulkEditDialogComponent {
     return `${this.target()?.label ?? ''} · ${this._translateService.instant(`pages.dataBrowser.bulkEdit.${actionKey}`)}`;
   });
 
-  private readonly _changedIris = new Set<string>();
   private readonly _cancel$ = new Subject<void>();
+
+  /** Fires when a run ends, with the resources it changed, so the view behind the panel reloads them at once. */
+  readonly applied = output<BulkEditApplied>();
 
   isOpen(kind: string): boolean {
     return !this._folded().has(kind);
@@ -1453,6 +1456,7 @@ export class BulkEditDialogComponent {
     const batchable = changes.filter(change => batchChangeOf(change, target));
     const single = changes.filter(change => !batchChangeOf(change, target));
     const jobs: BulkEditChange[][] = [...batchesOf(batchable), ...single.map(change => [change])];
+    const changedIris = new Set<string>();
 
     from(jobs)
       .pipe(
@@ -1465,6 +1469,10 @@ export class BulkEditDialogComponent {
         finalize(() => {
           this._dialogRef.disableClose = false;
           this.step.set('done');
+          // finalize also runs when the panel is destroyed, and a destroyed component emits nothing.
+          if (changedIris.size && !this._destroyRef.destroyed) {
+            this.applied.emit([...changedIris]);
+          }
         }),
         takeUntilDestroyed(this._destroyRef)
       )
@@ -1472,7 +1480,7 @@ export class BulkEditDialogComponent {
         this.processed.update(count => count + outcomes.length);
         const ok = outcomes.filter(outcome => outcome.ok).map(outcome => outcome.change);
         const failed = outcomes.filter(outcome => !outcome.ok).map(outcome => outcome.change);
-        ok.forEach(change => this._changedIris.add(change.resource.id));
+        ok.forEach(change => changedIris.add(change.resource.id));
         this.succeeded.update(done => [...done, ...ok]);
         this.failed.update(done => [...done, ...failed]);
       });
@@ -1489,7 +1497,7 @@ export class BulkEditDialogComponent {
   }
 
   close() {
-    this._dialogRef.close([...this._changedIris]);
+    this._dialogRef.close();
   }
 
   private _writeOne(change: BulkEditChange, target: BulkEditTarget): Observable<BulkEditOutcome[]> {
