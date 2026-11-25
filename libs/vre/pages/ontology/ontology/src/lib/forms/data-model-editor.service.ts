@@ -273,7 +273,8 @@ export class DataModelEditorService implements DataModelEditor {
           filter(ontology => !!ontology?.classes[classIri]),
           take(1),
           switchMap(ontology => {
-            // The class's properties in form order; its own ones take the new order, in the places they had.
+            // The class's properties in form order, inherited ones too, as the former Data models tab saved them;
+            // those dragged take the new order, in the places they had.
             const current = [...ontology!.classes[classIri].propertiesList].sort(
               (a, b) => (a.guiOrder ?? 0) - (b.guiOrder ?? 0)
             );

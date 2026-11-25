@@ -93,7 +93,7 @@ export interface PropertyOrder {
   ],
   template: `
     @let r = 'pages.dataModels';
-    <!-- A class's own properties, or one group of them, up to the cap, then "Show n more"; editors drag them. -->
+    <!-- A class's properties, own and inherited, up to the cap, then "Show n more"; editors drag them. -->
     <ng-template #capped let-properties let-key="key" let-card="card">
       @let all = showAll().has(key) || autoOpened().has(key);
       @let hidden = properties.length - CARD_PROPERTIES;
@@ -110,14 +110,14 @@ export interface PropertyOrder {
             cdkDrag
             cdkDragLockAxis="y"
             cdkDragBoundary=".props"
-            [cdkDragDisabled]="!drag || !own"
+            [cdkDragDisabled]="!drag"
             [homeIri]="card.row.id"
             [property]="property"
             [labelOf]="labelOf()"
             [reachable]="!!property.linkTarget && shown().has(property.linkTarget)"
             [query]="query()"
             [canEdit]="canEdit()"
-            [draggable]="drag && own"
+            [draggable]="drag"
             [classIri]="card.row.id"
             [inherited]="!own"
             [className]="card.row.label"
@@ -348,16 +348,16 @@ export class DataModelClassCardsComponent {
     return this.rows().map(row => {
       const parent = row.superclass ? byId.get(row.superclass) : undefined;
       const fromParent = new Set(parent?.propertyList.map(property => property.id));
-      let own = row.propertyList.filter(property => !fromParent.has(property.id));
       const order = dragged.get(row.id);
-      if (order) own = [...own].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
-      const ownIds = new Set(own.map(property => property.id));
-      const ownInOrder = [...own];
+      const all = order
+        ? [...row.propertyList].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))
+        : row.propertyList;
+      const own = all.filter(property => !fromParent.has(property.id));
       return {
         row,
         own,
-        all: row.propertyList.map(property => (ownIds.has(property.id) ? ownInOrder.shift()! : property)),
-        ownIds,
+        all,
+        ownIds: new Set(own.map(property => property.id)),
         fileIcon: row.representation ? fileIconOf(row.representation) : undefined,
       };
     });
@@ -440,18 +440,13 @@ export class DataModelClassCardsComponent {
   }
 
   /**
-   * A property of `list`, the class's own ones, one group of them, or all its properties with the inherited ones, was
-   * dropped elsewhere in it: the class's own properties take the new order, the others keeping their places, and it
-   * is shown at once, then saved.
+   * A property of the class, its own or inherited, was dropped elsewhere in its list, as in the former Data models tab:
+   * the list takes the new order, shown at once, then saved.
    */
   dropped(card: Card, list: CardProperty[], event: CdkDragDrop<unknown>): void {
     if (event.previousIndex === event.currentIndex) return;
-    const moved = [...list];
-    moveItemInArray(moved, event.previousIndex, event.currentIndex);
-    const inList = new Set(list.map(property => property.id));
-    // Inherited properties in the list keep their places: only the class's own are ordered.
-    const next = moved.filter(property => card.ownIds.has(property.id));
-    const order = card.own.map(property => (inList.has(property.id) ? next.shift()!.id : property.id));
+    const order = list.map(property => property.id);
+    moveItemInArray(order, event.previousIndex, event.currentIndex);
     this._dragged.update(dragged => new Map(dragged).set(card.row.id, order));
     this.reorder.emit({ classIri: card.row.id, propertyIris: order });
   }

@@ -21,8 +21,8 @@ export interface DataModelEditor {
   /** Opens the dialog creating a property of that type for the class; emits once it closes, `true` if it may have saved. */
   addNewProperty(classIri: string, type: DefaultProperty): Observable<boolean>;
   /**
-   * Saves the form order of the class's own properties, as `propertyIris` lists them; inherited ones keep their places.
-   * Emits `true` once saved.
+   * Saves the form order of the class's properties, own and inherited, as `propertyIris` lists them; those it leaves
+   * out keep their places. Emits `true` once saved.
    */
   reorderProperties(classIri: string, propertyIris: string[]): Observable<boolean>;
   /** Whether the class can be deleted: no resources, subclasses or links use it. */
@@ -156,7 +156,7 @@ export function injectDataModelEditing() {
       editor ? reloadOnceSaved(editor.setCardinality(classIri, propertyIri, cardinality)) : of(false),
     /** Whether properties can be put in another order here. */
     canReorder: !!editor,
-    /** Saves the form order of the class's own properties, then reads the project again. Emits `true` once saved. */
+    /** Saves the form order of the class's properties, then reads the project again. Emits `true` once saved. */
     reorderProperties: (classIri: string, propertyIris: string[]): Observable<boolean> =>
       editor ? reloadOnceSaved(editor.reorderProperties(classIri, propertyIris)) : of(false),
     /** Whether vocabulary values can be added, edited, moved and deleted here, in the editor's dialogs. */

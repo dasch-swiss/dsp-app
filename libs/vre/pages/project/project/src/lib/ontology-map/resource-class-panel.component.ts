@@ -135,13 +135,13 @@ function cardPropertyOf({ id, label, type, linkTarget, cardinality }: DataModelP
                     cdkDrag
                     cdkDragLockAxis="y"
                     cdkDragBoundary=".props"
-                    [cdkDragDisabled]="!drag || !isOwn"
+                    [cdkDragDisabled]="!drag"
                     [property]="property"
                     [homeIri]="node.id"
                     [labelOf]="labelOfIri"
                     [reachable]="!!property.linkTarget && classIris().has(property.linkTarget)"
                     [canEdit]="canEdit()"
-                    [draggable]="drag && isOwn"
+                    [draggable]="drag"
                     [classIri]="node.id"
                     [inherited]="!isOwn"
                     [className]="node.label"
@@ -292,40 +292,31 @@ export class ResourceClassPanelComponent {
   /** The properties the class has from its superclass: removed on the superclass, not here. */
   readonly inherited = computed(() => new Set((this._parent()?.propertyDetails ?? []).map(property => property.id)));
 
-  /** The order a drag gave the class's own properties, shown until the data model is read again. */
+  /** The order a drag gave the class's properties, shown until the data model is read again. */
   private readonly _dragged = signal<{ classIri: string; order: string[] } | undefined>(undefined);
-  /** The class's own properties, as rows of the cards, in their form order. */
-  readonly own = computed(() => {
-    let own = this.properties()
-      .filter(property => !this.inherited().has(property.id))
-      .map(cardPropertyOf);
-    const dragged = this._dragged();
-    if (dragged?.classIri === this.classIri()) {
-      own = [...own].sort((a, b) => dragged.order.indexOf(a.id) - dragged.order.indexOf(b.id));
-    }
-    return own;
-  });
-  readonly ownIds = computed(() => new Set(this.own().map(property => property.id)));
-  /** All its properties, as rows of the cards, in its form order: its own in the dragged order, if any. */
+  /** All its properties, own and inherited, as rows of the cards, in its form order, or the order a drag gave. */
   readonly all = computed(() => {
-    const own = [...this.own()];
-    return this.properties().map(property =>
-      this.ownIds().has(property.id) ? own.shift()! : cardPropertyOf(property)
-    );
+    const all = this.properties().map(cardPropertyOf);
+    const dragged = this._dragged();
+    return dragged?.classIri === this.classIri()
+      ? [...all].sort((a, b) => dragged.order.indexOf(a.id) - dragged.order.indexOf(b.id))
+      : all;
   });
+  /** The class's own properties, as rows of the cards. */
+  readonly own = computed(() => this.all().filter(property => !this.inherited().has(property.id)));
+  readonly ownIds = computed(() => new Set(this.own().map(property => property.id)));
   /** For editors, where the editor can save a new order. */
   readonly reorderable = computed(() => this.canEdit() && !!this.editing?.canReorder);
   readonly labelOfIri = (iri: string) => this.labelOf(iri);
 
   /**
-   * A property of `list`, the class's own and inherited ones, was dropped elsewhere in it: the class's own properties
-   * take the new order, the inherited keeping their places, shown at once, then saved.
+   * A property of `list`, the class's own and inherited ones, was dropped elsewhere in it, as in the former Data models
+   * tab: the list takes the new order, shown at once, then saved.
    */
   dropped(classIri: string, list: CardProperty[], event: CdkDragDrop<unknown>): void {
     if (event.previousIndex === event.currentIndex) return;
-    const moved = list.map(property => property.id);
-    moveItemInArray(moved, event.previousIndex, event.currentIndex);
-    const order = moved.filter(id => this.ownIds().has(id));
+    const order = list.map(property => property.id);
+    moveItemInArray(order, event.previousIndex, event.currentIndex);
     this._dragged.set({ classIri, order });
     this.editing
       ?.reorderProperties(classIri, order)
