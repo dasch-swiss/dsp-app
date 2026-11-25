@@ -156,6 +156,26 @@ describe('bulkEditTargets', () => {
       ['other', 'date', false],
     ]);
   });
+
+  it('LeavesOutTheBuiltInPropertiesTheCreationFormLeavesOut', () => {
+    const res = resource('r1');
+    const definitions = [
+      propertyDefinition(PROP, Constants.TextValue, Constants.GuiSimpleText),
+      propertyDefinition(Constants.HasDescription, Constants.TextValue, Constants.GuiRichText),
+    ];
+    res.entityInfo = {
+      classes: {
+        [res.type]: {
+          id: res.type,
+          getResourcePropertiesList: () =>
+            definitions.map(def => ({ propertyDefinition: def, cardinality: Cardinality._0_1 })),
+        } as unknown as ResourceClassDefinitionWithPropertyDefinition,
+      },
+      properties: {},
+    } as unknown as ReadResource['entityInfo'];
+
+    expect(bulkEditTargets(res).map(target => target.id)).toEqual([Constants.Label, PROP]);
+  });
 });
 
 describe('flattenList', () => {

@@ -15,6 +15,7 @@ import {
   UpdateResourceMetadata,
   UpdateValue,
 } from '@dasch-swiss/dsp-js';
+import { ApiConstants } from '@dasch-swiss/vre/core/config';
 import { propertiesTypeMapping } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { listRootIriFromGuiAttributes } from '@dasch-swiss/vre/shared/app-common';
 
@@ -125,10 +126,14 @@ export interface BulkEditPlan {
  */
 export function bulkEditTargets(resource: ReadResource): BulkEditTarget[] {
   const targets: BulkEditTarget[] = [{ kind: 'label', id: Constants.Label }];
-
   for (const { propertyDefinition, cardinality } of resource.entityInfo.classes[
     resource.type
   ].getResourcePropertiesList()) {
+    // The properties the resource creation form offers: none of the built-in knora-api ones, such as
+    // knora-api:hasDescription, which every class inherits.
+    if (propertyDefinition.id.startsWith(ApiConstants.apiKnoraOntologyUrl)) {
+      continue;
+    }
     if (!(propertyDefinition instanceof ResourcePropertyDefinition) || !propertyDefinition.isEditable) {
       continue;
     }
