@@ -51,12 +51,12 @@ import { PropertyPanelComponent } from './property-panel.component';
 import { ResourceClassPanelComponent } from './resource-class-panel.component';
 
 /**
- * Query parameters of the Ontology map tab: the data model to show, the class to outline, the class whose panel is
- * open, the link property whose panel is open, and the classes or properties the graph is filtered on. Classes are named by the end of their IRI, within the data model.
+ * Query parameters of the Diagram: the data model to show, the class whose panel is open, the link property whose
+ * panel is open, and the classes or properties the graph is filtered on. Classes are named by the end of their IRI,
+ * within the data model.
  */
 export const ONTOLOGY_MAP_PARAM = {
   ontology: 'ontology',
-  class: 'class',
   panel: 'panel',
   filter: 'filter',
   hide: 'hide',
@@ -864,8 +864,8 @@ export class OntologyMapPageComponent {
     const property = this.propertyPanelIri();
     return property ? { kind: 'property' as const, iri: property } : undefined;
   });
-  /** The class the map outlines: the one whose panel is open, else the one named in the URL. */
-  readonly classIri = computed(() => this.panelIri() ?? this._params()?.get(ONTOLOGY_MAP_PARAM.class) ?? undefined);
+  /** The class the map outlines: the one whose panel is open. */
+  readonly classIri = this.panelIri;
 
   /** Opens the class's panel, or closes whichever panel is open; a step in the browser history. */
   openPanel(classIri: string | undefined): void {

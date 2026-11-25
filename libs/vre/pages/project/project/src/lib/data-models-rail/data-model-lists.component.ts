@@ -4,7 +4,6 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   ElementRef,
   inject,
   Pipe,
@@ -20,7 +19,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ActivatedRoute } from '@angular/router';
 import { ListApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -33,7 +31,6 @@ import { LanguageTextsComponent } from './language-texts.component';
 import { expandableIds, VocabularyNode, vocabularyRows, VocabularyRow, vocabularyUses } from './vocabulary-tree';
 
 /** The query parameter naming the controlled vocabulary to open on arriving at Controlled vocabularies. */
-const VOCABULARY_PARAM = 'vocabulary';
 
 /** A vocabulary's or value's texts with their language, for the language lines. */
 @Pipe({ name: 'languageTexts' })
@@ -315,15 +312,6 @@ export class DataModelListsComponent {
   constructor() {
     // Arriving on the page, typing finds what it lists.
     afterNextRender(() => this._search()?.nativeElement.focus());
-    // Arriving from the Overview, the vocabulary picked there shows unfolded, once read.
-    let opening = inject(ActivatedRoute).snapshot.queryParamMap.get(VOCABULARY_PARAM);
-    effect(() => {
-      const vocabularies = this.vocabularies();
-      if (!opening || !vocabularies) return;
-      const picked = vocabularies.find(vocabulary => vocabulary.id.split('/').pop() === opening);
-      opening = null;
-      if (picked) this.expanded.update(expanded => new Set(expanded).add(picked.id));
-    });
   }
 
   toggle(row: VocabularyRow): void {

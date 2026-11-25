@@ -28,13 +28,8 @@ export class RouteConstants {
   static readonly resourceMetadata = 'resource-metadata';
   static readonly ontology = 'ontology';
   static readonly dataModels = 'data-models';
-  /** The data models' former paths, from before they replaced the first Data models tab: their links are redirected. */
-  static readonly dataModels2 = 'data-models-2';
-  static readonly dataModels3 = 'data-models-3';
-  static readonly ontologyMap = 'ontology-map';
   static readonly graph = 'graph';
   static readonly lists = 'lists';
-  static readonly overview = 'overview';
   static readonly imageSettings = 'image-settings';
   static readonly legalSettings = 'legal-settings';
   static readonly viewRestrictions = 'view-restrictions';

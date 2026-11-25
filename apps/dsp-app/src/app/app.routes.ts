@@ -83,7 +83,6 @@ export const routes: Routes = [
         component: DataModelsTreePageComponent,
         children: [
           { path: '', pathMatch: 'full', redirectTo: RouteConstants.classes },
-          { path: RouteConstants.overview, redirectTo: RouteConstants.classes },
           { path: RouteConstants.graph, component: OntologyMapPageComponent },
           { path: RouteConstants.classes, component: DataModelClassesComponent },
           { path: RouteConstants.properties, component: DataModelPropertiesComponent },
@@ -91,27 +90,12 @@ export const routes: Routes = [
           { path: `${RouteConstants.list}/:${RouteConstants.listParameter}`, component: ListPageComponent },
         ],
       },
-      // Former links land on the same section: Data models 2 and 3 were these data models before they replaced the
-      // first Data models tab, whose data model editor and vocabularies they also took over.
-      ...[RouteConstants.dataModels2, RouteConstants.dataModels3].flatMap(former => [
-        {
-          path: `${former}/${RouteConstants.list}/:${RouteConstants.listParameter}`,
-          redirectTo: `${RouteConstants.dataModels}/${RouteConstants.list}/:${RouteConstants.listParameter}`,
-        },
-        { path: `${former}/:section`, redirectTo: `${RouteConstants.dataModels}/:section` },
-        { path: former, redirectTo: RouteConstants.dataModels },
-      ]),
       // The former editor's links name their data model in the path: it moves to the query, so the same one opens.
       { path: `${RouteConstants.ontologyEditorRelative}/:section`, canActivate: [toDataModels], children: [] },
       { path: RouteConstants.ontologyEditorRelative, canActivate: [toDataModels], children: [] },
       {
         path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
         redirectTo: `${RouteConstants.dataModels}/${RouteConstants.list}/:${RouteConstants.listParameter}`,
-      },
-      // The Ontology map tab became the Diagram; links to it, with their query, land there.
-      {
-        path: RouteConstants.ontologyMap,
-        redirectTo: `${RouteConstants.dataModels}/${RouteConstants.graph}`,
       },
       {
         path: RouteConstants.settings,

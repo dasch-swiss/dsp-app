@@ -69,11 +69,10 @@ describe('OntologyMapPageComponent', () => {
     expect(component.graph()).toEqual(graph(BEOL));
   });
 
-  it('shows the data model the URL names, with the class to outline', () => {
-    params.next(convertToParamMap({ ontology: 'biblio', class: `${BIBLIO}#Letter` }));
+  it('shows the data model the URL names', () => {
+    params.next(convertToParamMap({ ontology: 'biblio' }));
 
     expect(component.selected()?.iri).toBe(BIBLIO);
-    expect(component.classIri()).toBe(`${BIBLIO}#Letter`);
   });
 
   it('reads the open panel and the graph filter from the URL', () => {
