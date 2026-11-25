@@ -430,10 +430,16 @@ export const OffersADateForRemovingOnly: Story = {
       await userEvent.click(await canvas.findByTestId('bulk-edit-property'));
       await userEvent.click(await within(document.body).findByRole('option', { name: /Datum/ }));
     });
-    await step('Setting is locked and nothing is chosen, so nothing is removed by default', async () => {
+    await step('Setting is locked and removing, its one action, is chosen', async () => {
       await expect(within(canvas.getByTestId('bulk-edit-action-set')).getByRole('button')).toBeDisabled();
       await expect(canvas.getByTestId('bulk-edit-set-unsupported')).toBeInTheDocument();
-      await expect(canvas.getByTestId('bulk-edit-choose-action')).toBeInTheDocument();
+      await expect(within(canvas.getByTestId('bulk-edit-action-remove')).getByRole('button')).toHaveAttribute(
+        'aria-pressed',
+        'true'
+      );
+      await expect(canvas.getByTestId('bulk-edit-remove-card')).toBeInTheDocument();
+    });
+    await step('With no date to remove, nothing can be applied', async () => {
       await expect(canvas.getByTestId('bulk-edit-apply')).toBeDisabled();
     });
   },

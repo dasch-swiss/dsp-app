@@ -221,12 +221,6 @@ const READ_CHUNK_SIZE = 25;
                   </span>
                 </div>
               }
-              @if (action() === null) {
-                <div class="info-card" data-cy="bulk-edit-choose-action">
-                  <mat-icon aria-hidden="true">info</mat-icon>
-                  <span>{{ 'pages.dataBrowser.bulkEdit.chooseActionHint' | translate }}</span>
-                </div>
-              }
 
               @if (action() === 'set') {
                 <div class="block">
@@ -696,14 +690,19 @@ const READ_CHUNK_SIZE = 25;
       /* Compact like the editors, the selection in the app's blue; removing in red. */
       .actions {
         align-self: flex-start;
-        --mat-standard-button-toggle-height: 36px;
+        --mat-standard-button-toggle-height: 32px;
+        --mat-standard-button-toggle-label-text-size: 13px;
+        --mat-standard-button-toggle-label-text-line-height: 32px;
         --mat-standard-button-toggle-selected-state-background-color: #e8eef4;
         --mat-standard-button-toggle-selected-state-text-color: #264c6a;
       }
+      .actions ::ng-deep .mat-button-toggle-label-content {
+        padding: 0 12px;
+      }
       .actions mat-icon {
-        width: 18px;
-        height: 18px;
-        font-size: 18px;
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
         margin-right: 4px;
         vertical-align: -3px;
       }
@@ -715,8 +714,7 @@ const READ_CHUNK_SIZE = 25;
       .creator ::ng-deep .mat-mdc-icon-button .mat-icon {
         color: #336790; /* $primary */
       }
-      .remove-card,
-      .info-card {
+      .remove-card {
         display: flex;
         gap: 10px;
         padding: 12px;
@@ -735,14 +733,6 @@ const READ_CHUNK_SIZE = 25;
         display: block;
         font-weight: 500;
         color: #9f1239;
-      }
-      .info-card {
-        border: 1px solid #e5e7eb; /* $cool-gray-200 */
-        background: #f9fafb; /* $cool-gray-50 */
-        color: #374151; /* $cool-gray-700 */
-      }
-      .info-card mat-icon {
-        color: #6b7280; /* $cool-gray-500 */
       }
       .danger {
         background: #b9193c; /* $red-800 */
@@ -1502,8 +1492,10 @@ export class BulkEditDialogComponent {
       label.setValue(typed, { emitEvent: false });
     }
     onlyEmpty.setValue(true, { emitEvent: false });
-    // A property that can only be removed starts with no action: removing is never the default.
-    this.form.controls.action.setValue(target && !canSet(target) ? null : 'set', { emitEvent: false });
+    // A property that can only be removed starts on removing, its one action; Apply still asks to confirm.
+    // A required one can do neither, and says why under the toggle.
+    const action = !target || canSet(target) ? 'set' : canRemove(target) ? 'remove' : null;
+    this.form.controls.action.setValue(action, { emitEvent: false });
     this.confirming.set(false);
     this._syncOnlyEmpty(Math.max(1, values.length));
   }

@@ -635,7 +635,6 @@
         "removeRequired": "Ogni risorsa deve avere {{property}}, quindi non si può rimuovere.",
         "removeCardTitle": "Tutti i valori di {{property}} vengono rimossi dalle risorse qui sotto",
         "removeCardHint": "Anche i commenti di questi valori vengono rimossi. L’app non può annullarlo.",
-        "chooseActionHint": "Scegli «Rimuovi i valori» per svuotarli. Nulla è selezionato di default, così nulla viene rimosso per errore.",
         "currentValues": "{{property}} attuale",
         "currentHave": "{{count}} su {{total}} ne hanno uno",
         "outcomeRemoved": "Valori rimossi",

@@ -635,7 +635,6 @@
         "removeRequired": "Jede Ressource braucht {{property}}, daher kann es nicht entfernt werden.",
         "removeCardTitle": "Alle Werte von {{property}} werden aus den Ressourcen unten entfernt",
         "removeCardHint": "Kommentare zu diesen Werten werden ebenfalls entfernt. Die App kann das nicht rückgängig machen.",
-        "chooseActionHint": "Wählen Sie „Werte entfernen“, um sie zu leeren. Standardmässig ist nichts ausgewählt, damit nichts versehentlich entfernt wird.",
         "currentValues": "Aktuell: {{property}}",
         "currentHave": "{{count}} von {{total}} haben einen Wert",
         "outcomeRemoved": "Werte entfernt",
