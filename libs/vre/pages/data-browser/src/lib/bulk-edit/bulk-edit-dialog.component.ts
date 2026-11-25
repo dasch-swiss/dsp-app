@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,15 +12,14 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatOptgroup } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormField, MatPrefix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { MatTooltip } from '@angular/material/tooltip';
 import {
   IHasPropertyWithPropertyDefinition,
   KnoraApiConnection,
@@ -123,7 +123,7 @@ const READ_CHUNK_SIZE = 25;
       </div>
     </header>
 
-    <div class="body">
+    <div class="body" [class.split]="step() === 'edit'">
       @switch (step()) {
         @case ('loading') {
           <app-progress-indicator />
@@ -134,83 +134,115 @@ const READ_CHUNK_SIZE = 25;
         @case ('edit') {
           @if (target(); as currentTarget) {
             <form [formGroup]="form" class="form">
-              <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>{{ 'pages.dataBrowser.bulkEdit.property' | translate }}</mat-label>
-                <mat-icon matPrefix class="kind-icon">{{ kindIcons[currentTarget.kind] }}</mat-icon>
-                <mat-select formControlName="property" data-cy="bulk-edit-property">
-                  @for (group of targetGroups(); track group.labelKey) {
-                    <mat-optgroup [label]="group.labelKey | translate">
-                      @for (option of group.targets; track option.id) {
-                        <mat-option [value]="option.id">{{ option.label }}</mat-option>
-                      }
-                    </mat-optgroup>
-                  }
-                </mat-select>
-              </mat-form-field>
-
-              @if (currentTarget.kind === 'label') {
-                <p class="hint">{{ 'pages.dataBrowser.bulkEdit.setValueHint' | translate }}</p>
-              }
-
-              @if (currentTarget.kind === 'label') {
-                <div class="compact-value-editor">
-                  <mat-form-field>
-                    <mat-label>{{ 'pages.dataBrowser.bulkEdit.value' | translate }}</mat-label>
-                    <input matInput formControlName="label" data-cy="bulk-edit-value-0" />
-                  </mat-form-field>
-                </div>
-              } @else {
-                <!-- The values exactly as the resource creation form shows them, recreated for each property. -->
-                @for (info of [propertyInfo()!]; track info.propDef.id) {
-                  <app-property-values-creator
-                    class="compact-value-editor creator"
-                    data-cy="bulk-edit-values"
-                    [myProperty]="info"
-                    [formArray]="form.controls.values"
-                    [resourceClassIri]="project().resourceClassIri"
-                    [projectIri]="project().projectIri"
-                    [projectShortcode]="project().projectShortcode" />
-                }
-              }
-              @if (currentTarget.kind !== 'label') {
-                <!-- A disabled checkbox shows no tooltip of its own, so its wrapper carries it. -->
-                <div
-                  class="only-empty"
-                  [matTooltip]="'pages.dataBrowser.bulkEdit.onlyEmptyMultipleTooltip' | translate"
-                  [matTooltipDisabled]="!onlyEmptyLocked()">
-                  <mat-checkbox formControlName="onlyEmpty" data-cy="bulk-edit-only-empty">
-                    {{ 'pages.dataBrowser.bulkEdit.onlyEmpty' | translate }}
-                  </mat-checkbox>
-                  <p class="hint">
-                    @if (onlyEmptyLocked()) {
-                      <mat-icon aria-hidden="true" class="hint-icon">lock</mat-icon>
+              <div class="block">
+                <span class="block-label">{{ 'pages.dataBrowser.bulkEdit.property' | translate }}</span>
+                <mat-form-field class="property-field">
+                  <mat-icon matPrefix class="kind-icon">{{ kindIcons[currentTarget.kind] }}</mat-icon>
+                  <mat-select
+                    formControlName="property"
+                    data-cy="bulk-edit-property"
+                    [attr.aria-label]="'pages.dataBrowser.bulkEdit.property' | translate">
+                    @for (group of targetGroups(); track group.labelKey) {
+                      <mat-optgroup [label]="group.labelKey | translate">
+                        @for (option of group.targets; track option.id) {
+                          <mat-option [value]="option.id">{{ option.label }}</mat-option>
+                        }
+                      </mat-optgroup>
                     }
-                    {{ onlyEmptyHintKey() | translate }}
-                  </p>
-                </div>
-                @if (overwriteCount()) {
-                  <p class="warning" role="status" data-cy="bulk-edit-overwrite-warning">
-                    <mat-icon aria-hidden="true">warning</mat-icon>
-                    {{ 'pages.dataBrowser.bulkEdit.overwriteWarning' | translate: { count: overwriteCount() } }}
+                  </mat-select>
+                </mat-form-field>
+                @if (isMultiple()) {
+                  <span class="kind-chip">{{ 'pages.dataBrowser.bulkEdit.severalAllowed' | translate }}</span>
+                }
+              </div>
+
+              <div class="block">
+                <span class="block-label">
+                  {{
+                    (valueCount() > 1 ? 'pages.dataBrowser.bulkEdit.newValues' : 'pages.dataBrowser.bulkEdit.newValue')
+                      | translate
+                  }}
+                </span>
+                @if (currentTarget.kind === 'label') {
+                  <div class="compact-value-editor">
+                    <mat-form-field>
+                      <input
+                        matInput
+                        formControlName="label"
+                        data-cy="bulk-edit-value-0"
+                        [attr.aria-label]="'pages.dataBrowser.bulkEdit.newValue' | translate" />
+                    </mat-form-field>
+                  </div>
+                  <p class="hint">{{ 'pages.dataBrowser.bulkEdit.setValueHint' | translate }}</p>
+                } @else {
+                  <!-- The values exactly as the resource creation form shows them, recreated for each property. -->
+                  @for (info of [propertyInfo()!]; track info.propDef.id) {
+                    <app-property-values-creator
+                      class="compact-value-editor creator"
+                      data-cy="bulk-edit-values"
+                      [myProperty]="info"
+                      [formArray]="form.controls.values"
+                      [resourceClassIri]="project().resourceClassIri"
+                      [projectIri]="project().projectIri"
+                      [projectShortcode]="project().projectShortcode" />
+                  }
+                }
+                @if (listLoadFailed()) {
+                  <p class="error" data-cy="bulk-edit-list-load-failed">
+                    {{ 'pages.dataBrowser.bulkEdit.listLoadFailed' | translate }}
                   </p>
                 }
-              }
-              @if (plan()?.severalKeptCount; as severalKeptCount) {
-                <p class="info" role="status" data-cy="bulk-edit-several-kept">
-                  <mat-icon aria-hidden="true">layers</mat-icon>
-                  {{ 'pages.dataBrowser.bulkEdit.severalKept' | translate: { count: severalKeptCount } }}
-                </p>
-              }
-              @if (plan()?.noRightsCount; as noRightsCount) {
-                <p class="info" role="status" data-cy="bulk-edit-no-rights">
-                  <mat-icon aria-hidden="true">lock</mat-icon>
-                  {{ 'pages.dataBrowser.bulkEdit.noRightsSkipped' | translate: { count: noRightsCount } }}
-                </p>
-              }
-              @if (listLoadFailed()) {
-                <p class="error" data-cy="bulk-edit-list-load-failed">
-                  {{ 'pages.dataBrowser.bulkEdit.listLoadFailed' | translate }}
-                </p>
+              </div>
+
+              @if (currentTarget.kind !== 'label') {
+                <div class="block">
+                  <span class="block-label" id="bulk-edit-which">
+                    {{ 'pages.dataBrowser.bulkEdit.whichResources' | translate }}
+                  </span>
+                  <mat-radio-group
+                    class="choices"
+                    formControlName="onlyEmpty"
+                    aria-labelledby="bulk-edit-which"
+                    data-cy="bulk-edit-only-empty">
+                    <mat-radio-button class="choice" [value]="true" data-cy="bulk-edit-choice-empty">
+                      <span class="choice-text">
+                        <span class="choice-title">{{ 'pages.dataBrowser.bulkEdit.onlyWhereEmpty' | translate }}</span>
+                        <span class="choice-hint">
+                          {{
+                            'pages.dataBrowser.bulkEdit.onlyWhereEmptyHint'
+                              | translate: { property: currentTarget.label }
+                          }}
+                        </span>
+                      </span>
+                      <span class="badge" data-cy="bulk-edit-choice-empty-count">{{
+                        choiceCounts().empty | number
+                      }}</span>
+                    </mat-radio-button>
+                    <mat-radio-button
+                      class="choice"
+                      [value]="false"
+                      [disabled]="onlyEmptyLocked()"
+                      data-cy="bulk-edit-choice-replace">
+                      <span class="choice-text">
+                        <span class="choice-title">{{ 'pages.dataBrowser.bulkEdit.alsoReplace' | translate }}</span>
+                        <span class="choice-hint">
+                          @if (onlyEmptyLocked()) {
+                            <mat-icon aria-hidden="true" class="hint-icon">lock</mat-icon>
+                            {{ 'pages.dataBrowser.bulkEdit.alsoReplaceLocked' | translate }}
+                          } @else {
+                            {{
+                              'pages.dataBrowser.bulkEdit.alsoReplaceHint'
+                                | translate: { property: currentTarget.label }
+                            }}
+                          }
+                        </span>
+                      </span>
+                      <span class="badge" data-cy="bulk-edit-choice-replace-count">
+                        {{ onlyEmptyLocked() ? '—' : (choiceCounts().replace | number) }}
+                      </span>
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </div>
               }
             </form>
 
@@ -218,7 +250,7 @@ const READ_CHUNK_SIZE = 25;
               <div class="preview-header">
                 <mat-icon aria-hidden="true">visibility</mat-icon>
                 <span class="preview-title">{{ 'pages.dataBrowser.bulkEdit.preview' | translate }}</span>
-                @if (plan(); as p) {
+                @if (plan()) {
                   <span class="preview-count" data-cy="bulk-edit-preview-count">
                     {{
                       'pages.dataBrowser.bulkEdit.previewCount'
@@ -229,29 +261,46 @@ const READ_CHUNK_SIZE = 25;
               </div>
               <div class="preview-list">
                 @if (plan(); as p) {
-                  @for (group of previewGroups(); track group.resource.id) {
-                    <div class="change" data-cy="bulk-edit-change">
-                      <div class="label">{{ group.resource.label }}</div>
-                      @for (change of group.changes; track $index) {
-                        <div class="diff">
-                          @if (change.before === null) {
-                            <span class="empty">{{ 'pages.dataBrowser.bulkEdit.empty' | translate }}</span>
-                          } @else {
-                            <del [class.chip]="isList()">{{ change.before }}</del>
-                          }
-                          <mat-icon aria-hidden="true">arrow_forward</mat-icon>
-                          <ins [class.chip]="isList()">{{ change.after }}</ins>
-                        </div>
+                  @for (group of outcomeGroups(); track group.kind) {
+                    <div class="group" [attr.data-cy]="'bulk-edit-group-' + group.kind">
+                      <button
+                        type="button"
+                        class="group-header"
+                        [attr.aria-expanded]="isOpen(group.kind)"
+                        (click)="toggleGroup(group.kind)">
+                        <mat-icon aria-hidden="true" class="chevron">
+                          {{ isOpen(group.kind) ? 'expand_less' : 'expand_more' }}
+                        </mat-icon>
+                        <mat-icon aria-hidden="true" [class]="'status ' + group.kind">{{ group.icon }}</mat-icon>
+                        <span class="group-title">{{ group.titleKey | translate }}</span>
+                        <span class="group-count">{{ group.count }}</span>
+                      </button>
+                      @if (isOpen(group.kind)) {
+                        @for (item of group.items; track item.resource.id) {
+                          <div class="group-item" data-cy="bulk-edit-change">
+                            <span class="item-label">{{ item.resource.label }}</span>
+                            <span class="item-values">
+                              @for (change of item.changes; track $index) {
+                                @if (change.before !== null) {
+                                  <del class="value">{{ change.before }}</del>
+                                  <mat-icon aria-hidden="true" class="arrow">arrow_forward</mat-icon>
+                                }
+                                <ins class="value">{{ change.after }}</ins>
+                              }
+                            </span>
+                          </div>
+                        }
+                        @for (reason of group.reasons; track reason.key) {
+                          <div class="group-item reason" [attr.data-cy]="'bulk-edit-reason-' + reason.key">
+                            {{ reason.labelKey | translate: { count: reason.count } }}
+                          </div>
+                        }
                       }
                     </div>
-                  } @empty {
+                  }
+                  @if (!p.changes.length) {
                     <p class="note" data-cy="bulk-edit-nothing-to-change">
                       {{ 'pages.dataBrowser.bulkEdit.nothingToChange' | translate }}
-                    </p>
-                  }
-                  @if (p.changes.length && p.unchangedCount) {
-                    <p class="note">
-                      {{ 'pages.dataBrowser.bulkEdit.unchangedCount' | translate: { count: p.unchangedCount } }}
                     </p>
                   }
                 } @else {
@@ -317,7 +366,7 @@ const READ_CHUNK_SIZE = 25;
     <footer class="footer">
       @switch (step()) {
         @case ('edit') {
-          <span class="footer-hint">{{ 'pages.dataBrowser.bulkEdit.liveHint' | translate }}</span>
+          <span class="footer-hint"></span>
           <button mat-button type="button" (click)="close()">{{ 'ui.common.actions.cancel' | translate }}</button>
           @if (target()) {
             <button
@@ -327,7 +376,7 @@ const READ_CHUNK_SIZE = 25;
               data-cy="bulk-edit-apply"
               [disabled]="!plan()?.changes?.length"
               (click)="apply(plan()!.changes)">
-              {{ 'pages.dataBrowser.bulkEdit.apply' | translate: { count: plan()?.changes?.length ?? 0 } }}
+              {{ 'pages.dataBrowser.bulkEdit.applyTo' | translate: { count: changedResourceCount() } }}
             </button>
           }
         }
@@ -419,11 +468,203 @@ const READ_CHUNK_SIZE = 25;
         padding: 20px 24px;
         overflow: auto;
       }
+      /* Editing: the form on the left, the preview beside it, each scrolling on its own. */
+      .body.split {
+        flex-direction: row;
+        gap: 0;
+        padding: 0;
+        overflow: hidden;
+      }
       .form {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 20px;
         flex: none;
+      }
+      .split .form {
+        width: 440px;
+        padding: 20px 20px 20px 24px;
+        border-right: 1px solid #e5e7eb; /* $cool-gray-200 */
+        overflow: auto;
+      }
+      .split .preview {
+        flex: 1;
+        min-width: 0;
+        margin: 16px;
+        background: #fff;
+      }
+      .split {
+        background: #f9fafb; /* $cool-gray-50 */
+      }
+      .split .form {
+        background: #fff;
+      }
+      .block {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .block-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #4b5563; /* $cool-gray-600 */
+      }
+      .property-field {
+        width: 100%;
+      }
+      .kind-chip {
+        align-self: flex-start;
+        padding: 0 8px;
+        border-radius: 9px;
+        background: #f3f4f6; /* $cool-gray-100 */
+        color: #4b5563; /* $cool-gray-600 */
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 18px;
+      }
+      .choices {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .choice {
+        border: 1px solid #e5e7eb; /* $cool-gray-200 */
+        border-radius: 6px;
+        padding: 4px 10px 4px 0;
+      }
+      .choice.mat-mdc-radio-checked {
+        border-color: #336790; /* $primary */
+        background: #f5f8fb;
+      }
+      .choice ::ng-deep .mdc-form-field {
+        width: 100%;
+        align-items: flex-start;
+      }
+      .choice ::ng-deep .mdc-label {
+        flex: 1;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding-top: 10px;
+      }
+      .choice-text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .choice-title {
+        font-weight: 500;
+      }
+      .choice-hint {
+        font-size: 12px;
+        line-height: 16px;
+        color: #6b7280; /* $cool-gray-500 */
+      }
+      .badge {
+        flex: none;
+        padding: 0 8px;
+        border-radius: 11px;
+        background: #f3f4f6; /* $cool-gray-100 */
+        color: #374151; /* $cool-gray-700 */
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 22px;
+        white-space: nowrap;
+      }
+      .choice.mat-mdc-radio-checked .badge {
+        background: #336790; /* $primary */
+        color: #fff;
+      }
+      .group {
+        border-bottom: 1px solid #e5e7eb; /* $cool-gray-200 */
+      }
+      .group-header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border: 0;
+        background: #fafafa;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        text-align: left;
+        cursor: pointer;
+      }
+      .group-header mat-icon {
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+      }
+      .chevron {
+        color: #6b7280; /* $cool-gray-500 */
+      }
+      .status.new {
+        color: #0f766e; /* $green-700 */
+      }
+      .status.replaced {
+        color: #b45309; /* $amber-700 */
+      }
+      .status.unchanged {
+        color: #9ca3af; /* $cool-gray-400 */
+      }
+      .group-title {
+        flex: 1;
+      }
+      .group-count {
+        font-size: 12px;
+        font-weight: 400;
+        color: #6b7280; /* $cool-gray-500 */
+      }
+      .group-item {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        padding: 3px 10px 3px 32px;
+        border-top: 1px solid #f3f4f6; /* $cool-gray-100 */
+        font-size: 12px;
+        line-height: 18px;
+      }
+      .group-item.reason {
+        color: #6b7280; /* $cool-gray-500 */
+      }
+      .item-label {
+        flex: none;
+        width: 140px;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .item-values {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 6px;
+      }
+      .value {
+        padding: 1px 6px;
+        border-radius: 4px;
+        text-decoration: none;
+      }
+      del.value {
+        background: #fdecef;
+        color: #b9193c; /* $red-800 */
+        text-decoration: line-through;
+      }
+      ins.value {
+        background: #e6f4f1;
+        color: #115e59; /* $green-800 */
+        font-weight: 500;
+      }
+      .arrow {
+        width: 14px;
+        height: 14px;
+        font-size: 14px;
+        color: #9ca3af; /* $cool-gray-400 */
       }
       .values {
         display: flex;
@@ -433,7 +674,7 @@ const READ_CHUNK_SIZE = 25;
       /* The creation form hangs each value's buttons in a 140px column right of the field. */
       .creator {
         display: block;
-        margin-right: 100px;
+        margin-right: 96px;
       }
       .compact-value-editor mat-form-field {
         width: 100%;
@@ -607,20 +848,20 @@ const READ_CHUNK_SIZE = 25;
     `,
   ],
   imports: [
+    DecimalPipe,
     ReactiveFormsModule,
     MatButton,
-    MatCheckbox,
+    MatRadioButton,
+    MatRadioGroup,
     MatFormField,
     MatIcon,
     MatIconButton,
     MatInput,
-    MatLabel,
     MatOptgroup,
     MatOption,
     MatPrefix,
     MatProgressBar,
     MatSelect,
-    MatTooltip,
     TranslatePipe,
     AppProgressIndicatorComponent,
     PropertyValuesCreatorComponent,
@@ -672,7 +913,6 @@ export class BulkEditDialogComponent {
     })).filter(group => group.targets.length)
   );
   readonly target = computed(() => this.targets().find(target => target.id === this.formValue().property) ?? null);
-  readonly isList = computed(() => this.target()?.kind === 'list');
   readonly isMultiple = computed(() => {
     const target = this.target();
     return !!target && target.kind !== 'label' && target.multiple;
@@ -697,15 +937,6 @@ export class BulkEditDialogComponent {
   });
   /** Several new values can only fill empty properties, so the checkbox locks ticked. */
   readonly onlyEmptyLocked = computed(() => !canOverwrite(this.valueCount()));
-  readonly onlyEmptyHintKey = computed(() => {
-    if (this.onlyEmptyLocked()) {
-      return 'pages.dataBrowser.bulkEdit.onlyEmptyMultipleTooltip';
-    }
-    if (!this.formValue().onlyEmpty && this.isMultiple()) {
-      return 'pages.dataBrowser.bulkEdit.overwriteMultipleHint';
-    }
-    return 'pages.dataBrowser.bulkEdit.onlyEmptyHint';
-  });
   /** What the editors need to know about the project, taken from the first resource. */
   readonly project = computed(() => {
     const [first] = this._resources();
@@ -728,20 +959,70 @@ export class BulkEditDialogComponent {
   readonly changedResourceCount = computed(
     () => new Set(this.plan()?.changes.map(change => change.resource.id) ?? []).size
   );
-  /** The preview shows each resource once, with every value it gets. */
-  readonly previewGroups = computed(() => {
-    const groups = new Map<string, { resource: ReadResource; changes: BulkEditChange[] }>();
-    for (const change of this.plan()?.changes ?? []) {
-      const group = groups.get(change.resource.id) ?? { resource: change.resource, changes: [] };
-      group.changes.push(change);
-      groups.set(change.resource.id, group);
+  /** What happens to each resource, as the preview groups it: new values, replaced values, unchanged. */
+  readonly outcomeGroups = computed(() => {
+    const plan = this.plan();
+    if (!plan) {
+      return [];
     }
-    return [...groups.values()];
+    const byResource = new Map<string, { resource: ReadResource; changes: BulkEditChange[] }>();
+    for (const change of plan.changes) {
+      const item = byResource.get(change.resource.id) ?? { resource: change.resource, changes: [] };
+      item.changes.push(change);
+      byResource.set(change.resource.id, item);
+    }
+    const items = [...byResource.values()];
+    const isLabel = this.target()?.kind === 'label';
+    const replaced = items.filter(item => isLabel || item.changes.some(change => change.value));
+    const added = items.filter(item => !replaced.includes(item));
+    const reasons = [
+      { key: 'hasValue', labelKey: 'pages.dataBrowser.bulkEdit.reasonHasValue', count: plan.unchangedCount },
+      { key: 'several', labelKey: 'pages.dataBrowser.bulkEdit.reasonSeveral', count: plan.severalKeptCount },
+      { key: 'noRights', labelKey: 'pages.dataBrowser.bulkEdit.reasonNoRights', count: plan.noRightsCount },
+    ].filter(reason => reason.count);
+    const none: typeof reasons = [];
+    return [
+      {
+        kind: 'new' as const,
+        icon: 'add_circle',
+        titleKey: 'pages.dataBrowser.bulkEdit.outcomeNew',
+        count: added.length,
+        items: added,
+        reasons: none,
+      },
+      {
+        kind: 'replaced' as const,
+        icon: isLabel ? 'edit' : 'change_circle',
+        titleKey: isLabel ? 'pages.dataBrowser.bulkEdit.outcomeLabel' : 'pages.dataBrowser.bulkEdit.outcomeReplaced',
+        count: replaced.length,
+        items: replaced,
+        reasons: none,
+      },
+      {
+        kind: 'unchanged' as const,
+        icon: 'remove_circle_outline',
+        titleKey: 'pages.dataBrowser.bulkEdit.outcomeUnchanged',
+        count: reasons.reduce((sum, reason) => sum + reason.count, 0),
+        items: [] as typeof items,
+        reasons,
+      },
+    ].filter(group => group.count);
   });
-  /** Values written over, so the user sees what is lost before applying. */
-  readonly overwriteCount = computed(() =>
-    this.target()?.kind === 'label' ? 0 : (this.plan()?.changes.filter(change => change.value).length ?? 0)
-  );
+  /** Unchanged resources start folded: they only explain why. */
+  private readonly _folded = signal(new Set<string>(['unchanged']));
+  /** How many resources each choice changes, shown before the user picks; a placeholder value counts them early. */
+  readonly choiceCounts = computed(() => {
+    const target = this.target();
+    if (!target || target.kind === 'label') {
+      return { empty: 0, replace: 0 };
+    }
+    const values = _operationOf(target, this.formValue(), this.listOptions())?.values ?? [
+      { content: '\u0000', display: '' },
+    ];
+    const count = (onlyEmpty: boolean) =>
+      new Set(planBulkEdit(this._resources(), target, { values, onlyEmpty }).changes.map(c => c.resource.id)).size;
+    return { empty: count(true), replace: count(false) };
+  });
 
   readonly running = signal<BulkEditChange[]>([]);
   readonly processed = signal(0);
@@ -755,6 +1036,22 @@ export class BulkEditDialogComponent {
 
   private readonly _changedIris = new Set<string>();
   private readonly _cancel$ = new Subject<void>();
+
+  isOpen(kind: string): boolean {
+    return !this._folded().has(kind);
+  }
+
+  toggleGroup(kind: string) {
+    this._folded.update(folded => {
+      const next = new Set(folded);
+      if (next.has(kind)) {
+        next.delete(kind);
+      } else {
+        next.add(kind);
+      }
+      return next;
+    });
+  }
 
   constructor() {
     this._loadResources();
@@ -878,11 +1175,9 @@ export class BulkEditDialogComponent {
   /** Locks the checkbox ticked while several values are typed, and frees it again for one. */
   private _syncOnlyEmpty(count: number) {
     const { onlyEmpty } = this.form.controls;
-    if (!canOverwrite(count)) {
-      onlyEmpty.setValue(true, { emitEvent: false });
-      onlyEmpty.disable();
-    } else if (onlyEmpty.disabled) {
-      onlyEmpty.enable();
+    // Several values can only fill empty properties: “also replace” is then disabled, so fall back.
+    if (!canOverwrite(count) && !onlyEmpty.value) {
+      onlyEmpty.setValue(true);
     }
   }
 
@@ -905,8 +1200,8 @@ export class BulkEditDialogComponent {
       .subscribe({
         next: resources => {
           this._resources.set(resources);
-          // A property is preselected rather than the label, which matters more to get wrong.
-          const preselected = this.targets().find(target => target.kind !== 'label') ?? this.targets()[0];
+          // The label comes first: every resource has one.
+          const [preselected] = this.targets();
           if (preselected && !this.form.controls.property.value) {
             this.form.controls.property.setValue(preselected.id);
           }

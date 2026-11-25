@@ -147,10 +147,18 @@ const meta: Meta<BulkEditDialogComponent> = {
   component: BulkEditDialogComponent,
   argTypes: {},
   // The side panel's size, as the selection bar opens it.
-  decorators: [componentWrapperDecorator(story => `<div style="width: 600px; height: 800px">${story}</div>`)],
+  decorators: [componentWrapperDecorator(story => `<div style="width: 1100px; height: 800px">${story}</div>`)],
 };
 export default meta;
 type Story = StoryObj<BulkEditDialogComponent>;
+
+export const OpensOnTheLabel: Story = {
+  decorators: [applicationConfig({ providers: providers(letters) })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByTestId('bulk-edit-property')).toHaveTextContent('Label');
+  },
+};
 
 export const SetsADefaultValueOnlyWhereEmptyAndReportsTheResult: Story = {
   decorators: [applicationConfig({ providers: providers(letters) })],
@@ -158,10 +166,13 @@ export const SetsADefaultValueOnlyWhereEmptyAndReportsTheResult: Story = {
     const canvas = within(canvasElement);
 
     await step('Set value is offered first and only fills empty values; type the value', async () => {
-      await expect(await canvas.findByTestId('bulk-edit-only-empty')).toHaveTextContent('Only update empty values');
+      await choose(canvas, 'bulk-edit-property', 'Ort');
+      await expect(within(await canvas.findByTestId('bulk-edit-choice-empty')).getByRole('radio')).toBeChecked();
+      await expect(canvas.getByTestId('bulk-edit-choice-empty-count')).toHaveTextContent('1');
       await typeValue(canvas, 0, 'Wien');
     });
-    await step('Only the letter without a place is changed', async () => {
+    await step('Only the letter without a place gets a value', async () => {
+      await expect(canvas.getByTestId('bulk-edit-group-new')).toHaveTextContent('Gets a value');
       await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(1);
       await expect(canvas.getByText('Postkarte an Paul Amadeus Pisk')).toBeInTheDocument();
     });
@@ -197,8 +208,9 @@ export const ListsAFailedValueAndOffersARetry: Story = {
     const canvas = within(canvasElement);
 
     await step('Overwrite a value the API refuses', async () => {
+      await choose(canvas, 'bulk-edit-property', 'Ort');
       await typeValue(canvas, 0, 'Wien');
-      await userEvent.click(within(canvas.getByTestId('bulk-edit-only-empty')).getByRole('checkbox'));
+      await userEvent.click(within(canvas.getByTestId('bulk-edit-choice-replace')).getByRole('radio'));
       await userEvent.click(canvas.getByTestId('bulk-edit-apply'));
     });
     await step('The failure is listed and can be retried', async () => {
@@ -256,27 +268,26 @@ export const OffersTheRichTextEditorOfResourceCreation: Story = {
   ],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByTestId('bulk-edit-property')).toHaveTextContent('Kommentar');
+    await choose(canvas, 'bulk-edit-property', 'Kommentar');
     await expect(await valueEditor(canvas, 0)).toBeInTheDocument();
   },
 };
 
-export const OverwritesASingleValueWhenOnlyEmptyIsUnticked: Story = {
+export const ReplacesASingleValueWhenAskedTo: Story = {
   decorators: [applicationConfig({ providers: providers(letters) })],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Type a value and untick Only update empty values', async () => {
+    await step('Type a value and choose to also replace the current value', async () => {
+      await choose(canvas, 'bulk-edit-property', 'Ort');
       await typeValue(canvas, 0, 'Wien');
-      await userEvent.click(within(canvas.getByTestId('bulk-edit-only-empty')).getByRole('checkbox'));
+      await userEvent.click(within(canvas.getByTestId('bulk-edit-choice-replace')).getByRole('radio'));
     });
-    await step('The two existing places are overwritten, with a warning', async () => {
-      await expect(canvas.getByTestId('bulk-edit-overwrite-warning')).toHaveTextContent(
-        'Existing values overwritten: 1'
-      );
+    await step('The empty place is filled and the other one replaced, each in its group', async () => {
+      await expect(canvas.getByTestId('bulk-edit-group-new')).toHaveTextContent('Gets a value');
+      await expect(canvas.getByTestId('bulk-edit-group-replaced')).toHaveTextContent('Mödling');
       await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(2);
-      await expect(canvas.getByText('Mödling')).toBeInTheDocument();
-      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply changes (2)');
+      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply to 2 resource(s)');
     });
   },
 };
@@ -296,22 +307,24 @@ export const FillsAMultiValuePropertyWithSeveralValues: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('With one value, only empty is ticked and can be changed', async () => {
-      const onlyEmpty = within(await canvas.findByTestId('bulk-edit-only-empty')).getByRole('checkbox');
-      await expect(onlyEmpty).toBeChecked();
-      await expect(onlyEmpty).toBeEnabled();
+    await step('With one value, replacing can be chosen', async () => {
+      await choose(canvas, 'bulk-edit-property', 'Ort');
+      await expect(within(await canvas.findByTestId('bulk-edit-choice-replace')).getByRole('radio')).toBeEnabled();
     });
-    await step('Add a second value, which locks only empty', async () => {
+    await step('Add a second value, which rules replacing out', async () => {
       await typeValue(canvas, 0, 'Wien');
       // The creation form's own add button.
       await userEvent.click(within(canvas.getByTestId('bulk-edit-values')).getByRole('button', { name: /add_circle/ }));
       await typeValue(canvas, 1, 'Mödling');
-      await expect(within(canvas.getByTestId('bulk-edit-only-empty')).getByRole('checkbox')).toBeDisabled();
+      await expect(within(canvas.getByTestId('bulk-edit-choice-replace')).getByRole('radio')).toBeDisabled();
+      await expect(canvas.getByTestId('bulk-edit-choice-replace')).toHaveTextContent(
+        'Only possible with one new value'
+      );
     });
     await step('The postcard without a place gets both values', async () => {
       await expect(canvas.getAllByTestId('bulk-edit-change')).toHaveLength(1);
       await expect(canvas.getByText('Postkarte an Paul Amadeus Pisk')).toBeInTheDocument();
-      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply changes (2)');
+      await expect(canvas.getByTestId('bulk-edit-apply')).toHaveTextContent('Apply to 1 resource(s)');
     });
   },
 };
@@ -332,12 +345,12 @@ export const SkipsResourcesTheUserMayNotEdit: Story = {
     const canvas = within(canvasElement);
 
     await step('Set a place where it is empty', async () => {
+      await choose(canvas, 'bulk-edit-property', 'Ort');
       await typeValue(canvas, 0, 'Wien');
     });
-    await step('The postcard the user may only view is skipped, and the panel says so', async () => {
-      await expect(canvas.getByTestId('bulk-edit-no-rights')).toHaveTextContent(
-        'Resources you may not edit are skipped: 1'
-      );
+    await step('The postcard the user may only view is not changed, and the preview says why', async () => {
+      await userEvent.click(within(canvas.getByTestId('bulk-edit-group-unchanged')).getByRole('button'));
+      await expect(canvas.getByTestId('bulk-edit-reason-noRights')).toHaveTextContent('You may not edit: 1');
       await expect(canvas.queryAllByTestId('bulk-edit-change')).toHaveLength(0);
       await expect(canvas.getByTestId('bulk-edit-apply')).toBeDisabled();
     });

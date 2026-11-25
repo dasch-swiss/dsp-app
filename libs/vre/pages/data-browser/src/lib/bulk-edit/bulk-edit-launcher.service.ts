@@ -21,7 +21,7 @@ export class BulkEditLauncher {
     return this._dialog
       .open<BulkEditDialogComponent, BulkEditDialogProps, BulkEditDialogResult>(BulkEditDialogComponent, {
         ...DspDialogConfig.dialogDrawerConfig({ resourceIris, scope }, true),
-        width: '600px',
+        width: '1100px',
         maxWidth: '100vw',
         minWidth: 0,
         autoFocus: false,
