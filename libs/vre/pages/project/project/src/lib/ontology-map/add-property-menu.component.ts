@@ -27,7 +27,7 @@ import { AvailableProperties, DATA_MODEL_EDITOR, injectDataModelEditing } from '
         data-cy="class-panel-add-property"
         [class.row]="row()"
         [matMenuTriggerFor]="menu"
-        (menuOpened)="opened.set(true)">
+        (menuOpened)="openings.update(count => count + 1)">
         <mat-icon>add</mat-icon>
         {{ a + '.addProperty' | translate }}
       </button>
@@ -108,13 +108,14 @@ export class AddPropertyMenuComponent {
 
   readonly categories: PropertyCategory[] = DefaultProperties.data;
 
-  /** The menu was opened once: the project's properties are read then, not with every panel. */
-  readonly opened = signal(false);
+  /**
+   * How often the menu was opened: the project's properties are read each time, not with every panel, so a property
+   * created or taken off the class since shows as it now is. The list read before shows until the new one is in.
+   */
+  readonly openings = signal(0);
   readonly available = toSignal<AvailableProperties[] | undefined>(
-    toObservable(this.opened).pipe(
-      switchMap(opened =>
-        opened && this._editing ? this._editing.availableProperties(this.classIri()) : of(undefined)
-      )
+    toObservable(this.openings).pipe(
+      switchMap(count => (count && this._editing ? this._editing.availableProperties(this.classIri()) : of(undefined)))
     )
   );
 
