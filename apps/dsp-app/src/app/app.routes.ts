@@ -1,13 +1,10 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Params, Router, Routes } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { ListPageComponent } from '@dasch-swiss/vre/pages/ontology/list';
+import { DataModelEditorService } from '@dasch-swiss/vre/pages/ontology/ontology';
 import {
-  DataModelsPageComponent,
-  OntologyEditorPageComponent,
-  OntologyPageComponent,
-  OntologyPropertiesComponent,
-} from '@dasch-swiss/vre/pages/ontology/ontology';
-import {
+  DATA_MODEL_EDITOR,
   CollaborationPageComponent,
   CreateProjectFormPageComponent,
   DataBrowserPageComponent,
@@ -16,6 +13,11 @@ import {
   EditProjectFormPageComponent,
   ImageSettingsComponent,
   LegalSettingsComponent,
+  OntologyMapPageComponent,
+  DataModelClassesComponent,
+  DataModelPropertiesComponent,
+  DataModelListsComponent,
+  DataModelsTreePageComponent,
   ProjectAdminGuard,
   ProjectPageComponent,
   ProjectPageGuard,
@@ -38,11 +40,26 @@ import { NoResultsFoundComponent, NoResultsFoundPageComponent, NotAllowedPageCom
 import { AuthGuard } from './main/guard/auth.guard';
 import { SysAdminGuard } from './main/guard/sys-admin.guard';
 
+/**
+ * Sends a former editor link to the project's Data models page, at its section, showing the data model the link
+ * named. A guard, not a redirect: a redirect neither sees the project in a parent route nor keeps a query.
+ */
+const toDataModels: CanActivateFn = route => {
+  const params = Object.assign({}, ...route.pathFromRoot.map(step => step.params)) as Params;
+  const section = params['section'] ? [params['section']] : [];
+  return inject(Router).createUrlTree(
+    [RouteConstants.project, params[RouteConstants.uuidParameter], RouteConstants.dataModels, ...section],
+    { queryParams: { [RouteConstants.ontologyParameter]: params[RouteConstants.ontoParameter] } }
+  );
+};
+
 export const routes: Routes = [
   {
     path: RouteConstants.projectUuidRelative,
     component: ProjectPageComponent,
     canActivate: [ProjectPageGuard],
+    // Editing a class or a property from the Data and Data models tabs opens the data model editor's dialog in place.
+    providers: [{ provide: DATA_MODEL_EDITOR, useClass: DataModelEditorService }],
     children: [
       {
         path: RouteConstants.home,
@@ -60,32 +77,25 @@ export const routes: Routes = [
           },
         ],
       },
+      // The data models: a rail listing every data model, each folding open on its sections.
       {
         path: RouteConstants.dataModels,
-        component: DataModelsPageComponent,
-      },
-      {
-        path: RouteConstants.ontologyEditorRelative,
-        component: OntologyPageComponent,
+        component: DataModelsTreePageComponent,
         children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            redirectTo: RouteConstants.classes,
-          },
-          {
-            path: RouteConstants.classes,
-            component: OntologyEditorPageComponent,
-          },
-          {
-            path: RouteConstants.properties,
-            component: OntologyPropertiesComponent,
-          },
+          { path: '', pathMatch: 'full', redirectTo: RouteConstants.classes },
+          { path: RouteConstants.graph, component: OntologyMapPageComponent },
+          { path: RouteConstants.classes, component: DataModelClassesComponent },
+          { path: RouteConstants.properties, component: DataModelPropertiesComponent },
+          { path: RouteConstants.lists, component: DataModelListsComponent },
+          { path: `${RouteConstants.list}/:${RouteConstants.listParameter}`, component: ListPageComponent },
         ],
       },
+      // The former editor's links name their data model in the path: it moves to the query, so the same one opens.
+      { path: `${RouteConstants.ontologyEditorRelative}/:section`, canActivate: [toDataModels], children: [] },
+      { path: RouteConstants.ontologyEditorRelative, canActivate: [toDataModels], children: [] },
       {
         path: `${RouteConstants.list}/:${RouteConstants.listParameter}`,
-        component: ListPageComponent,
+        redirectTo: `${RouteConstants.dataModels}/${RouteConstants.list}/:${RouteConstants.listParameter}`,
       },
       {
         path: RouteConstants.settings,

@@ -70,8 +70,12 @@ a {
 
 // --------------------------------------
 
-
 // resource
+
+// "Add existing property": wide enough for each property's second line (type, classes using it, name).
+.mat-mdc-menu-panel.existing-properties {
+  max-width: 420px;
+}
 
 // file representation menu styling
 .representation-menu {

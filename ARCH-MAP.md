@@ -385,8 +385,8 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Bazel package**: `//libs/vre/pages/project/project`
 - **Paths**: `libs/vre/pages/project/project/**`
-- **Purpose**: The project area: the project shell and its navigation, the data browser page, collaboration and all project settings (image, legal, resource metadata, view restrictions), and the project create and edit forms.
-- **Key entities**: `ProjectPageService`, `DataBrowserPageService`, `ProjectPageGuard`, `ProjectAdminGuard`, `CollaborationPageService`, `ViewRestrictionsPageService`, `ResourceClassSidenavComponent`, `ResourcesListFetcherComponent`, `DataTableFetcherComponent`, `DataClassViewComponent`, `DataClassHeaderComponent`, `DataClassQueryService`, `DataClassUrlStateService`, `provideDataClassSearch`, `ReusableProjectFormComponent`, `LicenseCaptionsMapping`, `shortcode-exists.validator`
+- **Purpose**: The project area: the project shell and its navigation, the data browser page, the Data models pages (classes as cards, properties, controlled vocabularies and the diagram, in `src/lib/data-models-rail/` and `src/lib/ontology-map/`), collaboration and all project settings (image, legal, resource metadata, view restrictions), and the project create and edit forms.
+- **Key entities**: `ProjectPageService`, `DataBrowserPageService`, `ProjectPageGuard`, `ProjectAdminGuard`, `CollaborationPageService`, `ViewRestrictionsPageService`, `ResourceClassSidenavComponent`, `ResourcesListFetcherComponent`, `DataTableFetcherComponent`, `DataClassViewComponent`, `DataClassHeaderComponent`, `DataClassQueryService`, `DataClassUrlStateService`, `provideDataClassSearch`, `ReusableProjectFormComponent`, `LicenseCaptionsMapping`, `shortcode-exists.validator`, `DataModelsTreePageComponent`, `DataModelsRailState`, `DATA_MODEL_EDITOR`, `injectDataModelEditing`, `OntologyGraphComponent`
 - **Public interface**: 19 `export *` from `src/index.ts`, but only the routed components, two services and two guards are consumed elsewhere. In practice the outside world imports one symbol: `ProjectPageService`.
 - **Local-context kit**: `src/index.ts`, `src/lib/project-page.service.ts`, `src/lib/project-page.guard.ts`, `src/lib/data-browser-page.component.ts`, `src/lib/project-settings/view-restrictions/view-restrictions-page.service.ts`, `src/lib/stories.helpers.ts`, `apps/dsp-app/src/app/app.routes.ts`
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/core/error-handler`, `vre/core/session`, `vre/pages/data-browser`, `vre/pages/search/search-filters`, `vre/pages/system/system`, `vre/pages/user-settings/user`, `vre/resource-editor/resource-editor`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/styles`, `vre/ui/ui`
@@ -395,6 +395,7 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
   - Page-level state is a component-provided service listed in `providers:`, not a root singleton. `docs-only`
   - A project identifier is a UUID in routes and an IRI in services. `ProjectService.IriToUuid` and `uuidToIri` are the only permitted conversion. `docs-only`
   - License captions are managed in `src/lib/description/license-captions-mapping.ts`. `docs-only`
+  - The Data models pages edit only through `injectDataModelEditing()`, which calls the `DATA_MODEL_EDITOR` the app provides (`DataModelEditorService` in `vre/pages/ontology/ontology`); without it they only read. This library does not import the editor library. `structure`
   - Export from `src/index.ts` only when a symbol is routed or consumed across a library boundary. `docs-only`
 - **Durable state**:
   - `ProjectPageService`, root-provided, holding `_currentProjectIdSubject`, `_reloadProjectSubject` and a mutable `_currentProject` written by a `tap` inside `currentProject$`. The synchronous getter throws if nothing has subscribed yet. Seeded by `ProjectPageGuard.canActivate`, so navigation order matters.
@@ -429,18 +430,18 @@ Load this file on demand for blast-radius and boundary questions. It is not mean
 
 - **Bazel package**: `//libs/vre/pages/ontology/ontology`
 - **Paths**: `libs/vre/pages/ontology/ontology/**`
-- **Purpose**: The data-model editor: the data-model landing page, the resource-class editor and the property editor, including cardinality and GUI-element configuration.
-- **Key entities**: `OntologyEditService`, `OntologyPageService`, `MakeOntologyFor`, `ResourceClassInfo`, `PropertyInfo`, `ClassPropertyInfo`, `PropToAdd`, `PropertyForm`, `CreatePropertyData`, `CardinalityComponent`, `GuiAttrListComponent`
-- **Public interface**: Four routed components. `OntologyEditService` is deliberately not exported; it is component-scoped.
-- **Local-context kit**: `src/index.ts`, `src/lib/ontology-page.component.ts`, `src/lib/services/ontology-edit.service.ts`, `src/lib/services/make-ontology-for.ts`, `src/lib/ontology.types.ts`, `src/lib/forms/property-form/property-form.type.ts`, `libs/vre/shared/app-helper-services/src/lib/default-data/default-properties.ts`
+- **Purpose**: Editing a data model for the Data models pages: the dialogs that create and edit data models, resource classes and properties, and the service that saves classes' properties, cardinalities and form order. It has no page of its own.
+- **Key entities**: `DataModelEditorService`, `OntologyEditService`, `MakeOntologyFor`, `PropertyForm`, `CreatePropertyData`, `EditPropertyFormDialogComponent`, `CreateResourceClassDialogComponent`, `GuiAttrListComponent`
+- **Public interface**: One export, `DataModelEditorService`, which the app provides as `DATA_MODEL_EDITOR` (declared in `vre/pages/project/project`). `OntologyEditService` is not exported: the editor service creates one per dialog or save, on the data model of what it edits.
+- **Local-context kit**: `src/index.ts`, `src/lib/forms/data-model-editor.service.ts`, `src/lib/services/ontology-edit.service.ts`, `src/lib/services/make-ontology-for.ts`, `src/lib/ontology.types.ts`, `src/lib/forms/property-form/property-form.type.ts`, `libs/vre/pages/project/project/src/lib/ontology-map/data-model-editor.ts`, `libs/vre/shared/app-helper-services/src/lib/default-data/default-properties.ts`
 - **Depends on**: `dsp-js`, `vre/3rd-party-services/api`, `vre/3rd-party-services/open-api`, `vre/core/config`, `vre/pages/ontology/list`, `vre/pages/project/project`, `vre/pages/user-settings/user`, `vre/shared/app-common`, `vre/shared/app-common-to-move`, `vre/shared/app-helper-services`, `vre/ui/notification`, `vre/ui/progress-indicator`, `vre/ui/string-literal`, `vre/ui/styles`, `vre/ui/ui`
 - **Used by**: `dsp-app`
 - **Boundary rules**:
   - The property-type registry is not in this library. Adding a property type touches `default-properties.ts` and `ontology.service.ts` in `vre/shared/app-helper-services`, then possibly `make-ontology-for.ts` here and a branch in `property-form.component.ts`. Four files, two libraries, no single registry. `docs-only`
-  - `OntologyPageComponent` owns the DI scope through `providers: [OntologyPageService, OntologyEditService]`. `structure`
+  - Writes to a class's properties (add, remove, cardinality, form order) go through `DataModelEditorService`, which runs them one after another: each reads the data model afresh, since the API refuses a change made from an older reading. `structure`
   - A "cardinality" is the class-to-property binding with its count, which is dsp-api's meaning of the term; the dsp-js `Cardinality` enum is only the count. Two code comments in this library complain about the overlap. See CONTEXT.md. `docs-only`
-- **Durable state**: `OntologyEditService`, component-scoped, roughly 670 lines, holding `_currentOntology`, `_currentOntologyInfo`, `_projectOntologiesSubject`, `_listsInProjectSubject`, `_isTransacting` and `_canDeletePropertyMap`. Two of those are `take(1)` snapshots of parent state (DEV-7130), so a controlled vocabulary created in `vre/pages/ontology/list` is stale here until re-navigation. `latestChangedItem` is a public BehaviorSubject written both by the service and by `property-item.component.ts`.
-- **Fingerprint**: `6480aa13df77`
+- **Durable state**: `OntologyEditService`, created per dialog or save and dropped after it, holding `_currentOntology`, `_currentOntologyInfo`, `_projectOntologiesSubject`, `_listsInProjectSubject`, `_isTransacting` and `_canDeletePropertyMap`. `DataModelEditorService` keeps only its queue of saves; after a save, the Data models pages read the whole project again through `ProjectPageService.reloadProject()`.
+- **Fingerprint**: `e5f069191c09`
 
 ### vre/pages/ontology/list
 

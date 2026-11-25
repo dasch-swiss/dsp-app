@@ -353,7 +353,6 @@
       },
       "list": {
         "deleteList": "Kontrolliertes Vokabular löschen",
-        "backToDataModels": "Zurück zu Datenmodellen",
         "editInfo": "Info zu kontrolliertem Vokabular bearbeiten",
         "deleteConfirmation": "Möchten Sie dieses kontrollierte Vokabular löschen?",
         "actionBubble": {
@@ -385,31 +384,10 @@
         }
       },
       "dataModels": {
-        "title": "Alle Datenmodelle",
         "info": "Ein Datenmodell organisiert Datenelemente und spezifiziert, wie sie miteinander in Beziehung stehen und durch welche Eigenschaften sie beschrieben werden.",
-        "createNew": "Neu erstellen",
-        "documentation": "Dokumentation zum Erstellen von Datenmodellen lesen",
         "vocabularies": {
-          "title": "Kontrollierte Vokabulare",
-          "info": "Kontrollierte Vokabulare sind hierarchische oder nicht-hierarchische Lexika von Referenzbegriffen. Aufgrund ihrer normativen oder standardisierten Natur verbessern kontrollierte Vokabulare die Datenqualität und machen die Datenbanksuche effizienter als Freitextfelder.",
-          "createNew": "Neu erstellen"
+          "info": "Kontrollierte Vokabulare sind hierarchische oder nicht-hierarchische Lexika von Referenzbegriffen. Aufgrund ihrer normativen oder standardisierten Natur verbessern kontrollierte Vokabulare die Datenqualität und machen die Datenbanksuche effizienter als Freitextfelder."
         }
-      },
-      "editor": {
-        "backToDataModels": "Zurück zu Datenmodellen",
-        "updatedOn": "Aktualisiert am:",
-        "editInfo": "Datenmodell-Info bearbeiten",
-        "deleteTooltip": "Datenmodell löschen",
-        "cannotDelete": "Dieses Datenmodell kann nicht gelöscht werden, da es verwendet wird!",
-        "deleteConfirmation": "Möchten Sie dieses Datenmodell löschen?"
-      },
-      "sidenav": {
-        "classes": "Klassen",
-        "properties": "Eigenschaften",
-        "collapseAll": "Alle einklappen",
-        "expandAll": "Alle ausklappen",
-        "createNewClass": "Neue Klasse erstellen",
-        "addProperty": "Eigenschaft hinzufügen"
       },
       "cardinality": {
         "multipleValues": "Mehrere Werte",
@@ -426,20 +404,6 @@
         "missingPropertyError": "Mindestens eine Ressource der Klasse \"{{className}}\" hat keine \"{{propertyLabel}}\"-Eigenschaft in Ihren Daten.",
         "missingPropertyHint": "Um die Kardinalität von \"{{propertyLabel}}\" auf erforderlich zu setzen, muss jede Ressource \"{{className}}\" vor dieser Änderung einen \"{{propertyLabel}}\"-Wert haben."
       },
-      "propertyItem": {
-        "edit": "Bearbeiten",
-        "removeFromClass": "Aus Klasse entfernen",
-        "copyId": "Eigenschafts-ID kopieren",
-        "idCopied": "Eigenschafts-ID in Zwischenablage kopiert!"
-      },
-      "propertyInfo": {
-        "usedIn": "Verwendet in",
-        "notUsed": "Nicht verwendet",
-        "cannotEdit": "Kann nicht bearbeitet werden",
-        "cannotDelete": "Kann nicht gelöscht werden",
-        "deleteConfirmation": "Möchten Sie diese Eigenschaft löschen?",
-        "restrictedTo": "Eingeschränkt auf {{className}}"
-      },
       "resourceClassInfo": {
         "collapse": "Einklappen",
         "expand": "Ausklappen",
@@ -447,9 +411,7 @@
         "edit": "Bearbeiten",
         "openInstances": "Instanzen öffnen",
         "copyId": "Klassen-ID kopieren",
-        "cannotDelete": "Diese Klasse kann nicht gelöscht werden, da sie verwendet wird!",
         "delete": "Löschen",
-        "deleteConfirmation": "Möchten Sie diese Ressourcenklasse löschen?",
         "idCopied": "Klassen-ID in Zwischenablage kopiert!"
       },
       "propertyForm": {
@@ -463,6 +425,8 @@
         "selectList": "Liste auswählen"
       },
       "addPropertyMenu": {
+        "usedBy": "in {{classes}}",
+        "notUsed": "noch nicht verwendet",
         "addProperty": "Eigenschaft hinzufügen",
         "createNewFromType": "Neue von Typ erstellen",
         "addExistingProperty": "Bestehende Eigenschaft hinzufügen"
@@ -708,6 +672,253 @@
         "searchBody": "Durchsuchen Sie die Ressourcen dieser Klasse und grenzen Sie sie mit Filtern ein, ohne den Daten-Tab zu verlassen.",
         "tableTitle": "Probieren Sie die Tabellenansicht",
         "tableBody": "Wechseln Sie zu Tabelle, um Ressourcen als Zeilen und ihre Eigenschaften als Spalten zu sehen und Werte direkt zu vergleichen."
+      },
+      "dataModelMap": {
+        "anyResource": "Beliebige Ressource",
+        "legendLink": "Verknüpfungseigenschaft, zeigt auf die verknüpfte Klasse"
+      }
+    },
+    "ontologyMap": {
+      "filterNote": {
+        "classesOnlyOne": "Nur {{names}} und die damit verknüpften Klassen",
+        "classesOnlyNamed": "Nur {{names}} und die damit verknüpften Klassen",
+        "classesOnlyMany": "Nur {{count}} Klassen und die damit verknüpften Klassen",
+        "classesAllButOne": "Alle Klassen ausser {{names}}",
+        "classesAllButNamed": "Alle Klassen ausser {{names}}",
+        "classesAllButMany": "Alle Klassen ausser {{count}}",
+        "linksOnlyOne": "Nur die Verknüpfungen {{names}}",
+        "linksOnlyNamed": "Nur die Verknüpfungen {{names}}",
+        "linksOnlyMany": "Nur {{count}} Arten von Verknüpfungen",
+        "linksAllButOne": "Alle Verknüpfungen ausser {{names}}",
+        "linksAllButNamed": "Alle Verknüpfungen ausser {{names}}",
+        "linksAllButMany": "Alle Verknüpfungen ausser {{count}} Arten",
+        "showAll": "Zurück zum ganzen Diagramm"
+      },
+      "dataModels": "Datenmodelle",
+      "noDataModels": "Dieses Projekt hat noch kein Datenmodell.",
+      "classPanel": {
+        "close": "Klassendetails schliessen",
+        "otherModel": "Ressourcenklasse · anderes Datenmodell: {{model}}",
+        "builtIn": "Eingebaute DSP-Klasse",
+        "otherModelText": "{{current}} definiert diese Klasse nicht: Es verknüpft sie aus {{model}}, einem anderen Datenmodell.",
+        "builtInText": "Diese Klasse gehört zu DSP selbst, und jedes Projekt kann sie verwenden.",
+        "openIn": "In {{model}} öffnen",
+        "properties": "Eigenschaften · {{count}}",
+        "noProperties": "Diese Klasse hat keine eigenen Eigenschaften.",
+        "required": "erforderlich",
+        "optional": "optional",
+        "many": "mehrere",
+        "oneOrMore": "eine oder mehrere",
+        "none": "Keine",
+        "edit": "Bearbeiten",
+        "editProperty": "Eigenschaft {{property}} bearbeiten"
+      },
+      "filters": "Filter",
+      "fit": "An Bildschirm anpassen",
+      "graphFailed": "Der Graph konnte nicht geladen werden.",
+      "graphEmpty": "Dieses Datenmodell ist leer. Erstellen Sie eine Ressourcenklasse, um sie hier zu sehen.",
+      "graphNoMatch": "Keine Klasse entspricht dem Filter.",
+      "legendDashed": "anderes Datenmodell",
+      "classFilter": "Klasse",
+      "allClasses": "Alle Klassen",
+      "resetFilter": "Zurücksetzen",
+      "size": "Grösse",
+      "sizes": {
+        "small": "Klein",
+        "normal": "Normal",
+        "large": "Gross"
+      },
+      "classesChosen": "{{count}} Klassen",
+      "propertyFilter": "Eigenschaft",
+      "search": {
+        "placeholder": "Suchen oder ↓ zum Durchblättern",
+        "found": "{{count}} gefunden",
+        "none": "Kein Treffer",
+        "clear": "Suche löschen",
+        "results": "Suchergebnisse",
+        "all": "Alle Ergebnisse",
+        "resetFilter": "Alle Klassen anzeigen",
+        "usedByOne": "1 Klasse",
+        "usedBy": "{{count}} Klassen",
+        "classes": "Klassen · {{count}}",
+        "properties": "Eigenschaften · {{count}}",
+        "subclasses": "{{count}} Unterklassen"
+      },
+      "allProperties": "Alle Eigenschaften",
+      "propertiesChosen": "{{count}} Eigenschaften",
+      "levelLabels": "Verknüpfungsbeschriftungen waagrecht",
+      "viewMenu": {
+        "textSize": "Textgrösse",
+        "links": "Verknüpfungen",
+        "levelLabelsHint": "Leichter lesbar als entlang der Linie"
+      },
+      "propertyPanel": {
+        "close": "Details der Eigenschaft schliessen",
+        "subPropertyOf": "Untereigenschaft von",
+        "standardTerm": "Standardbegriff",
+        "through": "über {{property}}",
+        "subProperties": "Untereigenschaften:",
+        "usedBy": "Verwendet von · {{count}} Klassen",
+        "inheritedFrom": "geerbt von {{class}}",
+        "edit": "Eigenschaft bearbeiten",
+        "type": "Typ"
+      },
+      "zoom": "Zoom",
+      "zoomIn": "Vergrössern",
+      "zoomOut": "Verkleinern",
+      "filterNone": "keine",
+      "allButOne": "alle ausser {{name}}",
+      "allBut": "alle ausser {{count}}",
+      "filterMenu": {
+        "search": "Nach Name suchen",
+        "clearSearch": "Suche löschen",
+        "allMatches": "Alle {{count}} Treffer",
+        "onlyThese": "Nur diese",
+        "only": "Nur",
+        "ticked": "{{count}} von {{total}}",
+        "noMatch": "Kein Treffer",
+        "matching": "{{count}} von {{total}} gefunden",
+        "hidden": "Ausgeblendet:",
+        "showAll": "Alle zeigen"
+      },
+      "export": "Exportieren",
+      "exportMenu": {
+        "imageCopied": "Bild kopiert",
+        "exportFailed": "Das Bild konnte nicht erstellt werden."
+      },
+      "exportDialog": {
+        "title": "Bild exportieren",
+        "previewView": "Vorschau: was Sie sehen",
+        "previewAlt": "Vorschau des exportierten Bildes",
+        "resolution": "Auflösung",
+        "legend": "Legende",
+        "copy": "In die Zwischenablage kopieren",
+        "download": "Als {{format}} herunterladen",
+        "close": "Schliessen",
+        "modelName": "Name des Datenmodells",
+        "include": "Einschliessen",
+        "filteredOn": "Gefiltert nach: {{filter}}",
+        "low": "Niedrig",
+        "standard": "Standard",
+        "high": "Hoch",
+        "format": "Format",
+        "pngHint": "Ein Bild aus Pixeln, für Folien und Dokumente",
+        "svgHint": "Vektoren, in jeder Grösse scharf, zum Bearbeiten oder Drucken"
+      },
+      "labelsMenu": {
+        "heading": "Auf Klassen und Verknüpfungen",
+        "labels": "Labels",
+        "labelsHint": "Wie man sie liest",
+        "names": "Namen",
+        "namesHint": "linkToVideo",
+        "both": "Beides",
+        "bothHint": "Bezeichnung · Name"
+      },
+      "copyName": "Namen kopieren",
+      "nameCopied": "Name kopiert",
+      "islands": {
+        "legend": "Legende",
+        "subclass": "Unterklasse, unter ihrer Oberklasse",
+        "link": "Verknüpfung",
+        "fileKinds": {
+          "StillImageRepresentation": "Bild",
+          "MovingImageRepresentation": "Video",
+          "AudioRepresentation": "Audio",
+          "DocumentRepresentation": "Dokument",
+          "TextRepresentation": "Text",
+          "ArchiveRepresentation": "Archiv",
+          "DDDRepresentation": "3D-Modell"
+        }
+      },
+      "links": "Verknüpfungen",
+      "expandLinks": "Klicken, um die {{count}} Verknüpfungen zu zeigen"
+    },
+    "dataModels": {
+      "classActions": "Aktionen für {{class}}",
+      "objectWithoutRepresentation": "Objekt ohne Repräsentation",
+      "dataModels": "Datenmodelle",
+      "createDataModel": "Datenmodell erstellen",
+      "documentation": "Dokumentation",
+      "showSections": "Bereiche von {{model}} ein- oder ausblenden",
+      "editDataModel": "Datenmodell bearbeiten",
+      "deleteDataModel": "Datenmodell löschen",
+      "cannotDeleteDataModel": "Ressourcen oder andere Datenmodelle verwenden es",
+      "deleteDataModelConfirm": "Das Datenmodell «{{model}}» löschen? Dies kann nicht rückgängig gemacht werden.",
+      "cannotDeletePropertyShort": "Eine Klasse oder ein Wert verwendet sie",
+      "editProperty": "Eigenschaft bearbeiten",
+      "deleteClass": "Klasse löschen",
+      "checkingDelete": "Prüfen, ob sie gelöscht werden kann …",
+      "cannotDeleteClass": "Ressourcen, Unterklassen oder Verknüpfungen verwenden sie",
+      "deleteClassConfirm": "Die Klasse «{{class}}» löschen? Ihre Eigenschaften bleiben im Datenmodell. Dies kann nicht rückgängig gemacht werden.",
+      "removeFromClass": "Aus {{class}} entfernen",
+      "removeFromClassConfirm": "«{{property}}» aus der Klasse «{{class}}» entfernen? Die Eigenschaft bleibt im Datenmodell.",
+      "cannotRemove": "«{{property}}» kann nicht aus «{{class}}» entfernt werden.",
+      "cannotRemoveOneValue": "«{{property}}» kann nicht aus «{{class}}» entfernt werden: 1 Ressource hat noch einen Wert dafür. Löschen Sie diesen Wert zuerst.",
+      "cannotRemoveValues": "«{{property}}» kann nicht aus «{{class}}» entfernt werden: {{count}} Ressourcen haben noch einen Wert dafür. Löschen Sie diese Werte zuerst.",
+      "cannotRemoveHiddenValues": "«{{property}}» kann nicht aus «{{class}}» entfernt werden: Als gelöscht markierte Werte oder Werte, die Sie nicht sehen können, verwenden sie noch. Wenden Sie sich an DaSCH, um sie zu entfernen.",
+      "deleteProperty": "Eigenschaft löschen",
+      "deletePropertyConfirm": "Die Eigenschaft «{{property}}» löschen? Dies kann nicht rückgängig gemacht werden.",
+      "cannotDeleteProperty": "«{{property}}» kann nicht gelöscht werden, solange eine Klasse oder ein Wert sie verwendet.",
+      "cardinalityBlocked": "Bestehende Ressourcen passen nicht dazu",
+      "cardinalitySaved": "«{{property}}» in «{{class}}»: {{cardinality}}",
+      "undo": "Rückgängig",
+      "cardinalityRule": "Wird nach Ihrer Bestätigung gespeichert und kann gleich danach rückgängig gemacht werden. Bestehende Werte werden nie verändert: Eine Änderung, die sie nicht zulassen, ist ausgegraut.",
+      "propertyShared": "{{count}} Klassen verwenden diese Eigenschaft ({{classes}}). Ihre Änderungen gelten für alle.",
+      "andMore": "{{names}} und {{count}} weitere",
+      "booleanOne": "Eine Ja/Nein-Eigenschaft hat einen Wert",
+      "findInCards": "Klassen und Eigenschaften suchen",
+      "dragToReorder": "Ziehen, um die Reihenfolge zu ändern",
+      "showMore": "{{count}} weitere anzeigen",
+      "showLess": "Weniger anzeigen",
+      "cardinality": {
+        "requiredOne": "Pflichtfeld, ein Wert",
+        "optionalOne": "Optional, ein Wert",
+        "requiredMultiple": "Pflichtfeld, mehrere Werte",
+        "optionalMultiple": "Optional, mehrere Werte"
+      },
+      "createVocabulary": "Kontrolliertes Vokabular erstellen",
+      "createClass": "Ressourcenklasse erstellen",
+      "createProperty": "Eigenschaft erstellen",
+      "noProperties": "Noch keine Eigenschaften",
+      "valueActions": "Aktionen für {{value}}",
+      "addValueInside": "Wert darin hinzufügen",
+      "addValueAfter": "Wert danach hinzufügen",
+      "editValue": "Name und Beschreibung bearbeiten",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "deleteValue": "Löschen",
+      "colVocabulary": "Vokabular / Wert",
+      "expandAll": "Alle aufklappen",
+      "collapseAll": "Alle zuklappen",
+      "expandRow": "Aufklappen",
+      "collapseRow": "Zuklappen",
+      "notUsed": "In diesem Datenmodell nicht verwendet",
+      "graph": "Diagramm",
+      "classes": "Ressourcenklassen",
+      "properties": "Eigenschaften",
+      "lists": "Kontrollierte Vokabulare",
+      "findProperty": "Tabelle durchsuchen",
+      "findList": "Vokabulare durchsuchen",
+      "colProperty": "Eigenschaft",
+      "colType": "Typ",
+      "colPointsTo": "Zeigt auf",
+      "colUsedBy": "Verwendet von",
+      "notUsedByClass": "Von keiner Klasse verwendet",
+      "noMatch": "Nichts entspricht der Suche.",
+      "noLists": "Dieses Projekt hat noch keine Listen.",
+      "colDescription": "Beschreibung",
+      "filterOn": "Nach {{column}} filtern",
+      "noTarget": "Keine Verknüpfung",
+      "clearFilter": "Zurücksetzen",
+      "contains": "Enthält…",
+      "selectAll": "Alle auswählen",
+      "deselectAll": "Alle abwählen",
+      "resizeColumn": "Spaltenbreite ändern",
+      "descriptionEditor": {
+        "edit": "Beschreibung ({{language}}) von {{class}} bearbeiten",
+        "add": "Beschreibung ({{language}}) zu {{class}} hinzufügen",
+        "editLabel": "Bezeichnung ({{language}}) von {{class}} bearbeiten",
+        "addLabel": "Bezeichnung ({{language}}) zu {{class}} hinzufügen"
       }
     }
   },

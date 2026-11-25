@@ -353,7 +353,6 @@
       },
       "list": {
         "deleteList": "Elimina vocabolario controllato",
-        "backToDataModels": "Torna ai modelli di dati",
         "editInfo": "Modifica info del vocabolario controllato",
         "deleteConfirmation": "Vuoi eliminare questo vocabolario controllato?",
         "actionBubble": {
@@ -385,31 +384,10 @@
         }
       },
       "dataModels": {
-        "title": "Tutti i modelli di dati",
         "info": "Un modello di dati organizza gli elementi di dati e specifica come si relazionano tra loro e da quali proprietà sono descritti.",
-        "createNew": "Crea nuovo",
-        "documentation": "Leggi la documentazione su come creare modelli di dati",
         "vocabularies": {
-          "title": "Vocabolari controllati",
-          "info": "I vocabolari controllati sono lessici gerarchici o non gerarchici di termini di riferimento. Grazie alla loro natura normativa o standardizzata, i vocabolari controllati migliorano la qualità dei dati e rendono la ricerca nel database più efficiente rispetto ai campi di testo libero.",
-          "createNew": "Crea nuovo"
+          "info": "I vocabolari controllati sono lessici gerarchici o non gerarchici di termini di riferimento. Grazie alla loro natura normativa o standardizzata, i vocabolari controllati migliorano la qualità dei dati e rendono la ricerca nel database più efficiente rispetto ai campi di testo libero."
         }
-      },
-      "editor": {
-        "backToDataModels": "Torna ai modelli di dati",
-        "updatedOn": "Aggiornato il:",
-        "editInfo": "Modifica info del modello di dati",
-        "deleteTooltip": "Elimina modello di dati",
-        "cannotDelete": "Questo modello di dati non può essere eliminato perché è in uso!",
-        "deleteConfirmation": "Vuoi eliminare questo modello di dati?"
-      },
-      "sidenav": {
-        "classes": "Classi",
-        "properties": "Proprietà",
-        "collapseAll": "Riduci tutto",
-        "expandAll": "Espandi tutto",
-        "createNewClass": "Crea nuova classe",
-        "addProperty": "Aggiungi proprietà"
       },
       "cardinality": {
         "multipleValues": "Valori multipli",
@@ -426,20 +404,6 @@
         "missingPropertyError": "Almeno una risorsa della classe \"{{className}}\" non ha una proprietà \"{{propertyLabel}}\" nei tuoi dati.",
         "missingPropertyHint": "Per impostare la cardinalità di \"{{propertyLabel}}\" su obbligatorio, ogni risorsa \"{{className}}\" deve avere un valore \"{{propertyLabel}}\" prima di questa modifica."
       },
-      "propertyItem": {
-        "edit": "Modifica",
-        "removeFromClass": "Rimuovi dalla classe",
-        "copyId": "Copia ID della proprietà",
-        "idCopied": "ID proprietà copiato negli appunti!"
-      },
-      "propertyInfo": {
-        "usedIn": "Usato in",
-        "notUsed": "Non usato",
-        "cannotEdit": "Non può essere modificato",
-        "cannotDelete": "Non può essere eliminato",
-        "deleteConfirmation": "Vuoi eliminare questa proprietà?",
-        "restrictedTo": "Limitato a {{className}}"
-      },
       "resourceClassInfo": {
         "collapse": "Riduci",
         "expand": "Espandi",
@@ -447,9 +411,7 @@
         "edit": "Modifica",
         "openInstances": "Apri istanze",
         "copyId": "Copia ID della classe",
-        "cannotDelete": "Questa classe non può essere eliminata perché è in uso!",
         "delete": "Elimina",
-        "deleteConfirmation": "Vuoi eliminare questa classe di risorsa?",
         "idCopied": "ID classe copiato negli appunti!"
       },
       "propertyForm": {
@@ -463,6 +425,8 @@
         "selectList": "Seleziona lista"
       },
       "addPropertyMenu": {
+        "usedBy": "in {{classes}}",
+        "notUsed": "non ancora usata",
         "addProperty": "Aggiungi proprietà",
         "createNewFromType": "Crea nuovo dal tipo",
         "addExistingProperty": "Aggiungi proprietà esistente"
@@ -708,6 +672,253 @@
         "searchBody": "Cerca tra le risorse di questa classe e restringile con i filtri, senza lasciare la scheda Dati.",
         "tableTitle": "Prova la vista tabella",
         "tableBody": "Passa a Tabella per vedere le risorse come righe, con le proprietà come colonne, e confrontare i valori fianco a fianco."
+      },
+      "dataModelMap": {
+        "anyResource": "Qualsiasi risorsa",
+        "legendLink": "proprietà di collegamento, punta alla classe collegata"
+      }
+    },
+    "ontologyMap": {
+      "filterNote": {
+        "classesOnlyOne": "Solo {{names}} e le classi collegate",
+        "classesOnlyNamed": "Solo {{names}} e le classi collegate",
+        "classesOnlyMany": "Solo {{count}} classi e le classi collegate",
+        "classesAllButOne": "Tutte le classi tranne {{names}}",
+        "classesAllButNamed": "Tutte le classi tranne {{names}}",
+        "classesAllButMany": "Tutte le classi tranne {{count}}",
+        "linksOnlyOne": "Solo i collegamenti {{names}}",
+        "linksOnlyNamed": "Solo i collegamenti {{names}}",
+        "linksOnlyMany": "Solo {{count}} tipi di collegamenti",
+        "linksAllButOne": "Tutti i collegamenti tranne {{names}}",
+        "linksAllButNamed": "Tutti i collegamenti tranne {{names}}",
+        "linksAllButMany": "Tutti i collegamenti tranne {{count}} tipi",
+        "showAll": "Torna al diagramma completo"
+      },
+      "dataModels": "Modelli di dati",
+      "noDataModels": "Questo progetto non ha ancora un modello di dati.",
+      "classPanel": {
+        "close": "Chiudi i dettagli della classe",
+        "otherModel": "Classe di risorse · altro modello di dati: {{model}}",
+        "builtIn": "Classe integrata di DSP",
+        "otherModelText": "{{current}} non definisce questa classe: la collega da {{model}}, un altro modello di dati.",
+        "builtInText": "Questa classe fa parte di DSP e ogni progetto può usarla.",
+        "openIn": "Apri in {{model}}",
+        "properties": "Proprietà · {{count}}",
+        "noProperties": "Questa classe non ha proprietà proprie.",
+        "required": "obbligatoria",
+        "optional": "facoltativa",
+        "many": "molteplici",
+        "oneOrMore": "una o più",
+        "none": "Nessuna",
+        "edit": "Modifica",
+        "editProperty": "Modifica la proprietà {{property}}"
+      },
+      "filters": "Filtra",
+      "fit": "Adatta allo schermo",
+      "graphFailed": "Non è stato possibile caricare il grafo.",
+      "graphEmpty": "Questo modello di dati è vuoto. Crea una classe di risorse per vederla qui.",
+      "graphNoMatch": "Nessuna classe corrisponde al filtro.",
+      "legendDashed": "altro modello di dati",
+      "classFilter": "Classe",
+      "allClasses": "Tutte le classi",
+      "resetFilter": "Reimposta",
+      "size": "Dimensione",
+      "sizes": {
+        "small": "Piccolo",
+        "normal": "Normale",
+        "large": "Grande"
+      },
+      "classesChosen": "{{count}} classi",
+      "propertyFilter": "Proprietà",
+      "search": {
+        "placeholder": "Cerca, o ↓ per sfogliare",
+        "found": "{{count}} trovati",
+        "none": "Nessun risultato",
+        "clear": "Cancella la ricerca",
+        "results": "Risultati della ricerca",
+        "all": "Tutti i risultati",
+        "resetFilter": "Mostra tutte le classi",
+        "usedByOne": "1 classe",
+        "usedBy": "{{count}} classi",
+        "classes": "Classi · {{count}}",
+        "properties": "Proprietà · {{count}}",
+        "subclasses": "{{count}} sottoclassi"
+      },
+      "allProperties": "Tutte le proprietà",
+      "propertiesChosen": "{{count}} proprietà",
+      "levelLabels": "Etichette dei collegamenti orizzontali",
+      "viewMenu": {
+        "textSize": "Dimensione del testo",
+        "links": "Collegamenti",
+        "levelLabelsHint": "Più leggibili che lungo la linea"
+      },
+      "propertyPanel": {
+        "close": "Chiudi i dettagli della proprietà",
+        "subPropertyOf": "Sottoproprietà di",
+        "standardTerm": "Termine standard",
+        "through": "tramite {{property}}",
+        "subProperties": "Sottoproprietà:",
+        "usedBy": "Usata da · {{count}} classi",
+        "inheritedFrom": "ereditata da {{class}}",
+        "edit": "Modifica la proprietà",
+        "type": "Tipo"
+      },
+      "zoom": "Zoom",
+      "zoomIn": "Ingrandisci",
+      "zoomOut": "Riduci",
+      "filterNone": "nessuna",
+      "allButOne": "tutte tranne {{name}}",
+      "allBut": "tutte tranne {{count}}",
+      "filterMenu": {
+        "search": "Cerca per nome",
+        "clearSearch": "Cancella la ricerca",
+        "allMatches": "Tutti i {{count}} risultati",
+        "onlyThese": "Solo queste",
+        "only": "Solo",
+        "ticked": "{{count}} di {{total}}",
+        "noMatch": "Nessun risultato",
+        "matching": "{{count}} di {{total}} trovate",
+        "hidden": "Nascoste:",
+        "showAll": "Mostra tutto"
+      },
+      "export": "Esporta",
+      "exportMenu": {
+        "imageCopied": "Immagine copiata",
+        "exportFailed": "Non è stato possibile creare l’immagine."
+      },
+      "exportDialog": {
+        "title": "Esporta l'immagine",
+        "previewView": "Anteprima: ciò che vedi",
+        "previewAlt": "Anteprima dell'immagine esportata",
+        "resolution": "Risoluzione",
+        "legend": "Legenda",
+        "copy": "Copia negli appunti",
+        "download": "Scarica come {{format}}",
+        "close": "Chiudi",
+        "modelName": "Nome del modello di dati",
+        "include": "Includi",
+        "filteredOn": "Filtrato su: {{filter}}",
+        "low": "Bassa",
+        "standard": "Standard",
+        "high": "Alta",
+        "format": "Formato",
+        "pngHint": "Un'immagine in pixel, per diapositive e documenti",
+        "svgHint": "Vettori, nitidi a ogni dimensione, da modificare o stampare"
+      },
+      "labelsMenu": {
+        "heading": "Scrivere su classi e collegamenti",
+        "labels": "Labels",
+        "labelsHint": "Come si leggono",
+        "names": "Nomi",
+        "namesHint": "linkToVideo",
+        "both": "Entrambi",
+        "bothHint": "Etichetta · nome"
+      },
+      "copyName": "Copia il nome",
+      "nameCopied": "Nome copiato",
+      "islands": {
+        "legend": "Legenda",
+        "subclass": "Sottoclasse, sotto la sua classe madre",
+        "link": "Collegamento",
+        "fileKinds": {
+          "StillImageRepresentation": "Immagine",
+          "MovingImageRepresentation": "Video",
+          "AudioRepresentation": "Audio",
+          "DocumentRepresentation": "Documento",
+          "TextRepresentation": "Testo",
+          "ArchiveRepresentation": "Archivio",
+          "DDDRepresentation": "Modello 3D"
+        }
+      },
+      "links": "collegamenti",
+      "expandLinks": "Clicca per mostrare i {{count}} collegamenti"
+    },
+    "dataModels": {
+      "classActions": "Azioni per {{class}}",
+      "objectWithoutRepresentation": "Oggetto senza rappresentazione",
+      "dataModels": "Modelli di dati",
+      "createDataModel": "Crea modello di dati",
+      "documentation": "Documentazione",
+      "showSections": "Mostra o nascondi le sezioni di {{model}}",
+      "editDataModel": "Modifica modello di dati",
+      "deleteDataModel": "Elimina modello di dati",
+      "cannotDeleteDataModel": "Risorse o altri modelli di dati lo usano",
+      "deleteDataModelConfirm": "Eliminare il modello di dati «{{model}}»? Questa azione è irreversibile.",
+      "cannotDeletePropertyShort": "Una classe o un valore la usa",
+      "editProperty": "Modifica proprietà",
+      "deleteClass": "Elimina classe",
+      "checkingDelete": "Verifica dell’eliminazione…",
+      "cannotDeleteClass": "Risorse, sottoclassi o collegamenti la usano",
+      "deleteClassConfirm": "Eliminare la classe «{{class}}»? Le sue proprietà restano nel modello di dati. L’operazione è irreversibile.",
+      "removeFromClass": "Rimuovi da {{class}}",
+      "removeFromClassConfirm": "Rimuovere «{{property}}» dalla classe «{{class}}»? La proprietà resta nel modello di dati.",
+      "cannotRemove": "«{{property}}» non può essere rimossa da «{{class}}».",
+      "cannotRemoveOneValue": "«{{property}}» non può essere rimossa da «{{class}}»: 1 risorsa ha ancora un valore per essa. Elimina prima quel valore.",
+      "cannotRemoveValues": "«{{property}}» non può essere rimossa da «{{class}}»: {{count}} risorse hanno ancora un valore per essa. Elimina prima quei valori.",
+      "cannotRemoveHiddenValues": "«{{property}}» non può essere rimossa da «{{class}}»: valori contrassegnati come eliminati, o che non puoi vedere, la usano ancora. Contatta DaSCH per cancellarli.",
+      "deleteProperty": "Elimina proprietà",
+      "deletePropertyConfirm": "Eliminare la proprietà «{{property}}»? L’operazione è irreversibile.",
+      "cannotDeleteProperty": "«{{property}}» non può essere eliminata finché una classe o un valore la usa.",
+      "cardinalityBlocked": "Risorse esistenti non vi si adattano",
+      "cardinalitySaved": "«{{property}}» in «{{class}}»: {{cardinality}}",
+      "undo": "Annulla",
+      "cardinalityRule": "Salvato dopo la conferma, e annullabile subito dopo. I valori esistenti non vengono mai modificati: una modifica che non consentono è disattivata.",
+      "propertyShared": "{{count}} classi usano questa proprietà ({{classes}}). Le modifiche valgono per tutte.",
+      "andMore": "{{names}} e altre {{count}}",
+      "booleanOne": "Una proprietà sì/no ha un solo valore",
+      "findInCards": "Cerca classi e proprietà",
+      "dragToReorder": "Trascina per cambiare l’ordine",
+      "showMore": "Mostra altri {{count}}",
+      "showLess": "Mostra meno",
+      "cardinality": {
+        "requiredOne": "Obbligatorio, un valore",
+        "optionalOne": "Facoltativo, un valore",
+        "requiredMultiple": "Obbligatorio, più valori",
+        "optionalMultiple": "Facoltativo, più valori"
+      },
+      "createVocabulary": "Crea vocabolario controllato",
+      "createClass": "Crea classe di risorsa",
+      "createProperty": "Crea proprietà",
+      "noProperties": "Ancora nessuna proprietà",
+      "valueActions": "Azioni per {{value}}",
+      "addValueInside": "Aggiungi un valore dentro",
+      "addValueAfter": "Aggiungi un valore dopo",
+      "editValue": "Modifica nome e descrizione",
+      "moveUp": "Sposta su",
+      "moveDown": "Sposta giù",
+      "deleteValue": "Elimina",
+      "colVocabulary": "Vocabolario / valore",
+      "expandAll": "Espandi tutto",
+      "collapseAll": "Comprimi tutto",
+      "expandRow": "Espandi",
+      "collapseRow": "Comprimi",
+      "notUsed": "Non usato in questo modello di dati",
+      "graph": "Diagramma",
+      "classes": "Classi di risorse",
+      "properties": "Proprietà",
+      "lists": "Vocabolari controllati",
+      "findProperty": "Cerca nella tabella",
+      "findList": "Cerca nei vocabolari",
+      "colProperty": "Proprietà",
+      "colType": "Tipo",
+      "colPointsTo": "Punta a",
+      "colUsedBy": "Usata da",
+      "notUsedByClass": "Non usata da nessuna classe",
+      "noMatch": "Nessun risultato per la ricerca.",
+      "noLists": "Questo progetto non ha ancora liste.",
+      "colDescription": "Descrizione",
+      "filterOn": "Filtra per {{column}}",
+      "noTarget": "Nessun collegamento",
+      "clearFilter": "Cancella",
+      "contains": "Contiene…",
+      "selectAll": "Seleziona tutto",
+      "deselectAll": "Deseleziona tutto",
+      "resizeColumn": "Ridimensiona la colonna",
+      "descriptionEditor": {
+        "edit": "Modifica la descrizione ({{language}}) di {{class}}",
+        "add": "Aggiungi una descrizione ({{language}}) a {{class}}",
+        "editLabel": "Modifica l'etichetta ({{language}}) di {{class}}",
+        "addLabel": "Aggiungi un'etichetta ({{language}}) a {{class}}"
       }
     }
   },

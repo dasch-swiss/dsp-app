@@ -107,7 +107,10 @@ const meta: Meta = {
           },
         },
         { provide: UserService, useValue: { isLoggedIn$: of(false), user$: of(null), isSysAdmin$: of(false) } },
-        { provide: DspApiConnectionToken, useValue: {} as KnoraApiConnection },
+        {
+          provide: DspApiConnectionToken,
+          useValue: { v2: { ontologyCache: { getOntology: () => of(new Map()) } } } as unknown as KnoraApiConnection,
+        },
         {
           provide: AppConfigService,
           useValue: {
@@ -140,7 +143,13 @@ export const DataTab: Story = {
       await expect(await within(header).findByText(PROJECT.longname)).toBeInTheDocument();
     });
     await step('Resource classes are listed in the sidenav', async () => {
-      await expect(await canvas.findByText('Book')).toBeInTheDocument();
+      // The class list, not the data model map above it, which names the classes too.
+      const classList = (await canvas.findAllByText('Book'))[0].closest(
+        'app-projects-sidenav-ontologies'
+      ) as HTMLElement;
+      await expect(
+        within(classList.querySelector('app-resource-class-sidenav') as HTMLElement).getByText('Book')
+      ).toBeInTheDocument();
     });
     await step('Project description is shown', async () => {
       await expect(await canvas.findByText(/woodcut sequences/)).toBeInTheDocument();

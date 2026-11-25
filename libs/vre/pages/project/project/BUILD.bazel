@@ -1,4 +1,12 @@
+load("@rules_sass//src:index.bzl", "sass_library")
 load("//tools/angular:defs.bzl", "LIBRARY_EXCLUDES", "TEST_SRCS", "vre_library")
+
+# The Sass partials several of this library's stylesheets `@use` (`@use 'table'` beside them).
+sass_library(
+    name = "partials",
+    srcs = glob(["src/**/_*.scss"]),
+    deps = ["//libs/vre/ui/styles"],
+)
 
 vre_library(
     name = "project",
@@ -7,8 +15,14 @@ vre_library(
         exclude = LIBRARY_EXCLUDES,
     ),
     assets = glob(["src/**/*.html"]),
-    stylesheets = glob(["src/**/*.scss"]),
-    sass_deps = ["//libs/vre/ui/styles"],
+    stylesheets = glob(
+        ["src/**/*.scss"],
+        exclude = ["src/**/_*.scss"],
+    ),
+    sass_deps = [
+        ":partials",
+        "//libs/vre/ui/styles",
+    ],
     test_shard_count = 2,
     test_size = "medium",
     test_srcs = glob(TEST_SRCS),
@@ -29,6 +43,8 @@ vre_library(
         "//:node_modules/@ngx-translate/core",
         "//:node_modules/angular-imask",
         "//:node_modules/angular-split",
+        "//:node_modules/cytoscape",
+        "//:node_modules/cytoscape-svg",
         "//:node_modules/rxjs",
         "//libs/dsp-js",
         "//libs/vre/3rd-party-services/api",

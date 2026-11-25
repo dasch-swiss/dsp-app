@@ -1,0 +1,178 @@
+@use '../data-models-rail/card-sizes';
+@use 'config' as *;
+
+:host {
+  display: block;
+}
+
+.panel {
+  box-sizing: border-box;
+  height: 100%;
+  overflow: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: white;
+  border-left: 1px solid $cold_grey_50;
+  box-shadow: -8px 0 24px rgba($black, 0.08);
+  font: 400 13px/20px var(--font-sans, Roboto, sans-serif);
+  color: $dark-text;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.class-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  color: $primary;
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+  }
+}
+
+.name-line {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.name {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: $cool_gray_100;
+  font-family: 'Roboto Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: $cool_gray_700;
+}
+
+.copy {
+  display: flex;
+  padding: 2px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: $cool_gray_500;
+  cursor: pointer;
+
+  &:hover {
+    background: $cool_gray_100;
+  }
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.description {
+  margin: 0;
+  color: $cool_gray_700;
+}
+
+.kind {
+  font-size: 12px;
+  color: $cool_gray_600;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+h3 {
+  margin: 0;
+  padding-bottom: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $cool_gray_500;
+}
+
+.none {
+  margin: 0;
+  padding: 6px 0 8px;
+  border-top: 1px solid $cool_gray_100;
+  font-size: 12.5px;
+  color: $cool_gray_500;
+}
+
+// The cards' rows, across the panel's padding, between lines as on a card.
+// The cards' comfortable sizes.
+.props {
+  @include card-sizes.comfortable-card-sizes;
+}
+
+.props {
+  list-style: none;
+  margin: 0 -16px;
+  padding: 0;
+  border-top: 1px solid $cool_gray_100;
+}
+
+// Where a dragged property lands.
+.drop-line {
+  height: 2px;
+  background: $primary;
+}
+
+.cdk-drag-animating,
+.props.cdk-drop-list-dragging .prop:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.add-property {
+  display: block;
+  margin: 0 -16px;
+  border-top: 1px solid $cool_gray_100;
+}
+
+// A footer across the panel, against its padding: pushed down when the panel is short, stuck to the bottom when
+// it scrolls.
+.actions {
+  position: sticky;
+  bottom: -20px;
+  margin: auto -24px -20px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border-top: 1px solid $cool_gray_200;
+
+  // Deleting, in red, once possible.
+  .delete:not([disabled]) {
+    color: $red_800;
+    border-color: $red_800;
+  }
+
+  button {
+    --mat-button-filled-container-height: 36px;
+    --mat-button-outlined-container-height: 36px;
+    flex: none;
+    white-space: nowrap;
+  }
+}
+
+.spacer {
+  flex: 1;
+}

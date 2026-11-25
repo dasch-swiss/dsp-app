@@ -43,6 +43,8 @@
     "angular-imask": "^7.5.0",
     "angular-split": "^20.0.0",
     "ckeditor5-custom-build": "file:vendor/ckeditor5-custom-build-2.1.5.tgz",
+    "cytoscape": "3.34.4",
+    "cytoscape-svg": "0.4.0",
     "json2typescript": "^1.6.1",
     "jsonld": "^9.0.0",
     "jwt-decode": "^4.0.0",

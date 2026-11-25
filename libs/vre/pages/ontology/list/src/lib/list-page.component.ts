@@ -1,9 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
-import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListNodeInfo, ListResponse } from '@dasch-swiss/dsp-js';
@@ -13,7 +12,7 @@ import { ProjectPageService } from '@dasch-swiss/vre/pages/project/project';
 import { LocalizationService, pickPreferredLanguageString } from '@dasch-swiss/vre/shared/app-helper-services';
 import { ProgressIndicatorOverlayComponent } from '@dasch-swiss/vre/ui/progress-indicator';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { CenteredLayoutComponent, DialogService, TruncatePipe } from '@dasch-swiss/vre/ui/ui';
+import { CenteredLayoutComponent, DialogService } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { ListInfoFormComponent } from './list-info-form/list-info-form.component';
@@ -24,20 +23,17 @@ import { ListItemService } from './list-item/list-item.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-list-page',
   templateUrl: './list-page.component.html',
+  styleUrl: './list-page.component.css',
   providers: [ListItemService],
   imports: [
     AsyncPipe,
-    MatAnchor,
     MatButton,
     MatIcon,
-    MatToolbar,
-    MatToolbarRow,
     MatTooltip,
     TranslatePipe,
     ProgressIndicatorOverlayComponent,
     ListItemComponent,
     StringifyStringLiteralPipe,
-    TruncatePipe,
     CenteredLayoutComponent,
   ],
 })
@@ -106,9 +102,10 @@ export class ListPageComponent implements OnInit, OnDestroy {
       });
   }
 
+  /** Back to the controlled vocabularies of the Data models tab. */
   navigateToDataModels() {
     const projectUuid = this._projectPageService.currentProjectUuid;
-    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.dataModels]);
+    this._router.navigate([RouteConstants.project, projectUuid, RouteConstants.dataModels, RouteConstants.lists]);
   }
 
   ngOnDestroy() {
