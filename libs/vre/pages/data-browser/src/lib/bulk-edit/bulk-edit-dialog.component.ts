@@ -715,11 +715,11 @@ const READ_CHUNK_SIZE = 25;
       /* Compact like the editors, the selection in the app's blue; removing in red. */
       .actions {
         align-self: flex-start;
-        --mat-standard-button-toggle-height: 32px;
-        --mat-standard-button-toggle-label-text-size: 13px;
-        --mat-standard-button-toggle-label-text-line-height: 32px;
-        --mat-standard-button-toggle-selected-state-background-color: #e8eef4;
-        --mat-standard-button-toggle-selected-state-text-color: #264c6a;
+        --mat-button-toggle-height: 32px;
+        --mat-button-toggle-label-text-size: 13px;
+        --mat-button-toggle-label-text-line-height: 32px;
+        --mat-button-toggle-selected-state-background-color: #e8eef4;
+        --mat-button-toggle-selected-state-text-color: #264c6a;
       }
       .actions ::ng-deep .mat-button-toggle-label-content {
         padding: 0 12px;
