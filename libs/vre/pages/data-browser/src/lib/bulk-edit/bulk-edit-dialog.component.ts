@@ -142,6 +142,7 @@ const READ_CHUNK_SIZE = 25;
                   <!-- The label stands alone; the properties follow under one header, whatever their type. -->
                   <mat-select
                     formControlName="property"
+                    panelClass="bulk-edit-property-panel"
                     data-cy="bulk-edit-property"
                     [attr.aria-label]="'pages.dataBrowser.bulkEdit.edit' | translate">
                     @if (labelTarget(); as label) {
@@ -679,13 +680,37 @@ const READ_CHUNK_SIZE = 25;
         display: none;
       }
       .option-tag {
-        margin-left: 8px;
+        margin-left: auto;
         padding: 0 6px;
         border-radius: 8px;
         background: #f3f4f6; /* $cool-gray-100 */
         color: #6b7280; /* $cool-gray-500 */
         font-size: 11px;
         font-weight: 500;
+        line-height: 18px;
+      }
+      /*
+       * The picker's panel opens in an overlay, outside this component: compact options, the properties not
+       * indented under their one header, and the "Remove only" tag on the right.
+       */
+      ::ng-deep .bulk-edit-property-panel .mat-mdc-option {
+        min-height: 38px;
+        font-size: 14px;
+      }
+      ::ng-deep .bulk-edit-property-panel .mat-mdc-optgroup .mat-mdc-option:not(.mat-mdc-option-multiple) {
+        padding-left: 16px;
+      }
+      ::ng-deep .bulk-edit-property-panel .mat-mdc-option .mdc-list-item__primary-text {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+      }
+      ::ng-deep .bulk-edit-property-panel .mat-mdc-optgroup-label {
+        min-height: 28px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #6b7280; /* $cool-gray-500 */
       }
       /* Compact like the editors, the selection in the app's blue; removing in red. */
       .actions {
