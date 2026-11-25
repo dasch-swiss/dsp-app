@@ -591,7 +591,6 @@
         "title": "Modifica multipla",
         "subtitle": "{{count}} risorse selezionate",
         "loadFailed": "Non è stato possibile caricare le risorse selezionate.",
-        "property": "Proprietà",
         "nothingToChange": "Nessun valore corrisponde. Non cambierà nulla.",
         "applying": "Aggiornamento di {{done}} su {{total}} valori",
         "cancelRemaining": "Annulla il resto",
@@ -606,9 +605,6 @@
         "retryFailed": "Riprova i falliti",
         "editAgain": "Modifica di nuovo",
         "label": "Etichetta",
-        "groupResource": "Risorsa",
-        "groupText": "Testo",
-        "groupList": "Lista",
         "setValue": "Imposta valore",
         "setValueHint": "Dai questa etichetta a ogni risorsa",
         "listLoadFailed": "Non è stato possibile caricare la lista.",
@@ -628,7 +624,9 @@
         "reasonHasValue": "Ha già un valore: {{count}}",
         "reasonSeveral": "Ha più valori: {{count}}",
         "reasonNoRights": "Non puoi modificare: {{count}}",
-        "applyTo": "Applica a {{count}} risorsa/e"
+        "applyTo": "Applica a {{count}} risorsa/e",
+        "edit": "Modifica",
+        "properties": "Proprietà"
       },
       "resourcesList": {
         "resultsCount": "{{count}} risultati",

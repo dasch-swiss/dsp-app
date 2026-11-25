@@ -591,7 +591,6 @@
         "title": "Bulk edit",
         "subtitle": "{{count}} selected resources",
         "loadFailed": "The selected resources could not be loaded.",
-        "property": "Property",
         "nothingToChange": "No value matches. Nothing will change.",
         "applying": "Updating {{done}} of {{total}} values",
         "cancelRemaining": "Cancel remaining",
@@ -606,9 +605,6 @@
         "retryFailed": "Retry failed",
         "editAgain": "Edit again",
         "label": "Label",
-        "groupResource": "Resource",
-        "groupText": "Text",
-        "groupList": "List",
         "setValue": "Set value",
         "setValueHint": "Give every resource this label",
         "listLoadFailed": "The list could not be loaded.",
@@ -628,7 +624,9 @@
         "reasonHasValue": "Already has a value: {{count}}",
         "reasonSeveral": "Has several values: {{count}}",
         "reasonNoRights": "You may not edit: {{count}}",
-        "applyTo": "Apply to {{count}} resource(s)"
+        "applyTo": "Apply to {{count}} resource(s)",
+        "edit": "Edit",
+        "properties": "Properties"
       },
       "resourcesList": {
         "resultsCount": "{{count}} results",

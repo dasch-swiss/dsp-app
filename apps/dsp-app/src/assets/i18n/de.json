@@ -591,7 +591,6 @@
         "title": "Mehrfach bearbeiten",
         "subtitle": "{{count}} ausgewählte Ressourcen",
         "loadFailed": "Die ausgewählten Ressourcen konnten nicht geladen werden.",
-        "property": "Eigenschaft",
         "nothingToChange": "Kein Wert passt. Es wird nichts geändert.",
         "applying": "{{done}} von {{total}} Werten werden aktualisiert",
         "cancelRemaining": "Restliche abbrechen",
@@ -606,9 +605,6 @@
         "retryFailed": "Fehlgeschlagene wiederholen",
         "editAgain": "Erneut bearbeiten",
         "label": "Bezeichnung",
-        "groupResource": "Ressource",
-        "groupText": "Text",
-        "groupList": "Liste",
         "setValue": "Wert setzen",
         "setValueHint": "Allen Ressourcen diese Bezeichnung geben",
         "listLoadFailed": "Die Liste konnte nicht geladen werden.",
@@ -628,7 +624,9 @@
         "reasonHasValue": "Hat bereits einen Wert: {{count}}",
         "reasonSeveral": "Hat mehrere Werte: {{count}}",
         "reasonNoRights": "Keine Bearbeitungsrechte: {{count}}",
-        "applyTo": "Auf {{count}} Ressource(n) anwenden"
+        "applyTo": "Auf {{count}} Ressource(n) anwenden",
+        "edit": "Bearbeiten",
+        "properties": "Eigenschaften"
       },
       "resourcesList": {
         "resultsCount": "{{count}} Ergebnisse",

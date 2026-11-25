@@ -591,7 +591,6 @@
         "title": "Modifier en masse",
         "subtitle": "{{count}} ressources sélectionnées",
         "loadFailed": "Les ressources sélectionnées n’ont pas pu être chargées.",
-        "property": "Propriété",
         "nothingToChange": "Aucune valeur ne correspond. Rien ne sera modifié.",
         "applying": "Mise à jour de {{done}} sur {{total}} valeurs",
         "cancelRemaining": "Annuler le reste",
@@ -606,9 +605,6 @@
         "retryFailed": "Réessayer les échecs",
         "editAgain": "Modifier à nouveau",
         "label": "Libellé",
-        "groupResource": "Ressource",
-        "groupText": "Texte",
-        "groupList": "Liste",
         "setValue": "Définir la valeur",
         "setValueHint": "Donner ce libellé à chaque ressource",
         "listLoadFailed": "La liste n’a pas pu être chargée.",
@@ -628,7 +624,9 @@
         "reasonHasValue": "A déjà une valeur : {{count}}",
         "reasonSeveral": "A plusieurs valeurs : {{count}}",
         "reasonNoRights": "Vous ne pouvez pas modifier : {{count}}",
-        "applyTo": "Appliquer à {{count}} ressource(s)"
+        "applyTo": "Appliquer à {{count}} ressource(s)",
+        "edit": "Modifier",
+        "properties": "Propriétés"
       },
       "resourcesList": {
         "resultsCount": "{{count}} résultats",

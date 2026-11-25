@@ -14,7 +14,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatOptgroup } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormField, MatPrefix } from '@angular/material/form-field';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -88,12 +88,6 @@ interface FormValue {
 
 type ValueGroup = FormGroup<{ item: AbstractControl; comment: FormControl<string | null> }>;
 
-const TARGET_GROUPS: { kinds: BulkEditTarget['kind'][]; labelKey: string }[] = [
-  { kinds: ['label'], labelKey: 'pages.dataBrowser.bulkEdit.groupResource' },
-  { kinds: ['text', 'richText'], labelKey: 'pages.dataBrowser.bulkEdit.groupText' },
-  { kinds: ['list'], labelKey: 'pages.dataBrowser.bulkEdit.groupList' },
-];
-
 /** dsp-api reads at most this many resources in one request. */
 const READ_CHUNK_SIZE = 25;
 
@@ -135,16 +129,19 @@ const READ_CHUNK_SIZE = 25;
           @if (target(); as currentTarget) {
             <form [formGroup]="form" class="form">
               <div class="block">
-                <span class="block-label">{{ 'pages.dataBrowser.bulkEdit.property' | translate }}</span>
+                <span class="block-label">{{ 'pages.dataBrowser.bulkEdit.edit' | translate }}</span>
                 <mat-form-field class="property-field">
-                  <mat-icon matPrefix class="kind-icon">{{ kindIcons[currentTarget.kind] }}</mat-icon>
+                  <!-- The label stands alone; the properties follow under one header, whatever their type. -->
                   <mat-select
                     formControlName="property"
                     data-cy="bulk-edit-property"
-                    [attr.aria-label]="'pages.dataBrowser.bulkEdit.property' | translate">
-                    @for (group of targetGroups(); track group.labelKey) {
-                      <mat-optgroup [label]="group.labelKey | translate">
-                        @for (option of group.targets; track option.id) {
+                    [attr.aria-label]="'pages.dataBrowser.bulkEdit.edit' | translate">
+                    @if (labelTarget(); as label) {
+                      <mat-option [value]="label.id">{{ label.label }}</mat-option>
+                    }
+                    @if (propertyTargets().length) {
+                      <mat-optgroup [label]="'pages.dataBrowser.bulkEdit.properties' | translate">
+                        @for (option of propertyTargets(); track option.id) {
                           <mat-option [value]="option.id">{{ option.label }}</mat-option>
                         }
                       </mat-optgroup>
@@ -799,10 +796,6 @@ const READ_CHUNK_SIZE = 25;
       ins.chip {
         background: #e6f4f1;
       }
-      .kind-icon {
-        padding: 0 4px 0 12px;
-        color: #6b7280; /* $cool-gray-500 */
-      }
       .empty {
         font-style: italic;
         color: #9ca3af; /* $cool-gray-400 */
@@ -859,7 +852,6 @@ const READ_CHUNK_SIZE = 25;
     MatInput,
     MatOptgroup,
     MatOption,
-    MatPrefix,
     MatProgressBar,
     MatSelect,
     TranslatePipe,
@@ -881,13 +873,6 @@ export class BulkEditDialogComponent {
   private readonly _resourceService = inject(ResourceService);
   private readonly _destroyRef = inject(DestroyRef);
 
-  readonly kindIcons: Record<BulkEditTarget['kind'], string> = {
-    label: 'label',
-    text: 'notes',
-    richText: 'subject',
-    list: 'account_tree',
-  };
-
   readonly form = new FormGroup({
     property: new FormControl<string | null>(null),
     label: new FormControl('', { nonNullable: true }),
@@ -906,11 +891,12 @@ export class BulkEditDialogComponent {
     const [first] = this._resources();
     return first ? bulkEditTargets(first).map(target => ({ ...target, label: this._labelOf(target) })) : [];
   });
-  readonly targetGroups = computed(() =>
-    TARGET_GROUPS.map(group => ({
-      ...group,
-      targets: this.targets().filter(target => group.kinds.includes(target.kind)),
-    })).filter(group => group.targets.length)
+  readonly labelTarget = computed(() => this.targets().find(target => target.kind === 'label') ?? null);
+  /** Every editable property, A–Z: the user looks for a name, not a type. */
+  readonly propertyTargets = computed(() =>
+    this.targets()
+      .filter(target => target.kind !== 'label')
+      .sort((a, b) => a.label.localeCompare(b.label))
   );
   readonly target = computed(() => this.targets().find(target => target.id === this.formValue().property) ?? null);
   readonly isMultiple = computed(() => {

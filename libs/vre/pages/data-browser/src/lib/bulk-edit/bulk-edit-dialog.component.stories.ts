@@ -160,6 +160,17 @@ export const OpensOnTheLabel: Story = {
   },
 };
 
+export const ListsTheLabelThenThePropertiesWithoutTypes: Story = {
+  decorators: [applicationConfig({ providers: providers(letters) })],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByTestId('bulk-edit-property'));
+    const options = await within(document.body).findAllByRole('option');
+    await expect(options.map(option => option.textContent?.trim())).toEqual(['Label', 'Art', 'Ort']);
+    await expect(within(document.body).getByRole('group', { name: 'Properties' })).toBeInTheDocument();
+  },
+};
+
 export const SetsADefaultValueOnlyWhereEmptyAndReportsTheResult: Story = {
   decorators: [applicationConfig({ providers: providers(letters) })],
   play: async ({ canvasElement, step }) => {
