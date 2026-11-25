@@ -30,6 +30,7 @@ import {
   ResourcePropertyDefinition,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
+import { APIV3ApiService, BatchChangesRequest } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import {
   propertiesTypeMapping,
@@ -56,6 +57,8 @@ import {
   toArray,
 } from 'rxjs';
 import {
+  batchChangeOf,
+  batchesOf,
   BulkEditChange,
   BulkEditListOption,
   BulkEditNewValue,
@@ -85,6 +88,12 @@ export type BulkEditDialogResult = string[];
 type Step = 'loading' | 'loadFailed' | 'edit' | 'applying' | 'done';
 
 type BulkEditAction = 'set' | 'remove';
+
+/** Whether one change was written. */
+interface BulkEditOutcome {
+  change: BulkEditChange;
+  ok: boolean;
+}
 
 interface FormValue {
   property: string | null;
@@ -1183,6 +1192,7 @@ export class BulkEditDialogComponent {
   private readonly _stringifyStringLiteral = inject(StringifyStringLiteralPipe);
   private readonly _translateService = inject(TranslateService);
   private readonly _resourceService = inject(ResourceService);
+  private readonly _apiV3 = inject(APIV3ApiService);
   private readonly _destroyRef = inject(DestroyRef);
 
   readonly form = new FormGroup({
@@ -1439,13 +1449,17 @@ export class BulkEditDialogComponent {
     this._dialogRef.disableClose = true;
     this.step.set('applying');
 
-    from(changes)
+    // Plain text, list values and labels go to the batch route, 100 changes a request; the rest one by one.
+    const batchable = changes.filter(change => batchChangeOf(change, target));
+    const single = changes.filter(change => !batchChangeOf(change, target));
+    const jobs: BulkEditChange[][] = [...batchesOf(batchable), ...single.map(change => [change])];
+
+    from(jobs)
       .pipe(
-        concatMap(change =>
-          this._write(change, target).pipe(
-            map(() => ({ change, ok: true })),
-            catchError(() => of({ change, ok: false }))
-          )
+        concatMap(job =>
+          job.length === 1 && !batchChangeOf(job[0], target)
+            ? this._writeOne(job[0], target)
+            : this._writeBatch(job, target)
         ),
         takeUntil(this._cancel$),
         finalize(() => {
@@ -1454,14 +1468,13 @@ export class BulkEditDialogComponent {
         }),
         takeUntilDestroyed(this._destroyRef)
       )
-      .subscribe(({ change, ok }) => {
-        this.processed.update(count => count + 1);
-        if (ok) {
-          this._changedIris.add(change.resource.id);
-          this.succeeded.update(done => [...done, change]);
-        } else {
-          this.failed.update(done => [...done, change]);
-        }
+      .subscribe(outcomes => {
+        this.processed.update(count => count + outcomes.length);
+        const ok = outcomes.filter(outcome => outcome.ok).map(outcome => outcome.change);
+        const failed = outcomes.filter(outcome => !outcome.ok).map(outcome => outcome.change);
+        ok.forEach(change => this._changedIris.add(change.resource.id));
+        this.succeeded.update(done => [...done, ...ok]);
+        this.failed.update(done => [...done, ...failed]);
       });
   }
 
@@ -1477,6 +1490,28 @@ export class BulkEditDialogComponent {
 
   close() {
     this._dialogRef.close([...this._changedIris]);
+  }
+
+  private _writeOne(change: BulkEditChange, target: BulkEditTarget): Observable<BulkEditOutcome[]> {
+    return this._write(change, target).pipe(
+      map(() => [{ change, ok: true }]),
+      catchError(() => of([{ change, ok: false }]))
+    );
+  }
+
+  /**
+   * Applies up to 100 changes in one request; each gets its own result, so one refused change (a conflict,
+   * missing rights) does not fail the others. A failed request fails them all, to be retried.
+   */
+  private _writeBatch(changes: BulkEditChange[], target: BulkEditTarget): Observable<BulkEditOutcome[]> {
+    const body = { changes: changes.map(change => batchChangeOf(change, target)!) };
+    return this._apiV3.postV3ResourcesValuesBatch(body as unknown as BatchChangesRequest).pipe(
+      map(response => {
+        const ok = new Set((response.results ?? []).filter(result => result.status === 'ok').map(r => r.index));
+        return changes.map((change, index) => ({ change, ok: ok.has(index) }));
+      }),
+      catchError(() => of(changes.map(change => ({ change, ok: false }))))
+    );
   }
 
   private _write(change: BulkEditChange, target: BulkEditTarget): Observable<unknown> {

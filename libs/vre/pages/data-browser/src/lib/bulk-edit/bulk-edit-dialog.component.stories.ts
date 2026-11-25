@@ -9,6 +9,7 @@ import {
   ResourceClassDefinitionWithPropertyDefinition,
   ResourcePropertyDefinition,
 } from '@dasch-swiss/dsp-js';
+import { APIV3ApiService } from '@dasch-swiss/vre/3rd-party-services/open-api';
 import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
 import { ResourceService } from '@dasch-swiss/vre/shared/app-common';
 import { applicationConfig, componentWrapperDecorator, type Meta, type StoryObj } from '@storybook/angular';
@@ -108,6 +109,7 @@ const providers = (resources: ReadResource[]) => [
   { provide: MAT_DIALOG_DATA, useValue: { resourceIris: resources.map(resource => resource.id) } },
   { provide: MatDialogRef, useValue: { close: () => {}, disableClose: false } },
   { provide: ResourceService, useValue: { getProjectShortcode: () => '0001' } },
+  { provide: APIV3ApiService, useValue: { postV3ResourcesValuesBatch: batchAnswering('ok') } },
   {
     provide: DspApiConnectionToken,
     useValue: {
@@ -134,6 +136,17 @@ async function typeValue(canvas: ReturnType<typeof within>, index: number, text:
   const label = canvas.queryByTestId('bulk-edit-value-0');
   const input = label ?? (await within(await valueEditor(canvas, index)).findByRole('textbox'));
   await userEvent.type(input, text);
+}
+
+/** The batch route, answering every change with `status`, or only updates when `updatesOnly`. */
+function batchAnswering(status: string, updatesOnly = false) {
+  return (body: { changes: { value?: string }[] }) =>
+    of({
+      results: body.changes.map((change, index) => ({
+        index,
+        status: updatesOnly && !change.value ? 'ok' : status,
+      })),
+    });
 }
 
 /** mat-select options open in an overlay outside the story's canvas. */
@@ -212,6 +225,8 @@ export const ListsAFailedValueAndOffersARetry: Story = {
             },
           },
         },
+        // The batch route refuses the update: the stored place changed since the preview.
+        { provide: APIV3ApiService, useValue: { postV3ResourcesValuesBatch: batchAnswering('conflict', true) } },
       ],
     }),
   ],

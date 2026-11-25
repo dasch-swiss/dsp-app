@@ -18,6 +18,8 @@ import {
   DeleteValue,
 } from '@dasch-swiss/dsp-js';
 import {
+  batchChangeOf,
+  batchesOf,
   BulkEditListOption,
   BulkEditNewValue,
   bulkEditRequest,
@@ -519,5 +521,78 @@ describe('bulkEditRequest', () => {
     expect(request.kind).toBe('label');
     expect(request.payload).toBeInstanceOf(UpdateResourceMetadata);
     expect(request.payload).toMatchObject({ id: 'r1', label: 'Letter', lastModificationDate: '2026-11-01T10:00:00Z' });
+  });
+});
+
+describe('batchChangeOf', () => {
+  it('UpdatesAValueOnlyIfItStillHoldsWhatThePreviewShowed', () => {
+    const value = textValue('v1', 'Basel');
+    const [change] = planBulkEdit([resource('r1', value)], TEXT, { values: texts('Basle'), onlyEmpty: false }).changes;
+
+    expect(batchChangeOf(change, TEXT)).toEqual({
+      resource: 'r1',
+      property: PROP,
+      value: 'v1',
+      expected: 'Basel',
+      new: 'Basle',
+    });
+  });
+
+  it('CreatesAValueOnlyWhereThePropertyIsStillEmpty', () => {
+    const [change] = planBulkEdit([resource('r1')], LIST, { values: nodes(BRIEF), onlyEmpty: true }).changes;
+
+    expect(batchChangeOf(change, LIST)).toEqual({
+      resource: 'r1',
+      property: LIST_PROP,
+      new: BRIEF.id,
+      expectEmpty: true,
+    });
+  });
+
+  it('ChangesALabelFromWhatItWas', () => {
+    const [change] = planBulkEdit([resource('r1')], LABEL, { values: texts('Letter'), onlyEmpty: false }).changes;
+
+    expect(batchChangeOf(change, LABEL)).toEqual({ resource: 'r1', label: { expected: 'Label r1', new: 'Letter' } });
+  });
+
+  it('LeavesRichTextRemovalsAndCommentsToSingleRequests', () => {
+    const [rich] = planBulkEdit([resource('r1')], RICH, {
+      values: [{ content: '<p>Note</p>', display: 'Note' }],
+      onlyEmpty: true,
+    }).changes;
+    const [commented] = planBulkEdit([resource('r1')], TEXT, {
+      values: [{ content: 'Brief', display: 'Brief', comment: 'checked' }],
+      onlyEmpty: true,
+    }).changes;
+    const value = Object.assign(textValue('v1', 'Karte'), { userHasPermission: 'D' });
+    const [removal] = planBulkEdit([resource('r1', value)], TEXT, { kind: 'remove' }).changes;
+
+    expect(batchChangeOf(rich, RICH)).toBeNull();
+    expect(batchChangeOf(commented, TEXT)).toBeNull();
+    expect(batchChangeOf(removal, TEXT)).toBeNull();
+  });
+});
+
+describe('batchesOf', () => {
+  const changeOn = (id: string) => ({ resource: { id } });
+
+  it('CutsBatchesAtTheGivenSize', () => {
+    const changes = ['a', 'b', 'c', 'd', 'e'].map(changeOn);
+
+    expect(batchesOf(changes, 2).map(batch => batch.map(change => change.resource.id))).toEqual([
+      ['a', 'b'],
+      ['c', 'd'],
+      ['e'],
+    ]);
+  });
+
+  it('KeepsTheChangesOfOneResourceTogether', () => {
+    const changes = ['a', 'b', 'b', 'c'].map(changeOn);
+
+    expect(batchesOf(changes, 2).map(batch => batch.map(change => change.resource.id))).toEqual([
+      ['a'],
+      ['b', 'b'],
+      ['c'],
+    ]);
   });
 });
