@@ -4,7 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ReadResource, ReadUser } from '@dasch-swiss/dsp-js';
 import { UserService } from '@dasch-swiss/vre/core/session';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { BulkEditDialogComponent } from '../bulk-edit/bulk-edit-dialog.component';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource-link-dialog.component';
 import { ResourceListSelectionComponent } from './resource-list-selection.component';
@@ -274,6 +275,70 @@ describe('ResourceListSelectionComponent', () => {
         expect(state.reason).toBeUndefined();
         done();
       });
+    });
+  });
+
+  describe('canEdit$', () => {
+    it('is true when the user is a member of every selected resource project', done => {
+      userSubject.next(createMockUser('user-1', ['project-uuid-1']));
+      selectedResourcesSubject.next([mockResource1]);
+
+      component.canEdit$.subscribe(canEdit => {
+        expect(canEdit).toBe(true);
+        done();
+      });
+    });
+
+    it('is false when one selected resource belongs to a project the user is not a member of', done => {
+      userSubject.next(createMockUser('user-1', ['project-uuid-1']));
+      selectedResourcesSubject.next([mockResource1, mockResource3]);
+
+      component.canEdit$.subscribe(canEdit => {
+        expect(canEdit).toBe(false);
+        done();
+      });
+    });
+  });
+
+  describe('isSameClass', () => {
+    it('is false when the selection mixes classes', () => {
+      const otherClass = { ...mockResource2, type: 'http://example.org#Other' } as ReadResource;
+
+      expect(component.isSameClass([mockResource1, mockResource2])).toBe(true);
+      expect(component.isSameClass([mockResource1, otherClass])).toBe(false);
+    });
+  });
+
+  describe('openBulkEditDialog', () => {
+    it('passes the selected IRIs and announces the resources a run changed, with the panel still open', () => {
+      const applied = new Subject<string[]>();
+      mockDialog.open.mockReturnValue({ componentInstance: { applied } } as any);
+      mockMultipleViewerService.notifyResourceChanged = jest.fn();
+      const emitted: string[][] = [];
+      component.bulkEdited.subscribe(iris => emitted.push(iris));
+
+      component.openBulkEditDialog([mockResource1, mockResource2]);
+      applied.next(['resource-1']);
+
+      expect(mockDialog.open).toHaveBeenCalledWith(
+        BulkEditDialogComponent,
+        expect.objectContaining({
+          data: { resourceIris: ['resource-1', 'resource-2'] },
+          position: { right: '0px' },
+        })
+      );
+      expect(mockMultipleViewerService.notifyResourceChanged).toHaveBeenCalledWith('resource-1');
+      expect(emitted).toEqual([['resource-1']]);
+    });
+
+    it('emits nothing before a run ends', () => {
+      mockDialog.open.mockReturnValue({ componentInstance: { applied: new Subject<string[]>() } } as any);
+      const emitted: string[][] = [];
+      component.bulkEdited.subscribe(iris => emitted.push(iris));
+
+      component.openBulkEditDialog([mockResource1]);
+
+      expect(emitted).toEqual([]);
     });
   });
 

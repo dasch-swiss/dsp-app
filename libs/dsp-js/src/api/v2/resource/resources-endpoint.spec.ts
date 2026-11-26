@@ -72,6 +72,30 @@ describe('ResourcesEndpoint', () => {
     getListNodesFromCacheSpy.mockRestore();
   });
 
+  describe('method getResourcesBatch', () => {
+    it('PostsTheIrisInTheBodyAndReadsTheResources', done => {
+      const resource = require('../../../../test/data/api/v2/resources/testding.json');
+
+      ajaxMock.setMockResponse(resource);
+
+      knoraApiConnection.v2.res
+        .getResourcesBatch(['http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'])
+        .subscribe(response => {
+          expect((response as ReadResourceSequence).resources[0].id).toEqual(
+            'http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'
+          );
+
+          const request = ajaxMock.getLastRequest();
+
+          expect(request?.url).toBe('http://0.0.0.0:3333/v2/resources/batch');
+          expect(request?.method).toEqual('POST');
+          expect(request?.body).toEqual({ resourceIris: ['http://rdfh.ch/0001/H6gBWUuJSuuO-CilHV8kQw'] });
+
+          done();
+        });
+    });
+  });
+
   describe('method getResource', () => {
     it('should return a resource', done => {
       const resource = require('../../../../test/data/api/v2/resources/testding.json');

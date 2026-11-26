@@ -427,6 +427,37 @@ describe('SearchEndpoint', () => {
         });
     });
 
+    it('ReturnsOnlyTheIrisOfTheResourcesFound', done => {
+      ajaxMock.setMockResponse({ '@graph': [{ '@id': 'http://rdfh.ch/0001/a' }, { '@id': 'http://rdfh.ch/0001/b' }] });
+
+      knoraApiConnection.v2.search
+        .doExtendedSearchIris(
+          'CONSTRUCT { ?mainRes knora-api:isMainResource true . } WHERE {}',
+          'http://rdfh.ch/projects/0001'
+        )
+        .subscribe(iris => {
+          expect(iris).toEqual(['http://rdfh.ch/0001/a', 'http://rdfh.ch/0001/b']);
+          expect(ajaxMock.getLastRequest()?.url).toBe(
+            'http://0.0.0.0:3333/v2/searchextended?limitToProject=http%3A%2F%2Frdfh.ch%2Fprojects%2F0001'
+          );
+          done();
+        });
+    });
+
+    it('ReadsASingleResourceAndAnEmptyAnswer', done => {
+      ajaxMock.setMockResponse({ '@id': 'http://rdfh.ch/0001/a', 'rdfs:label': 'A' });
+
+      knoraApiConnection.v2.search.doExtendedSearchIris('query').subscribe(single => {
+        expect(single).toEqual(['http://rdfh.ch/0001/a']);
+        ajaxMock.setMockResponse({});
+
+        knoraApiConnection.v2.search.doExtendedSearchIris('query').subscribe(none => {
+          expect(none).toEqual([]);
+          done();
+        });
+      });
+    });
+
     it('should perform an extended search count query', done => {
       const gravsearchQuery = `
                 PREFIX knora-api: <http://api.knora.org/ontology/knora-api/v2#>

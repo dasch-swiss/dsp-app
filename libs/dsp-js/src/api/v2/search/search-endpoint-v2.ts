@@ -1,11 +1,12 @@
 import jsonld from 'jsonld/dist/jsonld.js';
-import { catchError, map, mergeMap } from 'rxjs';
+import { Observable, catchError, map, mergeMap } from 'rxjs';
 import { AjaxResponse } from 'rxjs/ajax';
 import { ListNodeV2Cache } from '../../../cache/ListNodeV2Cache';
 import { OntologyCache } from '../../../cache/ontology-cache/OntologyCache';
 import { IFulltextSearchParams } from '../../../interfaces/models/v2/i-fulltext-search-params';
 import { ILabelSearchParams } from '../../../interfaces/models/v2/i-label-search-params';
 import { KnoraApiConfig } from '../../../knora-api-config';
+import { ApiResponseError } from '../../../models/api-response-error';
 import { ResourcesConversionUtil } from '../../../models/v2/resources/ResourcesConversionUtil';
 import { Endpoint } from '../../endpoint';
 import { V2Endpoint } from '../v2-endpoint';
@@ -178,6 +179,30 @@ export class SearchEndpointV2 extends Endpoint {
       catchError(error => {
         return this.handleError(error);
       })
+    );
+  }
+
+  /**
+   * Performs a Gravsearch query and returns only the IRIs of the resources it finds, in result order.
+   * The answer is not turned into resources, so no ontology is read; pair it with a query whose
+   * CONSTRUCT clause asks for no values, and the page stays small.
+   *
+   * @param gravsearchQuery the given Gravsearch query.
+   * @param limitToProject if provided, restricts the search to the project with this IRI.
+   */
+  doExtendedSearchIris(gravsearchQuery: string, limitToProject?: string): Observable<string[] | ApiResponseError> {
+    const path = `/searchextended${
+      limitToProject !== undefined ? `?limitToProject=${encodeURIComponent(limitToProject)}` : ''
+    }`;
+
+    return this.httpPost(path, gravsearchQuery, 'sparql').pipe(
+      // One resource arrives as the top-level object, several in `@graph`, none as `{}`.
+      map(ajaxResponse => {
+        const answer = ajaxResponse.response ?? {};
+        const resources: { '@id'?: string }[] = answer['@graph'] ?? (answer['@id'] ? [answer] : []);
+        return resources.map(resource => resource['@id']).filter((iri): iri is string => !!iri);
+      }),
+      catchError(error => this.handleError(error))
     );
   }
 

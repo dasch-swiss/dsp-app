@@ -74,6 +74,7 @@ table {
   &:hover,
   &:focus-within {
     .header-sort,
+    .header-bulk-edit,
     .header-filter,
     .header-pin {
       width: var(--header-control-width);
@@ -81,6 +82,7 @@ table {
     }
 
     .header-sort,
+    .header-bulk-edit,
     .header-filter,
     .header-pin {
       margin-left: 4px;
@@ -94,6 +96,7 @@ table {
 
 // A hidden control takes no room, so the name gets the whole width until hover brings the controls in.
 .header-sort,
+.header-bulk-edit,
 .header-filter,
 .header-pin {
   width: 0;
@@ -126,6 +129,7 @@ table {
 
 // Shared shape for the header controls; hidden until hover unless `.is-active`.
 .header-sort,
+.header-bulk-edit,
 .header-filter,
 .header-pin {
   --header-control-width: 18px;
@@ -156,6 +160,7 @@ table {
 }
 
 .header-sort,
+.header-bulk-edit,
 .header-filter,
 .header-pin {
   &.is-active {

@@ -16,3 +16,7 @@ export { RepresentationService } from './lib/representation/representation.servi
 export { FootnoteService } from './lib/properties/properties-display/footnotes/footnote.service';
 
 export { ResourceExplorerButtonComponent } from './lib/properties/resource-explorer-button.component';
+
+// The resource creation form's value editors and payloads, for other forms that write values (bulk edit).
+export { PropertyValuesCreatorComponent } from './lib/resource-creator/property-values-creator.component';
+export { propertiesTypeMapping } from './lib/properties/properties-display/property-value/resource-payloads-mapping';

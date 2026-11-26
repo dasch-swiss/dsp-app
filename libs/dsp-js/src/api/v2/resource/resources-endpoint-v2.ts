@@ -55,12 +55,28 @@ export class ResourcesEndpointV2 extends Endpoint {
         return acc + currentValue;
       });
 
+    return this._readResourceSequence(this.httpGet(resIris));
+  }
+
+  /**
+   * Gets many resources at once: the IRIs go in the body of `POST /v2/resources/batch`, so a long list does
+   * not run into URL-length limits. dsp-api accepts 1 to 100 IRIs per request. The answer is the same as
+   * `getResources`'s.
+   *
+   * @param resourceIris Iris of the resources to get, at most 100.
+   */
+  getResourcesBatch(resourceIris: string[]): Observable<ReadResourceSequence | ApiResponseError> {
+    return this._readResourceSequence(this.httpPost('/batch', { resourceIris }));
+  }
+
+  /** Turns a JSON-LD answer listing resources into a `ReadResourceSequence`. */
+  private _readResourceSequence(request: Observable<AjaxResponse<any>>) {
     // Create temporary caches for this request only
     // These will be garbage collected after the request completes
     const tempOntologyCache = new OntologyCache(this.knoraApiConfig, this.v2Endpoint);
     const tempListNodeCache = new ListNodeV2Cache(this.v2Endpoint);
 
-    return this.httpGet(resIris).pipe(
+    return request.pipe(
       mergeMap(ajaxResponse => {
         // console.log(JSON.stringify(ajaxResponse.response));
         // TODO: @rosenth Adapt context object

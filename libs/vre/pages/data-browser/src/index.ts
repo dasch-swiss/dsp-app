@@ -5,6 +5,7 @@ export { ResourceBrowserComponent } from './lib/comparison/resource-browser.comp
 export { ResourcesListComponent } from './lib/list-view/resources-list.component';
 export { MultipleViewerComponent } from './lib/comparison/multiple-viewer.component';
 export { ResourceListSelectionComponent } from './lib/list-view/resource-list-selection.component';
+export { BulkEditLauncher } from './lib/bulk-edit/bulk-edit-launcher.service';
 
 // Service used by ResourceBrowserComponent
 export { MultipleViewerService } from './lib/comparison/multiple-viewer.service';

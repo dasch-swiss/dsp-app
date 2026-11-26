@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -9,17 +9,22 @@ import { UserService } from '@dasch-swiss/vre/core/session';
 import { UserPermissions } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
+import { BulkEditLauncher } from '../bulk-edit/bulk-edit-launcher.service';
 import { MultipleViewerService } from '../comparison/multiple-viewer.service';
 import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource-link-dialog.component';
 
 @Component({
   selector: 'app-resource-list-selection',
   template: `
-    <div style="background: #336790; color: white; padding: 0 16px; display: flex; gap: 8px; align-items: center">
-      <div style="flex: 1; display: flex; align-items: center; gap: 16px;">
-        <div>
-          {{ 'pages.dataBrowser.resourceListSelection.resourcesSelected' | translate: { count: count$ | async } }}
-        </div>
+    <div class="selection-bar" data-cy="selection-bar">
+      <b class="count">
+        {{ 'pages.dataBrowser.resourceListSelection.resourcesSelected' | translate: { count: count$ | async } }}
+      </b>
+      <button mat-button type="button" data-cy="clear-selection-btn" (click)="reset()">
+        {{ 'pages.dataBrowser.resourceListSelection.clearSelection' | translate }}
+      </button>
+      <span class="spacer"></span>
+      <div class="actions">
         @if ((showCreateLink$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
           @if (isCreateLinkButtonDisabled$ | async; as disabledState) {
             <div
@@ -29,7 +34,7 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
               "
               [matTooltipDisabled]="!disabledState.disabled">
               <button
-                mat-flat-button
+                mat-stroked-button
                 (click)="openCreateLinkDialog(selectedResources)"
                 [disabled]="disabledState.disabled">
                 {{ 'pages.dataBrowser.resourceListSelection.createLinkObject' | translate }}
@@ -37,15 +42,100 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
             </div>
           }
         }
+        <!-- The host's actions for the same selection, e.g. Download. -->
+        <ng-content />
+        <!-- Only project members may edit, so the button is not offered to anyone else. -->
+        @if ((canEdit$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
+          @let sameClass = (sameClass$ | async) === true;
+          <div
+            class="tooltip-anchor"
+            [matTooltip]="'pages.dataBrowser.resourceListSelection.bulkEditSameClass' | translate"
+            [matTooltipDisabled]="sameClass">
+            <button
+              mat-stroked-button
+              data-cy="bulk-edit-btn"
+              [disabled]="!sameClass"
+              (click)="openBulkEditDialog(selectedResources)">
+              <mat-icon>edit_note</mat-icon>
+              {{ 'pages.dataBrowser.resourceListSelection.bulkEdit' | translate }}
+              <span class="count-badge" data-cy="bulk-edit-count">{{ selectedResources.length }}</span>
+            </button>
+          </div>
+        }
       </div>
-      <button mat-icon-button (click)="reset()"><mat-icon>close</mat-icon></button>
     </div>
   `,
-  styles: ['button[disabled] { background-color: #fff; color: #b8b8b8 }'],
-  imports: [AsyncPipe, MatButton, MatIconButton, MatIcon, MatTooltip, TranslatePipe],
+  styles: [
+    `
+      .selection-bar {
+        /* Dense: the bar sits between the toolbar and the results, so it stays one slim line. */
+        --mat-button-filled-container-height: 28px;
+        --mat-button-outlined-container-height: 28px;
+        --mat-button-text-container-height: 28px;
+        --mat-button-filled-horizontal-padding: 10px;
+        --mat-button-outlined-horizontal-padding: 10px;
+        --mat-button-text-horizontal-padding: 8px;
+        --mat-button-filled-label-text-size: 13px;
+        --mat-button-outlined-label-text-size: 13px;
+        --mat-button-text-label-text-size: 13px;
+        --mat-button-filled-icon-spacing: 6px;
+        --mat-button-outlined-icon-spacing: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 36px;
+        padding: 0 24px;
+        background: #eaeff3; /* $primary_50 */
+        border-bottom: 1px solid #c1d1dd; /* $primary_200 */
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      .selection-bar > * {
+        flex: none;
+      }
+      .count {
+        font-weight: 500;
+      }
+      /* A disabled button shows no tooltip, so its wrapper carries it. */
+      .tooltip-anchor {
+        display: inline-block;
+      }
+      .selection-bar > .spacer {
+        flex: 1;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .mat-icon {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+      }
+      .count-badge {
+        /* Aligned to the text's top, the pill is centred on the label's line box. */
+        display: inline-block;
+        vertical-align: text-top;
+        margin-left: 6px;
+        padding: 0 6px;
+        border-radius: 8px;
+        background: #eaeff3; /* $primary_50 */
+        color: #336790; /* $primary */
+        font-size: 11px;
+        line-height: 16px;
+      }
+    `,
+  ],
+  imports: [AsyncPipe, MatButton, MatIcon, MatTooltip, TranslatePipe],
 })
 export class ResourceListSelectionComponent {
+  /** Emits once a bulk edit has written values, so the host can reload its results. */
+  @Output() bulkEdited = new EventEmitter<string[]>();
+
   count$ = this.multipleViewerService.selectedResources$.pipe(map(resources => resources.length));
+  /** Bulk edit takes its properties from one class, so every selected resource must share it. */
+  sameClass$ = this.multipleViewerService.selectedResources$.pipe(map(resources => this.isSameClass(resources)));
   showCreateLink$ = combineLatest([
     this.count$,
     this.multipleViewerService.selectedResources$,
@@ -68,6 +158,19 @@ export class ResourceListSelectionComponent {
       // Check if user has Project Member OR Project Admin rights on ANY of the projects
       // This allows the button to show (possibly disabled) to provide feedback
       return projectUuids.some(projectUuid => UserPermissions.hasProjectMemberRights(user, projectUuid));
+    })
+  );
+
+  /** Bulk edit needs write access; dsp-api still checks each value. */
+  canEdit$ = combineLatest([
+    this.multipleViewerService.selectedResources$,
+    this._userService.user$,
+    this._userService.isSysAdmin$,
+  ]).pipe(
+    map(([resources, user, isSysAdmin]) => {
+      if (!user || resources.length === 0) return false;
+      if (isSysAdmin) return true;
+      return resources.every(r => UserPermissions.hasProjectMemberRights(user, r.attachedToProject));
     })
   );
 
@@ -98,11 +201,24 @@ export class ResourceListSelectionComponent {
     public multipleViewerService: MultipleViewerService,
     private readonly _userService: UserService,
     private readonly _translateService: TranslateService,
-    private readonly _dialog: MatDialog
+    private readonly _dialog: MatDialog,
+    private readonly _bulkEditLauncher: BulkEditLauncher
   ) {}
 
   reset() {
     this.multipleViewerService.reset();
+  }
+
+  /** The edited property comes from the class, so every resource must share it. */
+  isSameClass(resources: ReadResource[]): boolean {
+    return resources.every(resource => resource.type === resources[0].type);
+  }
+
+  openBulkEditDialog(resources: ReadResource[]): void {
+    this._bulkEditLauncher.open(resources.map(resource => resource.id)).subscribe(changedIris => {
+      changedIris.forEach(iri => this.multipleViewerService.notifyResourceChanged(iri));
+      if (changedIris.length) this.bulkEdited.emit(changedIris);
+    });
   }
 
   openCreateLinkDialog(resources: ReadResource[]): void {

@@ -22,7 +22,7 @@ import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ReadResource } from '@dasch-swiss/dsp-js';
+import { Constants, ReadResource } from '@dasch-swiss/dsp-js';
 import {
   FootnoteService,
   PropertiesDisplayService,
@@ -60,6 +60,8 @@ interface RenderColumn extends TableColumn {
   readonly isPinned: boolean;
   /** Why the column cannot be edited here, as a translation key; `null` when it can, or when the user could not edit anything anyway. */
   readonly readOnlyReasonKey: string | null;
+  /** Whether its header offers a bulk edit: only to a user who may edit, see `isBulkEditable`. */
+  readonly offersBulkEdit: boolean;
 }
 
 /** The trailing column that absorbs the table's spare width. `__` like the label key, so it cannot collide with a property IRI. */
@@ -146,6 +148,18 @@ const FILLER_COLUMN_KEY = '__filler';
                     [matTooltip]="column.sortTooltipKey | translate"
                     (click)="sortToggled.emit({ key: column.key, descending: column.nextSortDescending })">
                     <mat-icon>{{ column.sortIcon }}</mat-icon>
+                  </button>
+                }
+
+                @if (column.offersBulkEdit) {
+                  <button
+                    type="button"
+                    class="header-bulk-edit"
+                    data-cy="column-bulk-edit"
+                    [attr.aria-label]="'pages.dataBrowser.table.bulkEditColumn' | translate: { column: column.label }"
+                    [matTooltip]="'pages.dataBrowser.table.bulkEdit' | translate"
+                    (click)="bulkEditRequested.emit(column.propertyIri ?? labelIri)">
+                    <mat-icon>edit_note</mat-icon>
                   </button>
                 }
 
@@ -428,6 +442,10 @@ export class DataTableComponent {
   readonly filterRequested = output<string>();
   /** Emits the column whose pin the user toggled. */
   readonly columnPinToggled = output<string>();
+  /** The property whose values the user wants to bulk edit: the column's property IRI, or `rdfs:label`. */
+  readonly bulkEditRequested = output<string>();
+
+  protected readonly labelIri = Constants.Label;
   /**
    * A row's resource as dsp-api holds it after a cell was saved. The table has already re-rendered the row;
    * this is for whoever else shows the same resource.
@@ -585,6 +603,7 @@ export class DataTableComponent {
 
       return {
         ...column,
+        offersBulkEdit: canEdit && isBulkEditable(column),
         // Never narrower than its editor while one is open; back to its own width once it closes.
         width: editing.has(column.key)
           ? Math.max(widths[column.key] ?? column.defaultWidth, editWidthForValueType(column.valueType))
@@ -814,4 +833,21 @@ export class DataTableComponent {
 
   /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */
   protected readonly trackRow = (_: number, row: TableRow) => row.id;
+}
+
+/**
+ * Whether the bulk edit panel can open on this column: the label and the class's own properties, as the
+ * resource creation form offers them; not the image, the rights statement or built-in properties.
+ */
+function isBulkEditable(column: TableColumn): boolean {
+  if (column.key === LABEL_COLUMN_KEY) {
+    return true;
+  }
+  return (
+    !!column.propertyIri &&
+    column.isEditable &&
+    !column.isImage &&
+    !column.rightsField &&
+    !column.propertyIri.startsWith(Constants.KnoraApiV2)
+  );
 }

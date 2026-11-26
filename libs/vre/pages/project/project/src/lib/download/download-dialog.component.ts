@@ -6,7 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
 import { PropertyInfoValues } from '@dasch-swiss/vre/shared/app-common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DownloadDialogResourcesTabComponent } from './download-dialog-resources-tab.component';
+import { DownloadDialogResourcesTabComponent, DownloadScope } from './download-dialog-resources-tab.component';
 
 export interface DownloadDialogData {
   resClass: ResourceClassDefinitionWithAllLanguages;
@@ -14,6 +14,10 @@ export interface DownloadDialogData {
   /** Shown in the dialog title. */
   classLabel: string;
   properties: PropertyInfoValues[];
+  /** Which resources `resourceCount` counts; the whole class when absent. */
+  scope?: DownloadScope;
+  /** The resources to export, for the `search` and `selection` scopes; the whole class when absent. */
+  resourceIris?: string[];
 }
 
 @Component({
@@ -37,6 +41,8 @@ export interface DownloadDialogData {
       [properties]="data.properties"
       [resourceClassIri]="data.resClass.id"
       [resourceCount]="data.resourceCount"
+      [scope]="data.scope ?? 'class'"
+      [resourceIris]="data.resourceIris"
       (afterClosed)="dialogRef.close()" />
   `,
   styles: [

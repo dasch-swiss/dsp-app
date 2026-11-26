@@ -20,6 +20,18 @@ import { DownloadPropertyListComponent } from './download-property-list.componen
 // and a real X-of-N progress bar while it runs.
 export const CSV_EXPORT_LARGE_THRESHOLD = 1_000;
 
+/** The whole class, what the search and filters keep, or the ticked rows. */
+export type DownloadScope = 'class' | 'search' | 'selection';
+
+const SCOPE_NOTE_KEYS: Record<DownloadScope, string> = {
+  class: 'pages.dataBrowser.downloadDialog.scopeAll',
+  search: 'pages.dataBrowser.downloadDialog.scopeSearch',
+  selection: 'pages.dataBrowser.downloadDialog.scopeSelection',
+};
+
+/** dsp-api rejects an export of more resource IRIs than this. */
+export const EXPORT_MAX_RESOURCE_IRIS = 10_000;
+
 // U+FEFF, encoded by Blob as the three-byte UTF-8 BOM (ef bb bf).
 const UTF8_BOM = '﻿';
 
@@ -186,9 +198,9 @@ const UTF8_BOM = '﻿';
     <app-download-property-list [propertyDefinitions]="properties" (propertiesChange)="selectedPropertyIds = $event" />
 
     <footer class="footer">
-      <!-- The export ignores the Data tab's search and filters; say so before the click. -->
+      <!-- What the file will contain, said before the click. -->
       <p class="summary" data-cy="download-scope-note">
-        {{ 'pages.dataBrowser.downloadDialog.scopeAll' | translate }}
+        {{ scopeNoteKey | translate: { count: resourceCount | number } }}
       </p>
 
       <div class="options">
@@ -269,7 +281,15 @@ export class DownloadDialogResourcesTabComponent {
   @Input({ required: true }) properties!: PropertyInfoValues[];
   @Input({ required: true }) resourceClassIri!: string;
   @Input({ required: true }) resourceCount!: number;
+  /** Which resources the download stands for; only shown in the note above the button. */
+  @Input() scope: DownloadScope = 'class';
+  /** The resources to export; the whole class when absent. */
+  @Input() resourceIris?: string[];
   @Output() afterClosed = new EventEmitter<void>();
+
+  get scopeNoteKey(): string {
+    return SCOPE_NOTE_KEYS[this.scope];
+  }
   readonly largeThreshold = CSV_EXPORT_LARGE_THRESHOLD;
   includeArkUrls = false;
   includeResourceIris = false;
@@ -311,6 +331,7 @@ export class DownloadDialogResourcesTabComponent {
       language: this._localizationService.currentLanguage,
       includeIris: this.includeResourceIris,
       includeArkUrls: this.includeArkUrls,
+      ...(this.resourceIris && { resourceIris: this.resourceIris }),
     };
 
     // Call HttpClient directly instead of the generated APIV3ApiService: now that dsp-api streams the

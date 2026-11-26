@@ -1,11 +1,10 @@
-import { AsyncPipe, DecimalPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   afterRenderEffect,
   Component,
   computed,
   DestroyRef,
   ElementRef,
-  Inject,
   inject,
   Input,
   signal,
@@ -16,25 +15,20 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { KnoraApiConnection, ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
-import { DspApiConnectionToken, DspDialogConfig } from '@dasch-swiss/vre/core/config';
-import {
-  ResourceClassCountApi,
-  TableViewOptionsComponent,
-  TableViewStateService,
-} from '@dasch-swiss/vre/pages/data-browser';
+import { ResourceClassDefinitionWithAllLanguages } from '@dasch-swiss/dsp-js';
+import { DspDialogConfig } from '@dasch-swiss/vre/core/config';
+import { TableViewOptionsComponent, TableViewStateService } from '@dasch-swiss/vre/pages/data-browser';
 import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search-filters';
-import { filterUndefined, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
+import { filterUndefined } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { TranslatePipe } from '@ngx-translate/core';
-import { catchError, distinctUntilChanged, from, of, ReplaySubject, startWith, switchMap } from 'rxjs';
+import { from, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
 import { DataClassViewToggleComponent } from './data-class-view-toggle.component';
 import { DataTabTourComponent, DataTabTourStep } from './data-tab-tour/data-tab-tour.component';
-import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
 interface SelectedClass {
@@ -91,14 +85,6 @@ interface CreateResourceDialogProps {
           }
         </div>
         <div class="actions">
-          <!-- "All" and the class total: the export ignores search and filters. Hidden while loading and for an empty class. -->
-          @if (classCount$ | async; as classCount) {
-            <button mat-stroked-button (click)="openDownloadDialog(classCount)" data-cy="download-btn">
-              <mat-icon>download</mat-icon>
-              {{ 'pages.dataBrowser.downloadDialog.downloadAll' | translate }}
-              <span class="count-badge" data-cy="download-count">{{ classCount | number }}</span>
-            </button>
-          }
           @if (hasProjectMemberRights$ | async) {
             <button mat-flat-button color="primary" (click)="goToAddClassInstance()" data-cy="create-resource-btn">
               <mat-icon>add</mat-icon>
@@ -153,7 +139,6 @@ interface CreateResourceDialogProps {
   styleUrl: './data-class-header.component.css',
   imports: [
     AsyncPipe,
-    DecimalPipe,
     MatButton,
     MatIcon,
     MatProgressBar,
@@ -180,24 +165,11 @@ export class DataClassHeaderComponent {
   @Input({ required: true }) set classSelected(value: SelectedClass) {
     this._classSelected = value;
     this.descriptionExpanded.set(false);
-    this._resClassId$.next(value.resClass.id);
   }
   get classSelected(): SelectedClass {
     return this._classSelected;
   }
   private _classSelected!: SelectedClass;
-  private readonly _resClassId$ = new ReplaySubject<string>(1);
-
-  /** The class total, not the filtered result count: the export always covers the whole class. */
-  readonly classCount$ = this._resClassId$.pipe(
-    distinctUntilChanged(),
-    switchMap(id =>
-      this._resClassCountApi.getResourceClassCount(id).pipe(
-        startWith(null),
-        catchError(() => of(null))
-      )
-    )
-  );
 
   readonly descriptionExpanded = signal(false);
   readonly descriptionClamped = signal(false);
@@ -249,8 +221,6 @@ export class DataClassHeaderComponent {
     private readonly _dialog: MatDialog,
     private readonly _viewContainerRef: ViewContainerRef,
     private readonly _projectPageService: ProjectPageService,
-    @Inject(DspApiConnectionToken) private readonly _dspApiConnection: KnoraApiConnection,
-    private readonly _resClassCountApi: ResourceClassCountApi,
     private readonly _stringifyStringLiteralPipe: StringifyStringLiteralPipe,
     private readonly _dataBrowserPageService: DataBrowserPageService
   ) {
@@ -295,32 +265,5 @@ export class DataClassHeaderComponent {
           width: `${1200 - this._dialog.openDialogs.length * 40}px`,
         });
       });
-  }
-
-  openDownloadDialog(resClassCount: number) {
-    const classIri = this.classSelected.resClass.id;
-    // The export is the whole class, so the columns come from the class definition, not from a selected row.
-    this._dspApiConnection.v2.ontologyCache.getResourceClassDefinition(classIri).subscribe(classDefinitions => {
-      const properties = GenerateProperty.classProperty(classDefinitions.classes[classIri]).filter(
-        prop => prop.propDef.isEditable
-      );
-
-      // Full-height side panel: the property list scrolls inside it and the actions stay visible.
-      this._dialog.open(DownloadDialogComponent, {
-        ...DspDialogConfig.dialogDrawerConfig(
-          {
-            resourceCount: resClassCount,
-            resClass: this.classSelected.resClass,
-            classLabel: this._stringifyStringLiteralPipe.transform(this.classSelected.resClass.labels),
-            properties,
-          },
-          true
-        ),
-        width: '600px',
-        maxWidth: '100vw',
-        minWidth: 0,
-        autoFocus: false,
-      });
-    });
   }
 }
