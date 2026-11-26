@@ -662,12 +662,6 @@
         "showComments": "Afficher les commentaires"
       },
       "tour": {
-        "new": "Nouveau",
-        "progress": "{{current}} sur {{total}}",
-        "close": "Fermer la visite",
-        "back": "Retour",
-        "next": "Suivant",
-        "done": "Compris",
         "searchTitle": "Rechercher et filtrer ici",
         "searchBody": "Recherchez parmi les ressources de cette classe et affinez-les avec des filtres, sans quitter l'onglet Données.",
         "tableTitle": "Essayez la vue tableau",
@@ -1428,6 +1422,14 @@
         "long": "dimanche",
         "short": "D"
       }
+    },
+    "featureTour": {
+      "new": "Nouveau",
+      "progress": "{{current}} sur {{total}}",
+      "close": "Fermer la visite",
+      "back": "Retour",
+      "next": "Suivant",
+      "done": "Compris"
     }
   },
   "shared": {

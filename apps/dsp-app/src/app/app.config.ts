@@ -15,9 +15,11 @@ import {
 import { provideAppErrorHandler } from '@dasch-swiss/vre/core/error-handler';
 import { apiConnectionTokenProvider } from '@dasch-swiss/vre/core/session';
 import { LocalizationService } from '@dasch-swiss/vre/shared/app-helper-services';
+import { FEATURE_TOUR_CHANNEL } from '@dasch-swiss/vre/ui/ui';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { TRANSLATE_HTTP_LOADER_CONFIG } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
+import { featureTourChannel } from './feature-tour-channel';
 import { I18nFallbackTranslateLoader } from './i18n-fallback-translate-loader';
 import { authInterceptorFn } from './main/http-interceptors/auth.interceptor.fn';
 import { iiifWithCredentialsInterceptorFn } from './main/http-interceptors/iiif-with-credentials.interceptor.fn';
@@ -61,6 +63,12 @@ export const appConfig: ApplicationConfig = {
     {
       provide: DspInstrumentationToken,
       useFactory: (appConfigService: AppConfigService) => appConfigService.dspInstrumentationConfig,
+      deps: [AppConfigService],
+    },
+    {
+      provide: FEATURE_TOUR_CHANNEL,
+      useFactory: (appConfigService: AppConfigService) =>
+        featureTourChannel(appConfigService.dspInstrumentationConfig.environment),
       deps: [AppConfigService],
     },
     {

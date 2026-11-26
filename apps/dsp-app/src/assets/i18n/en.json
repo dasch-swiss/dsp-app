@@ -662,12 +662,6 @@
         "showComments": "Show comments"
       },
       "tour": {
-        "new": "New",
-        "progress": "{{current}} of {{total}}",
-        "close": "Close tour",
-        "back": "Back",
-        "next": "Next",
-        "done": "Got it",
         "searchTitle": "Search and filter right here",
         "searchBody": "Search the resources of this class and narrow them down with filters, without leaving the Data tab.",
         "tableTitle": "Try the table view",
@@ -1428,6 +1422,14 @@
         "long": "Sunday",
         "short": "S"
       }
+    },
+    "featureTour": {
+      "new": "New",
+      "progress": "{{current}} of {{total}}",
+      "close": "Close tour",
+      "back": "Back",
+      "next": "Next",
+      "done": "Got it"
     }
   },
   "shared": {

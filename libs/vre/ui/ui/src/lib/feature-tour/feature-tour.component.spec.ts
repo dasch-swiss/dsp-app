@@ -1,8 +1,17 @@
 import { Component, ElementRef, viewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
-import { DataTabTourComponent, DataTabTourStep, FIRST_APPEARANCE_DELAY_MS } from './data-tab-tour.component';
-import { DATA_TAB_TOUR_STORAGE_KEY } from './data-tab-tour.service';
+import { FEATURE_TOUR_CHANNEL, featureTourStorageKey } from './feature-tour';
+import { FeatureTourComponent, FeatureTourStep, FIRST_APPEARANCE_DELAY_MS } from './feature-tour.component';
+import { FEATURE_TOURS, FeatureTourName } from './feature-tours';
+
+/** Any registered tour does; the component only reads its name, and each test runs on its live day. */
+const NAME = Object.keys(FEATURE_TOURS)[0] as FeatureTourName;
+const STORAGE_KEY = featureTourStorageKey(FEATURE_TOURS[NAME]);
+const LIVE_DAY = (() => {
+  const [year, month, day] = FEATURE_TOURS[NAME].liveOn.split('-').map(Number);
+  return new Date(year, month - 1, day, 10);
+})();
 
 @Component({
   template: `
@@ -10,33 +19,34 @@ import { DATA_TAB_TOUR_STORAGE_KEY } from './data-tab-tour.service';
     @if (showSecond) {
       <button #second>second</button>
     }
-    <app-data-tab-tour [steps]="steps()" />
+    <app-feature-tour [tour]="name" [steps]="steps()" />
   `,
-  imports: [DataTabTourComponent],
+  imports: [FeatureTourComponent],
 })
 class HostComponent {
   showSecond = true;
+  name = NAME;
   private readonly _first = viewChild('first', { read: ElementRef });
   private readonly _second = viewChild('second', { read: ElementRef });
-  readonly tour = viewChild.required(DataTabTourComponent);
+  readonly tour = viewChild.required(FeatureTourComponent);
 
-  steps = (): DataTabTourStep[] => [
+  steps = (): FeatureTourStep[] => [
     { anchor: this._first(), align: 'start', titleKey: 'one.title', bodyKey: 'one.body' },
     { anchor: this._second(), align: 'end', titleKey: 'two.title', bodyKey: 'two.body' },
   ];
 }
 
-describe('DataTabTourComponent', () => {
+describe('FeatureTourComponent', () => {
   let fixture: ComponentFixture<HostComponent>;
 
-  const bubble = () => document.querySelector('[data-cy="data-tab-tour"]');
+  const bubble = () => document.querySelector('[data-cy="feature-tour"]');
   const click = (cy: string) => (document.querySelector(`[data-cy="${cy}"]`) as HTMLElement).click();
 
   /** Renders the host and, unless told otherwise, lets the first-appearance delay run out. */
   const render = async (showSecond = true, waitForTour = true) => {
     await TestBed.configureTestingModule({
       imports: [HostComponent],
-      providers: [provideTranslateService()],
+      providers: [provideTranslateService(), { provide: FEATURE_TOUR_CHANNEL, useValue: 'prod' }],
     }).compileComponents();
     fixture = TestBed.createComponent(HostComponent);
     fixture.componentInstance.showSecond = showSecond;
@@ -49,7 +59,7 @@ describe('DataTabTourComponent', () => {
 
   beforeEach(() => {
     localStorage.clear();
-    jest.useFakeTimers();
+    jest.useFakeTimers({ now: LIVE_DAY });
   });
 
   afterEach(() => jest.useRealTimers());
@@ -58,7 +68,7 @@ describe('DataTabTourComponent', () => {
     await render();
 
     expect(bubble()?.textContent).toContain('one.title');
-    expect(document.querySelector('[data-cy="data-tab-tour-back"]')).toBeNull();
+    expect(document.querySelector('[data-cy="feature-tour-back"]')).toBeNull();
   });
 
   it('waits before it first opens', async () => {
@@ -94,7 +104,7 @@ describe('DataTabTourComponent', () => {
   });
 
   it('stays closed once the tour has been seen', async () => {
-    localStorage.setItem(DATA_TAB_TOUR_STORAGE_KEY, 'x');
+    localStorage.setItem(STORAGE_KEY, 'x');
 
     await render();
 
@@ -104,12 +114,12 @@ describe('DataTabTourComponent', () => {
   it('walks forward and back between steps', async () => {
     await render();
 
-    click('data-tab-tour-next');
+    click('feature-tour-next');
     fixture.detectChanges();
     expect(bubble()?.textContent).toContain('two.title');
-    expect(document.querySelector('[data-cy="data-tab-tour-back"]')).not.toBeNull();
+    expect(document.querySelector('[data-cy="feature-tour-back"]')).not.toBeNull();
 
-    click('data-tab-tour-back');
+    click('feature-tour-back');
     fixture.detectChanges();
     expect(bubble()?.textContent).toContain('one.title');
   });
@@ -117,23 +127,23 @@ describe('DataTabTourComponent', () => {
   it('closes and remembers it after the last step', async () => {
     await render();
 
-    click('data-tab-tour-next');
+    click('feature-tour-next');
     fixture.detectChanges();
-    click('data-tab-tour-next');
+    click('feature-tour-next');
     fixture.detectChanges();
 
     expect(bubble()).toBeNull();
-    expect(localStorage.getItem(DATA_TAB_TOUR_STORAGE_KEY)).not.toBeNull();
+    expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull();
   });
 
   it('closes and remembers it from the close button', async () => {
     await render();
 
-    click('data-tab-tour-close');
+    click('feature-tour-close');
     fixture.detectChanges();
 
     expect(bubble()).toBeNull();
-    expect(localStorage.getItem(DATA_TAB_TOUR_STORAGE_KEY)).not.toBeNull();
+    expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull();
   });
 
   it('closes and remembers it on Escape', async () => {
@@ -143,7 +153,7 @@ describe('DataTabTourComponent', () => {
     fixture.detectChanges();
 
     expect(bubble()).toBeNull();
-    expect(localStorage.getItem(DATA_TAB_TOUR_STORAGE_KEY)).not.toBeNull();
+    expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull();
   });
 
   it('stays closed when the browser blocks storage', async () => {
@@ -161,7 +171,7 @@ describe('DataTabTourComponent', () => {
     await render(false);
 
     expect(bubble()?.textContent).toContain('one.title');
-    click('data-tab-tour-next');
+    click('feature-tour-next');
     fixture.detectChanges();
 
     expect(bubble()).toBeNull();
