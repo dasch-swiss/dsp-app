@@ -1,12 +1,12 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { ESCAPE } from '@angular/cdk/keycodes';
 import { CdkConnectedOverlay, ConnectedPosition } from '@angular/cdk/overlay';
-import { DOCUMENT } from '@angular/common';
 import {
   afterNextRender,
   Component,
   computed,
   DestroyRef,
+  DOCUMENT,
   effect,
   ElementRef,
   inject,
