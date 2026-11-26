@@ -68,10 +68,11 @@ before(() => {
   });
 });
 
-// The Data tab tour (DEV-7545) opens over the toolbar on first visit and would cover what specs
-// click. Mark it seen before the app boots; a spec about the tour can remove the key again.
+// A feature tour opens over the page on first visit and would cover what specs click. Turn every
+// tour off before the app boots (`FEATURE_TOURS_OFF_STORAGE_KEY`); a spec about a tour can remove
+// the key again.
 Cypress.on('window:before:load', win => {
-  win.localStorage.setItem('dsp.dataBrowser.tour.v1', 'seen-in-e2e');
+  win.localStorage.setItem('dsp.featureTours.off', 'e2e');
   installMutationObserverLoopGuard(win);
 });
 

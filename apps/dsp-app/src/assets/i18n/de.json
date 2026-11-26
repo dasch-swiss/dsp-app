@@ -662,12 +662,6 @@
         "showComments": "Kommentare anzeigen"
       },
       "tour": {
-        "new": "Neu",
-        "progress": "{{current}} von {{total}}",
-        "close": "Tour schliessen",
-        "back": "Zurück",
-        "next": "Weiter",
-        "done": "Verstanden",
         "searchTitle": "Hier suchen und filtern",
         "searchBody": "Durchsuchen Sie die Ressourcen dieser Klasse und grenzen Sie sie mit Filtern ein, ohne den Daten-Tab zu verlassen.",
         "tableTitle": "Probieren Sie die Tabellenansicht",
@@ -1428,6 +1422,14 @@
         "long": "Sonntag",
         "short": "S"
       }
+    },
+    "featureTour": {
+      "new": "Neu",
+      "progress": "{{current}} von {{total}}",
+      "close": "Tour schliessen",
+      "back": "Zurück",
+      "next": "Weiter",
+      "done": "Verstanden"
     }
   },
   "shared": {

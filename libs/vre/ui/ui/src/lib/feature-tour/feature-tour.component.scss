@@ -1,7 +1,7 @@
 @use 'config' as *;
 
 // The ring around the anchor. Its outer shadow is what dims the rest of the page; the pane it sits
-// in lets clicks through (see `.data-tab-tour-spotlight-pane` in the global styles).
+// in lets clicks through (see `.feature-tour-spotlight-pane` in the global styles).
 .spotlight {
   width: 100%;
   height: 100%;

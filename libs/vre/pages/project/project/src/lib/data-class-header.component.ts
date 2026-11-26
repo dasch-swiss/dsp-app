@@ -27,13 +27,13 @@ import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search
 import { filterUndefined, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { FeatureTourComponent, FeatureTourStep } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, distinctUntilChanged, from, of, ReplaySubject, startWith, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
 import { DataClassResultMetaComponent } from './data-class-result-meta.component';
 import { DataClassUrlStateService } from './data-class-url-state.service';
 import { DataClassViewToggleComponent } from './data-class-view-toggle.component';
-import { DataTabTourComponent, DataTabTourStep } from './data-tab-tour/data-tab-tour.component';
 import { DownloadDialogComponent } from './download/download-dialog.component';
 import { ProjectPageService } from './project-page.service';
 
@@ -147,7 +147,7 @@ interface CreateResourceDialogProps {
           [attr.aria-label]="'pages.dataBrowser.resultMeta.updating' | translate" />
       }
 
-      <app-data-tab-tour [steps]="tourSteps()" />
+      <app-feature-tour tour="dataTab" [steps]="tourSteps()" />
     </div>
   `,
   styleUrl: './data-class-header.component.css',
@@ -163,7 +163,7 @@ interface CreateResourceDialogProps {
     DataClassResultMetaComponent,
     DataClassViewToggleComponent,
     TableViewOptionsComponent,
-    DataTabTourComponent,
+    FeatureTourComponent,
   ],
   providers: [StringifyStringLiteralPipe],
 })
@@ -223,7 +223,7 @@ export class DataClassHeaderComponent {
   private readonly _tourViewToggleAnchor = viewChild('tourViewToggleAnchor', { read: ElementRef });
 
   /** The Data tab tour (DEV-7545): what is new in this header, in the order it reads. */
-  readonly tourSteps = computed<DataTabTourStep[]>(() => [
+  readonly tourSteps = computed<FeatureTourStep[]>(() => [
     {
       anchor: this._tourSearchAnchor(),
       align: 'start',
