@@ -661,12 +661,6 @@
         "comments": "Kommentare",
         "showComments": "Kommentare anzeigen"
       },
-      "tour": {
-        "searchTitle": "Hier suchen und filtern",
-        "searchBody": "Durchsuchen Sie die Ressourcen dieser Klasse und grenzen Sie sie mit Filtern ein, ohne den Daten-Tab zu verlassen.",
-        "tableTitle": "Probieren Sie die Tabellenansicht",
-        "tableBody": "Wechseln Sie zu Tabelle, um Ressourcen als Zeilen und ihre Eigenschaften als Spalten zu sehen und Werte direkt zu vergleichen."
-      },
       "dataModelMap": {
         "anyResource": "Beliebige Ressource",
         "legendLink": "Verknüpfungseigenschaft, zeigt auf die verknüpfte Klasse"
@@ -825,7 +819,13 @@
         }
       },
       "links": "Verknüpfungen",
-      "expandLinks": "Klicken, um die {{count}} Verknüpfungen zu zeigen"
+      "expandLinks": "Klicken, um die {{count}} Verknüpfungen zu zeigen",
+      "tour": {
+        "filterTitle": "Nur zeigen, was Sie brauchen",
+        "filterBody": "Suchen Sie eine Klasse, oder blenden Sie Klassen und Verknüpfungen mit den Filtern ein und aus.",
+        "exportTitle": "Diagramm exportieren",
+        "exportBody": "Laden Sie das Diagramm als PNG oder SVG herunter, etwa für eine Publikation oder Präsentation."
+      }
     },
     "dataModels": {
       "classActions": "Aktionen für {{class}}",
@@ -913,6 +913,19 @@
         "add": "Beschreibung ({{language}}) zu {{class}} hinzufügen",
         "editLabel": "Bezeichnung ({{language}}) von {{class}} bearbeiten",
         "addLabel": "Bezeichnung ({{language}}) zu {{class}} hinzufügen"
+      },
+      "tour": {
+        "overviewTitle": "Alles an einem Ort",
+        "overviewBody": "Hier finden Sie Ihre Datenmodelle mit Ressourcenklassen, Eigenschaften und Diagramm, und darunter die kontrollierten Vokabulare.",
+        "sectionsTitle": "Ressourcenklassen und Eigenschaften",
+        "sectionsBody": "Die Eigenschaften sind jetzt leichter erreichbar. Hier erstellen Sie eine Eigenschaft, die Sie in mehreren Ressourcenklassen wiederverwenden möchten.",
+        "diagramTitle": "Ihr Datenmodell als Diagramm",
+        "diagramBody": "Das Diagramm zeigt, wie die Ressourcenklassen Ihres Datenmodells zusammenhängen."
+      },
+      "teaser": {
+        "label": "Neu im Tab Datenmodelle",
+        "title": "Neue Ansicht für Datenmodelle",
+        "body": "Der Tab Datenmodelle wurde neu gestaltet und zeigt das Datenmodell jetzt auch als Diagramm."
       }
     }
   },
@@ -1429,7 +1442,10 @@
       "close": "Tour schliessen",
       "back": "Zurück",
       "next": "Weiter",
-      "done": "Verstanden"
+      "done": "Verstanden",
+      "closeTeaser": "Schliessen",
+      "dismiss": "Nein, danke",
+      "start": "Tour starten"
     }
   },
   "shared": {

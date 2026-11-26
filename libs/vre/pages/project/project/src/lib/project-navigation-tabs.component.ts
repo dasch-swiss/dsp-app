@@ -5,6 +5,7 @@ import { MatTabLink, MatTabNav, MatTabNavPanel } from '@angular/material/tabs';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
+import { FeatureTourTeaserComponent } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ProjectPageService } from './project-page.service';
 
@@ -32,7 +33,17 @@ import { ProjectPageService } from './project-page.service';
         [class.active-link]="isDataModelsRouteActive()"
         data-cy="data-models-tab">
         <mat-icon class="tab-icon">lan</mat-icon>
-        {{ 'shared.header.projectTabs.dataModels' | translate }}
+        <span class="teaser-anchor">
+          {{ 'shared.header.projectTabs.dataModels' | translate }}
+          @if (!isDataModelsRouteActive()) {
+            <app-feature-tour-teaser
+              tour="dataModels"
+              labelKey="pages.dataModels.teaser.label"
+              titleKey="pages.dataModels.teaser.title"
+              bodyKey="pages.dataModels.teaser.body"
+              (started)="openDataModels()" />
+          }
+        </span>
       </a>
       @if (projectPageService.hasProjectAdminRights$ | async) {
         <a mat-tab-link [routerLink]="[SETTINGS]" routerLinkActive="active-link">
@@ -48,6 +59,9 @@ import { ProjectPageService } from './project-page.service';
       .tab-icon {
         margin-right: 8px;
       }
+      .teaser-anchor {
+        position: relative;
+      }
       .active-link {
         border-bottom: 2px solid #336790;
         font-weight: 500;
@@ -59,7 +73,17 @@ import { ProjectPageService } from './project-page.service';
       }
     `,
   ],
-  imports: [AsyncPipe, MatTabNav, MatTabLink, MatTabNavPanel, MatIcon, RouterLink, RouterLinkActive, TranslatePipe],
+  imports: [
+    AsyncPipe,
+    FeatureTourTeaserComponent,
+    MatTabNav,
+    MatTabLink,
+    MatTabNavPanel,
+    MatIcon,
+    RouterLink,
+    RouterLinkActive,
+    TranslatePipe,
+  ],
 })
 export class ProjectNavigationTabsComponent {
   readonly DATA = RouteConstants.data;
@@ -85,6 +109,11 @@ export class ProjectNavigationTabsComponent {
       this._titleService.setTitle(currentTitle);
       this._router.navigate([RouteConstants.data], { relativeTo: this._route });
     });
+  }
+
+  /** Where the Data models tour runs, after the teaser's "Start tour". */
+  openDataModels(): void {
+    this._router.navigate([RouteConstants.dataModels], { relativeTo: this._route });
   }
 
   isDataRouteActive(): boolean {

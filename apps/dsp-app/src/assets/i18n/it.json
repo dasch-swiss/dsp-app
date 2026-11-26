@@ -661,12 +661,6 @@
         "comments": "Commenti",
         "showComments": "Mostra i commenti"
       },
-      "tour": {
-        "searchTitle": "Cerca e filtra qui",
-        "searchBody": "Cerca tra le risorse di questa classe e restringile con i filtri, senza lasciare la scheda Dati.",
-        "tableTitle": "Prova la vista tabella",
-        "tableBody": "Passa a Tabella per vedere le risorse come righe, con le proprietà come colonne, e confrontare i valori fianco a fianco."
-      },
       "dataModelMap": {
         "anyResource": "Qualsiasi risorsa",
         "legendLink": "proprietà di collegamento, punta alla classe collegata"
@@ -825,7 +819,13 @@
         }
       },
       "links": "collegamenti",
-      "expandLinks": "Clicca per mostrare i {{count}} collegamenti"
+      "expandLinks": "Clicca per mostrare i {{count}} collegamenti",
+      "tour": {
+        "filterTitle": "Mostra solo ciò che ti serve",
+        "filterBody": "Cerca una classe, oppure mostra e nascondi classi e collegamenti con i filtri.",
+        "exportTitle": "Esporta il diagramma",
+        "exportBody": "Scarica il diagramma come PNG o SVG, per esempio per una pubblicazione o una presentazione."
+      }
     },
     "dataModels": {
       "classActions": "Azioni per {{class}}",
@@ -913,6 +913,19 @@
         "add": "Aggiungi una descrizione ({{language}}) a {{class}}",
         "editLabel": "Modifica l'etichetta ({{language}}) di {{class}}",
         "addLabel": "Aggiungi un'etichetta ({{language}}) a {{class}}"
+      },
+      "tour": {
+        "overviewTitle": "Tutto in un unico posto",
+        "overviewBody": "Qui trovi i tuoi modelli di dati con classi di risorse, proprietà e diagramma, e sotto i vocabolari controllati.",
+        "sectionsTitle": "Classi di risorse e proprietà",
+        "sectionsBody": "Le proprietà ora sono più facili da raggiungere. Crea qui una proprietà se vuoi riutilizzarla in più classi di risorse.",
+        "diagramTitle": "Il tuo modello di dati come diagramma",
+        "diagramBody": "Il diagramma mostra come le classi di risorse del tuo modello di dati sono collegate tra loro."
+      },
+      "teaser": {
+        "label": "Novità nella scheda Modelli di dati",
+        "title": "Una nuova vista per i modelli di dati",
+        "body": "La scheda Modelli di dati è stata ridisegnata e ora mostra il modello di dati anche come diagramma."
       }
     }
   },
@@ -1429,7 +1442,10 @@
       "close": "Chiudi il tour",
       "back": "Indietro",
       "next": "Avanti",
-      "done": "Ho capito"
+      "done": "Ho capito",
+      "closeTeaser": "Chiudi",
+      "dismiss": "No, grazie",
+      "start": "Inizia il tour"
     }
   },
   "shared": {

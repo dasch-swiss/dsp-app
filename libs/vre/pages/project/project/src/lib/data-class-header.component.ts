@@ -27,7 +27,6 @@ import { AdvancedSearchBarComponent } from '@dasch-swiss/vre/pages/search/search
 import { filterUndefined, GenerateProperty } from '@dasch-swiss/vre/shared/app-common';
 import { ResourceResultService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
-import { FeatureTourComponent, FeatureTourStep } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, distinctUntilChanged, from, of, ReplaySubject, startWith, switchMap } from 'rxjs';
 import { DataBrowserPageService } from './data-browser-page.service';
@@ -111,7 +110,6 @@ interface CreateResourceDialogProps {
       <div class="toolbar">
         <!-- Nothing is projected into the bar: the class is fixed by the route and label is the only sort. -->
         <app-advanced-search-bar
-          #tourSearchAnchor
           class="toolbar-search"
           [projectUuid]="projectUuid"
           density="compact"
@@ -135,7 +133,7 @@ interface CreateResourceDialogProps {
               (columnVisibilityChanged)="tableState.setColumnVisible($event.key, $event.isVisible)"
               (allColumnsVisibilityChanged)="tableState.setAllColumnsVisible($event)" />
           }
-          <app-data-class-view-toggle #tourViewToggleAnchor />
+          <app-data-class-view-toggle />
         </div>
       </div>
 
@@ -146,8 +144,6 @@ interface CreateResourceDialogProps {
           data-cy="results-refreshing"
           [attr.aria-label]="'pages.dataBrowser.resultMeta.updating' | translate" />
       }
-
-      <app-feature-tour tour="dataTab" [steps]="tourSteps()" />
     </div>
   `,
   styleUrl: './data-class-header.component.css',
@@ -163,7 +159,6 @@ interface CreateResourceDialogProps {
     DataClassResultMetaComponent,
     DataClassViewToggleComponent,
     TableViewOptionsComponent,
-    FeatureTourComponent,
   ],
   providers: [StringifyStringLiteralPipe],
 })
@@ -218,25 +213,6 @@ export class DataClassHeaderComponent {
     });
     this._descriptionObserver.observe(el);
   });
-
-  private readonly _tourSearchAnchor = viewChild('tourSearchAnchor', { read: ElementRef });
-  private readonly _tourViewToggleAnchor = viewChild('tourViewToggleAnchor', { read: ElementRef });
-
-  /** The Data tab tour (DEV-7545): what is new in this header, in the order it reads. */
-  readonly tourSteps = computed<FeatureTourStep[]>(() => [
-    {
-      anchor: this._tourSearchAnchor(),
-      align: 'start',
-      titleKey: 'pages.dataBrowser.tour.searchTitle',
-      bodyKey: 'pages.dataBrowser.tour.searchBody',
-    },
-    {
-      anchor: this._tourViewToggleAnchor(),
-      align: 'end',
-      titleKey: 'pages.dataBrowser.tour.tableTitle',
-      bodyKey: 'pages.dataBrowser.tour.tableBody',
-    },
-  ]);
 
   hasProjectMemberRights$ = this._projectPageService.hasProjectMemberRights$;
 

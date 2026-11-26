@@ -1,3 +1,4 @@
+import { computed } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FEATURE_TOUR_CHANNEL, FeatureTour, FeatureTourChannel } from './feature-tour';
 import { FEATURE_TOURS_OFF_STORAGE_KEY, FeatureTourService } from './feature-tour.service';
@@ -33,5 +34,33 @@ describe('FeatureTourService', () => {
     localStorage.setItem(FEATURE_TOURS_OFF_STORAGE_KEY, 'x');
 
     expect(service('dev').shouldShow(tour)).toBe(false);
+  });
+
+  it('remembers a visit to the tour page apart from having seen the tour', () => {
+    const tours = service('stage');
+
+    tours.markVisited(tour);
+
+    expect(tours.wasVisited(tour)).toBe(true);
+    expect(tours.shouldShow(tour)).toBe(true);
+  });
+
+  it('skips the delay only for the next render after start now', () => {
+    const tours = service('stage');
+
+    tours.startNow(tour);
+
+    expect(tours.takeStartNow(tour)).toBe(true);
+    expect(tours.takeStartNow(tour)).toBe(false);
+  });
+
+  it('tells signals that read it when a tour is seen', () => {
+    const tours = service('stage');
+    const showing = computed(() => tours.shouldShow(tour));
+    expect(showing()).toBe(true);
+
+    tours.markSeen(tour);
+
+    expect(showing()).toBe(false);
   });
 });

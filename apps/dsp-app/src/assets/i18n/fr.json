@@ -661,12 +661,6 @@
         "comments": "Commentaires",
         "showComments": "Afficher les commentaires"
       },
-      "tour": {
-        "searchTitle": "Rechercher et filtrer ici",
-        "searchBody": "Recherchez parmi les ressources de cette classe et affinez-les avec des filtres, sans quitter l'onglet Données.",
-        "tableTitle": "Essayez la vue tableau",
-        "tableBody": "Passez à Tableau pour afficher les ressources en lignes, leurs propriétés en colonnes, et comparer les valeurs côte à côte."
-      },
       "dataModelMap": {
         "anyResource": "Toute ressource",
         "legendLink": "propriété de lien, pointe vers la classe liée"
@@ -825,7 +819,13 @@
         }
       },
       "links": "liens",
-      "expandLinks": "Cliquer pour afficher les {{count}} liens"
+      "expandLinks": "Cliquer pour afficher les {{count}} liens",
+      "tour": {
+        "filterTitle": "N'afficher que l'essentiel",
+        "filterBody": "Recherchez une classe, ou affichez et masquez des classes et des liens avec les filtres.",
+        "exportTitle": "Exporter le diagramme",
+        "exportBody": "Téléchargez le diagramme en PNG ou en SVG, par exemple pour une publication ou une présentation."
+      }
     },
     "dataModels": {
       "classActions": "Actions pour {{class}}",
@@ -913,6 +913,19 @@
         "add": "Ajouter une description ({{language}}) à {{class}}",
         "editLabel": "Modifier le libellé ({{language}}) de {{class}}",
         "addLabel": "Ajouter un libellé ({{language}}) à {{class}}"
+      },
+      "tour": {
+        "overviewTitle": "Tout au même endroit",
+        "overviewBody": "Vous trouvez ici vos modèles de données avec leurs classes de ressources, leurs propriétés et leur diagramme, et en dessous les vocabulaires contrôlés.",
+        "sectionsTitle": "Classes de ressources et propriétés",
+        "sectionsBody": "Les propriétés sont désormais plus faciles d'accès. Créez ici une propriété que vous souhaitez réutiliser dans plusieurs classes de ressources.",
+        "diagramTitle": "Votre modèle de données en diagramme",
+        "diagramBody": "Le diagramme montre comment les classes de ressources de votre modèle de données sont liées entre elles."
+      },
+      "teaser": {
+        "label": "Nouveau dans l'onglet Modèles de données",
+        "title": "Une nouvelle vue pour les modèles de données",
+        "body": "L'onglet Modèles de données a été repensé et affiche désormais aussi le modèle de données sous forme de diagramme."
       }
     }
   },
@@ -1429,7 +1442,10 @@
       "close": "Fermer la visite",
       "back": "Retour",
       "next": "Suivant",
-      "done": "Compris"
+      "done": "Compris",
+      "closeTeaser": "Fermer",
+      "dismiss": "Non merci",
+      "start": "Commencer la visite"
     }
   },
   "shared": {

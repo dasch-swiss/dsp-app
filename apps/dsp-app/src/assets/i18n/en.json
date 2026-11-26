@@ -661,12 +661,6 @@
         "comments": "Comments",
         "showComments": "Show comments"
       },
-      "tour": {
-        "searchTitle": "Search and filter right here",
-        "searchBody": "Search the resources of this class and narrow them down with filters, without leaving the Data tab.",
-        "tableTitle": "Try the table view",
-        "tableBody": "Switch to Table to see resources as rows, with their properties as columns, and compare values side by side."
-      },
       "dataModelMap": {
         "anyResource": "Any resource",
         "legendLink": "link property, points to the linked class"
@@ -825,7 +819,13 @@
         }
       },
       "links": "links",
-      "expandLinks": "Click to show the {{count}} links"
+      "expandLinks": "Click to show the {{count}} links",
+      "tour": {
+        "filterTitle": "Show only what you need",
+        "filterBody": "Search for a class, or show and hide classes and links with the filters.",
+        "exportTitle": "Export the diagram",
+        "exportBody": "Download the diagram as PNG or SVG, for example for a publication or presentation."
+      }
     },
     "dataModels": {
       "classActions": "Actions for {{class}}",
@@ -913,6 +913,19 @@
         "add": "Add a {{language}} description to {{class}}",
         "editLabel": "Edit the {{language}} label of {{class}}",
         "addLabel": "Add a {{language}} label to {{class}}"
+      },
+      "tour": {
+        "overviewTitle": "Everything in one place",
+        "overviewBody": "Here you find your data models with resource classes, properties and diagram, and below them the controlled vocabularies.",
+        "sectionsTitle": "Resource classes and properties",
+        "sectionsBody": "Properties are now easier to reach. Create a property here if you want to reuse it across several resource classes.",
+        "diagramTitle": "Your data model as a diagram",
+        "diagramBody": "The diagram shows how the resource classes of your data model relate to each other."
+      },
+      "teaser": {
+        "label": "New in the Data models tab",
+        "title": "A new view for data models",
+        "body": "The Data models tab was redesigned and now also shows the data model as a diagram."
       }
     }
   },
@@ -1429,7 +1442,10 @@
       "close": "Close tour",
       "back": "Back",
       "next": "Next",
-      "done": "Got it"
+      "done": "Got it",
+      "closeTeaser": "Close",
+      "dismiss": "No thanks",
+      "start": "Start tour"
     }
   },
   "shared": {

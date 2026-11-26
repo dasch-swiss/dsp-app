@@ -44,5 +44,6 @@ export * from './lib/resource-authorship.component';
 export * from './lib/authorship-chip-editor.component';
 export { FEATURE_TOUR_CHANNEL, type FeatureTourChannel } from './lib/feature-tour/feature-tour';
 export { FeatureTourComponent, type FeatureTourStep } from './lib/feature-tour/feature-tour.component';
+export { FeatureTourTeaserComponent } from './lib/feature-tour/feature-tour-teaser.component';
 export { CalendarMarkerComponent, type CalendarFacts, type CalendarReading } from './lib/calendar-marker.component';
 export { CalendarDateService, WEEKDAY_KEYS } from './lib/calendar-date/calendar-date.service';

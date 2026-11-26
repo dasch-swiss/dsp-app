@@ -3,11 +3,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { FEATURE_TOUR_CHANNEL, featureTourStorageKey } from './feature-tour';
 import { FeatureTourComponent, FeatureTourStep, FIRST_APPEARANCE_DELAY_MS } from './feature-tour.component';
+import { FeatureTourService } from './feature-tour.service';
 import { FEATURE_TOURS, FeatureTourName } from './feature-tours';
 
 /** Any registered tour does; the component only reads its name, and each test runs on its live day. */
 const NAME = Object.keys(FEATURE_TOURS)[0] as FeatureTourName;
 const STORAGE_KEY = featureTourStorageKey(FEATURE_TOURS[NAME]);
+const ANOTHER = { id: 'another', liveOn: '2026-12-02' };
 const LIVE_DAY = (() => {
   const [year, month, day] = FEATURE_TOURS[NAME].liveOn.split('-').map(Number);
   return new Date(year, month - 1, day, 10);
@@ -19,6 +21,7 @@ const LIVE_DAY = (() => {
     @if (showSecond) {
       <button #second>second</button>
     }
+    <button #third>third</button>
     <app-feature-tour [tour]="name" [steps]="steps()" />
   `,
   imports: [FeatureTourComponent],
@@ -26,14 +29,20 @@ const LIVE_DAY = (() => {
 class HostComponent {
   showSecond = true;
   name = NAME;
-  private readonly _first = viewChild('first', { read: ElementRef });
+  readonly first = viewChild('first', { read: ElementRef });
   private readonly _second = viewChild('second', { read: ElementRef });
+  readonly third = viewChild.required('third', { read: ElementRef });
   readonly tour = viewChild.required(FeatureTourComponent);
 
   steps = (): FeatureTourStep[] => [
-    { anchor: this._first(), align: 'start', titleKey: 'one.title', bodyKey: 'one.body' },
+    { anchor: this.first(), align: 'start', titleKey: 'one.title', bodyKey: 'one.body' },
     { anchor: this._second(), align: 'end', titleKey: 'two.title', bodyKey: 'two.body' },
   ];
+}
+
+/** Hangs `getBoundingClientRect` on an element, which jsdom cannot lay out. */
+function placeAt(el: HTMLElement, left: number, top: number, width: number, height: number): void {
+  el.getBoundingClientRect = () => new DOMRect(left, top, width, height);
 }
 
 describe('FeatureTourComponent', () => {
@@ -43,13 +52,14 @@ describe('FeatureTourComponent', () => {
   const click = (cy: string) => (document.querySelector(`[data-cy="${cy}"]`) as HTMLElement).click();
 
   /** Renders the host and, unless told otherwise, lets the first-appearance delay run out. */
-  const render = async (showSecond = true, waitForTour = true) => {
+  const render = async (showSecond = true, waitForTour = true, setUp?: (host: HostComponent) => void) => {
     await TestBed.configureTestingModule({
       imports: [HostComponent],
       providers: [provideTranslateService(), { provide: FEATURE_TOUR_CHANNEL, useValue: 'prod' }],
     }).compileComponents();
     fixture = TestBed.createComponent(HostComponent);
     fixture.componentInstance.showSecond = showSecond;
+    setUp?.(fixture.componentInstance);
     fixture.detectChanges();
     if (waitForTour) {
       jest.advanceTimersByTime(FIRST_APPEARANCE_DELAY_MS);
@@ -175,5 +185,68 @@ describe('FeatureTourComponent', () => {
     fixture.detectChanges();
 
     expect(bubble()).toBeNull();
+  });
+
+  it('opens right away when asked to start now', async () => {
+    await render(true, false, () => TestBed.inject(FeatureTourService).startNow(FEATURE_TOURS[NAME]));
+
+    expect(bubble()?.textContent).toContain('one.title');
+    expect(fixture.componentInstance.tour().captureFocus()).toBe(true);
+  });
+
+  it('waits while another tour is on screen, and opens when it closes', async () => {
+    await render(true, true, () => TestBed.inject(FeatureTourService).claim(ANOTHER));
+    const service = TestBed.inject(FeatureTourService);
+    expect(bubble()).toBeNull();
+
+    service.release(ANOTHER);
+    fixture.detectChanges();
+    expect(bubble()?.textContent).toContain('one.title');
+    expect(service.openTour()).toBe(FEATURE_TOURS[NAME].id);
+
+    click('feature-tour-close');
+    fixture.detectChanges();
+    expect(service.openTour()).toBeNull();
+  });
+
+  it('remembers the page was visited, for the teaser', async () => {
+    await render(true, false);
+
+    expect(TestBed.inject(FeatureTourService).wasVisited(FEATURE_TOURS[NAME])).toBe(true);
+  });
+
+  it('rings several anchors together', async () => {
+    await render(false, true, host => {
+      host.steps = () => [
+        { anchor: [host.first(), undefined, host.third()], align: 'start', titleKey: 't', bodyKey: 'b' },
+      ];
+    });
+    const host = fixture.componentInstance;
+    placeAt(host.first()!.nativeElement, 10, 20, 100, 30);
+    placeAt(host.third().nativeElement, 200, 40, 50, 30);
+    // jsdom has no ResizeObserver to measure again once the anchors are placed.
+    host.tour()['_measure']();
+
+    expect(host.tour().spotlightBox()).toEqual({ offsetX: -4, offsetY: -4, width: 248, height: 58 });
+  });
+
+  it.each([
+    ['below', 'start', { overlayX: 'start', overlayY: 'top', offsetX: -4, offsetY: 44 }],
+    ['below', 'end', { overlayX: 'end', overlayY: 'top', offsetX: 104, offsetY: 44 }],
+    ['right', 'start', { overlayX: 'start', overlayY: 'top', offsetX: 114, offsetY: -4 }],
+    ['right', 'end', { overlayX: 'start', overlayY: 'bottom', offsetX: 114, offsetY: 34 }],
+  ] as const)('places the bubble %s the ring, lined up with its %s', async (placement, align, position) => {
+    await render(false, true, host => {
+      host.steps = () => [{ anchor: host.first(), placement, align, titleKey: 't', bodyKey: 'b' }];
+    });
+    const host = fixture.componentInstance;
+    placeAt(host.first()!.nativeElement, 10, 20, 100, 30);
+    host.tour()['_measure']();
+    fixture.detectChanges();
+
+    const [preferred, ...fallbacks] = host.tour().bubblePositions();
+    expect(preferred).toEqual(expect.objectContaining({ originX: 'start', originY: 'top', ...position }));
+    // Beside the anchor falls back to below it on a screen too narrow for both.
+    expect(fallbacks.map(fallback => fallback.overlayY)).toEqual(placement === 'right' ? ['top'] : []);
   });
 });
