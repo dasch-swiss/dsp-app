@@ -1,14 +1,18 @@
 import { DecimalPipe } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
   effect,
+  ElementRef,
   inject,
+  Injector,
   output,
   signal,
   untracked,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -24,15 +28,11 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatOption, MatSelect, MatSelectTrigger } from '@angular/material/select';
 import {
   IHasPropertyWithPropertyDefinition,
-  KnoraApiConnection,
-  ListNodeV2,
   ReadResource,
-  ReadResourceSequence,
   ResourcePropertyDefinition,
   ResourcePropertyDefinitionWithAllLanguages,
 } from '@dasch-swiss/dsp-js';
-import { APIV3ApiService, BatchChangesRequest } from '@dasch-swiss/vre/3rd-party-services/open-api';
-import { DspApiConnectionToken } from '@dasch-swiss/vre/core/config';
+import { BulkEditApiService } from '@dasch-swiss/vre/3rd-party-services/api';
 import {
   propertiesTypeMapping,
   PropertyValuesCreatorComponent,
@@ -45,15 +45,14 @@ import {
   catchError,
   concatMap,
   distinctUntilChanged,
+  EMPTY,
   finalize,
   from,
   map,
   mergeMap,
   Observable,
   of,
-  Subject,
   switchMap,
-  takeUntil,
   tap,
   toArray,
 } from 'rxjs';
@@ -122,7 +121,7 @@ const READ_CONCURRENCY = 4;
   template: `
     <header class="header">
       <div class="top">
-        <h2 class="mat-headline-6 title">{{ 'pages.dataBrowser.bulkEdit.title' | translate }}</h2>
+        <h2 id="bulk-edit-title" class="mat-headline-6 title">{{ 'pages.dataBrowser.bulkEdit.title' | translate }}</h2>
         <span class="scope" data-cy="bulk-edit-scope">
           <mat-icon aria-hidden="true">{{ data.scope ? 'filter_list' : 'check_box' }}</mat-icon>
           <span class="scope-text">
@@ -141,6 +140,9 @@ const READ_CONCURRENCY = 4;
       </div>
     </header>
 
+    <!-- One region that outlives the steps, so screen readers hear loading, the preview, progress and the result. -->
+    <p class="cdk-visually-hidden" aria-live="polite" data-cy="bulk-edit-announcement">{{ announcement() }}</p>
+
     <div class="body" [class.split]="step() === 'edit'">
       @switch (step()) {
         @case ('loading') {
@@ -155,7 +157,9 @@ const READ_CONCURRENCY = 4;
           </div>
         }
         @case ('loadFailed') {
-          <p class="error" data-cy="bulk-edit-load-failed">{{ 'pages.dataBrowser.bulkEdit.loadFailed' | translate }}</p>
+          <p class="error" role="alert" data-cy="bulk-edit-load-failed">
+            {{ 'pages.dataBrowser.bulkEdit.loadFailed' | translate }}
+          </p>
         }
         @case ('edit') {
           @if (target(); as currentTarget) {
@@ -284,7 +288,7 @@ const READ_CONCURRENCY = 4;
                     }
                   }
                   @if (listLoadFailed()) {
-                    <p class="error" data-cy="bulk-edit-list-load-failed">
+                    <p class="error" role="alert" data-cy="bulk-edit-list-load-failed">
                       {{ 'pages.dataBrowser.bulkEdit.listLoadFailed' | translate }}
                     </p>
                   }
@@ -312,9 +316,12 @@ const READ_CONCURRENCY = 4;
                             }}
                           </span>
                         </span>
-                        <span class="badge" data-cy="bulk-edit-choice-empty-count">{{
-                          choiceCounts().empty | number
-                        }}</span>
+                        <span class="badge" data-cy="bulk-edit-choice-empty-count"
+                          >{{ choiceCounts().empty | number }}
+                          <span class="cdk-visually-hidden">{{
+                            'pages.dataBrowser.bulkEdit.resourcesUnit' | translate
+                          }}</span></span
+                        >
                       </mat-radio-button>
                       <mat-radio-button
                         class="choice"
@@ -335,9 +342,16 @@ const READ_CONCURRENCY = 4;
                             }
                           </span>
                         </span>
-                        <span class="badge" data-cy="bulk-edit-choice-replace-count">
-                          {{ onlyEmptyLocked() ? '—' : (choiceCounts().replace | number) }}
-                        </span>
+                        @if (!onlyEmptyLocked()) {
+                          <span class="badge" data-cy="bulk-edit-choice-replace-count"
+                            >{{ choiceCounts().replace | number }}
+                            <span class="cdk-visually-hidden">{{
+                              'pages.dataBrowser.bulkEdit.resourcesUnit' | translate
+                            }}</span></span
+                          >
+                        } @else {
+                          <span class="badge" aria-hidden="true" data-cy="bulk-edit-choice-replace-count">—</span>
+                        }
                       </mat-radio-button>
                     </mat-radio-group>
                     @if (choicesAlike()) {
@@ -373,16 +387,16 @@ const READ_CONCURRENCY = 4;
                       <button
                         type="button"
                         class="group-header"
-                        [attr.aria-expanded]="isOpen(group.kind)"
+                        [attr.aria-expanded]="group.open"
                         (click)="toggleGroup(group.kind)">
                         <mat-icon aria-hidden="true" class="chevron">
-                          {{ isOpen(group.kind) ? 'expand_less' : 'expand_more' }}
+                          {{ group.open ? 'expand_less' : 'expand_more' }}
                         </mat-icon>
                         <mat-icon aria-hidden="true" [class]="'status ' + group.kind">{{ group.icon }}</mat-icon>
                         <span class="group-title">{{ group.titleKey | translate }}</span>
                         <span class="group-count">{{ group.count }}</span>
                       </button>
-                      @if (isOpen(group.kind)) {
+                      @if (group.open) {
                         @for (item of group.items; track item.resource.id) {
                           <div class="group-item" data-cy="bulk-edit-change">
                             <span class="item-label">{{ item.resource.label }}</span>
@@ -513,9 +527,9 @@ const READ_CONCURRENCY = 4;
         @case ('edit') {
           @if (confirming()) {
             <!-- Removing asks once more, with the exact counts. -->
-            <div class="confirm" role="alertdialog" data-cy="bulk-edit-confirm">
+            <div class="confirm" role="group" aria-labelledby="bulk-edit-confirm-text" data-cy="bulk-edit-confirm">
               <mat-icon aria-hidden="true">warning</mat-icon>
-              <span class="confirm-text">
+              <span class="confirm-text" id="bulk-edit-confirm-text">
                 <strong>
                   {{
                     'pages.dataBrowser.bulkEdit.confirmRemove'
@@ -524,7 +538,12 @@ const READ_CONCURRENCY = 4;
                 </strong>
                 {{ 'pages.dataBrowser.bulkEdit.confirmRemoveHint' | translate }}
               </span>
-              <button mat-button type="button" data-cy="bulk-edit-confirm-back" (click)="confirming.set(false)">
+              <button
+                #stepFocus
+                mat-button
+                type="button"
+                data-cy="bulk-edit-confirm-back"
+                (click)="confirming.set(false)">
                 {{ 'pages.dataBrowser.bulkEdit.back' | translate }}
               </button>
               <button
@@ -543,6 +562,7 @@ const READ_CONCURRENCY = 4;
             @if (target()) {
               @if (action() === 'remove') {
                 <button
+                  #stepFocus
                   mat-flat-button
                   class="danger"
                   type="button"
@@ -568,13 +588,13 @@ const READ_CONCURRENCY = 4;
         }
         @case ('applying') {
           <span class="footer-hint"></span>
-          <button mat-button type="button" data-cy="bulk-edit-cancel-remaining" (click)="cancelRemaining()">
+          <button #stepFocus mat-button type="button" data-cy="bulk-edit-cancel-remaining" (click)="cancelRemaining()">
             {{ 'pages.dataBrowser.bulkEdit.cancelRemaining' | translate }}
           </button>
         }
         @case ('done') {
           @if (failed().length) {
-            <button mat-button type="button" data-cy="bulk-edit-retry" (click)="apply(failed())">
+            <button mat-button type="button" data-cy="bulk-edit-retry" (click)="retryFailed()">
               <mat-icon>replay</mat-icon>
               {{ 'pages.dataBrowser.bulkEdit.retryFailed' | translate }}
             </button>
@@ -583,7 +603,7 @@ const READ_CONCURRENCY = 4;
           <button mat-stroked-button type="button" data-cy="bulk-edit-again" (click)="editAgain()">
             {{ 'pages.dataBrowser.bulkEdit.editAgain' | translate }}
           </button>
-          <button mat-flat-button color="primary" type="button" data-cy="bulk-edit-close" (click)="close()">
+          <button #stepFocus mat-flat-button color="primary" type="button" data-cy="bulk-edit-close" (click)="close()">
             {{ 'ui.common.actions.close' | translate }}
           </button>
         }
@@ -624,8 +644,8 @@ const READ_CONCURRENCY = 4;
         min-width: 0;
         padding: 2px 10px;
         border-radius: 12px;
-        background: #e8eef4;
-        color: #264c6a;
+        background: #eaeff3; /* $primary_50 */
+        color: #264c6a; /* $primary_800 */
         font-size: 12px;
         font-weight: 500;
       }
@@ -655,11 +675,13 @@ const READ_CONCURRENCY = 4;
         overflow: auto;
       }
       /* Editing: the form on the left, the preview beside it, each scrolling on its own. */
+      /* Side by side when there is room; stacked, the panel scrolling, when narrow or zoomed. */
       .body.split {
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 0;
         padding: 0;
-        overflow: hidden;
+        overflow: auto;
       }
       .form {
         display: flex;
@@ -668,22 +690,23 @@ const READ_CONCURRENCY = 4;
         flex: none;
       }
       .split .form {
-        width: 540px;
+        flex: 0 1 540px;
+        min-width: 0;
         padding: 20px 20px 20px 24px;
         border-right: 1px solid #e5e7eb; /* $cool-gray-200 */
         overflow: auto;
       }
       .split .preview {
-        flex: 1;
+        flex: 1 1 320px;
         min-width: 0;
         margin: 16px;
-        background: #fff;
+        background: white;
       }
       .split {
         background: #f9fafb; /* $cool-gray-50 */
       }
       .split .form {
-        background: #fff;
+        background: white;
       }
       .block {
         display: flex;
@@ -715,40 +738,14 @@ const READ_CONCURRENCY = 4;
         font-weight: 500;
         line-height: 18px;
       }
-      /*
-       * The picker's panel opens in an overlay, outside this component: compact options, the properties not
-       * indented under their one header, and the "Remove only" tag on the right.
-       */
-      ::ng-deep .bulk-edit-property-panel .mat-mdc-option {
-        min-height: 38px;
-        font-size: 14px;
-      }
-      ::ng-deep .bulk-edit-property-panel .mat-mdc-optgroup .mat-mdc-option:not(.mat-mdc-option-multiple) {
-        padding-left: 16px;
-      }
-      ::ng-deep .bulk-edit-property-panel .mat-mdc-option .mdc-list-item__primary-text {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        width: 100%;
-      }
-      ::ng-deep .bulk-edit-property-panel .mat-mdc-optgroup-label {
-        min-height: 28px;
-        font-size: 12px;
-        font-weight: 500;
-        color: #6b7280; /* $cool-gray-500 */
-      }
       /* Compact like the editors, the selection in the app's blue; removing in red. */
       .actions {
         align-self: flex-start;
         --mat-button-toggle-height: 32px;
         --mat-button-toggle-label-text-size: 13px;
         --mat-button-toggle-label-text-line-height: 32px;
-        --mat-button-toggle-selected-state-background-color: #e8eef4;
-        --mat-button-toggle-selected-state-text-color: #264c6a;
-      }
-      .actions ::ng-deep .mat-button-toggle-label-content {
-        padding: 0 12px;
+        --mat-button-toggle-selected-state-background-color: #eaeff3; /* $primary_50 */
+        --mat-button-toggle-selected-state-text-color: #264c6a; /* $primary_800 */
       }
       .actions mat-icon {
         width: 16px;
@@ -758,12 +755,12 @@ const READ_CONCURRENCY = 4;
         vertical-align: -3px;
       }
       .actions .remove-toggle.mat-button-toggle-checked {
-        background: #fdecef;
-        color: #9f1239;
+        background: #fef2f2; /* $red_50 */
+        color: #991633; /* $red_900 */
       }
       /* The creation form's add button, in the app's blue rather than black. */
-      .creator ::ng-deep .mat-mdc-icon-button .mat-icon {
-        color: #336790; /* $primary */
+      .creator {
+        --mat-icon-button-icon-color: #336790; /* $primary */
       }
       .remove-card {
         display: flex;
@@ -773,9 +770,9 @@ const READ_CONCURRENCY = 4;
         font-size: 13px;
       }
       .remove-card {
-        border: 1px solid #f3c2cd;
-        background: #fff5f7;
-        color: #7f1d2d;
+        border: 1px solid #fca5a5; /* $red_400 */
+        background: #fef2f2; /* $red_50 */
+        color: #991633; /* $red_900 */
       }
       .remove-card mat-icon {
         color: #b9193c; /* $red-800 */
@@ -783,18 +780,18 @@ const READ_CONCURRENCY = 4;
       .remove-card strong {
         display: block;
         font-weight: 500;
-        color: #9f1239;
+        color: #991633; /* $red_900 */
       }
       .danger {
         background: #b9193c; /* $red-800 */
-        color: #fff;
+        color: white;
       }
       .confirm {
         flex: 1;
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #7f1d2d;
+        color: #991633; /* $red_900 */
         font-size: 13px;
       }
       .confirm > mat-icon {
@@ -814,7 +811,7 @@ const READ_CONCURRENCY = 4;
         align-items: center;
         gap: 6px;
         padding: 4px 10px;
-        background: #fafafa;
+        background: #f9fafb; /* $cool_gray_50 */
         border-bottom: 1px solid #e5e7eb; /* $cool-gray-200 */
         font-size: 13px;
         font-weight: 500;
@@ -848,18 +845,7 @@ const READ_CONCURRENCY = 4;
       }
       .choice.mat-mdc-radio-checked {
         border-color: #336790; /* $primary */
-        background: #f5f8fb;
-      }
-      .choice ::ng-deep .mdc-form-field {
-        width: 100%;
-        align-items: flex-start;
-      }
-      .choice ::ng-deep .mdc-label {
-        flex: 1;
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        padding-top: 10px;
+        background: #eaeff3; /* $primary_50 */
       }
       .choice-text {
         flex: 1;
@@ -887,7 +873,7 @@ const READ_CONCURRENCY = 4;
       }
       .choice.mat-mdc-radio-checked .badge {
         background: #336790; /* $primary */
-        color: #fff;
+        color: white;
       }
       .group {
         border-bottom: 1px solid #e5e7eb; /* $cool-gray-200 */
@@ -899,7 +885,7 @@ const READ_CONCURRENCY = 4;
         gap: 6px;
         padding: 4px 10px;
         border: 0;
-        background: #fafafa;
+        background: #f9fafb; /* $cool_gray_50 */
         font: inherit;
         font-size: 13px;
         font-weight: 500;
@@ -965,12 +951,12 @@ const READ_CONCURRENCY = 4;
         text-decoration: none;
       }
       del.value {
-        background: #fdecef;
+        background: #fef2f2; /* $red_50 */
         color: #b9193c; /* $red-800 */
         text-decoration: line-through;
       }
       ins.value {
-        background: #e6f4f1;
+        background: #f0fdfa; /* $green_50 */
         color: #115e59; /* $green-800 */
         font-weight: 500;
       }
@@ -1108,14 +1094,14 @@ const READ_CONCURRENCY = 4;
         font-size: 13px;
       }
       del.chip {
-        background: #fdecef;
+        background: #fef2f2; /* $red_50 */
       }
       ins.chip {
-        background: #e6f4f1;
+        background: #f0fdfa; /* $green_50 */
       }
       .empty {
         font-style: italic;
-        color: #9ca3af; /* $cool-gray-400 */
+        color: #6b7280; /* $cool-gray-500 */
       }
       .loading {
         display: flex;
@@ -1194,11 +1180,11 @@ const READ_CONCURRENCY = 4;
 export class BulkEditDialogComponent {
   readonly data = inject<BulkEditDialogProps>(MAT_DIALOG_DATA);
   private readonly _dialogRef = inject<MatDialogRef<BulkEditDialogComponent>>(MatDialogRef);
-  private readonly _dspApiConnection = inject<KnoraApiConnection>(DspApiConnectionToken);
+  private readonly _bulkEditApi = inject(BulkEditApiService);
+  private readonly _injector = inject(Injector);
   private readonly _stringifyStringLiteral = inject(StringifyStringLiteralPipe);
   private readonly _translateService = inject(TranslateService);
   private readonly _resourceService = inject(ResourceService);
-  private readonly _apiV3 = inject(APIV3ApiService);
   private readonly _destroyRef = inject(DestroyRef);
 
   readonly form = new FormGroup({
@@ -1344,9 +1330,11 @@ export class BulkEditDialogComponent {
       },
     ].filter(reason => reason.count);
     const none: typeof reasons = [];
+    const folded = this._folded();
     return [
       {
         kind: 'removed' as const,
+        open: !folded.has('removed'),
         icon: 'remove_circle',
         titleKey: 'pages.dataBrowser.bulkEdit.outcomeRemoved',
         count: removed.length,
@@ -1355,6 +1343,7 @@ export class BulkEditDialogComponent {
       },
       {
         kind: 'new' as const,
+        open: !folded.has('new'),
         icon: 'add_circle',
         titleKey: 'pages.dataBrowser.bulkEdit.outcomeNew',
         count: added.length,
@@ -1363,6 +1352,7 @@ export class BulkEditDialogComponent {
       },
       {
         kind: 'replaced' as const,
+        open: !folded.has('replaced'),
         icon: isLabel ? 'edit' : 'change_circle',
         titleKey: isLabel ? 'pages.dataBrowser.bulkEdit.outcomeLabel' : 'pages.dataBrowser.bulkEdit.outcomeReplaced',
         count: replaced.length,
@@ -1371,6 +1361,7 @@ export class BulkEditDialogComponent {
       },
       {
         kind: 'unchanged' as const,
+        open: !folded.has('unchanged'),
         icon: 'remove_circle_outline',
         titleKey: 'pages.dataBrowser.bulkEdit.outcomeUnchanged',
         count: reasons.reduce((sum, reason) => sum + reason.count, 0),
@@ -1416,14 +1407,38 @@ export class BulkEditDialogComponent {
     return `${this.target()?.label ?? ''} · ${this._translateService.instant(`pages.dataBrowser.bulkEdit.${actionKey}`)}`;
   });
 
-  private readonly _cancel$ = new Subject<void>();
+  /** Set by "Cancel remaining": the request on its way finishes and reports; the next ones are not sent. */
+  private _cancelled = false;
+  /** The control to focus after a step change (Back, Apply, Cancel remaining, Close), so focus is never lost. */
+  private readonly _stepFocus = viewChild('stepFocus', { read: ElementRef });
+  private _focusedStep?: string;
+
+  /** What the live region says: loading progress, the preview's count, progress while applying, the result. */
+  readonly announcement = computed(() => {
+    const t = (key: string, params?: object) =>
+      this._translateService.instant(`pages.dataBrowser.bulkEdit.${key}`, params);
+    switch (this.step()) {
+      case 'loading':
+        return t('loading', { loaded: this.loadedCount(), total: this.data.resourceIris.length });
+      case 'loadFailed':
+        return '';
+      case 'edit':
+        return this.plan()
+          ? t('previewCount', { changed: this.changedResourceCount(), total: this.resourceCount() })
+          : '';
+      case 'applying':
+        return t('applying', { done: this.processed(), total: this.running().length });
+      case 'done': {
+        const done = t(this.action() === 'remove' ? 'doneRemovedSummary' : 'doneSummary', {
+          updated: this.succeeded().length,
+        });
+        return this.failed().length ? `${done} · ${t('failedSummary', { failed: this.failed().length })}` : done;
+      }
+    }
+  });
 
   /** Fires when a run ends, with the resources it changed, so the view behind the panel reloads them at once. */
   readonly applied = output<BulkEditApplied>();
-
-  isOpen(kind: string): boolean {
-    return !this._folded().has(kind);
-  }
 
   toggleGroup(kind: string) {
     this._folded.update(folded => {
@@ -1446,6 +1461,7 @@ export class BulkEditDialogComponent {
       const count = this.valueCount();
       untracked(() => this._syncOnlyEmpty(count));
     });
+    this._keepFocusAcrossSteps();
   }
 
   apply(changes: BulkEditChange[]) {
@@ -1455,6 +1471,7 @@ export class BulkEditDialogComponent {
     this.succeeded.set([]);
     this.failed.set([]);
     this._dialogRef.disableClose = true;
+    this._cancelled = false;
     this.step.set('applying');
 
     // Plain text, list values and labels go to the batch route, 100 changes a request; the rest one by one.
@@ -1465,12 +1482,15 @@ export class BulkEditDialogComponent {
 
     from(jobs)
       .pipe(
-        concatMap(job =>
-          job.length === 1 && !batchChangeOf(job[0], target)
+        // Cancelling lets the request on its way finish, so what the server wrote is reported and reloaded.
+        concatMap(job => {
+          if (this._cancelled) {
+            return EMPTY;
+          }
+          return job.length === 1 && !batchChangeOf(job[0], target)
             ? this._writeOne(job[0], target)
-            : this._writeBatch(job, target)
-        ),
-        takeUntil(this._cancel$),
+            : this._writeBatch(job, target);
+        }),
         finalize(() => {
           this._dialogRef.disableClose = false;
           this.step.set('done');
@@ -1492,7 +1512,24 @@ export class BulkEditDialogComponent {
   }
 
   cancelRemaining() {
-    this._cancel$.next();
+    this._cancelled = true;
+  }
+
+  /**
+   * Sends the failed changes again. Where the earlier run already wrote some of a resource's new values, its
+   * other creates no longer find the property empty, so they are sent without that check.
+   */
+  retryFailed() {
+    const filled = new Set(
+      this.succeeded()
+        .filter(change => !change.value && !change.remove)
+        .map(change => change.resource.id)
+    );
+    this.apply(
+      this.failed().map(change =>
+        !change.value && !change.remove && filled.has(change.resource.id) ? { ...change, afterOwnValues: true } : change
+      )
+    );
   }
 
   /** The written values changed the resources, so they are read again before the next edit. */
@@ -1517,8 +1554,7 @@ export class BulkEditDialogComponent {
    * missing rights) does not fail the others. A failed request fails them all, to be retried.
    */
   private _writeBatch(changes: BulkEditChange[], target: BulkEditTarget): Observable<BulkEditOutcome[]> {
-    const body = { changes: changes.map(change => batchChangeOf(change, target)!) };
-    return this._apiV3.postV3ResourcesValuesBatch(body as unknown as BatchChangesRequest).pipe(
+    return this._bulkEditApi.applyBatch(changes.map(change => batchChangeOf(change, target)!)).pipe(
       map(response => {
         const ok = new Set((response.results ?? []).filter(result => result.status === 'ok').map(r => r.index));
         return changes.map((change, index) => ({ change, ok: ok.has(index) }));
@@ -1531,13 +1567,13 @@ export class BulkEditDialogComponent {
     const request = bulkEditRequest(change, target);
     switch (request.kind) {
       case 'label':
-        return this._dspApiConnection.v2.res.updateResourceMetadata(request.payload);
+        return this._bulkEditApi.updateLabel(request.payload);
       case 'update':
-        return this._dspApiConnection.v2.values.updateValue(request.payload);
+        return this._bulkEditApi.updateValue(request.payload);
       case 'create':
-        return this._dspApiConnection.v2.values.createValue(request.payload);
+        return this._bulkEditApi.createValue(request.payload);
       case 'delete':
-        return this._dspApiConnection.v2.values.deleteValue(request.payload);
+        return this._bulkEditApi.deleteValue(request.payload);
     }
   }
 
@@ -1555,8 +1591,8 @@ export class BulkEditDialogComponent {
           if (target?.kind !== 'list') {
             return of([]);
           }
-          return this._dspApiConnection.v2.list.getList(target.listRootIri).pipe(
-            map(root => flattenList(root as ListNodeV2)),
+          return this._bulkEditApi.readList(target.listRootIri).pipe(
+            map(root => flattenList(root)),
             catchError(() => {
               this.listLoadFailed.set(true);
               return of([]);
@@ -1617,8 +1653,8 @@ export class BulkEditDialogComponent {
       .pipe(
         mergeMap(
           ({ iris, index }) =>
-            this._dspApiConnection.v2.res.getResourcesBatch(iris).pipe(
-              map(sequence => ({ index, resources: (sequence as ReadResourceSequence).resources })),
+            this._bulkEditApi.readResources(iris).pipe(
+              map(resources => ({ index, resources })),
               tap(({ resources }) => this.loadedCount.update(count => count + resources.length))
             ),
           READ_CONCURRENCY
@@ -1640,6 +1676,22 @@ export class BulkEditDialogComponent {
         },
         error: () => this.step.set('loadFailed'),
       });
+  }
+
+  /**
+   * Moves focus to the step's main control when the step or the confirmation changes: the control that had it
+   * is gone. Opening and reloading leave focus where the dialog put it.
+   */
+  private _keepFocusAcrossSteps() {
+    effect(() => {
+      const key = `${this.step()}:${this.confirming()}`;
+      const previous = this._focusedStep;
+      this._focusedStep = key;
+      if (previous === undefined || previous === key || previous.startsWith('loading') || key.startsWith('loading')) {
+        return;
+      }
+      afterNextRender(() => this._stepFocus()?.nativeElement.focus(), { injector: this._injector });
+    });
   }
 
   private _labelOf(target: BulkEditTarget): string {

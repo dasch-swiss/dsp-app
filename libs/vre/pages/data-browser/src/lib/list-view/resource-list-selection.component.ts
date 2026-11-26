@@ -46,9 +46,9 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
         <ng-content />
         <!-- Only project members may edit, so the button is not offered to anyone else. -->
         @if ((canEdit$ | async) && (multipleViewerService.selectedResources$ | async); as selectedResources) {
-          @let sameClass = isSameClass(selectedResources);
+          @let sameClass = (sameClass$ | async) === true;
           <div
-            style="display: inline-block"
+            class="tooltip-anchor"
             [matTooltip]="'pages.dataBrowser.resourceListSelection.bulkEditSameClass' | translate"
             [matTooltipDisabled]="sameClass">
             <button
@@ -85,8 +85,8 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
         gap: 6px;
         min-height: 36px;
         padding: 0 24px;
-        background: #eaf1f7;
-        border-bottom: 1px solid #c9d8e5;
+        background: #eaeff3; /* $primary_50 */
+        border-bottom: 1px solid #c1d1dd; /* $primary_200 */
         font-size: 13px;
         white-space: nowrap;
       }
@@ -95,6 +95,10 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
       }
       .count {
         font-weight: 500;
+      }
+      /* A disabled button shows no tooltip, so its wrapper carries it. */
+      .tooltip-anchor {
+        display: inline-block;
       }
       .selection-bar > .spacer {
         flex: 1;
@@ -116,8 +120,8 @@ import { ResourceLinkDialogComponent, ResourceLinkDialogProps } from './resource
         margin-left: 6px;
         padding: 0 6px;
         border-radius: 8px;
-        background: #e8eef4;
-        color: #336790;
+        background: #eaeff3; /* $primary_50 */
+        color: #336790; /* $primary */
         font-size: 11px;
         line-height: 16px;
       }
@@ -130,6 +134,8 @@ export class ResourceListSelectionComponent {
   @Output() bulkEdited = new EventEmitter<string[]>();
 
   count$ = this.multipleViewerService.selectedResources$.pipe(map(resources => resources.length));
+  /** Bulk edit takes its properties from one class, so every selected resource must share it. */
+  sameClass$ = this.multipleViewerService.selectedResources$.pipe(map(resources => this.isSameClass(resources)));
   showCreateLink$ = combineLatest([
     this.count$,
     this.multipleViewerService.selectedResources$,

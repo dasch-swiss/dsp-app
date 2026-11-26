@@ -570,6 +570,16 @@ describe('batchChangeOf', () => {
     });
   });
 
+  it('RetriesACreateWithoutTheEmptyCheckAfterItsResourceGotItsOtherValues', () => {
+    const [change] = planBulkEdit([resource('r1')], LIST, { values: nodes(BRIEF), onlyEmpty: true }).changes;
+
+    expect(batchChangeOf({ ...change, afterOwnValues: true }, LIST)).toEqual({
+      resource: 'r1',
+      property: LIST_PROP,
+      new: BRIEF.id,
+    });
+  });
+
   it('ChangesALabelFromWhatItWas', () => {
     const [change] = planBulkEdit([resource('r1')], LABEL, { values: texts('Letter'), onlyEmpty: false }).changes;
 

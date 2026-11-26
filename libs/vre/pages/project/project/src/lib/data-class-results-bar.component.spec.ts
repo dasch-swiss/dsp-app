@@ -187,6 +187,16 @@ describe('DataClassResultsBarComponent', () => {
       expect(component.collecting()).toBeNull();
     });
 
+    it('starts no second collection while one is running', () => {
+      const component = create();
+      component.collecting.set(40);
+
+      component.download(30, 'search');
+
+      expect(doExtendedSearchIris).not.toHaveBeenCalled();
+      expect(dialog.open).not.toHaveBeenCalled();
+    });
+
     it('refuses a search larger than the export accepts, without reading it', () => {
       create().download(10_001, 'search');
       expect(doExtendedSearchIris).not.toHaveBeenCalled();

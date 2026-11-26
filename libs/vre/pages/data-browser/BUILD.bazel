@@ -21,6 +21,7 @@ vre_library(
         "//:node_modules/angular-split",
         "//:node_modules/rxjs",
         "//libs/dsp-js",
+        "//libs/vre/3rd-party-services/api",
         "//libs/vre/3rd-party-services/open-api",
         "//libs/vre/core/config",
         "//libs/vre/core/session",

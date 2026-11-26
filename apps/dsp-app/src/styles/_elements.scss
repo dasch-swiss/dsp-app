@@ -131,6 +131,49 @@ a {
   pointer-events: none;
 }
 
+// Bulk edit panel (DEV-7912). The property picker opens in the CDK overlay, and the radio cards lay out
+// Material's own label: both outside the component's styles. Compact options, the properties not indented
+// under their one header, the "Remove only" tag on the right; the card's text and count beside the radio.
+.bulk-edit-property-panel {
+  .mat-mdc-option {
+    min-height: 38px;
+    font-size: 14px;
+  }
+
+  .mat-mdc-optgroup .mat-mdc-option:not(.mat-mdc-option-multiple) {
+    padding-left: 16px;
+  }
+
+  .mat-mdc-option .mdc-list-item__primary-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .mat-mdc-optgroup-label {
+    min-height: 28px;
+    font-size: 12px;
+    font-weight: 500;
+    color: $cool_gray_500;
+  }
+}
+
+app-bulk-edit-dialog .choice {
+  .mdc-form-field {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .mdc-label {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding-top: 10px;
+  }
+}
+
 // action bubble
 .action-bubble {
   position: absolute;

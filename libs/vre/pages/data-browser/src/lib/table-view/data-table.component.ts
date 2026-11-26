@@ -60,6 +60,8 @@ interface RenderColumn extends TableColumn {
   readonly isPinned: boolean;
   /** Why the column cannot be edited here, as a translation key; `null` when it can, or when the user could not edit anything anyway. */
   readonly readOnlyReasonKey: string | null;
+  /** Whether its header offers a bulk edit: only to a user who may edit, see `isBulkEditable`. */
+  readonly offersBulkEdit: boolean;
 }
 
 /** The trailing column that absorbs the table's spare width. `__` like the label key, so it cannot collide with a property IRI. */
@@ -149,7 +151,7 @@ const FILLER_COLUMN_KEY = '__filler';
                   </button>
                 }
 
-                @if (canEdit() && isBulkEditable(column)) {
+                @if (column.offersBulkEdit) {
                   <button
                     type="button"
                     class="header-bulk-edit"
@@ -601,6 +603,7 @@ export class DataTableComponent {
 
       return {
         ...column,
+        offersBulkEdit: canEdit && isBulkEditable(column),
         // Never narrower than its editor while one is open; back to its own width once it closes.
         width: editing.has(column.key)
           ? Math.max(widths[column.key] ?? column.defaultWidth, editWidthForValueType(column.valueType))
@@ -660,23 +663,6 @@ export class DataTableComponent {
    *
    * The label column is drag-disabled, which stops it being picked up but not another column being dropped in front of it.
    */
-  /**
-   * Whether the bulk edit panel can open on this column: the label and the class's own properties, as the
-   * resource creation form offers them; not the image, the rights statement or built-in properties.
-   */
-  protected isBulkEditable(column: TableColumn): boolean {
-    if (column.key === LABEL_COLUMN_KEY) {
-      return true;
-    }
-    return (
-      !!column.propertyIri &&
-      column.isEditable &&
-      !column.isImage &&
-      !column.rightsField &&
-      !column.propertyIri.startsWith(Constants.KnoraApiV2)
-    );
-  }
-
   protected readonly canDropAt = (index: number, drag: CdkDrag<string>): boolean => {
     const [first, last] = this._slotsFor(drag.data);
     return index >= first && index <= last;
@@ -847,4 +833,21 @@ export class DataTableComponent {
 
   /** Stable across re-queries, so a page change re-uses rows instead of rebuilding every cell. */
   protected readonly trackRow = (_: number, row: TableRow) => row.id;
+}
+
+/**
+ * Whether the bulk edit panel can open on this column: the label and the class's own properties, as the
+ * resource creation form offers them; not the image, the rights statement or built-in properties.
+ */
+function isBulkEditable(column: TableColumn): boolean {
+  if (column.key === LABEL_COLUMN_KEY) {
+    return true;
+  }
+  return (
+    !!column.propertyIri &&
+    column.isEditable &&
+    !column.isImage &&
+    !column.rightsField &&
+    !column.propertyIri.startsWith(Constants.KnoraApiV2)
+  );
 }

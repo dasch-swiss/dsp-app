@@ -8,7 +8,8 @@ import { BulkEditApplied, BulkEditDialogComponent, BulkEditDialogProps } from '.
 /**
  * Opens the bulk edit side panel, for a selection or for every resource a search matches. It stays
  * free of page-scoped services (MultipleViewerService lives on the data browser page, out of root's
- * reach): callers tell their open viewers about the changed resources.
+ * reach): callers tell their open viewers about the changed resources. Stateless (only `MatDialog`),
+ * so root provision is correct (ADR-0003 d3).
  */
 @Injectable({ providedIn: 'root' })
 export class BulkEditLauncher {
@@ -26,6 +27,8 @@ export class BulkEditLauncher {
       maxWidth: '100vw',
       minWidth: 0,
       autoFocus: false,
+      // The panel's heading names the dialog for screen readers.
+      ariaLabelledBy: 'bulk-edit-title',
     });
     // An output observable completes when its component is destroyed, that is when the panel closes.
     return outputToObservable(dialogRef.componentInstance.applied);

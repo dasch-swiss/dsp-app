@@ -15,6 +15,7 @@ import {
   UpdateResourceMetadata,
   UpdateValue,
 } from '@dasch-swiss/dsp-js';
+import { BulkEditBatchChange } from '@dasch-swiss/vre/3rd-party-services/api';
 import { ApiConstants } from '@dasch-swiss/vre/core/config';
 import { propertiesTypeMapping } from '@dasch-swiss/vre/resource-editor/resource-editor';
 import { listRootIriFromGuiAttributes } from '@dasch-swiss/vre/shared/app-common';
@@ -106,6 +107,11 @@ export interface BulkEditChange {
   newValue: string;
   /** What an updated value holds now (the text or the list node IRI): the batch route checks it is unchanged. */
   expected?: string;
+  /**
+   * A retried create on a resource whose other new values were written by the earlier run: the property holds
+   * those now, so the batch route must not expect it empty.
+   */
+  afterOwnValues?: boolean;
   /** A comment to write with the value; without one, an updated value keeps its own. */
   comment?: string;
 }
@@ -403,25 +409,11 @@ function _richTextHtml(value: ReadTextValue): string {
 const BATCH_SIZE = 100;
 
 /**
- * One change as `POST /v3/resources/values/batch` takes it. The field is `new` on the wire; the generated
- * client names it `_new` and would send that, so the panel builds this body itself.
- */
-export interface BatchChangeBody {
-  resource: string;
-  property?: string;
-  value?: string;
-  expected?: string;
-  new?: string;
-  expectEmpty?: boolean;
-  label?: { expected: string; new: string };
-}
-
-/**
  * The change as the batch route takes it, or null when the route cannot apply it: it creates and updates plain
  * text and list values and labels, but refuses formatted text, removes nothing, and writes no comment.
  * A value created where the property was empty says so (`expectEmpty`), so a value added since is not doubled.
  */
-export function batchChangeOf(change: BulkEditChange, target: BulkEditTarget): BatchChangeBody | null {
+export function batchChangeOf(change: BulkEditChange, target: BulkEditTarget): BulkEditBatchChange | null {
   if (change.remove || change.comment) {
     return null;
   }
@@ -439,6 +431,9 @@ export function batchChangeOf(change: BulkEditChange, target: BulkEditTarget): B
       expected: change.expected,
       new: change.newValue,
     };
+  }
+  if (change.afterOwnValues) {
+    return { resource: change.resource.id, property: target.id, new: change.newValue };
   }
   return { resource: change.resource.id, property: target.id, new: change.newValue, expectEmpty: true };
 }

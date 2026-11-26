@@ -612,7 +612,8 @@
         "remove": "Remove",
         "doneRemovedSummary": "Values removed: {{updated}}",
         "choicesAlike": "Both choices change the same {{count}} resource(s): nothing would be replaced.",
-        "loading": "Loading resources: {{loaded}} of {{total}}"
+        "loading": "Loading resources: {{loaded}} of {{total}}",
+        "resourcesUnit": "resources"
       },
       "resourcesList": {
         "resultsCount": "{{count}} results",

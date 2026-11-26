@@ -125,7 +125,12 @@ const COLLECT_RETRIES = 2;
     <!-- Hidden while the count loads and when there is nothing to download. -->
     <ng-template #downloadButton let-scope="scope" let-count="count" let-selected="selected">
       @if (count) {
-        <button mat-stroked-button (click)="download(count, scope, selected)" data-cy="download-btn">
+        <!-- One collection at a time: a search's matches are read page by page before the dialog opens. -->
+        <button
+          mat-stroked-button
+          [disabled]="collecting() !== null"
+          (click)="download(count, scope, selected)"
+          data-cy="download-btn">
           <mat-icon>download</mat-icon>
           {{
             (scope === 'class'
@@ -158,9 +163,9 @@ const COLLECT_RETRIES = 2;
         gap: 6px;
         min-height: 36px;
         padding: 0 24px;
-        background: #f9fafb;
-        border-bottom: 1px solid #e5e7eb;
-        color: #374151;
+        background: #f9fafb; /* $cool_gray_50 */
+        border-bottom: 1px solid #e5e7eb; /* $cool_gray_200 */
+        color: #374151; /* $cool_gray_700 */
         font-size: 13px;
         white-space: nowrap;
       }
@@ -177,7 +182,7 @@ const COLLECT_RETRIES = 2;
       }
       .count {
         font-weight: 500;
-        color: rgba(0, 0, 0, 0.87);
+        color: #111827; /* $cool_gray_900 */
       }
       .mat-icon {
         width: 18px;
@@ -191,8 +196,8 @@ const COLLECT_RETRIES = 2;
         margin-left: 6px;
         padding: 0 6px;
         border-radius: 8px;
-        background: #e8eef4;
-        color: #336790;
+        background: #eaeff3; /* $primary_50 */
+        color: #336790; /* $primary */
         font-size: 11px;
         line-height: 16px;
       }
@@ -286,6 +291,9 @@ export class DataClassResultsBarComponent {
     }
     if (scope === 'class') {
       this._openDownloadDialog(resourceCount, scope);
+      return;
+    }
+    if (this.collecting() !== null) {
       return;
     }
     if (resourceCount > EXPORT_MAX_RESOURCE_IRIS) {
