@@ -917,8 +917,8 @@
       "tour": {
         "overviewTitle": "Alles an einem Ort",
         "overviewBody": "Hier finden Sie Ihre Datenmodelle mit Ressourcenklassen, Eigenschaften und Diagramm, und darunter die kontrollierten Vokabulare.",
-        "sectionsTitle": "Ressourcenklassen und Eigenschaften",
-        "sectionsBody": "Die Eigenschaften sind jetzt leichter erreichbar. Hier erstellen Sie eine Eigenschaft, die Sie in mehreren Ressourcenklassen wiederverwenden möchten.",
+        "sectionsTitle": "Klassen und Eigenschaften auf einen Klick",
+        "sectionsBody": "Ressourcenklassen und Eigenschaften erreichen Sie jetzt beide direkt hier. So finden Sie auch Eigenschaften schnell, die mehrere Klassen gemeinsam nutzen.",
         "diagramTitle": "Ihr Datenmodell als Diagramm",
         "diagramBody": "Das Diagramm zeigt, wie die Ressourcenklassen Ihres Datenmodells zusammenhängen."
       },

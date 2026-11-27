@@ -917,8 +917,8 @@
       "tour": {
         "overviewTitle": "Tutto in un unico posto",
         "overviewBody": "Qui trovi i tuoi modelli di dati con classi di risorse, proprietà e diagramma, e sotto i vocabolari controllati.",
-        "sectionsTitle": "Classi di risorse e proprietà",
-        "sectionsBody": "Le proprietà ora sono più facili da raggiungere. Crea qui una proprietà se vuoi riutilizzarla in più classi di risorse.",
+        "sectionsTitle": "Classi e proprietà con un clic",
+        "sectionsBody": "Classi di risorse e proprietà ora sono entrambe raggiungibili direttamente qui. Così trovi rapidamente anche le proprietà condivise da più classi.",
         "diagramTitle": "Il tuo modello di dati come diagramma",
         "diagramBody": "Il diagramma mostra come le classi di risorse del tuo modello di dati sono collegate tra loro."
       },

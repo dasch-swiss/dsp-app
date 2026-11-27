@@ -917,8 +917,8 @@
       "tour": {
         "overviewTitle": "Everything in one place",
         "overviewBody": "Here you find your data models with resource classes, properties and diagram, and below them the controlled vocabularies.",
-        "sectionsTitle": "Resource classes and properties",
-        "sectionsBody": "Properties are now easier to reach. Create a property here if you want to reuse it across several resource classes.",
+        "sectionsTitle": "Classes and properties in one click",
+        "sectionsBody": "Resource classes and properties are now both directly accessible here. So you can also quickly find properties that several classes share.",
         "diagramTitle": "Your data model as a diagram",
         "diagramBody": "The diagram shows how the resource classes of your data model relate to each other."
       },
