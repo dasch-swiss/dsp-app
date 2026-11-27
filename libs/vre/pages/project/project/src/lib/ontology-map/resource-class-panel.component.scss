@@ -125,7 +125,8 @@ h3 {
 .props {
   list-style: none;
   margin: 0 -16px;
-  padding: 0;
+  // The rows set in from the panel's edges, as on a card.
+  padding: 4px 0;
   border-top: 1px solid $cool_gray_100;
 }
 

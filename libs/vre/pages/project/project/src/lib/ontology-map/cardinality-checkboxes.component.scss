@@ -1,4 +1,8 @@
+@use 'sass:color';
 @use 'config' as *;
+
+// A ticked box: halfway between the app's blue and its paler step, so a column of ticks does not shout.
+$ticked: color.mix($primary, $primary_600, 50%);
 
 // Two columns, or with their words, the two boxes one above the other, as in the Data models tab.
 // Small boxes and words, so a card's properties stay what reads first.
@@ -11,6 +15,21 @@ app-cardinality-checkboxes {
   --mat-checkbox-state-layer-size: var(--density-check-layer, 22px);
   --mat-checkbox-label-text-size: var(--density-check-label, 10.5px);
   --mat-checkbox-label-text-line-height: calc(var(--density-check-label, 10.5px) + 3.5px);
+  // Light grey boxes until ticked; the disabled ones keep Material's grey.
+  --mat-checkbox-unselected-icon-color: #{$cool_gray_300};
+  --mat-checkbox-unselected-hover-icon-color: #{$cool_gray_400};
+  --mat-checkbox-unselected-focus-icon-color: #{$cool_gray_400};
+  --mat-checkbox-unselected-pressed-icon-color: #{$cool_gray_400};
+  --mat-checkbox-selected-icon-color: #{$ticked};
+  --mat-checkbox-selected-hover-icon-color: #{$ticked};
+  --mat-checkbox-selected-focus-icon-color: #{$ticked};
+  --mat-checkbox-selected-pressed-icon-color: #{$ticked};
+  // The words grey, and dark blue beside a ticked box.
+  --mat-checkbox-label-text-color: #{$cool_gray_500};
+}
+
+app-cardinality-checkboxes .box:not(.unticked) {
+  --mat-checkbox-label-text-color: #{$primary_800};
 }
 
 app-cardinality-checkboxes.labelled {
@@ -104,9 +123,14 @@ app-cardinality-checkboxes .mat-mdc-checkbox {
     pointer-events: auto;
   }
 
-  // Material draws an 18 px box: drawn at 14 px, in the room its smaller state layer leaves.
+  // Material draws an 18 px box: drawn at 11 px, no taller than the words beside it, in the room its smaller state
+  // layer leaves; its corners rounded to 3 px once scaled.
   .mdc-checkbox {
-    transform: scale(var(--density-check-scale, 0.78));
+    transform: scale(var(--density-check-scale, 0.61));
+  }
+
+  .mdc-checkbox__background {
+    border-radius: 5px;
   }
 
   .mdc-label {

@@ -9,6 +9,6 @@
   --density-check-col: 112px;
   --density-check-layer: 22px;
   --density-check-label: 11.5px;
-  // Small boxes, 13px, beside words at their full size.
-  --density-check-scale: 0.72;
+  // Small boxes, 11px, no taller than the words beside them.
+  --density-check-scale: 0.61;
 }

@@ -37,21 +37,24 @@
   }
 }
 
-// As a card's last row: the whole line is the button, square, its text at the start.
+// As a card's last row: the whole line is the button, square, its text at the start, in blue as what can be clicked.
 .add.row {
   width: 100%;
   margin: 0;
-  height: 28px;
+  height: 36px;
   padding: 0 16px;
   justify-content: flex-start;
   border-radius: 0;
-  font-size: 12.5px;
+  font-size: 13px;
+  font-weight: 500;
   --mat-button-text-container-shape: 0;
+  --mat-button-text-label-text-color: #{$primary};
+  --mat-button-text-state-layer-color: #{$primary};
 
   mat-icon {
     font-size: 18px;
     width: 18px;
     height: 18px;
-    margin-right: 4px;
+    margin-right: 6px;
   }
 }

@@ -5,35 +5,37 @@
   height: 100%;
 }
 
+// The split lays out the rail and the content itself.
 .page {
-  display: flex;
   height: 100%;
 }
 
+// The rail, as the Data tab's class list: full-width rows, a line at its right, then the split's gutter.
 .rail {
-  flex: none;
   box-sizing: border-box;
-  padding: 8px 8px 16px;
+  height: 100%;
+  padding: 8px 0 16px;
   border-right: 1px solid $cool_gray_200;
   overflow: auto;
   background: white;
 }
 
-// "Data models" and "Controlled vocabularies", with their "+".
+// "Data models" and "Controlled vocabularies", with their "+", as the Data tab's data model headings.
 .heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
   min-height: 36px;
-  padding: 4px 4px 0 12px;
-  font-size: 11px;
+  padding: 0 4px 0 16px;
+  font-size: 12px;
+  font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: $cool_gray_500;
 
   &.project {
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: 8px;
+    padding-top: 8px;
     border-top: 1px solid $cool_gray_200;
   }
 
@@ -69,12 +71,11 @@
 .model {
   display: flex;
   align-items: center;
-  min-height: 36px;
-  padding-right: 2px;
-  border-radius: 6px;
+  min-height: 34px;
+  padding: 0 4px 0 6px;
 
   &:hover {
-    background: $cool_gray_50;
+    background: $cool_gray_100;
   }
 
   .hover-action {
@@ -136,40 +137,43 @@
   background: $red_50;
 }
 
-// A data model's sections, set in under its name.
+// A data model's sections, under its name, their icons set in past its fold.
 .sections {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 0 0 6px 20px;
-
-  &.flat {
-    padding-left: 0;
-  }
+  padding: 0 0 8px;
 }
 
-// Rail rows as in the V3 design: compact, rounded, a pale blue for the current section. Specific enough to win
-// over Material's own list item rules.
+.rail .sections .rail-link.mat-mdc-list-item {
+  --mat-list-list-item-leading-icon-start-space: 32px;
+}
+
+.rail .sections.flat .rail-link.mat-mdc-list-item {
+  --mat-list-list-item-leading-icon-start-space: 12px;
+}
+
+// Rail rows as the Data tab's class list: 34px, square, grey icons and counts; the current one marked with a pale
+// blue and a bar at its left. Specific enough to win over Material's own list item rules.
 .rail .rail-link.mat-mdc-list-item {
   --mat-list-list-item-one-line-container-height: 34px;
-  --mat-list-list-item-leading-icon-size: 18px;
-  --mat-list-list-item-leading-icon-start-space: 12px;
-  --mat-list-list-item-leading-icon-end-space: 10px;
+  --mat-list-list-item-leading-icon-size: 16px;
+  --mat-list-list-item-leading-icon-end-space: 8px;
   --mat-list-list-item-label-text-size: 14px;
   --mat-list-list-item-label-text-line-height: 18px;
-  --mat-list-list-item-label-text-color: #{$cool_gray_700};
-  --mat-list-list-item-hover-label-text-color: #{$cool_gray_900};
-  --mat-list-list-item-leading-icon-color: #{$cool_gray_500};
-  --mat-list-list-item-hover-leading-icon-color: #{$cool_gray_700};
+  --mat-list-list-item-label-text-color: #{$cool_gray_800};
+  --mat-list-list-item-hover-label-text-color: #{$cool_gray_800};
+  --mat-list-list-item-leading-icon-color: #{$cool_gray_400};
+  --mat-list-list-item-hover-leading-icon-color: #{$cool_gray_400};
   --mat-list-list-item-hover-state-layer-color: #{$cool_gray_500};
   --mat-list-list-item-hover-state-layer-opacity: 0.08;
-  --mat-list-active-indicator-shape: 6px;
+  --mat-list-active-indicator-shape: 0;
   --mat-list-active-indicator-color: transparent;
   height: auto;
   min-height: 34px;
   padding-top: 5px;
   padding-bottom: 5px;
-  border-radius: 6px;
+  border-left: 2px solid transparent;
+  border-radius: 0;
   cursor: pointer;
 
   // Long names wrap rather than end in an ellipsis.
@@ -178,16 +182,8 @@
   }
 
   &.current {
-    --mat-list-list-item-label-text-color: #{$primary_700};
-    --mat-list-list-item-hover-label-text-color: #{$primary_700};
-    --mat-list-list-item-leading-icon-color: #{$primary};
-    --mat-list-list-item-hover-leading-icon-color: #{$primary};
-    background: $primary_50;
-    font-weight: 500;
-
-    .count {
-      color: $primary_700;
-    }
+    border-left-color: $primary;
+    background: $primary_100;
   }
 
   &.docs {
@@ -198,7 +194,8 @@
 .count {
   font-size: 12px;
   font-weight: 400;
-  color: $cool_gray_500;
+  color: $cool_gray_400;
+  font-variant-numeric: tabular-nums;
 }
 
 // As the line over "Controlled vocabularies".
@@ -208,15 +205,16 @@
 }
 
 .main {
-  flex: 1;
+  height: 100%;
   min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
+// White, as the Data tab's content: no grey ground with the sections floating on it.
 .content {
   flex: 1;
   min-height: 0;
-  background: $cool_gray_50;
+  background: white;
 }

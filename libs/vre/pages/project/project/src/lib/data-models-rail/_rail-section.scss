@@ -25,9 +25,16 @@
 
   h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: 20px;
+    line-height: 26px;
     font-weight: 500;
   }
+}
+
+// Under a section's title: the data model it is of, as the Data tab names the class under its title.
+.subtitle {
+  font-size: 14px;
+  color: $cool_gray_500;
 }
 
 .counts {
@@ -51,6 +58,9 @@
   width: 280px;
   font-size: 13px;
   background: white;
+  // A grey outline until focused, as the Data tab's search: the app's blue made it look focused already.
+  --mat-form-field-outlined-outline-color: #{$cool_gray_300};
+  --mat-form-field-outlined-hover-outline-color: #{$cool_gray_400};
 
   mat-icon {
     font-size: 18px;

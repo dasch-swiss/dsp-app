@@ -56,7 +56,11 @@ import { escapeClosesPanel } from './escape-closes';
     <div class="section">
       <!-- On one line: the title, the search and the create button; the tools, small, on a line under it. -->
       <div class="head one-line">
-        <h2>{{ r + '.classes' | translate }}</h2>
+        <!-- The title, and the data model under it. -->
+        <div class="title">
+          <h2>{{ r + '.classes' | translate }}</h2>
+          <span class="subtitle">{{ state.selected()?.label }}</span>
+        </div>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
           <mat-icon matPrefix>search</mat-icon>
           <input

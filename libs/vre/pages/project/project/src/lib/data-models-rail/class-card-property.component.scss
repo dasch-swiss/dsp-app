@@ -1,33 +1,33 @@
 @use 'config' as *;
 
 // One line: type, label and target, local name, the two checkboxes; the pencil and the handle float over it on hover.
+// No lines between rows: each is set in 6px from the card's edges, and rounds grey while pointed at. Its texts and
+// checkboxes stay 16px and 8px from the edges, as without the inset.
 :host {
   position: relative;
   display: grid;
   // Sizes from the cards' density (see DataModelClassesComponent), as compact as can be when none is set.
   grid-template-columns: 16px minmax(0, 1fr) calc(var(--density-check-col, 100px) + 4px);
-  --actions-right: calc(var(--density-check-col, 100px) + 18px);
+  --actions-right: calc(var(--density-check-col, 100px) + 12px);
   gap: 6px;
   align-items: center;
   min-height: var(--density-row, 26px);
-  padding: var(--density-pad, 1px) 8px var(--density-pad, 1px) 16px;
+  margin: 0 6px;
+  padding: var(--density-pad, 1px) 2px var(--density-pad, 1px) 10px;
+  border-radius: 6px;
   font-size: var(--density-label, 12.5px);
   background: white;
 
   &:hover {
-    background: $cool_gray_50;
+    background: $cool_gray_100;
   }
-}
-
-:host + :host {
-  border-top: 1px solid $cool_gray_100;
 }
 
 .type {
   font-size: 15px;
   width: 15px;
   height: 15px;
-  color: $cool_gray_500;
+  color: $cool_gray_400;
 }
 
 .texts {
@@ -62,14 +62,25 @@
   }
 }
 
+// The class a link points at, in blue as what can be clicked, a little smaller than the label, after a grey arrow.
 .target {
-  padding: 0;
+  padding: 0 0 0 6px;
   background: none;
-  color: $cool_gray_500;
+  font-size: calc(var(--density-label, 12.5px) - 0.5px);
+  color: $primary;
 
-  &:not(.off):hover {
-    color: $primary;
+  .arrow {
+    margin-right: 3px;
+    color: $cool_gray_400;
+  }
+
+  &:not(.off):hover .label {
     text-decoration: underline;
+  }
+
+  // In another data model, or hidden by the search: plain text.
+  &.off {
+    color: $cool_gray_500;
   }
 }
 
@@ -105,7 +116,8 @@
   font-family: 'Roboto Mono', monospace;
   font-size: var(--density-name, 11px);
   line-height: 1.3;
-  color: $primary;
+  // Grey: it is not a link.
+  color: $cool_gray_500;
 }
 
 // The handle, left of the pencil, on hover.
@@ -127,8 +139,9 @@
   display: flex;
   align-items: center;
   border-radius: 99px;
-  background: $cool_gray_50;
-  box-shadow: -10px 0 8px -2px $cool_gray_50;
+  // The row's hover grey, so the buttons sit on it.
+  background: $cool_gray_100;
+  box-shadow: -10px 0 8px -2px $cool_gray_100;
   // Transparent, not hidden, so Tab still reaches its buttons; it lets clicks through to the name it covers.
   opacity: 0;
   pointer-events: none;

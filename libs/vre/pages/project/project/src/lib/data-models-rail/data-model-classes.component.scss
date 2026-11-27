@@ -32,12 +32,14 @@
   grid-template-areas:
     'title search . create'
     'tools tools tools tools';
-  // The tools nearer the cards they act on than the button above them.
-  gap: 12px;
-  margin-bottom: -10px;
+  gap: 12px 16px;
+  align-items: center;
 
-  h2 {
+  .title {
     grid-area: title;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .search {
@@ -79,6 +81,13 @@
 // The comfortable sizes, which the property rows and their checkboxes read.
 .cards-box[data-density='comfortable'] {
   @include card-sizes.comfortable-card-sizes;
+}
+
+// The cards scroll out to the section's right and bottom edges, so the scrollbar sits at the window's edge, not
+// inside the section's padding.
+.cards-box {
+  margin: 0 -24px -16px 0;
+  padding: 0 24px 16px 0;
 }
 
 // On a narrow screen the search gives room first, down to a usable width.
