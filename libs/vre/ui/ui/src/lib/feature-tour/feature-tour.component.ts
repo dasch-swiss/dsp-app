@@ -341,7 +341,8 @@ export class FeatureTourComponent {
       return;
     }
     const host = anchors[0].getBoundingClientRect();
-    const measure = this.currentStep()?.ring === 'content' ? contentRect : (el: HTMLElement) => el.getBoundingClientRect();
+    const measure =
+      this.currentStep()?.ring === 'content' ? contentRect : (el: HTMLElement) => el.getBoundingClientRect();
     const content = union(anchors.map(measure));
     const corner = Math.max(0, ...anchors.map(anchor => parseFloat(getComputedStyle(anchor).borderTopLeftRadius) || 0));
     const height = content.height + SPOTLIGHT_PADDING * 2;
