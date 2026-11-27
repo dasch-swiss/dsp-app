@@ -5,9 +5,12 @@ import {
   computed,
   DestroyRef,
   effect,
+  ElementRef,
   inject,
   signal,
   untracked,
+  viewChild,
+  viewChildren,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
@@ -19,6 +22,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterOutlet } from 
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
+import { FeatureTourComponent, FeatureTourStep } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter, map, startWith } from 'rxjs';
 import { SIDEBAR_WIDTHS } from '../data-browser-page.component';
@@ -60,6 +64,7 @@ function paramOf(ontologyIri: string): Record<string, string> {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DataModelsRailState],
   imports: [
+    FeatureTourComponent,
     MatDivider,
     MatIcon,
     MatIconButton,
@@ -77,7 +82,7 @@ function paramOf(ontologyIri: string): Record<string, string> {
     @let r = 'pages.dataModels';
     @let editor = state.canEdit() && editing.canEditDataModels;
     <div class="page">
-      <aside class="rail" data-cy="data-models-tree" [style.width.px]="railWidth()">
+      <aside #tourRail class="rail" data-cy="data-models-tree" [style.width.px]="railWidth()">
         <div class="heading">
           <!-- What a data model is, as the Data models tab says it. -->
           <span class="title">
@@ -163,6 +168,7 @@ function paramOf(ontologyIri: string): Record<string, string> {
               @for (item of sections; track item.path) {
                 @let active = current && section() === item.path;
                 <a
+                  #tourSection
                   mat-list-item
                   class="rail-link"
                   [class.current]="active"
@@ -243,6 +249,8 @@ function paramOf(ontologyIri: string): Record<string, string> {
         </main>
       </div>
     </div>
+
+    <app-feature-tour tour="dataModels" [steps]="tourSteps()" />
   `,
   styleUrl: './data-models-tree-page.component.css',
 })
@@ -289,6 +297,35 @@ export class DataModelsTreePageComponent {
 
   /** The data models folded open on their sections; the one shown opens by itself. */
   readonly expanded = signal(new Set<string>());
+
+  private readonly _tourRail = viewChild('tourRail', { read: ElementRef });
+  private readonly _tourSections = viewChildren('tourSection', { read: ElementRef });
+
+  /** The tour of the rail. With several data models, it points at the sections of the first one folded open. */
+  readonly tourSteps = computed<FeatureTourStep[]>(() => {
+    // An open data model lists all its sections, in `MODEL_SECTIONS` order: the first open one's come first.
+    const section = (path: string) => this._tourSections()[MODEL_SECTIONS.findIndex(known => known.path === path)];
+    const beside = (anchor: FeatureTourStep['anchor'], titleKey: string, bodyKey: string): FeatureTourStep => ({
+      anchor,
+      placement: 'right',
+      align: 'start',
+      titleKey,
+      bodyKey,
+    });
+    return [
+      {
+        // The rail is as tall as the page: the ring goes around what it lists.
+        ...beside(this._tourRail(), 'pages.dataModels.tour.overviewTitle', 'pages.dataModels.tour.overviewBody'),
+        ring: 'content',
+      },
+      beside(
+        [section(RouteConstants.classes), section(RouteConstants.properties)],
+        'pages.dataModels.tour.sectionsTitle',
+        'pages.dataModels.tour.sectionsBody'
+      ),
+      beside(section(RouteConstants.graph), 'pages.dataModels.tour.diagramTitle', 'pages.dataModels.tour.diagramBody'),
+    ];
+  });
 
   /** What the API says of deleting each data model, once asked; none while it checks. */
   private readonly _deleteChecks = new CanDoChecks(iri => this.editing.canDeleteDataModel(iri), this._destroyRef);

@@ -21,6 +21,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouteConstants } from '@dasch-swiss/vre/core/config';
 import { LocalizationService, OntologyService, SortingHelper } from '@dasch-swiss/vre/shared/app-helper-services';
+import { FeatureTourComponent, FeatureTourStep } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, map } from 'rxjs';
 import { escapeClosesPanel } from '../data-models-rail/escape-closes';
@@ -118,6 +119,7 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
   imports: [
     CdkConnectedOverlay,
     CdkOverlayOrigin,
+    FeatureTourComponent,
     FilterMenuComponent,
     GraphSearchResultsComponent,
     MatIcon,
@@ -235,7 +237,7 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
                       (browsedChange)="browsed.set($event)"
                       (previewed)="preview($event)" />
                   </ng-template>
-                  <div class="float filters">
+                  <div #tourFilters class="float filters">
                     <span class="filters-label">{{ m + '.filters' | translate }}</span>
                     <span class="divider"></span>
                     <span class="chip" [class.active]="classFilter().mode">
@@ -404,6 +406,7 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
                     }
                   </mat-menu>
                   <button
+                    #tourExport
                     type="button"
                     class="float export"
                     data-cy="ontology-map-export"
@@ -487,6 +490,8 @@ const SIZES: GraphSize[] = ['small', 'normal', 'large'];
         <p class="empty">{{ m + '.noDataModels' | translate }}</p>
       }
     </div>
+
+    <app-feature-tour tour="dataModelsDiagram" [steps]="tourSteps()" />
   `,
   styleUrl: './ontology-map-page.component.css',
 })
@@ -555,6 +560,24 @@ export class OntologyMapPageComponent {
   readonly graphView = viewChild('mainGraph', { read: OntologyGraphComponent });
   private readonly _searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
   private readonly _searchBox = viewChild<ElementRef<HTMLElement>>('searchBox');
+  private readonly _tourFilters = viewChild('tourFilters', { read: ElementRef });
+  private readonly _tourExport = viewChild('tourExport', { read: ElementRef });
+
+  /** The diagram's tour: what to show, then how to take it away. */
+  readonly tourSteps = computed<FeatureTourStep[]>(() => [
+    {
+      anchor: [this._searchBox(), this._tourFilters()],
+      align: 'start',
+      titleKey: 'pages.ontologyMap.tour.filterTitle',
+      bodyKey: 'pages.ontologyMap.tour.filterBody',
+    },
+    {
+      anchor: this._tourExport(),
+      align: 'end',
+      titleKey: 'pages.ontologyMap.tour.exportTitle',
+      bodyKey: 'pages.ontologyMap.tour.exportBody',
+    },
+  ]);
 
   /** The family of every class of the data model, which the Islands view groups and colours classes by. */
   readonly families = computed(() => {

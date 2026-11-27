@@ -5,13 +5,18 @@ import { InjectionToken } from '@angular/core';
  * showing by itself, so nobody has to remember to take it out.
  */
 export interface FeatureTour {
-  /** Names the tour, and the key under which this browser remembers it has seen it. */
+  /** Names the tour, and the keys under which this browser remembers it has seen it and been on its page. */
   id: string;
   /**
    * The day the release that ships the tour reaches production, as `YYYY-MM-DD` in the viewer's
    * time zone. Move it when the release moves, or the tour loses the days the release slipped.
    */
   liveOn: string;
+  /**
+   * The id of the tour this one continues, on a page reached from it. Turning that tour off from its
+   * teaser turns this one off too.
+   */
+  follows?: string;
 }
 
 /**

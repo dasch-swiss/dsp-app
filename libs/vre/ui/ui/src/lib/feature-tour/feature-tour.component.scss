@@ -44,6 +44,18 @@
   right: 28px;
 }
 
+// Beside the anchor: points left at it, from the bubble's top or bottom end.
+.placement-right .arrow {
+  top: 20px;
+  left: -7px;
+  right: auto;
+}
+
+.placement-right.align-end .arrow {
+  top: auto;
+  bottom: 20px;
+}
+
 .meta {
   display: flex;
   align-items: center;
