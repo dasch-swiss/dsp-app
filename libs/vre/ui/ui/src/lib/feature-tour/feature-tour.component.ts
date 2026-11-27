@@ -27,6 +27,11 @@ export interface FeatureTourStep {
    * them. A step none of whose anchors is rendered is skipped.
    */
   anchor: FeatureTourAnchor | readonly (FeatureTourAnchor | undefined)[] | undefined;
+  /**
+   * What the ring goes around: the anchors themselves (the default), or what they draw, for an anchor
+   * that stretches beyond its content, like a rail as tall as the page.
+   */
+  ring?: 'anchor' | 'content';
   /** Which side of the anchor the bubble opens on; below by default. */
   placement?: 'below' | 'right';
   /**
@@ -270,6 +275,7 @@ export class FeatureTourComponent {
     // follows every change rather than keeping its first, often wrong, size.
     effect(onCleanup => {
       const anchors = this.anchors().map(anchor => anchor.nativeElement);
+      const content = this.currentStep()?.ring === 'content';
       if (anchors.length === 0) {
         return;
       }
@@ -278,7 +284,9 @@ export class FeatureTourComponent {
         return;
       }
       const observer = new ResizeObserver(() => this._measure());
-      anchors.forEach(anchor => observer.observe(anchor));
+      anchors
+        .flatMap(anchor => (content ? [anchor, ...Array.from(anchor.children)] : [anchor]))
+        .forEach(el => observer.observe(el));
       onCleanup(() => observer.disconnect());
     });
   }
@@ -333,7 +341,8 @@ export class FeatureTourComponent {
       return;
     }
     const host = anchors[0].getBoundingClientRect();
-    const content = union(anchors.map(anchor => anchor.getBoundingClientRect()));
+    const measure = this.currentStep()?.ring === 'content' ? contentRect : (el: HTMLElement) => el.getBoundingClientRect();
+    const content = union(anchors.map(measure));
     const corner = Math.max(0, ...anchors.map(anchor => parseFloat(getComputedStyle(anchor).borderTopLeftRadius) || 0));
     const height = content.height + SPOTLIGHT_PADDING * 2;
     this.spotlightRadius.set(Math.min(Math.max(SPOTLIGHT_MIN_RADIUS, corner + SPOTLIGHT_PADDING), height / 2));
@@ -353,6 +362,14 @@ function renderedAnchors(step: FeatureTourStep | undefined): FeatureTourAnchor[]
   }
   const anchors = anchor instanceof ElementRef ? [anchor] : anchor;
   return anchors.filter((a): a is FeatureTourAnchor => a !== undefined);
+}
+
+/** The box around what the anchor draws: its children, or the anchor itself if it has none. */
+function contentRect(anchor: HTMLElement): DOMRect {
+  const rects = Array.from(anchor.children)
+    .map(child => child.getBoundingClientRect())
+    .filter(rect => rect.width > 0 && rect.height > 0);
+  return rects.length === 0 ? anchor.getBoundingClientRect() : union(rects);
 }
 
 /** The smallest box around all the given ones. */

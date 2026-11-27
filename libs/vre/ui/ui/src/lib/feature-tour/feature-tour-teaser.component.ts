@@ -62,8 +62,15 @@ let nextInstance = 0;
         [cdkConnectedOverlayPositions]="positions"
         [cdkConnectedOverlayPush]="true"
         (overlayKeydown)="onPopoverKeydown($event)">
-        <!-- The padding on top is the bridge from the label: the pointer reaches the popover without leaving it. -->
-        <div class="bridge" (pointerenter)="pin()" (pointerleave)="onPointerLeave()">
+        <!-- The padding on top is the bridge from the label: the pointer reaches the popover without leaving it.
+             Hovering keeps the popover open and leaving it closes it as leaving the label does; a click or
+             focus inside it pins it. -->
+        <div
+          class="bridge"
+          (pointerenter)="onPointerEnter()"
+          (pointerleave)="onPointerLeave()"
+          (pointerdown)="pin()"
+          (focusin)="pin()">
           <section
             #popover
             class="popover"
@@ -133,7 +140,7 @@ export class FeatureTourTeaserComponent {
   });
 
   readonly hovered = signal(false);
-  /** Open until closed, once clicked or entered. */
+  /** Open until closed, once the label or the popover is clicked, or the popover takes focus. */
   readonly pinned = signal(false);
   readonly open = computed(() => this.hovered() || this.pinned());
   /** Whether the popover takes focus as it opens: only when opened from the keyboard. */

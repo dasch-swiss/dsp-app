@@ -252,6 +252,21 @@ describe('FeatureTourComponent', () => {
     expect(host.tour().spotlightBox()).toEqual({ offsetX: -4, offsetY: -4, width: 248, height: 58 });
   });
 
+  it('rings what the anchor draws, not the anchor, when the step asks for its content', async () => {
+    await render(false, true, host => {
+      host.steps = () => [{ anchor: host.first(), ring: 'content', align: 'start', titleKey: 't', bodyKey: 'b' }];
+    });
+    const host = fixture.componentInstance;
+    const anchor = host.first()!.nativeElement as HTMLElement;
+    const child = anchor.ownerDocument.createElement('span');
+    anchor.appendChild(child);
+    placeAt(anchor, 0, 0, 200, 800);
+    placeAt(child, 10, 20, 100, 30);
+    host.tour()['_measure']();
+
+    expect(host.tour().spotlightBox()).toEqual({ offsetX: 6, offsetY: 16, width: 108, height: 38 });
+  });
+
   it.each([
     ['below', 'start', { overlayX: 'start', overlayY: 'top', offsetX: -4, offsetY: 44 }],
     ['below', 'end', { overlayX: 'end', overlayY: 'top', offsetX: 104, offsetY: 44 }],

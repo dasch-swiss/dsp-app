@@ -313,7 +313,11 @@ export class DataModelsTreePageComponent {
       bodyKey,
     });
     return [
-      beside(this._tourRail(), 'pages.dataModels.tour.overviewTitle', 'pages.dataModels.tour.overviewBody'),
+      {
+        // The rail is as tall as the page: the ring goes around what it lists.
+        ...beside(this._tourRail(), 'pages.dataModels.tour.overviewTitle', 'pages.dataModels.tour.overviewBody'),
+        ring: 'content',
+      },
       beside(
         [section(RouteConstants.classes), section(RouteConstants.properties)],
         'pages.dataModels.tour.sectionsTitle',

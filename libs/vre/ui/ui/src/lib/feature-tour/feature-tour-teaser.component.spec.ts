@@ -129,12 +129,28 @@ describe('FeatureTourTeaserComponent', () => {
     expect(popover()).toBeNull();
   });
 
-  it('stays open once the pointer moves into the popover', async () => {
+  it('stays open while the pointer is on the popover, and closes a grace period after it leaves', async () => {
     await render();
 
     fire(label(), 'pointerenter');
     fire(label(), 'pointerleave');
     fire(popover()!.parentElement, 'pointerenter');
+    jest.advanceTimersByTime(TEASER_CLOSE_GRACE_MS * 2);
+    fixture.detectChanges();
+    expect(popover()).not.toBeNull();
+
+    fire(popover()!.parentElement, 'pointerleave');
+    jest.advanceTimersByTime(TEASER_CLOSE_GRACE_MS);
+    fixture.detectChanges();
+    expect(popover()).toBeNull();
+  });
+
+  it('stays open once clicked inside the popover', async () => {
+    await render();
+
+    fire(label(), 'pointerenter');
+    fire(popover()!.parentElement, 'pointerenter');
+    fire(popover()!.parentElement, 'pointerdown');
     fire(popover()!.parentElement, 'pointerleave');
     jest.advanceTimersByTime(TEASER_CLOSE_GRACE_MS * 2);
     fixture.detectChanges();
