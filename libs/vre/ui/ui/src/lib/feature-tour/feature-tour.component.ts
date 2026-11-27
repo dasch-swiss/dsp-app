@@ -44,8 +44,11 @@ const SPOTLIGHT_PADDING = 4;
 /** Room between the ring and the bubble, which the bubble's arrow spans. */
 const BUBBLE_GAP = 10;
 
-/** How long the tour waits after the page renders before it first opens. */
-export const FIRST_APPEARANCE_DELAY_MS = 2000;
+/** How long the tour waits, once its first anchor is on the page, before it first opens. */
+export const FIRST_APPEARANCE_DELAY_MS = 600;
+
+/** The ring's corner radius around square anchors; around rounded ones it follows their corners. */
+const SPOTLIGHT_MIN_RADIUS = 6;
 
 /** Tells the bubbles of tours on one page apart, for the ids their labels point at. */
 let nextInstance = 0;
@@ -74,7 +77,7 @@ let nextInstance = 0;
         [cdkConnectedOverlayWidth]="spotlightBox().width"
         [cdkConnectedOverlayHeight]="spotlightBox().height"
         cdkConnectedOverlayPanelClass="feature-tour-spotlight-pane">
-        <div class="spotlight" aria-hidden="true"></div>
+        <div class="spotlight" aria-hidden="true" [style.border-radius.px]="spotlightRadius()"></div>
       </ng-template>
 
       <ng-template
@@ -157,6 +160,8 @@ export class FeatureTourComponent {
 
   /** The ring's box, relative to the origin's top-left corner. */
   readonly spotlightBox = signal({ offsetX: 0, offsetY: 0, width: 0, height: 0 });
+  /** The ring's corner radius, so that it runs parallel to a pill's rounded ends instead of cutting them. */
+  readonly spotlightRadius = signal(SPOTLIGHT_MIN_RADIUS);
 
   readonly spotlightPositions = computed<ConnectedPosition[]>(() => {
     const { offsetX, offsetY } = this.spotlightBox();
@@ -208,9 +213,12 @@ export class FeatureTourComponent {
   /** Whether the bubble opened beside its anchor rather than below, which points its arrow left. */
   readonly beside = signal(false);
 
+  /** Set when the tour is due to be shown on this page: on its days, and not seen yet. */
+  private readonly _eligible = signal(false);
   /** Set once the delay has run out, or at once on start now. */
   private readonly _ready = signal(false);
   private _startedNow = false;
+  private _delayStarted = false;
 
   constructor() {
     afterNextRender(() => {
@@ -223,16 +231,23 @@ export class FeatureTourComponent {
       if (startNow) {
         this._startedNow = true;
         this._ready.set(true);
+      }
+      this._eligible.set(true);
+    });
+
+    // A moment after the first anchor shows up, not after the first render: anchors that depend on
+    // loaded data come later, and a delay on top of the loading would let the user start working
+    // before the tour interrupts. The moment keeps the tour from landing in the same frame as the page.
+    effect(() => {
+      if (!this._eligible() || this._ready() || this._delayStarted || this._nextRenderedStep(0, 1) === -1) {
         return;
       }
-      // A moment after the first render: the page has had time to load and be looked at before the
-      // tour asks for attention.
+      this._delayStarted = true;
       const timer = setTimeout(() => this._ready.set(true), FIRST_APPEARANCE_DELAY_MS);
       this._destroyRef.onDestroy(() => clearTimeout(timer));
     });
 
-    // Once ready, opens as soon as no other tour is on screen and a step's anchor is on the page:
-    // anchors that depend on loaded data may not be there yet, and the tour waits for them.
+    // Once ready, opens as soon as no other tour is on screen and a step's anchor is on the page.
     // Once closed, the tour is seen and does not open again.
     effect(() => {
       const tour = FEATURE_TOURS[this.tour()];
@@ -263,7 +278,7 @@ export class FeatureTourComponent {
         return;
       }
       const observer = new ResizeObserver(() => this._measure());
-      anchors.flatMap(anchor => [anchor, ...Array.from(anchor.children)]).forEach(el => observer.observe(el));
+      anchors.forEach(anchor => observer.observe(anchor));
       onCleanup(() => observer.disconnect());
     });
   }
@@ -318,7 +333,10 @@ export class FeatureTourComponent {
       return;
     }
     const host = anchors[0].getBoundingClientRect();
-    const content = union(anchors.map(contentRect));
+    const content = union(anchors.map(anchor => anchor.getBoundingClientRect()));
+    const corner = Math.max(0, ...anchors.map(anchor => parseFloat(getComputedStyle(anchor).borderTopLeftRadius) || 0));
+    const height = content.height + SPOTLIGHT_PADDING * 2;
+    this.spotlightRadius.set(Math.min(Math.max(SPOTLIGHT_MIN_RADIUS, corner + SPOTLIGHT_PADDING), height / 2));
     this.spotlightBox.set({
       offsetX: content.left - host.left - SPOTLIGHT_PADDING,
       offsetY: content.top - host.top - SPOTLIGHT_PADDING,
@@ -335,17 +353,6 @@ function renderedAnchors(step: FeatureTourStep | undefined): FeatureTourAnchor[]
   }
   const anchors = anchor instanceof ElementRef ? [anchor] : anchor;
   return anchors.filter((a): a is FeatureTourAnchor => a !== undefined);
-}
-
-/**
- * The box around what the anchor draws, not the anchor itself. A host that stretches to fill its
- * row (the search bar does) would otherwise put the ring around empty space and its neighbours.
- */
-function contentRect(anchor: HTMLElement): DOMRect {
-  const rects = Array.from(anchor.children)
-    .map(child => child.getBoundingClientRect())
-    .filter(rect => rect.width > 0 && rect.height > 0);
-  return rects.length === 0 ? anchor.getBoundingClientRect() : union(rects);
 }
 
 /** The smallest box around all the given ones. */

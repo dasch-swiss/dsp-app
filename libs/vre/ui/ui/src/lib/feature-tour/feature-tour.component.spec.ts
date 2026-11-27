@@ -61,6 +61,8 @@ describe('FeatureTourComponent', () => {
     fixture.componentInstance.showSecond = showSecond;
     setUp?.(fixture.componentInstance);
     fixture.detectChanges();
+    // A second pass, as the app runs on its own: it starts the delay, now that the anchors are on the page.
+    fixture.detectChanges();
     if (waitForTour) {
       jest.advanceTimersByTime(FIRST_APPEARANCE_DELAY_MS);
     }
@@ -185,6 +187,26 @@ describe('FeatureTourComponent', () => {
     fixture.detectChanges();
 
     expect(bubble()).toBeNull();
+  });
+
+  it('counts its delay from when an anchor shows up, not from the first render', async () => {
+    await render(false, false, host => {
+      host.steps = () => [{ anchor: host['_second'](), align: 'start', titleKey: 't', bodyKey: 'b' }];
+    });
+    jest.advanceTimersByTime(FIRST_APPEARANCE_DELAY_MS * 5);
+    fixture.detectChanges();
+    expect(bubble()).toBeNull();
+
+    fixture.componentInstance.showSecond = true;
+    fixture.detectChanges();
+    fixture.detectChanges();
+    jest.advanceTimersByTime(FIRST_APPEARANCE_DELAY_MS - 1);
+    fixture.detectChanges();
+    expect(bubble()).toBeNull();
+
+    jest.advanceTimersByTime(1);
+    fixture.detectChanges();
+    expect(bubble()?.textContent).toContain('t');
   });
 
   it('opens right away when asked to start now', async () => {
