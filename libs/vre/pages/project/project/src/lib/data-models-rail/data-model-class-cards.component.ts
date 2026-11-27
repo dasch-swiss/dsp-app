@@ -171,14 +171,15 @@ export interface PropertyOrder {
               <!-- Under the label: the class's name, then the kind of file its resources carry, or none. -->
               <span class="kind-line" data-cy="data-model-class-card-file">
                 <ng-container [ngTemplateOutlet]="className" />
-                <span aria-hidden="true">·</span>
-                @if (row.representation; as representation) {
-                  <mat-icon>{{ card.fileIcon }}</mat-icon>
-                  {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
-                } @else {
-                  <mat-icon>person_outline</mat-icon>
-                  {{ 'pages.dataModels.objectWithoutRepresentation' | translate }}
-                }
+                <span class="representation">
+                  @if (row.representation; as representation) {
+                    <mat-icon>{{ card.fileIcon }}</mat-icon>
+                    {{ 'pages.ontologyMap.islands.fileKinds.' + representation | translate }}
+                  } @else {
+                    <mat-icon>person_outline</mat-icon>
+                    {{ 'pages.dataModels.objectWithoutRepresentation' | translate }}
+                  }
+                </span>
               </span>
             </span>
             <!-- The class's actions, as in the Data models tab: edit, open its resources, copy its ID, delete. -->

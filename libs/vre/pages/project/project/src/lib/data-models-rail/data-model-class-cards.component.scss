@@ -17,8 +17,12 @@
 
 .card {
   background: white;
-  border: 1px solid $cool_gray_300;
-  border-radius: 6px;
+  border: 1px solid $cool_gray_200;
+  border-radius: 10px;
+  // A faint lift off the page, which the outline of a selected or flashed card replaces.
+  box-shadow:
+    0 1px 3px rgba($cool_gray_900, 0.06),
+    0 1px 2px rgba($cool_gray_900, 0.03);
   overflow: hidden;
   position: relative;
   scroll-margin: 16px;
@@ -39,8 +43,8 @@
   display: flex;
   align-items: flex-start;
   gap: 2px;
-  // As the property rows: their texts 16px from the left and 6px from the top, the toggle flush with their checkboxes.
-  padding: 6px 19px 6px 16px;
+  // Texts 16px from the left, as the property rows'; the toggle flush with their checkboxes.
+  padding: 12px 19px 10px 16px;
 
   .texts {
     flex: 1;
@@ -48,6 +52,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: 3px;
   }
 
   .title {
@@ -61,7 +66,8 @@
 
   b {
     font-weight: 500;
-    font-size: 14px;
+    font-size: 16px;
+    line-height: 20px;
     color: $cool_gray_900;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -84,12 +90,11 @@
   border-radius: 2px;
 }
 
-// The superclass, in the family's colour, above the name.
-// Under the label of a class with a file: its name, then the kind of file with its icon.
+// Under the label: its name, then the kind of file its resources carry, with its icon, in a grey pill.
 .kind-line {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
   font-size: 12px;
   line-height: 16px;
@@ -105,10 +110,20 @@
 
   mat-icon {
     flex: none;
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
   }
+}
+
+.representation {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 7px 0 5px;
+  border-radius: 9999px;
+  background: $cool_gray_100;
+  color: $cool_gray_600;
 }
 
 // The actions menu and the fold button, round and grey.
@@ -118,7 +133,7 @@
   // Without the browser's padding the icon sits in the circle's middle, not pushed to its side.
   padding: 0;
   background: none;
-  color: $cool_gray_500;
+  color: $cool_gray_400;
   cursor: pointer;
   border-radius: 50%;
   width: 28px;
@@ -128,12 +143,20 @@
 
   &:hover:not([disabled]) {
     background: $cool_gray_100;
+    color: $cool_gray_600;
   }
 
   &[disabled] {
     cursor: default;
     color: $cool_gray_300;
   }
+}
+
+// The fold button's chevron, a little smaller than Material's.
+.icon-button:not(.menu-button) mat-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
 }
 
 // The class's menu: shown over the header, while open or with the focus; its dots drawn smaller, as tall as the
@@ -157,11 +180,12 @@
   pointer-events: auto;
 }
 
+// Under the header's line; the rows set in from the card's edges, with no lines between them.
 .props {
   list-style: none;
   margin: 0;
-  padding: 0;
-  border-top: 1px solid $cool_gray_100;
+  padding: 4px 0;
+  border-top: 1px solid $cool_gray_200;
 }
 
 // Where a dragged property lands.
@@ -181,19 +205,19 @@
   align-items: center;
   gap: 4px;
   width: 100%;
-  padding: 3px 16px;
+  padding: 5px 16px;
   border: 0;
   border-top: 1px solid $cool_gray_100;
   background: none;
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 500;
   color: $primary;
   text-align: left;
   cursor: pointer;
 
   &:hover {
-    background: $cool_gray_100;
+    background: $primary_50;
   }
 
   mat-icon {
@@ -212,18 +236,16 @@
   color: $cool_gray_500;
 }
 
-// "Add property" under an opened card's properties, as in the Data models tab.
+// "Add property" under an opened card's properties, as in the Data models tab: the whole last row.
 .add-property {
   display: block;
-  // Room above and below as the property rows have.
-  padding: var(--density-pad, 1px) 0;
-  border-top: 1px solid $cool_gray_100;
+  border-top: 1px solid $cool_gray_200;
 }
 
 .none {
   margin: 0;
-  padding: 6px 16px 8px;
-  border-top: 1px solid $cool_gray_100;
+  padding: 8px 16px;
+  border-top: 1px solid $cool_gray_200;
   font-size: 12.5px;
   color: $cool_gray_500;
 }

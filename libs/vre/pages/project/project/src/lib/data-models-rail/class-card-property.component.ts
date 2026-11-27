@@ -51,7 +51,7 @@ function cardinalityOf({ required, multiple }: CardProperty): Cardinality {
             [class.off]="!reachable()"
             [disabled]="!reachable()"
             (click)="goTo.emit(target)">
-            → {{ targetLabel() }}
+            <span class="arrow" aria-hidden="true">→</span><span class="label">{{ targetLabel() }}</span>
           </button>
         }
       </span>
