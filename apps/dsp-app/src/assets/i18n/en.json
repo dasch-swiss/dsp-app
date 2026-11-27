@@ -918,7 +918,7 @@
         "overviewTitle": "Everything in one place",
         "overviewBody": "Here you find your data models with resource classes, properties and diagram, and below them the controlled vocabularies.",
         "sectionsTitle": "Classes and properties in one click",
-        "sectionsBody": "Resource classes and properties are now both directly accessible here. So you can also quickly find properties that several classes share.",
+        "sectionsBody": "Resource classes and properties are now both directly accessible here. Properties that several classes share are quick to find, too.",
         "diagramTitle": "Your data model as a diagram",
         "diagramBody": "The diagram shows how the resource classes of your data model relate to each other."
       },
