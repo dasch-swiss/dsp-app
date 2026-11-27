@@ -24,6 +24,7 @@ import { OntologyService } from '@dasch-swiss/vre/shared/app-helper-services';
 import { StringifyStringLiteralPipe } from '@dasch-swiss/vre/ui/string-literal';
 import { FeatureTourComponent, FeatureTourStep } from '@dasch-swiss/vre/ui/ui';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AngularSplitModule, SplitGutterInteractionEvent } from 'angular-split';
 import { filter, map, startWith } from 'rxjs';
 import { SIDEBAR_WIDTHS } from '../data-browser-page.component';
 import { injectDataModelEditing } from '../ontology-map/data-model-editor';
@@ -39,7 +40,7 @@ const MODEL_SECTIONS = [
 ] as const;
 
 /** The rail's least width: below it, its headings and the data models' names would crowd. */
-const RAIL_MIN_WIDTH = 220;
+const RAIL_MIN_WIDTH = 260;
 const RAIL_QUERIES = SIDEBAR_WIDTHS.map(([minWidth]) => `(min-width: ${minWidth}px)`);
 
 /** A vocabulary's name in the URL: the end of its IRI. */
@@ -64,6 +65,7 @@ function paramOf(ontologyIri: string): Record<string, string> {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DataModelsRailState],
   imports: [
+    AngularSplitModule,
     FeatureTourComponent,
     MatDivider,
     MatIcon,
@@ -81,174 +83,183 @@ function paramOf(ontologyIri: string): Record<string, string> {
   template: `
     @let r = 'pages.dataModels';
     @let editor = state.canEdit() && editing.canEditDataModels;
-    <div class="page">
-      <aside #tourRail class="rail" data-cy="data-models-tree" [style.width.px]="railWidth()">
-        <div class="heading">
-          <!-- What a data model is, as the Data models tab says it. -->
-          <span class="title">
-            {{ r + '.dataModels' | translate }}
-            <mat-icon
-              class="info"
-              tabindex="0"
-              data-cy="data-models-tree-info"
-              [attr.aria-label]="'pages.ontology.dataModels.info' | translate"
-              [matTooltip]="'pages.ontology.dataModels.info' | translate"
-              >info_outline</mat-icon
-            >
-          </span>
-          @if (editor) {
-            <button
-              mat-icon-button
-              type="button"
-              class="small"
-              data-cy="data-models-tree-create-model"
-              [attr.aria-label]="r + '.createDataModel' | translate"
-              [matTooltip]="r + '.createDataModel' | translate"
-              (click)="createDataModel()">
-              <mat-icon>add</mat-icon>
-            </button>
-          }
-        </div>
-
-        @for (model of state.ontologies(); track model.iri) {
-          @let open = expanded().has(model.iri);
-          @let current = model.iri === state.selected()?.iri;
-          @let counts = state.counts().get(model.iri);
-          <!-- The data model: its fold, its name (opens it), and for editors, on hover, its pen and bin. -->
-          <div
-            class="model"
-            [class.current]="current"
-            data-cy="data-models-tree-model"
-            (mouseenter)="editor && checkDelete(model.iri, true)"
-            (mouseleave)="cancelCheck()"
-            (focusin)="editor && checkDelete(model.iri)">
-            <button
-              mat-icon-button
-              type="button"
-              class="small fold"
-              [attr.aria-expanded]="open"
-              [attr.aria-label]="r + '.showSections' | translate: { model: model.label }"
-              (click)="toggle(model.iri)">
-              <mat-icon>{{ open ? 'expand_more' : 'chevron_right' }}</mat-icon>
-            </button>
-            <button type="button" class="name" (click)="openModel(model.iri)">{{ model.label }}</button>
+    <!-- As the Data tab: the rail beside the content, its gutter dragged to widen it. -->
+    <as-split class="page" direction="horizontal" unit="pixel" (dragEnd)="onRailDragged($event)">
+      <as-split-area [size]="railSize()">
+        <aside #tourRail class="rail" data-cy="data-models-tree">
+          <div class="heading">
+            <!-- What a data model is, as the Data models tab says it. -->
+            <span class="title">
+              {{ r + '.dataModels' | translate }}
+              <mat-icon
+                class="info"
+                tabindex="0"
+                data-cy="data-models-tree-info"
+                [attr.aria-label]="'pages.ontology.dataModels.info' | translate"
+                [matTooltip]="'pages.ontology.dataModels.info' | translate"
+                >info_outline</mat-icon
+              >
+            </span>
             @if (editor) {
               <button
                 mat-icon-button
                 type="button"
-                class="small hover-action"
-                data-cy="data-models-tree-edit-model"
-                [attr.aria-label]="r + '.editDataModel' | translate"
-                [matTooltip]="r + '.editDataModel' | translate"
-                (click)="editModel(model)">
-                <mat-icon>edit</mat-icon>
+                class="small"
+                data-cy="data-models-tree-create-model"
+                [attr.aria-label]="r + '.createDataModel' | translate"
+                [matTooltip]="r + '.createDataModel' | translate"
+                (click)="createDataModel()">
+                <mat-icon>add</mat-icon>
               </button>
-              @let check = deleteChecks().get(model.iri);
-              <span
-                class="hover-action"
-                [matTooltip]="
-                  (!check ? r + '.checkingDelete' : check.canDo ? r + '.deleteDataModel' : r + '.cannotDeleteDataModel')
-                    | translate
-                ">
+            }
+          </div>
+
+          @for (model of state.ontologies(); track model.iri) {
+            @let open = expanded().has(model.iri);
+            @let current = model.iri === state.selected()?.iri;
+            @let counts = state.counts().get(model.iri);
+            <!-- The data model: its fold, its name (opens it), and for editors, on hover, its pen and bin. -->
+            <div
+              class="model"
+              [class.current]="current"
+              data-cy="data-models-tree-model"
+              (mouseenter)="editor && checkDelete(model.iri, true)"
+              (mouseleave)="cancelCheck()"
+              (focusin)="editor && checkDelete(model.iri)">
+              <button
+                mat-icon-button
+                type="button"
+                class="small fold"
+                [attr.aria-expanded]="open"
+                [attr.aria-label]="r + '.showSections' | translate: { model: model.label }"
+                (click)="toggle(model.iri)">
+                <mat-icon>{{ open ? 'expand_more' : 'chevron_right' }}</mat-icon>
+              </button>
+              <button type="button" class="name" (click)="openModel(model.iri)">{{ model.label }}</button>
+              @if (editor) {
                 <button
                   mat-icon-button
                   type="button"
-                  class="small delete"
-                  data-cy="data-models-tree-delete-model"
-                  [attr.aria-label]="r + '.deleteDataModel' | translate"
-                  [disabled]="!check?.canDo"
-                  (click)="deleteModel(model.iri, model.label)">
-                  <mat-icon>delete</mat-icon>
+                  class="small hover-action"
+                  data-cy="data-models-tree-edit-model"
+                  [attr.aria-label]="r + '.editDataModel' | translate"
+                  [matTooltip]="r + '.editDataModel' | translate"
+                  (click)="editModel(model)">
+                  <mat-icon>edit</mat-icon>
                 </button>
-              </span>
+                @let check = deleteChecks().get(model.iri);
+                <span
+                  class="hover-action"
+                  [matTooltip]="
+                    (!check
+                      ? r + '.checkingDelete'
+                      : check.canDo
+                        ? r + '.deleteDataModel'
+                        : r + '.cannotDeleteDataModel'
+                    ) | translate
+                  ">
+                  <button
+                    mat-icon-button
+                    type="button"
+                    class="small delete"
+                    data-cy="data-models-tree-delete-model"
+                    [attr.aria-label]="r + '.deleteDataModel' | translate"
+                    [disabled]="!check?.canDo"
+                    (click)="deleteModel(model.iri, model.label)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </span>
+              }
+            </div>
+            @if (open) {
+              <mat-nav-list class="sections">
+                @for (item of sections; track item.path) {
+                  @let active = current && section() === item.path;
+                  <a
+                    #tourSection
+                    mat-list-item
+                    class="rail-link"
+                    [class.current]="active"
+                    [activated]="active"
+                    [attr.aria-current]="active ? 'page' : null"
+                    [routerLink]="item.path"
+                    [queryParams]="modelParams().get(model.iri)"
+                    [attr.data-cy]="'data-models-tree-' + item.path">
+                    <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+                    <span class="rail-text">{{ r + '.' + item.path | translate }}</span>
+                    @if (item.path === classes && counts) {
+                      <span matListItemMeta class="count">{{ counts.classes }}</span>
+                    } @else if (item.path === properties && counts) {
+                      <span matListItemMeta class="count">{{ counts.properties }}</span>
+                    }
+                  </a>
+                }
+              </mat-nav-list>
+            }
+          }
+
+          <!-- The project's controlled vocabularies, which all its data models can use; each opens as in the Data models tab. -->
+          <div class="heading project">
+            <span class="title">
+              {{ r + '.lists' | translate }}
+              <mat-icon
+                class="info"
+                tabindex="0"
+                data-cy="data-models-tree-vocabularies-info"
+                [attr.aria-label]="'pages.ontology.dataModels.vocabularies.info' | translate"
+                [matTooltip]="'pages.ontology.dataModels.vocabularies.info' | translate"
+                >info_outline</mat-icon
+              >
+            </span>
+            @if (state.canEdit() && editing.canCreate) {
+              <button
+                mat-icon-button
+                type="button"
+                class="small"
+                data-cy="data-models-tree-create-vocabulary"
+                [attr.aria-label]="r + '.createVocabulary' | translate"
+                [matTooltip]="r + '.createVocabulary' | translate"
+                (click)="createVocabulary()">
+                <mat-icon>add</mat-icon>
+              </button>
             }
           </div>
-          @if (open) {
-            <mat-nav-list class="sections">
-              @for (item of sections; track item.path) {
-                @let active = current && section() === item.path;
-                <a
-                  #tourSection
-                  mat-list-item
-                  class="rail-link"
-                  [class.current]="active"
-                  [activated]="active"
-                  [attr.aria-current]="active ? 'page' : null"
-                  [routerLink]="item.path"
-                  [queryParams]="modelParams().get(model.iri)"
-                  [attr.data-cy]="'data-models-tree-' + item.path">
-                  <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-                  <span class="rail-text">{{ r + '.' + item.path | translate }}</span>
-                  @if (item.path === classes && counts) {
-                    <span matListItemMeta class="count">{{ counts.classes }}</span>
-                  } @else if (item.path === properties && counts) {
-                    <span matListItemMeta class="count">{{ counts.properties }}</span>
-                  }
-                </a>
-              }
-            </mat-nav-list>
-          }
-        }
+          <mat-nav-list class="sections flat">
+            @for (vocabulary of state.lists() ?? []; track vocabulary.id) {
+              @let name = listNames().get(vocabulary.id);
+              @let active = section() === list && route().list === name;
+              <a
+                mat-list-item
+                class="rail-link"
+                [class.current]="active"
+                [activated]="active"
+                [attr.aria-current]="active ? 'page' : null"
+                [routerLink]="[list, name]"
+                data-cy="data-models-tree-vocabulary">
+                <mat-icon matListItemIcon>list</mat-icon>
+                <span class="rail-text">{{ vocabulary.labels | appStringifyStringLiteral }}</span>
+              </a>
+            }
+            @if (state.canEdit()) {
+              <!-- A line sets the documentation apart from the project's vocabularies. -->
+              <mat-divider class="docs-divider" />
+              <a mat-list-item class="rail-link docs" [href]="docs" target="_blank" rel="noopener">
+                <mat-icon matListItemIcon>open_in_new</mat-icon>
+                <span class="rail-text">{{ r + '.documentation' | translate }}</span>
+              </a>
+            }
+          </mat-nav-list>
+        </aside>
+      </as-split-area>
 
-        <!-- The project's controlled vocabularies, which all its data models can use; each opens as in the Data models tab. -->
-        <div class="heading project">
-          <span class="title">
-            {{ r + '.lists' | translate }}
-            <mat-icon
-              class="info"
-              tabindex="0"
-              data-cy="data-models-tree-vocabularies-info"
-              [attr.aria-label]="'pages.ontology.dataModels.vocabularies.info' | translate"
-              [matTooltip]="'pages.ontology.dataModels.vocabularies.info' | translate"
-              >info_outline</mat-icon
-            >
-          </span>
-          @if (state.canEdit() && editing.canCreate) {
-            <button
-              mat-icon-button
-              type="button"
-              class="small"
-              data-cy="data-models-tree-create-vocabulary"
-              [attr.aria-label]="r + '.createVocabulary' | translate"
-              [matTooltip]="r + '.createVocabulary' | translate"
-              (click)="createVocabulary()">
-              <mat-icon>add</mat-icon>
-            </button>
-          }
+      <as-split-area size="*">
+        <div class="main">
+          <main class="content">
+            <router-outlet />
+          </main>
         </div>
-        <mat-nav-list class="sections flat">
-          @for (vocabulary of state.lists() ?? []; track vocabulary.id) {
-            @let name = listNames().get(vocabulary.id);
-            @let active = section() === list && route().list === name;
-            <a
-              mat-list-item
-              class="rail-link"
-              [class.current]="active"
-              [activated]="active"
-              [attr.aria-current]="active ? 'page' : null"
-              [routerLink]="[list, name]"
-              data-cy="data-models-tree-vocabulary">
-              <mat-icon matListItemIcon>list</mat-icon>
-              <span class="rail-text">{{ vocabulary.labels | appStringifyStringLiteral }}</span>
-            </a>
-          }
-          @if (state.canEdit()) {
-            <!-- A line sets the documentation apart from the project's vocabularies. -->
-            <mat-divider class="docs-divider" />
-            <a mat-list-item class="rail-link docs" [href]="docs" target="_blank" rel="noopener">
-              <mat-icon matListItemIcon>open_in_new</mat-icon>
-              <span class="rail-text">{{ r + '.documentation' | translate }}</span>
-            </a>
-          }
-        </mat-nav-list>
-      </aside>
-
-      <div class="main">
-        <main class="content">
-          <router-outlet />
-        </main>
-      </div>
-    </div>
+      </as-split-area>
+    </as-split>
 
     <app-feature-tour tour="dataModels" [steps]="tourSteps()" />
   `,
@@ -262,10 +273,23 @@ export class DataModelsTreePageComponent {
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _breakpoints = inject(BreakpointObserver);
 
-  /** The rail's width, as the Data tab's sidebar at each breakpoint, but never under 220px. */
+  /** The rail's width, as the Data tab's sidebar at each breakpoint, but never under 260px: its entries fit whole. */
   readonly railWidth = toSignal(this._breakpoints.observe(RAIL_QUERIES).pipe(map(() => this._railWidthForScreen())), {
     initialValue: this._railWidthForScreen(),
   });
+
+  /** The width the user dragged the rail to, if they have. */
+  private readonly _draggedWidth = signal<number | undefined>(undefined);
+
+  /** The breakpoint's width until the user drags the rail, as in the Data tab; then theirs. */
+  readonly railSize = computed(() => this._draggedWidth() ?? this.railWidth());
+
+  onRailDragged({ sizes }: SplitGutterInteractionEvent): void {
+    const [width] = sizes;
+    if (typeof width === 'number') {
+      this._draggedWidth.set(width);
+    }
+  }
 
   readonly sections = MODEL_SECTIONS;
   readonly classes = RouteConstants.classes;
